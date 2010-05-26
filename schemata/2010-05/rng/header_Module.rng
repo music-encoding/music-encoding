@@ -1,0 +1,1762 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            header_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- Header Module -->
+  <!-- Declare additional start elements -->
+  <define name="model.startLike" combine="choice">
+    <ref name="meihead"/>
+  </define>
+
+  <!-- Declare module attr classes -->
+  <define name="att.regularmethod" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that describe correction and
+      normalization methods</a:documentation>
+    <optional>
+      <attribute name="method">
+        <a:documentation xml:lang="eng">indicates the method employed to mark
+          corrections and normalizations.</a:documentation>
+        <choice>
+          <value>silent</value>
+          <value>tags</value>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.availabilityPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of a
+      description of the availability of and access to a bibliographic
+      item.</a:documentation>
+    <zeroOrMore>
+      <ref name="acqsource"/>
+      <zeroOrMore>
+        <ref name="accessdesc"/>
+        <optional>
+          <ref name="price"/>
+        </optional>
+      </zeroOrMore>
+    </zeroOrMore>
+    <optional>
+      <ref name="userestrict"/>
+    </optional>
+    <optional>
+      <ref name="sysreq"/>
+    </optional>
+  </define>
+
+  <define name="model.editorialdeclPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of a
+      description of the editorial process applied to the encoding of
+      notation.</a:documentation>
+    <choice>
+      <ref name="correction"/>
+      <ref name="interpretation"/>
+      <ref name="normalization"/>
+      <ref name="segmentation"/>
+      <ref name="stdvals"/>
+    </choice>
+  </define>
+
+  <define name="model.encodingPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      information regarding the encoding process.</a:documentation>
+    <optional>
+      <ref name="appinfo"/>
+    </optional>
+    <optional>
+      <ref name="projectdesc"/>
+    </optional>
+    <optional>
+      <ref name="samplingdecl"/>
+    </optional>
+    <optional>
+      <ref name="editorialdecl"/>
+    </optional>
+  </define>
+
+  <define name="model.frontPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      front matter.</a:documentation>
+    <ref name="titlepage"/>
+  </define>
+
+  <define name="model.headerPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      the MEI header.</a:documentation>
+    <optional>
+      <ref name="encodingdesc"/>
+    </optional>
+    <optional>
+      <ref name="profiledesc"/>
+    </optional>
+  </define>
+
+  <define name="model.physdescPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      the physical description of a bibliographic item.</a:documentation>
+    <choice>
+      <ref name="condition"/>
+      <ref name="dimensions"/>
+      <ref name="exhibithist"/>
+      <ref name="extent"/>
+      <ref name="handlist"/>
+      <ref name="inscription"/>
+      <ref name="physmedium"/>
+      <ref name="physloc"/>
+      <ref name="provenance"/>
+      <ref name="model.repositoryLike"/>
+      <ref name="model.frontPart"/>
+      <ref name="treatmenthist"/>
+      <ref name="treatmentsched"/>
+    </choice>
+  </define>
+
+  <define name="model.profiledescPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      the profile description.</a:documentation>
+    <optional>
+      <ref name="creation"/>
+    </optional>
+    <optional>
+      <ref name="langusage"/>
+    </optional>
+    <optional>
+      <ref name="classification"/>
+    </optional>
+    <zeroOrMore>
+      <ref name="eventlist"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="model.pubstmtPart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      the publication statement for a bibliographic item.</a:documentation>
+    <choice>
+      <ref name="model.nameLike.geogname"/>
+      <ref name="model.addressLike"/>
+      <ref name="respstmt"/>
+      <ref name="model.dateLike"/>
+      <ref name="model.identifierLike"/>
+      <ref name="availability"/>
+    </choice>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.meihead">
+    <zeroOrMore>
+      <ref name="altmeiid"/>
+    </zeroOrMore>
+    <ref name="filedesc"/>
+    <ref name="model.headerPart"/>
+    <optional>
+      <ref name="revisiondesc"/>
+    </optional>
+  </define>
+
+  <define name="meihead">
+    <element name="meihead">
+      <a:documentation xml:lang="eng">meihead ― A wrapper for general
+        bibliographic and descriptive information about the encoded file. This
+        information is often essential in a machine-readable environment. Five
+        sub-elements must be encoded in the following order:
+        &lt;altmeiid&gt;(optional), &lt;filedesc&gt;(required),
+        &lt;encodingdesc&gt;(optional),
+        &lt;profiledesc;&gt;(optional), and
+        &lt;revisiondesc&gt;(optional). These elements and their
+        sub-elements provide: a unique identifier for the MEI file,
+        bibliographic information about the MEI file and its sources,
+        information about the encoding process, information about the creation
+        of the work being encoded, and statements regarding significant
+        revisions of the file. The xml:lang attribute may be used to indicate
+        the language in which the metadata content of the header is provided. In
+        order to encourage uniformity in the provision of metadata across
+        document types, this element is modelled on an element in the Text
+        Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.meihead"/>
+      <ref name="content.meihead"/>
+    </element>
+  </define>
+
+  <define name="attlist.meihead">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+    <ref name="att.lang"/>
+    <ref name="att.meiversion"/>
+    <optional>
+      <attribute name="type">
+        <a:documentation xml:lang="eng">specifies the kind of document to which
+          the header is attached, that is, whether it is a corpus or an
+          individual text.</a:documentation>
+        <choice>
+          <value>music</value>
+          <value>corpus</value>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.accessdesc">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="accessdesc">
+    <element name="accessdesc">
+      <a:documentation xml:lang="eng">access description ― Describes the
+        conditions that affect the accessibility of material. May indicate the
+        nature of restrictions or the lack of restrictions. Do not confuse this
+        element with &lt;userestrict&gt; (usage restrictions), which
+        captures information about limitations on the use of material, such as
+        those afforded by copyright. This element is modelled on an element in
+        Encoded Archival Description (EAD).</a:documentation>
+      <ref name="attlist.accessdesc"/>
+      <ref name="content.accessdesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.accessdesc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.acqsource">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="acqsource">
+    <element name="acqsource">
+      <a:documentation xml:lang="eng">acquisition source ― Post-publication
+        source, such as a vendor or distributor, from which access to a
+        bibliographic item may be obtained, including electronic access. This
+        element is modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.acqsource"/>
+      <ref name="content.acqsource"/>
+    </element>
+  </define>
+
+  <define name="attlist.acqsource">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.altmeiid">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="altmeiid">
+    <element name="altmeiid">
+      <a:documentation xml:lang="eng">alternative MEI identifier ― May contain a
+        bibliographic identifier that does not fit within the meihead id
+        attribute, for example because the id does not fit the definition of an
+        XML id or because multiple identifiers are needed. One or the other of
+        &lt;altmeiid&gt; or the id attribute on &lt;mei&gt; is
+        required when applicable.</a:documentation>
+      <ref name="attlist.altmeiid"/>
+      <ref name="content.altmeiid"/>
+    </element>
+  </define>
+
+  <define name="attlist.altmeiid">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+    <ref name="att.typed"/>
+  </define>
+
+  <define name="content.appinfo">
+    <zeroOrMore>
+      <ref name="application"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="appinfo">
+    <element name="appinfo">
+      <a:documentation xml:lang="eng">application information ― Groups
+        information about applications which have acted upon the MEI file. This
+        is not to be confused with applications which were used to create the
+        MEI file. The latter may be recorded in the projectdesc element. This
+        element is modelled on an element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.appinfo"/>
+      <ref name="content.appinfo"/>
+    </element>
+  </define>
+
+  <define name="attlist.appinfo">
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.application">
+    <oneOrMore>
+      <ref name="model.nameLike"/>
+    </oneOrMore>
+    <choice>
+      <zeroOrMore>
+        <ref name="model.ptrLike"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="model.pLike"/>
+      </zeroOrMore>
+    </choice>
+  </define>
+
+  <define name="application">
+    <element name="application">
+      <a:documentation xml:lang="eng">application ― Provides information about
+        an application which has acted upon the current document. This element
+        is modelled on an element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.application"/>
+      <ref name="content.application"/>
+    </element>
+  </define>
+
+  <define name="attlist.application">
+    <ref name="att.common"/>
+    <ref name="att.datable"/>
+    <ref name="att.typed"/>
+    <optional>
+      <attribute name="version">
+        <a:documentation xml:lang="eng">supplies a version number for an
+          application, independent of its identifier or display
+          name.</a:documentation>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.availability">
+    <ref name="model.availabilityPart"/>
+  </define>
+
+  <define name="availability">
+    <element name="availability">
+      <a:documentation xml:lang="eng">availability ― Groups elements that
+        describe the availability of and access to a bibliographic item. When
+        used within the filedesc element, availability indicates access to the
+        MEI-encoded document itself. This element is modelled on an element in
+        Encoded Archival Description (EAD).</a:documentation>
+      <ref name="attlist.availability"/>
+      <ref name="content.availability"/>
+    </element>
+  </define>
+
+  <define name="attlist.availability">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.change">
+    <ref name="respstmt"/>
+    <ref name="changedesc"/>
+    <ref name="model.dateLike"/>
+  </define>
+
+  <define name="change">
+    <element name="change">
+      <a:documentation xml:lang="eng">change ― Individual change within the
+        revision description. Additions, deletions, and significant recoding
+        should be noted, but not correction of minor typographical errors. It is
+        recommended that revisions should be entered in reverse chronological
+        order, with the most recent &lt;change&gt; first. The resp
+        attribute contains a pointer to an element containing info about the
+        person/entity responsible for change. The edition element can be used to
+        designate an MEI encoding that has been so substantively changed that it
+        constitutes a new version that supersedes earlier versions. This element
+        is modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.change"/>
+      <ref name="content.change"/>
+    </element>
+  </define>
+
+  <define name="attlist.change">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.changedesc">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="changedesc">
+    <element name="changedesc">
+      <a:documentation xml:lang="eng">change description ― Description of a
+        revision of the MEI file.</a:documentation>
+      <ref name="attlist.changedesc"/>
+      <ref name="content.changedesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.changedesc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.classcode">
+    <text/>
+  </define>
+
+  <define name="classcode">
+    <element name="classcode">
+      <a:documentation xml:lang="eng">classification code ― Library of Congress
+        subject or call number, or a thesaurus or ontology citation, for
+        example. The source of controlled-vocabulary terms used in the
+        &lt;keywords&gt; element.</a:documentation>
+      <ref name="attlist.classcode"/>
+      <ref name="content.classcode"/>
+    </element>
+  </define>
+
+  <define name="attlist.classcode">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.classification">
+    <oneOrMore>
+      <choice>
+        <ref name="classcode"/>
+        <ref name="keywords"/>
+      </choice>
+    </oneOrMore>
+  </define>
+
+  <define name="classification">
+    <element name="classification">
+      <a:documentation xml:lang="eng">classification ― Groups information which
+        describes the nature or topic of a musical work. Although use of names
+        and terms from locally controlled vocabularies is possible, terms used
+        here should come from standard national or international vocabularies
+        whenever they are available in order to enable searches in systems that
+        include multiple MEI documents, or MEI documents and bibliographic
+        records from many institutions.</a:documentation>
+      <ref name="attlist.classification"/>
+      <ref name="content.classification"/>
+    </element>
+  </define>
+
+  <define name="attlist.classification">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.condition">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="condition">
+    <element name="condition">
+      <a:documentation xml:lang="eng">condition ― The physical condition of an
+        item, particularly any variances between the physical makeup of the item
+        and that of other copies of the same item (e.g., missing pages, plates,
+        etc.). Condition may reflect other aspects of the physical condition of
+        the item as well (e.g., brittleness, faded images, etc.). This element
+        is modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.condition"/>
+      <ref name="content.condition"/>
+    </element>
+  </define>
+
+  <define name="attlist.condition">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.correction">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="correction">
+    <element name="correction">
+      <a:documentation xml:lang="eng">correction ― States how and under what
+        circumstances corrections have been made in the text. This element is
+        modelled on an element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.correction"/>
+      <ref name="content.correction"/>
+    </element>
+  </define>
+
+  <define name="attlist.correction">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+    <ref name="att.regularmethod"/>
+    <optional>
+      <attribute name="corrlevel">
+        <a:documentation xml:lang="eng">indicates the degree of correction
+          applied to the text.</a:documentation>
+        <choice>
+          <value>high</value>
+          <value>medium</value>
+          <value>low</value>
+          <value>unknown</value>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.creation">
+    <oneOrMore>
+      <ref name="model.textcomponentLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="creation">
+    <element name="creation">
+      <a:documentation xml:lang="eng">creation ― Non-bibliographic creation
+        details for the work being encoded, in narrative form. Contains phrases
+        describing the origin of the text, e.g. the date, place, and
+        circumstances of its composition. This element is modelled on an element
+        in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.creation"/>
+      <ref name="content.creation"/>
+    </element>
+  </define>
+
+  <define name="attlist.creation">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.dimensions">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="dimensions">
+    <element name="dimensions">
+      <a:documentation xml:lang="eng">dimensions ― Information about the
+        physical size of a bibliographic source; usually includes numerical
+        data. There are no height and width sub-elements; however, num
+        sub-elements may be used with appropriate n attribute values.
+        Measurements may be expressed in any convenient unit. Do not confuse
+        this element with the &lt;extent&gt; element, which is used to
+        indicate the quantity of described materials. This element is modelled
+        on an element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.dimensions"/>
+      <ref name="content.dimensions"/>
+    </element>
+  </define>
+
+  <define name="attlist.dimensions">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.measurement"/>
+  </define>
+
+  <define name="content.editionstmt">
+    <oneOrMore>
+      <ref name="model.editionLike"/>
+      <zeroOrMore>
+        <ref name="respstmt"/>
+      </zeroOrMore>
+    </oneOrMore>
+  </define>
+
+  <define name="editionstmt">
+    <element name="editionstmt">
+      <a:documentation xml:lang="eng">edition statement ― Container for
+        meta-data pertaining to a particular edition of the material being
+        described. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.editionstmt"/>
+      <ref name="content.editionstmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.editionstmt">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.editorialdecl">
+    <choice>
+      <oneOrMore>
+        <ref name="model.pLike"/>
+      </oneOrMore>
+      <group>
+        <oneOrMore>
+          <ref name="model.editorialdeclPart"/>
+        </oneOrMore>
+        <zeroOrMore>
+          <ref name="model.pLike"/>
+        </zeroOrMore>
+      </group>
+    </choice>
+  </define>
+
+  <define name="editorialdecl">
+    <element name="editorialdecl">
+      <a:documentation xml:lang="eng">editorial declaration ― Used to provide
+        details of editorial principles and practices applied during the
+        encoding of musical text. This element is modelled on an element in the
+        Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.editorialdecl"/>
+      <ref name="content.editorialdecl"/>
+    </element>
+  </define>
+
+  <define name="attlist.editorialdecl">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.encodingdesc">
+    <ref name="model.encodingPart"/>
+  </define>
+
+  <define name="encodingdesc">
+    <element name="encodingdesc">
+      <a:documentation xml:lang="eng">encoding description ― Documents the
+        relationship between an electronic file and the source or sources from
+        which it was derived as well as applications used in the
+        encoding/editing process. This element is modelled on an element in the
+        Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.encodingdesc"/>
+      <ref name="content.encodingdesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.encodingdesc">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.exhibithist">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="exhibithist">
+    <element name="exhibithist">
+      <a:documentation xml:lang="eng">exhibition history ― A record of public
+        exhibitions, including dates, venues, etc. This element is modelled on
+        an element in Encoded Archival Description (EAD).</a:documentation>
+      <ref name="attlist.exhibithist"/>
+      <ref name="content.exhibithist"/>
+    </element>
+  </define>
+
+  <define name="attlist.exhibithist">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.extent">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="extent">
+    <element name="extent">
+      <a:documentation xml:lang="eng">extent ― Used to express size in terms
+        other than physical dimensions, such as number of pages, number of
+        records in file, number of bytes, performance duration for music, audio
+        recordings and visual projections, etc. Use the
+        &lt;dimensions&gt; element when it is necessary to specify the
+        physical size of materials being described, for example, height and
+        width. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.extent"/>
+      <ref name="content.extent"/>
+    </element>
+  </define>
+
+  <define name="attlist.extent">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.measurement"/>
+  </define>
+
+  <define name="content.filedesc">
+    <ref name="titlestmt"/>
+    <optional>
+      <ref name="editionstmt"/>
+    </optional>
+    <optional>
+      <ref name="extent"/>
+    </optional>
+    <optional>
+      <ref name="fingerprint"/>
+    </optional>
+    <ref name="pubstmt"/>
+    <optional>
+      <ref name="seriesstmt"/>
+    </optional>
+    <optional>
+      <ref name="notesstmt"/>
+    </optional>
+    <optional>
+      <ref name="sourcedesc"/>
+    </optional>
+  </define>
+
+  <define name="filedesc">
+    <element name="filedesc">
+      <a:documentation xml:lang="eng">file description ― Contains a full
+        bibliographic description of the MEI file. Extent in this context is
+        file size. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.filedesc"/>
+      <ref name="content.filedesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.filedesc">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.fingerprint">
+    <text/>
+  </define>
+
+  <define name="fingerprint">
+    <element name="fingerprint">
+      <a:documentation xml:lang="eng">fingerprint ― Traditionally, an
+        identifier, constructed by combining groups of characters transcribed
+        from specified pages of a printed item, which makes it possible to
+        signal differences between copies of the item. For an electronic item,
+        such as an MEI file, however, the fingerprint should be a
+        checksum.</a:documentation>
+      <ref name="attlist.fingerprint"/>
+      <ref name="content.fingerprint"/>
+    </element>
+  </define>
+
+  <define name="attlist.fingerprint">
+    <ref name="att.common"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.hand">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="hand">
+    <element name="hand">
+      <a:documentation xml:lang="eng">hand ― Defines a distinct scribe or
+        handwriting style. The initial attribute indicates whether this is the
+        first or main scribe of the document. The medium attribute describes the
+        writing medium, e.g., 'pencil', or the tint or type of ink, e.g.
+        'brown'. The resp attribute contains an ID reference to an element
+        containing the name of the editor or transcriber responsible for
+        identifying the hand. The characteristics of the hand, particularly
+        those related to the quality of the writing, such as 'shaky', 'thick',
+        etc. may be described within the content of the hand element. This
+        element is modelled on an element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.hand"/>
+      <ref name="content.hand"/>
+    </element>
+  </define>
+
+  <define name="attlist.hand">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+    <ref name="att.medium"/>
+    <ref name="att.responsibility"/>
+    <optional>
+      <attribute name="initial">
+        <a:documentation xml:lang="eng">marks this hand as the initial one of
+          the document.</a:documentation>
+        <ref name="data.BOOLEAN"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.handlist">
+    <oneOrMore>
+      <ref name="hand"/>
+    </oneOrMore>
+  </define>
+
+  <define name="handlist">
+    <element name="handlist">
+      <a:documentation xml:lang="eng">hand list ― Container for one or more hand
+        elements. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.handlist"/>
+      <ref name="content.handlist"/>
+    </element>
+  </define>
+
+  <define name="attlist.handlist">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.inscription">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="inscription">
+    <element name="inscription">
+      <a:documentation xml:lang="eng">inscription ― An inscription added to an
+        item, such as a bookplate, a note designating the item as a gift, and/or
+        the author's signature.</a:documentation>
+      <ref name="attlist.inscription"/>
+      <ref name="content.inscription"/>
+    </element>
+  </define>
+
+  <define name="attlist.inscription">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.interpretation">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="interpretation">
+    <element name="interpretation">
+      <a:documentation xml:lang="eng">interpretation ― Describes the scope of
+        any analytic or interpretive information added to the transcription of
+        the music. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.interpretation"/>
+      <ref name="content.interpretation"/>
+    </element>
+  </define>
+
+  <define name="attlist.interpretation">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.keywords">
+    <oneOrMore>
+      <ref name="term"/>
+    </oneOrMore>
+  </define>
+
+  <define name="keywords">
+    <element name="keywords">
+      <a:documentation xml:lang="eng">keywords ― Collection of keywords or text
+        phrases which describe the work. This element is modelled on an element
+        in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.keywords"/>
+      <ref name="content.keywords"/>
+    </element>
+  </define>
+
+  <define name="attlist.keywords">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.language">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="language">
+    <element name="language">
+      <a:documentation xml:lang="eng">language ― Description of a language used
+        in the document. A text element may be related to this element via its
+        xml:lang attribute, which normally takes the form of a code, drawn from
+        a coded list, such as ISO639-2b. The name of the authorizing list may be
+        encoded in the authority attribute. This element is modelled on an
+        element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.language"/>
+      <ref name="content.language"/>
+    </element>
+  </define>
+
+  <define name="attlist.language">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.authorized"/>
+  </define>
+
+  <define name="content.langusage">
+    <oneOrMore>
+      <ref name="language"/>
+    </oneOrMore>
+  </define>
+
+  <define name="langusage">
+    <element name="langusage">
+      <a:documentation xml:lang="eng">language usage ― Langusage groups elements
+        describing the languages, sublanguages, dialects, etc., represented
+        within the encoded work. This element is modelled on an element in the
+        Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.langusage"/>
+      <ref name="content.langusage"/>
+    </element>
+  </define>
+
+  <define name="attlist.langusage">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.normalization">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="normalization">
+    <element name="normalization">
+      <a:documentation xml:lang="eng">normalization ― Indicates the extent of
+        normalization or regularization of the original source carried out in
+        converting it to electronic form. This element is modelled on an element
+        in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.normalization"/>
+      <ref name="content.normalization"/>
+    </element>
+  </define>
+
+  <define name="attlist.normalization">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+    <ref name="att.regularmethod"/>
+  </define>
+
+  <define name="content.notesstmt">
+    <oneOrMore>
+      <ref name="model.annotLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="notesstmt">
+    <element name="notesstmt">
+      <a:documentation xml:lang="eng">notes statement ― Groups bibliographic
+        annotations, each of which provides descriptive information in addition
+        to that recorded in other parts of the bibliographic description. These
+        annotations are similar to "general notes" in traditional bibliographic
+        descriptions. This element is modelled on an element in the Text
+        Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.notesstmt"/>
+      <ref name="content.notesstmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.notesstmt">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.physdesc">
+    <oneOrMore>
+      <ref name="model.physdescPart"/>
+    </oneOrMore>
+  </define>
+
+  <define name="physdesc">
+    <element name="physdesc">
+      <a:documentation xml:lang="eng">physical description ― Container for
+        information about the location, appearance, construction, or handling of
+        physical materials, such as their dimension, quantity, color, style, and
+        technique of creation. Dedicatory text and title page features may also
+        be encoded here when they are not transcribed as part of the front or
+        back matter; i.e., when they are considered to be meta-data rather than
+        a transcription. This element is modelled on an element in Encoded
+        Archival Description (EAD).</a:documentation>
+      <ref name="attlist.physdesc"/>
+      <ref name="content.physdesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.physdesc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.physloc">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="physloc">
+    <element name="physloc">
+      <a:documentation xml:lang="eng">physical location ― Location of the source
+        within a repository, e.g., shelf mark or other locational information.
+        This element is modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.physloc"/>
+      <ref name="content.physloc"/>
+    </element>
+  </define>
+
+  <define name="attlist.physloc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.physmedium">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="physmedium">
+    <element name="physmedium">
+      <a:documentation xml:lang="eng">physical medium ― Records the physical
+        materials used in the source, such as ink and paper. All materials may
+        be described in a single &lt;physmedium&gt; element or multiple
+        elements may be used, one for each medium. This element is modelled on
+        an element in Encoded Archival Description (EAD).</a:documentation>
+      <ref name="attlist.physmedium"/>
+      <ref name="content.physmedium"/>
+    </element>
+  </define>
+
+  <define name="attlist.physmedium">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.authorized"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.price">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="price">
+    <element name="price">
+      <a:documentation xml:lang="eng">price ― The cost of access to a
+        bibliographic item.</a:documentation>
+      <ref name="attlist.price"/>
+      <ref name="content.price"/>
+    </element>
+  </define>
+
+  <define name="attlist.price">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.measurement"/>
+  </define>
+
+  <define name="content.profiledesc">
+    <ref name="model.profiledescPart"/>
+  </define>
+
+  <define name="profiledesc">
+    <element name="profiledesc">
+      <a:documentation xml:lang="eng">profile description ― A detailed
+        description of the non-bibliographic aspects of the creation of a
+        musical work, specifically the languages and sublanguages used, the
+        situation in which it was produced, e.g. the participants, setting,
+        reception history, etc. Do not confuse this with
+        &lt;filedesc&gt;, which bundles bibliographic information about
+        the creation of the MEI file. This element is modelled on an element in
+        the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.profiledesc"/>
+      <ref name="content.profiledesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.profiledesc">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.projectdesc">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="projectdesc">
+    <element name="projectdesc">
+      <a:documentation xml:lang="eng">project description ― Project-level
+        meta-data describing the aim or purpose for which the electronic file
+        was encoded, funding agencies, etc. together with any other relevant
+        information concerning the process by which it was assembled or
+        collected. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.projectdesc"/>
+      <ref name="content.projectdesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.projectdesc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.provenance">
+    <choice>
+      <optional>
+        <ref name="eventlist"/>
+      </optional>
+      <zeroOrMore>
+        <choice>
+          <text/>
+          <ref name="model.textphraseLike.limited"/>
+        </choice>
+      </zeroOrMore>
+    </choice>
+  </define>
+
+  <define name="provenance">
+    <element name="provenance">
+      <a:documentation xml:lang="eng">provenance ― The record of ownership or
+        custodianship of an item. This element is modelled on an element in the
+        Encoded Archival Description (EAD) and Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.provenance"/>
+      <ref name="content.provenance"/>
+    </element>
+  </define>
+
+  <define name="attlist.provenance">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.pubstmt">
+    <choice>
+      <optional>
+        <ref name="unpub"/>
+      </optional>
+      <zeroOrMore>
+        <ref name="model.pubstmtPart"/>
+      </zeroOrMore>
+    </choice>
+  </define>
+
+  <define name="pubstmt">
+    <element name="pubstmt">
+      <a:documentation xml:lang="eng">publication statement ― Container for
+        information regarding the publication or distribution of a bibliographic
+        item, including the publisher's name and address, the date of
+        publication, and other relevant details. When an item is unpublished,
+        use only the &lt;unpub&gt; sub-element. This element is modelled
+        on an element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.pubstmt"/>
+      <ref name="content.pubstmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.pubstmt">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.resp">
+    <text/>
+  </define>
+
+  <define name="resp">
+    <element name="resp">
+      <a:documentation xml:lang="eng">responsibility ― A phrase describing the
+        nature of a person's intellectual responsibility. The name of the list
+        from which a controlled value is taken may be recorded using the
+        authority attribute. This element is modelled on an element in the Text
+        Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.resp"/>
+      <ref name="content.resp"/>
+    </element>
+  </define>
+
+  <define name="attlist.resp">
+    <ref name="att.authorized"/>
+  </define>
+
+  <define name="content.respstmt">
+    <zeroOrMore>
+      <choice>
+        <ref name="resp"/>
+        <ref name="model.nameLike"/>
+        <ref name="model.nameLike.agent"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="respstmt">
+    <element name="respstmt">
+      <a:documentation xml:lang="eng">responsibility statement ― Names one or
+        more individuals, groups, or in rare cases, mechanical processes,
+        responsible for creation or realization of the intellectual or artistic
+        content. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.respstmt"/>
+      <ref name="content.respstmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.respstmt">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.revisiondesc">
+    <oneOrMore>
+      <ref name="change"/>
+    </oneOrMore>
+  </define>
+
+  <define name="revisiondesc">
+    <element name="revisiondesc">
+      <a:documentation xml:lang="eng">revision description ― Container for
+        information about alterations that have been made to an MEI file. It is
+        recommended that changes be recorded in reverse chronological order,
+        with the most recent alteration first. This element is modelled on an
+        element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.revisiondesc"/>
+      <ref name="content.revisiondesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.revisiondesc">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.samplingdecl">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="samplingdecl">
+    <element name="samplingdecl">
+      <a:documentation xml:lang="eng">sampling declaration ― Contains a prose
+        description of the rationale and methods used in sampling texts in the
+        creation of a corpus or collection. This element is modelled on an
+        element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.samplingdecl"/>
+      <ref name="content.samplingdecl"/>
+    </element>
+  </define>
+
+  <define name="attlist.samplingdecl">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.segmentation">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="segmentation">
+    <element name="segmentation">
+      <a:documentation xml:lang="eng">segmentation ― Describes the principles
+        according to which the musical text has been segmented, for example into
+        movements, sections, etc. This element is modelled on an element in the
+        Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.segmentation"/>
+      <ref name="content.segmentation"/>
+    </element>
+  </define>
+
+  <define name="attlist.segmentation">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.seriesstmt">
+    <oneOrMore>
+      <ref name="model.titleLike"/>
+    </oneOrMore>
+    <zeroOrMore>
+      <ref name="respstmt"/>
+    </zeroOrMore>
+    <zeroOrMore>
+      <ref name="model.identifierLike"/>
+    </zeroOrMore>
+    <choice>
+      <ref name="model.listLike"/>
+      <zeroOrMore>
+        <ref name="seriesstmt"/>
+      </zeroOrMore>
+    </choice>
+  </define>
+
+  <define name="seriesstmt">
+    <element name="seriesstmt">
+      <a:documentation xml:lang="eng">series statement ― Groups information
+        about the series, if any, to which a publication belongs. In this
+        context, the title element records the series title, the respStmt
+        element records the person or group responsible for the series, and the
+        identifier element contains a series identifier. The list element should
+        be used when it is necessary to enumerate the contents of the series.
+        The seriesstmt is provided within seriesstmt for the description of a
+        sub-series. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.seriesstmt"/>
+      <ref name="content.seriesstmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.seriesstmt">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.source">
+    <zeroOrMore>
+      <ref name="model.identifierLike"/>
+    </zeroOrMore>
+    <optional>
+      <ref name="titlestmt"/>
+    </optional>
+    <optional>
+      <ref name="editionstmt"/>
+    </optional>
+    <ref name="pubstmt"/>
+    <optional>
+      <ref name="physdesc"/>
+    </optional>
+    <optional>
+      <ref name="seriesstmt"/>
+    </optional>
+    <optional>
+      <ref name="notesstmt"/>
+    </optional>
+    <optional>
+      <ref name="langusage"/>
+    </optional>
+    <optional>
+      <ref name="classification"/>
+    </optional>
+  </define>
+
+  <define name="source">
+    <element name="source">
+      <a:documentation xml:lang="eng">source ― A bibliographic description of a
+        source for the electronic file. Multiple physdesc sub-elements may be
+        used to describe the physically separate parts of a single source. The
+        data attribute may be used to reference one or more features that occur
+        in this particular source. This element is modelled on the sourcedesc
+        element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.source"/>
+      <ref name="content.source"/>
+    </element>
+  </define>
+
+  <define name="attlist.source">
+    <ref name="att.datapointing"/>
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.sourcedesc">
+    <oneOrMore>
+      <ref name="source"/>
+    </oneOrMore>
+  </define>
+
+  <define name="sourcedesc">
+    <element name="sourcedesc">
+      <a:documentation xml:lang="eng">source description ― A container for the
+        descriptions of the source(s) used in the creation of the electronic
+        file. This element is recommended where the MEI file is a transcription
+        of existing music, but is not required when the data is originally
+        created in MEI form.</a:documentation>
+      <ref name="attlist.sourcedesc"/>
+      <ref name="content.sourcedesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.sourcedesc">
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.stdvals">
+    <oneOrMore>
+      <ref name="model.pLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="stdvals">
+    <element name="stdvals">
+      <a:documentation xml:lang="eng">standard values ― Specifies the format
+        used when standardized date or number values are supplied. This element
+        is modelled on an element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.stdvals"/>
+      <ref name="content.stdvals"/>
+    </element>
+  </define>
+
+  <define name="attlist.stdvals">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.sysreq">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="sysreq">
+    <element name="sysreq">
+      <a:documentation xml:lang="eng">system requirements ― System requirements
+        for using the electronic item.</a:documentation>
+      <ref name="attlist.sysreq"/>
+      <ref name="content.sysreq"/>
+    </element>
+  </define>
+
+  <define name="attlist.sysreq">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.term">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="term"/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="term">
+    <element name="term">
+      <a:documentation xml:lang="eng">term ― Single keyword or phrase which
+        describes the work. The classcode attribute may be used to link the term
+        to a terminological source given in a classcode element. The term
+        element may include other term elements in order to allow the creation
+        of coordinated terms; i.e., terms created from a combination of other,
+        independent terms. This element is modelled on an element in the Text
+        Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.term"/>
+      <ref name="content.term"/>
+    </element>
+  </define>
+
+  <define name="attlist.term">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+    <optional>
+      <attribute name="classcode">
+        <a:documentation xml:lang="eng">contains a reference to the controlled
+          vocabulary from which the term is drawn. The value must match the
+          value of an ID attribute on a classcode element given elsewhere in the
+          document.</a:documentation>
+        <data type="IDREF"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.titlestmt">
+    <oneOrMore>
+      <ref name="model.titleLike"/>
+    </oneOrMore>
+    <zeroOrMore>
+      <ref name="respstmt"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="titlestmt">
+    <element name="titlestmt">
+      <a:documentation xml:lang="eng">title statement ― Container for title and
+        responsibility meta-data. This element is modelled on an element in the
+        Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.titlestmt"/>
+      <ref name="content.titlestmt"/>
+    </element>
+  </define>
+
+  <define name="attlist.titlestmt">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.treatmenthist">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="treatmenthist">
+    <element name="treatmenthist">
+      <a:documentation xml:lang="eng">treatment history ― A record of the
+        treatment the item has undergone (e.g., deacidification, restoration,
+        etc.) Treatment history may also comprise details of the treatment
+        process (e.g., chemical solutions used, techniques applied, etc.), the
+        date the treatment was applied, etc. This element is modelled on an
+        element in Encoded Archival Description (EAD).</a:documentation>
+      <ref name="attlist.treatmenthist"/>
+      <ref name="content.treatmenthist"/>
+    </element>
+  </define>
+
+  <define name="attlist.treatmenthist">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.treatmentsched">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="treatmentsched">
+    <element name="treatmentsched">
+      <a:documentation xml:lang="eng">treatment scheduled ― Scheduled treatment,
+        e.g. deacidification, restoration, etc., for an item. This element is
+        modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.treatmentsched"/>
+      <ref name="content.treatmentsched"/>
+    </element>
+  </define>
+
+  <define name="attlist.treatmentsched">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.unpub">
+    <text/>
+  </define>
+
+  <define name="unpub">
+    <element name="unpub">
+      <a:documentation xml:lang="eng">unpublished ― Used to explicitly indicate
+        that a bibliographic source is unpublished. A short phrase indicating
+        the nature of or the reason for the unpublished status may be given as
+        the element's content.</a:documentation>
+      <ref name="attlist.unpub"/>
+      <ref name="content.unpub"/>
+    </element>
+  </define>
+
+  <define name="attlist.unpub">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="content.userestrict">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="userestrict">
+    <element name="userestrict">
+      <a:documentation xml:lang="eng">usage restrictions ― Container for
+        information about the conditions that affect use of a bibliographic item
+        after access has been granted. It may indicate limitations imposed by an
+        owner, repository, or legal statute (for example, copyright law)
+        regarding the reproduction, publication, or quotation of the item. It
+        may also indicate the absence of restrictions, such as when rights have
+        been ceded to the public domain. Do not confuse this element with the
+        &lt;accessdesc&gt; element, which holds information about
+        conditions affecting the availability of the material. This element is
+        modelled on an element in Encoded Archival Description
+        (EAD).</a:documentation>
+      <ref name="attlist.userestrict"/>
+      <ref name="content.userestrict"/>
+    </element>
+  </define>
+
+  <define name="attlist.userestrict">
+    <ref name="att.common"/>
+    <ref name="att.bibl"/>
+  </define>
+
+  <define name="eventlist">
+    <element name="eventlist">
+      <a:documentation xml:lang="eng">event list ― Contains historical
+        information given as a sequence of significant past events.
+        &lt;eventlist&gt; contains &lt;event&gt; elements that
+        contain a brief description of the associated event, including dates and
+        locations where the event took place. An &lt;eventlist&gt;
+        describes events associated with a work when it appears in the
+        &lt;profiledesc&gt; element or events associated with the
+        custodial history of a given copy of a source for the encoding when it
+        appears within the &lt;source&gt; element. The type attribute
+        may be used to distinguish between event lists with different functions,
+        such as a list of events in the compositional process and a list of
+        performance dates.</a:documentation>
+      <ref name="attlist.eventlist"/>
+      <ref name="content.eventlist"/>
+    </element>
+  </define>
+
+  <define name="attlist.eventlist">
+    <ref name="att.bibl"/>
+    <ref name="att.common"/>
+    <ref name="att.typed"/>
+  </define>
+
+  <define name="content.eventlist">
+    <oneOrMore>
+      <ref name="event"/>
+    </oneOrMore>
+  </define>
+
+  <define name="event">
+    <element name="event">
+      <a:documentation xml:lang="eng">event ― contains a description of an
+        event, including the dates and locations of its occurrence and prominent
+        participants. When a single date can be associated with the event, the
+        attributes in the att.datable class may provide a more
+        machine-processable alternative than date elements within the content of
+        &lt;event&gt;. &lt;table&gt; and &lt;list&gt;
+        elements are allowed within &lt;event&gt; in order to
+        accommodate structured content.</a:documentation>
+      <ref name="attlist.event"/>
+      <ref name="content.event"/>
+    </element>
+  </define>
+
+  <define name="attlist.event">
+    <ref name="att.bibl"/>
+    <ref name="att.calendared"/>
+    <ref name="att.common"/>
+    <ref name="att.datable"/>
+    <ref name="att.edit"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.event">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+        <ref name="model.tableLike"/>
+        <ref name="model.listLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+</grammar>

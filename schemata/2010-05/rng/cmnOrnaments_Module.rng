@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            cmnOrnaments_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- CMN Ornaments Module -->
+  <!-- Declare module attr classes -->
+  <define name="att.ornamentaccid" combine="interleave">
+    <a:documentation>Accidentals associated with ornaments</a:documentation>
+    <optional>
+      <attribute name="accidupper">
+        <a:documentation xml:lang="eng">records the written accidental
+          associated with an upper neighboring note.</a:documentation>
+        <ref name="data.ACCIDENTAL.EXPLICIT"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="accidlower">
+        <a:documentation xml:lang="eng">records the written accidental
+          associated with a lower neighboring note.</a:documentation>
+        <ref name="data.ACCIDENTAL.EXPLICIT"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.mordent.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.mordent.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.mordent.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.controlevent"/>
+    <ref name="att.startendid"/>
+    <ref name="att.ornamentaccid"/>
+    <optional>
+      <attribute name="form">
+        <a:documentation xml:lang="eng">'norm' signals the normal form, that is,
+          the written note, followed by its lower neighbor, with a return to the
+          written note, while 'inv' indicates the inverted form, that is, the
+          principal note, followed by its upper neighbor, with a return to the
+          principal note. Traditionally, the 'normal' mordent is written as a
+          short wavy line with a vertical line through it and the inverted
+          mordent is written without the vertical line. However, the meaning of
+          these signs is sometimes reversed. See Read, p. 245-246. Another
+          attribute in the visual domain would be necessary in order to be
+          completely explicit about which visual symbol is actually to be
+          rendered.</a:documentation>
+        <choice>
+          <value>inv</value>
+          <value>norm</value>
+        </choice>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="long">
+        <a:documentation xml:lang="eng">When the long attribute is set to 'yes',
+          a double or long mordent, consisting of 5 notes, is
+          indicated.</a:documentation>
+        <ref name="data.BOOLEAN"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.mordent.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.color"/>
+    <ref name="att.placement"/>
+    <ref name="att.visualoffset"/>
+  </define>
+
+  <define name="att.trill.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.trill.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <ref name="att.duration.performed"/>
+  </define>
+
+  <define name="att.trill.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.controlevent"/>
+    <ref name="att.startendid"/>
+    <ref name="att.ornamentaccid"/>
+    <ref name="att.duration.timestamp"/>
+  </define>
+
+  <define name="att.trill.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.color"/>
+    <ref name="att.placement"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.visualoffset2.ho"/>
+    <ref name="att.visualoffset2.to"/>
+    <ref name="att.xy"/>
+  </define>
+
+  <define name="att.turn.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.turn.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.turn.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.controlevent"/>
+    <ref name="att.ornamentaccid"/>
+    <ref name="att.startid"/>
+    <optional>
+      <attribute name="delayed">
+        <a:documentation xml:lang="eng">When the delayed attribute is set to
+          'yes', the turn begins on the second half of the beat. See Read, p.
+          246.</a:documentation>
+        <ref name="data.BOOLEAN"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="form">
+        <a:documentation xml:lang="eng">indicates whether the turn begins on the
+          note above (norm) or on the note below (inv).</a:documentation>
+        <choice>
+          <value>inv</value>
+          <value>norm</value>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.turn.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.color"/>
+    <ref name="att.placement"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.xy"/>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.ornamentLike.cmn" combine="interleave">
+    <a:documentation xml:lang="eng">groups CMN ornament
+      elements.</a:documentation>
+    <choice>
+      <ref name="mordent"/>
+      <ref name="trill"/>
+      <ref name="turn"/>
+    </choice>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.mordent">
+    <zeroOrMore>
+      <ref name="model.eventLike"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="mordent">
+    <element name="mordent">
+      <a:documentation xml:lang="eng">mordent ― An ornament indicating rapid
+        alternation of the main note with a secondary note, usually a step
+        below, but sometimes a step above. See Read, p. 245-246. Events may be
+        contained within &lt;mordent&gt; in order to record precise
+        performance data. The starting point of the mordent may be indicated by
+        either a tstamp, tstamp.ges, tstamp.real or startid attribute. It is a
+        semantic error not to specify a starting point
+        attribute.</a:documentation>
+      <ref name="attlist.mordent"/>
+      <ref name="content.mordent"/>
+    </element>
+  </define>
+
+  <define name="attlist.mordent">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.mordent.log"/>
+    <ref name="att.mordent.vis"/>
+    <ref name="att.mordent.ges"/>
+    <ref name="att.mordent.anl"/>
+  </define>
+
+  <define name="content.trill">
+    <zeroOrMore>
+      <ref name="model.eventLike"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="trill">
+    <element name="trill">
+      <a:documentation xml:lang="eng">trill ― Rapid alternation of a note with
+        one (usually at the interval of a second) above. Usually, the interval
+        is understood to be diatonic unless altered by an accidental. The
+        starting note of the trill; i.e., the written one or the ornamenting
+        one, and the speed of alternation depends on performance practice.
+        Events may be contained within &lt;trill&gt; in order to record
+        precise performance data. The starting point of the trill may be
+        indicated by either a tstamp, tstamp.ges, tstamp.real or startid
+        attribute, while the ending point may be recorded by either a dur,
+        dur.ges or endid attribute. It is a semantic error not to specify a
+        starting point attribute. Please note that the dur attribute is not a
+        true duration, but rather a time stamp for the end point of the
+        trill.</a:documentation>
+      <ref name="attlist.trill"/>
+      <ref name="content.trill"/>
+    </element>
+  </define>
+
+  <define name="attlist.trill">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.trill.log"/>
+    <ref name="att.trill.vis"/>
+    <ref name="att.trill.ges"/>
+    <ref name="att.trill.anl"/>
+  </define>
+
+  <define name="content.turn">
+    <zeroOrMore>
+      <ref name="model.eventLike"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="turn">
+    <element name="turn">
+      <a:documentation xml:lang="eng">turn ― An ornament consisting of four
+        notes — the upper neighbor of the written note, the written note, the
+        lower neighbor, and the written note. See Read, p. 246-247. Events may
+        be contained within &lt;turn&gt; in order to record precise
+        performance data. Whether the turn is accented or unaccented may be
+        inferred from the timestamp — accented turns occur directly on the
+        affected beat, unaccented ones do not.</a:documentation>
+      <ref name="attlist.turn"/>
+      <ref name="content.turn"/>
+    </element>
+  </define>
+
+  <define name="attlist.turn">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.turn.log"/>
+    <ref name="att.turn.vis"/>
+    <ref name="att.turn.ges"/>
+    <ref name="att.turn.anl"/>
+  </define>
+
+</grammar>
