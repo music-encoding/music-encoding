@@ -585,61 +585,31 @@
   </xsl:template>
 
   <xsl:template match="mei:scoredef" mode="MIDI">
-    <xsl:for-each select="descendant::mei:staffdef">
-      <xsl:choose>
-        <xsl:when test="mei:layerdef">
-          <xsl:for-each select="mei:layerdef">
-            <xsl:if test="@midi.channel or @midi.instr">
-              <xsl:value-of select="$indent"/>
-              <xsl:text>midi </xsl:text>
-              <xsl:value-of select="../@n"/>
-              <xsl:text> </xsl:text>
-              <xsl:value-of select="@n"/>
-              <xsl:text>: </xsl:text>
-            </xsl:if>
-            <xsl:for-each select="@*[starts-with(name(),'midi.')]">
-              <xsl:if test="name()='midi.channel'">
-                <xsl:text>0 "channel=</xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>";</xsl:text>
-              </xsl:if>
-              <xsl:if test="name()='midi.instr'">
-                <xsl:text>0 "program=</xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>";</xsl:text>
-              </xsl:if>
-              <xsl:if test="position() != last()">
-                <xsl:text> </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-            <xsl:value-of select="$nl"/>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:if test="@midi.channel or @midi.instr">
-            <xsl:value-of select="$indent"/>
-            <xsl:text>midi </xsl:text>
-            <xsl:value-of select="@n"/>
-            <xsl:text> 1-3: </xsl:text>
-            <xsl:for-each select="@*[starts-with(name(),'midi.')]">
-              <xsl:if test="name()='midi.channel'">
-                <xsl:text>0 "channel=</xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>";</xsl:text>
-              </xsl:if>
-              <xsl:if test="name()='midi.instr'">
-                <xsl:text>0 "program=</xsl:text>
-                <xsl:value-of select="."/>
-                <xsl:text>";</xsl:text>
-              </xsl:if>
-              <xsl:if test="position() != last()">
-                <xsl:text> </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-            <xsl:value-of select="$nl"/>
-          </xsl:if>
-        </xsl:otherwise>
-      </xsl:choose>
+    <xsl:for-each select="descendant::mei:instrdef">
+      <xsl:if test="@midi.channel or @midi.instrnum">
+        <xsl:value-of select="$indent"/>
+        <xsl:text>midi </xsl:text>
+        <xsl:value-of select="ancestor::mei:staffdef/@n"/>
+        <xsl:text> </xsl:text>
+        <xsl:value-of select="ancestor::mei:layerdef/@n"/>
+        <xsl:text>: </xsl:text>
+      </xsl:if>
+      <xsl:for-each select="@*[starts-with(name(),'midi.')]">
+        <xsl:if test="name()='midi.channel'">
+          <xsl:text>0 "channel=</xsl:text>
+          <xsl:value-of select="."/>
+          <xsl:text>";</xsl:text>
+        </xsl:if>
+        <xsl:if test="name()='midi.instrnum'">
+          <xsl:text>0 "program=</xsl:text>
+          <xsl:value-of select="."/>
+          <xsl:text>";</xsl:text>
+        </xsl:if>
+        <xsl:if test="position() != last()">
+          <xsl:text> </xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:value-of select="$nl"/>
     </xsl:for-each>
   </xsl:template>
 
@@ -2184,7 +2154,7 @@
             <!-- non-grace to non-grace note, use @tstamp and @dur -->
             <xsl:value-of select="$indent"/>
             <xsl:text>phrase </xsl:text>
-            <xsl:value-of select="@place"/>
+            <xsl:value-of select="@curvedir"/>
             <xsl:text> </xsl:text>
             <xsl:value-of select="@staff"/>
             <xsl:text>: </xsl:text>
