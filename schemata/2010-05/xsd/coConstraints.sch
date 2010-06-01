@@ -30,12 +30,10 @@
 
 <sch:schema xmlns="http://purl.oclc.org/dsdl/schematron"
   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   xmlns:xlink="http://www.w3.org/1999/xlink"
-  ns="http://www.music-encoding.org/ns/mei"
   xmlns:mei="http://www.music-encoding.org/ns/mei" queryBinding="xslt2">
   <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
 
@@ -67,7 +65,8 @@
         test="every $i in tokenize(@source, '\s+') satisfies
           $i=//mei:source/@xml:id"
         >The values in @source must match the IDs of source
-        elements.</sch:assert> /> </sch:rule>
+        elements.</sch:assert>
+    </sch:rule>
   </sch:pattern>
 
   <sch:pattern>
