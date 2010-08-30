@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            neumes_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- Neumes Module -->
+  <!-- Declare module attr classes -->
+  <define name="att.ineume.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.ineume.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.ineume.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <optional>
+      <attribute name="form">
+        <a:documentation xml:lang="eng">provides a subclass or functional label
+          for the neume.</a:documentation>
+        <ref name="data.INEUMEFORM"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="name">
+        <a:documentation xml:lang="eng">records a name of an interrupted
+          neume.</a:documentation>
+        <ref name="data.INEUMENAME"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.ineume.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.color"/>
+  </define>
+
+  <define name="att.uneume.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+    <ref name="att.harmonicfunction"/>
+    <ref name="att.melodicfunction"/>
+    <ref name="att.intervallicdesc"/>
+    <ref name="att.solfa"/>
+  </define>
+
+  <define name="att.uneume.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.uneume.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.event"/>
+    <ref name="att.syltext"/>
+    <optional>
+      <attribute name="form">
+        <a:documentation xml:lang="eng">provides a subclass or functional label
+          for the neume.</a:documentation>
+        <ref name="data.UNEUMEFORM"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="name">
+        <a:documentation xml:lang="eng">records the name of an uninterrupted
+          neume.</a:documentation>
+        <ref name="data.UNEUMENAME"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.uneume.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.altsym"/>
+    <ref name="att.color"/>
+    <ref name="att.relativesize"/>
+    <ref name="att.visualoffset.ho"/>
+    <ref name="att.xy"/>
+    <ref name="att.visibility"/>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.eventLike.neumes" combine="interleave">
+    <zeroOrMore>
+      <choice>
+        <ref name="ineume"/>
+        <ref name="uneume"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="model.layerPart.neumes" combine="interleave">
+    <zeroOrMore>
+      <ref name="model.syllableLike"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="model.neumeModifierLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that modify neume-like
+      features.</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="model.syllableLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that accommodate neumed
+      text.</a:documentation>
+    <ref name="syllable"/>
+  </define>
+
+  <define name="model.syllablePart" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that may appear as part of
+      content of a syllable.</a:documentation>
+    <choice>
+      <ref name="model.sylLike"/>
+      <ref name="model.eventLike"/>
+      <ref name="model.eventLike.neumes"/>
+      <ref name="model.midiLike"/>
+      <ref name="model.controleventLike"/>
+      <ref name="model.lyricsLike"/>
+      <ref name="model.noteModifierLike"/>
+      <ref name="model.verseLike"/>
+    </choice>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.ineume">
+    <zeroOrMore>
+      <choice>
+        <ref name="model.eventLike"/>
+        <ref name="model.eventLike.neumes"/>
+        <ref name="model.neumeModifierLike"/>
+        <ref name="model.appLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+        <ref name="model.verseLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="ineume">
+    <element name="ineume">
+      <a:documentation xml:lang="eng">interrupted neume ― a graphically
+        interrupted neume; that is, a neume which is logically a single entity
+        but is written using multiple signs. The constituent signs may be
+        encoded using ineume and uneume sub-elements.</a:documentation>
+      <ref name="attlist.ineume"/>
+      <ref name="content.ineume"/>
+    </element>
+  </define>
+
+  <define name="attlist.ineume">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.typed"/>
+    <ref name="att.ineume.log"/>
+    <ref name="att.ineume.vis"/>
+    <ref name="att.ineume.ges"/>
+    <ref name="att.ineume.anl"/>
+  </define>
+
+  <define name="content.syllable">
+    <zeroOrMore>
+      <choice>
+        <ref name="model.appLike"/>
+        <ref name="model.divLike"/>
+        <ref name="model.milestoneLike.music"/>
+        <ref name="model.scoredefLike"/>
+        <ref name="model.staffdefLike"/>
+        <ref name="model.staffgrpLike"/>
+        <ref name="model.annotLike"/>
+        <ref name="model.graphicprimitiveLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+        <ref name="model.syllablePart"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="syllable">
+    <element name="syllable">
+      <a:documentation xml:lang="eng">syllable ― Neume notation can be thought
+        of as "neumed text". Therefore, the syllable element provides high-level
+        organization in this repertoire.</a:documentation>
+      <ref name="attlist.syllable"/>
+      <ref name="content.syllable"/>
+    </element>
+  </define>
+
+  <define name="attlist.syllable">
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.uneume">
+    <zeroOrMore>
+      <choice>
+        <ref name="model.eventLike"/>
+        <ref name="model.neumeModifierLike"/>
+        <ref name="model.appLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+        <ref name="model.verseLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="uneume">
+    <element name="uneume">
+      <a:documentation xml:lang="eng">uninterrupted neume ― A
+        graphically-uninterrupted neume sign. While ineume is allowed as a
+        sub-element of uneume here as part of the model.eventLike.neume class,
+        it is unlikely that an uninterrupted neume containing an interrupted
+        neume is a meaningful construct.</a:documentation>
+      <ref name="attlist.uneume"/>
+      <ref name="content.uneume"/>
+    </element>
+  </define>
+
+  <define name="attlist.uneume">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.typed"/>
+    <ref name="att.uneume.log"/>
+    <ref name="att.uneume.vis"/>
+    <ref name="att.uneume.ges"/>
+    <ref name="att.uneume.anl"/>
+  </define>
+
+</grammar>

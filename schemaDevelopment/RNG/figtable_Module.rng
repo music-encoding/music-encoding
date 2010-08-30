@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            figtable_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- Figure and Table module -->
+  <!-- Declare module attr classes -->
+  <define name="att.tabular" combine="interleave">
+    <a:documentation>Attributes shared by table cells</a:documentation>
+    <optional>
+      <attribute name="colspan">
+        <a:documentation xml:lang="eng">the number of columns spanned by this
+          cell.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="rowspan">
+        <a:documentation xml:lang="eng">the number of rows spanned by this
+          cell.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.figureLike" combine="interleave">
+    <ref name="fig"/>
+  </define>
+
+  <define name="model.graphicLike" combine="interleave">
+    <ref name="graphic"/>
+  </define>
+
+  <define name="model.figdescLike" combine="interleave">
+    <ref name="figdesc"/>
+  </define>
+
+  <define name="model.tableLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups table-like
+      elements.</a:documentation>
+    <ref name="table"/>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.graphic">
+    <empty/>
+  </define>
+
+  <define name="graphic">
+    <element name="graphic">
+      <a:documentation xml:lang="eng">graphic ― Indicates the location of an
+        inline graphic, illustration, or figure. This element is modelled on an
+        element in the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.graphic"/>
+      <ref name="content.graphic"/>
+    </element>
+  </define>
+
+  <define name="attlist.graphic">
+    <ref name="att.common"/>
+    <ref name="att.internetmedia"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.link.external"/>
+    <ref name="att.measurement"/>
+    <ref name="att.typed"/>
+    <optional>
+      <attribute name="height">
+        <a:documentation xml:lang="eng">measurement of the vertical dimension of
+          an image.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+    <optional>
+      <a:documentation xml:lang="eng">measurement of the horizontal dimension of
+        an image.</a:documentation>
+      <ref name="att.width"/>
+    </optional>
+  </define>
+
+  <define name="content.fig">
+    <optional>
+      <ref name="model.captionLike"/>
+    </optional>
+    <optional>
+      <ref name="figdesc"/>
+    </optional>
+    <zeroOrMore>
+      <ref name="model.graphicLike"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="fig">
+    <element name="fig">
+      <a:documentation xml:lang="eng">figure ― groups elements representing or
+        containing graphic information such as an illustration or figure. This
+        element is modelled on the figure element in the Text Encoding Initiative
+        (TEI).</a:documentation>
+      <ref name="attlist.fig"/>
+      <ref name="content.fig"/>
+    </element>
+  </define>
+
+  <define name="attlist.fig">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.link.common"/>
+    <ref name="att.link.external"/>
+    <ref name="att.xy"/>
+  </define>
+
+  <define name="content.figdesc">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.graphicprimitiveLike"/>
+        <ref name="model.textcomponentLike"/>
+        <ref name="model.annotLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="figdesc">
+    <element name="figdesc">
+      <a:documentation xml:lang="eng">figure description ― Contains a brief
+        prose description of the appearance or content of a graphic figure, for
+        use when documenting an image without displaying it. Best practice
+        suggests the use of controlled vocabulary. Don't confuse this element
+        with a figure caption. A caption is text primarily intended for display
+        with an illustration. It may or may not function as a description of the
+        illustration. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</a:documentation>
+      <ref name="attlist.figdesc"/>
+      <ref name="content.figdesc"/>
+    </element>
+  </define>
+
+  <define name="attlist.figdesc">
+    <ref name="att.common"/>
+    <ref name="att.lang"/>
+  </define>
+
+  <define name="content.table">
+    <optional>
+      <ref name="model.captionLike"/>
+    </optional>
+    <oneOrMore>
+      <ref name="tr"/>
+    </oneOrMore>
+  </define>
+
+  <define name="table">
+    <element name="table">
+      <a:documentation xml:lang="eng">table ― Visual layout in tabular form.
+        This element is modelled on elements in Encoded Archival Description
+        (EAD), Text Encoding Initiative (TEI), and HTML.</a:documentation>
+      <ref name="attlist.table"/>
+      <ref name="content.table"/>
+    </element>
+  </define>
+
+  <define name="attlist.table">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.lang"/>
+    <ref name="att.xy"/>
+  </define>
+
+  <define name="content.td">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textcomponentLike"/>
+        <ref name="model.textphraseLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="td">
+    <element name="td">
+      <a:documentation xml:lang="eng">table data ― Designates a table cell that
+        contains data as opposed to a cell that contains column or row heading
+        information. The colspan and rowspan attributes tabular display
+        rendering information. This element is modelled on an element in
+        HTML.</a:documentation>
+      <ref name="attlist.td"/>
+      <ref name="content.td"/>
+    </element>
+  </define>
+
+  <define name="attlist.td">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.lang"/>
+    <ref name="att.xy"/>
+    <ref name="att.tabular"/>
+  </define>
+
+  <define name="content.th">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textcomponentLike"/>
+        <ref name="model.textphraseLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="th">
+    <element name="th">
+      <a:documentation xml:lang="eng">table header ― Designates a table cell
+        containing column or row heading information as opposed to one
+        containing data. The colspan and rowspan attributes tabular display
+        rendering information. This element is modelled on an element in
+        HTML.</a:documentation>
+      <ref name="attlist.th"/>
+      <ref name="content.th"/>
+    </element>
+  </define>
+
+  <define name="attlist.th">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.lang"/>
+    <ref name="att.xy"/>
+    <ref name="att.tabular"/>
+  </define>
+
+  <define name="content.tr">
+    <oneOrMore>
+      <choice>
+        <ref name="th"/>
+        <ref name="td"/>
+      </choice>
+    </oneOrMore>
+  </define>
+
+  <define name="tr">
+    <element name="tr">
+      <a:documentation xml:lang="eng">table row ― A formatting element that
+        contains one or more &lt;td&gt; or &lt;th&gt; elements
+        (cells) in a &lt;table&gt;. A cell is the intersection of a row
+        and a column. The precise rendition of the table and its cells should be
+        specified in a style sheet. This element is modelled on an element in
+        HTML.</a:documentation>
+      <ref name="attlist.tr"/>
+      <ref name="content.tr"/>
+    </element>
+  </define>
+
+  <define name="attlist.tr">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.lang"/>
+    <ref name="att.xy"/>
+  </define>
+
+</grammar>

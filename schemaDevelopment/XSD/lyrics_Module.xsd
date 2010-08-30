@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import schemaLocation="analysis_Module.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <!-- Lyrics Module -->
+  <!-- Declare module attr classes -->
+  <xs:attributeGroup name="att.lyrics.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.lyrics.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.layerident"/>
+    <xs:attributeGroup ref="mei:att.staffident"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.lyrics.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.typography"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.verse.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.verse.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes. The n attribute
+      should be used for verse numbers. Numbers need not be consecutive; they
+      may also be expressed as ranges, e.g. 2-3,6.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="refrain" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>used to indicate a common, usually
+          centered, refrain (Mup User's Guide, p. 44).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="rhythm">
+      <xs:annotation>
+        <xs:documentation>used to specify a rhythm for the lyrics
+          that differs from that of the notes on the staff.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.verse.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.typography"/>
+    <xs:attributeGroup ref="mei:att.visualoffset.to"/>
+    <xs:attributeGroup ref="mei:att.visualoffset.vo"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <!-- Declare module model classes -->
+  <xs:group name="model.lyricsLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that represent sung
+      text.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:lyrics"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.sylLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that contain a lyric
+      syllable.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:syl"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.verseLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that contain a lyric
+      verse.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:verse"/>
+    </xs:sequence>
+  </xs:group>
+  <!-- Declare module elements -->
+  <xs:complexType name="content.lyrics">
+    <xs:group maxOccurs="unbounded" ref="mei:model.verseLike"/>
+  </xs:complexType>
+  <xs:element name="lyrics">
+    <xs:annotation>
+      <xs:documentation>lyrics ― Vocally performed 'text' of a
+        musical composition, such as a song or opera. The staff attribute gives
+        the staff to which the lyrics are attached. If there is more than one
+        layer on that staff, the layer attribute may be used to indicate the
+        layer from which the rhythm should be taken. Often, automatic text
+        underlay may rely on the notes of the indicated staff. When this is not
+        desirable, however, the rhythm of the lyrics may be recorded in the
+        rhythm attribute of the parent verse element. </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.lyrics">
+          <xs:attributeGroup ref="mei:attlist.lyrics"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.lyrics">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.lyrics.log"/>
+    <xs:attributeGroup ref="mei:att.lyrics.vis"/>
+    <xs:attributeGroup ref="mei:att.lyrics.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.verse">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="mei:dir"/>
+        <xs:element ref="mei:dynam"/>
+        <xs:element ref="mei:tempo"/>
+        <xs:element ref="mei:space"/>
+      </xs:choice>
+      <xs:group maxOccurs="unbounded" ref="mei:model.sylLike"/>
+      <xs:group minOccurs="0" maxOccurs="unbounded" ref="mei:model.lbLike"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="verse">
+    <xs:annotation>
+      <xs:documentation>verse ― Lyric verse. The lb element is
+        allowed here in order to facilitate karaoke applications. The func
+        attribute on lb may be used to distinguish true line ends from line
+        group ends for these applications.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.verse">
+          <xs:attributeGroup ref="mei:attlist.verse"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.verse">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.verse.log"/>
+    <xs:attributeGroup ref="mei:att.verse.vis"/>
+    <xs:attributeGroup ref="mei:att.verse.anl"/>
+  </xs:attributeGroup>
+</xs:schema>

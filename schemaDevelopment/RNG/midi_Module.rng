@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            midi_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- MIDI module -->
+  <!-- Declare module attr classes -->
+  <define name="att.channelized" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record MIDI channel
+      information</a:documentation>
+    <optional>
+      <attribute name="midi.channel">
+        <a:documentation xml:lang="eng">records a MIDI channel
+          value.</a:documentation>
+        <ref name="data.MIDICHANNEL"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="midi.duty">
+        <a:documentation xml:lang="eng">specifies the 'on' part of the duty
+          cycle as a percentage of a note's duration.</a:documentation>
+        <ref name="data.PERCENT"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="midi.port">
+        <a:documentation xml:lang="eng">sets the default MIDI port
+          value.</a:documentation>
+        <ref name="data.MIDIVALUE"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="midi.track">
+        <a:documentation xml:lang="eng">sets the default MIDI
+          track.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.midiinstrument" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record MIDI instrument
+      information</a:documentation>
+    <optional>
+      <attribute name="midi.instrnum">
+        <a:documentation xml:lang="eng">sets the MIDI instrument
+          number.</a:documentation>
+        <ref name="data.MIDIVALUE"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="midi.instrname">
+        <a:documentation xml:lang="eng">provides a label for the MIDI
+          instrument.</a:documentation>
+        <ref name="data.MIDINAMES"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.midinumber" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record MIDI
+      numbers</a:documentation>
+    <attribute name="num">
+      <a:documentation xml:lang="eng">records a MIDI number.</a:documentation>
+      <ref name="data.MIDIVALUE"/>
+    </attribute>
+  </define>
+
+  <define name="att.miditempo" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record MIDI tempo
+      information</a:documentation>
+    <optional>
+      <attribute name="midi.tempo">
+        <a:documentation xml:lang="eng">contains a MIDI value, that is, the
+          number of quarter notes per minute in the range from 10 to
+          1000.</a:documentation>
+        <ref name="data.MIDITEMPO"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.midivalue" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record MIDI
+      values</a:documentation>
+    <optional>
+      <attribute name="val">
+        <a:documentation xml:lang="eng">captures a MIDI value.</a:documentation>
+        <ref name="data.MIDIVALUE"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.midi.event" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes common to MIDI
+      events</a:documentation>
+    <ref name="att.layerident"/>
+    <ref name="att.staffident"/>
+    <ref name="att.timestamp.musical"/>
+  </define>
+
+  <define name="att.midi.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.midi.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.midi.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.layerident"/>
+    <ref name="att.staffident"/>
+  </define>
+
+  <define name="att.midi.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <empty/>
+  </define>
+
+  <define name="att.timebase" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that record time-base
+      information</a:documentation>
+    <optional>
+      <attribute name="ppq">
+        <a:documentation xml:lang="eng">indicates the number of pulses
+          (sometimes referred to as ticks or divisions) per quarter note. Unlike
+          MIDI, MEI permits different values for a score and individual
+          staves.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.midiLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements which group MIDI-like
+      elements.</a:documentation>
+    <ref name="midi"/>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.cc">
+    <empty/>
+  </define>
+
+  <define name="cc">
+    <element name="cc">
+      <a:documentation xml:lang="eng">control change ― MIDI parameter/control
+        change. The num attribute specifies parameter number, while val contains
+        the parameter value. Each must fall in the range
+        0-127.</a:documentation>
+      <xhtml:table>
+        <xhtml:caption>A sampling of controllers and their
+          numbers</xhtml:caption>
+        <xhtml:tr>
+          <xhtml:td>0</xhtml:td>
+          <xhtml:td>Bank Select MSB</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>1</xhtml:td>
+          <xhtml:td>Modulation</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>2</xhtml:td>
+          <xhtml:td>Breath Control</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>5</xhtml:td>
+          <xhtml:td>Portamento Time</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>7</xhtml:td>
+          <xhtml:td>Main Volume</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>10</xhtml:td>
+          <xhtml:td>Pan</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>11</xhtml:td>
+          <xhtml:td>Expression</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>32</xhtml:td>
+          <xhtml:td>Bank Select LSB</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>64</xhtml:td>
+          <xhtml:td>Sustain Pedal (0=up, 127=down)</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>65</xhtml:td>
+          <xhtml:td>Portamento Pedal (0=off, 127=on)</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>91</xhtml:td>
+          <xhtml:td>Reverb</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>93</xhtml:td>
+          <xhtml:td>Chorus Depth</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>120</xhtml:td>
+          <xhtml:td>All Sounds Off (0)</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>121</xhtml:td>
+          <xhtml:td>Reset All Controllers (0)</xhtml:td>
+        </xhtml:tr>
+        <xhtml:tr>
+          <xhtml:td>123</xhtml:td>
+          <xhtml:td>All Notes Off (0)</xhtml:td>
+        </xhtml:tr>
+      </xhtml:table>
+      <ref name="attlist.cc"/>
+      <ref name="content.cc"/>
+    </element>
+  </define>
+
+  <define name="attlist.cc">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+    <ref name="att.midivalue"/>
+  </define>
+
+  <define name="content.chan">
+    <empty/>
+  </define>
+
+  <define name="chan">
+    <element name="chan">
+      <a:documentation xml:lang="eng">channel ― MIDI channel
+        assignment.</a:documentation>
+      <ref name="attlist.chan"/>
+      <ref name="content.chan"/>
+    </element>
+  </define>
+
+  <define name="attlist.chan">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <attribute name="num">
+      <a:documentation xml:lang="eng">records a MIDI channel value. The value
+        must be in the range 1-16.</a:documentation>
+      <ref name="data.MIDICHANNEL"/>
+    </attribute>
+  </define>
+
+  <define name="content.chanpr">
+    <empty/>
+  </define>
+
+  <define name="chanpr">
+    <element name="chanpr">
+      <a:documentation xml:lang="eng">channel pressure ― MIDI channel
+        pressure/after touch. The value of the num attribute must be in the
+        range 0-127.</a:documentation>
+      <ref name="attlist.chanpr"/>
+      <ref name="content.chanpr"/>
+    </element>
+  </define>
+
+  <define name="attlist.chanpr">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+  </define>
+
+  <define name="content.cue">
+    <text/>
+  </define>
+
+  <define name="cue">
+    <element name="cue">
+      <a:documentation xml:lang="eng">cue ― MIDI cue point.</a:documentation>
+      <ref name="attlist.cue"/>
+      <ref name="content.cue"/>
+    </element>
+  </define>
+
+  <define name="attlist.cue">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+  </define>
+
+  <define name="content.hex">
+    <text/>
+  </define>
+
+  <define name="hex">
+    <element name="hex">
+      <a:documentation xml:lang="eng">hex ― Arbitrary MIDI data in hexadecimal
+        form. The element's content must be wrapped in a CDATA section to avoid
+        parsing errors.</a:documentation>
+      <ref name="attlist.hex"/>
+      <ref name="content.hex"/>
+    </element>
+  </define>
+
+  <define name="attlist.hex">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+  </define>
+
+  <define name="content.marker">
+    <text/>
+  </define>
+
+  <define name="marker">
+    <element name="marker">
+      <a:documentation xml:lang="eng">marker ― MIDI marker
+        meta-event.</a:documentation>
+      <ref name="attlist.marker"/>
+      <ref name="content.marker"/>
+    </element>
+  </define>
+
+  <define name="attlist.marker">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+  </define>
+
+  <define name="content.metatext">
+    <text/>
+  </define>
+
+  <define name="metatext">
+    <element name="metatext">
+      <a:documentation xml:lang="eng">meta text ― MIDI text
+        meta-event.</a:documentation>
+      <ref name="attlist.metatext"/>
+      <ref name="content.metatext"/>
+    </element>
+  </define>
+
+  <define name="attlist.metatext">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+  </define>
+
+  <define name="content.midi">
+    <zeroOrMore>
+      <choice>
+        <ref name="cc"/>
+        <ref name="chan"/>
+        <ref name="chanpr"/>
+        <ref name="cue"/>
+        <ref name="hex"/>
+        <ref name="marker"/>
+        <ref name="metatext"/>
+        <ref name="noteoff"/>
+        <ref name="noteon"/>
+        <ref name="port"/>
+        <ref name="prog"/>
+        <ref name="seqnum"/>
+        <ref name="trkname"/>
+        <ref name="vel"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="midi">
+    <element name="midi">
+      <a:documentation xml:lang="eng">midi ― Container for elements that contain
+        information useful when generating MIDI output. The n attribute can be
+        used to differentiate between multiple MIDI data streams, e.g.
+        quantized/unquantized, straight/swing, ornamented/as notated,
+        etc.</a:documentation>
+      <ref name="attlist.midi"/>
+      <ref name="content.midi"/>
+    </element>
+  </define>
+
+  <define name="attlist.midi">
+    <ref name="att.common"/>
+    <ref name="att.midi.log"/>
+    <ref name="att.midi.vis"/>
+    <ref name="att.midi.ges"/>
+    <ref name="att.midi.anl"/>
+  </define>
+
+  <define name="content.noteoff">
+    <empty/>
+  </define>
+
+  <define name="noteoff">
+    <element name="noteoff">
+      <a:documentation xml:lang="eng">note-off ― MIDI note-off
+        event.</a:documentation>
+      <ref name="attlist.noteoff"/>
+      <ref name="content.noteoff"/>
+    </element>
+  </define>
+
+  <define name="attlist.noteoff">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+  </define>
+
+  <define name="content.noteon">
+    <empty/>
+  </define>
+
+  <define name="noteon">
+    <element name="noteon">
+      <a:documentation xml:lang="eng">note-on ― MIDI note-on
+        event.</a:documentation>
+      <ref name="attlist.noteon"/>
+      <ref name="content.noteon"/>
+    </element>
+  </define>
+
+  <define name="attlist.noteon">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+  </define>
+
+  <define name="content.port">
+    <empty/>
+  </define>
+
+  <define name="port">
+    <element name="port">
+      <a:documentation xml:lang="eng">port ― MIDI port. The num attribute must
+        be in the range 0-127.</a:documentation>
+      <ref name="attlist.port"/>
+      <ref name="content.port"/>
+    </element>
+  </define>
+
+  <define name="attlist.port">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+  </define>
+
+  <define name="content.prog">
+    <empty/>
+  </define>
+
+  <define name="prog">
+    <element name="prog">
+      <a:documentation xml:lang="eng">program ― MIDI program change. The num
+        attribute must be in the range 0-127.</a:documentation>
+      <ref name="attlist.prog"/>
+      <ref name="content.prog"/>
+    </element>
+  </define>
+
+  <define name="attlist.prog">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+  </define>
+
+  <define name="content.seqnum">
+    <empty/>
+  </define>
+
+  <define name="seqnum">
+    <element name="seqnum">
+      <a:documentation xml:lang="eng">sequence number ― MIDI sequence number.
+        The num attribute must be in the range 0-65535.</a:documentation>
+      <ref name="attlist.seqnum"/>
+      <ref name="content.seqnum"/>
+    </element>
+  </define>
+
+  <define name="attlist.seqnum">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <attribute name="num">
+      <a:documentation xml:lang="eng">holds the MIDI sequence number. The value
+        must be in the range 0-65535.</a:documentation>
+      <data type="nonNegativeInteger">
+        <param name="maxInclusive">65535</param>
+      </data>
+    </attribute>
+  </define>
+
+  <define name="content.trkname">
+    <text/>
+  </define>
+
+  <define name="trkname">
+    <element name="trkname">
+      <a:documentation xml:lang="eng">track name ― MIDI track/sequence
+        name.</a:documentation>
+      <ref name="attlist.trkname"/>
+      <ref name="content.trkname"/>
+    </element>
+  </define>
+
+  <define name="attlist.trkname">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+  </define>
+
+  <define name="content.vel">
+    <empty/>
+  </define>
+
+  <define name="vel">
+    <element name="vel">
+      <a:documentation xml:lang="eng">velocity ― MIDI Note-on/off velocity. The
+        num attribute must be in the range 0-127.</a:documentation>
+      <ref name="attlist.vel"/>
+      <ref name="content.vel"/>
+    </element>
+  </define>
+
+  <define name="attlist.vel">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.midi.event"/>
+    <ref name="att.midinumber"/>
+    <attribute name="form">
+      <a:documentation xml:lang="eng">indicates whether this is note-on or
+        note-off velocity data.</a:documentation>
+      <choice>
+        <value>on</value>
+        <value>off</value>
+      </choice>
+    </attribute>
+  </define>
+
+</grammar>
