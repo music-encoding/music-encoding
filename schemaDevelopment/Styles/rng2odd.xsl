@@ -556,6 +556,9 @@
                   <xsl:attribute name="usage">req</xsl:attribute>
                 </xsl:when>
               </xsl:choose>
+              <desc>
+                <xsl:apply-templates select="a:documentation"/>
+              </desc>
               <xsl:choose>
                 <xsl:when test="data | ref">
                   <datatype>
@@ -881,6 +884,9 @@
                     <xsl:attribute name="usage">req</xsl:attribute>
                   </xsl:when>
                 </xsl:choose>
+                <desc>
+                  <xsl:apply-templates select="a:documentation"/>
+                </desc>
                 <xsl:choose>
                   <xsl:when test="data | ref">
                     <datatype>
