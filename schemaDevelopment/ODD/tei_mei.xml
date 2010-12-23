@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="/Users/raffaeleviglianti/Desktop/tei_odds.rng" type="xml"?>
+<TEI xml:lang="en" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+	xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+	xmlns:mei="http://www.music-encoding.org/ns/mei"
+	xmlns:twm="http://www.tei-c.org/ns/teiWithMusic">
+	<teiHeader>
+		<fileDesc>
+			<titleStmt>
+				<title>TEI with Music Notation</title>
+				<author>James Cummings, Raffaele Viglianti</author>
+			</titleStmt>
+			<publicationStmt>
+				<authority>TEI Special Interest Group in Music</authority>
+				<availability status="free">
+					<p>Released for free under a <ref
+							target="http://creativecommons.org/licenses/by/3.0/">Creative Commons
+							Attribution 3.0 License</ref></p>
+				</availability>
+			</publicationStmt>
+			<sourceDesc>
+				<p>Born digital</p>
+			</sourceDesc>
+		</fileDesc>
+	</teiHeader>
+	<text>
+		<front>
+			<divGen type="toc"/>
+			<pb/>
+			<div xml:id="webspace">
+				<head>TEI with Music Notation Guidelines</head>
+				<div xml:id="twm01-intro">
+					<p>This webspace hosts the results of the work of some members of the TEI Music
+						SIG. As part of a small project funded by the TEI, the group focussed on
+						adopting TEI's One Document Does it all (ODD) vocabulary to <hi rend="bold"
+							>connect the TEI to music encoding formats</hi>. Specifically, first
+						efforts concentrated on the <ref target="http://www.music-encoding.org"
+							>Music Encoding Initiative</ref> (MEI) format, which is modelled on the
+						TEI and aims to be independent from rendering software and to provide
+						encoding methods for different research approaches in musicology. However,
+						this customisation also allows to link to external representations of music
+							<hi rend="bold">in any other format</hi>.</p>
+				</div>
+
+				<div xml:id="twm02-download">
+					<head>What is available on the webspace</head>
+
+
+					<ab xml:id="download_button"><ref target="#" rend="large blue button download"
+							>Download beta release <hi rend="small">(0.55 KB)</hi></ref></ab>
+
+
+					<p>The files distributed here come with no warranty and under the license
+						included therein. Please remember that this is a <hi rend="bold">*beta*</hi>
+						version. Changes may occur at any time. For the latest (unstable)
+						development, we recommend to refer to the <ref target="#">MEI SourceForge
+							SVN repository</ref>.</p>
+					<p>The downloadable package contains:</p>
+					<list type="bulleted">
+						<item>ODD definition of MEI</item>
+						<item>TEI-with-MEI customisation (ODD and RelaxNG)</item>
+					</list>
+				</div>
+				<div xml:id="tmw03-roma">
+					<head>Generating schemas from the ODDs</head>
+
+					<p>Because TEI and MEI sources are defined by two different ODDs, the current
+							<ref target="http://www.tei-c.org/Roma/">Roma webservice</ref> cannot
+						generate schemas using this customization. It is therefore necessary to use
+						the UNIX command-line version of Roma (available on TEI's SourceForge) and
+						follow the following instructions:</p>
+
+					<list>
+						<item>Check out and install TEI's stylesheets and source from <ref
+								target="https://sourceforge.net/scm/?type=svn&amp;group_id=106328"
+								>SourceForge</ref></item>
+						<item>Execute roma2.sh forcing it to use mei-source.xml as local source with
+							this command:</item>
+					</list>
+
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"> $ roma2.sh --localsource=mei-source.xml tei-with-mei.xml </egXML>
+				</div>
+				<div xml:id="tmw04-members">
+					<head>Members of the workgroup</head>
+
+					<list>
+						<item>Raffaele Viglianti</item>
+						<item>Perry Roland</item>
+						<item>Johannes Kepper</item>
+						<item>James Cummings</item>
+						<item>Daniel Röwenstrunk</item>
+					</list>
+					<p>Also thanks to</p>
+					<list>
+						<item>Joachim Veit</item>
+						<item>Benjamin Bohl</item>
+						<item>Maja Hartwig</item>
+						<item>Laurent Pugin</item>
+						<item>Andrew Hankinson</item>
+					</list>
+				</div>
+			</div>
+		</front>
+		<body>
+			<div xml:id="tmw05-intro">
+				<head>Introduction</head>
+
+				<p>This is a draft of guidelines for using TEI with music notation. They are
+					associated with a TEI-with-MEI customisation that introduces
+					&lt;twm:notatedMusic&gt;, a new element to encode music notation. This element
+					has been proposed to enter the TEI specifications and TEI's namespace; however,
+					while waiting for our <ref
+						target="https://sourceforge.net/tracker/?func=detail&amp;aid=3086726&amp;group_id=106328amp;&amp;atid=644065"
+						>feature request</ref> to be accepted by the TEI council, this new element
+					is presented here with a namespace mapped to the prefix <hi rend="bold"
+						>twm:</hi>, as requested for TEI conformance.</p>
+				<p>The examples presented in this document intend to cover useful occurrences of
+					music within text. They are taken from three documents that we believe represent
+					well the need for the inclusion of encoded music notation within TEI-encoded
+					texts.</p>
+
+				<list type="bulleted">
+					<item>
+						<label>Gaffurius, F. (1496). Practica Musicae, Liber Primus.</label>
+						<list>
+							<item>Facsimile available on <ref
+									target="http://imslp.org/wiki/Practica_musicae_(Gaffurius,_Franchinus)"
+									>IMSLP</ref></item>
+							<item>An early printed music manual with examples in squared notation
+								(neumes).</item>
+						</list>
+					</item>
+					<item>
+						<label>Beethoven, L. W. (dates). Letters [...]</label>
+						<list>
+							<item>Transcription of manuscript letters with common western music
+								notation.</item>
+						</list>
+					</item>
+					<item>
+						<label>Prout, E. (1899). The orchestra. </label>
+						<list>
+							<item>More recent and more typical print practice for music examples in
+								common western music notation.</item>
+						</list>
+					</item>
+				</list>
+
+				<p>All the music examples presented in this document are encoded with MEI, however,
+					it is possible to use &lt;tmw:notatedMusic&gt; to link to external
+					representations of music in any other format. See <ref target="#">Linking to
+						other symbolic music representations</ref></p>
+
+				<p>This guidelines do not claim to be entirely comprehensive; however, we present
+					them with the hope to encourage adoption of this customisation for further
+					testing and improvement. The <ref
+						target="http://listserv.brown.edu/archives/cgi-bin/wa?A0=TEI-MUSIC-SIG"
+						>Music SIG mailing list</ref> is the best way to get in touch with the
+					workgroup and to participate to the SIG's work.</p>
+
+			</div>
+			<div xml:id="tmw06-notatedMusic">
+				<head>Notated music in writing</head>
+
+				<p>Music, as many other art forms, is often mentioned, discussed and described in
+					writings of different kind. This applies to both historical and contemporary
+					documents, even if the way of notating music has changed considerably in western
+					history. In most cases, music notation enters the text flow in a way similar to
+					figures, images or graphs, while in some occasions elements of music notation
+					are written inline as characters in running text.</p>
+
+				<p>These guidelines propose a way of encoding the presence of music notation in text
+					and defer to other representations to describe the music notation itself, which
+					is not covered by TEI guidelines. In fact, several commercial, academic and
+					standard bodies have developed digital representations of music notation and,
+					given the topic's complexity, these many representations focus on different
+					aspects and adopt different methodologies. Therefore, these guidelines define a
+					container element to encode occurrence of music notation and allow to link to
+					the data format preferred by the encoder.</p>
+
+				<p>Moreover, the TEI-with-MEI customisation associated with these guidelines also
+					includes elements from the <ref target="http://www.music-encoding.org/">Music
+						Encoding Initiative</ref> (MEI) data format, which is modelled on the TEI
+					and aims to be independent from rendering software and to provide encoding
+					methods for different research approaches in musicology. MEI has been purposely
+					redefined in ODD to allow maximal flexibility when combined with TEI; this is,
+					in fact, also a customisation of MEI meant to accommodate specific issues in
+					representing occurrences of music within the text flow. </p>
+
+				<p><hi rend="bold">All MEI elements in the examples will have the prefix mei:, while
+						TEI elements will have no prefix.</hi></p>
+
+				<p>For encoding music notation, these guidelines provide the following elements:</p>
+
+				<list rend="specList">
+
+					<item>
+						<label>&lt;twm:notatedMusic&gt;</label> groups elements representing or
+						containing music notation. </item>
+					<item>
+						<label>&lt;ptr&gt;</label> can be used to indicate the location of a
+						representation of the music notation. <list type="specDesc">
+							<item><label>@mimeType</label> supplies the MIME type of the data
+								format, when available. </item>
+						</list>
+					</item>
+					<item>
+						<label>&lt;desc&gt;</label> can be used to give a prose description of the
+						notated music. </item>
+					<item>
+						<label>&lt;graphic&gt;</label> can be used to indicate the location of a
+						graphical representation of the music notation. </item>
+					<item>
+						<label>&lt;binaryObject&gt;</label> provides encoded binary data
+						representing a graphical representation of the music notation or other
+						object (i.e. audio). </item>
+
+				</list>
+
+				<p>The <ref>twm:notatedMusic</ref> element is used to contain notated music, a
+					textual description and various representations of the music notation in
+					different media. A representation of then notated music is specified using the <ref>ref</ref>
+					element, whose @target attribute provides the location of the file containing
+					it. The attribute @mimeType, added specifically for this customisation, supplies
+					the MIME type of the data format when available. For example:</p>
+
+
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.xml"/>
+</twm:notatedMusic></egXML>
+
+				<p>A description of the notation can be provided within the element <ref>desc</ref>,
+					or it is possible to give it a <ref>label</ref>. For example:</p>
+
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.xml"/>
+    <desc>First bar of Chopin's Scherzo No.3 Op.39</desc>
+</twm:notatedMusic></egXML>
+				
+				<p>It is possible to link to any kind of music notation data format. However, when 
+				a MIME type is not available, it is recommended to at least specify the format in the
+				description. For example:</p>
+				
+				<p>MIME type available</p>
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.xml" mimeType="application/vnd.recordare.musicxml"/>
+    <desc>First bar of Chopin's Scherzo No.3 Op.39. Encoded in MusicXML</desc>
+</twm:notatedMusic></egXML>
+				
+				<p>MIME type not available</p>
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.ly"/>
+    <desc>First bar of Chopin's Scherzo No.3 Op.39. Encoded in Lilypond</desc>
+</twm:notatedMusic></egXML>
+				
+				<p>Application format</p>
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.mscz" mimeType="application/x-musescore"/>
+    <desc>First bar of Chopin's Scherzo No.3 Op.39. MuseScore Notation Software format.</desc>
+</twm:notatedMusic></egXML>
+				
+				<p>It is possible to specify the location of digital objects representing the
+					notated music in other media like images or audio or video files. The encoders
+					interpretation of the correspondence between the notated music and these digital
+					objects is not encoded explicitly. We recommend the use of graphic and
+					binaryObject mainly as a fallback mechanism when the notated music format is not
+					displayable by the application using the encoding. The alignment of encoded
+					notated music, images carrying the notation and audio files is a complex matter
+					for which we suggest to refer to other formats and specifications such as <ref
+						target="http://www.interactivemusicnetwork.org/mpeg-ahg/"
+					>MPEG-SMR</ref>.</p>
+
+
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><twm:notatedMusic>
+    <ref target="bar1.xml"/>
+    <graphic url="bar1.jpg"/>
+    <desc>First bar of Chopin's Scherzo No.3 Op.39</desc>
+</twm:notatedMusic></egXML>
+
+				<div xml:id="twm06.1-MEI">
+					<head>Embedding MEI</head>
+					
+					<p>It is possible to include MEI elements directly within <ref>twm:notatedMusic</ref>.
+						There are four "entry points" allowed:
+						
+						<list>
+							<item>
+								<label><ref target="http://music-encoding.org/documentation/tagLibrary/mei">mei:mei</ref></label> 
+								This is MEI's root element. The customisation proposes to use this element to embed a complete MEI file, which includes a mandatory header.
+							</item>
+							<item>
+								<label><ref target="http://music-encoding.org/documentation/tagLibrary/music">mei:music</ref></label> 
+								This element contains everything else in the document apart from the header. The customisation proposes to use this element to embed
+								MEI without a header.
+							</item>
+							<item><label><ref target="http://music-encoding.org/documentation/tagLibrary/mdiv">mei:mdiv</ref></label>
+								This element contains either or both the score and the parts of a musical piece. The customisation proposes to use this element to access lower-lever
+								elements, for example for encoding just a measure.
+							</item>
+							<item><label><ref target="http://music-encoding.org/documentation/tagLibrary/layer">mei:layer</ref></label>
+								This element contains the streams of events on a staff. The customisation proposes to use this element 
+								<hi rend="bold">exclusively</hi> to access music symbols that are occurring in the text independently from a staff. For more discussion
+								see <ref target="#twm06.2.1-inrunningtext">Music symbols in running text</ref>.
+							</item>
+						</list>
+					</p>
+					</div>
+					<div xml:id="twm06.2-inline">
+						<head>Inline Music Notation Excerpts</head>
+						
+						<p>Music notation excerpts can be found in the text flow. In these cases, the notated music is often part of the discourse and does not break the unity of paragraphs or other similar textual structures. To encode such occurrences of music notation, <ref>twm:notatedMusic</ref> can be used within any TEI element containing text.</p> 
+						
+						<p>The following examples present few cases of inline music excerpts and show their MEI encoding.</p>
+					
+						<p><label>Example 1.</label> Common Western Notation. Beethoven [...].</p>
+						
+						<figure>
+							<figDesc>Inline Music Notation Excerpts. Figure 1. Beethoven.</figDesc>
+							<graphic url="twm06.2-ex1.jpg"/>
+						</figure>
+						
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>
+   <hi rend="italic">Adagio Cantabile</hi> Klawierstimme im (17) Siebzehnten Takt muß statt so wie hier<lb/> 
+   <twm:notatedMusic>
+      <mei:mdiv >
+         <mei:score>
+            <mei:scoredef>
+               <mei:staffgrp barthru="true">
+                  <mei:staffdef n="1" clef.shape="G" clef.line="2"/>
+                  <mei:staffdef n="2" clef.shape="F" clef.line="4"/>
+               </mei:staffgrp>
+            </mei:scoredef>
+            <mei:section>
+               <mei:measure right="dbldashed">
+                  <mei:staff n="1">
+                     <mei:layer n="1">
+                        <mei:rest dur="8"/>
+                        <mei:beam xml:id="m9_s1_e2">
+                           <mei:note pname="c" oct="5" dur="8"/>
+                           <mei:note pname="d" oct="5" dur="8"/>
+                        </mei:beam>
+                        <mei:space dur="4"/>
+                     </mei:layer>
+                  </mei:staff>
+                  <mei:staff n="2">
+                     <mei:layer n="1">
+                        <mei:rest dur="8"/>
+                        <mei:beam xml:id="m9_s2_e2">
+                           <mei:chord stem.dir="down">
+                              <mei:note pname="a" oct="3" dur="8" accid="s"/>
+                              <mei:note pname="e" oct="4" dur="8"/>
+                           </mei:chord>
+                           <mei:chord stem.dir="down">
+                              <mei:note pname="b" oct="3" dur="8"/>
+                              <mei:note pname="e" oct="4" dur="8"/>
+                           </mei:chord>
+                        </mei:beam>
+                        <mei:chord stem.dir="up">
+                           <mei:note pname="e" oct="3" dur="8"/>
+                           <mei:note pname="g" oct="3" dur="8"/>
+                           <mei:note pname="b" oct="3" dur="8"/>
+                           <mei:note pname="d" oct="4" dur="8"/>
+                        </mei:chord>
+                        <mei:chord stem.dir="down">
+                           <mei:note pname="e" oct="2" dur="8"/>
+                           <mei:note pname="g" oct="2" dur="8"/>
+                           <mei:note pname="b" oct="2" dur="8"/>
+                           <mei:note pname="d" oct="3" dur="8"/>
+                        </mei:chord>
+                     </mei:layer>
+                  </mei:staff>
+                  <mei:dir staff="1" place="above" startid="m9_s1_e2">x</mei:dir>
+                  <mei:dir staff="2" place="below" startid="m9_s2_e2">x</mei:dir>
+               </mei:measure>
+            </mei:section>
+         </mei:score>
+      </mei:mdiv>
+   </twm:notatedMusic> 
+   so heißen bey denen mit x bezeichneten Noten 
+   <twm:notatedMusic>
+      <mei:mdiv>
+         <mei:score>
+            <mei:scoredef>
+               <mei:staffgrp>
+                  <mei:staffdef n="1" clef.shape="G" clef.line="2"/>
+                  <mei:staffdef n="2" clef.shape="F" clef.line="4"/>
+               </mei:staffgrp>
+            </mei:scoredef>
+            <mei:section>
+               <mei:measure right="invis">
+                  <mei:staff n="1">
+                     <mei:layer n="1">
+                        <mei:beam>
+                           <mei:note pname="c" oct="5" dur="8" xml:id="m10_s1_e1"/>
+                           <mei:note pname="d" oct="5" dur="8" xml:id="m10_s1_e2"/>
+                        </mei:beam>
+                     </mei:layer>
+                  </mei:staff>
+                  <mei:staff n="2">
+                     <mei:layer n="1">
+                        <mei:beam>
+                           <mei:chord>
+                              <mei:note pname="a" oct="3" dur="8" accid="s" xml:id="m10_s2_e1"/>
+                              <mei:note pname="e" oct="4" dur="8"/>
+                           </mei:chord>
+                           <mei:chord>
+                              <mei:note pname="b" oct="3" dur="8" xml:id="m10_s2_e2"/>
+                              <mei:note pname="e" oct="4" dur="8"/>
+                           </mei:chord>
+                        </mei:beam>
+                     </mei:layer>
+                  </mei:staff>
+                  <mei:slur staff="1" startid="m10_s1_e1" endid="m10_s1_e2" curvedir="above"/>
+                  <mei:slur staff="2" startid="m10_s2_e1" endid="m10_s2_e2" curvedir="below"/>
+                  <mei:dir staff="1" startid="m10_s1_e1" place="above">x</mei:dir>
+               </mei:measure>
+            </mei:section>
+         </mei:score>
+      </mei:mdiv>
+   </twm:notatedMusic> 
+   nemlich der
+</ab></egXML>
+						
+						<p><label>Example 2.</label> Older Notation. Practica Musicae.</p>
+						
+						<p>In this example the music notation is printed within a paragraph, to the right of the text flow.
+							The attribute @place can be used to specify where the music notation is in respect to the text. 
+							In this case we are using the value "inspace", which means that the notation is printed where some white space was left purposely.
+						</p>
+						
+						<figure>
+							<figDesc>Inline Music Notation Excerpts. Figure 2. Practica Musicae.</figDesc>
+							<graphic url="twm06.2-ex2.jpg"/>
+						</figure>
+						
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><p>
+   <twm:notatedMusic place="inspace" rend="right">
+      <mei:mdiv>                  
+         <mei:score>
+            <mei:staffgrp>
+               <mei:staffdef n="1" lines="4" />
+            </mei:staffgrp>
+            <mei:section>
+               <mei:staff n="1">
+                  <mei:layer n="1">
+                     <mei:barline rend="single"/>
+                     <mei:uneume name="clivis">
+                        <mei:note pname="g" stem.dir="down" stem.pos="left" />
+                        <mei:note pname="f" />
+                      </mei:uneume>
+                      <mei:uneume name="porrectusflexus">
+                         <mei:note pname="g" stem.dir="down" stem.pos="left" />
+                         <mei:note pname="f" />
+                         <mei:note pname="g" />
+                         <mei:note pname="f" />
+                      </mei:uneume>
+                     <mei:uneume>
+                        <mei:ligature>
+                           <mei:note pname="g" stem.dir="down" stem.pos="left"/>
+                           <mei:note pname="f"/>
+                        </mei:ligature>
+                     </mei:uneume>
+                     <mei:uneume>
+                        <mei:ligature>
+                           <mei:note pname="g" stem.dir="down" stem.pos="left"/>
+                           <mei:note pname="f"/>
+                        </mei:ligature>
+                        <mei:note pname="g"/>
+                        <mei:note pname="f"/>
+                     </mei:uneume>
+                     <mei:barline rend="single"/>
+                  </mei:layer>
+               </mei:staff>
+            </mei:section>
+         </mei:score>
+      </mei:mdiv>
+   </twm:notatedMusic>
+   Quam quidem principijs ligaturarum congruentiam <lb/>
+   ueterum auctoritas proprietatem instituit uocitan<lb/>
+   dam. Est igitur proprietas conueniens principiis li<lb/>
+   gaturarum descriptio a musicis auctoribus institu<lb rend="hyphen"/>
+   ta. <seg rend="margin">Philoso<lb/>phus</seg> Vltimis autem commissura notulis: quod omnium<lb/>
+   rerum perfectio teste Philosopho fini attribuatur:<lb/> 
+   perfectionem ascripserunt. Haec enim tribus modis denotatur: Aut enim vltima <lb/>
+   <seg rend="right">ligaturae</seg>
+</p></egXML>
+					
+					
+						<div xml:id="twm06.2.1-inrunningtext">
+							<head>Music symbols in running text</head>
+							
+							<p>Occasionally, music symbols are used in running text. This is common especially
+								for illustrative and educational material, or in analytical essays. TEI
+								currently offers at least two possibilities to encode these occurrences.</p>
+							
+							
+							<p><label>1)</label> Using a Unicode character for those music symbols included
+								in the range 1D100-1D1FF (excluding the most common accidentals, already in
+								2666D-F), for which a <ref target="http://unicode.org/charts/PDF/U1D100.pdf"
+									>chart</ref> is available. For example: 
+								
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>bey 9ten Takt, wo die ♯♯♯ sich in ♮♮♮ auflösen</ab></egXML> 
+								
+								or using the corresponding entities: 
+								
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>bey 9ten Takt, wo die &amp;#x266F;&amp;#x266F;&amp;#x266F; sich in &amp;#x266E;&amp;#x266E;&amp;#x266E; auflösen</ab></egXML>
+							</p>
+							
+							<p>2) Using the <ref>g</ref> element when the musical symbol needed is not
+								already present in Unicode. For guidance on when and how to use
+								<ref>g</ref>, we refer to chapter 5 of the TEI Guidelines: <ref
+									target="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/WD.html"
+									>Representation of Non-standard Characters and Glyphs.</ref></p>
+							
+							<p>In some circumstances, however, the encoder might be interested in using a
+								specific format for music notation to represent these symbols and to encode
+								their musical meaning. These are some examples of how <ref>twm:notatedMusic</ref> could
+								be used in this case. In this customisation, the element <ref target="http://music-encoding.org/documentation/tagLibrary/layer">mei:layer</ref> 
+								can be used independently to obtain
+								access to elements encoding musical symbols without the need to define a staff.</p>
+							
+							<p><label>Example 1.</label> Common Wester Notation. Beethoven letter [...]</p>
+							
+							<figure>
+								<figDesc>Music Symbols in running text. Figure 1. Beethoven.</figDesc>
+								<graphic url="twm06.2.1-ex1.jpg"/>
+							</figure>
+							
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>
+   bey 9ten Takt, wo die 
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:accid accid="s"/>
+         <mei:accid accid="s"/>
+         <mei:accid accid="s"/>
+      </mei:layer>
+   </twm:notatedMusic>
+   sich in
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:accid accid="n"/>
+         <mei:accid accid="n"/>
+         <mei:accid accid="n"/>
+      </mei:layer>
+   </twm:notatedMusic>
+   auflösen
+</ab></egXML>
+							
+							<p><label>Example 2.</label> Modern printing practice. Riccardo Allorto, Nuova storia della musica</p>
+							
+							<figure>
+								<figDesc>Music Symbols in running text. Example 2. Allorto.</figDesc>
+								<graphic url="twm06.2.1-ex2.jpg"/>
+							</figure>
+							
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>
+   la prevalenza nel soggetto iniziale di figurazioni e note ribatutte con il seguente modulo ritmico:<lb/>
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:note dur="2"/>
+         <mei:note dur="4"/>
+         <mei:note dur="4"/>
+         <mei:barline rend="single"/>
+         <mei:note dur="2"/>
+      </mei:layer>
+   </twm:notatedMusic>; oppure
+   <twm:notatedMusic>
+     <mei:layer>
+        <mei:rest dur="4"/>
+        <mei:note dur="4"/>
+        <mei:note dur="4"/>
+        <mei:note dur="4"/>
+        <mei:barline rend="single"/>
+        <mei:note dur="2"/>
+     </mei:layer>
+   </twm:notatedMusic>;	o ancora
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:note dur="4"/>
+         <mei:note dur="8"/>
+         <mei:note dur="8"/>
+         <mei:barline rend="single"/>
+         <mei:note dur="4"/>
+      </mei:layer>
+   </twm:notatedMusic>
+</ab></egXML>
+							
+							<p><label>Example 3.</label> Older notation. Practica Musicae [...]</p>
+							
+							<figure>
+								<figDesc>Music Symbols in running text. Example 3. Practica Musicae.</figDesc>
+								<graphic url="twm06.2.1-ex3.jpg"/>
+							</figure>
+							
+ <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><ab>
+   Fit igitur notularum triplex descriptio simplex composita:&amp; mediocris. Sim<lb/>
+   plex notula est quae alteri notulae non coniungitur:&amp; quadrato corpore figu<lb rend="hyphen"/>
+   atur hoc modo 
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:uneume name="punctum">
+            <mei:note />
+         </mei:uneume>
+      </mei:layer>
+   </twm:notatedMusic> 
+   quandoque item cum uirgula in latere eius dextro descen<lb/> 
+   dente describitur in modum longae mensurabilis Ut hic. 
+   <twm:notatedMusic>
+      <mei:layer>
+         <mei:uneume name="virga">
+            <mei:note stem.pos="right" stem.dir="down" />
+         </mei:uneume>
+      </mei:layer>
+   </twm:notatedMusic>
+</ab></egXML>
+					
+					</div>
+					
+				</div>
+				<div xml:id="twm06.3-block">
+					<head>Music Notation Between Paragraphs, Blocks, Divisions</head> 
+					
+					<p>In many cases, music notation excerpts are found between paragraphs, blocks of text or divisions (for more on these concepts refer to Chapter 4 of the TEI Guidelines: <ref target="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/DS.html">Default Text Structure</ref> and Chapter 16 §3: <ref target="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/SA.html#SASE">Blocks, Segments and Anchors</ref>).</p>
+					
+					<p>Usually, music notation in this positioned between blocks of text for illustrative purposes. In a book, text and music notation may occur on the same page -for example between paragraphs, but occasionally the music example may take a full page and may be rotated of 90 degrees to help the formatting of a longer sequence of symbols. These pages are usually positioned between chapters. The following examples show some illustrative cases with their MEI encoding.</p>
+					
+					
+					<p><label>Example 1.</label> Common Western Notation. Beethoven.</p>
+					
+					<p>This example letter has music notation in its opener, right after the date line supplied by the editor.</p>
+					
+					<figure>
+						<figDesc>Music Notation Between Text Blocks. Figure 1. Beethoven</figDesc>
+						<graphic url="twm06.3-ex1.jpg"/>
+					</figure>
+					
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><opener rend="centred">
+   <dateline>
+      <supplied>
+         <placeName><settlement>Wien</settlement></placeName>, 1798/99 </supplied>
+   </dateline>
+   <twm:notatedMusic>
+      <mei:mdiv>
+         <mei:score>
+           <mei:scoredef>
+              <mei:staffgrp>
+                <mei:staffdef n="1" lines="5" clef.shape="C" clef.line="3" 
+                	          meter.count="4" meter.unit="4" meter.sym="common">
+                   <mei:label>alto</mei:label>
+                </mei:staffdef>
+             </mei:staffgrp>
+          </mei:scoredef>
+          <mei:section>
+             <mei:measure right="single" xml:id="pickup">
+               <mei:staff n="1">
+                 <mei:layer>
+                    <mei:note pname="g" oct="4" dur="32" stem.dir="up">
+                       <mei:verse>
+                          <mei:syl wordpos="i" con="u">Ba</mei:syl>
+                       </mei:verse>
+                    </mei:note>
+                    <mei:dir staff="1" type="italic" place="above" tstamp="1">grave</mei:dir>
+                 </mei:layer>
+              </mei:staff>
+           </mei:measure>
+           <mei:measure right="invis" xml:id="m1">
+              <mei:staff n="1">
+                 <mei:layer>
+                    <mei:note pname="c" oct="5" dur="2" dots="1" stem.dir="up">
+                       <mei:verse>
+                          <mei:syl wordpos="t">ron</mei:syl>
+                       </mei:verse>
+                    </mei:note>
+                    <mei:barline rend="invis"/>
+                 </mei:layer>
+              </mei:staff>
+           </mei:measure>
+        </mei:section>
+        <mei:section restart="true">
+           <mei:staffdef n="1" lines="5" clef.shape="C" clef.line="4">
+              <mei:label>
+                 <mei:rend fontstyle="ital">tenore</mei:rend>
+              </mei:label>
+           </mei:staffdef>
+           <mei:measure right="single" sameas="m1">
+              <mei:staff>
+                 <mei:layer>
+                    <mei:rest dur="8"/>
+                    <mei:rest dur="16" dots="1"/>
+                    <mei:note pname="g" oct="4" dur="32">
+                       <mei:verse>
+                          <mei:syl wordpos="i" con="u">Ba</mei:syl>
+                       </mei:verse>
+                    </mei:note>
+                 </mei:layer>
+              </mei:staff>
+           </mei:measure>
+           <mei:measure right="invis" xml:id="m2">
+              <mei:staff>
+                 <mei:layer>
+                    <mei:note pname="e" oct="4" dur="2" dots="1">
+                       <mei:verse>
+                          <mei:syl wordpos="t">ron</mei:syl>
+                       </mei:verse>
+                    </mei:note>
+                 </mei:layer>
+              </mei:staff>
+           </mei:measure>
+        </mei:section>
+        <mei:section restart="true">
+           <mei:staffdef n="1" lines="5" clef.shape="F" clef.line="4">
+              <mei:label>Basso</mei:label>
+           </mei:staffdef>
+           <mei:measure right="single" sameas="m2">
+              <mei:staff>
+                 <mei:layer>
+                    <mei:rest dur="8"/>
+                    <mei:rest dur="16" dots="1"/>
+                    <mei:note pname="g" oct="3" dur="32" stem.dir="down">
+                       <mei:verse>
+                          <mei:syl wordpos="i">Ba</mei:syl>
+                       </mei:verse>
+                    </mei:note>
+                    </mei:layer>
+                 </mei:staff>
+              </mei:measure>
+              <mei:measure right="single" xml:id="m3">
+                 <mei:staff>
+                    <mei:layer>
+                       <mei:note pname="c" oct="3" dur="4" dots="1" stem.dir="down">
+                          <mei:verse>
+                             <mei:syl>ron</mei:syl>
+                          </mei:verse>
+                       </mei:note>
+                       <mei:rest dur="32" dots="1"/>
+                       <mei:note pname="c" oct="3" dur="32" stem.dir="down">
+                          <mei:verse>
+                             <mei:syl wordpos="i" con="u">Ba</mei:syl>
+                          </mei:verse>
+                       </mei:note>
+                       <mei:note pname="c" oct="3" dur="4" dots="1" stem.dir="down">
+                          <mei:verse>
+                             <mei:syl wordpos="t">ron</mei:syl>
+                          </mei:verse>
+                       </mei:note>
+                       <mei:rest dur="32" dots="1"/>
+                       <mei:note pname="c" oct="3" dur="32" stem.dir="down">
+                          <mei:verse>
+                             <mei:syl wordpos="i">Ba</mei:syl>
+                          </mei:verse>
+                       </mei:note>
+                    </mei:layer>
+                 </mei:staff>
+              </mei:measure>
+              <mei:measure right="end" xml:id="m4">
+                 <mei:staff>
+                    <mei:layer>
+                       <mei:note pname="c" oct="3" dur="1">
+                          <mei:verse>
+                             <mei:syl wordpos="t">ron</mei:syl>
+                          </mei:verse>
+                       </mei:note>
+                    </mei:layer>
+                 </mei:staff>
+              </mei:measure>
+           </mei:section>
+        </mei:score>
+     </mei:mdiv>
+  </twm:notatedMusic>
+</opener></egXML>
+					
+					<p><label>Example 2.</label> Older Notation. Practica Musicae.</p>
+					
+					<p>This example has music notation between the end of a paragraph and the catchword for the following page.</p>
+					
+					<figure>
+						<figDesc>Music Notation Between Text Blocks. Figure 2. Practica Musicae.</figDesc>
+						<graphic url="twm06.3-ex2.jpg"/>
+					</figure>
+					
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><p>
+   Sonitus uero sol ab ut diapentes interuallo sustinetur in acutum: tribus.s.to<lb/>
+   nis &amp; semitonio: quod uariatis notulis per diuersa tenditur interualla ut his de<lb/>
+   uctionibns consideratur.
+</p>
+
+<twm:notatedMusic>
+   <mei:mdiv>
+      <mei:score>
+         <mei:section>
+            <mei:staff n="1">
+               <mei:staffdef n="1" lines="4" clef.line="3" clef.shape="F" />
+               <mei:layer n="1">
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="d" />
+                     <mei:note pname="e" />
+                     <mei:note pname="f" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="d" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="d" />
+                     <mei:note pname="e" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="e" />
+                     <mei:note pname="f" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />   
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="f" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />   
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="e" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />   
+                  </mei:uneume>
+                  <mei:uneume>
+                     <mei:note pname="c" />
+                     <mei:note pname="g" stem.dir="down" stem.pos="right" />   
+                  </mei:uneume>
+                  <mei:barline rend="dbl" />
+               </mei:layer>
+            </mei:staff>
+         </mei:section>
+      </mei:score>
+   </mei:mdiv>
+</twm:notatedMusic>
+	
+<fw type="catch" rend="right">Sonitus</fw>
+<pb n="10"/>
+</egXML>
+					
+					<div xml:id="twm06.3.1-infigures">
+						<head>Music Notation Excerpts as Figures</head>
+						
+						<p>In modern printing, music notation positioned between blocks of text for illustrative purposes is usually referred to as "figure" or "example". In this cases, we recommend to include <ref>twm:notatedMusic</ref> in <ref>figure</ref>, in order to encode possible captions and headers. For example:</p>
+						
+						<figure>
+							<figDesc>Music Notation as Figures. Figure 1. Prout.</figDesc>
+							<graphic url="twm06.3.1-ex1.jpg"/>
+						</figure>
+						
+<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve"><div n="67">
+   <p>
+      We now give some examples, from the works of the great masters, 
+      of some of the most frequently used bowings.
+   </p>
+							
+   <figure>
+      <head><label>Ex. 3</label>SCHUBERT: Symphony in B minor.</head>
+	  <twm:notatedMusic>
+         <mei:mdiv>
+            <mei:score>
+               <mei:scoredef meter.count="3" meter.unit="8" key.sig="4s" key.mode="major">
+                  <mei:staffgrp>
+                     <mei:staffdef n="1" lines="5" clef.line="2" clef.shape="G" />
+                  </mei:staffgrp>
+               </mei:scoredef>
+               <mei:section>
+                  <mei:measure n="1">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="b" oct="5" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:dynam staff="1" tstamp="1">pp</mei:dynam>
+                     <mei:slur staff="1" tstamp="1" dur="2m+3"/>
+                  </mei:measure>
+                  <mei:measure n="2">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="c" oct="6" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="3">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:beam>
+                              <mei:note pname="b" oct="5" dur="8" stem.dir="down"/>
+                              <mei:note pname="g" oct="5" dur="8" stem.dir="down"/>
+                              <mei:note pname="e" oct="5" dur="8" stem.dir="down"/>
+                           </mei:beam>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="4">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="f" oct="5" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:slur staff="1" tstamp="1" dur="1m+1"/>
+                     <mei:hairpin form="dim" staff="1" tstamp="1" dur="1m+1"/>
+                  </mei:measure>
+               	  <mei:measure n="5">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="g" oct="5" dur="8" stem.dir="down"/>
+                           <mei:rest dur="8"/>
+                           <mei:rest dur="8"/>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="5">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:mrest/>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="6">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="b" oct="5" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:slur staff="1" tstamp="1" dur="2m+3"/>
+                  </mei:measure>
+                  <mei:measure n="7">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="c" oct="6" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="8">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:beam>
+                              <mei:note pname="b" oct="5" dur="8" stem.dir="down"/>
+                              <mei:note pname="g" oct="5" dur="8" stem.dir="down"/>
+                              <mei:note pname="e" oct="5" dur="8" stem.dir="down"/>
+                           </mei:beam>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+                  <mei:measure n="9">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="d" oct="5" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:slur staff="1" tstamp="1" dur="1m+1"/>
+                     <mei:hairpin form="dim" staff="1" tstamp="1" dur="1m+1"/>
+                  </mei:measure>
+                  <mei:measure n="10">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="c" oct="5" dur="4" dots="1" stem.dir="down"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:slur staff="1" tstamp="1" dur="1m+1"/>
+                  </mei:measure>
+                  <mei:measure n="11">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="c" oct="5" dur="4" dots="1" stem.dir="down" accid="n"/>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:dynam staff="1" tstamp="0">fp</mei:dynam>
+                     <mei:slur staff="1" tstamp="1" dur="1m+1"/>
+                     <mei:hairpin form="dim" staff="1" tstamp="1" dur="4"/>
+                  </mei:measure>
+                  <mei:measure n="12">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:beam>
+                              <mei:note pname="b" oct="4" dur="16" stem.dir="down"/>
+                              <mei:note pname="d" oct="5" dur="16" stem.dir="down" accid="s"/>
+                              <mei:note pname="f" oct="5" dur="16" stem.dir="down"/>
+                              <mei:note pname="a" oct="5" dur="16" stem.dir="down"/>
+                              <mei:note pname="g" oct="5" dur="16" stem.dir="down"/>
+                              <mei:note pname="f" oct="5" dur="16" stem.dir="down"/>
+                            </mei:beam>
+                        </mei:layer>
+                     </mei:staff>
+                     <mei:slur staff="1" tstamp="1" dur="1m+1"/>
+                  </mei:measure>
+                  <mei:measure n="13">
+                     <mei:staff n="1">
+                        <mei:layer n="1">
+                           <mei:note pname="e" oct="5" dur="8" stem.dir="down"/>
+                           <mei:rest dur="8"/>
+                           <mei:rest dur="8"/>
+                        </mei:layer>
+                     </mei:staff>
+                  </mei:measure>
+               </mei:section>
+            </mei:score>
+         </mei:mdiv>
+      </twm:notatedMusic>
+   </figure>
+</div></egXML>
+						
+					</div>
+					
+				</div>
+			</div>
+		</body>
+		<back>
+			<div>
+				<head>ODD definition</head>
+				<p>Preliminary version of TEI with Music Notation</p>
+				<schemaSpec ident="tei_mei" docLang="en" xml:lang="en" targetLang="en">
+					<!--source="/usr/share/xml/tei/odd/p5subset.xml"-->
+					<!-- ==== TEI Modules ==== -->
+					<moduleRef key="tei"/>
+					<!-- required -->
+					<moduleRef key="core"/>
+					<!-- required -->
+					<moduleRef key="analysis"/>
+					<moduleRef key="certainty"/>
+					<moduleRef key="corpus"/>
+					<moduleRef key="dictionaries"/>
+					<moduleRef key="drama"/>
+					<moduleRef key="figures"/>
+					<moduleRef key="gaiji"/>
+					<moduleRef key="header"/>
+					<!-- required -->
+					<moduleRef key="iso-fs"/>
+					<moduleRef key="linking"/>
+					<moduleRef key="msdescription"/>
+					<moduleRef key="namesdates"/>
+					<moduleRef key="nets"/>
+					<moduleRef key="spoken"/>
+					<moduleRef key="textcrit"/>
+					<moduleRef key="textstructure"/>
+					<!-- required -->
+					<moduleRef key="transcr"/>
+					<moduleRef key="verse"/>
+					<moduleRef key="tagdocs"/>
+
+					<!-- ==== MEI Modules ==== -->
+					<!-- NB. @source *MUST* point to MEI's ODD source-->
+					<moduleRef key="mei" source="mei-source.xml"/>
+					<moduleRef key="MEI.analysis" source="mei-source.xml"/>
+					<moduleRef key="MEI.cmn" source="mei-source.xml"/>
+					<moduleRef key="MEI.cmnOrnaments" source="mei-source.xml"/>
+					<moduleRef key="MEI.corpus" source="mei-source.xml"/>
+					<moduleRef key="MEI.critapp" source="mei-source.xml"/>
+					<moduleRef key="MEI.edittrans" source="mei-source.xml"/>
+					<moduleRef key="MEI.facsimile" source="mei-source.xml"/>
+					<moduleRef key="MEI.figtable" source="mei-source.xml"/>
+					<moduleRef key="MEI.harmony" source="mei-source.xml"/>
+					<moduleRef key="MEI.header" source="mei-source.xml"/>
+					<moduleRef key="MEI.linkalign" source="mei-source.xml"/>
+					<moduleRef key="MEI.lyrics" source="mei-source.xml"/>
+					<moduleRef key="MEI.mensural" source="mei-source.xml"/>
+					<moduleRef key="MEI.midi" source="mei-source.xml"/>
+					<moduleRef key="MEI.namesdates" source="mei-source.xml"/>
+					<moduleRef key="MEI.neumes" source="mei-source.xml"/>
+					<moduleRef key="MEI.ptrref" source="mei-source.xml"/>
+					<moduleRef key="MEI.shared" source="mei-source.xml"/>
+					<moduleRef key="MEI.tablature" source="mei-source.xml"/>
+					<moduleRef key="MEI.text" source="mei-source.xml"/>
+					<moduleRef key="MEI.usersymbols" source="mei-source.xml"/>
+
+					<!-- Changes to TEI components -->
+
+					<elementSpec ident="ptr" mode="change" module="core">
+						<desc>ptr changed to be member of att.internetMedia.</desc>
+						<classes>
+							<memberOf key="model.ptrLike"/>
+							<memberOf key="att.pointing"/>
+							<memberOf key="att.declaring"/>
+							<memberOf key="att.internetMedia"/>
+						</classes>
+					</elementSpec>
+
+					<macroSpec xmlns="http://www.tei-c.org/ns/1.0" type="pe" ident="macro.anyXML"
+						mode="change">
+						<desc>Changing macro.anyXML to exclude MEI namespace as well as TEI.</desc>
+						<content>
+							<element xmlns="http://relaxng.org/ns/structure/1.0">
+								<anyName>
+									<except>
+										<nsName ns="http://www.tei-c.org/ns/1.0"/>
+										<nsName ns="http://www.music-encoding.org/ns/mei"/>
+										<name ns="http://www.tei-c.org/ns/Examples">egXML</name>
+									</except>
+								</anyName>
+								<zeroOrMore>
+									<attribute>
+										<anyName/>
+									</attribute>
+								</zeroOrMore>
+								<zeroOrMore>
+									<choice>
+										<text/>
+										<ref name="macro.anyXML"/>
+									</choice>
+								</zeroOrMore>
+							</element>
+						</content>
+					</macroSpec>
+
+					<!-- ==== New elements for music notation ==== -->
+					<elementSpec ident="notatedMusic" ns="http://www.tei-c.org/ns/geneticEditions"
+						mode="add">
+						<desc>This element encodes the presence of music notation in a text. It is
+							possible to describe the content of the notation using elements from the
+							model.glossLike class and it is possible to point to an external
+							representation using elements from model.ptrLike. In the TEI with Music
+							Notation customisation, some elements from MEI are allowed to occur
+							within the element to encode the music notation.</desc>
+						<classes>
+							<memberOf key="model.global"/>
+							<memberOf key="att.placement"/>
+							<memberOf key="att.typed"/>
+						</classes>
+						<content>
+							<rng:zeroOrMore>
+								<rng:choice>
+									<rng:ref name="model.labelLike"/>
+									<rng:ref name="model.ptrLike"/>
+									<rng:ref name="graphic"/>
+									<rng:ref name="binaryObject"/>
+								</rng:choice>
+							</rng:zeroOrMore>
+							<rng:optional>
+								<rng:choice>
+									<rng:ref name="mei"/>
+									<rng:ref name="mei_music"/>
+									<rng:ref name="mdiv"/>
+									<rng:ref name="layer"/>
+								</rng:choice>
+							</rng:optional>
+						</content>
+					</elementSpec>
+
+					<!-- Changes to MEI components -->
+
+				</schemaSpec>
+			</div>
+		</back>
+	</text>
+</TEI>
