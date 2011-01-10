@@ -17,6 +17,7 @@
         doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
         encoding="UTF-8" method="xhtml" indent="yes"/>
 
+
     <xsl:variable name="newline">
         <xsl:text>
 </xsl:text>
@@ -63,6 +64,35 @@
                     <div id="page">
                         <div id="page-bgtop">
                             <div id="page-bgbtm">
+                                <div id="sidebar">
+                                    <div id="logo">
+                                        <h1>
+                                            <a href="#">TEI Music SIG </a>
+                                        </h1>
+                                        <!--<p>Design by <a href="http://www.freecsstemplates.org/">CSS Templates</a></p>-->
+                                    </div>
+                                    <div id="menu">
+                                        <ul>
+                                            <li>
+                                                <a href="../index.html"><span>Home</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="../about.html"><span>About the SIG</span></a>
+                                            </li>
+                                            <li class="current_page_item">
+                                                <a href="index.html"><span>TEI with music notation</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="http://wiki.tei-c.org/index.php/SIG:Music"
+                                                    ><span>Wiki</span></a>
+                                            </li>
+                                            <li>
+                                                <a href="http://www.tei-c.org/"><span>TEI Home</span></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
                                 <div id="content">
                                     <div class="post">
                                         
@@ -84,41 +114,32 @@
                                             <xsl:apply-templates select="//body/div"/>
                                             
                                         </div>
+                                        
+                                        <div class="emtry" id="notatedMusicODD"><h3 id="notatedMusic">&lt;notatedMusic&gt;
+                                            [http://www.tei-c.org/ns/teiWithMusic]
+                                        </h3><table class="wovenodd"><tr><td colspan="2" class="wovenodd-col2"><span class="label">&lt;notatedMusic&gt; </span>This element encodes the presence of music notation in a text.
+                                            It is possible to describe the content of the notation using
+                                            elements from the model.glossLike class and it is possible to
+                                            point to an external representation using elements from
+                                            model.ptrLike. In the TEI with Music Notation customisation, some
+                                            elements from MEI are allowed to occur within the element to
+                                            encode the music notation.</td></tr><tr><td class="wovenodd-col1"><span class="label" xml:lang="en">Module</span></td><td class="wovenodd-col2">derived-module-tei_mei</td></tr><tr><td class="wovenodd-col1"><span class="label" xml:lang="en">In addition to global attributes</span></td><td class="wovenodd-col2"><span xml:lang="en"/><a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.placement.html">att.placement</a> (<span class="attribute">@place</span>) <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.typed.html">att.typed</a> (<span class="attribute">@type</span>, <span class="attribute">@subtype</span>) </td></tr>
+                                            <tr><td class="wovenodd-col1"><span class="label" xml:lang="en">Used by</span></td><td class="wovenodd-col2"><div class="parent"><a class="link_odd_classSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-model.global.html">model.global</a></div></td></tr>
+                                            <tr><td class="wovenodd-col1"><span class="label" xml:lang="en">May contain</span></td><td class="wovenodd-col2"><div class="specChildren"><div class="specChild"><span class="specChildModule">MEI.shared: </span><span class="specChildElements"> <a class="link_odd_elementSpec" href="http://music-encoding.org/documentation/tagLibrary/layer">mei:layer</a> <a class="link_odd_elementSpec" href="http://music-encoding.org/documentation/tagLibrary/mdiv">mei:mdiv</a> <a class="link_odd_elementSpec" href="http://music-encoding.org/documentation/tagLibrary/mei">mei:mei</a> <a class="link_odd_elementSpec" href="http://music-encoding.org/documentation/tagLibrary/music">mei:music</a></span></div><div class="specChild"><span class="specChildModule">core: </span><span class="specChildElements"><a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-binaryObject.html">binaryObject</a> <a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-desc.html">desc</a> <a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-graphic.html">graphic</a> <a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-label.html">label</a> <a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-ptr.html">ptr</a> <a class="link_odd_elementSpec" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-ref.html">ref</a></span></div></div></td></tr><tr><td class="wovenodd-col1"><span class="label" xml:lang="en">Declaration</span></td><td class="wovenodd-col2"><pre class="eg">
+<span class="rnc_keyword">element</span> <span class="rnc_nc">notatedMusic</span>
+{
+   <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.placement.html">att.placement.attributes</a>,
+   <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.typed.html">att.typed.attributes</a>,
+   ( <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-model.labelLike.html">model.labelLike</a> | <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-model.ptrLike.html">model.ptrLike</a> | <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-graphic.html">graphic</a> | <a class="link_odd" href="http://www.tei-c.org/release/doc/tei-p5-doc/en/html/ref-binaryObject.html">binaryObject</a> )*,
+   ( <a class="link_odd" href="http://music-encoding.org/documentation/tagLibrary/mei">mei:mei</a> | <a class="link_odd" href="http://music-encoding.org/documentation/tagLibrary/music">mei:music</a> | <a class="link_odd" href="http://music-encoding.org/documentation/tagLibrary/mdiv">mei:mdiv</a> | <a class="link_odd" href="http://music-encoding.org/documentation/tagLibrary/layer">mei:layer</a> )?
+}</pre></td></tr></table></div>
+                                  
                                     </div>
                                     <div style="clear: both;">&#160;</div>
                                     
                                 </div>
                                 <!-- end #content -->
-                                <div id="sidebar">
-                                    <div id="logo">
-                                        <h1>
-                                            <a href="#">TEI Music SIG </a>
-                                        </h1>
-                                        <!--<p>Design by <a href="http://www.freecsstemplates.org/">CSS Templates</a></p>-->
-                                    </div>
-                                    <div id="menu">
-                                        <ul>
-                                            <li>
-                                                <a href="../index.html">Home</a>
-                                            </li>
-                                            <li>
-                                                <a href="../about.html">About the SIG</a>
-                                            </li>
-                                            <li class="current_page_item">
-                                                <a href="index.html">TEI with music notation</a>
-                                            </li>
-                                            <li>
-                                                <a href="http://wiki.tei-c.org/index.php/SIG:Music"
-                                                    >Wiki</a>
-                                            </li>
-                                            <li>
-                                                <a href="http://www.tei-c.org/">TEI Home</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                </div>
-                                <!-- end #sidebar -->
+                                
                                 <div style="clear: both;">&#160;</div>
                             </div>
                         </div>
@@ -194,7 +215,13 @@
     </xsl:template>
     
     <xsl:template match="ref">
-        <a xmlns="http://www.w3.org/1999/xhtml" href="{@target}">
+        <a xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:attribute name="href">
+                <xsl:if test="@type='internal'">
+                    <xsl:text>#</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="@target"/>
+            </xsl:attribute>
             <xsl:if test="@rend">
                 <xsl:attribute name="class">
                     <xsl:value-of select="@rend"/>
@@ -267,12 +294,28 @@
         </p>
     </xsl:template>
     
-    <xsl:template match="ab">
+    <xsl:template match="bibl">
+        <p xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates/>
+        </p>
+    </xsl:template>
+    
+    <xsl:template match="author">
+        <strong xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates/>
+        </strong>
+    </xsl:template>
+    
+    <xsl:template match="title">
+        <em xmlns="http://www.w3.org/1999/xhtml">
+            <xsl:apply-templates/>
+        </em>
+    </xsl:template>
+    
+    <xsl:template match="divGen">
         <xsl:choose>
             <xsl:when test="@xml:id='download_button'">
-                <span xmlns="http://www.w3.org/1999/xhtml" id="{@xml:id}">
-                    <xsl:apply-templates/>
-                </span>
+                <span xmlns="http://www.w3.org/1999/xhtml" id="{@xml:id}"><a href="../redist/tei-with-mei_beta.zip" title="Download beta release">&#160;</a></span>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates/>
@@ -282,7 +325,7 @@
     </xsl:template>
     
     <xsl:template match="figure[not(ancestor::eg:egXML)]">
-        <div class="example-img">
+        <div class="example-img" xmlns="http://www.w3.org/1999/xhtml">
             <img src="../_a/images/examples/{graphic/@url}" alt="{figDesc}"/>
         </div>
     </xsl:template>
@@ -419,6 +462,8 @@
             </xsl:call-template>
         </xsl:if>
     </xsl:template>
+    
+    
 
 </xsl:stylesheet>
 
