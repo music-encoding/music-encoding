@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="xml"?>
+<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+        <title>MEI (Music Encoding Initiative) - ALL</title>
+        <respStmt>
+          <resp>Authored by</resp>
+          <name xml:id="RV">Raffaele Viglianti</name>
+        </respStmt>
+      </titleStmt>
+      <publicationStmt>
+        <p>Automatically Generated</p>
+      </publicationStmt>
+      <sourceDesc>
+        <p>created on 2010-08-26T22:09:54.285+02:00</p>
+      </sourceDesc>
+    </fileDesc>
+  </teiHeader>
+  <text>
+    <front>
+      <divGen type="toc"/>
+    </front>
+    <body>
+      <schemaSpec ident="mei" start="mei meihead meicorpus music"
+        ns="http://www.music-encoding.org/ns/mei">
+        <moduleRef key="mei"/>
+        <moduleRef key="MEI.shared"/>
+        <moduleRef key="MEI.header"/>
+        <moduleRef key="MEI.cmn"/>
+        <moduleRef key="MEI.mensural"/>
+        <moduleRef key="MEI.neumes"/>
+        <moduleRef key="MEI.analysis"/>
+        <moduleRef key="MEI.cmnOrnaments"/>
+        <moduleRef key="MEI.corpus"/>
+        <moduleRef key="MEI.critapp"/>
+        <moduleRef key="MEI.edittrans"/>
+        <moduleRef key="MEI.facsimile"/>
+        <moduleRef key="MEI.figtable"/>
+        <moduleRef key="MEI.harmony"/>
+        <moduleRef key="MEI.linkalign"/>
+        <moduleRef key="MEI.lyrics"/>
+        <moduleRef key="MEI.midi"/>
+        <moduleRef key="MEI.namesdates"/>
+        <moduleRef key="MEI.performance"/>
+        <moduleRef key="MEI.ptrref"/>
+        <moduleRef key="MEI.tablature"/>
+        <moduleRef key="MEI.text"/>
+        <moduleRef key="MEI.usersymbols"/>
+
+        <!-- NMTOKEN doesn't work here because '#' isn't allowed in XML names;
+          change to the token datatype. -->
+        <classSpec type="atts" module="MEI.tablature"
+          ident="att.staffdef.ges.tablature" mode="replace">
+          <desc>Gestural domain attributes for staffdef in tablature</desc>
+          <attList>
+            <attDef ident="tab.strings" usage="opt">
+              <desc>provides a written pitch and octave for each open string,
+                e.g. "e3 a3 d4 g4 b4 e5" for standard guitar tuning. It should
+                contain the number of tokens indicated by the lines attribute.
+                Chromatic alteration may be indicated with '-', or 'f', (flat)
+                and '#', or 's' (sharp). Multiple sharps and flats are not
+                permitted.</desc>
+              <datatype>
+                <rng:list>
+                  <rng:oneOrMore>
+                    <rng:data type="token">
+                      <rng:param name="pattern">[a-g][\-#fs]?[0-9]</rng:param>
+                    </rng:data>
+                  </rng:oneOrMore>
+                </rng:list>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <!-- key.sig.mixed changed to token datatype with new value pattern. -->
+        <classSpec type="atts" module="MEI.shared" ident="att.keysigs.log"
+          mode="replace">
+          <desc>Used by staffdef and scoredef to provide default values for
+            attributes in the logical domain related to key signatures</desc>
+          <attList>
+            <attDef ident="key.accid" usage="opt">
+              <desc>contains an accidental for the tonic key, if one is
+                required, e.g., if key.pname equals 'c' and key.accid equals
+                's', then a tonic of C# is indicated.</desc>
+              <datatype>
+                <rng:ref name="data.ACCIDENTAL.IMPLICIT"/>
+              </datatype>
+            </attDef>
+            <attDef ident="key.mode" usage="opt">
+              <desc>indicates major, minor, or other tonality.</desc>
+              <datatype>
+                <rng:ref name="data.MODE"/>
+              </datatype>
+            </attDef>
+            <attDef ident="key.pname" usage="opt">
+              <desc>holds the pitch name of the tonic key, e.g. 'c' for the key
+                of C.</desc>
+              <datatype>
+                <rng:ref name="data.PITCHNAME"/>
+              </datatype>
+            </attDef>
+            <attDef ident="key.sig" usage="opt">
+              <desc>indicates where the key lies in the circle of fifths.</desc>
+              <datatype>
+                <rng:ref name="data.KEYSIGNATURE"/>
+              </datatype>
+            </attDef>
+            <attDef ident="key.sig.mixed" usage="opt">
+              <desc>Mixed key signatures, e.g. those consisting of a mixture of
+                flats and sharps (Read, p. 143, ex. 9-39), and key signatures
+                with unorthodox placement of the accidentals (Read, p. 141) must
+                be indicated by setting the key.sig attribute to 'mixed' and
+                providing explicit keysig info in the key.sig.mixed attribute or
+                in the &lt;keysig&gt; element. It is intended that key.sig.mixed
+                contain a series of tokens with each token containing pitch
+                name, accidental, and octave, such as 'A4 Cs5 Ef5' that indicate
+                what key accidentals should be rendered and where they should be
+                placed.</desc>
+              <datatype>
+                <rng:list>
+                  <rng:oneOrMore>
+                    <rng:data type="token">
+                      <rng:param name="pattern"
+                        >[a-g][0-9](\-{1,3}|f{1,3}|#{1,3}|s{1,3}|x)</rng:param>
+                    </rng:data>
+                  </rng:oneOrMore>
+                </rng:list>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <!-- Figured bass! -->
+        <!-- Additional changes made to mei-source: graphicprimitiveLike and
+        fLike added to content of elements in transcriptionLike class. -->
+
+        <!-- Add figbassLike model -->
+        <classSpec type="model" ident="model.figbassLike" module="MEI.harmony">
+          <desc>groups elements that record figured bass.</desc>
+        </classSpec>
+        <classSpec type="model" ident="model.fLike" module="MEI.harmony">
+          <desc>groups elements that represent single figured bass
+            elements.</desc>
+        </classSpec>
+
+        <!-- Add fb element -->
+        <elementSpec ident="fb" module="MEI.harmony" mode="add">
+          <desc>Figured Bass ― </desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.common.anl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="model.figbassLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.fLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <!-- Add f element -->
+        <elementSpec ident="f" module="MEI.harmony" mode="add">
+          <desc>Figure (figured bass) ― Single element of a figured bass
+            indication.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.common.anl"/>
+            <memberOf key="att.altsym"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="model.fLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="extender" usage="opt">
+              <desc>indicates the presence of an extension symbol, typically a
+                dash or underscore, drawn from the end of the harmonic
+                indication to the point indicated by the dur attribute.</desc>
+              <datatype>
+                <rng:ref name="data.BOOLEAN"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="harm" module="MEI.harmony" mode="replace">
+          <desc>harmony ― An indication of harmony, e.g., chord names, tablature
+            grids, harmonic analysis, figured bass. The starting point of the
+            harmony may be indicated by either a tstamp, tstamp.ges, tstamp.real
+            or startid attribute, while the ending point may be recorded by
+            either a dur, dur.ges or endid attribute. It is a semantic error not
+            to specify a starting point attribute. The dur attribute encodes the
+            logical and visual duration of the harmony. Please note that the dur
+            attribute here is not a true duration, but rather a time stamp for
+            the end point of the harmony.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.harm.log"/>
+            <memberOf key="att.harm.vis"/>
+            <memberOf key="att.harm.ges"/>
+            <memberOf key="att.harm.anl"/>
+            <memberOf key="model.harmLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.figbassLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec
+            ident="Start-type_attributes_required_on_some_control_events"
+            scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:harm">
+                <sch:assert test="@startid or @tstamp or @tstamp.ges or
+                  @tstamp.real"> Must have one of the attributes: startid,
+                  tstamp, tstamp.ges or tstamp.real</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_harmchordref" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:harm[@chordref]">
+                <sch:let name="thischordref" value="@chordref"/>
+                <sch:assert test="@chordref =
+                  preceding::mei:chorddef[@xml:id=$thischordref]/@xml:id">The
+                  value of @chordref must be the ID of a chorddef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </elementSpec>
+
+        <!-- Add plate and watermark elements and make them part of
+          model.physdescPart. This model is used by &lt;physdesc&gt;. -->
+        <elementSpec ident="plate" module="MEI.header" mode="add">
+          <desc>plate number ― Designation assigned to a resource by a music
+            publisher, usually printed at the bottom of each page, and sometimes
+            appearing also on the title page. While it is often called a "plate
+            number", it does not always contain numbers. The facs attribute may
+            be used to record the location of the plate number in a facsimile
+            image.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="model.physdescPart"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="watermark" module="MEI.header" mode="add">
+          <desc>watermark ― Contains a description of a watermark or similar
+            device. The facs attribute may be used to record the location of the
+            watermark in a facsimile image. This element is modelled on an
+            element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="model.physdescPart"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+      </schemaSpec>
+    </body>
+  </text>
+</TEI>
