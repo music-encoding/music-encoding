@@ -53,6 +53,15 @@
       <change who="#RV" when="2010-08-27+02:00">Integrated Schematron rules
         within element declarations.</change>
       <change who="#RV" when="2010-08-27+02:00">Integrated modules.</change>
+      <change who="#PR" when="2010-12-10">Added descriptions in attribute
+        definitions</change>
+      <change who="#PR" when="2010-12-10">Corrected typos in the description of
+        list</change>
+      <change who="#PR" when="2010-12-10">Corrected omission of att.width on
+        graphic</change>
+      <change who="#PR" when="2010-12-10">Revised description of
+      att.calendared</change>
+      <change who="#PR" when="2010-12-10">Modified attribute classes</change>
     </revisionDesc>
   </teiHeader>
   <text>
@@ -63,7 +72,6 @@
       <p>MEI</p>
       <!--****-->
       <!--Modules-->
-      <!--Number of modules found in original RNG: 21-->
       <!--****-->
       <moduleSpec ident="mei">
         <desc/>
@@ -133,7 +141,6 @@
       </moduleSpec>
       <!--****-->
       <!--Datatype Macros-->
-      <!--Number of definitions found in original RNG: 93-->
       <!--****-->
       <macroSpec module="mei" type="dt" ident="data.BEND.AMOUNT">
         <desc>Either a decimal value or a token. The decimal values are limited
@@ -182,12 +189,21 @@
           maroon, navy, olive, purple, red, silver, teal, white, or yellow, for
           colors defined by the HTML 4.01 specification.</desc>
         <content>
-          <rng:choice>
-            <rng:data type="token">
-              <rng:param name="pattern"
-                >(x[0-9A-Fa-f]{6,6}|aqua|black|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)</rng:param>
-            </rng:data>
-          </rng:choice>
+          <rng:data type="token">
+            <rng:param name="pattern"
+              >(x[0-9A-Fa-f]{6,6}|aqua|black|fuchsia|gray|green|lime|maroon|navy|olive|purple|red|silver|teal|white|yellow)</rng:param>
+          </rng:data>
+        </content>
+      </macroSpec>
+      <macroSpec module="mei" type="dt" ident="data.COLORS">
+        <desc>One or more values from the list given in the definition of
+          data.COLOR.</desc>
+        <content>
+          <rng:list>
+            <rng:oneOrMore>
+              <rng:ref name="data.COLOR"/>
+            </rng:oneOrMore>
+          </rng:list>
         </content>
       </macroSpec>
       <macroSpec module="mei" type="dt" ident="data.DEGREES">
@@ -264,8 +280,8 @@
           range from 0 to 7, e.g., "4m+3".</desc>
         <content>
           <rng:data type="token">
-            <rng:param name="pattern">([0-9]+m *\+
-              *)?[0-9]+(\.?[0-9]*)?</rng:param>
+            <rng:param name="pattern"
+              >([0-9]+m\s*\+\s*)?[0-9]+(\.?[0-9]*)?</rng:param>
           </rng:data>
         </content>
       </macroSpec>
@@ -1240,7 +1256,8 @@
             <rng:value>dblunderline</rng:value>
             <rng:value>none</rng:value>
             <rng:value>quote</rng:value>
-            <rng:value>slash</rng:value>
+            <rng:value>bslash</rng:value>
+            <rng:value>fslash</rng:value>
             <rng:value>smcaps</rng:value>
             <rng:value>strike</rng:value>
             <rng:value>sub</rng:value>
@@ -1339,12 +1356,12 @@
       </macroSpec>
       <!--****-->
       <!--Attribute Classes-->
-      <!--Number of definitions found in original RNG: 456-->
       <!--****-->
       <classSpec type="atts" module="MEI.shared" ident="att.accidental">
         <desc>Attributes for capturing momentary pitch inflection</desc>
         <attList>
           <attDef ident="accid" usage="opt">
+            <desc>captures a written accidental.</desc>
             <datatype>
               <rng:ref name="data.ACCIDENTAL.EXPLICIT"/>
             </datatype>
@@ -1357,6 +1374,8 @@
           gestural domain</desc>
         <attList>
           <attDef ident="accid.ges" usage="opt">
+            <desc>records the performed pitch inflection when it differs from
+              the written accidental.</desc>
             <datatype>
               <rng:ref name="data.ACCIDENTAL.IMPLICIT"/>
             </datatype>
@@ -1367,6 +1386,9 @@
         <desc>Attributes supplying pointers to user-defined symbols</desc>
         <attList>
           <attDef ident="altsym" usage="opt">
+            <desc>provides a way of pointing to a user-defined symbol. It must
+              contain an ID of a &lt;symboldef&gt; element elsewhere in the
+              document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -1378,6 +1400,11 @@
           method of performance</desc>
         <attList>
           <attDef ident="artic" usage="opt">
+            <desc>encodes the written articulation(s). Articulations are
+              normally encoded in order from the notehead outward; that is, away
+              from the stem. See additional notes at att.vis.note. Only
+              articulations should be encoded in the artic attribute; fingerings
+              should be encoded using the &lt;dir&gt; element.</desc>
             <datatype>
               <rng:ref name="data.ARTICULATIONS"/>
             </datatype>
@@ -1389,6 +1416,8 @@
         <desc>Attributes describing the method of performance</desc>
         <attList>
           <attDef ident="artic.ges" usage="opt">
+            <desc>records performed articulation that differs from the written
+              value.</desc>
             <datatype>
               <rng:ref name="data.ARTICULATIONS"/>
             </datatype>
@@ -1399,6 +1428,8 @@
         <desc>Attributes that record the number of dots of augmentation</desc>
         <attList>
           <attDef ident="dots" usage="opt">
+            <desc>records the number of augmentation dots required by a dotted
+              duration.</desc>
             <datatype>
               <rng:ref name="data.AUGMENTDOT"/>
             </datatype>
@@ -1408,18 +1439,31 @@
       <classSpec type="atts" module="MEI.shared" ident="att.authorized">
         <desc>Attributes that describe the source of an controlled value</desc>
         <attList>
-          <attDef ident="authority" usage="opt"/>
+          <attDef ident="authority" usage="opt">
+            <desc>a name or label associated with the controlled vocabulary from
+              which the value is taken.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.barplacement">
         <desc>Attributes that capture the placement of barlines</desc>
         <attList>
           <attDef ident="barplace" usage="opt">
+            <desc>records the location of a barline.</desc>
             <datatype>
               <rng:ref name="data.BARPLACE"/>
             </datatype>
           </attDef>
           <attDef ident="taktplace" usage="opt">
+            <desc>If takt barlines are to be used, then the taktplace attribute
+              may be used to denote the staff location of the shortened barline.
+              The location may include staff lines, spaces, and the spaces
+              directly above and below the staff. The value ranges between 0
+              (just below the staff) to 2 * number of staff lines (directly
+              above the staff). For example, on a 5-line staff the lines would
+              be numbered 1,3,5,7, and 9 while the spaces would be numbered
+              0,2,4,6,8,10. For example, a value of '9' puts the barline through
+              the top line of a 5-line staff.</desc>
             <datatype>
               <rng:ref name="data.STAFFLOC"/>
             </datatype>
@@ -1431,6 +1475,8 @@
           for attributes in the visual domain related to beaming</desc>
         <attList>
           <attDef ident="beam.rend" usage="opt">
+            <desc>encodes whether a beam is feathered and in which
+              direction.</desc>
             <valList type="closed">
               <valItem ident="acc"/>
               <valItem ident="rit"/>
@@ -1438,6 +1484,7 @@
             </valList>
           </attDef>
           <attDef ident="beam.slope" usage="opt">
+            <desc>captures beam slope.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -1447,13 +1494,26 @@
       <classSpec type="atts" module="MEI.shared" ident="att.bibl">
         <desc>Bibliographic attributes</desc>
         <attList>
-          <attDef ident="analog" usage="opt"/>
+          <attDef ident="analog" usage="opt">
+            <desc>contains a reference to a field or element in another
+              descriptive encoding system to which this MEI element is
+              comparable. Mapping elements from one system to another may help a
+              repository harvest selected data from the MEI file to build a
+              basic catalog record. The encoding system from which fields are
+              taken must be specified. When possible, subfields as well as
+              fields should be specified, e.g., subfields within MARC
+              fields.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.calendared">
-        <desc>Attributes that indicate the calendar system of a date</desc>
+        <desc>Attributes that indicate the calendar system of a date datable
+          element.</desc>
         <attList>
           <attDef ident="calendar" usage="opt">
+            <desc>indicates the calendar system to which a date belongs, for
+              example, Gregorian, Julian, Roman, Mosaic, Revolutionary, Islamic,
+              etc.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -1465,21 +1525,27 @@
           attributes in the logical domain related to clefs</desc>
         <attList>
           <attDef ident="clef.shape" usage="opt">
+            <desc>encodes a value for the clef symbol.</desc>
             <datatype>
               <rng:ref name="data.CLEFSHAPE"/>
             </datatype>
           </attDef>
           <attDef ident="clef.line" usage="opt">
+            <desc>contains a default value for the position of the clef.</desc>
             <datatype>
               <rng:ref name="data.CLEFLINE"/>
             </datatype>
           </attDef>
           <attDef ident="clef.dis" usage="opt">
+            <desc>records the amount of octave displacement to be applied to the
+              clef.</desc>
             <datatype>
               <rng:ref name="data.OCTAVE.DIS"/>
             </datatype>
           </attDef>
           <attDef ident="clef.dis.place" usage="opt">
+            <desc>records the direction of octave displacement to be applied to
+              the clef.</desc>
             <datatype>
               <rng:ref name="data.PLACE"/>
             </datatype>
@@ -1491,11 +1557,13 @@
           attributes in the visual domain related to clefs</desc>
         <attList>
           <attDef ident="clef.color" usage="opt">
+            <desc>describes the color of the clef.</desc>
             <datatype>
               <rng:ref name="data.COLOR"/>
             </datatype>
           </attDef>
           <attDef ident="clef.visible" usage="opt">
+            <desc>determines whether the clef is to be displayed.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -1506,6 +1574,7 @@
         <desc>Attributes that record the shape of a clef</desc>
         <attList>
           <attDef ident="shape" usage="opt">
+            <desc>describes a clef's shape.</desc>
             <datatype>
               <rng:ref name="data.CLEFSHAPE"/>
             </datatype>
@@ -1516,6 +1585,8 @@
         <desc>Visual color attributes</desc>
         <attList>
           <attDef ident="color" usage="opt">
+            <desc>used to indicate visual appearance. Do not confuse this with
+              the musical term 'color' as used in pre-CMN notation.</desc>
             <datatype>
               <rng:ref name="data.COLOR"/>
             </datatype>
@@ -1526,6 +1597,12 @@
         <desc>Indication of coloration</desc>
         <attList>
           <attDef ident="colored" usage="opt">
+            <desc>indicates this feature is 'colored'; that is, it is a
+              participant in a change in rhythmic values. In mensural notation,
+              coloration is indicated by colored notes (red, black, etc.) where
+              void notes would otherwise occur. In CMN notation, coloration is
+              indicated by an inverse color; that is, the notehead is void when
+              it would otherwise be filled and vice versa.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -1536,11 +1613,17 @@
         <desc>Common attributes</desc>
         <attList>
           <attDef ident="xml:id" usage="opt">
+            <desc>regularizes the naming of an element and thus facilitates
+              building links between it and other resources. Each id attribute
+              within a document must have a unique value.</desc>
             <datatype>
               <rng:data type="ID"/>
             </datatype>
           </attDef>
           <attDef ident="n" usage="opt">
+            <desc>provides a label (name or number) for an element. While its
+              value need not be unique, it is required to be a single
+              token.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -1555,10 +1638,12 @@
           <memberOf key="att.participantident"/>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
-          <memberOf key="att.staffident"/>
+          <memberOf key="att.staffident.required"/>
         </classes>
         <attList>
-          <attDef ident="layer" usage="opt"/>
+          <attDef ident="layer" usage="opt">
+            <desc>identifies the layer to which a feature applies.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.coordinated">
@@ -1566,21 +1651,25 @@
           two-dimensional coordinate system.</desc>
         <attList>
           <attDef ident="ulx" usage="opt">
+            <desc>indicates the upper-left corner x coordinate.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger"/>
             </datatype>
           </attDef>
           <attDef ident="uly" usage="opt">
+            <desc>indicates the upper-left corner y coordinate.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger"/>
             </datatype>
           </attDef>
           <attDef ident="lrx" usage="opt">
+            <desc>indicates the lower-right corner x coordinate.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger"/>
             </datatype>
           </attDef>
           <attDef ident="lry" usage="opt">
+            <desc>indicates the lower-left corner x coordinate.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger"/>
             </datatype>
@@ -1590,9 +1679,20 @@
       <classSpec type="atts" module="MEI.shared" ident="att.curvature">
         <desc>Attributes that describe curvature</desc>
         <attList>
-          <attDef ident="bezier" usage="opt"/>
-          <attDef ident="bulge" usage="opt"/>
+          <attDef ident="bezier" usage="opt">
+            <desc>records the placement of Bezier control points as a series of
+              space-separated xy coordinates, eg. 19 45 -32 118.</desc>
+          </attDef>
+          <attDef ident="bulge" usage="opt">
+            <desc>describes a curve as a set of distance values above or below
+              an imaginary line connecting the endpoints of the curve. The bulge
+              attribute must contain one or more decimal values expressed in
+              inter-line units.</desc>
+          </attDef>
           <attDef ident="curvedir" usage="opt">
+            <desc>describes a curve with a generic term indicating whether the
+              curve bows upward or downward. Upward curves go above the items
+              they cover, while downward curves go under them.</desc>
             <valList type="closed">
               <valItem ident="above"/>
               <valItem ident="below"/>
@@ -1604,6 +1704,7 @@
         <desc>Attributes that record the visual rendition of curves</desc>
         <attList>
           <attDef ident="rend" usage="opt">
+            <desc>describes the line style of the curve.</desc>
             <datatype>
               <rng:ref name="data.CURVERENDITION"/>
             </datatype>
@@ -1614,16 +1715,19 @@
         <desc>Attributes common to dates</desc>
         <attList>
           <attDef ident="enddate" usage="opt">
+            <desc>contains the end point of a date range.</desc>
             <datatype>
               <rng:ref name="data.ISODATE"/>
             </datatype>
           </attDef>
           <attDef ident="notafter" usage="opt">
+            <desc>contains an upper boundary for an uncertain date.</desc>
             <datatype>
               <rng:ref name="data.ISODATE"/>
             </datatype>
           </attDef>
           <attDef ident="notbefore" usage="opt">
+            <desc>contains a lower boundary for an uncertain date.</desc>
             <datatype>
               <rng:ref name="data.ISODATE"/>
             </datatype>
@@ -1634,6 +1738,7 @@
             </datatype>
           </attDef>
           <attDef ident="startdate" usage="opt">
+            <desc>contains the starting point of a date range.</desc>
             <datatype>
               <rng:ref name="data.ISODATE"/>
             </datatype>
@@ -1644,6 +1749,8 @@
         <desc>Attributes for linking metadata to data</desc>
         <attList>
           <attDef ident="data" usage="opt">
+            <desc>used to link metadata elements to one or more data-containing
+              elements.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -1654,16 +1761,23 @@
         <desc>Attributes that describe distance from the staff</desc>
         <attList>
           <attDef ident="dynam.dist" usage="opt">
+            <desc>records the distance from the staff for dynamic marks in 1/2
+              inter-line units.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="harm.dist" usage="opt">
+            <desc>records the default distance from the staff of harmonic
+              indications, such as guitar chord grids or functional
+              labels.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="text.dist" usage="opt">
+            <desc>determines how far from the staff to render text
+              elements.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -1674,6 +1788,9 @@
         <desc>Attributes that provide a durational default value</desc>
         <attList>
           <attDef ident="dur.default" usage="opt">
+            <desc>contains a default duration in those situations when the first
+              note, rest, chord, etc. in a measure does not have a duration
+              specified.</desc>
             <datatype>
               <rng:ref name="data.DURATION"/>
             </datatype>
@@ -1684,6 +1801,8 @@
         <desc>Attributes that express duration in musical terms</desc>
         <attList>
           <attDef ident="dur" usage="opt">
+            <desc>records the duration of a feature using the relative
+              durational values provided by the data.DURATION datatype.</desc>
             <datatype>
               <rng:ref name="data.DURATION"/>
             </datatype>
@@ -1694,18 +1813,27 @@
         <desc>Attributes that record performed duration that differs from a
           feature's written duration.</desc>
         <attList>
-          <attDef ident="dur.ges" usage="opt"/>
+          <attDef ident="dur.ges" usage="opt">
+            <desc>records performed duration information that differs from
+              written duration. Its value may be expressed in any convenient
+              form, such as measures[s]+ beat[s].beatpart, ppq (MIDI clicks),
+              Humdrum **recip values, or MusicXML 'divisions', etc.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.duration.ratio">
         <desc>Attributes that describe duration as a ratio</desc>
         <attList>
           <attDef ident="num" usage="opt">
+            <desc>along with numbase, describes duration as a ratio. num is the
+              first value in the ratio, while numbase is the second.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
           </attDef>
           <attDef ident="numbase" usage="opt">
+            <desc>along with num, describes duration as a ratio. num is the
+              first value in the ratio, while numbase is the second.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -1717,6 +1845,9 @@
           point</desc>
         <attList>
           <attDef ident="dur" usage="opt">
+            <desc>records the duration of a feature using the relative
+              durational values provided by the data.MEASUREBEAT
+              datatype.</desc>
             <datatype>
               <rng:ref name="data.MEASUREBEAT"/>
             </datatype>
@@ -1728,6 +1859,10 @@
           a cautionary or editorial function</desc>
         <attList>
           <attDef ident="enclose" usage="opt">
+            <desc>records the characters often used to mark accidentals,
+              articulations, and sometimes notes as having a cautionary or
+              editorial function. For an example of cautionary accidentals
+              enclosed in parentheses, see Read, p. 131, ex. 9-14.</desc>
             <datatype>
               <rng:ref name="data.ENCLOSURE"/>
             </datatype>
@@ -1740,6 +1875,7 @@
         <classes>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
+          <memberOf key="att.staffident.optional"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.fermatapresent">
@@ -1747,6 +1883,9 @@
           feature</desc>
         <attList>
           <attDef ident="fermata" usage="opt">
+            <desc>indicates the attachment of a fermata to this element. If
+              visual information about the fermata needs to be recorded, then a
+              &lt;fermata&gt; element should be employed instead.</desc>
             <datatype>
               <rng:ref name="data.STAFFREL"/>
             </datatype>
@@ -1758,6 +1897,7 @@
           staves</desc>
         <attList>
           <attDef ident="symbol" usage="opt">
+            <desc>specifies the symbol used to group a set of staves.</desc>
             <valList type="closed">
               <valItem ident="brace"/>
               <valItem ident="bracket"/>
@@ -1771,6 +1911,8 @@
         <desc>Attributes which identify a document hand</desc>
         <attList>
           <attDef ident="hand" usage="opt">
+            <desc>signifies the hand responsible for an action. The value must
+              be the ID of a &lt;hand&gt; element declared in the header.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -1781,6 +1923,7 @@
         <desc>Attributes that record horizontal alignment</desc>
         <attList>
           <attDef ident="halign" usage="opt">
+            <desc>records horizontal alignment.</desc>
             <valList type="closed">
               <valItem ident="left"/>
               <valItem ident="right"/>
@@ -1794,6 +1937,9 @@
         <desc>Attributes which identify a MIDI instrument</desc>
         <attList>
           <attDef ident="instr" usage="opt">
+            <desc>provides a way of pointing to a MIDI instrument definition. It
+              must contain the ID of an &lt;instrdef&gt; element elsewhere in
+              the document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -1803,7 +1949,11 @@
       <classSpec type="atts" module="MEI.shared" ident="att.internetmedia">
         <desc/>
         <attList>
-          <attDef ident="mimetype" usage="opt"/>
+          <attDef ident="mimetype" usage="opt">
+            <desc>specifies the applicable MIME (multimedia internet mail
+              extension) type. The value should be a valid MIME media type
+              defined by the Internet Engineering Task Force in RFC 2046.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.joined">
@@ -1812,6 +1962,11 @@
           thought of as a single intellectual object</desc>
         <attList>
           <attDef ident="join" usage="opt">
+            <desc>used for linking visually separate slurs, sometimes necessary
+              due to system breaks, that form a single musical phrase. Also used
+              to indicate a measure which metrically completes the current one.
+              Record the IDs of the separately encoded components, excluding
+              this one.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -1823,26 +1978,44 @@
           attributes in the logical domain related to key signatures</desc>
         <attList>
           <attDef ident="key.accid" usage="opt">
+            <desc>contains an accidental for the tonic key, if one is required,
+              e.g., if key.pname equals 'c' and key.accid equals 's', then a
+              tonic of C# is indicated.</desc>
             <datatype>
               <rng:ref name="data.ACCIDENTAL.IMPLICIT"/>
             </datatype>
           </attDef>
           <attDef ident="key.mode" usage="opt">
+            <desc>indicates major, minor, or other tonality.</desc>
             <datatype>
               <rng:ref name="data.MODE"/>
             </datatype>
           </attDef>
           <attDef ident="key.pname" usage="opt">
+            <desc>holds the pitch name of the tonic key, e.g. 'c' for the key of
+              C.</desc>
             <datatype>
               <rng:ref name="data.PITCHNAME"/>
             </datatype>
           </attDef>
           <attDef ident="key.sig" usage="opt">
+            <desc>indicates where the key lies in the circle of fifths.</desc>
             <datatype>
               <rng:ref name="data.KEYSIGNATURE"/>
             </datatype>
           </attDef>
-          <attDef ident="key.sig.mixed" usage="opt"/>
+          <attDef ident="key.sig.mixed" usage="opt">
+            <desc>Mixed key signatures, e.g. those consisting of a mixture of
+              flats and sharps (Read, p. 143, ex. 9-39), and key signatures with
+              unorthodox placement of the accidentals (Read, p. 141) must be
+              indicated by setting the key.sig attribute to 'mixed' and
+              providing explicit keysig info in the key.sig.mixed attribute or
+              in the &lt;keysig&gt; element. It is intended that key.sig.mixed
+              contain a series of tokens with each token containing pitch name,
+              accidental, and octave, such as 'A4 Cs5 Ef5' that indicate what
+              key accidentals should be rendered and where they should be
+              placed.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.keysigs.vis">
@@ -1850,11 +2023,15 @@
           attributes in the visual domain related to key signatures</desc>
         <attList>
           <attDef ident="key.sig.show" usage="opt">
+            <desc>indicates whether the key signature should be
+              displayed.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="key.sig.showchange" usage="opt">
+            <desc>determines whether cautionary accidentals should be displayed
+              at a key change.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -1864,14 +2041,25 @@
       <classSpec type="atts" module="MEI.shared" ident="att.labels">
         <desc>Attributes that record display labels for a feature</desc>
         <attList>
-          <attDef ident="label.abbr" usage="opt"/>
-          <attDef ident="label.full" usage="opt"/>
+          <attDef ident="label.abbr" usage="opt">
+            <desc>provides a label for a group of staves on pages after the
+              first page. Usually, this label takes an abbreviated form.</desc>
+          </attDef>
+          <attDef ident="label.full" usage="opt">
+            <desc>provides a label for a group of staves on the first page;
+              label.abbr is used thereafter.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.lang">
         <desc>Language attributes common to text elements</desc>
         <attList>
           <attDef ident="xml:lang" usage="opt">
+            <desc>identifies the language of the element's content. The values
+              for this attribute are language 'tags' as defined in BCP 47. All
+              language tags that make use of private use subtags must be
+              documented in a corresponding language element in the MEI header
+              whose id attribute is the same as the language tag's value.</desc>
             <datatype>
               <rng:data type="language"/>
             </datatype>
@@ -1883,6 +2071,7 @@
           applies</desc>
         <attList>
           <attDef ident="layer" usage="opt">
+            <desc>identifies the layer to which a feature applies.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -1894,6 +2083,9 @@
           associated</desc>
         <attList>
           <attDef ident="line" usage="opt">
+            <desc>indicates the line upon which a feature stands. The value must
+              be in the range between 1 and the number of lines on the
+              staff.</desc>
             <datatype>
               <rng:ref name="data.CLEFLINE"/>
             </datatype>
@@ -1904,6 +2096,7 @@
         <desc>Attributes that record the visual rendition of lines</desc>
         <attList>
           <attDef ident="rend" usage="opt">
+            <desc>records the appearance of a line.</desc>
             <datatype>
               <rng:ref name="data.LINERENDITION"/>
             </datatype>
@@ -1914,6 +2107,9 @@
         <desc>Attributes common to all linking elements</desc>
         <attList>
           <attDef ns="http://www.w3.org/1999/xlink" ident="actuate" usage="opt">
+            <desc>defines whether a link occurs automatically or must be
+              requested by the user. It is used in conjunction with the show
+              attribute to determine link behavior.</desc>
             <valList type="closed">
               <valItem ident="onLoad"/>
               <valItem ident="onRequest"/>
@@ -1922,11 +2118,21 @@
             </valList>
           </attDef>
           <attDef ns="http://www.w3.org/1999/xlink" ident="role" usage="opt">
+            <desc>indicates a property of the entire link. The value of the role
+              attribute must be a URI reference as defined in [IETF RFC 2396],
+              except that if the URI scheme used is allowed to have absolute and
+              relative forms, the URI portion must be absolute. The URI
+              reference identifies some resource that describes the intended
+              property. When no value is supplied, no particular role value is
+              to be inferred.</desc>
             <datatype>
               <rng:data type="anyURI"/>
             </datatype>
           </attDef>
           <attDef ns="http://www.w3.org/1999/xlink" ident="show" usage="opt">
+            <desc>defines whether a remote resource that is the target of a link
+              appears at the point of the link, replaces the existing link, or
+              appears in a new window.</desc>
             <valList type="closed">
               <valItem ident="new"/>
               <valItem ident="replace"/>
@@ -1935,22 +2141,38 @@
             </valList>
           </attDef>
           <attDef ident="targettype" usage="opt">
+            <desc>in contrast with the role attribute, allows the target
+              resource to be characterized using any convenient classification
+              scheme or typology.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
           </attDef>
-          <attDef ns="http://www.w3.org/1999/xlink" ident="title" usage="opt"/>
+          <attDef ns="http://www.w3.org/1999/xlink" ident="title" usage="opt">
+            <desc>contains a human-readable description of the entire link. A
+              value is optional; if a value is supplied, it should contain a
+              string that describes the resource. The use of this information is
+              highly dependent on the type of processing being done. It may be
+              used, for example, to make titles available to applications used
+              by visually impaired users, or to create a table of links, or to
+              present help text that appears when a user lets a mouse pointer
+              hover over a starting resource.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.link.external">
         <desc>Linking attributes for external referencing elements</desc>
         <attList>
           <attDef ident="entityref" usage="opt">
+            <desc>uses a previously-declared entity to identify an external
+              electronic object.</desc>
             <datatype>
               <rng:data type="ENTITY"/>
             </datatype>
           </attDef>
           <attDef ns="http://www.w3.org/1999/xlink" ident="href" usage="opt">
+            <desc>allows the use of an previously-undeclared URI to identify an
+              external electronic object.</desc>
             <datatype>
               <rng:ref name="data.URI"/>
             </datatype>
@@ -1967,31 +2189,38 @@
         <desc>Attributes that describe default typography of lyrics</desc>
         <attList>
           <attDef ident="lyric.align" usage="opt">
+            <desc>describes the alignment of lyric syllables associated with a
+              note or chord.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="lyric.fam" usage="opt">
+            <desc>sets the font family default value for lyrics.</desc>
             <datatype>
               <rng:ref name="data.FONTFAMILY"/>
             </datatype>
           </attDef>
           <attDef ident="lyric.name" usage="opt">
+            <desc>sets the font name default value for lyrics.</desc>
             <datatype>
               <rng:ref name="data.FONTNAME"/>
             </datatype>
           </attDef>
           <attDef ident="lyric.size" usage="opt">
+            <desc>sets the default font size value for lyrics.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="lyric.style" usage="opt">
+            <desc>sets the default font style value for lyrics.</desc>
             <datatype>
               <rng:ref name="data.FONTSTYLE"/>
             </datatype>
           </attDef>
           <attDef ident="lyric.weight" usage="opt">
+            <desc>sets the default font weight value for lyrics.</desc>
             <datatype>
               <rng:ref name="data.FONTWEIGHT"/>
             </datatype>
@@ -2003,6 +2232,8 @@
           expressed</desc>
         <attList>
           <attDef ident="unit" usage="opt">
+            <desc>indicates the units used for a measurement, usually using the
+              standard symbol for the desired unit.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -2013,6 +2244,13 @@
         <desc>Attributes that describe horizontal dimensions</desc>
         <attList>
           <attDef ident="width" usage="opt">
+            <desc>measurement of the horizontal dimension of an entity. This
+              value can only be interpreted meaningfully in combination with the
+              units attribute. The width attribute may be used to capture
+              measure width data for interchange with music printing systems
+              that utilize this information for printing. On &lt;barline&gt; the
+              width attribute captures the width of the preceding
+              measure.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2023,13 +2261,16 @@
         <desc>Attributes describing a writing medium, such as pencil or
           ink</desc>
         <attList>
-          <attDef ident="medium" usage="opt"/>
+          <attDef ident="medium" usage="opt">
+            <desc>describes the writing medium.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.meiversion">
         <desc>Attributes that record the version of MEI in use</desc>
         <attList>
           <attDef ident="meiversion" usage="opt">
+            <desc>records the version of MEI used by the file.</desc>
             <defaultVal>2010-05</defaultVal>
             <valList type="closed">
               <valItem ident="2010-05"/>
@@ -2042,6 +2283,10 @@
           barline and the prevailing meter</desc>
         <attList>
           <attDef ident="complete" usage="opt">
+            <desc>a value of 'c' (complete) indicates a metrically complete
+              measure, 'i' (incomplete) indicates a measure with not enough
+              beats, while 'o' (overfull) is for measures with too many
+              beats.</desc>
             <valList type="closed">
               <valItem ident="c"/>
               <valItem ident="i"/>
@@ -2049,6 +2294,12 @@
             </valList>
           </attDef>
           <attDef ident="control" usage="opt">
+            <desc>indicates whether or not a barline is "controlling"; that is,
+              if it indicates a point of alignment across all the parts.
+              Barlines within a score are usually controlling; that is, they
+              "line up". Barlines within parts may or may not be controlling.
+              When applied to &lt;measure&gt;, this attribute indicates the
+              nature of the right barline but not the left.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -2060,11 +2311,15 @@
           attributes in the logical domain related to meter signature</desc>
         <attList>
           <attDef ident="meter.count" usage="opt">
+            <desc>captures the number of beats in a measure, that is, the top
+              number of the meter signature.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="meter.unit" usage="opt">
+            <desc>contains the number indicating the beat unit, that is, the
+              bottom number of the meter signature.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2076,6 +2331,8 @@
           attributes in the visual domain related to meter signature</desc>
         <attList>
           <attDef ident="meter.rend" usage="opt">
+            <desc>contains indication of how the meter signature should be
+              rendered.</desc>
             <valList type="closed">
               <valItem ident="denomsym"/>
               <valItem ident="norm"/>
@@ -2083,11 +2340,16 @@
             </valList>
           </attDef>
           <attDef ident="meter.showchange" usage="opt">
+            <desc>determines whether a new meter signature should be displayed
+              when the meter signature changes.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="meter.sym" usage="opt">
+            <desc>indicates the use of a meter symbol instead of a numeric meter
+              signature, that is, 'C' for common time or 'C' with a slash for
+              cut time.</desc>
             <datatype>
               <rng:ref name="data.METERSIGN"/>
             </datatype>
@@ -2098,6 +2360,8 @@
         <desc>Attributes that record tempo in terms of beats per minute</desc>
         <attList>
           <attDef ident="mm" usage="opt">
+            <desc>used to describe tempo in terms of beats (meter signature
+              denominator) per minute, ala M.M. (Maezel's Metronome).</desc>
             <datatype>
               <rng:ref name="data.TEMPOVALUE"/>
             </datatype>
@@ -2108,6 +2372,9 @@
         <desc>Attributes that indicate programmatic numbering</desc>
         <attList>
           <attDef ident="multi.number" usage="opt">
+            <desc>indicates whether programmatically calculated counts of
+              multiple measures of rest (mrest) and whole measure repeats (mrpt)
+              in parts should be rendered.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -2126,17 +2393,24 @@
             </datatype>
           </attDef>
           <attDef ident="nymref" usage="opt">
+            <desc>used to record a pointer to the regularized form of the name
+              elsewhere in the document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
           </attDef>
-          <attDef ident="role" usage="opt"/>
+          <attDef ident="role" usage="opt">
+            <desc>used to specify further information about the entity
+              referenced by this name, for example, the occupation of a person
+              or the status of a place.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.octave">
         <desc>Attributes that record written octave</desc>
         <attList>
           <attDef ident="oct" usage="opt">
+            <desc>captures written octave information.</desc>
             <datatype>
               <rng:ref name="data.OCTAVE"/>
             </datatype>
@@ -2147,6 +2421,9 @@
         <desc>Attributes that record a default value for octave</desc>
         <attList>
           <attDef ident="octave.default" usage="opt">
+            <desc>contains a default octave specification for use when the first
+              note, rest, chord, etc. in a measure does not have an octave value
+              specified.</desc>
             <datatype>
               <rng:ref name="data.OCTAVE"/>
             </datatype>
@@ -2158,6 +2435,10 @@
           staff</desc>
         <attList>
           <attDef ident="ontheline" usage="opt">
+            <desc>determines the placement of notes on a 1-line staff. A value
+              of 'true' places all notes on the line, while a value of 'false'
+              places stems-up notes above the line and stems-down notes below
+              the line.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -2169,11 +2450,13 @@
           displacement</desc>
         <attList>
           <attDef ident="dis" usage="opt">
+            <desc>records the amount of octave displacement.</desc>
             <datatype>
               <rng:ref name="data.OCTAVE.DIS"/>
             </datatype>
           </attDef>
           <attDef ident="dis.place" usage="opt">
+            <desc>records the direction of octave displacement.</desc>
             <datatype>
               <rng:ref name="data.PLACE"/>
             </datatype>
@@ -2184,6 +2467,9 @@
         <desc>Attributes listing the participants in a collection</desc>
         <attList>
           <attDef ident="plist" usage="opt">
+            <desc>contains a space separated list of ID references that identify
+              logical events that participate in a collection, such as notes
+              under a phrase mark.</desc>
             <datatype>
               <rng:ref name="data.PLIST"/>
             </datatype>
@@ -2194,6 +2480,7 @@
         <desc>Attributes that record written pitch name</desc>
         <attList>
           <attDef ident="pname" usage="opt">
+            <desc>contains a written pitch name.</desc>
             <datatype>
               <rng:ref name="data.PITCHNAME"/>
             </datatype>
@@ -2211,6 +2498,8 @@
         <desc>Attributes capturing placement information</desc>
         <attList>
           <attDef ident="place" usage="opt">
+            <desc>captures the placement of the item with respect to the staff
+              with which it is associated.</desc>
             <datatype>
               <rng:ref name="data.STAFFREL"/>
             </datatype>
@@ -2221,6 +2510,7 @@
         <desc>Attributes that record relative size</desc>
         <attList>
           <attDef ident="size" usage="opt">
+            <desc>describes the relative size of a feature.</desc>
             <datatype>
               <rng:ref name="data.SIZE"/>
             </datatype>
@@ -2233,6 +2523,10 @@
           encoding.</desc>
         <attList>
           <attDef ident="resp" usage="opt">
+            <desc>captures information regarding responsibility for some aspect
+              of the text's creation, transcription, editing, or encoding. Its
+              value must point to one or more identifiers declared in the
+              document header.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -2243,6 +2537,8 @@
         <desc>Attributes that describe relative size</desc>
         <attList>
           <attDef ident="scale" usage="opt">
+            <desc>scale factor to be applied to the feature to make it the
+              desired display size.</desc>
             <datatype>
               <rng:ref name="data.PERCENT"/>
             </datatype>
@@ -2253,6 +2549,9 @@
         <desc/>
         <attList>
           <attDef ident="seq" usage="opt">
+            <desc>used to assign a sequence number related to the order in which
+              the encoded features carrying this attribute are believed to have
+              occurred.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -2264,6 +2563,8 @@
           feature</desc>
         <attList>
           <attDef ident="slash" usage="opt">
+            <desc>indicates the number of slashes to be rendered along with the
+              feature.</desc>
             <datatype>
               <rng:ref name="data.SLASH"/>
             </datatype>
@@ -2274,16 +2575,45 @@
         <desc>Attributes for marking the presence of a slur</desc>
         <attList>
           <attDef ident="slur" usage="opt">
+            <desc>indicates that this element participates in a slur. If visual
+              information about the slur needs to be recorded, then a
+              &lt;slur&gt; element should be employed.</desc>
             <datatype>
               <rng:ref name="data.SLURS"/>
             </datatype>
           </attDef>
         </attList>
       </classSpec>
-      <classSpec type="atts" module="MEI.shared" ident="att.staffident">
+      <classSpec type="atts" module="MEI.shared" ident="att.staffident.required">
         <desc/>
         <attList>
-          <attDef ident="staff" usage="req"/>
+          <attDef ident="staff" usage="req">
+            <desc>signifies the staff on which a notated event occurs or to
+              which a control event applies.</desc>
+            <datatype>
+              <rng:list>
+                <rng:oneOrMore>
+                  <rng:data type="positiveInteger"/>
+                </rng:oneOrMore>
+              </rng:list>
+            </datatype>
+          </attDef>
+        </attList>
+      </classSpec>
+      <classSpec type="atts" module="MEI.shared" ident="att.staffident.optional">
+        <desc/>
+        <attList>
+          <attDef ident="staff" usage="opt">
+            <desc>signifies the staff on which a notated event occurs or to
+              which a control event applies.</desc>
+            <datatype>
+              <rng:list>
+                <rng:oneOrMore>
+                  <rng:data type="positiveInteger"/>
+                </rng:oneOrMore>
+              </rng:list>
+            </datatype>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.staffloc">
@@ -2291,6 +2621,7 @@
           spaces</desc>
         <attList>
           <attDef ident="loc" usage="opt">
+            <desc>holds the staff location of the feature.</desc>
             <datatype>
               <rng:ref name="data.STAFFLOC"/>
             </datatype>
@@ -2301,6 +2632,8 @@
         <desc/>
         <attList>
           <attDef ident="startid" usage="opt">
+            <desc>holds a reference to the first element in a sequence of events
+              to which the feature applies.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -2316,6 +2649,8 @@
         </classes>
         <attList>
           <attDef ident="endid" usage="opt">
+            <desc>indicates the final element in a sequence of events to which
+              the feature applies.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -2330,26 +2665,34 @@
         </classes>
         <attList>
           <attDef ident="stem.dir" usage="opt">
+            <desc>describes the direction of a stem.</desc>
             <datatype>
               <rng:ref name="data.STEMDIRECTION"/>
             </datatype>
           </attDef>
           <attDef ident="stem.len" usage="opt">
+            <desc>encodes the stem length.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="stem.pos" usage="opt">
+            <desc>records the position of the stem in relation to the
+              notehead(s).</desc>
             <datatype>
               <rng:ref name="data.STEMPOSITION"/>
             </datatype>
           </attDef>
           <attDef ident="stem.x" usage="opt">
+            <desc>records the output x coordinate of the stem's attachment
+              point.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="stem.y" usage="opt">
+            <desc>records the output y coordinate of the stem's attachment
+              point.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2359,33 +2702,50 @@
       <classSpec type="atts" module="MEI.shared" ident="att.syltext">
         <desc>Attributes that hold associated sung text syllables</desc>
         <attList>
-          <attDef ident="syl" usage="opt"/>
+          <attDef ident="syl" usage="opt">
+            <desc>holds an associated sung text syllable.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.textstyle">
         <desc>Attributes that describe default text typography</desc>
         <attList>
           <attDef ident="text.fam" usage="opt">
+            <desc>provides a default value for the font family name of text
+              (other than lyrics) when this information is not provided on the
+              individual elements.</desc>
             <datatype>
               <rng:ref name="data.FONTFAMILY"/>
             </datatype>
           </attDef>
           <attDef ident="text.name" usage="opt">
+            <desc>provides a default value for the font name of text (other than
+              lyrics) when this information is not provided on the individual
+              elements.</desc>
             <datatype>
               <rng:ref name="data.FONTNAME"/>
             </datatype>
           </attDef>
           <attDef ident="text.size" usage="opt">
+            <desc>provides a default value for the font size of text (other than
+              lyrics) when this information is not provided on the individual
+              elements.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="text.style" usage="opt">
+            <desc>provides a default value for the font style of text (other
+              than lyrics) when this information is not provided on the
+              individual elements.</desc>
             <datatype>
               <rng:ref name="data.FONTSTYLE"/>
             </datatype>
           </attDef>
           <attDef ident="text.weight" usage="opt">
+            <desc>provides a default value for the font weight for text (other
+              than lyrics) when this information is not provided on the
+              individual elements.</desc>
             <datatype>
               <rng:ref name="data.FONTWEIGHT"/>
             </datatype>
@@ -2396,8 +2756,11 @@
         <desc>Attributes that indicate the presence of a tie</desc>
         <attList>
           <attDef ident="tie" usage="opt">
+            <desc>indicates that this element participates in a tie. If visual
+              information about the tie needs to be recorded, then a &lt;tie&gt;
+              element should be employed.</desc>
             <datatype>
-              <rng:ref name="data.TIE"/>
+              <rng:ref name="data.TIES"/>
             </datatype>
           </attDef>
         </attList>
@@ -2407,6 +2770,8 @@
           i.e., beats[.fractional beat part]</desc>
         <attList>
           <attDef ident="tstamp" usage="opt">
+            <desc>encodes the onset time in terms of musical time, i.e.,
+              beats[.fractional_beat_part]</desc>
             <datatype>
               <rng:ref name="data.BEAT"/>
             </datatype>
@@ -2418,11 +2783,16 @@
           time.</desc>
         <attList>
           <attDef ident="tstamp.ges" usage="opt">
+            <desc>used to record the onset time in pulses per quarter note (ppq,
+              MusicXML divisions, or MIDI clicks) since the start of the
+              file.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger"/>
             </datatype>
           </attDef>
           <attDef ident="tstamp.real" usage="opt">
+            <desc>used to record the onset time in terms of ISO time since the
+              start of the file.</desc>
             <datatype>
               <rng:ref name="data.ISOTIME"/>
             </datatype>
@@ -2433,11 +2803,21 @@
         <desc>Attributes that describe transposition</desc>
         <attList>
           <attDef ident="trans.diat" usage="opt">
+            <desc>records the amount of diatonic pitch shift, e.g. C to
+              C&#x266f; = 0, C to D&#x266d; = 1. Transposition requires both
+              trans.diat and trans.semi attributes in order to distinguish the
+              difference, for example, between a transposition from C to
+              C&#x266f; and one from C to D&#x266d;.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="trans.semi" usage="opt">
+            <desc>contains the amount of pitch shift in semitones, C to
+              C&#x266f; = 1, C to D&#x266d; = 1. Transposition requires both
+              trans.diat and trans.semi attributes in order to distinguish the
+              difference, for example, between a transposition from C to
+              C&#x266f; and one from C to D&#x266d;. </desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2448,6 +2828,9 @@
         <desc>Attributes for indicating the presence of a tuplet</desc>
         <attList>
           <attDef ident="tuplet" usage="opt">
+            <desc>indicates that this feature participates in a tuplet. If
+              visual information about the tuplet needs to be recorded, then a
+              &lt;tuplet&gt; element should be employed.</desc>
             <datatype>
               <rng:ref name="data.TUPLETS"/>
             </datatype>
@@ -2459,11 +2842,15 @@
           features</desc>
         <attList>
           <attDef ident="type" usage="opt">
+            <desc>characterizes the element in some sense, using any convenient
+              classification scheme or typology.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
           </attDef>
           <attDef ident="subtype" usage="opt">
+            <desc>provide any sub-classification for the element, additional to
+              that given by its type attribute.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -2474,26 +2861,33 @@
         <desc>Typographical attributes</desc>
         <attList>
           <attDef ident="fontfam" usage="opt">
+            <desc>contains the name of a font-family.</desc>
             <datatype>
               <rng:ref name="data.FONTFAMILY"/>
             </datatype>
           </attDef>
           <attDef ident="fontname" usage="opt">
+            <desc>holds the name of a font.</desc>
             <datatype>
               <rng:ref name="data.FONTNAME"/>
             </datatype>
           </attDef>
           <attDef ident="fontsize" usage="opt">
+            <desc>indicates the size of a font in printers' points, i.e., 1/72nd
+              of an inch.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="fontstyle" usage="opt">
+            <desc>records the style of a font, i.e, italic, oblique, or
+              normal.</desc>
             <datatype>
               <rng:ref name="data.FONTSTYLE"/>
             </datatype>
           </attDef>
           <attDef ident="fontweight" usage="opt">
+            <desc>used to indicate bold type.</desc>
             <datatype>
               <rng:ref name="data.FONTWEIGHT"/>
             </datatype>
@@ -2504,6 +2898,9 @@
         <desc>Attributes describing whether a feature should be displayed</desc>
         <attList>
           <attDef ident="visible" usage="opt">
+            <desc>indicates if a feature should be rendered when the notation is
+              presented graphically or sounded when it is presented in an aural
+              form.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -2514,6 +2911,10 @@
         <desc>Horizontal offset attributes</desc>
         <attList>
           <attDef ident="ho" usage="opt">
+            <desc>records a horizontal adjustment to a feature's
+              programmatically-determined location in terms of staff interline
+              distance; that is, in units of 1/2 the distance between adjacent
+              staff lines.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
@@ -2524,6 +2925,9 @@
         <desc>Horizontal offset attributes specified in terms of time</desc>
         <attList>
           <attDef ident="to" usage="opt">
+            <desc>records a timestamp adjustment of a feature's
+              programmatically-determined location in terms of musical time;
+              that is, beats.</desc>
             <datatype>
               <rng:ref name="data.TSTAMPOFFSET"/>
             </datatype>
@@ -2534,6 +2938,10 @@
         <desc>Vertical offset attributes</desc>
         <attList>
           <attDef ident="vo" usage="opt">
+            <desc>records the vertical adjustment of a feature's
+              programmatically-determined location in terms of staff interline
+              distance; that is, in units of 1/2 the distance between adjacent
+              staff lines.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
@@ -2557,11 +2965,15 @@
         <desc>Horizontal offset requiring a pair of attributes</desc>
         <attList>
           <attDef ident="startho" usage="opt">
+            <desc>records the horizontal adjustment of a feature's
+              programmatically-determined start point.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
           </attDef>
           <attDef ident="endho" usage="opt">
+            <desc>records the horizontal adjustment of a feature's
+              programmatically-determined end point.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
@@ -2573,11 +2985,15 @@
           specified in terms of time</desc>
         <attList>
           <attDef ident="startto" usage="opt">
+            <desc>records a timestamp adjustment of a feature's
+              programmatically-determined start point.</desc>
             <datatype>
               <rng:ref name="data.TSTAMPOFFSET"/>
             </datatype>
           </attDef>
           <attDef ident="endto" usage="opt">
+            <desc>records a timestamp adjustment of a feature's
+              programmatically-determined end point.</desc>
             <datatype>
               <rng:ref name="data.TSTAMPOFFSET"/>
             </datatype>
@@ -2588,11 +3004,15 @@
         <desc>Vertical offset attributes requiring a pair of attributes</desc>
         <attList>
           <attDef ident="startvo" usage="opt">
+            <desc>records a vertical adjustment of a feature's
+              programmatically-determined start point.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
           </attDef>
           <attDef ident="endvo" usage="opt">
+            <desc>records a vertical adjustment of a feature's
+              programmatically-determined end point.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
@@ -2621,11 +3041,17 @@
           feature in a facsimile requires the use of the facs attribute.</desc>
         <attList>
           <attDef ident="x" usage="opt">
+            <desc>encodes an x coordinate for a feature in an output coordinate
+              system. When it is necessary to record the placement of a feature
+              in a facsimile image, use the facs attribute.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="y" usage="opt">
+            <desc>encodes an y coordinate for a feature in an output coordinate
+              system. When it is necessary to record the placement of a feature
+              in a facsimile image, use the facs attribute.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2637,11 +3063,13 @@
           pairs to record their rendered *output* coordinates.</desc>
         <attList>
           <attDef ident="x2" usage="opt">
+            <desc>encodes the optional 2nd x coordinate.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="y2" usage="opt">
+            <desc>encodes the optional 2nd y coordinate.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -2664,6 +3092,8 @@
         </classes>
         <attList>
           <attDef ident="func" usage="opt">
+            <desc>records whether the accidental has an editorial or cautionary
+              function.</desc>
             <valList type="closed">
               <valItem ident="caution"/>
               <valItem ident="edit"/>
@@ -2682,6 +3112,8 @@
         </classes>
         <attList>
           <attDef ident="place" usage="opt">
+            <desc>captures the placement of the accidental relative to the
+              staff.</desc>
             <valList type="closed">
               <valItem ident="above"/>
               <valItem ident="below"/>
@@ -2713,6 +3145,7 @@
           <memberOf key="att.layerident"/>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
+          <memberOf key="att.staffident.optional"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.annot.vis">
@@ -2762,6 +3195,8 @@
         </classes>
         <attList>
           <attDef ident="rend" usage="opt">
+            <desc>records the appearance and usually the function of the
+              barline.</desc>
             <datatype>
               <rng:ref name="data.BARRENDITION"/>
             </datatype>
@@ -2835,6 +3270,9 @@
         </classes>
         <attList>
           <attDef ident="cluster" usage="opt">
+            <desc>indicates a single alternative notehead should be displayed
+              instead of individual noteheads. See Read, p. 320-321, re: tone
+              clusters.</desc>
             <datatype>
               <rng:ref name="data.CLUSTER"/>
             </datatype>
@@ -2907,6 +3345,8 @@
         </classes>
         <attList>
           <attDef ident="target" usage="opt">
+            <desc>encodes the target note when its pitch differs from the pitch
+              at which the custos appears.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -2966,6 +3406,8 @@
         </classes>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>records the function of the dot; that is, whether it is a dot
+              of augmentation or a dot of division.</desc>
             <valList type="closed">
               <valItem ident="aug"/>
               <valItem ident="div"/>
@@ -3126,11 +3568,16 @@
         </classes>
         <attList>
           <attDef ident="left" usage="opt">
+            <desc>indicates the visual rendition of the left barline. It is
+              present here only for facilitation of translation from legacy
+              encodings which use it. Usually, it can be safely ignored.</desc>
             <datatype>
               <rng:ref name="data.BARRENDITION"/>
             </datatype>
           </attDef>
           <attDef ident="right" usage="opt">
+            <desc>indicates the function of the right barline and is
+              structurally important.</desc>
             <datatype>
               <rng:ref name="data.BARRENDITION"/>
             </datatype>
@@ -3161,16 +3608,22 @@
         </classes>
         <attList>
           <attDef ident="oct.ges" usage="opt">
+            <desc>records performed octave information that differs from the
+              written value.</desc>
             <datatype>
               <rng:ref name="data.OCTAVE"/>
             </datatype>
           </attDef>
           <attDef ident="pname.ges" usage="opt">
+            <desc>contains a performed pitch name that differs from the written
+              value.</desc>
             <datatype>
               <rng:ref name="data.PITCHNAME.GES"/>
             </datatype>
           </attDef>
           <attDef ident="pnum" usage="opt">
+            <desc>holds a pitch-to-number mapping, a base-40 or MIDI note
+              number, for example.</desc>
             <datatype>
               <rng:ref name="data.PITCHNUMBER"/>
             </datatype>
@@ -3212,6 +3665,8 @@
         </classes>
         <attList>
           <attDef ident="headshape" usage="opt">
+            <desc>used to override the headshape normally used for the given
+              duration.</desc>
             <datatype>
               <rng:ref name="data.HEADSHAPE"/>
             </datatype>
@@ -3231,6 +3686,7 @@
         </classes>
         <attList>
           <attDef ident="num" usage="req">
+            <desc>amount of "padding" to be added, in interline units.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -3355,6 +3811,8 @@
         <desc>Visual domain attributes</desc>
         <attList>
           <attDef ident="rend" usage="opt">
+            <desc>indicates whether hash marks should be rendered between
+              systems. See Read, p. 436, ex. 26-3.</desc>
             <valList type="closed">
               <valItem ident="hash"/>
             </valList>
@@ -3397,16 +3855,21 @@
         </classes>
         <attList>
           <attDef ident="tune.pname" usage="opt">
+            <desc>holds the pitch name of a tuning reference pitch.</desc>
             <datatype>
               <rng:ref name="data.PITCHNAME"/>
             </datatype>
           </attDef>
           <attDef ident="tune.Hz" usage="opt">
+            <desc>holds a value for cycles per second, i.e., Hertz, for a tuning
+              reference pitch.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="tune.temper" usage="opt">
+            <desc>provides an indication of the tuning system, 'just', for
+              example.</desc>
             <datatype>
               <rng:ref name="data.TEMPERAMENT"/>
             </datatype>
@@ -3445,6 +3908,7 @@
         </classes>
         <attList>
           <attDef ident="ending.rend" usage="opt">
+            <desc>describes where ending marks should be displayed.</desc>
             <valList type="closed">
               <valItem ident="top"/>
               <valItem ident="barred"/>
@@ -3452,97 +3916,134 @@
             </valList>
           </attDef>
           <attDef ident="mnum.visible" usage="opt">
+            <desc>indicates whether measure numbers should be displayed.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="music.name" usage="opt">
+            <desc>sets the default music font name.</desc>
             <datatype>
               <rng:ref name="data.MUSICFONT"/>
             </datatype>
           </attDef>
           <attDef ident="music.size" usage="opt">
+            <desc>sets the default music font size.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="optimize" usage="opt">
+            <desc>indicates whether staves without notes, rests, etc. should be
+              displayed. When the value is 'true', empty staves are
+              displayed.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="page.height" usage="opt">
+            <desc>describes the physical height of the rendered output
+              page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.width" usage="opt">
+            <desc>describes the physical width of the rendered output
+              page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.units" usage="opt">
+            <desc>contains the real-world measurement units (inches,
+              centimeters, millimeters) used to describe the rendered page
+              height, width, and margins.</desc>
             <datatype>
               <rng:ref name="data.PGUNITS"/>
             </datatype>
           </attDef>
           <attDef ident="page.topmar" usage="opt">
+            <desc>indicates the amount of whitespace at the top of a rendered
+              score page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.botmar" usage="opt">
+            <desc>indicates the amount of whitespace at the bottom of a rendered
+              score page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.leftmar" usage="opt">
+            <desc>indicates the amount of whitespace at the left side of a
+              rendered score page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.rightmar" usage="opt">
+            <desc>indicates the amount of whitespace at the right side of a
+              rendered score page.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="page.panels" usage="opt">
+            <desc>indicates the number of logical pages to be rendered on a
+              single physical page.</desc>
             <datatype>
               <rng:ref name="data.PAGE.PANELS"/>
             </datatype>
           </attDef>
           <attDef ident="page.scale" usage="opt">
+            <desc>indicates how the page should be scaled when rendered.</desc>
             <datatype>
               <rng:ref name="data.PGSCALE"/>
             </datatype>
           </attDef>
           <attDef ident="spacing.packexp" usage="opt">
+            <desc>describes a note's spacing relative to its time value.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="spacing.packfact" usage="opt">
+            <desc>describes the note spacing of output.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="spacing.staff" usage="opt">
+            <desc>sets the minimum amount of space between staves in the same
+              system.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
-          <attDef ident="spacing.system" usage="opt"/>
+          <attDef ident="spacing.system" usage="opt">
+            <desc>contains a space-separated pair of numbers describing the
+              minimum and maximum amount of space between systems.</desc>
+          </attDef>
           <attDef ident="system.leftmar" usage="opt">
+            <desc>describes the amount of whitespace at the left system margin
+              relative to page.leftmar.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="system.rightmar" usage="opt">
+            <desc>describes the amount of whitespace at the right system margin
+              relative to page.rightmar.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
           </attDef>
           <attDef ident="system.topmar" usage="opt">
+            <desc>describes the distance from page's top edge to the first
+              system; used for first page only.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -3565,6 +4066,7 @@
         <desc>Visual domain attributes</desc>
         <attList>
           <attDef ident="restart" usage="opt">
+            <desc>indicates that staves begin again with this section.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3598,6 +4100,8 @@
         <desc>Visual domain attributes</desc>
         <attList>
           <attDef ident="compressable" usage="opt">
+            <desc>indicates whether a space is 'compressable', i.e., if it may
+              be removed at the disgression of processing software.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3666,27 +4170,47 @@
         </classes>
         <attList>
           <attDef ident="grid.show" usage="opt">
+            <desc>determines whether to display guitar chord grids.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="layerscheme" usage="opt">
+            <desc>indicates the number of layers and their stem
+              directions.</desc>
             <datatype>
               <rng:ref name="data.LAYERSCHEME"/>
             </datatype>
           </attDef>
           <attDef ident="lines" usage="opt">
+            <desc>indicates the number of stafflines.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
           </attDef>
-          <attDef ident="lines.color" usage="opt"/>
+          <attDef ident="lines.color" usage="opt">
+            <desc>captures the colors of the staff lines. The value is
+              structured; that is, it should have the same number of
+              space-separated RGB values as the number of lines indicated by the
+              lines attribute. A line can be made invisible by assigning it the
+              same RGB value as the background, usually white.</desc>
+            <datatype>
+              <rng:ref name="data.COLORS"/>
+            </datatype>
+          </attDef>
           <attDef ident="lines.visible" usage="opt">
+            <desc>records whether all stafflines are visible.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="spacing" usage="opt">
+            <desc>records the absolute distance (as opposed to the relative
+              distances recorded in &lt;scoredef&gt; elements) between this
+              staff and the preceding one in the same system. This value is
+              meaningless for the first staff in a system since the
+              spacing.system attribute indicates the spacing between
+              systems.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -3714,6 +4238,9 @@
         </classes>
         <attList>
           <attDef ident="barthru" usage="opt">
+            <desc>indicates whether barlines go across the space between staves
+              (true) or are only drawn across the lines of each staff
+              (false).</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3733,6 +4260,10 @@
         <desc>Logical domain attributes</desc>
         <attList>
           <attDef ident="con" usage="opt">
+            <desc>describes the symbols typically used to indicate breaks
+              between syllables: s (_s_pace) = word separator, d (_d_ash) =
+              syllable separator, u (_u_nderscore) = syllable extension, t
+              (_t_ilde) = syllable elision </desc>
             <valList type="closed">
               <valItem ident="s"/>
               <valItem ident="d"/>
@@ -3741,6 +4272,7 @@
             </valList>
           </attDef>
           <attDef ident="wordpos" usage="opt">
+            <desc>records the position of a syllable within a word.</desc>
             <valList type="closed">
               <valItem ident="i"/>
               <valItem ident="m"/>
@@ -3793,6 +4325,8 @@
           methods</desc>
         <attList>
           <attDef ident="method" usage="opt">
+            <desc>indicates the method employed to mark corrections and
+              normalizations.</desc>
             <valList type="closed">
               <valItem ident="silent"/>
               <valItem ident="tags"/>
@@ -3804,6 +4338,7 @@
         <desc>Attributes that indicate whether an event lies under a beam</desc>
         <attList>
           <attDef ident="beam" usage="opt">
+            <desc>indicates that this event is "under a beam".</desc>
             <datatype>
               <rng:ref name="data.BEAMS"/>
             </datatype>
@@ -3814,6 +4349,9 @@
         <desc>Attributes indicating cross-staff beaming</desc>
         <attList>
           <attDef ident="beam.with" usage="opt">
+            <desc>In the case of cross-staff beams, the beam.with attribute is
+              used to indicate which staff the beam is connected to; that is,
+              the staff above or the staff below.</desc>
             <datatype>
               <rng:ref name="data.OTHERSTAFF"/>
             </datatype>
@@ -3824,8 +4362,27 @@
         <desc>Used by layerdef, staffdef, and scoredef to provide default values
           for attributes in the logical domain related to beaming</desc>
         <attList>
-          <attDef ident="beam.group" usage="opt"/>
+          <attDef ident="beam.group" usage="opt">
+            <desc>provides an example of how automated beaming (including
+              secondary beams) is to be performed. It can be used to set a
+              default beaming pattern to be used when no beaming is indicated at
+              the event level. beam.group must contain a comma-separated list of
+              time values that add up to a measure, e.g., in 4/4 time '4,4,4,4'
+              indicates each quarter note worth of shorter notes would be beamed
+              together. Parentheses can be used to indicate sub-groupings of
+              secondary beams. For example, '(4.,4.,4.)' in 9/8 meter indicates
+              one outer beam per measure with secondary beams broken at each
+              dotted quarter duration, while a measure of 16th notes in 4/4 with
+              beam.group equal to '(4,4),(4,4)' will result in a primary beam
+              covering all the notes and secondary beams each group of 4 notes.
+              This beaming "directive" can be overridden by using &lt;beam&gt;
+              elements. If neither &lt;beam&gt; elements or the beam.group
+              attribute is used, then no beaming is rendered. Beaming can be
+              'turned off' by setting beam.group to an empty string.</desc>
+          </attDef>
           <attDef ident="beam.rests" usage="opt">
+            <desc>indicates whether automatically-drawn beams should include
+              rests shorter than a quarter note duration.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3836,6 +4393,11 @@
         <desc>Attributes that record the visual rendition of beams</desc>
         <attList>
           <attDef ident="rend" usage="opt">
+            <desc>captures whether a beam is feathered and in which direction:
+              'acc' indicates that the secondary beams get progressively closer
+              together, coming together at the end of the beam, while 'rit'
+              means that the secondary beams start at the same point and get
+              progressively more distant.</desc>
             <valList type="closed">
               <valItem ident="acc"/>
               <valItem ident="rit"/>
@@ -3843,6 +4405,7 @@
             </valList>
           </attDef>
           <attDef ident="slope" usage="opt">
+            <desc>records the slope of the beam.</desc>
             <datatype>
               <rng:data type="decimal"/>
             </datatype>
@@ -3853,6 +4416,10 @@
         <desc>Attributes that capture informtion about secondary beaming</desc>
         <attList>
           <attDef ident="breaksec" usage="opt">
+            <desc>presence of this attribute indicates that the secondary beam
+              should be broken following this note/chord. The value of the
+              attribute records the number of beams which should remain
+              unbroken.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -3864,7 +4431,9 @@
           measure</desc>
         <attList>
           <attDef ident="cutout" usage="opt">
-            <defaultVal>cutout</defaultVal>
+            <desc>Presence of the cutout attribute indicates that the staff
+              lines should not be drawn for the measure containing this
+              element.</desc>
             <valList type="closed">
               <valItem ident="cutout"/>
             </valList>
@@ -3876,6 +4445,9 @@
           source material to which it refers</desc>
         <attList>
           <attDef ident="expand" usage="opt">
+            <desc>indicates whether to render a repeat symbol or the source
+              material to which it refers. A value of 'true' renders the source
+              material, while 'false' displays the repeat symbol.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3888,11 +4460,16 @@
           note/chord.</desc>
         <attList>
           <attDef ident="grace" usage="opt">
+            <desc>marks a note or chord as a "grace" (without a definitive
+              written duration) and records from which other note/chord it
+              should "steal" time.</desc>
             <datatype>
               <rng:ref name="data.GRACE"/>
             </datatype>
           </attDef>
           <attDef ident="grace.time" usage="opt">
+            <desc>records the amount of time to be "stolen" from a non-grace
+              note/chord.</desc>
             <datatype>
               <rng:ref name="data.PERCENT"/>
             </datatype>
@@ -3904,6 +4481,8 @@
           marking attached to a feature</desc>
         <attList>
           <attDef ident="lv" usage="opt">
+            <desc>indicates the attachment of an l.v. (laissez vibrer) sign to
+              this element.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3923,6 +4502,8 @@
           feature</desc>
         <attList>
           <attDef ident="num" usage="opt">
+            <desc>along with numbase, describes duration as a ratio. num is the
+              first value in the ratio, while numbase is the second.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -3934,11 +4515,14 @@
           that accompany a bowed tremolo or tuplet</desc>
         <attList>
           <attDef ident="num.place" usage="opt">
+            <desc>states where the tuplet number will be placed in relation to
+              the noteheads.</desc>
             <datatype>
               <rng:ref name="data.PLACE"/>
             </datatype>
           </attDef>
           <attDef ident="num.visible" usage="opt">
+            <desc>determines if the tuplet number is visible.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -3949,6 +4533,7 @@
         <desc>Attributes that describe the rendition of slurs</desc>
         <attList>
           <attDef ident="slur.rend" usage="opt">
+            <desc>describes the line style of the slur.</desc>
             <datatype>
               <rng:ref name="data.CURVERENDITION"/>
             </datatype>
@@ -3960,11 +4545,16 @@
           is, chords and notes</desc>
         <attList>
           <attDef ident="stem.mod" usage="opt">
+            <desc>encodes any stem "modifiers"; that is, symbols rendered on the
+              stem, such as tremolo or Sprechstimme indicators.</desc>
             <datatype>
               <rng:ref name="data.STEMMODIFIER"/>
             </datatype>
           </attDef>
           <attDef ident="stem.with" usage="opt">
+            <desc>contains an indication of which staff a note or chord that
+              logically belongs to the current staff should be visually placed
+              on; that is, the one above or the one below.</desc>
             <datatype>
               <rng:ref name="data.OTHERSTAFF"/>
             </datatype>
@@ -3975,6 +4565,7 @@
         <desc>Attributes that describe the rendition of ties</desc>
         <attList>
           <attDef ident="tie.rend" usage="opt">
+            <desc>describes the line style of the tie</desc>
             <datatype>
               <rng:ref name="data.CURVERENDITION"/>
             </datatype>
@@ -3997,6 +4588,10 @@
         </classes>
         <attList>
           <attDef ident="order" usage="opt">
+            <desc>describes the direction in which the arpeggio is to be
+              performed (up = lowest to highest, down = highest to lowest) or a
+              return to a non-arpeggiated style (nonarp, usually rendered with a
+              preceding bracket instead of a wavy line).</desc>
             <valList type="closed">
               <valItem ident="up"/>
               <valItem ident="down"/>
@@ -4014,6 +4609,8 @@
         </classes>
         <attList>
           <attDef ident="arrow" usage="opt">
+            <desc>indicates if an arrowhead is to be drawn as part of the
+              arpeggiation symbol.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -4093,6 +4690,14 @@
         </classes>
         <attList>
           <attDef ident="rend" usage="req">
+            <desc>indicates the number of slashes required to render the
+              appropriate beat repeat symbol. When a single beat is repeated,
+              consisting of a single note or chord, it is indicated by a single
+              thick, slanting slash; therefore, the value '1' should be used.
+              The following values should be used when the beat is divided into
+              even notes: 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5.
+              When the beat is comprised of mixed duration values, the symbol is
+              always rendered as 2 slashes and 2 dots.</desc>
             <datatype>
               <rng:ref name="data.BEATRPT.REND"/>
             </datatype>
@@ -4109,6 +4714,9 @@
         <desc>Gestural domain attributes</desc>
         <attList>
           <attDef ident="amount" usage="opt">
+            <desc>records the amount of detuning. The decimal values should be
+              rendered as a fraction (or an integer plus a fraction) along with
+              the bend symbol.</desc>
             <datatype>
               <rng:ref name="data.BEND.AMOUNT"/>
             </datatype>
@@ -4184,6 +4792,7 @@
         </classes>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>describes the bowed tremolo as measured or unmeasured.</desc>
             <valList type="closed">
               <valItem ident="meas"/>
               <valItem ident="unmeas"/>
@@ -4228,7 +4837,7 @@
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.fermata.ges">
-        <desc>Gestural domain attributes</desc>
+        <desc>Analytical domain attributes</desc>
         <classes>
           <memberOf key="att.duration.performed"/>
         </classes>
@@ -4251,6 +4860,8 @@
         </classes>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>describes the visual appearance of the fermata; that is,
+              whether it occurs as upright or inverted.</desc>
             <valList type="closed">
               <valItem ident="inv"/>
               <valItem ident="norm"/>
@@ -4268,6 +4879,8 @@
         <desc>Gestural domain attributes</desc>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>describes whether the tremolo is measured or
+              unmeasured.</desc>
             <valList type="closed">
               <valItem ident="meas"/>
               <valItem ident="unmeas"/>
@@ -4314,7 +4927,10 @@
           <memberOf key="att.linerend"/>
         </classes>
         <attList>
-          <attDef ident="text" usage="opt"/>
+          <attDef ident="text" usage="opt">
+            <desc>records a text string, such as 'gliss', that accompanies the
+              glissando mark.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.hairpin.anl">
@@ -4338,6 +4954,8 @@
         </classes>
         <attList>
           <attDef ident="form" usage="req">
+            <desc>captures the visual rendition and function of the hairpin;
+              that is, whether it is a crescendo or diminuendo mark.</desc>
             <valList type="closed">
               <valItem ident="cres"/>
               <valItem ident="dim"/>
@@ -4366,6 +4984,8 @@
         </classes>
         <attList>
           <attDef ident="opening" usage="opt">
+            <desc>specifies the distance between the points of the open end of a
+              hairpin dynamic mark.</desc>
             <datatype>
               <rng:ref name="data.INTERLINE"/>
             </datatype>
@@ -4419,6 +5039,8 @@
         </classes>
         <attList>
           <attDef ident="c" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's C strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4427,6 +5049,8 @@
             </valList>
           </attDef>
           <attDef ident="d" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's D strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4435,6 +5059,8 @@
             </valList>
           </attDef>
           <attDef ident="e" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's E strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4443,6 +5069,8 @@
             </valList>
           </attDef>
           <attDef ident="f" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's F strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4451,6 +5079,8 @@
             </valList>
           </attDef>
           <attDef ident="g" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's G strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4459,6 +5089,8 @@
             </valList>
           </attDef>
           <attDef ident="a" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's A strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4467,6 +5099,8 @@
             </valList>
           </attDef>
           <attDef ident="b" usage="opt">
+            <desc>indicates the pedal setting, i.e., flat, natural, or sharp,
+              for the harp's B strings.</desc>
             <defaultVal>n</defaultVal>
             <valList type="closed">
               <valItem ident="f"/>
@@ -4628,6 +5262,9 @@
         </classes>
         <attList>
           <attDef ident="block" usage="opt">
+            <desc>When the block attribute is used, combinations of the 1, 2,
+              and 4 measure rest forms (Read, p. 104) should be rendered instead
+              of the modern form or an alternative symbol.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -4664,6 +5301,8 @@
         </classes>
         <attList>
           <attDef ident="gliss" usage="opt">
+            <desc>indicates that this element participates in a
+              glissando.</desc>
             <datatype>
               <rng:ref name="data.GLISSANDO"/>
             </datatype>
@@ -4705,6 +5344,12 @@
         </classes>
         <attList>
           <attDef ident="coll" usage="opt">
+            <desc>indicates whether the octave displacement should be performed
+              simultaneously with the written notes, i.e., "coll' ottava".
+              Unlike other octave signs which are indicated by broken lines,
+              coll' ottava uses an unbroken line or a series of longer broken
+              lines, ending with a short vertical stroke. See Read, p.
+              47-48.</desc>
             <valList type="closed">
               <valItem ident="coll"/>
             </valList>
@@ -4753,6 +5398,7 @@
         </classes>
         <attList>
           <attDef ident="dir" usage="req">
+            <desc>records the position of the piano damper pedal.</desc>
             <valList type="closed">
               <valItem ident="down"/>
               <valItem ident="up"/>
@@ -4776,6 +5422,13 @@
         </classes>
         <attList>
           <attDef ident="style" usage="opt">
+            <desc>When style is set to 'line', the pedal mark is rendered with a
+              continuous line. When it's set to pedstar, a pedal down and a half
+              pedal are rendered with "Ped.", a pedal up is rendered as "*", and
+              a pedal "bounce" (up then immediately down) is rendered with "*
+              Ped.". When set to altpedstar, pedal up and down indications are
+              the same as with pedstar but a bounce is rendered with "Ped."
+              only.</desc>
             <valList type="closed">
               <valItem ident="line"/>
               <valItem ident="pedstar"/>
@@ -4796,6 +5449,9 @@
           piano pedal rendition</desc>
         <attList>
           <attDef ident="pedal.style" usage="opt">
+            <desc>determines whether piano pedal marks should be drawn as lines
+              or as terms (e.g. 'Ped.' for pedal down and '*' for pedal
+              up).</desc>
             <valList type="closed">
               <valItem ident="line"/>
               <valItem ident="pedstar"/>
@@ -4809,6 +5465,7 @@
           information about rehearsal numbers/letters</desc>
         <attList>
           <attDef ident="reh.enclose" usage="opt">
+            <desc>describes the enclosing shape for rehearsal marks.</desc>
             <valList type="closed">
               <valItem ident="box"/>
               <valItem ident="circle"/>
@@ -4829,7 +5486,7 @@
       <classSpec type="atts" module="MEI.cmn" ident="att.reh.log">
         <desc>Logical domain attributes</desc>
         <classes>
-          <memberOf key="att.staffident"/>
+          <memberOf key="att.staffident.required"/>
           <memberOf key="att.startid"/>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
@@ -4871,6 +5528,7 @@
         </classes>
         <attList>
           <attDef ident="grid.show" usage="opt">
+            <desc>determines whether to display guitar chord grids.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -4990,7 +5648,10 @@
           <memberOf key="att.startendid"/>
         </classes>
         <attList>
-          <attDef ident="dur" usage="opt"/>
+          <attDef ident="dur" usage="opt">
+            <desc>records the duration of a feature using the relative
+              durational values provided by the data.DURATION datatype.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.tuplet.vis">
@@ -5000,21 +5661,30 @@
         </classes>
         <attList>
           <attDef ident="bracket.place" usage="opt">
+            <desc>used to state where a tuplet bracket will be placed in
+              relation to the noteheads.</desc>
             <datatype>
               <rng:ref name="data.PLACE"/>
             </datatype>
           </attDef>
           <attDef ident="bracket.visible" usage="opt">
+            <desc>states whether a bracket should be rendered with a
+              tuplet.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="dur.visible" usage="opt">
+            <desc>determines if the tuplet duration is visible.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="num.format" usage="opt">
+            <desc>controls how the num:numbase ratio is to be displayed. When
+              set to 'count' only the num attribute is displayed, e.g., '7';
+              however, when set to 'ratio', both the num and numbase attributes
+              are displayed, e.g., '7:4'.</desc>
             <valList type="closed">
               <valItem ident="count"/>
               <valItem ident="ratio"/>
@@ -5037,8 +5707,18 @@
       <classSpec type="atts" module="MEI.cmn" ident="att.tupletspan.log">
         <desc>Logical domain attributes</desc>
         <classes>
-          <memberOf key="att.tuplet.log"/>
+          <memberOf key="att.controlevent"/>
+          <memberOf key="att.beamedwith"/>
+          <memberOf key="att.augmentdots"/>
+          <memberOf key="att.duration.ratio"/>
+          <memberOf key="att.startendid"/>
         </classes>
+        <attList>
+          <attDef ident="dur" usage="opt">
+            <desc>records the duration of a feature using the relative
+              durational values provided by the data.DURATION datatype.</desc>
+          </attDef>
+        </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.tupletspan.vis">
         <desc>Visual domain attributes</desc>
@@ -5059,6 +5739,7 @@
         <desc>Logical domain attributes</desc>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>provides an indication of the function of the ligature.</desc>
             <datatype>
               <rng:ref name="data.LIGATUREFORM"/>
             </datatype>
@@ -5084,21 +5765,25 @@
         </classes>
         <attList>
           <attDef ident="modusmaior" usage="opt">
+            <desc>describes the maxima-long relationship.</desc>
             <datatype>
               <rng:ref name="data.MODUSMAIOR"/>
             </datatype>
           </attDef>
           <attDef ident="modusminor" usage="opt">
+            <desc>describes the long-breve relationship.</desc>
             <datatype>
               <rng:ref name="data.MODUSMINOR"/>
             </datatype>
           </attDef>
           <attDef ident="prolatio" usage="opt">
+            <desc>describes the semibreve-minim relationship.</desc>
             <datatype>
               <rng:ref name="data.PROLATIO"/>
             </datatype>
           </attDef>
           <attDef ident="tempus" usage="opt">
+            <desc>describes the breve-semibreve relationship.</desc>
             <datatype>
               <rng:ref name="data.TEMPUS"/>
             </datatype>
@@ -5117,22 +5802,30 @@
         </classes>
         <attList>
           <attDef ident="dot" usage="opt">
+            <desc>specifies whether a dot is to be added to the base
+              symbol.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="form" usage="opt">
+            <desc>indicates whether the base symbol is written vertically or
+              horizontally.</desc>
             <valList type="closed">
               <valItem ident="horizontal"/>
               <valItem ident="vertical"/>
             </valList>
           </attDef>
           <attDef ident="orient" usage="opt">
+            <desc>describes the rotation or reflection of the base
+              symbol.</desc>
             <datatype>
               <rng:ref name="data.ORIENTATION"/>
             </datatype>
           </attDef>
           <attDef ident="sign" usage="opt">
+            <desc>the base symbol in the mensuration sign/time signature of
+              mensural notation.</desc>
             <datatype>
               <rng:ref name="data.MENSURATIONSIGN"/>
             </datatype>
@@ -5147,21 +5840,29 @@
         </classes>
         <attList>
           <attDef ident="mensur.dot" usage="opt">
+            <desc>determines if a dot is to be added to the base symbol.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="mensur.orient" usage="opt">
+            <desc>describes the rotation or reflection of the base
+              symbol.</desc>
             <datatype>
               <rng:ref name="data.ORIENTATION"/>
             </datatype>
           </attDef>
           <attDef ident="mensur.sign" usage="opt">
+            <desc>the base symbol in the mensuration sign/time signature of
+              mensural notation.</desc>
             <datatype>
               <rng:ref name="data.MENSURATIONSIGN"/>
             </datatype>
           </attDef>
           <attDef ident="mensur.slash" usage="opt">
+            <desc>indicates the number lines added to the mensuration sign. For
+              example, one slash is added for what we now call 'alla
+              breve'.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5173,17 +5874,21 @@
           attributes in the visual domain related to mensuration</desc>
         <attList>
           <attDef ident="mensur.form" usage="opt">
+            <desc>indicates whether the base symbol is written vertically or
+              horizontally.</desc>
             <valList type="closed">
               <valItem ident="horizontal"/>
               <valItem ident="vertical"/>
             </valList>
           </attDef>
           <attDef ident="mensur.loc" usage="opt">
+            <desc>holds the staff location of the mensuration sign.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
           </attDef>
           <attDef ident="mensur.size" usage="opt">
+            <desc>describes the relative size of the mensuration sign.</desc>
             <datatype>
               <rng:ref name="data.SIZE"/>
             </datatype>
@@ -5200,6 +5905,7 @@
         <desc>Logical domain attributes</desc>
         <attList>
           <attDef ident="lig" usage="opt">
+            <desc>indicates this element's participation in a ligature.</desc>
             <valList type="closed">
               <valItem ident="recta"/>
               <valItem ident="obliqua"/>
@@ -5240,6 +5946,7 @@
         </classes>
         <attList>
           <attDef ident="spaces" usage="opt">
+            <desc>states how many spaces are covered by the rest.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5281,11 +5988,17 @@
         </classes>
         <attList>
           <attDef ident="proport.num" usage="opt">
+            <desc>Together, proport.num and proport.numbase specify a
+              proportional change as a ratio, e.g., 1:3. Proport.num is for the
+              first value in the ratio.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
           </attDef>
           <attDef ident="proport.numbase" usage="opt">
+            <desc>Together, proport.num and proport.numbase specify a
+              proportional change as a ratio, e.g., 1:3. Proport.numbase is for
+              the second value in the ratio.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5312,11 +6025,13 @@
         <desc>Logical domain attributes</desc>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>provides a subclass or functional label for the neume.</desc>
             <datatype>
               <rng:ref name="data.INEUMEFORM"/>
             </datatype>
           </attDef>
           <attDef ident="name" usage="opt">
+            <desc>records the name of the neume.</desc>
             <datatype>
               <rng:ref name="data.INEUMENAME"/>
             </datatype>
@@ -5350,11 +6065,13 @@
         </classes>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>provides a subclass or functional label for the neume.</desc>
             <datatype>
               <rng:ref name="data.UNEUMEFORM"/>
             </datatype>
           </attDef>
           <attDef ident="name" usage="opt">
+            <desc>records the name of the neume.</desc>
             <datatype>
               <rng:ref name="data.UNEUMENAME"/>
             </datatype>
@@ -5381,31 +6098,43 @@
         </classes>
         <attList>
           <attDef ident="copyof" usage="opt">
+            <desc>points to an element of which the current element is a
+              copy.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
           </attDef>
           <attDef ident="corresp" usage="opt">
+            <desc>used to point to other elements that correspond to this one in
+              a generic fashion.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
           </attDef>
           <attDef ident="next" usage="opt">
+            <desc>used to point to the next event(s) in a user-defined
+              collection.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
           </attDef>
           <attDef ident="prev" usage="opt">
+            <desc>points to the previous event(s) in a user-defined
+              collection.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
           </attDef>
           <attDef ident="sameas" usage="opt">
+            <desc>points to an element that is the same as the current element
+              but is not a literal copy of the current element.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
           </attDef>
           <attDef ident="synch" usage="opt">
+            <desc>points to elements that are synchronous with the current
+              element.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -5417,6 +6146,7 @@
           pitch</desc>
         <attList>
           <attDef ident="hfunc" usage="opt">
+            <desc>describes harmonic function in any convenient typology.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -5427,6 +6157,8 @@
         <desc>Attributes that describe harmonic intervals</desc>
         <attList>
           <attDef ident="inth" usage="opt">
+            <desc>encodes the harmonic interval between this note and other
+              pitches occurring at the same time.</desc>
             <datatype>
               <rng:data type="NMTOKENS"/>
             </datatype>
@@ -5441,6 +6173,7 @@
         </classes>
         <attList>
           <attDef ident="intm" usage="opt">
+            <desc>encodes the melodic interval from the previous pitch.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -5451,6 +6184,7 @@
         <desc>Attributes describing melodic function</desc>
         <attList>
           <attDef ident="mfunc" usage="opt">
+            <desc>describes melodic function in any convenient typology.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -5461,6 +6195,7 @@
         <desc>Attributes that describe pitch class</desc>
         <attList>
           <attDef ident="pclass" usage="opt">
+            <desc>holds pitch class information.</desc>
             <datatype>
               <rng:ref name="data.PITCHCLASS"/>
             </datatype>
@@ -5470,18 +6205,25 @@
       <classSpec type="atts" module="MEI.analysis" ident="att.solfa">
         <desc>Attributes that specify pitch using solfa</desc>
         <attList>
-          <attDef ident="psolfa" usage="opt"/>
+          <attDef ident="psolfa" usage="opt">
+            <desc>contains solfa designation, e.g., do, re, mi, etc., in either
+              a fixed or movable Do system.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.cmnOrnaments" ident="att.ornamentaccid">
         <desc>Accidentals associated with ornaments</desc>
         <attList>
           <attDef ident="accidupper" usage="opt">
+            <desc>records the written accidental associated with an upper
+              neighboring note.</desc>
             <datatype>
               <rng:ref name="data.ACCIDENTAL.EXPLICIT"/>
             </datatype>
           </attDef>
           <attDef ident="accidlower" usage="opt">
+            <desc>records the written accidental associated with a lower
+              neighboring note.</desc>
             <datatype>
               <rng:ref name="data.ACCIDENTAL.EXPLICIT"/>
             </datatype>
@@ -5506,12 +6248,25 @@
         </classes>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>'norm' signals the normal form, that is, the written note,
+              followed by its lower neighbor, with a return to the written note,
+              while 'inv' indicates the inverted form, that is, the principal
+              note, followed by its upper neighbor, with a return to the
+              principal note. Traditionally, the 'normal' mordent is written as
+              a short wavy line with a vertical line through it and the inverted
+              mordent is written without the vertical line. However, the meaning
+              of these signs is sometimes reversed. See Read, p. 245-246.
+              Another attribute in the visual domain would be necessary in order
+              to be completely explicit about which visual symbol is actually to
+              be rendered.</desc>
             <valList type="closed">
               <valItem ident="inv"/>
               <valItem ident="norm"/>
             </valList>
           </attDef>
           <attDef ident="long" usage="opt">
+            <desc>When the long attribute is set to 'yes', a double or long
+              mordent, consisting of 5 notes, is indicated.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -5576,11 +6331,15 @@
         </classes>
         <attList>
           <attDef ident="delayed" usage="opt">
+            <desc>When the delayed attribute is set to 'true', the turn begins
+              on the second half of the beat. See Read, p. 246.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="form" usage="opt">
+            <desc>indicates whether the turn begins on the note above (norm) or
+              on the note below (inv).</desc>
             <valList type="closed">
               <valItem ident="inv"/>
               <valItem ident="norm"/>
@@ -5608,6 +6367,8 @@
         </classes>
         <attList>
           <attDef ident="cause" usage="opt">
+            <desc>classifies the cause for the variant reading, according to any
+              appropriate typology of possible origins.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -5618,6 +6379,10 @@
         <desc>Attributes common to elements that may refer to a source</desc>
         <attList>
           <attDef ident="source" usage="opt">
+            <desc>contains a list of one or more pointers indicating the sources
+              which attest to a given reading. Each value should correspond to
+              the ID of a &lt;source&gt; element located in the document
+              header.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -5648,11 +6413,17 @@
         </classes>
         <attList>
           <attDef ident="cert" usage="opt">
+            <desc>signifies the degree of certainty or precision associated with
+              a feature.</desc>
             <datatype>
               <rng:ref name="data.CERTAINTY"/>
             </datatype>
           </attDef>
           <attDef ident="evidence" usage="opt">
+            <desc>indicates the nature of the evidence supporting the
+              reliability or accuracy of the intervention or interpretation.
+              Suggested values include: 'internal', 'external',
+              'conjecture'.</desc>
             <datatype>
               <rng:data type="NMTOKEN"/>
             </datatype>
@@ -5662,20 +6433,29 @@
       <classSpec type="atts" module="MEI.edittrans" ident="att.agentident">
         <desc>Attributes for the identification of a causative agent</desc>
         <attList>
-          <attDef ident="agent" usage="opt"/>
+          <attDef ident="agent" usage="opt">
+            <desc>signifies the causative agent of damage, illegibility, or
+              other loss of original text.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.edittrans" ident="att.extent">
         <desc>Attributes for identification of the extent of editorial
           assertions</desc>
         <attList>
-          <attDef ident="extent" usage="opt"/>
+          <attDef ident="extent" usage="opt">
+            <desc>indicates the extent of damage or omission.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.edittrans" ident="att.reasonident">
         <desc/>
         <attList>
-          <attDef ident="reason" usage="opt"/>
+          <attDef ident="reason" usage="opt">
+            <desc>holds a short phrase describing the reason for missing textual
+              material (gap), why material is supplied (supplied), or why
+              transcription is difficult (unclear).</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.edittrans" ident="att.trans">
@@ -5690,6 +6470,8 @@
         <desc/>
         <attList>
           <attDef ident="facs" usage="opt">
+            <desc>permits the current element to reference a facsimile image or
+              image zone which corresponds to it.</desc>
             <datatype>
               <rng:data type="IDREFS"/>
             </datatype>
@@ -5700,11 +6482,13 @@
         <desc>Attributes shared by table cells</desc>
         <attList>
           <attDef ident="colspan" usage="opt">
+            <desc>the number of columns spanned by this cell.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
           </attDef>
           <attDef ident="rowspan" usage="opt">
+            <desc>the number of rows spanned by this cell.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5715,6 +6499,8 @@
         <desc>Attributes that describe a fret location</desc>
         <attList>
           <attDef ident="fret" usage="opt">
+            <desc>records the location at which a string should be stopped
+              against a fret.</desc>
             <datatype>
               <rng:ref name="data.FRET"/>
             </datatype>
@@ -5742,6 +6528,8 @@
         </classes>
         <attList>
           <attDef ident="chordref" usage="opt">
+            <desc>contains a reference to a &lt;chorddef&gt; element elsewhere
+              in the document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -5759,11 +6547,21 @@
         </classes>
         <attList>
           <attDef ident="extender" usage="opt">
+            <desc>indicates the presence of an extension symbol, typically a
+              dash or underscore, drawn from the end of the harmonic indication
+              to the point indicated by the dur attribute.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
           <attDef ident="rendgrid" usage="opt">
+            <desc>when set to 'grid', the chord tablature grid defined in the
+              chordtable should be rendered instead of the text contents of the
+              &lt;harm&gt; element; if rendgrid equals 'gridname', both the
+              &lt;harm&gt; element's text and the grid should be displayed;
+              otherwise, only the 'name' of the chord, i.e., the text content of
+              the &lt;harm&gt; element, e.g. 'Cmaj' or 'V7/III', should be
+              rendered.</desc>
             <valList type="closed">
               <valItem ident="grid"/>
               <valItem ident="gridname"/>
@@ -5776,6 +6574,9 @@
           unavailable unless the meiLinkAlign module is included.</desc>
         <attList>
           <attDef ident="when" usage="opt">
+            <desc>indicates the point of occurrence of this feature along a
+              timeline. Its value must be the ID of a &lt;when&gt;
+              element.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -5795,7 +6596,7 @@
         <desc>Logical domain attributes</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident"/>
+          <memberOf key="att.staffident.required"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.lyrics" ident="att.lyrics.vis">
@@ -5820,11 +6621,17 @@
           expressed as ranges, e.g. 2-3,6.</desc>
         <attList>
           <attDef ident="refrain" usage="opt">
+            <desc>used to indicate a common, usually centered, refrain (Mup
+              User's Guide, p. 44).</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
           </attDef>
-          <attDef ident="rhythm" usage="opt"/>
+          <attDef ident="rhythm" usage="opt">
+            <desc>used to specify a rhythm for the lyric syllables that differs
+              from that of the notes on the staff, e.g. '4,4,4,4' when the
+              rhythm of the notes is '4.,8,4.,8'.</desc>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.lyrics" ident="att.verse.vis">
@@ -5840,21 +6647,26 @@
         <desc>Attributes that record MIDI channel information</desc>
         <attList>
           <attDef ident="midi.channel" usage="opt">
+            <desc>records a MIDI channel value.</desc>
             <datatype>
               <rng:ref name="data.MIDICHANNEL"/>
             </datatype>
           </attDef>
           <attDef ident="midi.duty" usage="opt">
+            <desc>specifies the 'on' part of the duty cycle as a percentage of a
+              note's duration.</desc>
             <datatype>
               <rng:ref name="data.PERCENT"/>
             </datatype>
           </attDef>
           <attDef ident="midi.port" usage="opt">
+            <desc>sets the MIDI port value.</desc>
             <datatype>
               <rng:ref name="data.MIDIVALUE"/>
             </datatype>
           </attDef>
           <attDef ident="midi.track" usage="opt">
+            <desc>sets the MIDI track.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5865,11 +6677,13 @@
         <desc>Attributes that record MIDI instrument information</desc>
         <attList>
           <attDef ident="midi.instrnum" usage="opt">
+            <desc>sets the MIDI instrument number.</desc>
             <datatype>
               <rng:ref name="data.MIDIVALUE"/>
             </datatype>
           </attDef>
           <attDef ident="midi.instrname" usage="opt">
+            <desc>provides a General MIDI label for the MIDI instrument.</desc>
             <datatype>
               <rng:ref name="data.MIDINAMES"/>
             </datatype>
@@ -5880,6 +6694,7 @@
         <desc>Attributes that record MIDI numbers</desc>
         <attList>
           <attDef ident="num" usage="req">
+            <desc>MIDI number in the range set by data.MIDIVALUE.</desc>
             <datatype>
               <rng:ref name="data.MIDIVALUE"/>
             </datatype>
@@ -5890,6 +6705,8 @@
         <desc>Attributes that record MIDI tempo information</desc>
         <attList>
           <attDef ident="midi.tempo" usage="opt">
+            <desc>contains a MIDI value, that is, the number of quarter notes
+              per minute in the range from 10 to 1000.</desc>
             <datatype>
               <rng:ref name="data.MIDITEMPO"/>
             </datatype>
@@ -5900,6 +6717,7 @@
         <desc>Attributes that record MIDI values</desc>
         <attList>
           <attDef ident="val" usage="opt">
+            <desc>MIDI number</desc>
             <datatype>
               <rng:ref name="data.MIDIVALUE"/>
             </datatype>
@@ -5910,7 +6728,7 @@
         <desc>Attributes common to MIDI events</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident"/>
+          <memberOf key="att.staffident.required"/>
           <memberOf key="att.timestamp.musical"/>
         </classes>
       </classSpec>
@@ -5927,7 +6745,7 @@
         <desc>Logical domain attributes</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident"/>
+          <memberOf key="att.staffident.required"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.midi" ident="att.midi.vis">
@@ -5937,6 +6755,9 @@
         <desc>Attributes that record time-base information</desc>
         <attList>
           <attDef ident="ppq" usage="opt">
+            <desc>indicates the number of pulses (sometimes referred to as ticks
+              or divisions) per quarter note. Unlike MIDI, MEI permits different
+              values for a score and individual staves.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -5947,7 +6768,22 @@
         ident="att.staffdef.ges.tablature">
         <desc>Gestural domain attributes for staffdef in tablature</desc>
         <attList>
-          <attDef ident="tab.strings" usage="opt"/>
+          <attDef ident="tab.strings" usage="opt">
+            <desc>provides a written pitch and octave for each open string, e.g.
+              "e3 a3 d4 g4 b4 e5" for standard guitar tuning. It should contain
+              the number of tokens indicated by the lines attribute. Chromatic
+              alteration may be indicated with '-', or 'f', (flat) and '#', or
+              's' (sharp). Double sharps and flats are not permitted.</desc>
+            <datatype>
+              <rng:list>
+                <rng:oneOrMore>
+                  <rng:data type="NMTOKEN">
+                    <rng:param name="pattern">[a-g][\-#fs]?[0-9]</rng:param>
+                  </rng:data>
+                </rng:oneOrMore>
+              </rng:list>
+            </datatype>
+          </attDef>
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.tablature"
@@ -5955,11 +6791,13 @@
         <desc>Gestural domain attributes</desc>
         <attList>
           <attDef ident="tab.fret" usage="opt">
+            <desc>records the fret at which a string should be stopped.</desc>
             <datatype>
               <rng:ref name="data.FRETNUMBER"/>
             </datatype>
           </attDef>
           <attDef ident="tab.string" usage="opt">
+            <desc>records which string is to be played.</desc>
             <datatype>
               <rng:ref name="data.STRINGNUMBER"/>
             </datatype>
@@ -5967,8 +6805,7 @@
         </attList>
       </classSpec>
       <!--****-->
-      <!--Defintion of Model and Macro Classes-->
-      <!--Number of definitions found in original RNG: 114-->
+      <!--Model and Macro Classes-->
       <!--****-->
       <classSpec type="model" ident="model.addressLike" module="MEI.shared">
         <desc>groups elements used to represent a postal address.</desc>
@@ -6675,8 +7512,7 @@
         <desc>groups elements that group symbol definitions.</desc>
       </classSpec>
       <!--****-->
-      <!--Defintion of Model Classes-->
-      <!--Number of definitions found in original RNG: 114-->
+      <!--Model Classes-->
       <!--****-->
       <elementSpec ident="abbr" module="MEI.shared">
         <desc>abbreviation ― A generic element for a shortened form of a word,
@@ -6726,7 +7562,9 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="expan" usage="opt"/>
+          <attDef ident="expan" usage="opt">
+            <desc>records the expansion of the abbreviation.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="accid" module="MEI.shared">
@@ -6896,8 +7734,9 @@
               <sch:let name="staffpos"
                 value="count(ancestor::mei:staff/preceding-sibling::mei:staff) +
                 1"/>
-              <sch:assert test="number(@taktplace) &lt;= number(2 *
-                preceding::mei:staffdef[@n=$staff and @lines][1]/@lines)"/>
+              <sch:assert
+                test="number(@taktplace) &lt;= number(2 * preceding::mei:staffdef[@n=$staff and @lines][1]/@lines)"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -6989,8 +7828,9 @@
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:chord[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7019,10 +7859,11 @@
           <constraint>
             <sch:rule context="mei:clef[ancestor::mei:staffdef[@lines]]">
               <sch:let name="thisstaff" value="ancestor::mei:staffdef/@n"/>
-              <sch:assert test="number(@line) &lt;=
-                number(ancestor::mei:staffdef[@n=$thisstaff and
-                @lines][1]/@lines)">The clef position must be less than or equal
-                to the number of lines on the staff.</sch:assert>
+              <sch:assert
+                test="number(@line) &lt;=
+                number(ancestor::mei:staffdef[@n=$thisstaff and @lines][1]/@lines)"
+                >The clef position must be less than or equal to the number of
+                lines on the staff.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7030,10 +7871,11 @@
           <constraint>
             <sch:rule context="mei:clef[ancestor::mei:staffdef[not(@lines)]]">
               <sch:let name="thisstaff" value="ancestor::mei:staffdef/@n"/>
-              <sch:assert test="number(@line) &lt;=
-                number(preceding::mei:staffdef[@n=$thisstaff and
-                @lines][1]/@lines)">The clef position must be less than or equal
-                to the number of lines on the staff.</sch:assert>
+              <sch:assert
+                test="number(@line) &lt;= number(preceding::mei:staffdef[@n=$thisstaff and
+                @lines][1]/@lines)"
+                >The clef position must be less than or equal to the number of
+                lines on the staff.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7061,12 +7903,14 @@
               <sch:let name="staffpos"
                 value="count(ancestor::mei:staff/preceding-sibling::mei:staff) +
                 1"/>
-              <sch:assert test="number(@line) &lt;=
+              <sch:assert
+                test="number(@line) &lt;=
                 number(preceding::mei:staffdef[@n=$thisstaff and
-                @lines][1]/@lines) or          number(@line) &lt;=
+                @lines][1]/@lines) or number(@line) &lt;=
                 number(preceding::mei:staffdef[@n=$staffpos and
-                @lines][1]/@lines)">The clef position must be less than or equal
-                to the number of lines on the staff.</sch:assert>
+                @lines][1]/@lines)"
+                >The clef position must be less than or equal to the number of
+                lines on the staff.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7094,9 +7938,11 @@
           <constraint>
             <sch:rule context="mei:custos[@target]">
               <sch:let name="thistarget" value="@target"/>
-              <sch:assert test="@target =
-                following::mei:note[@xml:id=$thistarget]/@xml:id">The value of
-                @target must be the ID of a note element.</sch:assert>
+              <sch:assert
+                test="@target = 
+                following::mei:note[@xml:id=$thistarget]/@xml:id"
+                >The value of @target must be the ID of a note
+                element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7168,9 +8014,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:dir">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7232,9 +8080,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:dynam">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7341,7 +8191,9 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="abbr" usage="opt"/>
+          <attDef ident="abbr" usage="opt">
+            <desc>captures the unabbreviated form of the text.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="expansion" module="MEI.shared">
@@ -7364,9 +8216,11 @@
         <constraintSpec ident="Check_expansionplist" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:expansion[@plist]">
-              <sch:assert test="every $i in tokenize(@plist, '\s+') satisfies
+              <sch:assert
+                test="every $i in tokenize(@plist, '\s+') satisfies
                 $i=ancestor::mei:section/descendant::mei:*[name()='section' or
-                name()='ending' or name()='rdg'][@xml:id]/@xml:id"/>
+                name()='ending' or name()='rdg'][@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7509,6 +8363,8 @@
         </content>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>specifies whether the accidental allows written enharmonic
+              values (explicit) or only performed (implicit) values.</desc>
             <valList type="closed">
               <valItem ident="implicit"/>
               <valItem ident="explicit"/>
@@ -7534,6 +8390,7 @@
         </content>
         <attList>
           <attDef ident="mode" usage="opt">
+            <desc>indicates major, minor, or other tonality.</desc>
             <datatype>
               <rng:ref name="data.MODE"/>
             </datatype>
@@ -7628,6 +8485,8 @@
         </content>
         <attList>
           <attDef ident="func" usage="opt">
+            <desc>states whether the line break follows a single line or a line
+              group.</desc>
             <valList type="closed">
               <valItem ident="line"/>
               <valItem ident="group"/>
@@ -7709,9 +8568,11 @@
         <constraintSpec ident="Check_source" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@source]">
-              <sch:assert test="every $i in tokenize(@source, '\s+') satisfies
-                $i=//mei:source/@xml:id">The values in @source must match the
-                IDs of source elements.</sch:assert>
+              <sch:assert
+                test="every $i in tokenize(@source, '\s+') satisfies
+                $i=//mei:source/@xml:id"
+                >The values in @source must match the IDs of source
+                elements.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7724,9 +8585,11 @@
           <constraint>
             <sch:rule context="mei:*[@altsym]">
               <sch:let name="thisaltsym" value="@altsym"/>
-              <sch:assert test="@altsym =
-                preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id">The value
-                of @altsym must be the ID of a symboldef element.</sch:assert>
+              <sch:assert
+                test="@altsym = 
+                preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id"
+                >The value of @altsym must be the ID of a symboldef
+                element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7739,9 +8602,11 @@
           <constraint>
             <sch:rule context="mei:*[starts-with(@xml:lang, 'x-')]">
               <sch:let name="thislang" value="@xml:lang"/>
-              <sch:assert test="@xml:lang =
-                //mei:language[@xml:id=$thislang]/@xml:id">The value of
-                @xml:lang must be the ID of a language element.</sch:assert>
+              <sch:assert
+                test="@xml:lang =
+                //mei:language[@xml:id=$thislang]/@xml:id"
+                >The value of @xml:lang must be the ID of a language
+                element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7754,9 +8619,10 @@
           <constraint>
             <sch:rule context="mei:*[@classcode]">
               <sch:let name="thisclasscode" value="@classcode"/>
-              <sch:assert test="@classcode =
-                preceding::mei:classcode[@xml:id=$thisclasscode]/@xml:id">The
-                value of @classcode must be the ID of a classcode
+              <sch:assert
+                test="@classcode =
+                preceding::mei:classcode[@xml:id=$thisclasscode]/@xml:id"
+                >The value of @classcode must be the ID of a classcode
                 element.</sch:assert>
             </sch:rule>
           </constraint>
@@ -7770,9 +8636,11 @@
           <constraint>
             <sch:rule context="mei:*[@hand]">
               <sch:let name="thishand" value="@hand"/>
-              <sch:assert test="@hand =
-                preceding::mei:hand[@xml:id=$thishand]/@xml:id">The value of
-                @hand must be the ID of a hand element.</sch:assert>
+              <sch:assert
+                test="@hand =
+                preceding::mei:hand[@xml:id=$thishand]/@xml:id"
+                >The value of @hand must be the ID of a hand
+                element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7785,15 +8653,19 @@
           <constraint>
             <sch:rule context="mei:*[@resp]">
               <sch:let name="thisresp" value="@resp"/>
-              <sch:assert test="@resp = //mei:persname[@xml:id=$thisresp and
-                ancestor::mei:meihead]/@xml:id">The value of @resp must be the
-                ID of a persname element declared within the meiheader
-                element.</sch:assert>
+              <sch:assert
+                test="@resp = //mei:*[@xml:id=$thisresp and
+                ancestor::mei:meihead]/@xml:id"
+                >The value of @resp must be the ID of an element declared within
+                the meiheader element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <attList>
           <attDef ident="xml:id" usage="opt">
+            <desc>regularizes the naming of an element and thus facilitates
+              building links between it and other resources. Each id attribute
+              within a document must have a unique value.</desc>
             <datatype>
               <rng:data type="ID"/>
             </datatype>
@@ -7896,8 +8768,10 @@
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:note[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies
+                $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -8027,6 +8901,8 @@
         </content>
         <attList>
           <attDef ident="func" usage="opt">
+            <desc>states the side of a leaf (as in a manuscript) on which the
+              content following the &lt;pb&gt; element occurs.</desc>
             <valList type="closed">
               <valItem ident="verso"/>
               <valItem ident="recto"/>
@@ -8054,56 +8930,6 @@
               <rng:ref name="model.textcomponentLike"/>
               <rng:ref name="model.annotLike"/>
               <rng:ref name="model.locrefLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </content>
-      </elementSpec>
-      <elementSpec ident="pgfoot1" module="MEI.shared">
-        <desc>page footer 1 ― A running footer on the first page. This element
-          is a specialized form of the fw element. Auto-generated page numbers
-          may be indicated with a processing instruction. The pgheadN and
-          pgfootN elements should *not* be used to encode textual
-          notes/annotations.</desc>
-        <classes>
-          <memberOf key="att.common"/>
-          <memberOf key="att.facsimile"/>
-          <memberOf key="att.lang"/>
-          <memberOf key="model.metaLike.score"/>
-        </classes>
-        <content>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:text/>
-              <rng:ref name="model.textcomponentLike"/>
-              <rng:ref name="model.textphraseLike.limited"/>
-              <rng:ref name="model.editLike"/>
-              <rng:ref name="model.transcriptionLike"/>
-              <rng:ref name="model.appLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </content>
-      </elementSpec>
-      <elementSpec ident="pgfoot2" module="MEI.shared">
-        <desc>page footer 2 ― A running header on the pages following the first.
-          This element is a specialized form of the fw element. Auto-generated
-          page numbers may be indicated with a processing instruction. The
-          pgheadN and pgfootN elements should *not* be used to encode textual
-          notes/annotations.</desc>
-        <classes>
-          <memberOf key="att.common"/>
-          <memberOf key="att.facsimile"/>
-          <memberOf key="att.lang"/>
-          <memberOf key="model.metaLike.score"/>
-        </classes>
-        <content>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:text/>
-              <rng:ref name="model.textcomponentLike"/>
-              <rng:ref name="model.textphraseLike.limited"/>
-              <rng:ref name="model.editLike"/>
-              <rng:ref name="model.transcriptionLike"/>
-              <rng:ref name="model.appLike"/>
             </rng:choice>
           </rng:zeroOrMore>
         </content>
@@ -8160,6 +8986,56 @@
           </rng:zeroOrMore>
         </content>
       </elementSpec>
+      <elementSpec ident="pgfoot1" module="MEI.shared">
+        <desc>page footer 1 ― A running footer on the first page. This element
+          is a specialized form of the fw element. Auto-generated page numbers
+          may be indicated with a processing instruction. The pgheadN and
+          pgfootN elements should *not* be used to encode textual
+          notes/annotations.</desc>
+        <classes>
+          <memberOf key="att.common"/>
+          <memberOf key="att.facsimile"/>
+          <memberOf key="att.lang"/>
+          <memberOf key="model.metaLike.score"/>
+        </classes>
+        <content>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textcomponentLike"/>
+              <rng:ref name="model.textphraseLike.limited"/>
+              <rng:ref name="model.editLike"/>
+              <rng:ref name="model.transcriptionLike"/>
+              <rng:ref name="model.appLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </content>
+      </elementSpec>
+      <elementSpec ident="pgfoot2" module="MEI.shared">
+        <desc>page footer 2 ― A running header on the pages following the first.
+          This element is a specialized form of the fw element. Auto-generated
+          page numbers may be indicated with a processing instruction. The
+          pgheadN and pgfootN elements should *not* be used to encode textual
+          notes/annotations.</desc>
+        <classes>
+          <memberOf key="att.common"/>
+          <memberOf key="att.facsimile"/>
+          <memberOf key="att.lang"/>
+          <memberOf key="model.metaLike.score"/>
+        </classes>
+        <content>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textcomponentLike"/>
+              <rng:ref name="model.textphraseLike.limited"/>
+              <rng:ref name="model.editLike"/>
+              <rng:ref name="model.transcriptionLike"/>
+              <rng:ref name="model.appLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </content>
+      </elementSpec>
       <elementSpec ident="phrase" module="MEI.shared">
         <desc>phrase ― Historically, a phrase mark indicated a "unified melodic
           idea", while the term "slur" was used for two-note legato patterns.
@@ -8194,9 +9070,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:phrase">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -8227,18 +9105,26 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="altrend" usage="opt"/>
+          <attDef ident="altrend" usage="opt">
+            <desc>used to extend the values of the rend attribute.</desc>
+          </attDef>
           <attDef ident="rend" usage="opt">
+            <desc>captures the appearance of the element's contents.</desc>
             <datatype>
               <rng:ref name="data.TEXTRENDITION"/>
             </datatype>
           </attDef>
           <attDef ident="rotation" usage="opt">
+            <desc>A positive value for rotation rotates the text in a
+              counter-clockwise fashion, while negative values produce clockwise
+              rotation.</desc>
             <datatype>
               <rng:ref name="data.DEGREES"/>
             </datatype>
           </attDef>
           <attDef ident="valign" usage="opt">
+            <desc>specifies the vertical alignment of the element
+              content.</desc>
             <valList type="closed">
               <valItem ident="top"/>
               <valItem ident="middle"/>
@@ -8293,18 +9179,21 @@
           <constraint>
             <sch:rule context="mei:rest[@line]">
               <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
-              <sch:assert test="number(@line) &lt;=
-                number(preceding::mei:staffdef[@n=$thisstaff and
-                @lines][1]/@lines)">The value of @line must be less than or
-                equal to the number of lines on the staff.</sch:assert>
+              <sch:assert
+                test="number(@line) &lt;= number(preceding::mei:staffdef[@n=$thisstaff and
+                @lines][1]/@lines)"
+                >The value of @line must be less than or equal to the number of
+                lines on the staff.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:rest[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies
+                $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -8478,8 +9367,12 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="delim" usage="opt"/>
+          <attDef ident="delim" usage="opt">
+            <desc>indicates the delimiter used to mark the portions of text that
+              are to be stacked.</desc>
+          </attDef>
           <attDef ident="align" usage="opt">
+            <desc>specifies how the stacked text should be aligned.</desc>
             <valList type="closed">
               <valItem ident="left"/>
               <valItem ident="right"/>
@@ -8555,9 +9448,11 @@
               <sch:let name="thisstaff" value="@n"/>
               <sch:assert test="@n">A staffdef must have an n
                 attribute.</sch:assert>
-              <sch:assert test="@lines or preceding::mei:staffdef[@n=$thisstaff
-                and @lines]">The first occurrence of a staff must declare the
-                number of staff lines.</sch:assert>
+              <sch:assert
+                test="@lines or preceding::mei:staffdef[@n=$thisstaff
+                and @lines]"
+                >The first occurrence of a staff must declare the number of
+                staff lines.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -8789,6 +9684,9 @@
         </content>
         <attList>
           <attDef ident="type" usage="opt">
+            <desc>specifies the kind of document to which the header is
+              attached, for example whether it is a corpus or individual
+              text.</desc>
             <valList type="closed">
               <valItem ident="music"/>
               <valItem ident="corpus"/>
@@ -8899,7 +9797,10 @@
           </rng:choice>
         </content>
         <attList>
-          <attDef ident="version" usage="opt"/>
+          <attDef ident="version" usage="opt">
+            <desc>supplies a version number for an application, independent of
+              its identifier or display name.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="availability" module="MEI.header">
@@ -8956,14 +9857,22 @@
       <elementSpec ident="classcode" module="MEI.header">
         <desc>classification code ― Library of Congress subject or call number,
           or a thesaurus or ontology citation, for example. The source of
-          controlled-vocabulary terms used in the &lt;keywords&gt;
-          element.</desc>
+          &lt;keywords&gt; element. Congress Classification (LCC), Library of
+          Congress Name Authority File (LCNAF), or other thesaurus or ontology.
+          The citation may be provided in the authority attribute or as textual
+          content of the element when additional markup is needed.</desc>
         <classes>
           <memberOf key="att.common"/>
           <memberOf key="att.bibl"/>
         </classes>
         <content>
-          <rng:text/>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.lbLike"/>
+              <rng:ref name="model.rendLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
         </content>
       </elementSpec>
       <elementSpec ident="classification" module="MEI.header">
@@ -9028,6 +9937,7 @@
         </content>
         <attList>
           <attDef ident="corrlevel" usage="opt">
+            <desc>indicates the degree of correction applied to the text.</desc>
             <valList type="closed">
               <valItem ident="high"/>
               <valItem ident="medium"/>
@@ -9050,9 +9960,9 @@
           <memberOf key="model.profiledescPart"/>
         </classes>
         <content>
-          <rng:oneOrMore>
+          <rng:zeroOrMore>
             <rng:ref name="model.textcomponentLike"/>
-          </rng:oneOrMore>
+          </rng:zeroOrMore>
         </content>
       </elementSpec>
       <elementSpec ident="dimensions" module="MEI.header">
@@ -9254,6 +10164,7 @@
         </content>
         <attList>
           <attDef ident="initial" usage="opt">
+            <desc>marks this hand as the first one of the document.</desc>
             <datatype>
               <rng:ref name="data.BOOLEAN"/>
             </datatype>
@@ -9477,13 +10388,13 @@
       </elementSpec>
       <elementSpec ident="profiledesc" module="MEI.header">
         <desc>profile description ― A detailed description of the
-          non-bibliographic aspects of the creation of a musical work,
-          specifically the languages and sublanguages used, the situation in
-          which it was produced, e.g. the participants, setting, reception
-          history, etc. Do not confuse this with &lt;filedesc&gt;, which bundles
-          bibliographic information about the creation of the MEI file. This
-          element is modelled on an element in the Text Encoding Initiative
-          (TEI).</desc>
+          non-bibliographic aspects of the musical entity, (e.g., work) that the
+          MEI file represents, specifically the languages and sublanguages used,
+          the situation in which it was produced, e.g. the participants,
+          setting, reception history, etc. Do not confuse this with
+          &lt;filedesc&gt;, which bundles bibliographic information about the
+          creation of the MEI file. This element is modelled on an element in
+          the Text Encoding Initiative (TEI).</desc>
         <classes>
           <memberOf key="att.bibl"/>
           <memberOf key="att.common"/>
@@ -9784,6 +10695,10 @@
         </content>
         <attList>
           <attDef ident="classcode" usage="opt">
+            <desc>contains a reference to the controlled vocabulary from which
+              the term is drawn. The value must match the value of an ID
+              attribute on a classcode element given elsewhere in the
+              document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -10015,9 +10930,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:beamspan">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10077,9 +10994,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:bend">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10164,9 +11083,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:fermata">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10233,9 +11154,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:hairpin">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10264,9 +11187,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:harppedal">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10307,9 +11232,11 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:gliss">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or
+                @tstamp.real"
+                > Must have one of the attributes: startid, tstamp, tstamp.ges
+                or tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10374,9 +11301,11 @@
           <constraint>
             <sch:rule context="mei:measure[@join]">
               <sch:let name="thisjoin" value="@join"/>
-              <sch:assert test="@join =
-                //mei:measure[@xml:id=$thisjoin]/@xml:id">The value of @join
-                must be the ID of a measure element.</sch:assert>
+              <sch:assert
+                test="@join = 
+                //mei:measure[@xml:id=$thisjoin]/@xml:id"
+                >The value of @join must be the ID of a measure
+                element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10401,8 +11330,10 @@
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:mrest[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies
+                $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10461,8 +11392,10 @@
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:mspace[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies
+                $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10487,8 +11420,10 @@
         <constraintSpec ident="Check_instr" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:multirest[@instr]">
-              <sch:assert test="every $i in tokenize(@instr, '\s+') satisfies
-                $i=preceding::mei:instrdef[@xml:id]/@xml:id"/>
+              <sch:assert
+                test="every $i in tokenize(@instr, '\s+') satisfies
+                $i=preceding::mei:instrdef[@xml:id]/@xml:id"
+              />
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10543,9 +11478,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:octave">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10605,9 +11541,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:pedal">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -10675,9 +11612,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:slur">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10707,9 +11645,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:tie">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10779,9 +11718,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:tupletspan">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
               <sch:assert test="@endid or @dur">Must have one of the attributes:
                 dur or endid</sch:assert>
             </sch:rule>
@@ -10964,9 +11904,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:mordent">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -11003,9 +11944,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:trill">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -11314,7 +12256,9 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="degree" usage="opt"/>
+          <attDef ident="degree" usage="opt">
+            <desc>records the degree of damage.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="del" module="MEI.edittrans">
@@ -11358,7 +12302,10 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="rend" usage="opt"/>
+          <attDef ident="rend" usage="opt">
+            <desc>contains an indication of how the deletion should be
+              rendered.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="gap" module="MEI.edittrans">
@@ -11426,9 +12373,9 @@
           <constraint>
             <sch:rule context="mei:handshift[@old]">
               <sch:let name="thisold" value="@old"/>
-              <sch:assert test="@old =
-                preceding::mei:hand[@xml:id=$thisold]/@xml:id">The value of @old
-                must be the ID of a hand element.</sch:assert>
+              <sch:assert
+                test="@old = preceding::mei:hand[@xml:id=$thisold]/@xml:id">The
+                value of @old must be the ID of a hand element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -11436,20 +12383,26 @@
           <constraint>
             <sch:rule context="mei:handshift[@new]">
               <sch:let name="thisnew" value="@new"/>
-              <sch:assert test="@new =
-                preceding::mei:hand[@xml:id=$thisnew]/@xml:id">The value of @new
-                must be the ID of a hand element.</sch:assert>
+              <sch:assert
+                test="@new = preceding::mei:hand[@xml:id=$thisnew]/@xml:id">The
+                value of @new must be the ID of a hand element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <attList>
-          <attDef ident="character" usage="opt"/>
+          <attDef ident="character" usage="opt">
+            <desc>describes the character of the new hand.</desc>
+          </attDef>
           <attDef ident="new" usage="opt">
+            <desc>identifies the new hand. The value must contain the ID of a
+              hand element given elsewhere in the document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
           </attDef>
           <attDef ident="old" usage="opt">
+            <desc>identifies the old hand. The value must contain the ID of a
+              hand element given elsewhere in the document.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -11577,7 +12530,9 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="desc" usage="opt"/>
+          <attDef ident="desc" usage="opt">
+            <desc>provides a description of the means of restoration.</desc>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="sic" module="MEI.edittrans">
@@ -11794,6 +12749,7 @@
           <memberOf key="att.link.external"/>
           <memberOf key="att.measurement"/>
           <memberOf key="att.typed"/>
+          <memberOf key="att.width"/>
           <memberOf key="model.graphicLike"/>
         </classes>
         <content>
@@ -11801,6 +12757,7 @@
         </content>
         <attList>
           <attDef ident="height" usage="opt">
+            <desc>measurement of the vertical dimension of an image.</desc>
             <datatype>
               <rng:data type="positiveInteger"/>
             </datatype>
@@ -11966,13 +12923,13 @@
             <sch:rule context="mei:barre">
               <sch:let name="from" value="@startid"/>
               <sch:let name="to" value="@endid"/>
-              <sch:assert test="@startid =
-                preceding-sibling::mei:chordmember[@xml:id=$from]/@xml:id">The
-                value of @startid must be the ID of a chordmember
+              <sch:assert
+                test="@startid = preceding-sibling::mei:chordmember[@xml:id=$from]/@xml:id"
+                >The value of @startid must be the ID of a chordmember
                 element.</sch:assert>
-              <sch:assert test="@endid =
-                preceding-sibling::mei:chordmember[@xml:id=$to]/@xml:id">The
-                value of @endid must be the ID of a chordmember
+              <sch:assert
+                test="@endid = preceding-sibling::mei:chordmember[@xml:id=$to]/@xml:id"
+                >The value of @endid must be the ID of a chordmember
                 element.</sch:assert>
             </sch:rule>
           </constraint>
@@ -11998,7 +12955,13 @@
           </rng:zeroOrMore>
         </content>
         <attList>
-          <attDef ident="pos" usage="opt"/>
+          <attDef ident="pos" usage="opt">
+            <desc>records the fret position at which the chord tablature is to
+              be played.</desc>
+            <datatype>
+              <rng:data type="positiveInteger"/>
+            </datatype>
+          </attDef>
         </attList>
       </elementSpec>
       <elementSpec ident="chordmember" module="MEI.harmony">
@@ -12021,6 +12984,9 @@
         </content>
         <attList>
           <attDef ident="fing" usage="opt">
+            <desc>indicates which finger, if any, should be used to play an
+              individual string. The values 'x' and 'o' indicated muffled and
+              open strings, respectively.</desc>
             <datatype>
               <rng:ref name="data.FINGER.FRET"/>
             </datatype>
@@ -12076,9 +13042,10 @@
           scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:harm">
-              <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                @tstamp.real"> Must have one of the attributes: startid, tstamp,
-                tstamp.ges or tstamp.real</sch:assert>
+              <sch:assert
+                test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must
+                have one of the attributes: startid, tstamp, tstamp.ges or
+                tstamp.real</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -12086,9 +13053,9 @@
           <constraint>
             <sch:rule context="mei:harm[@chordref]">
               <sch:let name="thischordref" value="@chordref"/>
-              <sch:assert test="@chordref =
-                preceding::mei:chorddef[@xml:id=$thischordref]/@xml:id">The
-                value of @chordref must be the ID of a chorddef
+              <sch:assert
+                test="@chordref = preceding::mei:chorddef[@xml:id=$thischordref]/@xml:id"
+                >The value of @chordref must be the ID of a chorddef
                 element.</sch:assert>
             </sch:rule>
           </constraint>
@@ -12129,6 +13096,8 @@
             </datatype>
           </attDef>
           <attDef ident="origin" usage="req">
+            <desc>designates the origin of the timeline, i.e. the &lt;when&gt;
+              element associated with the beginning of the timeline.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -12154,9 +13123,9 @@
           <constraint>
             <sch:rule context="mei:when[@since]">
               <sch:let name="thissince" value="@since"/>
-              <sch:assert test="@since =
-                preceding-sibling::mei:when[@xml:id=$thissince]/@xml:id">The
-                value of @since must be the ID of a preceding sibling when
+              <sch:assert
+                test="@since = preceding-sibling::mei:when[@xml:id=$thissince]/@xml:id"
+                >The value of @since must be the ID of a preceding sibling when
                 element.</sch:assert>
               <sch:assert test="@interval and @unit">If @since is present,
                 @interval and @unit are also required.</sch:assert>
@@ -12164,8 +13133,14 @@
           </constraint>
         </constraintSpec>
         <attList>
-          <attDef ident="absolute" usage="opt"/>
+          <attDef ident="absolute" usage="opt">
+            <desc>provides an absolute value for the time associated with a
+              point on a timeline. This attribute is required for the element
+              designated as the origin by the parent timeline.</desc>
+          </attDef>
           <attDef ident="interval" usage="opt">
+            <desc>specifies the time interval between this timepoint and the one
+              designated by the since attribute.</desc>
             <datatype>
               <rng:data type="decimal">
                 <rng:param name="minInclusive">1</rng:param>
@@ -12173,6 +13148,13 @@
             </datatype>
           </attDef>
           <attDef ident="since" usage="opt">
+            <desc>identifies the reference point for determining the time of the
+              current when element, which is obtained by adding the interval to
+              the time of the reference point. The value should be the ID of
+              another when element in the same timeline. If the since attribute
+              is omitted and the absolute attribute is not specified, then the
+              reference point is understood to be the immediately preceding when
+              element.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
@@ -12263,6 +13245,7 @@
         </content>
         <attList>
           <attDef ident="num" usage="req">
+            <desc>MIDI number in the range set by data.MIDICHANNEL.</desc>
             <datatype>
               <rng:ref name="data.MIDICHANNEL"/>
             </datatype>
@@ -12413,8 +13396,7 @@
         </content>
       </elementSpec>
       <elementSpec ident="seqnum" module="MEI.midi">
-        <desc>sequence number ― MIDI sequence number. The num attribute must be
-          in the range 0-65535.</desc>
+        <desc>sequence number ― MIDI sequence number.</desc>
         <classes>
           <memberOf key="att.common.anl"/>
           <memberOf key="att.common"/>
@@ -12425,6 +13407,7 @@
         </content>
         <attList>
           <attDef ident="num" usage="req">
+            <desc>number in the range 0-65535.</desc>
             <datatype>
               <rng:data type="nonNegativeInteger">
                 <rng:param name="maxInclusive">65535</rng:param>
@@ -12458,6 +13441,8 @@
         </content>
         <attList>
           <attDef ident="form" usage="req">
+            <desc>indicates whether this is note-on or note-off velocity
+              data.</desc>
             <valList type="closed">
               <valItem ident="on"/>
               <valItem ident="off"/>
@@ -12897,8 +13882,8 @@
         </content>
       </elementSpec>
       <elementSpec ident="list" module="MEI.text">
-        <desc>list ― A formatting element that contains as series of items
-          separated from one another and arranged in a linear, of vertical
+        <desc>list ― A formatting element that contains a series of items
+          separated from one another and arranged in a linear, often vertical,
           sequence. This element is modelled on elements in Encoded Archival
           Description (EAD), Text Encoding Initiative (TEI), and HTML.</desc>
         <classes>
@@ -12918,6 +13903,14 @@
         </content>
         <attList>
           <attDef ident="form" usage="opt">
+            <desc>used to identify and format a list. In a "simple" list,
+              &lt;item&gt;s are not numbered or bulleted. In a "marked" list,
+              the sequence of the list items is not critical, and a bullet, box,
+              dash, or other character is displayed at the start of each
+              &lt;item&gt;. In an "ordered" list, the sequence of the items is
+              important, and each &lt;item&gt; is lettered or numbered. Style
+              sheet functions should be used to specify the mark or numeration
+              system for each &lt;item&gt;.</desc>
             <valList type="closed">
               <valItem ident="simple"/>
               <valItem ident="marked"/>
@@ -13064,6 +14057,8 @@
         </content>
         <attList>
           <attDef ident="ref" usage="req">
+            <desc>contains a reference to a previously-declared user-defined
+              symbol.</desc>
             <datatype>
               <rng:data type="IDREF"/>
             </datatype>
