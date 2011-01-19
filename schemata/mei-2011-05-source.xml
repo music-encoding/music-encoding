@@ -91,7 +91,7 @@
       <change who="#PR" when="2011-01-13">On timeline: removed medialength and
         unit (att.measurement); substituted avref for mediacontent</change>
       <change who="#PR" when="2011-01-13">Removed @reg from att.datable; added
-        it directly to date element</change>
+        it directly to date element and att.authorized class</change>
       <change who="#PR" when="2011-01-13">Corrected omission of att.width on
         graphic</change>
       <change who="#PR" when="2011-01-13">Revised description of
@@ -1699,7 +1699,7 @@
           <memberOf key="att.participantident"/>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
-          <memberOf key="att.staffident.required"/>
+          <memberOf key="att.staffident"/>
         </classes>
         <attList>
           <attDef ident="layer" usage="opt">
@@ -2650,28 +2650,13 @@
           </attDef>
         </attList>
       </classSpec>
-      <classSpec type="atts" module="MEI.shared" ident="att.staffident.required">
-        <desc/>
+      <classSpec type="atts" module="MEI.shared" ident="att.staffident">
+        <desc>Attributes for identifying the staff associated with the current
+          feature</desc>
         <attList>
-          <attDef ident="staff" usage="req">
+          <attDef ident="staff" usage="mwa">
             <desc>signifies the staff on which a notated event occurs or to
-              which a control event applies.</desc>
-            <datatype>
-              <rng:list>
-                <rng:oneOrMore>
-                  <rng:data type="positiveInteger"/>
-                </rng:oneOrMore>
-              </rng:list>
-            </datatype>
-          </attDef>
-        </attList>
-      </classSpec>
-      <classSpec type="atts" module="MEI.shared" ident="att.staffident.optional">
-        <desc/>
-        <attList>
-          <attDef ident="staff" usage="opt">
-            <desc>signifies the staff on which a notated event occurs or to
-              which a control event applies.</desc>
+              which a control event applies. Mandatory when applicable.</desc>
             <datatype>
               <rng:list>
                 <rng:oneOrMore>
@@ -4883,6 +4868,7 @@
         <classes>
           <memberOf key="att.beamed"/>
           <memberOf key="att.lvpresent"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.chord.vis.cmn">
@@ -5380,6 +5366,7 @@
         <classes>
           <memberOf key="att.beamed"/>
           <memberOf key="att.lvpresent"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.note.vis.cmn">
@@ -5552,7 +5539,7 @@
       <classSpec type="atts" module="MEI.cmn" ident="att.reh.log">
         <desc>Logical domain attributes</desc>
         <classes>
-          <memberOf key="att.staffident.required"/>
+          <memberOf key="att.staffident"/>
           <memberOf key="att.startid"/>
           <memberOf key="att.timestamp.musical"/>
           <memberOf key="att.timestamp.performed"/>
@@ -5572,6 +5559,7 @@
         <desc>Logical domain attributes</desc>
         <classes>
           <memberOf key="att.beamed"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.rest.vis.cmn">
@@ -5640,6 +5628,7 @@
         <desc/>
         <classes>
           <memberOf key="att.beamed"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.cmn" ident="att.staffdef.log.cmn">
@@ -6662,7 +6651,7 @@
         <desc>Logical domain attributes</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident.required"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.lyrics" ident="att.lyrics.vis">
@@ -6794,7 +6783,7 @@
         <desc>Attributes common to MIDI events</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident.required"/>
+          <memberOf key="att.staffident"/>
           <memberOf key="att.timestamp.musical"/>
         </classes>
       </classSpec>
@@ -6811,7 +6800,7 @@
         <desc>Logical domain attributes</desc>
         <classes>
           <memberOf key="att.layerident"/>
-          <memberOf key="att.staffident.required"/>
+          <memberOf key="att.staffident"/>
         </classes>
       </classSpec>
       <classSpec type="atts" module="MEI.midi" ident="att.midi.vis">
@@ -8645,25 +8634,15 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
+        <constraintSpec ident="Check_decls" scheme="isoschematron">
           <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
-          </constraint>
-        </constraintSpec>
-        <constraintSpec ident="Check_source" scheme="isoschematron">
-          <constraint>
-            <sch:rule context="mei:*[@source]">
+            <sch:rule context="mei:*[@decls]">
               <sch:assert
-                test="every $i in tokenize(@source, '\s+') satisfies
-                $i=//mei:source/@xml:id"
-                >The values in @source must match the IDs of source
-                elements.</sch:assert>
+                test="every $i in tokenize(@decls, '\s+') satisfies
+                $i=//mei:meihead//mei:*/@xml:id"
+                >The values in @source must match the IDs of elements in the MEI
+                header.</sch:assert>
             </sch:rule>
-          </constraint>
-        </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
-          <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
           </constraint>
         </constraintSpec>
         <constraintSpec ident="Check_altsym" scheme="isoschematron">
@@ -8678,11 +8657,6 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
-          <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
-          </constraint>
-        </constraintSpec>
         <constraintSpec ident="Check_xmllang" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[starts-with(@xml:lang, 'x-')]">
@@ -8693,11 +8667,6 @@
                 >The value of @xml:lang must be the ID of a language
                 element.</sch:assert>
             </sch:rule>
-          </constraint>
-        </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
-          <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
           </constraint>
         </constraintSpec>
         <constraintSpec ident="Check_classcode" scheme="isoschematron">
@@ -8712,11 +8681,6 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
-          <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
-          </constraint>
-        </constraintSpec>
         <constraintSpec ident="Check_hand" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@hand]">
@@ -8729,11 +8693,6 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="set_ns" scheme="isoschematron">
-          <constraint>
-            <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
-          </constraint>
-        </constraintSpec>
         <constraintSpec ident="Check_resp" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@resp]">
@@ -8741,8 +8700,19 @@
               <sch:assert
                 test="@resp = //mei:*[@xml:id=$thisresp and
                 ancestor::mei:meihead]/@xml:id"
-                >The value of @resp must be the ID of a persname element
-                declared within the meiheader element.</sch:assert>
+                >The value of @resp must be the ID of an element declared within
+                the meiheader element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <constraintSpec ident="Check_staff" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:*[@staff]">
+              <sch:assert
+                test="every $i in tokenize(@staff, '\s+') satisfies
+          $i=//mei:staffdef/@n"
+                >The values in @staff must correspond to @n attribute of a
+                staffdef element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -9626,7 +9596,8 @@
             <rng:ref name="grpsym"/>
           </rng:zeroOrMore>
         </content>
-        <constraintSpec ident="no_title" scheme="isoschematron">
+        <constraintSpec ident="Check_staffgrp_unique_staff_n_values"
+          scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:staffgrp">
               <sch:let name="countstaves"
@@ -10649,33 +10620,28 @@
         <attList>
           <attDef ident="rel" usage="opt">
             <desc>describes the relationship between the &lt;relatedItem&gt; and
-              the resource being described in the parent element.</desc>
+              the resource described in the parent element. "preceding"
+              indicates a predecessor to the resource; "succeeding" applies to a
+              successor to the resource; "original" indicates the original form
+              of the resource; "host" provides info concerning an intellectual
+              or physical constituent unit of the resource; "otherVersion"
+              indicates a change in the intellectual content of the resource not
+              significant enough to be a different work; "otherFormat" indicates
+              a change in physical format of the resource; "isReferencedBy"
+              applies to a citation or reference to published bibliographic
+              descriptions, reviews, abstracts, or indexes of the content of the
+              resource; "references" applies to a resource cited or referred to
+              in the resource. These values are based on MODS version
+              3.4.</desc>
             <valList type="closed">
-              <!-- preceding: info concerning a predecessor to the resource -->
               <valItem ident="preceding"/>
-              <!-- succeeding: info concerning a successor to the resource -->
               <valItem ident="succeeding"/>
-              <!-- original: info concerning an original form of the resource -->
               <valItem ident="original"/>
-              <!-- host: info concerning a host or parent resource for the
-                resource described -->
               <valItem ident="host"/>
-              <!-- constituent: info concerning a constituent (intellectual)
-                unit of the resource -->
               <valItem ident="constituent"/>
-              <!-- separatedMaterial: info concerning a constituent (physical)
-                unit of resource -->
-              <valItem ident="separatedMaterial"/>
-              <!-- otherVersion: indicates a change in intellectual content of
-                the resource (but not significant enough to be a different work) -->
               <valItem ident="otherVersion"/>
-              <!-- otherFormat: indicates a change in physical format of the resource -->
               <valItem ident="otherFormat"/>
-              <!-- isReferencedBy: info concerning a  to the resource -->
               <valItem ident="isReferencedBy"/>
-              <!-- references: citation or reference to published bibliographic
-                descriptions, reviews, abstracts, or indexes of the content of
-                the resource -->
               <valItem ident="references"/>
             </valList>
           </attDef>
