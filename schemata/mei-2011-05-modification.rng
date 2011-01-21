@@ -4,7 +4,7 @@
   datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   ns="http://www.music-encoding.org/ns/mei">
   <!--
-Schema generated from ODD source 2011-01-19T23:21:12Z. 
+Schema generated from ODD source 2011-01-21T21:40:27Z. 
 Edition: 
 Edition Location: http://www.tei-c.org/Vault/P5//
 
@@ -7041,7 +7041,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           context="mei:*[@decls]">
           <sch:assert
-            test="every $i in tokenize(@decls, '\s+') satisfies                 $i=//mei:meihead//mei:*/@xml:id"
+            test="every $i in tokenize(@decls, '\s+') satisfies                   $i=//mei:meihead//mei:*/@xml:id"
             >The values in @source must match the IDs of elements in the MEI
             header.</sch:assert>
         </sch:rule>
@@ -7057,7 +7057,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           context="mei:*[@altsym]">
           <sch:let name="thisaltsym" value="@altsym"/>
           <sch:assert
-            test="@altsym =                 preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id"
+            test="@altsym =                   preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id"
             >The value of @altsym must be the ID of a symboldef
             element.</sch:assert>
         </sch:rule>
@@ -7073,7 +7073,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           context="mei:*[starts-with(@xml:lang, 'x-')]">
           <sch:let name="thislang" value="@xml:lang"/>
           <sch:assert
-            test="@xml:lang =                 //mei:language[@xml:id=$thislang]/@xml:id"
+            test="@xml:lang =                   //mei:language[@xml:id=$thislang]/@xml:id"
             >The value of @xml:lang must be the ID of a language
             element.</sch:assert>
         </sch:rule>
@@ -7089,7 +7089,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           context="mei:*[@classcode]">
           <sch:let name="thisclasscode" value="@classcode"/>
           <sch:assert
-            test="@classcode =                 //mei:classcode[@xml:id=$thisclasscode]/@xml:id"
+            test="@classcode =                   //mei:classcode[@xml:id=$thisclasscode]/@xml:id"
             >The value of @classcode must be the ID of a classcode
             element.</sch:assert>
         </sch:rule>
@@ -7105,7 +7105,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           context="mei:*[@hand]">
           <sch:let name="thishand" value="@hand"/>
           <sch:assert
-            test="@hand =                 preceding::mei:hand[@xml:id=$thishand]/@xml:id"
+            test="@hand =                   preceding::mei:hand[@xml:id=$thishand]/@xml:id"
             >The value of @hand must be the ID of a hand element.</sch:assert>
         </sch:rule>
       </pattern>
@@ -7120,7 +7120,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           context="mei:*[@resp]">
           <sch:let name="thisresp" value="@resp"/>
           <sch:assert
-            test="@resp = //mei:*[@xml:id=$thisresp and                 ancestor::mei:meihead]/@xml:id"
+            test="@resp = //mei:*[@xml:id=$thisresp and                   ancestor::mei:meihead]/@xml:id"
             >The value of @resp must be the ID of an element declared within the
             meiheader element.</sch:assert>
         </sch:rule>
@@ -7135,7 +7135,7 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           context="mei:*[@staff]">
           <sch:assert
-            test="every $i in tokenize(@staff, '\s+') satisfies           $i=//mei:staffdef/@n"
+            test="every $i in tokenize(@staff, '\s+') satisfies                   $i=//mei:staffdef/@n"
             >The values in @staff must correspond to @n attribute of a staffdef
             element.</sch:assert>
         </sch:rule>
@@ -8040,6 +8040,40 @@ Edition Location: http://www.tei-c.org/Vault/P5//
           <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The
             clef position must be less than or equal to the number of lines on
             the staff.</sch:assert>
+        </sch:rule>
+      </pattern>
+
+
+
+      <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+        id="staffdef-constraint-Check_tab_strings">
+        <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
+          xmlns:rng="http://relaxng.org/ns/structure/1.0"
+          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+          context="mei:staffdef[@tab.strings and @lines]">
+          <sch:let name="countTokens"
+            value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+          <sch:assert test="$countTokens = 1 or $countTokens = @lines">The
+            tab.strings attribute must have the same number of values as there
+            are staff lines.</sch:assert>
+        </sch:rule>
+      </pattern>
+
+
+
+      <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+        id="staffdef-constraint-Check_tab_strings">
+        <sch:rule xmlns="http://www.tei-c.org/ns/1.0"
+          xmlns:rng="http://relaxng.org/ns/structure/1.0"
+          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+          context="mei:staffdef[@tab.strings and not(@lines)]">
+          <sch:let name="countTokens"
+            value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+          <sch:let name="thisStaff" value="@n"/>
+          <sch:assert
+            test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and                 @lines][1]/@lines"
+            >The tab.strings attribute must have the same number of values as
+            there are staff lines.</sch:assert>
         </sch:rule>
       </pattern>
 
@@ -9223,10 +9257,10 @@ Edition Location: http://www.tei-c.org/Vault/P5//
         <ref name="classification"/>
       </optional>
       <zeroOrMore>
-        <ref name="extref"/>
+        <ref name="relateditem"/>
       </zeroOrMore>
       <zeroOrMore>
-        <ref name="relateditem"/>
+        <ref name="extref"/>
       </zeroOrMore>
       <ref name="att.datapointing.attributes"/>
       <ref name="att.common.attributes"/>

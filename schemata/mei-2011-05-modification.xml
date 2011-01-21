@@ -237,9 +237,11 @@
             scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:harm">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or
-                  @tstamp.real"> Must have one of the attributes: startid,
-                  tstamp, tstamp.ges or tstamp.real</sch:assert>
+                <sch:assert
+                  test="@startid or @tstamp or @tstamp.ges or
+                  @tstamp.real"
+                  > Must have one of the attributes: startid, tstamp, tstamp.ges
+                  or tstamp.real</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -247,9 +249,10 @@
             <constraint>
               <sch:rule context="mei:harm[@chordref]">
                 <sch:let name="thischordref" value="@chordref"/>
-                <sch:assert test="@chordref =
-                  preceding::mei:chorddef[@xml:id=$thischordref]/@xml:id">The
-                  value of @chordref must be the ID of a chorddef
+                <sch:assert
+                  test="@chordref =
+                  preceding::mei:chorddef[@xml:id=$thischordref]/@xml:id"
+                  >The value of @chordref must be the ID of a chorddef
                   element.</sch:assert>
               </sch:rule>
             </constraint>
@@ -300,6 +303,126 @@
               </rng:choice>
             </rng:zeroOrMore>
           </content>
+        </elementSpec>
+
+        <elementSpec ident="mei" module="MEI.shared" mode="replace">
+          <desc>mei ― The document element for a single document, containing a
+            header and data. The &lt;mei&gt; element defines a particular
+            instance of a document encoded with the MEI schema. The name of this
+            element should not be changed in order to assure an absolute minimum
+            level of MEI compliance.</desc>
+          <classes>
+            <memberOf key="att.meiversion"/>
+          </classes>
+          <content>
+            <rng:ref name="meihead"/>
+            <rng:ref name="music"/>
+          </content>
+          <constraintSpec ident="set_ns" scheme="isoschematron">
+            <constraint>
+              <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
+            </constraint>
+          </constraintSpec>          
+          <constraintSpec ident="Check_when" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@when]">
+                <sch:assert test="@when = preceding::mei:when/@xml:id">The value
+                  of @when must be the ID of a when element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_decls" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@decls]">
+                <sch:assert
+                  test="every $i in tokenize(@decls, '\s+') satisfies
+                  $i=//mei:meihead//mei:*/@xml:id"
+                  >The values in @source must match the IDs of elements in the
+                  MEI header.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_altsym" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@altsym]">
+                <sch:let name="thisaltsym" value="@altsym"/>
+                <sch:assert
+                  test="@altsym =
+                  preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id"
+                  >The value of @altsym must be the ID of a symboldef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_xmllang" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[starts-with(@xml:lang, 'x-')]">
+                <sch:let name="thislang" value="@xml:lang"/>
+                <sch:assert
+                  test="@xml:lang =
+                  //mei:language[@xml:id=$thislang]/@xml:id"
+                  >The value of @xml:lang must be the ID of a language
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_classcode" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@classcode]">
+                <sch:let name="thisclasscode" value="@classcode"/>
+                <sch:assert
+                  test="@classcode =
+                  //mei:classcode[@xml:id=$thisclasscode]/@xml:id"
+                  >The value of @classcode must be the ID of a classcode
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_hand" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@hand]">
+                <sch:let name="thishand" value="@hand"/>
+                <sch:assert
+                  test="@hand =
+                  preceding::mei:hand[@xml:id=$thishand]/@xml:id"
+                  >The value of @hand must be the ID of a hand
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_resp" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@resp]">
+                <sch:let name="thisresp" value="@resp"/>
+                <sch:assert
+                  test="@resp = //mei:*[@xml:id=$thisresp and
+                  ancestor::mei:meihead]/@xml:id"
+                  >The value of @resp must be the ID of an element declared
+                  within the meiheader element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_staff" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@staff]">
+                <sch:assert
+                  test="every $i in tokenize(@staff, '\s+') satisfies
+                  $i=//mei:staffdef/@n"
+                  >The values in @staff must correspond to @n attribute of a
+                  staffdef element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <attList>
+            <attDef ident="xml:id" usage="opt">
+              <desc>regularizes the naming of an element and thus facilitates
+                building links between it and other resources. Each id attribute
+                within a document must have a unique value.</desc>
+              <datatype>
+                <rng:data type="ID"/>
+              </datatype>
+            </attDef>
+          </attList>
         </elementSpec>
 
       </schemaSpec>

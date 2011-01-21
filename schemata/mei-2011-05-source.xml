@@ -124,13 +124,14 @@
       <change who="#PR" when="2011-01-19">Made @staff in att.staffident
         'mandatory when applicable'</change>
       <change who="#PR" when="2011-01-19">Fixed references to definition of
-      interline distance</change>
+        interline distance</change>
       <change who="#PR" when="2011-01-19">Added att.staffident to chord, note,
-      rest, space that seems to have gotten lost in earlier iterations</change>
+        rest, space that seems to have gotten lost in earlier
+        iterations</change>
       <change who="#PR" when="2011-01-19">Removed duplicate set_ns
-      constraintSpec elements</change>
+        constraintSpec elements</change>
       <change who="#PR" when="2011-01-19">Added constraint to check @staff
-      values against existing staffdef @n values</change>
+        values against existing staffdef @n values</change>
       <change who="#PR" when="2011-01-19">Eliminated "separatedMaterial" from
         relateditem @rel value list to remain in line with MODS values</change>
     </revisionDesc>
@@ -9617,6 +9618,57 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
+        <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:staffdef[@tab.strings and @lines]">
+              <sch:let name="countTokens"
+                value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+              <sch:assert test="$countTokens = 1 or $countTokens = @lines">The
+                tab.strings attribute must have the same number of values as
+                there are staff lines.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:staffdef[@tab.strings and not(@lines)]">
+              <sch:let name="countTokens"
+                value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+              <sch:let name="thisStaff" value="@n"/>
+              <sch:assert
+                test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                @lines][1]/@lines"
+                >The tab.strings attribute must have the same number of values
+                as there are staff lines.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <!-- <constraintSpec ident="Check_lines_color" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:staffdef[@lines.color and @lines]">
+              <sch:let name="countTokens"
+                value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
+              <sch:assert
+                test="$countTokens = 1 or $countTokens = @lines"
+                >The lines.color attribute must have either 1) a single value or
+                2) the same number of values as there are staff lines.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <constraintSpec ident="Check_lines_color" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:staffdef[@lines.color and not(@lines)]">
+              <sch:let name="countTokens"
+                value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
+              <sch:let name="thisStaff" value="@n"/>
+              <sch:assert
+                test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                @lines][1]/@lines"
+                >The lines.color attribute must have either 1) a single value or
+                2) the same number of values as there are staff lines.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec> -->
       </elementSpec>
       <elementSpec ident="staffgrp" module="MEI.shared">
         <desc>staff group ― A group of bracketed or braced staves. Bracketed
@@ -10667,11 +10719,11 @@
             <rng:ref name="classification"/>
           </rng:optional>
           <rng:zeroOrMore>
-            <rng:ref name="extref"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
             <rng:ref name="relateditem"/>
           </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="extref"/>
+          </rng:zeroOrMore>          
         </content>
         <attList>
           <attDef ident="rel" usage="opt">
