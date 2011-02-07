@@ -543,10 +543,11 @@
         </content>
       </macroSpec>
       <macroSpec module="mei" type="dt" ident="data.ACCIDENTAL.EXPLICIT">
-        <desc>Accidental attribute values: s = sharp, f = flat, ss = dblsharp, x=dblsharp, ff = dblflat, xs = triple sharp, tb = triple flat, n = natural, nf =
-          naturalflat, ns = naturalsharp. ss indicates the use of 2 sharp signs, while x indicates the use of a single double sharp. nf and ns are used to
-          cancel dbflats and dblsharps, respectively. su = sharp note qtr. tone up, sd = sharp note qtr. tone down, fu = flat note qtr. tone up, fd = flat note
-          qtr. tone down, nu = natural note qtr. tone up, nd = natural note quarter tone down.</desc>
+        <desc>Accidental attribute values: s = sharp, f = flat, ss = dblsharp, x=dblsharp, ff = dblflat, xs = triple sharp, ts = triple sharp, tf = triple flat,
+          n = natural, nf = naturalflat, ns = naturalsharp. ss indicates the use of 2 sharp signs, while x indicates the use of a single double sharp.
+          Similarly, xs indicates the presence of a double sharp sign plus an extra sharp, while ts encodes the presence of three sharp signs. nf and ns are
+          used to cancel dbflats and dblsharps, respectively. su = sharp note qtr. tone up, sd = sharp note qtr. tone down, fu = flat note qtr. tone up, fd =
+          flat note qtr. tone down, nu = natural note qtr. tone up, nd = natural note quarter tone down.</desc>
         <content>
           <rng:choice>
             <rng:value>s</rng:value>
@@ -555,7 +556,8 @@
             <rng:value>x</rng:value>
             <rng:value>ff</rng:value>
             <rng:value>xs</rng:value>
-            <rng:value>tb</rng:value>
+            <rng:value>ts</rng:value>
+            <rng:value>tf</rng:value>
             <rng:value>n</rng:value>
             <rng:value>nf</rng:value>
             <rng:value>ns</rng:value>
@@ -2819,7 +2821,8 @@
         </attList>
       </classSpec>
       <classSpec type="atts" module="MEI.shared" ident="att.xy2">
-        <desc>Output coordinate attributes. Some elements may need 2 coordinate pairs to record their rendered *output* coordinates.</desc>
+        <desc>Output coordinate attributes. Some elements may need 2 coordinate pairs to record their rendered *output* coordinates. The attributes indicate
+          where to place the rendered output. Recording the coordinates of a feature in a facsimile requires the use of the facs attribute. </desc>
         <attList>
           <attDef ident="x2" usage="opt">
             <desc>encodes the optional 2nd x coordinate.</desc>
@@ -7876,11 +7879,9 @@
         </content>
       </elementSpec>
       <elementSpec ident="mei" module="MEI.shared">
-        <desc>mei ― The document element for a single document, containing a
-          header and data. The &lt;mei&gt; element defines a particular
-          instance of a document encoded with the MEI schema. The name of this
-          element should not be changed in order to assure an absolute minimum
-          level of MEI compliance.</desc>
+        <desc>mei ― The document element for a single document, containing a header and data. The &lt;mei&gt; element defines a particular instance of a
+          document encoded with the MEI schema. The name of this element should not be changed in order to assure an absolute minimum level of MEI
+          compliance.</desc>
         <classes>
           <memberOf key="att.meiversion"/>
         </classes>
@@ -7892,23 +7893,20 @@
           <constraint>
             <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
           </constraint>
-        </constraintSpec>          
+        </constraintSpec>
         <constraintSpec ident="Check_when" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@when]">
-              <sch:assert test="@when = preceding::mei:when/@xml:id">The value
-                of @when must be the ID of a when element.</sch:assert>
+              <sch:assert test="@when = preceding::mei:when/@xml:id">The value of @when must be the ID of a when element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <constraintSpec ident="Check_decls" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@decls]">
-              <sch:assert
-                test="every $i in tokenize(@decls, '\s+') satisfies
-                $i=//mei:meihead//mei:*/@xml:id"
-                >The values in @decls must match the IDs of elements in the
-                MEI header.</sch:assert>
+              <sch:assert test="every $i in tokenize(@decls, '\s+') satisfies
+                $i=//mei:meihead//mei:*/@xml:id">The values in @decls must match
+                the IDs of elements in the MEI header.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7916,11 +7914,9 @@
           <constraint>
             <sch:rule context="mei:*[@altsym]">
               <sch:let name="thisaltsym" value="@altsym"/>
-              <sch:assert
-                test="@altsym =
-                preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id"
-                >The value of @altsym must be the ID of a symboldef
-                element.</sch:assert>
+              <sch:assert test="@altsym =
+                preceding::mei:symboldef[@xml:id=$thisaltsym]/@xml:id">The value of @altsym must be the ID of a
+                symboldef element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7928,10 +7924,8 @@
           <constraint>
             <sch:rule context="mei:*[starts-with(@xml:lang, 'x-')]">
               <sch:let name="thislang" value="@xml:lang"/>
-              <sch:assert
-                test="@xml:lang =
-                //mei:language[@xml:id=$thislang]/@xml:id"
-                >The value of @xml:lang must be the ID of a language
+              <sch:assert test="@xml:lang =
+                //mei:language[@xml:id=$thislang]/@xml:id">The value of @xml:lang must be the ID of a language
                 element.</sch:assert>
             </sch:rule>
           </constraint>
@@ -7940,11 +7934,9 @@
           <constraint>
             <sch:rule context="mei:*[@classcode]">
               <sch:let name="thisclasscode" value="@classcode"/>
-              <sch:assert
-                test="@classcode =
-                //mei:classcode[@xml:id=$thisclasscode]/@xml:id"
-                >The value of @classcode must be the ID of a classcode
-                element.</sch:assert>
+              <sch:assert test="@classcode =
+                //mei:classcode[@xml:id=$thisclasscode]/@xml:id">The value of @classcode must be the ID of a
+                classcode element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -7952,10 +7944,8 @@
           <constraint>
             <sch:rule context="mei:*[@hand]">
               <sch:let name="thishand" value="@hand"/>
-              <sch:assert
-                test="@hand =
-                preceding::mei:hand[@xml:id=$thishand]/@xml:id"
-                >The value of @hand must be the ID of a hand
+              <sch:assert test="@hand =
+                preceding::mei:hand[@xml:id=$thishand]/@xml:id">The value of @hand must be the ID of a hand
                 element.</sch:assert>
             </sch:rule>
           </constraint>
@@ -7964,30 +7954,25 @@
           <constraint>
             <sch:rule context="mei:*[@resp]">
               <sch:let name="thisresp" value="@resp"/>
-              <sch:assert
-                test="@resp = //mei:*[@xml:id=$thisresp and
-                ancestor::mei:meihead]/@xml:id"
-                >The value of @resp must be the ID of an element declared
-                within the meiheader element.</sch:assert>
+              <sch:assert test="@resp = //mei:*[@xml:id=$thisresp and
+                ancestor::mei:meihead]/@xml:id">The value of @resp must be the ID of an
+                element declared within the meiheader element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <constraintSpec ident="Check_staff" scheme="isoschematron">
           <constraint>
             <sch:rule context="mei:*[@staff]">
-              <sch:assert
-                test="every $i in tokenize(@staff, '\s+') satisfies
-                $i=//mei:staffdef/@n"
-                >The values in @staff must correspond to @n attribute of a
-                staffdef element.</sch:assert>
+              <sch:assert test="every $i in tokenize(@staff, '\s+') satisfies
+                $i=//mei:staffdef/@n">The values in @staff must correspond to @n
+                attribute of a staffdef element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
         <attList>
           <attDef ident="xml:id" usage="opt">
-            <desc>regularizes the naming of an element and thus facilitates
-              building links between it and other resources. Each id attribute
-              within a document must have a unique value.</desc>
+            <desc>regularizes the naming of an element and thus facilitates building links between it and other resources. Each id attribute within a document
+              must have a unique value.</desc>
             <datatype>
               <rng:data type="ID"/>
             </datatype>
@@ -9569,12 +9554,9 @@
         </content>
       </elementSpec>
       <elementSpec ident="plate" module="MEI.header">
-        <desc>plate number ― Designation assigned to a resource by a music
-          publisher, usually printed at the bottom of each page, and sometimes
-          appearing also on the title page. While it is often called a "plate
-          number", it does not always contain numbers. The facs attribute may
-          be used to record the location of the plate number in a facsimile
-          image.</desc>
+        <desc>plate number ― Designation assigned to a resource by a music publisher, usually printed at the bottom of each page, and sometimes appearing also
+          on the title page. While it is often called a "plate number", it does not always contain numbers. The facs attribute may be used to record the
+          location of the plate number in a facsimile image.</desc>
         <classes>
           <memberOf key="att.common"/>
           <memberOf key="att.bibl"/>
@@ -9723,12 +9705,13 @@
         </content>
         <attList>
           <attDef ident="rel" usage="opt">
-            <desc>describes the relationship between the &lt;relatedItem&gt; and the resource described in the parent element. "preceding" indicates a
-              predecessor to the resource; "succeeding" applies to a successor to the resource; "original" indicates the original form of the resource; "host"
-              provides info concerning an intellectual or physical constituent unit of the resource; "otherVersion" indicates a change in the intellectual
-              content of the resource not significant enough to be a different work; "otherFormat" indicates a change in physical format of the resource;
-              "isReferencedBy" applies to a citation or reference to published bibliographic descriptions, reviews, abstracts, or indexes of the content of the
-              resource; "references" applies to a resource cited or referred to in the resource. These values are based on MODS version 3.4.</desc>
+            <desc>describes the relationship between the &lt;relateditem&gt; and the resource described in the parent element, i.e. &lt;source&gt; or
+              &lt;relateditem&gt;. "preceding" indicates a predecessor to the resource; "succeeding" applies to a successor to the resource; "original"
+              indicates the original form of the resource; "host" provides info concerning an intellectual or physical constituent unit of the resource;
+              "otherVersion" indicates a change in the intellectual content of the resource not significant enough to be a different work; "otherFormat"
+              indicates a change in physical format of the resource; "isReferencedBy" applies to a citation or reference to published bibliographic
+              descriptions, reviews, abstracts, or indexes of the content of the resource; "references" applies to a resource cited or referred to in the
+              resource. These values are based on MODS version 3.4.</desc>
             <valList type="closed">
               <valItem ident="preceding"/>
               <valItem ident="succeeding"/>
@@ -10039,10 +10022,8 @@
         </content>
       </elementSpec>
       <elementSpec ident="watermark" module="MEI.header">
-        <desc>watermark ― Contains a description of a watermark or similar
-          device. The facs attribute may be used to record the location of the
-          watermark in a facsimile image. This element is modelled on an
-          element in the Text Encoding Initiative (TEI).</desc>
+        <desc>watermark ― Contains a description of a watermark or similar device. The facs attribute may be used to record the location of the watermark in a
+          facsimile image. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
         <classes>
           <memberOf key="att.common"/>
           <memberOf key="att.bibl"/>
