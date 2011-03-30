@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?oxygen RNGSchema="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="xml"?>
-<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-  xmlns="http://www.tei-c.org/ns/1.0">
+<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>MEI (Music Encoding Initiative) - ALL</title>
+        <title>Music Encoding Initiative Guidelines</title>
         <respStmt>
           <resp>Authored by</resp>
           <name xml:id="RV">Raffaele Viglianti</name>
+          <name xml:id="PR">Perry Roland</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
-        <p>Automatically Generated</p>
+        <p/>
       </publicationStmt>
       <sourceDesc>
-        <p>created on 2010-08-26T22:09:54.285+02:00</p>
+        <p/>
       </sourceDesc>
     </fileDesc>
   </teiHeader>
@@ -25,8 +24,8 @@
       <divGen type="toc"/>
     </front>
     <body>
-      <schemaSpec ident="mei" start="mei meihead meicorpus music"
-        ns="http://www.music-encoding.org/ns/mei">
+      <schemaSpec ident="mei" start="mei meihead meicorpus music" ns="http://www.music-encoding.org/ns/mei">
+        <!-- Workdesc can be added to @start when it becomes necessary to create separate work descriptions that can be referred to. -->
         <moduleRef key="mei"/>
         <moduleRef key="MEI.shared"/>
         <moduleRef key="MEI.header"/>
@@ -50,6 +49,747 @@
         <moduleRef key="MEI.tablature"/>
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
+
+        <!-- Split att.authorized into att.authorized (authority, authURI) and att.regularized (reg).  Add att.regularized
+          to all current members of att.authorized or only to name? Also, date has a reg attr that could be switched out
+          for membership in att.regularized. -->
+        <classSpec type="atts" module="MEI.shared" ident="att.authorized" mode="replace">
+          <desc>Attributes that describe the source of an controlled value</desc>
+          <attList>
+            <attDef ident="authority" usage="opt">
+              <desc>a name or label associated with the controlled vocabulary from which the value is taken.</desc>
+            </attDef>
+            <attDef ident="authURI" usage="opt">
+              <desc>the web-accessible location of the controlled vocabulary from which the value is taken.</desc>
+              <datatype>
+                <rng:ref name="data.URI"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.regularized" mode="add">
+          <desc>Attributes that describe the source of an controlled value</desc>
+          <attList>
+            <attDef ident="reg" usage="opt">
+              <desc>provides a regularized, authorized value.</desc>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <macroSpec module="mei" type="dt" ident="data.PLIST" mode="replace">
+          <desc>Participant list referencing method.</desc>
+          <content>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="anyURI"/>
+              </rng:oneOrMore>
+            </rng:list>
+          </content>
+        </macroSpec>
+
+        <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
+          <desc>groups elements that may appear as part of the work element.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="history"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="langusage"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="key"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="perfmedium"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+
+        <macroSpec type="pe" ident="macro.bibldescPart" module="MEI.header" mode="add">
+          <desc>groups manifestation-specific elements that may appear as part of a bibliographic description.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="editionstmt"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pubstmt"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="physdesc"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="seriesstmt"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+
+        <elementSpec ident="annot" module="MEI.shared" mode="replace">
+          <desc>annotation ― Provides a short statement explaining the text or indicating the basis for an assertion. It is used for both general comments and
+            for an annotation of the musical text. &lt;annot&gt; provides a way to group participating *events* and/or *control events*, the notes that form a
+            descending bass line or phrase marks, for example, and provide a label for or comment regarding the group. A list of event IDs may be given in the
+            plist attribute. An editorial or analytical comment or observation, encoded elsewhere, such as in the front or back matter, in score text elements,
+            or in an external document may be pointed to using the link.common, link.internal, or link.external attributes. Alternatively, the observation may
+            be included directly within the &lt;annot&gt; element. The &lt;annot&gt; element, along with other elements with attributes from the
+            att.link.external class, may also be used to link/synchronize elements within the MEI file to external media such as images or sound recordings. The
+            ID of the MEI element(s) to be linked from should be encoded in the plist attribute while the link to the external media may be encoded in the href
+            or entityref attributes or in the body of the annotation using &lt;extref&gt; or &lt;extptr&gt; elements. The starting point of the annotation may
+            be indicated by either a tstamp, tstamp.ges, tstamp.real or startid attribute, while the ending point may be recorded by either a dur, dur.ges or
+            endid attribute. The resp attribute records the editor(s) responsible for identifying or creating the annotation.</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.source"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="att.annot.log"/>
+            <memberOf key="att.annot.vis"/>
+            <memberOf key="att.annot.ges"/>
+            <memberOf key="att.annot.anl"/>
+            <memberOf key="att.link.common"/>
+            <memberOf key="att.link.internal"/>
+            <memberOf key="att.link.external"/>
+            <memberOf key="att.responsibility"/>
+            <memberOf key="model.annotLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="profiledesc" module="MEI.header" mode="delete"/>
+
+        <elementSpec ident="workdesc" module="MEI.header" mode="add">
+          <desc>work description ― A container for description of the work(s) used in the creation of the electronic file.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="model.headerPart"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="work"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="work" module="MEI.header" mode="add">
+          <desc/>
+          <classes>
+            <memberOf key="att.datapointing"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.identifierLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="titlestmt"/>
+            </rng:optional>
+            <rng:ref name="macro.workPart"/>
+            <rng:optional>
+              <rng:ref name="notesstmt"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="classification"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="castlist"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="contents"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:ref name="relateditem"/>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
+
+        <elementSpec ident="editionstmt" module="MEI.header" mode="replace">
+          <desc>edition statement ― Container for meta-data pertaining to a particular edition of the material being described. This element is modelled on an
+            element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="model.editionLike"/>
+              <rng:zeroOrMore>
+                <rng:ref name="respstmt"/>
+              </rng:zeroOrMore>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="pubstmt" module="MEI.header" mode="replace">
+          <desc>publication statement ― Container for information regarding the publication or distribution of a bibliographic item, including the publisher's
+            name and address, the date of publication, and other relevant details. When an item is unpublished, use only the &lt;unpub&gt; sub-element. This
+            element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:choice>
+              <rng:optional>
+                <rng:ref name="unpub"/>
+              </rng:optional>
+              <rng:zeroOrMore>
+                <rng:ref name="model.pubstmtPart"/>
+              </rng:zeroOrMore>
+            </rng:choice>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="physdesc" module="MEI.header" mode="replace">
+          <desc>physical description ― Container for information about the location, appearance, construction, or handling of physical materials, such as their
+            dimension, quantity, color, style, and technique of creation. Dedicatory text and title page features may also be encoded here when they are not
+            transcribed as part of the front or back matter; i.e., when they are considered to be meta-data rather than a transcription. This element is
+            modelled on an element in Encoded Archival Description (EAD).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="model.physdescPart"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="seriesstmt" module="MEI.header" mode="replace">
+          <desc>series statement ― Groups information about the series, if any, to which a publication belongs. In this context, the title element records the
+            series title, the respStmt element records the person or group responsible for the series, and the identifier element contains a series identifier.
+            The list element should be used when it is necessary to enumerate the contents of the series. The seriesstmt is provided within seriesstmt for the
+            description of a sub-series. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="model.titleLike"/>
+            </rng:oneOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="respstmt"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.identifierLike"/>
+            </rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.listLike"/>
+              <rng:zeroOrMore>
+                <rng:ref name="seriesstmt"/>
+              </rng:zeroOrMore>
+            </rng:choice>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="source" module="MEI.header" mode="replace">
+          <desc>source ― A bibliographic description of a source for the electronic file. Multiple physdesc sub-elements may be used to describe the physically
+            separate parts of a single source. The data attribute may be used to reference one or more features that occur in this particular source. A URI for
+            the related item should be placed in the &lt;identifier&gt; sub-element. This element is modelled on the sourcedesc element in the Text Encoding
+            Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.datapointing"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.identifierLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="titlestmt"/>
+            </rng:optional>
+            <rng:ref name="macro.bibldescPart"/>
+            <rng:optional>
+              <rng:ref name="notesstmt"/>
+            </rng:optional>
+            <rng:ref name="macro.workPart"/>
+            <rng:optional>
+              <rng:ref name="classification"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="castlist"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="contents"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:ref name="relateditem"/>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="meihead" module="MEI.header" mode="replace">
+          <desc>meihead ― A wrapper for general bibliographic and descriptive information about the encoded file. This information is often essential in a
+            machine-readable environment. Five sub-elements must be encoded in the following order: &lt;altmeiid&gt;(optional), &lt;filedesc&gt;(required),
+            &lt;encodingdesc&gt;(optional), &lt;workdesc;&gt;(optional), and &lt;revisiondesc&gt;(optional). These elements and their sub-elements provide: a
+            unique identifier for the MEI file, bibliographic information about the MEI file and its sources, information about the encoding process,
+            information about the creation of the work being encoded, and statements regarding significant revisions of the file. The xml:lang attribute may be
+            used to indicate the language in which the metadata content of the header is provided. In order to encourage uniformity in the provision of metadata
+            across document types, this element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.meiversion"/>
+            <memberOf key="model.startLike.header"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="altmeiid"/>
+            </rng:zeroOrMore>
+            <rng:ref name="filedesc"/>
+            <rng:ref name="model.headerPart_sequenceOptional"/>
+            <rng:optional>
+              <rng:ref name="revisiondesc"/>
+            </rng:optional>
+          </content>
+          <attList>
+            <attDef ident="type" usage="opt">
+              <desc>specifies the kind of document to which the header is attached, for example whether it is a corpus or individual text.</desc>
+              <valList type="closed">
+                <valItem ident="music">
+                  <desc>a single musical text</desc>
+                </valItem>
+                <valItem ident="corpus">
+                  <desc>a collection of musical texts</desc>
+                </valItem>
+              </valList>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="relateditem" module="MEI.header" mode="replace">
+          <desc>relateditem ― contains or references another bibliographic item which is related to the present one in some specified manner, for example as a
+            constituent or alternative version of it. A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This element is
+            modelled on the relatedItem element in the Text Encoding Initiative (TEI) and MODS schemas.</desc>
+          <classes>
+            <memberOf key="att.datapointing"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.identifierLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="titlestmt"/>
+            </rng:optional>
+            <rng:ref name="macro.bibldescPart"/>
+            <rng:optional>
+              <rng:ref name="notesstmt"/>
+            </rng:optional>
+            <rng:ref name="macro.workPart"/>
+            <rng:optional>
+              <rng:ref name="classification"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="castlist"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="contents"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:ref name="relateditem"/>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="rel" usage="opt">
+              <desc>describes the relationship between the &lt;relateditem&gt; and the resource described in the parent element, i.e. &lt;source&gt; or
+                &lt;relateditem&gt;. "preceding" indicates a predecessor to the resource; "succeeding" applies to a successor to the resource; "original"
+                indicates the original form of the resource; "host" provides info concerning an intellectual or physical constituent unit of the resource;
+                "otherVersion" indicates a change in the intellectual content of the resource not significant enough to be a different work; "otherFormat"
+                indicates a change in physical format of the resource; "isReferencedBy" applies to a citation or reference to published bibliographic
+                descriptions, reviews, abstracts, or indexes of the content of the resource; "references" applies to a resource cited or referred to in the
+                resource. These values are based on MODS version 3.4.</desc>
+              <valList type="closed">
+                <valItem ident="preceding"/>
+                <valItem ident="succeeding"/>
+                <valItem ident="original"/>
+                <valItem ident="host"/>
+                <valItem ident="constituent"/>
+                <valItem ident="otherVersion"/>
+                <valItem ident="otherFormat"/>
+                <valItem ident="isReferencedBy"/>
+                <valItem ident="references"/>
+              </valList>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="contents" module="MEI.header" mode="add">
+          <desc/>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:ref name="model.listLike"/>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="event" module="MEI.header" mode="replace">
+          <desc>event ― contains a description of an event, including the dates and locations of its occurrence and prominent participants. When a single date
+            can be associated with the event, the attributes in the att.datable class may provide a more machine-processable alternative than date elements
+            within the content of &lt;event&gt;. &lt;table&gt; and &lt;list&gt; elements are allowed within &lt;event&gt; in order to accommodate structured
+            content.</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.calendared"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.datable"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:choice>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:text/>
+                  <rng:ref name="model.textphraseLike.limited"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="model.tableLike"/>
+                  <rng:ref name="model.listLike"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:choice>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="classification" module="MEI.header" mode="replace">
+          <desc>classification ― Groups information which describes the nature or topic of an entity. Although use of names and terms from locally controlled
+            vocabularies is possible, terms used here should come from standard national or international vocabularies whenever they are available in order to
+            enable searches in systems that include multiple MEI documents, or MEI documents and bibliographic records from many institutions.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.datapointing"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="classcode"/>
+                <rng:ref name="termlist"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="creation" module="MEI.header" mode="replace">
+          <desc>creation ― Non-bibliographic creation details for the work being encoded, in narrative form. Contains phrases describing the origin of the text,
+            e.g. the date, place, and circumstances of its composition. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="date"/>
+                <rng:ref name="geogname"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="eventlist" module="MEI.header" mode="replace">
+          <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventlist&gt; contains &lt;event&gt; elements
+            that contain a brief description of the associated event, including dates and locations where the event took place. An &lt;eventlist&gt; describes
+            events associated with a work when it appears in the &lt;workdesc&gt; element or events associated with the custodial history of a given copy of a
+            source for the encoding when it appears within the &lt;source&gt; or &lt;relateditem&gt; elements. The type attribute may be used to distinguish
+            between event lists with different functions, such as a list of events in the compositional process and a list of performance dates.</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.typed"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.headLike"/>
+            </rng:optional>
+            <rng:oneOrMore>
+              <rng:ref name="event"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="langusage" module="MEI.header" mode="replace">
+          <desc>language usage ― Langusage groups elements describing the languages, sublanguages, dialects, etc., represented within the encoded work. This
+            element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.datapointing"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="language"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="history" module="MEI.header" mode="add">
+          <desc>history ― History provides a container for information about the creation and history of a resource.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.headLike"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="creation"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="eventlist"/>
+                <rng:ref name="p"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="key" module="MEI.header" mode="add">
+          <desc>key ― Key captures information about tonal center and mode. It is used exclusively within bibliographic descriptions. Do not confuse this
+            element with &lt;keysig&gt;, which is used within the body of an MEI file to record this data.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.accidental"/>
+            <memberOf key="att.pitch"/>
+          </classes>
+          <content>
+            <rng:text/>
+          </content>
+          <attList>
+            <attDef ident="mode" usage="opt">
+              <desc>indicates major, minor, or other tonality.</desc>
+              <datatype>
+                <rng:ref name="data.MODE"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="perfmedium" module="MEI.header" mode="add">
+          <desc>performance medium ― Indicates the number and character of the performing forces used in a musical composition. The function of instrumentalists
+            or vocalists is represented by the choice of ensemble and performer child elements. Arrangements are coded for the medium of the work being
+            described, not for the original medium.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.authorized"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="head"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="ensemble"/>
+                <rng:ref name="performer"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="performer" module="MEI.header" mode="add">
+          <desc>performer ― Used when performing forces includes specific instrumental or vocal performers. If the performer plays more than one instrument in a
+            composition, the first named instrument is given. If a principal instrument can be determined, the name or code for that instrument is given. For
+            percussion music, whether for a single performer or more than one, the number of performers is given, rather than the number of instruments. For
+            monologues, or works with narration, an indication of unspecified voice is given for the speaker or narrator.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:ref name="instrvoice"/>
+            </rng:oneOrMore>
+            <rng:optional>
+              <rng:ref name="role"/>
+            </rng:optional>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="ensemble" module="MEI.header" mode="add">
+          <desc>ensemble ― Used when an ensemble, such as an orchestra, is included in the performing forces of a composition. It is recommended that name
+            values (recorded in the reg attribute or in the element's content) be taken from a standardized list, such as the International Association of Music
+            Libraries' Medium of performance Codes List or the MARC Instruments and Voices Code List.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+          </classes>
+          <content>
+            <rng:ref name="instrvoice"/>
+            <rng:optional>
+              <rng:ref name="role"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="performer"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="instrvoice" module="MEI.header" mode="add">
+          <desc/>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.authorized"/>
+            <memberOf key="att.regularized"/>
+          </classes>
+          <content>
+            <rng:text/>
+          </content>
+          <attList>
+            <attDef ident="count" usage="opt">
+              <desc>indicates the number of parts or performers, e.g., in a composition for 2 flutes.</desc>
+              <datatype>
+                <rng:data type="positiveInteger"/>
+              </datatype>
+            </attDef>
+            <attDef ident="solo" usage="opt">
+              <desc>marks this instrument or vocal part as a soloist. Do not use this attribute for a solo instrument which is not accompanied.</desc>
+              <datatype>
+                <rng:ref name="data.BOOLEAN"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </elementSpec>
+
+        <elementSpec ident="castlist" module="MEI.shared" mode="add">
+          <desc>cast list ― Contains a single cast list or dramatis personae.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.headLike"/>
+            </rng:optional>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="castitem"/>
+                <rng:ref name="castgrp"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="castitem" module="MEI.shared" mode="add">
+          <desc>cast list item ― Contains a single entry within a cast list, describing either a single role or a list of non-speaking roles.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="role"/>
+                <rng:ref name="roledesc"/>
+                <rng:ref name="actor"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="castgrp" module="MEI.shared" mode="add">
+          <desc>cast list group ― Groups one or more individual castItem elements within a cast list.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="castitem"/>
+                <rng:ref name="castgrp"/>
+                <rng:ref name="roledesc"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="role" module="MEI.shared" mode="add">
+          <desc>role ― Name of a dramatic role, as given in a cast list.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="roledesc" module="MEI.shared" mode="add">
+          <desc>role description ― Describes a character's role in a drama.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
+        <elementSpec ident="actor" module="MEI.shared" mode="add">
+          <desc>actor ― Name of an actor appearing within a cast list.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+
       </schemaSpec>
     </body>
   </text>
