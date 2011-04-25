@@ -76,7 +76,7 @@
             </attDef>
           </attList>
         </classSpec>
-        
+
         <!-- allow dur attribute (as ending timestamp) on tie -->
         <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="delete"/>
         <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="add">
@@ -87,7 +87,109 @@
             <memberOf key="att.duration.timestamp"/>
           </classes>
         </classSpec>
-        
+
+        <!-- revise -->
+        <classSpec type="atts" module="MEI.shared" ident="att.meterbar" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.meterconformance.bar" mode="add">
+          <desc>Attributes that provide information about a measure's conformance to the prevailing meter.</desc>
+          <attList>
+            <attDef ident="metcon" usage="opt">
+              <desc>indicates the relationship between the content of a measure and the prevailing meter</desc>
+              <datatype>
+                <rng:ref name="data.BOOLEAN"/>
+              </datatype>
+            </attDef>
+            <attDef ident="control" usage="opt">
+              <desc>indicates whether or not a barline is "controlling"; that is, if it indicates a point of alignment across all the parts. Barlines within a
+                score are usually controlling; that is, they "line up". Barlines within parts may or may not be controlling. When applied to &lt;measure&gt;,
+                this attribute indicates the nature of the right barline but not the left.</desc>
+              <datatype>
+                <rng:ref name="data.BOOLEAN"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.barline.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.barline.log" mode="add">
+          <desc>Logical domain attributes</desc>
+          <classes>
+            <memberOf key="att.meterconformance.bar"/>
+          </classes>
+          <attList>
+            <attDef ident="rend" usage="opt">
+              <desc>records the appearance and usually the function of the barline.</desc>
+              <datatype>
+                <rng:ref name="data.BARRENDITION"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.measure.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.measure.log" mode="add">
+          <desc>Logical domain attributes. The n attribute contains a name or number associated with the measure (Read, p. 445). Often, this is an integer, but
+            not always. For example, some measures, especially incomplete measures or those under an ending mark, may have labels that contain an integer plus a
+            suffix, such as '12a'. Measures may even have labels, especially in editorial or analytical uses of MEI, that are entirely non-numeric strings.
+            Measure numbers may be machine-generated instead of encoding them in the markup. However, an explicit measure number should restart numbering with
+            the given value. The join attribute may be used to indicate another measure which metrically completes the current, incomplete one one.</desc>
+          <classes>
+            <memberOf key="att.meterconformance.bar"/>
+            <!--<memberOf key="att.joined"/>-->
+          </classes>
+          <attList>
+            <attDef ident="left" usage="opt">
+              <desc>indicates the visual rendition of the left barline. It is present here only for facilitation of translation from legacy encodings which use
+                it. Usually, it can be safely ignored.</desc>
+              <datatype>
+                <rng:ref name="data.BARRENDITION"/>
+              </datatype>
+            </attDef>
+            <attDef ident="right" usage="opt">
+              <desc>indicates the function of the right barline and is structurally important.</desc>
+              <datatype>
+                <rng:ref name="data.BARRENDITION"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.meterconformance" mode="add">
+          <desc>Attributes that provide information about a structure's conformance to the prevailing meter.</desc>
+          <attList>
+            <attDef ident="metcon">
+              <desc>indicates the relationship between the content of a staff or layer and the prevailing meter</desc>
+              <valList type="closed">
+                <valItem ident="c">
+                  <desc>conformant with the prevailing meter</desc>
+                </valItem>
+                <valItem ident="i">
+                  <desc>incomplete; i.e., not enough beats</desc>
+                </valItem>
+                <valItem ident="o">
+                  <desc>overfull; i.e., too many beats</desc>
+                </valItem>
+              </valList>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.layer.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.layer.log" mode="add">
+          <desc>Logical domain attributes</desc>
+          <classes>
+            <memberOf key="att.meterconformance"/>
+          </classes>
+        </classSpec>
+
+        <classSpec type="atts" module="MEI.shared" ident="att.staff.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.staff.log" mode="add">
+          <desc>Logical domain attributes</desc>
+          <classes>
+            <memberOf key="att.meterconformance"/>
+          </classes>
+        </classSpec>
+
         <!--<classSpec type="atts" module="MEI.shared" ident="att.staffgroupingsym" mode="replace">
           <desc>Attributes that describe the symbol used to group a set of staves</desc>
           <attList>
@@ -121,7 +223,7 @@
             </rng:list>
           </content>
           </macroSpec>-->
-        
+
         <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
 
         <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
