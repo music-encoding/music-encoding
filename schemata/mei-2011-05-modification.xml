@@ -77,6 +77,113 @@
           </attList>
         </classSpec>
 
+        <!-- FR 61: add constraint for staffdef/lines.color -->
+        <elementSpec ident="staffdef" module="MEI.shared" mode="replace">
+          <desc>staff definition ― Container for staff meta-information.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.staffdef.log"/>
+            <memberOf key="att.staffdef.vis"/>
+            <memberOf key="att.staffdef.ges"/>
+            <memberOf key="att.staffdef.anl"/>
+            <memberOf key="model.staffdefLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.labelLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.instrdefLike"/>
+                <rng:ref name="model.layerdefLike"/>
+                <rng:ref name="model.staffdefPart"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="Check_staffdefn" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:staffdef">
+                <sch:let name="thisstaff" value="@n"/>
+                <sch:assert test="@n">A staffdef must have an n attribute.</sch:assert>
+                <sch:assert test="@lines or preceding::mei:staffdef[@n=$thisstaff
+                  and @lines]">The first occurrence of a staff must declare
+                  the number of staff lines.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_clef_position_staffdef" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:staffdef[@clef.line and @lines]">
+                <sch:assert test="number(@clef.line) &lt;= number(@lines)">The clef position must be less than or equal to the number of lines on the
+                  staff.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_clef_position_staffdef" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:staffdef[@clef.line and not(@lines)]">
+                <sch:let name="thisstaff" value="@n"/>
+                <sch:let name="stafflines" value="preceding::mei:staffdef[@n=$thisstaff and
+                  @lines][1]/@lines"/>
+                <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The clef position must be less than or equal to the number of lines on the
+                  staff.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:staffdef[@tab.strings and @lines]">
+                <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+                <sch:assert test="$countTokens = 1 or $countTokens = @lines">The tab.strings attribute must have the same number of values as there are staff
+                  lines.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:staffdef[@tab.strings and not(@lines)]">
+                <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+                <sch:let name="thisStaff" value="@n"/>
+                <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                  @lines][1]/@lines">The
+                  tab.strings attribute must have the same number of values as there are staff lines.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="Check_lines_color" scheme="isoschematron">
+            <constraint>
+              <sch:pattern>
+                <sch:rule context="mei:staffdef[@lines.color and @lines]">
+                  <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
+                  <sch:assert test="$countTokens = 1 or $countTokens = @lines">The lines.color attribute must have either 1) a single value or 2) the same
+                    number of values as there are staff lines.</sch:assert>
+                </sch:rule>
+                <sch:rule context="mei:staffdef[@lines.color and not(@lines)]">
+                  <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
+                  <sch:let name="thisStaff" value="@n"/>
+                  <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                  @lines][1]/@lines">The
+                    lines.color attribute must have either 1) a single value or 2) the same number of values as there are staff lines.</sch:assert>
+                </sch:rule>
+              </sch:pattern>
+            </constraint>
+          </constraintSpec>
+          <!-- <constraintSpec ident="Check_lines_color" scheme="isoschematron">
+            <constraint>
+            <sch:rule context="mei:staffdef[@lines.color and not(@lines)]">
+            <sch:let name="countTokens"
+            value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
+            <sch:let name="thisStaff" value="@n"/>
+            <sch:assert
+            test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+            @lines][1]/@lines"
+            >The lines.color attribute must have either 1) a single value or
+            2) the same number of values as there are staff lines.</sch:assert>
+            </sch:rule>
+            </constraint>
+            </constraintSpec> -->
+        </elementSpec>
+
         <!-- FR 70: add @complete on layer -->
         <!-- revise -->
         <classSpec type="atts" module="MEI.shared" ident="att.meterbar" mode="delete"/>
@@ -186,7 +293,7 @@
             </rng:list>
           </content>
           </macroSpec>-->
-        
+
         <!-- FR 72: add head to eventlist -->
         <elementSpec ident="eventlist" module="MEI.header" mode="replace">
           <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventlist&gt; contains &lt;event&gt; elements
@@ -208,7 +315,7 @@
             </rng:oneOrMore>
           </content>
         </elementSpec>
-        
+
         <!-- FR 73: add att.bibl class to annot -->
         <elementSpec ident="annot" module="MEI.shared" mode="replace">
           <desc>annotation ― Provides a short statement explaining the text or indicating the basis for an assertion. It is used for both general comments and
@@ -251,7 +358,7 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        
+
         <!-- FR 75: add <lg> to content of <lg> -->
         <elementSpec ident="lg" module="MEI.text" mode="replace">
           <desc>line group ― Usually contains a lyric verse although it may be used for any section of text that is organized as a group of lines. This element
@@ -280,7 +387,7 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        
+
         <!-- FR 76: add workdesc directly within header; replaces profiledesc -->
         <!-- remove profiledesc -->
         <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
@@ -320,7 +427,7 @@
             </rng:optional>
           </content>
         </macroSpec>
-        
+
         <elementSpec ident="workdesc" module="MEI.header" mode="add">
           <desc>work description ― A container for description of the work(s) used in the creation of the electronic file.</desc>
           <classes>
@@ -333,7 +440,7 @@
             </rng:oneOrMore>
           </content>
         </elementSpec>
-        
+
         <elementSpec ident="work" module="MEI.header" mode="add">
           <desc/>
           <classes>
@@ -366,7 +473,7 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        
+
         <elementSpec ident="editionstmt" module="MEI.header" mode="replace">
           <desc>edition statement ― Container for meta-data pertaining to a particular edition of the material being described. This element is modelled on an
             element in the Text Encoding Initiative (TEI).</desc>
@@ -937,7 +1044,7 @@
             </rng:oneOrMore>
           </content>
         </elementSpec>
-        
+
         <!-- FR 78: allow dur attribute (as ending timestamp) on tie -->
         <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="delete"/>
         <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="add">
@@ -948,7 +1055,7 @@
             <memberOf key="att.duration.timestamp"/>
           </classes>
         </classSpec>
-        
+
         <!-- FR 80: make surface and zone members of att.datapointing -->
         <elementSpec ident="surface" module="MEI.facsimile" mode="replace">
           <desc>surface ― Defines a written surface in terms of a rectangular coordinate space, optionally grouping one or more graphic representations of that
@@ -973,7 +1080,7 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        
+
         <elementSpec ident="zone" module="MEI.facsimile" mode="replace">
           <desc>zone ― Defines a rectangular area contained within a surface. This element is modelled on an element in the Text Encoding Initiative
             (TEI).</desc>
@@ -991,8 +1098,116 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        
-        </schemaSpec>
+
+        <!-- FR 84: "in-staff" ossia -->
+        <classSpec type="atts" module="MEI.shared" ident="att.layer.anl" mode="replace">
+          <desc>Analytical domain attributes</desc>
+          <classes>
+            <memberOf key="att.common.anl"/>
+          </classes>
+          <attList>
+            <attDef ident="altern">
+              <desc>indicates the layer to which this layer is an alternative version. Its value must be the ID of another layer element.</desc>
+              <datatype>
+                <rng:data type="IDREF"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec type="model" ident="model.ossiaLike" module="MEI.cmn" mode="replace">
+          <desc>groups elements that function like ossia.</desc>
+          <classes>
+            <memberOf key="model.sectionPart"/>
+            <memberOf key="model.staffPart"/>
+          </classes>
+        </classSpec>
+
+        <elementSpec ident="ossia" module="MEI.cmn" mode="replace">
+          <desc>ossia ― An alternate notational version *present in the source being transcribed*. The alternative material often provides a simpler, easier to
+            perform option, while at other times the alternate material provides indications of performance practice, such as ornamentation. In the case of a
+            measure, an ossia is typically rendered above the main staff on a reduced-size staff. Sometimes the alternate material occurs on the same staff as
+            the primarly text, but in a separate layer. In this case, the alternative material is often rendered in small-sized notation.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.ossia.log"/>
+            <memberOf key="att.ossia.vis"/>
+            <memberOf key="att.ossia.ges"/>
+            <memberOf key="att.ossia.anl"/>
+            <memberOf key="model.ossiaLike"/>
+          </classes>
+          <content>
+            <rng:choice>
+              <rng:group>
+                <rng:ref name="model.measureLike"/>
+                <rng:oneOrMore>
+                  <rng:ref name="model.measureLike"/>
+                </rng:oneOrMore>
+              </rng:group>
+              <rng:group>
+                <rng:ref name="model.layerLike"/>
+                <rng:oneOrMore>
+                  <rng:ref name="model.layerLike"/>
+                </rng:oneOrMore>
+              </rng:group>
+            </rng:choice>
+          </content>
+          <constraintSpec ident="Check_ossia" scheme="isoschematron">
+            <constraint>
+              <sch:pattern>
+                <sch:rule context="mei:section/mei:ossia">
+                  <sch:assert test="count(mei:*) = count(mei:measure)">In this context ossia may contain only measure elements.</sch:assert>
+                </sch:rule>
+                <sch:rule context="mei:staff/mei:ossia">
+                  <sch:assert test="count(mei:*) = count(mei:layer)">In this context ossia may contain only layer elements.</sch:assert>
+                </sch:rule>
+              </sch:pattern>
+            </constraint>
+          </constraintSpec>
+        </elementSpec>
+
+        <elementSpec ident="layer" module="MEI.shared" mode="replace">
+          <desc>layer ― An independent stream of events on a staff. The term 'layer' in used instead of 'voice' in order to avoid confusion between 'voice' and
+            'voice leading'. The n attribute is used to establish a connection back to the appropriate layerdef element.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.layer.log"/>
+            <memberOf key="att.layer.vis"/>
+            <memberOf key="att.layer.ges"/>
+            <memberOf key="att.layer.anl"/>
+            <memberOf key="model.layerLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="model.divLike"/>
+                <rng:ref name="model.milestoneLike.music"/>
+                <rng:ref name="model.scoredefLike"/>
+                <rng:ref name="model.staffdefLike"/>
+                <rng:ref name="model.staffgrpLike"/>
+                <rng:ref name="model.annotLike"/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.layerPart"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="check_layeraltern" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:layer[@altern]">
+                <sch:let name="thisaltern" value="@altern"/>
+                <sch:assert test="@altern = //mei:layer[@xml:id=$thisaltern]/@xml:id">The value of @altern must be the ID of a layer element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </elementSpec>
+
+      </schemaSpec>
     </body>
   </text>
 </TEI>
