@@ -77,17 +77,7 @@
           </attList>
         </classSpec>
 
-        <!-- allow dur attribute (as ending timestamp) on tie -->
-        <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="delete"/>
-        <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="add">
-          <desc>Logical domain attributes</desc>
-          <classes>
-            <memberOf key="att.controlevent"/>
-            <memberOf key="att.startendid"/>
-            <memberOf key="att.duration.timestamp"/>
-          </classes>
-        </classSpec>
-
+        <!-- FR 70: add @complete on layer -->
         <!-- revise -->
         <classSpec type="atts" module="MEI.shared" ident="att.meterbar" mode="delete"/>
         <classSpec type="atts" module="MEI.shared" ident="att.meterconformance.bar" mode="add">
@@ -119,34 +109,6 @@
           <attList>
             <attDef ident="rend" usage="opt">
               <desc>records the appearance and usually the function of the barline.</desc>
-              <datatype>
-                <rng:ref name="data.BARRENDITION"/>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
-
-        <classSpec type="atts" module="MEI.shared" ident="att.measure.log" mode="delete"/>
-        <classSpec type="atts" module="MEI.shared" ident="att.measure.log" mode="add">
-          <desc>Logical domain attributes. The n attribute contains a name or number associated with the measure (Read, p. 445). Often, this is an integer, but
-            not always. For example, some measures, especially incomplete measures or those under an ending mark, may have labels that contain an integer plus a
-            suffix, such as '12a'. Measures may even have labels, especially in editorial or analytical uses of MEI, that are entirely non-numeric strings.
-            Measure numbers may be machine-generated instead of encoding them in the markup. However, an explicit measure number should restart numbering with
-            the given value. The join attribute may be used to indicate another measure which metrically completes the current, incomplete one one.</desc>
-          <classes>
-            <memberOf key="att.meterconformance.bar"/>
-            <!--<memberOf key="att.joined"/>-->
-          </classes>
-          <attList>
-            <attDef ident="left" usage="opt">
-              <desc>indicates the visual rendition of the left barline. It is present here only for facilitation of translation from legacy encodings which use
-                it. Usually, it can be safely ignored.</desc>
-              <datatype>
-                <rng:ref name="data.BARRENDITION"/>
-              </datatype>
-            </attDef>
-            <attDef ident="right" usage="opt">
-              <desc>indicates the function of the right barline and is structurally important.</desc>
               <datatype>
                 <rng:ref name="data.BARRENDITION"/>
               </datatype>
@@ -190,7 +152,8 @@
           </classes>
         </classSpec>
 
-        <!--<classSpec type="atts" module="MEI.shared" ident="att.staffgroupingsym" mode="replace">
+        <!-- Testing valList type="semi" -->
+        <!-- <classSpec type="atts" module="MEI.shared" ident="att.staffgroupingsym" mode="replace">
           <desc>Attributes that describe the symbol used to group a set of staves</desc>
           <attList>
             <attDef ident="symbol" usage="opt">
@@ -223,45 +186,30 @@
             </rng:list>
           </content>
           </macroSpec>-->
-
-        <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
-
-        <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
-          <desc>groups elements that may appear as part of the work element.</desc>
+        
+        <!-- FR 72: add head to eventlist -->
+        <elementSpec ident="eventlist" module="MEI.header" mode="replace">
+          <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventlist&gt; contains &lt;event&gt; elements
+            that contain a brief description of the associated event, including dates and locations where the event took place. An &lt;eventlist&gt; describes
+            events associated with a work when it appears in the &lt;workdesc&gt; element or events associated with the custodial history of a given copy of a
+            source for the encoding when it appears within the &lt;source&gt; or &lt;relateditem&gt; elements. The type attribute may be used to distinguish
+            between event lists with different functions, such as a list of events in the compositional process and a list of performance dates.</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.typed"/>
+          </classes>
           <content>
             <rng:optional>
-              <rng:ref name="history"/>
+              <rng:ref name="model.headLike"/>
             </rng:optional>
-            <rng:optional>
-              <rng:ref name="langusage"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="key"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="perfmedium"/>
-            </rng:optional>
+            <rng:oneOrMore>
+              <rng:ref name="event"/>
+            </rng:oneOrMore>
           </content>
-        </macroSpec>
-
-        <macroSpec type="pe" ident="macro.bibldescPart" module="MEI.header" mode="add">
-          <desc>groups manifestation-specific elements that may appear as part of a bibliographic description.</desc>
-          <content>
-            <rng:optional>
-              <rng:ref name="editionstmt"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="pubstmt"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="physdesc"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="seriesstmt"/>
-            </rng:optional>
-          </content>
-        </macroSpec>
-
+        </elementSpec>
+        
+        <!-- FR 73: add att.bibl class to annot -->
         <elementSpec ident="annot" module="MEI.shared" mode="replace">
           <desc>annotation ― Provides a short statement explaining the text or indicating the basis for an assertion. It is used for both general comments and
             for an annotation of the musical text. &lt;annot&gt; provides a way to group participating *events* and/or *control events*, the notes that form a
@@ -303,7 +251,76 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
+        
+        <!-- FR 75: add <lg> to content of <lg> -->
+        <elementSpec ident="lg" module="MEI.text" mode="replace">
+          <desc>line group ― Usually contains a lyric verse although it may be used for any section of text that is organized as a group of lines. This element
+            is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.xy"/>
+            <memberOf key="model.lgLike"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.headLike"/>
+            </rng:optional>
+            <rng:choice>
+              <rng:ref name="model.lLike"/>
+              <rng:ref name="model.lgLike"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.lLike"/>
+                <rng:ref name="model.lgLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+        
+        <!-- FR 76: add workdesc directly within header; replaces profiledesc -->
+        <!-- remove profiledesc -->
+        <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
 
+        <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
+          <desc>groups elements that may appear as part of the work element.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="history"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="langusage"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="key"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="perfmedium"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+
+        <macroSpec type="pe" ident="macro.bibldescPart" module="MEI.header" mode="add">
+          <desc>groups manifestation-specific elements that may appear as part of a bibliographic description.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="editionstmt"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pubstmt"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="physdesc"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="seriesstmt"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+        
         <elementSpec ident="workdesc" module="MEI.header" mode="add">
           <desc>work description ― A container for description of the work(s) used in the creation of the electronic file.</desc>
           <classes>
@@ -316,7 +333,7 @@
             </rng:oneOrMore>
           </content>
         </elementSpec>
-
+        
         <elementSpec ident="work" module="MEI.header" mode="add">
           <desc/>
           <classes>
@@ -349,7 +366,7 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-
+        
         <elementSpec ident="editionstmt" module="MEI.header" mode="replace">
           <desc>edition statement ― Container for meta-data pertaining to a particular edition of the material being described. This element is modelled on an
             element in the Text Encoding Initiative (TEI).</desc>
@@ -647,27 +664,6 @@
           </content>
         </elementSpec>
 
-        <elementSpec ident="eventlist" module="MEI.header" mode="replace">
-          <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventlist&gt; contains &lt;event&gt; elements
-            that contain a brief description of the associated event, including dates and locations where the event took place. An &lt;eventlist&gt; describes
-            events associated with a work when it appears in the &lt;workdesc&gt; element or events associated with the custodial history of a given copy of a
-            source for the encoding when it appears within the &lt;source&gt; or &lt;relateditem&gt; elements. The type attribute may be used to distinguish
-            between event lists with different functions, such as a list of events in the compositional process and a list of performance dates.</desc>
-          <classes>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.common"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:optional>
-              <rng:ref name="model.headLike"/>
-            </rng:optional>
-            <rng:oneOrMore>
-              <rng:ref name="event"/>
-            </rng:oneOrMore>
-          </content>
-        </elementSpec>
-
         <elementSpec ident="langusage" module="MEI.header" mode="replace">
           <desc>language usage ― Langusage groups elements describing the languages, sublanguages, dialects, etc., represented within the encoded work. This
             element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
@@ -924,7 +920,79 @@
           </content>
         </elementSpec>
 
-      </schemaSpec>
+        <!-- FR 77: add att.edit and att.trans classes to subst -->
+        <elementSpec ident="subst" module="MEI.edittrans" mode="replace">
+          <desc>substitution ― Groups transcriptional elements when the combination is to be regarded as a single intervention in the text. This element is
+            modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.trans"/>
+            <memberOf key="model.editLike"/>
+          </classes>
+          <content>
+            <rng:ref name="model.transcriptionLike"/>
+            <rng:oneOrMore>
+              <rng:ref name="model.transcriptionLike"/>
+            </rng:oneOrMore>
+          </content>
+        </elementSpec>
+        
+        <!-- FR 78: allow dur attribute (as ending timestamp) on tie -->
+        <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.cmn" ident="att.tie.log" mode="add">
+          <desc>Logical domain attributes</desc>
+          <classes>
+            <memberOf key="att.controlevent"/>
+            <memberOf key="att.startendid"/>
+            <memberOf key="att.duration.timestamp"/>
+          </classes>
+        </classSpec>
+        
+        <!-- FR 80: make surface and zone members of att.datapointing -->
+        <elementSpec ident="surface" module="MEI.facsimile" mode="replace">
+          <desc>surface ― Defines a written surface in terms of a rectangular coordinate space, optionally grouping one or more graphic representations of that
+            space, and rectangular zones of interest within it. The startid attribute may be used to hold a reference to the first feature occurring on this
+            surface. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.coordinated"/>
+            <memberOf key="att.datapointing"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.startid"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.figdescLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.graphicLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="zone"/>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+        
+        <elementSpec ident="zone" module="MEI.facsimile" mode="replace">
+          <desc>zone ― Defines a rectangular area contained within a surface. This element is modelled on an element in the Text Encoding Initiative
+            (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.coordinated"/>
+            <memberOf key="att.datapointing"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.figdescLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.graphicLike"/>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+        
+        </schemaSpec>
     </body>
   </text>
 </TEI>
