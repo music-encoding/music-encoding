@@ -168,20 +168,6 @@
               </sch:pattern>
             </constraint>
           </constraintSpec>
-          <!-- <constraintSpec ident="Check_lines_color" scheme="isoschematron">
-            <constraint>
-            <sch:rule context="mei:staffdef[@lines.color and not(@lines)]">
-            <sch:let name="countTokens"
-            value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
-            <sch:let name="thisStaff" value="@n"/>
-            <sch:assert
-            test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
-            @lines][1]/@lines"
-            >The lines.color attribute must have either 1) a single value or
-            2) the same number of values as there are staff lines.</sch:assert>
-            </sch:rule>
-            </constraint>
-            </constraintSpec> -->
         </elementSpec>
 
         <!-- FR 70: add @complete on layer -->
@@ -283,7 +269,7 @@
           </attList>
         </classSpec>-->
 
-        <!--<macroSpec module="mei" type="dt" ident="data.PLIST" mode="replace">
+        <!-- <macroSpec module="mei" type="dt" ident="data.PLIST" mode="replace">
           <desc>Participant list referencing method.</desc>
           <content>
             <rng:list>
@@ -292,7 +278,7 @@
               </rng:oneOrMore>
             </rng:list>
           </content>
-          </macroSpec>-->
+          </macroSpec> -->
 
         <!-- FR 72: add head to eventlist -->
         <elementSpec ident="eventlist" module="MEI.header" mode="replace">
@@ -391,6 +377,7 @@
         <!-- FR 76: add workdesc directly within header; replaces profiledesc -->
         <!-- remove profiledesc -->
         <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
+        <elementSpec ident="profiledesc" module="MEI.header" mode="delete"/>
 
         <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
           <desc>groups elements that may appear as part of the work element.</desc>
@@ -593,46 +580,6 @@
           </content>
         </elementSpec>
 
-        <elementSpec ident="meihead" module="MEI.header" mode="replace">
-          <desc>meihead ― A wrapper for general bibliographic and descriptive information about the encoded file. This information is often essential in a
-            machine-readable environment. Five sub-elements must be encoded in the following order: &lt;altmeiid&gt;(optional), &lt;filedesc&gt;(required),
-            &lt;encodingdesc&gt;(optional), &lt;workdesc;&gt;(optional), and &lt;revisiondesc&gt;(optional). These elements and their sub-elements provide: a
-            unique identifier for the MEI file, bibliographic information about the MEI file and its sources, information about the encoding process,
-            information about the creation of the work being encoded, and statements regarding significant revisions of the file. The xml:lang attribute may be
-            used to indicate the language in which the metadata content of the header is provided. In order to encourage uniformity in the provision of metadata
-            across document types, this element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
-          <classes>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.common"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.meiversion"/>
-            <memberOf key="model.startLike.header"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="altmeiid"/>
-            </rng:zeroOrMore>
-            <rng:ref name="filedesc"/>
-            <rng:ref name="model.headerPart_sequenceOptional"/>
-            <rng:optional>
-              <rng:ref name="revisiondesc"/>
-            </rng:optional>
-          </content>
-          <attList>
-            <attDef ident="type" usage="opt">
-              <desc>specifies the kind of document to which the header is attached, for example whether it is a corpus or individual text.</desc>
-              <valList type="closed">
-                <valItem ident="music">
-                  <desc>a single musical text</desc>
-                </valItem>
-                <valItem ident="corpus">
-                  <desc>a collection of musical texts</desc>
-                </valItem>
-              </valList>
-            </attDef>
-          </attList>
-        </elementSpec>
-
         <elementSpec ident="relateditem" module="MEI.header" mode="replace">
           <desc>relateditem ― contains or references another bibliographic item which is related to the present one in some specified manner, for example as a
             constituent or alternative version of it. A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This element is
@@ -692,14 +639,52 @@
         </elementSpec>
 
         <elementSpec ident="contents" module="MEI.header" mode="add">
-          <desc/>
+          <desc>contents ― description of the material contained within a resource. Use of this element should be determined by the complexity of the resource
+            and whether or not the information is readily available. The &lt;list&gt; element may be used to provide more structured information. A link to an
+            external table of contents may be supplied in lieu of or in addition to this element's contents. If it is necesary to describe each of the
+            components in detail, consider using &lt;relatedItem&gt; with the type="constituent" attribute instead of &lt;contents&gt;.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.bibl"/>
+            <memberOf key="att.link.external"/>
           </classes>
           <content>
-            <rng:ref name="model.listLike"/>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.listLike"/>
+            </rng:choice>
+            <!-- To make it possible to generate a DTD, content must read:
+              <content>
+                <rng:zeroOrMore>
+                  <rng:choice>
+                    <rng:text/>
+                    <rng:ref name="model.listLike"/>
+                  </rng:choice>
+                </rng:zeroOrMore>
+              </content>
+            -->
           </content>
+          <exemplum>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <contents>A suitable tone ; Left hand colouring ; Rhythm and accent ; Tempo ; Flexibility ; Ornaments</contents>
+            </egXML>
+          </exemplum>
+          <exemplum>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <contents>
+                <list>
+                  <item>Sonata in D major, op. V, no. 1 / Corelli</item>
+                  <item>Sonata in G minor / Purcell (with Robert Donington, gamba)</item>
+                  <item>Forlane from Concert royal no. 3 / Couperin</item>
+                </list>
+              </contents>
+            </egXML>
+          </exemplum>
+          <exemplum>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink">
+              <contents xlink:href="http://www.contentsProvider.org/toc/foo.html"/>
+            </egXML>
+          </exemplum>
         </elementSpec>
 
         <elementSpec ident="event" module="MEI.header" mode="replace">
@@ -1205,6 +1190,97 @@
               </sch:rule>
             </constraint>
           </constraintSpec>
+        </elementSpec>
+
+        <!-- FR 85: allow xi:include -->
+        <classSpec type="atts" module="MEI.shared" ident="att.common" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.common" mode="add">
+          <desc>Common attributes</desc>
+          <attList>
+            <attDef ident="id" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
+              <desc>regularizes the naming of an element and thus facilitates building links between it and other resources. Each id attribute within a document
+                must have a unique value.</desc>
+              <datatype>
+                <rng:data type="ID"/>
+              </datatype>
+            </attDef>
+            <attDef ident="n" usage="opt">
+              <desc>provides a label (name or number) for an element. While its value need not be unique, it is required to be a single token.</desc>
+              <datatype>
+                <rng:data type="NMTOKEN"/>
+              </datatype>
+            </attDef>
+            <attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
+              <desc>provides a base URI reference with which applications can resolve relative URI references into absolute URI references.</desc>
+              <datatype>
+                <rng:data type="anyURI"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        <classSpec type="atts" module="MEI.shared" ident="att.lang" mode="replace">
+          <desc>Language attributes common to text elements</desc>
+          <attList>
+            <attDef ident="lang" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
+              <desc>identifies the language of the element's content. The values for this attribute are language 'tags' as defined in BCP 47. All language tags
+                that make use of private use subtags must be documented in a corresponding language element in the MEI header whose id attribute is the same as
+                the language tag's value.</desc>
+              <datatype>
+                <rng:data type="language"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        
+        <!-- FR 86: allow caption to follow fig and table content -->
+        <elementSpec ident="fig" module="MEI.figtable" mode="replace">
+          <desc>figure ― groups elements representing or containing graphic information such as an illustration or figure. This element is modelled on the
+            figure element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.link.common"/>
+            <memberOf key="att.link.external"/>
+            <memberOf key="att.xy"/>
+            <memberOf key="model.figureLike"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.captionLike"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="figdesc"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:ref name="model.graphicLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="model.captionLike"/>
+            </rng:optional>
+          </content>
+        </elementSpec>
+        
+        <elementSpec ident="table" module="MEI.figtable" mode="replace">
+          <desc>table ― Visual layout in tabular form. This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding Initiative
+            (TEI), and HTML.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.xy"/>
+            <memberOf key="model.tableLike"/>
+          </classes>
+          <content>
+            <rng:optional>
+              <rng:ref name="model.captionLike"/>
+            </rng:optional>
+            <rng:oneOrMore>
+              <rng:ref name="tr"/>
+            </rng:oneOrMore>
+            <rng:optional>
+              <rng:ref name="model.captionLike"/>
+            </rng:optional>
+          </content>
         </elementSpec>
 
       </schemaSpec>
