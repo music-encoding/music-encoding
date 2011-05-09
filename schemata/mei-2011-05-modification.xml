@@ -1231,7 +1231,7 @@
             </attDef>
           </attList>
         </classSpec>
-        
+
         <!-- FR 86: allow caption to follow fig and table content -->
         <elementSpec ident="fig" module="MEI.figtable" mode="replace">
           <desc>figure ― groups elements representing or containing graphic information such as an illustration or figure. This element is modelled on the
@@ -1259,7 +1259,7 @@
             </rng:optional>
           </content>
         </elementSpec>
-        
+
         <elementSpec ident="table" module="MEI.figtable" mode="replace">
           <desc>table ― Visual layout in tabular form. This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding Initiative
             (TEI), and HTML.</desc>
@@ -1282,6 +1282,36 @@
             </rng:optional>
           </content>
         </elementSpec>
+
+        <!-- FR 87: make att.intervallicdesc more precise -->
+        <macroSpec module="mei" type="dt" ident="data.INTERVAL.AMOUNT" mode="add">
+          <desc>Either a token indicating direction of the interval but not its precise value or a decimal value in half steps. Decimal values are permitted to
+            accommodate microtuning.</desc>
+          <content>
+            <rng:choice>
+              <rng:data type="decimal"/>
+              <rng:data type="token">
+                <rng:param name="pattern">u|d|s</rng:param>
+              </rng:data>
+            </rng:choice>
+          </content>
+        </macroSpec>
+
+        <classSpec type="atts" module="MEI.analysis" ident="att.intervallicdesc" mode="replace">
+          <desc>Attributes that provide for description of intervallic content</desc>
+          <classes>
+            <memberOf key="att.intervalharmonic"/>
+          </classes>
+          <attList>
+            <attDef ident="intm" usage="opt">
+              <desc>encodes the melodic interval from the previous pitch. The value may be a general directional indication (u, d, s) or a precise numeric value
+                in half steps.</desc>
+              <datatype>
+                <rng:ref name="data.INTERVAL.AMOUNT"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
 
       </schemaSpec>
     </body>
