@@ -24,7 +24,7 @@
       <divGen type="toc"/>
     </front>
     <body>
-      <schemaSpec ident="mei" start="mei meihead meicorpus music" ns="http://www.music-encoding.org/ns/mei">
+      <schemaSpec ident="mei" start="mei meiHead meiCorpus music" ns="http://www.music-encoding.org/ns/mei">
         <!-- Workdesc can be added to @start when it becomes necessary to create separate work descriptions that can be referred to. -->
         <moduleRef key="mei"/>
         <moduleRef key="MEI.shared"/>
@@ -50,6 +50,7 @@
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
 
+        <!-- FR 37 Resolve confusion between @authority, @dbkey, @analog attributes -->
         <!-- Split att.authorized into att.authorized (authority, authURI) and att.regularized (reg).  Add att.regularized
           to all current members of att.authorized or only to name? Also, date has a reg attr that could be switched out
           for membership in att.regularized. -->
@@ -77,16 +78,50 @@
           </attList>
         </classSpec>
 
-        <!-- FR 61: add constraint for staffdef/lines.color -->
-        <elementSpec ident="staffdef" module="MEI.shared" mode="replace">
+        <!-- FR 44: use anyURI instead of IDREF: TABLED FOR NOW! -->
+        <!-- <macroSpec module="mei" type="dt" ident="data.PLIST" mode="replace">
+          <desc>Participant list referencing method.</desc>
+          <content>
+          <rng:list>
+          <rng:oneOrMore>
+          <rng:data type="anyURI"/>
+          </rng:oneOrMore>
+          </rng:list>
+          </content>
+          </macroSpec> -->
+
+        <!-- FR 48: remove entityref from att.link.external class -->
+        <classSpec type="atts" module="MEI.shared" ident="att.link.external" mode="replace">
+          <desc>Linking attributes for external referencing elements</desc>
+          <attList>
+            <!-- <attDef ident="entityref" usage="opt">
+              <desc>uses a previously-declared entity to identify an external electronic object.</desc>
+              <datatype>
+                <rng:data type="ENTITY"/>
+              </datatype>
+            </attDef> -->
+            <attDef ns="http://www.w3.org/1999/xlink" ident="href" usage="opt">
+              <desc>allows the use of an previously-undeclared URI to identify an external electronic object.</desc>
+              <datatype>
+                <rng:ref name="data.URI"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <!-- FR 61: add constraint for staffDef/lines.color -->
+        <!-- FR 91: make staffDef member of att.declaring -->
+        <!-- FR 96: limit @n on staff, staffDef, layer, layerDef to a single numeric value -->
+        <elementSpec ident="staffDef" module="MEI.shared" mode="replace">
           <desc>staff definition ― Container for staff meta-information.</desc>
           <classes>
             <memberOf key="att.common"/>
-            <memberOf key="att.staffdef.log"/>
-            <memberOf key="att.staffdef.vis"/>
-            <memberOf key="att.staffdef.ges"/>
-            <memberOf key="att.staffdef.anl"/>
-            <memberOf key="model.staffdefLike"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.staffDef.log"/>
+            <memberOf key="att.staffDef.vis"/>
+            <memberOf key="att.staffDef.ges"/>
+            <memberOf key="att.staffDef.anl"/>
+            <memberOf key="model.staffDefLike"/>
           </classes>
           <content>
             <rng:zeroOrMore>
@@ -94,36 +129,36 @@
             </rng:zeroOrMore>
             <rng:zeroOrMore>
               <rng:choice>
-                <rng:ref name="model.instrdefLike"/>
-                <rng:ref name="model.layerdefLike"/>
-                <rng:ref name="model.staffdefPart"/>
+                <rng:ref name="model.instrDefLike"/>
+                <rng:ref name="model.layerDefLike"/>
+                <rng:ref name="model.staffDefPart"/>
               </rng:choice>
             </rng:zeroOrMore>
           </content>
-          <constraintSpec ident="Check_staffdefn" scheme="isoschematron">
+          <constraintSpec ident="Check_staffDefn" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:staffdef">
+              <sch:rule context="mei:staffDef">
                 <sch:let name="thisstaff" value="@n"/>
-                <sch:assert test="@n">A staffdef must have an n attribute.</sch:assert>
-                <sch:assert test="@lines or preceding::mei:staffdef[@n=$thisstaff
+                <sch:assert test="number(@n) = round(number(@n))">An n attribute with a single integer value must be present.</sch:assert>
+                <sch:assert test="@lines or preceding::mei:staffDef[@n=$thisstaff
                   and @lines]">The first occurrence of a staff must declare
                   the number of staff lines.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
-          <constraintSpec ident="Check_clef_position_staffdef" scheme="isoschematron">
+          <constraintSpec ident="Check_clef_position_staffDef" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:staffdef[@clef.line and @lines]">
+              <sch:rule context="mei:staffDef[@clef.line and @lines]">
                 <sch:assert test="number(@clef.line) &lt;= number(@lines)">The clef position must be less than or equal to the number of lines on the
                   staff.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
-          <constraintSpec ident="Check_clef_position_staffdef" scheme="isoschematron">
+          <constraintSpec ident="Check_clef_position_staffDef" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:staffdef[@clef.line and not(@lines)]">
+              <sch:rule context="mei:staffDef[@clef.line and not(@lines)]">
                 <sch:let name="thisstaff" value="@n"/>
-                <sch:let name="stafflines" value="preceding::mei:staffdef[@n=$thisstaff and
+                <sch:let name="stafflines" value="preceding::mei:staffDef[@n=$thisstaff and
                   @lines][1]/@lines"/>
                 <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The clef position must be less than or equal to the number of lines on the
                   staff.</sch:assert>
@@ -132,7 +167,7 @@
           </constraintSpec>
           <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:staffdef[@tab.strings and @lines]">
+              <sch:rule context="mei:staffDef[@tab.strings and @lines]">
                 <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
                 <sch:assert test="$countTokens = 1 or $countTokens = @lines">The tab.strings attribute must have the same number of values as there are staff
                   lines.</sch:assert>
@@ -141,10 +176,10 @@
           </constraintSpec>
           <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:staffdef[@tab.strings and not(@lines)]">
+              <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
                 <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
                 <sch:let name="thisStaff" value="@n"/>
-                <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffDef[@n=$thisStaff and
                   @lines][1]/@lines">The
                   tab.strings attribute must have the same number of values as there are staff lines.</sch:assert>
               </sch:rule>
@@ -153,15 +188,15 @@
           <constraintSpec ident="Check_lines_color" scheme="isoschematron">
             <constraint>
               <sch:pattern>
-                <sch:rule context="mei:staffdef[@lines.color and @lines]">
+                <sch:rule context="mei:staffDef[@lines.color and @lines]">
                   <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
                   <sch:assert test="$countTokens = 1 or $countTokens = @lines">The lines.color attribute must have either 1) a single value or 2) the same
                     number of values as there are staff lines.</sch:assert>
                 </sch:rule>
-                <sch:rule context="mei:staffdef[@lines.color and not(@lines)]">
+                <sch:rule context="mei:staffDef[@lines.color and not(@lines)]">
                   <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
                   <sch:let name="thisStaff" value="@n"/>
-                  <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffdef[@n=$thisStaff and
+                  <sch:assert test="$countTokens = 1 or $countTokens = preceding::mei:staffDef[@n=$thisStaff and
                   @lines][1]/@lines">The
                     lines.color attribute must have either 1) a single value or 2) the same number of values as there are staff lines.</sch:assert>
                 </sch:rule>
@@ -183,8 +218,8 @@
               </datatype>
             </attDef>
             <attDef ident="control" usage="opt">
-              <desc>indicates whether or not a barline is "controlling"; that is, if it indicates a point of alignment across all the parts. Barlines within a
-                score are usually controlling; that is, they "line up". Barlines within parts may or may not be controlling. When applied to &lt;measure&gt;,
+              <desc>indicates whether or not a bar line is "controlling"; that is, if it indicates a point of alignment across all the parts. Bar lines within a
+                score are usually controlling; that is, they "line up". Bar lines within parts may or may not be controlling. When applied to &lt;measure&gt;,
                 this attribute indicates the nature of the right barline but not the left.</desc>
               <datatype>
                 <rng:ref name="data.BOOLEAN"/>
@@ -193,15 +228,15 @@
           </attList>
         </classSpec>
 
-        <classSpec type="atts" module="MEI.shared" ident="att.barline.log" mode="delete"/>
-        <classSpec type="atts" module="MEI.shared" ident="att.barline.log" mode="add">
+        <classSpec type="atts" module="MEI.shared" ident="att.barLine.log" mode="delete"/>
+        <classSpec type="atts" module="MEI.shared" ident="att.barLine.log" mode="add">
           <desc>Logical domain attributes</desc>
           <classes>
             <memberOf key="att.meterconformance.bar"/>
           </classes>
           <attList>
             <attDef ident="rend" usage="opt">
-              <desc>records the appearance and usually the function of the barline.</desc>
+              <desc>records the appearance and usually the function of the bar line.</desc>
               <datatype>
                 <rng:ref name="data.BARRENDITION"/>
               </datatype>
@@ -245,47 +280,12 @@
           </classes>
         </classSpec>
 
-        <!-- Testing valList type="semi" -->
-        <!-- <classSpec type="atts" module="MEI.shared" ident="att.staffgroupingsym" mode="replace">
-          <desc>Attributes that describe the symbol used to group a set of staves</desc>
-          <attList>
-            <attDef ident="symbol" usage="opt">
-              <desc>specifies the symbol used to group a set of staves.</desc>
-              <valList type="semi">
-                <valItem ident="brace">
-                  <desc>curved symbol, i.e., {</desc>
-                </valItem>
-                <valItem ident="bracket">
-                  <desc>square symbol, i.e., [</desc>
-                </valItem>
-                <valItem ident="line">
-                  <desc>line symbol, i.e., |</desc>
-                </valItem>
-                <valItem ident="none">
-                  <desc>grouping symbol missing</desc>
-                </valItem>
-              </valList>
-            </attDef>
-          </attList>
-        </classSpec>-->
-
-        <!-- <macroSpec module="mei" type="dt" ident="data.PLIST" mode="replace">
-          <desc>Participant list referencing method.</desc>
-          <content>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="anyURI"/>
-              </rng:oneOrMore>
-            </rng:list>
-          </content>
-          </macroSpec> -->
-
-        <!-- FR 72: add head to eventlist -->
-        <elementSpec ident="eventlist" module="MEI.header" mode="replace">
-          <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventlist&gt; contains &lt;event&gt; elements
-            that contain a brief description of the associated event, including dates and locations where the event took place. An &lt;eventlist&gt; describes
-            events associated with a work when it appears in the &lt;workdesc&gt; element or events associated with the custodial history of a given copy of a
-            source for the encoding when it appears within the &lt;source&gt; or &lt;relateditem&gt; elements. The type attribute may be used to distinguish
+        <!-- FR 72: add head to eventList -->
+        <elementSpec ident="eventList" module="MEI.header" mode="replace">
+          <desc>event list ― Contains historical information given as a sequence of significant past events. &lt;eventList&gt; contains &lt;event&gt; elements
+            that contain a brief description of the associated event, including dates and locations where the event took place. An &lt;eventList&gt; describes
+            events associated with a work when it appears in the &lt;workDesc&gt; element or events associated with the custodial history of a given copy of a
+            source for the encoding when it appears within the &lt;source&gt; or &lt;relatedItem&gt; elements. The type attribute may be used to distinguish
             between event lists with different functions, such as a list of events in the compositional process and a list of performance dates.</desc>
           <classes>
             <memberOf key="att.bibl"/>
@@ -347,8 +347,8 @@
 
         <!-- FR 75: add <lg> to content of <lg> -->
         <elementSpec ident="lg" module="MEI.text" mode="replace">
-          <desc>line group ― Usually contains a lyric verse although it may be used for any section of text that is organized as a group of lines. This element
-            is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <desc>line group ― May be used for any section of text that is organized as a group of lines. This element is modelled on an element in the Text
+            Encoding Initiative (TEI).</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.declaring"/>
@@ -374,10 +374,10 @@
           </content>
         </elementSpec>
 
-        <!-- FR 76: add workdesc directly within header; replaces profiledesc -->
-        <!-- remove profiledesc -->
-        <macroSpec type="pe" ident="macro.profiledescPart" module="MEI.header" mode="delete"/>
-        <elementSpec ident="profiledesc" module="MEI.header" mode="delete"/>
+        <!-- FR 76: add workDesc directly within header; replaces profileDesc -->
+        <!-- remove profileDesc -->
+        <macroSpec type="pe" ident="macro.profileDescPart" module="MEI.header" mode="delete"/>
+        <elementSpec ident="profileDesc" module="MEI.header" mode="delete"/>
 
         <macroSpec ident="macro.workPart" module="MEI.header" mode="add">
           <desc>groups elements that may appear as part of the work element.</desc>
@@ -386,13 +386,13 @@
               <rng:ref name="history"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="langusage"/>
+              <rng:ref name="langUsage"/>
             </rng:optional>
             <rng:optional>
               <rng:ref name="key"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="perfmedium"/>
+              <rng:ref name="perfMedium"/>
             </rng:optional>
           </content>
         </macroSpec>
@@ -401,21 +401,21 @@
           <desc>groups manifestation-specific elements that may appear as part of a bibliographic description.</desc>
           <content>
             <rng:optional>
-              <rng:ref name="editionstmt"/>
+              <rng:ref name="editionStmt"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="pubstmt"/>
+              <rng:ref name="pubStmt"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="physdesc"/>
+              <rng:ref name="physDesc"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="seriesstmt"/>
+              <rng:ref name="seriestStmt"/>
             </rng:optional>
           </content>
         </macroSpec>
 
-        <elementSpec ident="workdesc" module="MEI.header" mode="add">
+        <elementSpec ident="workDesc" module="MEI.header" mode="add">
           <desc>work description ― A container for description of the work(s) used in the creation of the electronic file.</desc>
           <classes>
             <memberOf key="att.common"/>
@@ -440,28 +440,31 @@
               <rng:ref name="model.identifierLike"/>
             </rng:zeroOrMore>
             <rng:optional>
-              <rng:ref name="titlestmt"/>
+              <rng:ref name="titleStmt"/>
             </rng:optional>
             <rng:ref name="macro.workPart"/>
             <rng:optional>
-              <rng:ref name="notesstmt"/>
+              <rng:ref name="notesStmt"/>
             </rng:optional>
             <rng:optional>
               <rng:ref name="classification"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="castlist"/>
+              <rng:ref name="castList"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="model.incipLike"/>
             </rng:optional>
             <rng:optional>
               <rng:ref name="contents"/>
             </rng:optional>
             <rng:zeroOrMore>
-              <rng:ref name="relateditem"/>
+              <rng:ref name="relatedItem"/>
             </rng:zeroOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="editionstmt" module="MEI.header" mode="replace">
+        <elementSpec ident="editionStmt" module="MEI.header" mode="replace">
           <desc>edition statement ― Container for meta-data pertaining to a particular edition of the material being described. This element is modelled on an
             element in the Text Encoding Initiative (TEI).</desc>
           <classes>
@@ -473,13 +476,13 @@
             <rng:oneOrMore>
               <rng:ref name="model.editionLike"/>
               <rng:zeroOrMore>
-                <rng:ref name="respstmt"/>
+                <rng:ref name="respStmt"/>
               </rng:zeroOrMore>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="pubstmt" module="MEI.header" mode="replace">
+        <elementSpec ident="pubStmt" module="MEI.header" mode="replace">
           <desc>publication statement ― Container for information regarding the publication or distribution of a bibliographic item, including the publisher's
             name and address, the date of publication, and other relevant details. When an item is unpublished, use only the &lt;unpub&gt; sub-element. This
             element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
@@ -493,13 +496,13 @@
                 <rng:ref name="unpub"/>
               </rng:optional>
               <rng:zeroOrMore>
-                <rng:ref name="model.pubstmtPart"/>
+                <rng:ref name="model.pubStmtPart"/>
               </rng:zeroOrMore>
             </rng:choice>
           </content>
         </elementSpec>
 
-        <elementSpec ident="physdesc" module="MEI.header" mode="replace">
+        <elementSpec ident="physDesc" module="MEI.header" mode="replace">
           <desc>physical description ― Container for information about the location, appearance, construction, or handling of physical materials, such as their
             dimension, quantity, color, style, and technique of creation. Dedicatory text and title page features may also be encoded here when they are not
             transcribed as part of the front or back matter; i.e., when they are considered to be meta-data rather than a transcription. This element is
@@ -510,16 +513,16 @@
           </classes>
           <content>
             <rng:oneOrMore>
-              <rng:ref name="model.physdescPart"/>
+              <rng:ref name="model.physDescPart"/>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="seriesstmt" module="MEI.header" mode="replace">
+        <elementSpec ident="seriestStmt" module="MEI.header" mode="replace">
           <desc>series statement ― Groups information about the series, if any, to which a publication belongs. In this context, the title element records the
             series title, the respStmt element records the person or group responsible for the series, and the identifier element contains a series identifier.
-            The content element should be used when it is necessary to enumerate the contents of the series. The seriesstmt is provided within seriesstmt for
-            the description of a sub-series. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+            The content element should be used when it is necessary to enumerate the content of the series. The seriestStmt element is provided within seriestStmt for the
+            description of a sub-series. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.bibl"/>
@@ -529,7 +532,7 @@
               <rng:ref name="model.titleLike"/>
             </rng:oneOrMore>
             <rng:zeroOrMore>
-              <rng:ref name="respstmt"/>
+              <rng:ref name="respStmt"/>
             </rng:zeroOrMore>
             <rng:zeroOrMore>
               <rng:ref name="model.identifierLike"/>
@@ -538,15 +541,15 @@
               <rng:ref name="contents"/>
             </rng:optional>
             <rng:zeroOrMore>
-              <rng:ref name="seriesstmt"/>
+              <rng:ref name="seriestStmt"/>
             </rng:zeroOrMore>
           </content>
         </elementSpec>
 
         <elementSpec ident="source" module="MEI.header" mode="replace">
-          <desc>source ― A bibliographic description of a source used in the creation of the electronic file. Multiple physdesc sub-elements may be used to
+          <desc>source ― A bibliographic description of a source used in the creation of the electronic file. Multiple physDesc sub-elements may be used to
             describe the physically separate parts of a single source. The data attribute may be used to reference one or more features that occur in this
-            particular source. A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This element is modelled on the sourcedesc
+            particular source. A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This element is modelled on the sourceDesc
             element in the Text Encoding Initiative (TEI).</desc>
           <classes>
             <memberOf key="att.datapointing"/>
@@ -558,30 +561,33 @@
               <rng:ref name="model.identifierLike"/>
             </rng:zeroOrMore>
             <rng:optional>
-              <rng:ref name="titlestmt"/>
+              <rng:ref name="titleStmt"/>
             </rng:optional>
             <rng:ref name="macro.bibldescPart"/>
             <rng:optional>
-              <rng:ref name="notesstmt"/>
+              <rng:ref name="notesStmt"/>
             </rng:optional>
             <rng:ref name="macro.workPart"/>
             <rng:optional>
               <rng:ref name="classification"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="castlist"/>
+              <rng:ref name="castList"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="model.incipLike"/>
             </rng:optional>
             <rng:optional>
               <rng:ref name="contents"/>
             </rng:optional>
             <rng:zeroOrMore>
-              <rng:ref name="relateditem"/>
+              <rng:ref name="relatedItem"/>
             </rng:zeroOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="relateditem" module="MEI.header" mode="replace">
-          <desc>relateditem ― contains or references another bibliographic item which is related to the present one in some specified manner, for example as a
+        <elementSpec ident="relatedItem" module="MEI.header" mode="replace">
+          <desc>related item ― contains or references another bibliographic item which is related to the present one in some specified manner, for example as a
             constituent or alternative version of it. A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This element is
             modelled on the relatedItem element in the Text Encoding Initiative (TEI) and MODS schemas.</desc>
           <classes>
@@ -594,30 +600,33 @@
               <rng:ref name="model.identifierLike"/>
             </rng:zeroOrMore>
             <rng:optional>
-              <rng:ref name="titlestmt"/>
+              <rng:ref name="titleStmt"/>
             </rng:optional>
             <rng:ref name="macro.bibldescPart"/>
             <rng:optional>
-              <rng:ref name="notesstmt"/>
+              <rng:ref name="notesStmt"/>
             </rng:optional>
             <rng:ref name="macro.workPart"/>
             <rng:optional>
               <rng:ref name="classification"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="castlist"/>
+              <rng:ref name="castList"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="model.incipLike"/>
             </rng:optional>
             <rng:optional>
               <rng:ref name="contents"/>
             </rng:optional>
             <rng:zeroOrMore>
-              <rng:ref name="relateditem"/>
+              <rng:ref name="relatedItem"/>
             </rng:zeroOrMore>
           </content>
           <attList>
             <attDef ident="rel" usage="opt">
-              <desc>describes the relationship between the &lt;relateditem&gt; and the resource described in the parent element, i.e. &lt;source&gt; or
-                &lt;relateditem&gt;. "preceding" indicates a predecessor to the resource; "succeeding" applies to a successor to the resource; "original"
+              <desc>describes the relationship between the &lt;relatedItem&gt; and the resource described in the parent element, i.e. &lt;source&gt; or
+                &lt;relatedItem&gt;. "preceding" indicates a predecessor to the resource; "succeeding" applies to a successor to the resource; "original"
                 indicates the original form of the resource; "host" provides info concerning an intellectual or physical constituent unit of the resource;
                 "otherVersion" indicates a change in the intellectual content of the resource not significant enough to be a different work; "otherFormat"
                 indicates a change in physical format of the resource; "isReferencedBy" applies to a citation or reference to published bibliographic
@@ -640,25 +649,31 @@
 
         <elementSpec ident="contents" module="MEI.header" mode="add">
           <desc>contents ― description of the material contained within a resource. Use of this element should be determined by the complexity of the resource
-            and whether or not the information is readily available. The &lt;list&gt; element may be used to provide more structured information. A link to an
-            external table of contents may be supplied in lieu of or in addition to this element's contents. If it is necesary to describe each of the
-            components in detail, consider using &lt;relatedItem&gt; with the type="constituent" attribute instead of &lt;contents&gt;.</desc>
+            and whether or not the information is readily available. The description may consist of unstructured text or &lt;contentItem&gt; elements may be
+            used to provide structured information. A link to an external table of contents may be supplied in lieu of or in addition to this element's child
+            elements. If it is necesary to describe each of the components in detail, consider using &lt;relatedItem&gt; with the type="constituent" attribute
+            instead of &lt;contents&gt;.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.bibl"/>
             <memberOf key="att.link.external"/>
           </classes>
           <content>
+            <rng:optional>
+              <rng:ref name="model.headLike"/>
+            </rng:optional>
             <rng:choice>
               <rng:text/>
-              <rng:ref name="model.listLike"/>
+              <rng:zeroOrMore>
+                <rng:ref name="contentItem"/>
+              </rng:zeroOrMore>
             </rng:choice>
-            <!-- To make it possible to generate a DTD, content must read:
+            <!-- To make it possible to generate a DTD, <content> must read:
               <content>
                 <rng:zeroOrMore>
                   <rng:choice>
                     <rng:text/>
-                    <rng:ref name="model.listLike"/>
+                    <rng:ref name="contentItem"/>
                   </rng:choice>
                 </rng:zeroOrMore>
               </content>
@@ -672,19 +687,37 @@
           <exemplum>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
               <contents>
-                <list>
-                  <item>Sonata in D major, op. V, no. 1 / Corelli</item>
-                  <item>Sonata in G minor / Purcell (with Robert Donington, gamba)</item>
-                  <item>Forlane from Concert royal no. 3 / Couperin</item>
-                </list>
+                <contentItem>Sonata in D major, op. V, no. 1 / Corelli</contentItem>
+                <contentItem>Sonata in G minor / Purcell (with Robert Donington, gamba)</contentItem>
+                <contentItem>Forlane from Concert royal no. 3 / Couperin</contentItem>
               </contents>
             </egXML>
           </exemplum>
           <exemplum>
             <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink">
-              <contents xlink:href="http://www.contentsProvider.org/toc/foo.html"/>
+              <contents xlink:href="http://www.contentProvider.org/toc/foo.html"/>
             </egXML>
           </exemplum>
+        </elementSpec>
+
+        <elementSpec ident="contentItem" module="MEI.header" mode="add">
+          <desc>content item ― Contains a single entry within a content description element.</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.incipLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
         </elementSpec>
 
         <elementSpec ident="event" module="MEI.header" mode="replace">
@@ -730,8 +763,8 @@
           <content>
             <rng:oneOrMore>
               <rng:choice>
-                <rng:ref name="classcode"/>
-                <rng:ref name="termlist"/>
+                <rng:ref name="classCode"/>
+                <rng:ref name="termList"/>
               </rng:choice>
             </rng:oneOrMore>
           </content>
@@ -750,13 +783,13 @@
               <rng:choice>
                 <rng:text/>
                 <rng:ref name="date"/>
-                <rng:ref name="geogname"/>
+                <rng:ref name="geogName"/>
               </rng:choice>
             </rng:zeroOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="langusage" module="MEI.header" mode="replace">
+        <elementSpec ident="langUsage" module="MEI.header" mode="replace">
           <desc>language usage ― Langusage groups elements describing the languages, sublanguages, dialects, etc., represented within the encoded work. This
             element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
           <classes>
@@ -786,7 +819,7 @@
             </rng:optional>
             <rng:zeroOrMore>
               <rng:choice>
-                <rng:ref name="eventlist"/>
+                <rng:ref name="eventList"/>
                 <rng:ref name="p"/>
               </rng:choice>
             </rng:zeroOrMore>
@@ -795,7 +828,7 @@
 
         <elementSpec ident="key" module="MEI.header" mode="add">
           <desc>key ― Key captures information about tonal center and mode. It is used exclusively within bibliographic descriptions. Do not confuse this
-            element with &lt;keysig&gt;, which is used within the body of an MEI file to record this data.</desc>
+            element with &lt;keySig&gt;, which is used within the body of an MEI file to record this data.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.bibl"/>
@@ -815,7 +848,7 @@
           </attList>
         </elementSpec>
 
-        <elementSpec ident="perfmedium" module="MEI.header" mode="add">
+        <elementSpec ident="perfMedium" module="MEI.header" mode="add">
           <desc>performance medium ― Indicates the number and character of the performing forces used in a musical composition. The function of instrumentalists
             or vocalists is represented by the choice of ensemble and performer child elements. Arrangements are coded for the medium of the work being
             described, not for the original medium.</desc>
@@ -848,7 +881,7 @@
           </classes>
           <content>
             <rng:oneOrMore>
-              <rng:ref name="instrvoice"/>
+              <rng:ref name="instrVoice"/>
             </rng:oneOrMore>
             <rng:optional>
               <rng:ref name="role"/>
@@ -865,7 +898,7 @@
             <memberOf key="att.bibl"/>
           </classes>
           <content>
-            <rng:ref name="instrvoice"/>
+            <rng:ref name="instrVoice"/>
             <rng:optional>
               <rng:ref name="role"/>
             </rng:optional>
@@ -877,7 +910,7 @@
           </content>
         </elementSpec>
 
-        <elementSpec ident="instrvoice" module="MEI.header" mode="add">
+        <elementSpec ident="instrVoice" module="MEI.header" mode="add">
           <desc/>
           <classes>
             <memberOf key="att.common"/>
@@ -904,7 +937,7 @@
           </attList>
         </elementSpec>
 
-        <elementSpec ident="castlist" module="MEI.shared" mode="add">
+        <elementSpec ident="castList" module="MEI.shared" mode="add">
           <desc>cast list ― Contains a single cast list or dramatis personae.</desc>
           <classes>
             <memberOf key="att.common"/>
@@ -917,14 +950,14 @@
             </rng:optional>
             <rng:oneOrMore>
               <rng:choice>
-                <rng:ref name="castitem"/>
-                <rng:ref name="castgrp"/>
+                <rng:ref name="castItem"/>
+                <rng:ref name="castGrp"/>
               </rng:choice>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="castitem" module="MEI.shared" mode="add">
+        <elementSpec ident="castItem" module="MEI.shared" mode="add">
           <desc>cast list item ― Contains a single entry within a cast list, describing either a single role or a list of non-speaking roles.</desc>
           <classes>
             <memberOf key="att.common"/>
@@ -936,14 +969,14 @@
               <rng:choice>
                 <rng:text/>
                 <rng:ref name="role"/>
-                <rng:ref name="roledesc"/>
+                <rng:ref name="roleDesc"/>
                 <rng:ref name="actor"/>
               </rng:choice>
             </rng:oneOrMore>
           </content>
         </elementSpec>
 
-        <elementSpec ident="castgrp" module="MEI.shared" mode="add">
+        <elementSpec ident="castGrp" module="MEI.shared" mode="add">
           <desc>cast list group ― Groups one or more individual castItem elements within a cast list.</desc>
           <classes>
             <memberOf key="att.common"/>
@@ -953,9 +986,9 @@
           <content>
             <rng:oneOrMore>
               <rng:choice>
-                <rng:ref name="castitem"/>
-                <rng:ref name="castgrp"/>
-                <rng:ref name="roledesc"/>
+                <rng:ref name="castItem"/>
+                <rng:ref name="castGrp"/>
+                <rng:ref name="roleDesc"/>
               </rng:choice>
             </rng:oneOrMore>
           </content>
@@ -978,7 +1011,7 @@
           </content>
         </elementSpec>
 
-        <elementSpec ident="roledesc" module="MEI.shared" mode="add">
+        <elementSpec ident="roleDesc" module="MEI.shared" mode="add">
           <desc>role description ― Describes a character's role in a drama.</desc>
           <classes>
             <memberOf key="att.common"/>
@@ -1011,6 +1044,47 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
+        
+        <!-- Revise description of meiHead -->
+        <elementSpec ident="meiHead" module="MEI.header" mode="replace">
+          <desc>mei header ― A wrapper for general bibliographic and descriptive information about the encoded file. This information is often essential in a
+            machine-readable environment. Five sub-elements must be encoded in the following order: &lt;altId&gt;(optional), &lt;fileDesc&gt;(required),
+            &lt;encodingDesc&gt;(optional), &lt;workDesc;&gt;(optional), and &lt;revisionDesc&gt;(optional). These elements and their sub-elements provide: a
+            unique identifier for the MEI file, bibliographic information about the MEI file and its sources, information about the encoding process,
+            information about the creation of the work being encoded, and statements regarding significant revisions of the file. The xml:lang attribute may be
+            used to indicate the language in which the metadata content of the header is provided. In order to encourage uniformity in the provision of metadata
+            across document types, this element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.common"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.meiversion"/>
+            <memberOf key="model.startLike.header"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="altId"/>
+            </rng:zeroOrMore>
+            <rng:ref name="fileDesc"/>
+            <rng:ref name="model.headerPart_sequenceOptional"/>
+            <rng:optional>
+              <rng:ref name="revisionDesc"/>
+            </rng:optional>
+          </content>
+          <attList>
+            <attDef ident="type" usage="opt">
+              <desc>specifies the kind of document to which the header is attached, for example whether it is a corpus or individual text.</desc>
+              <valList type="closed">
+                <valItem ident="music">
+                  <desc>header is attached to a music document</desc>
+                </valItem>
+                <valItem ident="corpus">
+                  <desc>header is attached to a corpus</desc>
+                </valItem>
+              </valList>
+            </attDef>
+          </attList>
+        </elementSpec>
 
         <!-- FR 77: add att.edit and att.trans classes to subst -->
         <elementSpec ident="subst" module="MEI.edittrans" mode="replace">
@@ -1041,6 +1115,111 @@
           </classes>
         </classSpec>
 
+        <!-- FR 79: allow music content in abbr and expan -->
+        <!-- employ same model as sic -->
+        <elementSpec ident="abbr" module="MEI.shared" mode="replace">
+          <desc>abbreviation ― A generic element for 1) a shortened form of a word, including an acronym or 2) a shorthand notation. The type attribute may be
+            used to classify the abbreviation according to some convenient typology. Sample values include: suspension - the abbreviation provides the first
+            letter(s) of the word or phrase, omitting the remainder; contraction - the abbreviation omits some letter(s) in the middle; brevigraph - the
+            abbreviation comprises a special symbol or mark; superscription - the abbreviation includes writing above the line; acronym - the abbreviation
+            comprises the initial letters of the words of a phrase; title - the abbreviation is for a title of address (Dr, Ms, Mr, ...); organization - the
+            abbreviation is for the name of an organization; geographic - the abbreviation is for a geographic name. This tag is the mirror image of the
+            &lt;expan&gt; tag; both allow the encoder to transcribe both an abbreviation and its expansion. In &lt;abbr&gt;, however, the original is
+            transcribed as the content of the element and the expansion as an attribute value; &lt;expan&gt; reverses this. The choice between the two is up to
+            the user. The &lt;abbr&gt; tag is not required; if appropriate, the encoder may transcribe abbreviations in the source text silently, without
+            tagging them. If abbreviations are not transcribed directly but expanded silently, then the MEI header should so indicate. The cert attribute
+            signifies the degree of certainty ascribed to the expansion of the abbreviation. The expan attribute gives an expansion of the abbreviation. The
+            resp attribute contains an ID reference to an element containing the name of the editor or transcriber responsible for supplying the expansion of
+            the abbreviation. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.trans"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.editorialLike"/>
+            <memberOf key="model.choicePart"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike"/>
+                <rng:ref name="model.eventLike"/>
+                <rng:ref name="model.eventLike.neumes"/>
+                <rng:ref name="model.controleventLike"/>
+                <rng:ref name="model.lyricsLike"/>
+                <rng:ref name="model.midiLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.eventLike.measureFilling"/>
+                <rng:ref name="model.noteModifierLike"/>
+                <!-- <rng:ref name="model.sectionLike"/>
+                <rng:ref name="model.measureLike"/>
+                <rng:ref name="model.staffLike"/>
+                <rng:ref name="model.layerLike"/> -->
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.fLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="expan" usage="opt">
+              <desc>records the expansion of a text abbreviation.</desc>
+            </attDef>
+          </attList>
+        </elementSpec>
+        
+        <elementSpec ident="expan" module="MEI.shared" mode="replace">
+          <desc>expansion ― Contains the expansion of an abbreviation. The type attribute may be used to classify the abbreviation according to some convenient
+            typology. This element is the mirror image of &lt;abbr&gt;. Both allow the encoder to transcribe both an abbreviation and its expansion. In
+            &lt;abbr&gt;, however, the original is transcribed as the content of the element and the expansion as an attribute value; &lt;expan&gt; reverses
+            this. The choice between the two elements is up to the user. If appropriate, the encoder may expand abbreviations in the source text silently,
+            without tagging them. If this is done, the MEI header should indicate this has been done. The abbr attribute gives the abbreviation in its
+            unexpanded form. The cert attribute signifies the degree of certainty ascribed to the expansion of the abbreviation. The resp attribute contains an
+            ID reference to an element containing the name of the editor or transcriber responsible for supplying the expansion of the abbreviation held as the
+            content of the &lt;expan&gt; element. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.trans"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.editorialLike"/>
+            <memberOf key="model.choicePart"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike"/>
+                <rng:ref name="model.eventLike"/>
+                <rng:ref name="model.eventLike.neumes"/>
+                <rng:ref name="model.controleventLike"/>
+                <rng:ref name="model.lyricsLike"/>
+                <rng:ref name="model.midiLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.eventLike.measureFilling"/>
+                <rng:ref name="model.noteModifierLike"/>
+                <rng:ref name="model.sectionLike"/>
+                <rng:ref name="model.measureLike"/>
+                <rng:ref name="model.staffLike"/>
+                <rng:ref name="model.layerLike"/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.fLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="abbr" usage="opt">
+              <desc>captures the unabbreviated form of the text.</desc>
+            </attDef>
+          </attList>
+        </elementSpec>
+
         <!-- FR 80: make surface and zone members of att.datapointing -->
         <elementSpec ident="surface" module="MEI.facsimile" mode="replace">
           <desc>surface ― Defines a written surface in terms of a rectangular coordinate space, optionally grouping one or more graphic representations of that
@@ -1055,7 +1234,7 @@
           </classes>
           <content>
             <rng:zeroOrMore>
-              <rng:ref name="model.figdescLike"/>
+              <rng:ref name="model.figDescLike"/>
             </rng:zeroOrMore>
             <rng:zeroOrMore>
               <rng:ref name="model.graphicLike"/>
@@ -1076,7 +1255,7 @@
           </classes>
           <content>
             <rng:zeroOrMore>
-              <rng:ref name="model.figdescLike"/>
+              <rng:ref name="model.figDescLike"/>
             </rng:zeroOrMore>
             <rng:zeroOrMore>
               <rng:ref name="model.graphicLike"/>
@@ -1090,29 +1269,21 @@
           <classes>
             <memberOf key="att.common.anl"/>
           </classes>
-          <attList>
-            <attDef ident="altern">
-              <desc>indicates the layer to which this layer is an alternative version. Its value must be the ID of another layer element.</desc>
-              <datatype>
-                <rng:data type="IDREF"/>
-              </datatype>
-            </attDef>
-          </attList>
         </classSpec>
 
         <classSpec type="model" ident="model.ossiaLike" module="MEI.cmn" mode="replace">
           <desc>groups elements that function like ossia.</desc>
           <classes>
-            <memberOf key="model.sectionPart"/>
+            <memberOf key="model.measurePart"/>
             <memberOf key="model.staffPart"/>
           </classes>
         </classSpec>
 
         <elementSpec ident="ossia" module="MEI.cmn" mode="replace">
           <desc>ossia ― An alternate notational version *present in the source being transcribed*. The alternative material often provides a simpler, easier to
-            perform option, while at other times the alternate material provides indications of performance practice, such as ornamentation. In the case of a
-            measure, an ossia is typically rendered above the main staff on a reduced-size staff. Sometimes the alternate material occurs on the same staff as
-            the primarly text, but in a separate layer. In this case, the alternative material is often rendered in small-sized notation.</desc>
+            perform option, while at other times the alternate material provides indications of performance practice, such as ornamentation.Often an ossia is
+            rendered above the main staff on a reduced-size staff. Sometimes the alternate material occurs on the same staff as the primarly text, but in a
+            separate layer. In this case, the alternative material is often rendered in small-sized notation.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.facsimile"/>
@@ -1125,9 +1296,9 @@
           <content>
             <rng:choice>
               <rng:group>
-                <rng:ref name="model.measureLike"/>
+                <rng:ref name="model.staffLike"/>
                 <rng:oneOrMore>
-                  <rng:ref name="model.measureLike"/>
+                  <rng:ref name="model.staffLike"/>
                 </rng:oneOrMore>
               </rng:group>
               <rng:group>
@@ -1141,20 +1312,21 @@
           <constraintSpec ident="Check_ossia" scheme="isoschematron">
             <constraint>
               <sch:pattern>
-                <sch:rule context="mei:section/mei:ossia">
-                  <sch:assert test="count(mei:*) = count(mei:measure)">In this context ossia may contain only measure elements.</sch:assert>
+                <sch:rule context="mei:measure/mei:ossia">
+                  <sch:assert test="count(mei:*) = count(mei:staff)">Ossia may contain only measure elements in this context.</sch:assert>
                 </sch:rule>
                 <sch:rule context="mei:staff/mei:ossia">
-                  <sch:assert test="count(mei:*) = count(mei:layer)">In this context ossia may contain only layer elements.</sch:assert>
+                  <sch:assert test="count(mei:*) = count(mei:layer)">Ossia may contain only layer elements in this context.</sch:assert>
                 </sch:rule>
               </sch:pattern>
             </constraint>
           </constraintSpec>
         </elementSpec>
 
+        <!-- FR 96: limit @n on staff, staffDef, layer, layerDef to a single numeric value -->
         <elementSpec ident="layer" module="MEI.shared" mode="replace">
           <desc>layer ― An independent stream of events on a staff. The term 'layer' in used instead of 'voice' in order to avoid confusion between 'voice' and
-            'voice leading'. The n attribute is used to establish a connection back to the appropriate layerdef element.</desc>
+            'voice leading'. The n attribute is used to establish a connection back to the appropriate layerDef element.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.declaring"/>
@@ -1171,9 +1343,9 @@
                 <rng:ref name="model.appLike"/>
                 <rng:ref name="model.divLike"/>
                 <rng:ref name="model.milestoneLike.music"/>
-                <rng:ref name="model.scoredefLike"/>
-                <rng:ref name="model.staffdefLike"/>
-                <rng:ref name="model.staffgrpLike"/>
+                <rng:ref name="model.scoreDefLike"/>
+                <rng:ref name="model.staffDefLike"/>
+                <rng:ref name="model.staffGrpLike"/>
                 <rng:ref name="model.annotLike"/>
                 <rng:ref name="model.graphicprimitiveLike"/>
                 <rng:ref name="model.editLike"/>
@@ -1182,17 +1354,20 @@
               </rng:choice>
             </rng:zeroOrMore>
           </content>
-          <constraintSpec ident="check_layeraltern" scheme="isoschematron">
+          <constraintSpec ident="Check_layern" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:layer[@altern]">
-                <sch:let name="thisaltern" value="@altern"/>
-                <sch:assert test="@altern = //mei:layer[@xml:id=$thisaltern]/@xml:id">The value of @altern must be the ID of a layer element.</sch:assert>
-              </sch:rule>
+              <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                xmlns="http://www.tei-c.org/ns/1.0"
+                context="mei:layer[@n]">
+                <sch:assert test="number(@n) = round(number(@n))">The n attribute must be a single integer.</sch:assert>
+              </sch:rule>              
             </constraint>
           </constraintSpec>
         </elementSpec>
 
         <!-- FR 85: allow xi:include -->
+        <!-- FR 89: allow @n to contain more than one value -->
         <classSpec type="atts" module="MEI.shared" ident="att.common" mode="delete"/>
         <classSpec type="atts" module="MEI.shared" ident="att.common" mode="add">
           <desc>Common attributes</desc>
@@ -1205,10 +1380,11 @@
               </datatype>
             </attDef>
             <attDef ident="n" usage="opt">
-              <desc>provides a label (name or number) for an element. While its value need not be unique, it is required to be a single token.</desc>
+              <desc>provides a label (name or number) for an element.</desc>
+              <!-- <desc>provides a label (name or number) for an element. While its value need not be unique, it is required to be a single token.</desc>
               <datatype>
                 <rng:data type="NMTOKEN"/>
-              </datatype>
+              </datatype> -->
             </attDef>
             <attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
               <desc>provides a base URI reference with which applications can resolve relative URI references into absolute URI references.</desc>
@@ -1249,7 +1425,7 @@
               <rng:ref name="model.captionLike"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="figdesc"/>
+              <rng:ref name="figDesc"/>
             </rng:optional>
             <rng:zeroOrMore>
               <rng:ref name="model.graphicLike"/>
@@ -1312,6 +1488,212 @@
             </attDef>
           </attList>
         </classSpec>
+
+        <!-- FR 88: allow incipit in header -->
+
+        <!-- This macro permits any element from the XSLT namespace.  Allowing XSLT in <incip> makes it possible to generate the incipit from the notational
+          content of the MEI file. Does this violate the principal of explicit markup? -->
+        <!-- <macroSpec ident="macro.XSLT">
+          <desc/>
+          <content>
+            <rng:element>
+              <rng:nsName ns="http://www.w3.org/1999/XSL/Transform"/>
+              <rng:zeroOrMore>
+                <rng:attribute>
+                  <rng:anyName/>
+                </rng:attribute>
+              </rng:zeroOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:text/>
+                  <rng:ref name="macro.XSLT"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:element>
+          </content>
+        </macroSpec> -->
+
+        <!-- create incipLike class -->
+        <classSpec ident="model.incipLike" type="model" mode="add">
+          <desc>groups elements used to represent a textual or musical incipit.</desc>
+        </classSpec>
+
+        <!-- create incip element -->
+        <elementSpec ident="incip" module="MEI.shared" mode="add">
+          <desc>incipit ― The opening words or music of a composition. The &lt;p&gt; and &lt;lg&gt; elements are permitted in order to accommodate a text
+            incipit, while &lt;score&gt; is available to provide an MEI-encoded musical incipit. An incipit encoded in another text format can be included in a
+            CDATA section inside the &lt;incipCode&gt; element.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.incipLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.pLike"/>
+                <rng:ref name="model.lgLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:choice>
+                <rng:ref name="incipCode"/>
+                <rng:ref name="model.scoreLike"/>
+                <!-- <rng:ref name="macro.XSLT"/> -->
+              </rng:choice>
+            </rng:optional>
+          </content>
+        </elementSpec>
+
+        <!-- incipCode element holds incipit encoded in a text format other than MEI -->
+        <elementSpec ident="incipCode" module="MEI.header" mode="add">
+          <desc>coded incipit ― Incipit coded in a plain text format, such as Plaine &amp; Easie.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.internetmedia"/>
+          </classes>
+          <content>
+            <rng:text/>
+          </content>
+          <constraintSpec ident="Check_incipCode_form_mimetype" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:incipCode">
+                <sch:assert test="@form or @mimetype">incipCode must have a form or mimetype attribute.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <attList>
+            <attDef ident="space" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
+              <desc>identifies the language of the element's content. The values for this attribute are language 'tags' as defined in BCP 47. All language tags
+                that make use of private use subtags must be documented in a corresponding language element in the MEI header whose id attribute is the same as
+                the language tag's value.</desc>
+              <valList type="closed">
+                <valItem ident="default">
+                  <desc>allows the application to handle white space as necessary. Not including an xml:space attribute produces the same result as using the
+                    default value.</desc>
+                </valItem>
+                <valItem ident="preserve">
+                  <desc>instructs the application to maintain white space as is, suggesting that it might have meaning.</desc>
+                </valItem>
+              </valList>
+            </attDef>
+            <attDef ident="form" usage="opt">
+              <desc>describes the notational form of the coded text</desc>
+              <valList type="semi">
+                <valItem ident="plaineAndEasie">
+                  <desc>Plaine &amp; Easie Code</desc>
+                </valItem>
+                <valItem ident="humdrumKern">
+                  <desc>Humdrum Kern format</desc>
+                </valItem>
+              </valList>
+            </attDef>
+          </attList>
+        </elementSpec>        
+        
+        <!-- FR 90: make label member of att.typed -->
+        <elementSpec ident="label" module="MEI.shared" mode="replace">
+          <desc>label ― A text string that identifies a staff or staff group.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.source"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.labelLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+        </elementSpec>
+        
+        <!-- FR 92: make layerDef member of att.labels and att.declaring -->
+        <!-- FR 96: limit @n on staff, staffDef, layer, layerDef to a single numeric value -->
+        <elementSpec ident="layerDef" module="MEI.shared" mode="replace">
+          <desc>layer definition ― Container for layer meta-information.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.labels"/>
+            <memberOf key="att.layerDef.log"/>
+            <memberOf key="att.layerDef.vis"/>
+            <memberOf key="att.layerDef.ges"/>
+            <memberOf key="att.layerDef.anl"/>
+            <memberOf key="model.layerDefLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.labelLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.instrDefLike"/>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="Check_layerDefn" scheme="isoschematron">
+            <constraint>
+              <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                xmlns="http://www.tei-c.org/ns/1.0"
+                context="mei:layerDef">
+                <sch:assert test="number(@n) = round(number(@n))">An n attribute with a single integer value must be present.</sch:assert>
+              </sch:rule>              
+            </constraint>
+          </constraintSpec>
+        </elementSpec>
+        
+        <!-- FR 96: limit @n on staff, staffDef, layer, layerDef to a single numeric value -->
+        <elementSpec ident="staff" module="MEI.shared" mode="replace">
+          <desc>staff ― A group of equidistant horizontal lines on which notes are placed in order to represent pitch. In MEI, however, &lt;staff&gt; is a
+            grouping element for individual 'strands' of notes, rests, etc. that may or may not be rendered on staff lines; that is, diastematic and
+            nondiastematic signs. The n attribute functions as a connection back to the appropriate staffDef element where logical and visual information about
+            the staff is recorded. If the n attribute is omitted, encoding order is presumed to match the staff order. Of course, if data is supplied for only a
+            subset of staves found in a printed source, the n attribute must be supplied.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.declaring"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.staff.log"/>
+            <memberOf key="att.staff.vis"/>
+            <memberOf key="att.staff.ges"/>
+            <memberOf key="att.staff.anl"/>
+            <memberOf key="model.staffLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="model.divLike"/>
+                <rng:ref name="model.milestoneLike.music"/>
+                <rng:ref name="model.scoreDefLike"/>
+                <rng:ref name="model.staffDefLike"/>
+                <rng:ref name="model.staffGrpLike"/>
+                <rng:ref name="model.annotLike"/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.staffPart"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="Check_staffn" scheme="isoschematron">
+            <constraint>
+                <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                  xmlns="http://www.tei-c.org/ns/1.0"
+                  context="mei:staff[@n]">
+                  <sch:assert test="number(@n) = round(number(@n))">The n attribute must be a single integer.</sch:assert>
+                </sch:rule>              
+            </constraint>
+          </constraintSpec>
+        </elementSpec>
 
       </schemaSpec>
     </body>
