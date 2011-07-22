@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import schemaLocation="analysis_Module.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <!-- Harmony Module -->
+  <!-- Declare module attr classes -->
+  <xs:attributeGroup name="att.fretlocation">
+    <xs:annotation>
+      <xs:documentation>Attributes that describe a fret
+      location</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="fret" type="mei:data.FRET">
+      <xs:annotation>
+        <xs:documentation>records the location at which a string
+          should be stopped against a fret.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harm.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harm.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harm.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attributeGroup ref="mei:att.duration.timestamp"/>
+    <xs:attribute name="chordref" type="xs:IDREF">
+      <xs:annotation>
+        <xs:documentation>contains a reference to a predefined
+          &lt;chorddef&gt; element.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harm.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2.ho"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2.to"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attribute name="extender" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>indicates the presence of an extension
+          symbol, typically a dash or underscore, drawn from the end of the
+          harmonic indication to the point indicated by the dur
+          attribute.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="rendgrid">
+      <xs:annotation>
+        <xs:documentation>when set to 'grid', the chord tablature
+          grid defined in the chordtable should be rendered instead of the text
+          contents of the &lt;harm&gt; element; if rendgrid equals
+          'gridname', both the &lt;harm&gt; element's text and the grid
+          should be displayed; otherwise, only the 'name' of the chord, i.e.,
+          the text content of the &lt;harm&gt; element, e.g. 'Cmaj' or
+          'V7/III', should be rendered.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="grid"/>
+          <xs:enumeration value="gridname"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- Declare module model classes -->
+  <xs:group name="model.chordtableLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that group playable chord
+      definitions.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:chordtable"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.harmLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that record
+      harmony.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="mei:harm"/>
+    </xs:sequence>
+  </xs:group>
+  <!-- Declare module elements -->
+  <xs:element name="barre">
+    <xs:annotation>
+      <xs:documentation>barre ― An indication of fingering in a
+        chord tablature grid. The startid and endid attributes are used to
+        indicate the &lt;chordmember&gt; elements on which the barre
+        starts and finishes respectively. The fret at which the barre should be
+        created is recorded by the fret attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.barre"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.barre">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.fretlocation"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.chorddef">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="mei:chordmember"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="mei:barre"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="chorddef">
+    <xs:annotation>
+      <xs:documentation>chord definition ― Chord tablature
+        definition. An id attribute, while not required by the schema, is needed
+        so that &lt;harm&gt; elements can reference a particular chord
+        definition. The pos (position) attribute is provided in order to create
+        displayable chord tablature grids. &lt;chordmember&gt;
+        sub-elements record the individual pitches of the chord.
+        &lt;barre&gt;sub-elements may be used when a single finger is
+        used to stop multiple strings.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.chorddef">
+          <xs:attributeGroup ref="mei:attlist.chorddef"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.chorddef">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attribute name="pos">
+      <xs:annotation>
+        <xs:documentation>records the fret position at which the
+          chord tablature is to be played.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:element name="chordmember">
+    <xs:annotation>
+      <xs:documentation>chord member ― An individual pitch in a
+        chord defined by a &lt;chorddef&gt; element. The fing and fret
+        attributes are provided in order to create displayable chord tablature
+        grids. The inth (harmonic interval) attribute may be used to facilitate
+        automated performance of a chord. It gives the number of 1/2 steps above
+        the bass. Of course, for the bass note itself, inth should be set to
+        '0'. The fret at which a finger should be placed is recorded in the fret
+        attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.chordmember"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.chordmember">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.accidental.performed"/>
+    <xs:attributeGroup ref="mei:att.fretlocation"/>
+    <xs:attributeGroup ref="att.intervalharmonic"/>
+    <xs:attributeGroup ref="mei:att.pitched"/>
+    <xs:attribute name="fing" type="mei:data.FINGER.FRET">
+      <xs:annotation>
+        <xs:documentation>indicates which finger, if any, should
+          be used to play an individual string. The values 'x' and 'o' indicated
+          stopped and open strings, respectively.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:complexType name="content.chordtable">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" ref="mei:chorddef"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="chordtable">
+    <xs:annotation>
+      <xs:documentation>chord table ― Chord/tablature look-up
+        table. A table may be shared between MEI instances through the use of an
+        external parsed entity containing the look-up table to be
+        shared.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.chordtable">
+          <xs:attributeGroup ref="mei:attlist.chordtable"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.chordtable">
+    <xs:attributeGroup ref="mei:att.common"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.harm" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.textphraseLike.limited"/>
+      <xs:group ref="mei:model.graphicprimitiveLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="harm">
+    <xs:annotation>
+      <xs:documentation>harmony ― An indication of harmony, e.g.,
+        chord names, tablature grids, harmonic analysis, figured bass. The
+        starting point of the harmony may be indicated by either a tstamp,
+        tstamp.ges, tstamp.real or startid attribute, while the ending point may
+        be recorded by either a dur, dur.ges or endid attribute. It is a
+        semantic error not to specify a starting point attribute. The dur
+        attribute encodes the logical and visual duration of the harmony. Please
+        note that the dur attribute here is not a true duration, but rather a
+        time stamp for the end point of the harmony.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.harm">
+          <xs:attributeGroup ref="mei:attlist.harm"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.harm">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.harm.log"/>
+    <xs:attributeGroup ref="mei:att.harm.vis"/>
+    <xs:attributeGroup ref="mei:att.harm.ges"/>
+    <xs:attributeGroup ref="mei:att.harm.anl"/>
+  </xs:attributeGroup>
+</xs:schema>

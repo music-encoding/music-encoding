@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            linkalign_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- LinkAlign Module -->
+  <!-- Declare module attr classes -->
+  <define name="att.alignment" combine="interleave">
+    <a:documentation xml:lang="eng">Temporal alignment attributes. This class of
+      attributes is unavailable unless the meiLinkAlign module is
+      included.</a:documentation>
+    <optional>
+      <attribute name="when">
+        <a:documentation xml:lang="eng">indicates the point of occurrence of
+          this feature along a timeline. Its value must be the ID of a
+          &lt;when&gt; element.</a:documentation>
+        <data type="IDREF"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.alignLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that are used for temporal
+      alignment.</a:documentation>
+    <ref name="timeline"/>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.timeline">
+    <zeroOrMore>
+      <ref name="when"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="timeline">
+    <element name="timeline">
+      <a:documentation xml:lang="eng">timeline ― Provides a set of ordered
+        points in time to which musical elements can be linked in order to
+        create a temporal alignment of those elements. The origin attribute
+        designates the origin of the timeline, i.e., the time at which it
+        begins. It must point to one of the when elements in its content. Units
+        specifies the unit of time corresponding to the value of the interval
+        attribute of the timeline or of its constituent points in time. The
+        mediacontent attribute is provided in order to link the timeline to a
+        particular external media file, such as an audio file. The medialength
+        attribute specifies the length of the external media file in terms of
+        the unit attribute. This element is modelled on an element in the Text
+        Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.timeline"/>
+      <ref name="content.timeline"/>
+    </element>
+  </define>
+
+  <define name="attlist.timeline">
+    <ref name="att.common"/>
+    <ref name="att.measurement"/>
+    <optional>
+      <attribute name="mediacontent">
+        <a:documentation xml:lang="eng">holds the web-addressable location of
+          the external digital media.</a:documentation>
+        <ref name="data.URI"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="medialength">
+        <a:documentation xml:lang="eng">indicates the length of the external
+          digital file.</a:documentation>
+        <data type="positiveInteger"/>
+      </attribute>
+    </optional>
+    <attribute name="origin">
+      <a:documentation xml:lang="eng">designates the origin of the timeline,
+        i.e. the time at which it begins.</a:documentation>
+      <data type="IDREF"/>
+    </attribute>
+  </define>
+
+  <define name="content.when">
+    <empty/>
+  </define>
+
+  <define name="when">
+    <element name="when">
+      <a:documentation xml:lang="eng">when ― Indicates a point in time either
+        absolutely (using the absolute attribute), or relative to other elements
+        in the same timeline element (using the interval and since attributes).
+        The data attribute may be used to reference one or more features that
+        occur at this point in time. This element is modelled on an element in
+        the Text Encoding Initiative (TEI).</a:documentation>
+      <ref name="attlist.when"/>
+      <ref name="content.when"/>
+    </element>
+  </define>
+
+  <define name="attlist.when">
+    <ref name="att.common"/>
+    <ref name="att.datapointing"/>
+    <ref name="att.measurement"/>
+    <optional>
+      <attribute name="absolute">
+        <a:documentation xml:lang="eng">provides an absolute value for the time
+          associated with a point on a timeline. This attribute is required for
+          the element designated as the origin by the parent
+          timeline.</a:documentation>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="interval">
+        <a:documentation xml:lang="eng">specifies the (positive) numeric portion
+          of a time interval.</a:documentation>
+        <data type="decimal">
+          <param name="minInclusive">1</param>
+        </data>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="since">
+        <a:documentation xml:lang="eng">identifies the reference point for
+          determining the time of the current when element, which is obtained by
+          adding the interval to the time of the reference point. The value
+          should be the ID of another when element in the same timeline. If the
+          since attribute is omitted and the absolute attribute is not
+          specified, then the reference point is understood to be the preceding
+          when element.</a:documentation>
+        <data type="IDREF"/>
+      </attribute>
+    </optional>
+  </define>
+
+</grammar>

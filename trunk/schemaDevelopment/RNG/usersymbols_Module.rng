@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            usersymbols_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- UserSymbols Module -->
+  <!-- Declare module attr classes -->
+
+  <!-- Declare module model classes -->
+  <define name="model.graphicprimitiveLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that function as drawing
+      primitives.</a:documentation>
+    <choice>
+      <ref name="curve"/>
+      <ref name="line"/>
+      <ref name="symbol"/>
+      <ref name="anchoredtext"/>
+    </choice>
+  </define>
+
+  <define name="model.symboltableLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that group symbol
+      definitions.</a:documentation>
+    <ref name="symboltable"/>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.anchoredtext">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="anchoredtext">
+    <element name="anchoredtext">
+      <a:documentation xml:lang="eng">anchored text ― Container for text that is
+        fixed to a particular location, regardless of changes made to the layout
+        of the measures around it. This element may be used where semantic
+        markup of the text is neither possible nor desirable, such as in optical
+        music recognition (OMR) applications. The content model here is similar
+        to paragraph without model.textcomponent and &lt;pb&gt;
+        sub-elements. The starting point of the text may be identified in
+        absolute output coordinate terms using the x and y attributes or
+        relative to the location of another element using the startid attribute.
+        The attributes in the att.visualoffset class may be used to record
+        horizontal, vertical, or time offsets from the absolute coordinates or
+        from the location of the referenced element.</a:documentation>
+      <ref name="attlist.anchoredtext"/>
+      <ref name="content.anchoredtext"/>
+    </element>
+  </define>
+
+  <define name="attlist.anchoredtext">
+    <ref name="att.common.anl"/>
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.lang"/>
+    <ref name="att.startid"/>
+    <ref name="att.typed"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.xy"/>
+  </define>
+
+  <define name="content.curve">
+    <empty/>
+  </define>
+
+  <define name="curve">
+    <element name="curve">
+      <a:documentation xml:lang="eng">curve ― A curved line that cannot be
+        represented by a more specific element, such as a &lt;slur&gt;.
+        The starting point of the curve may be identified in absolute output
+        coordinate terms using the x1 and y1 attributes or relative to the
+        location of another element using the startid attribute. The attributes
+        in the att.visualoffset class may be used to record horizontal,
+        vertical, or time offsets from the absolute coordinates or from the
+        location of the referenced element. Similarly, the terminal point of the
+        curve may be recorded using either the x2,y2 coordinates or in relation
+        to the location of another element using the endid attribute. Attributes
+        in the att.visualoffset2 class maybe used to record the offsets of the
+        ending point. The bulge attribute or, alternatively, the bezier
+        attribute, describes the shape of the curve. The bulge attribute
+        describes the curve as a set of distance values above or below an
+        imaginary line connecting the endpoints of the curve while the bezier
+        attribute records the placement of Bezier control points as a series of
+        space-separated xy coordinate pairs, eg. 19 45 -32 118. The bulge
+        attribute must contain one or more values of the NUMBER datatype. The
+        rend attribute captures the appearance of the curve.</a:documentation>
+      <ref name="attlist.curve"/>
+      <ref name="content.curve"/>
+    </element>
+  </define>
+
+  <define name="attlist.curve">
+    <ref name="att.common.anl"/>
+    <ref name="att.color"/>
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.startendid"/>
+    <ref name="att.typed"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.visualoffset2"/>
+    <ref name="att.xy"/>
+    <ref name="att.xy2"/>
+    <ref name="att.curvature"/>
+    <ref name="att.curverend"/>
+  </define>
+
+  <define name="content.line">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="line">
+    <element name="line">
+      <a:documentation xml:lang="eng">line ― A line that cannot be represented
+        by a more specific element. The starting point of the line may be
+        identified in absolute output coordinate terms using the x1 and y1
+        attributes or relative to the location of another element using the
+        startid attribute. The attributes in the att.visualoffset class may be
+        used to record horizontal, vertical, or time offsets from the absolute
+        coordinates or from the location of the referenced element. Similarly,
+        the terminal point of the line may be recorded using either the x2 and
+        y2 attributes or in relation to the location of another element using
+        the endid attribute. Attributes in the att.visualoffset2 class maybe
+        used to record the offsets of the ending point. Text content of the line
+        element, e.g. 'gliss.', may be rendered with the line. The appearance of
+        the line is captured in the rend attribute.</a:documentation>
+      <ref name="attlist.line"/>
+      <ref name="content.line"/>
+    </element>
+  </define>
+
+  <define name="attlist.line">
+    <ref name="att.common.anl"/>
+    <ref name="att.color"/>
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.startendid"/>
+    <ref name="att.typed"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.visualoffset2"/>
+    <ref name="att.xy"/>
+    <ref name="att.xy2"/>
+    <ref name="att.linerend"/>
+  </define>
+
+  <define name="content.symbol">
+    <empty/>
+  </define>
+
+  <define name="symbol">
+    <element name="symbol">
+      <a:documentation xml:lang="eng">symbol ― A reference to a previously
+        defined symbol. The starting point, e.g. "hotspot", of the symbol may be
+        indentified in absolute output coordinate terms using the x and y
+        attributes or relative to another element using the startid attribute.
+        Attributes in the att.visualoffset class may be used to record
+        horizontal, vertical, or time offsets from the absolute coordinates or
+        from the location of the referenced element. The ref attribute must
+        contain the id of a symboldef element. The scale attribute indicates
+        that the printed output must be scaled by the specified
+        percentage.</a:documentation>
+      <ref name="attlist.symbol"/>
+      <ref name="content.symbol"/>
+    </element>
+  </define>
+
+  <define name="attlist.symbol">
+    <ref name="att.common.anl"/>
+    <ref name="att.color"/>
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.scalable"/>
+    <ref name="att.startid"/>
+    <ref name="att.typed"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.xy"/>
+    <attribute name="ref">
+      <a:documentation xml:lang="eng">contains a reference to a
+        previously-declared user-defined symbol.</a:documentation>
+      <data type="IDREF"/>
+    </attribute>
+  </define>
+
+  <define name="content.symboldef">
+    <oneOrMore>
+      <ref name="model.graphicprimitiveLike"/>
+    </oneOrMore>
+  </define>
+
+  <define name="symboldef">
+    <element name="symboldef">
+      <a:documentation xml:lang="eng">symbol definition ― Declaration of an
+        individual symbol in a symboltable.</a:documentation>
+      <ref name="attlist.symboldef"/>
+      <ref name="content.symboldef"/>
+    </element>
+  </define>
+
+  <define name="attlist.symboldef">
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.symboltable">
+    <oneOrMore>
+      <ref name="symboldef"/>
+    </oneOrMore>
+  </define>
+
+  <define name="symboltable">
+    <element name="symboltable">
+      <a:documentation xml:lang="eng">symbol table ― Contains individual,
+        user-defined symbols. Like a chord table, a symboltable may be shared
+        between mei instances through the use of an external parsed entity
+        containing the symboltable to be shared.</a:documentation>
+      <ref name="attlist.symboltable"/>
+      <ref name="content.symboltable"/>
+    </element>
+  </define>
+
+  <define name="attlist.symboltable">
+    <ref name="att.common"/>
+  </define>
+
+</grammar>

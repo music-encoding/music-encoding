@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            harmony_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+            
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+            
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+
+<grammar xmlns="http://relaxng.org/ns/structure/1.0"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+  datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
+  xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  ns="http://www.music-encoding.org/ns/mei"
+  xmlns:mei="http://www.music-encoding.org/ns/mei">
+
+  <!-- Harmony Module -->
+  <!-- Declare module attr classes -->
+  <define name="att.fretlocation" combine="interleave">
+    <a:documentation xml:lang="eng">Attributes that describe a fret
+      location</a:documentation>
+    <optional>
+      <attribute name="fret">
+        <a:documentation xml:lang="eng">records the location at which a string
+          should be stopped against a fret.</a:documentation>
+        <ref name="data.FRET"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.harm.anl" combine="interleave">
+    <a:documentation xml:lang="eng">Analytical domain
+      attributes</a:documentation>
+    <ref name="att.common.anl"/>
+  </define>
+
+  <define name="att.harm.ges" combine="interleave">
+    <a:documentation xml:lang="eng">Gestural domain attributes</a:documentation>
+    <ref name="att.duration.performed"/>
+  </define>
+
+  <define name="att.harm.log" combine="interleave">
+    <a:documentation xml:lang="eng">Logical domain attributes</a:documentation>
+    <ref name="att.controlevent"/>
+    <ref name="att.startendid"/>
+    <ref name="att.duration.timestamp"/>
+    <optional>
+      <attribute name="chordref">
+        <a:documentation xml:lang="eng">contains a reference to a predefined
+          &lt;chorddef&gt; element.</a:documentation>
+        <data type="IDREF"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="att.harm.vis" combine="interleave">
+    <a:documentation xml:lang="eng">Visual domain attributes</a:documentation>
+    <ref name="att.placement"/>
+    <ref name="att.visualoffset"/>
+    <ref name="att.visualoffset2.ho"/>
+    <ref name="att.visualoffset2.to"/>
+    <ref name="att.xy"/>
+    <optional>
+      <attribute name="extender">
+        <a:documentation xml:lang="eng">indicates the presence of an extension
+          symbol, typically a dash or underscore, drawn from the end of the
+          harmonic indication to the point indicated by the dur
+          attribute.</a:documentation>
+        <ref name="data.BOOLEAN"/>
+      </attribute>
+    </optional>
+    <optional>
+      <attribute name="rendgrid">
+        <a:documentation xml:lang="eng">when set to 'grid', the chord tablature
+          grid defined in the chordtable should be rendered instead of the text
+          contents of the &lt;harm&gt; element; if rendgrid equals
+          'gridname', both the &lt;harm&gt; element's text and the grid
+          should be displayed; otherwise, only the 'name' of the chord, i.e.,
+          the text content of the &lt;harm&gt; element, e.g. 'Cmaj' or
+          'V7/III', should be rendered.</a:documentation>
+        <choice>
+          <value>grid</value>
+          <value>gridname</value>
+        </choice>
+      </attribute>
+    </optional>
+  </define>
+
+  <!-- Declare module model classes -->
+  <define name="model.chordtableLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that group playable chord
+      definitions.</a:documentation>
+    <ref name="chordtable"/>
+  </define>
+
+  <define name="model.harmLike" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that record
+      harmony.</a:documentation>
+    <zeroOrMore>
+      <ref name="harm"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="model.controleventLike.harmony" combine="interleave">
+    <a:documentation xml:lang="eng">groups elements that function as control
+      events; that is, those events that modify or otherwise depend on the
+      existence of notated events.</a:documentation>
+    <ref name="model.harmLike"/>
+  </define>
+
+  <!-- Declare module elements -->
+  <define name="content.barre">
+    <empty/>
+  </define>
+
+  <define name="barre">
+    <element name="barre">
+      <a:documentation xml:lang="eng">barre ― An indication of fingering in a
+        chord tablature grid. The startid and endid attributes are used to
+        indicate the &lt;chordmember&gt; elements on which the barre
+        starts and finishes respectively. The fret at which the barre should be
+        created is recorded by the fret attribute.</a:documentation>
+      <ref name="attlist.barre"/>
+      <ref name="content.barre"/>
+    </element>
+  </define>
+
+  <define name="attlist.barre">
+    <ref name="att.common"/>
+    <ref name="att.fretlocation"/>
+    <ref name="att.startendid"/>
+  </define>
+
+  <define name="content.chorddef">
+    <zeroOrMore>
+      <ref name="chordmember"/>
+    </zeroOrMore>
+    <zeroOrMore>
+      <ref name="barre"/>
+    </zeroOrMore>
+  </define>
+
+  <define name="chorddef">
+    <element name="chorddef">
+      <a:documentation xml:lang="eng">chord definition ― Chord tablature
+        definition. An id attribute, while not required by the schema, is needed
+        so that &lt;harm&gt; elements can reference a particular chord
+        definition. The pos (position) attribute is provided in order to create
+        displayable chord tablature grids. &lt;chordmember&gt;
+        sub-elements record the individual pitches of the chord.
+        &lt;barre&gt;sub-elements may be used when a single finger is
+        used to stop multiple strings.</a:documentation>
+      <ref name="attlist.chorddef"/>
+      <ref name="content.chorddef"/>
+    </element>
+  </define>
+
+  <define name="attlist.chorddef">
+    <ref name="att.common"/>
+    <optional>
+      <attribute name="pos">
+        <a:documentation xml:lang="eng">records the fret position at which the
+          chord tablature is to be played.</a:documentation>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.chordmember">
+    <empty/>
+  </define>
+
+  <define name="chordmember">
+    <element name="chordmember">
+      <a:documentation xml:lang="eng">chord member ― An individual pitch in a
+        chord defined by a &lt;chorddef&gt; element. The fing and fret
+        attributes are provided in order to create displayable chord tablature
+        grids. The inth (harmonic interval) attribute may be used to facilitate
+        automated performance of a chord. It gives the number of 1/2 steps above
+        the bass. Of course, for the bass note itself, inth should be set to
+        '0'. The fret at which a finger should be placed is recorded in the fret
+        attribute.</a:documentation>
+      <ref name="attlist.chordmember"/>
+      <ref name="content.chordmember"/>
+    </element>
+  </define>
+
+  <define name="attlist.chordmember">
+    <ref name="att.common"/>
+    <ref name="att.accidental.performed"/>
+    <ref name="att.fretlocation"/>
+    <ref name="att.intervalharmonic"/>
+    <ref name="att.pitched"/>
+    <optional>
+      <attribute name="fing">
+        <a:documentation xml:lang="eng">indicates which finger, if any, should
+          be used to play an individual string. The values 'x' and 'o' indicated
+          stopped and open strings, respectively.</a:documentation>
+        <ref name="data.FINGER.FRET"/>
+      </attribute>
+    </optional>
+  </define>
+
+  <define name="content.chordtable">
+    <oneOrMore>
+      <ref name="chorddef"/>
+    </oneOrMore>
+  </define>
+
+  <define name="chordtable">
+    <element name="chordtable">
+      <a:documentation xml:lang="eng">chord table ― Chord/tablature look-up
+        table. A table may be shared between MEI instances through the use of an
+        external parsed entity containing the look-up table to be
+        shared.</a:documentation>
+      <ref name="attlist.chordtable"/>
+      <ref name="content.chordtable"/>
+    </element>
+  </define>
+
+  <define name="attlist.chordtable">
+    <ref name="att.common"/>
+  </define>
+
+  <define name="content.harm">
+    <zeroOrMore>
+      <choice>
+        <text/>
+        <ref name="model.textphraseLike.limited"/>
+        <ref name="model.graphicprimitiveLike"/>
+        <ref name="model.editLike"/>
+        <ref name="model.transcriptionLike"/>
+      </choice>
+    </zeroOrMore>
+  </define>
+
+  <define name="harm">
+    <element name="harm">
+      <a:documentation xml:lang="eng">harmony ― An indication of harmony, e.g.,
+        chord names, tablature grids, harmonic analysis, figured bass. The
+        starting point of the harmony may be indicated by either a tstamp,
+        tstamp.ges, tstamp.real or startid attribute, while the ending point may
+        be recorded by either a dur, dur.ges or endid attribute. It is a
+        semantic error not to specify a starting point attribute. The dur
+        attribute encodes the logical and visual duration of the harmony. Please
+        note that the dur attribute here is not a true duration, but rather a
+        time stamp for the end point of the harmony.</a:documentation>
+      <ref name="attlist.harm"/>
+      <ref name="content.harm"/>
+    </element>
+  </define>
+
+  <define name="attlist.harm">
+    <ref name="att.common"/>
+    <ref name="att.facsimile"/>
+    <ref name="att.harm.log"/>
+    <ref name="att.harm.vis"/>
+    <ref name="att.harm.ges"/>
+    <ref name="att.harm.anl"/>
+  </define>
+
+</grammar>
