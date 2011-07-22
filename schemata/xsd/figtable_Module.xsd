@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            figtable_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+  
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+  
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import schemaLocation="analysis_Module.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <!-- Figure and Table module -->
+  <!-- Declare module attr classes -->
+  <xs:attributeGroup name="att.tabular">
+    <xs:annotation>
+      <xs:documentation>Attributes shared by table cells</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="colspan" type="xs:positiveInteger">
+      <xs:annotation>
+        <xs:documentation>the number of columns spanned by this
+          cell.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="rowspan" type="xs:positiveInteger">
+      <xs:annotation>
+        <xs:documentation>the number of rows spanned by this
+          cell.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <!-- Declare module model classes -->
+  <xs:group name="model.figureLike">
+    <xs:sequence>
+      <xs:element ref="mei:fig"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.graphicLike">
+    <xs:sequence>
+      <xs:element ref="mei:graphic"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.figdescLike">
+    <xs:sequence>
+      <xs:element ref="mei:figdesc"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.tableLike">
+    <xs:annotation>
+      <xs:documentation>groups table-like
+      elements.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:table"/>
+    </xs:sequence>
+  </xs:group>
+  <!-- Declare module elements -->
+  <xs:element name="graphic">
+    <xs:annotation>
+      <xs:documentation>graphic ― Indicates the location of an
+        inline graphic, illustration, or figure. This element is modelled on an
+        element in the Text Encoding Initiative (TEI).</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.graphic"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.graphic">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.internetmedia"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.link.external"/>
+    <xs:attributeGroup ref="mei:att.measurement"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attribute name="height" type="xs:positiveInteger">
+      <xs:annotation>
+        <xs:documentation>measurement of the vertical dimension of
+          an image.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="mei:att.width"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.fig">
+    <xs:sequence>
+      <xs:group minOccurs="0" ref="mei:model.captionLike"/>
+      <xs:element minOccurs="0" ref="mei:figdesc"/>
+      <xs:group minOccurs="0" maxOccurs="unbounded" ref="mei:model.graphicLike"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="fig">
+    <xs:annotation>
+      <xs:documentation>figure ― groups elements representing or
+        containing graphic information such as an illustration or figure. This
+        element is modelled on the figure element in the Text Encoding Initiative
+        (TEI).</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.fig">
+          <xs:attributeGroup ref="mei:attlist.fig"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.fig">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.link.common"/>
+    <xs:attributeGroup ref="mei:att.link.external"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.figdesc" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.graphicprimitiveLike"/>
+      <xs:group ref="mei:model.textcomponentLike"/>
+      <xs:group ref="mei:model.annotLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="figdesc">
+    <xs:annotation>
+      <xs:documentation>figure description ― Contains a brief
+        prose description of the appearance or content of a graphic figure, for
+        use when documenting an image without displaying it. Best practice
+        suggests the use of controlled vocabulary. Don't confuse this element
+        with a figure caption. A caption is text primarily intended for display
+        with an illustration. It may or may not function as a description of the
+        illustration. This element is modelled on an element in the Text Encoding
+        Initiative (TEI).</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.figdesc">
+          <xs:attributeGroup ref="mei:attlist.figdesc"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.figdesc">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.table">
+    <xs:sequence>
+      <xs:group minOccurs="0" ref="mei:model.captionLike"/>
+      <xs:element maxOccurs="unbounded" ref="mei:tr"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="table">
+    <xs:annotation>
+      <xs:documentation>table ― Visual layout in tabular form.
+        This element is modelled on elements in Encoded Archival Description
+        (EAD), Text Encoding Initiative (TEI), and HTML.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.table">
+          <xs:attributeGroup ref="mei:attlist.table"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.table">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.td" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.textcomponentLike"/>
+      <xs:group ref="mei:model.textphraseLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="td">
+    <xs:annotation>
+      <xs:documentation>table data ― Designates a table cell that
+        contains data as opposed to a cell that contains column or row heading
+        information. The colspan and rowspan attributes tabular display
+        rendering information. This element is modelled on an element in
+        HTML.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.td">
+          <xs:attributeGroup ref="mei:attlist.td"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.td">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.tabular"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.th" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.textcomponentLike"/>
+      <xs:group ref="mei:model.textphraseLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="th">
+    <xs:annotation>
+      <xs:documentation>table header ― Designates a table cell
+        containing column or row heading information as opposed to one
+        containing data. The colspan and rowspan attributes tabular display
+        rendering information. This element is modelled on an element in
+        HTML.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.th">
+          <xs:attributeGroup ref="mei:attlist.th"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.th">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.tabular"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.tr">
+    <xs:choice maxOccurs="unbounded">
+      <xs:element ref="mei:th"/>
+      <xs:element ref="mei:td"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="tr">
+    <xs:annotation>
+      <xs:documentation>table row ― A formatting element that
+        contains one or more &lt;td&gt; or &lt;th&gt; elements
+        (cells) in a &lt;table&gt;. A cell is the intersection of a row
+        and a column. The precise rendition of the table and its cells should be
+        specified in a style sheet. This element is modelled on an element in
+        HTML.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.tr">
+          <xs:attributeGroup ref="mei:attlist.tr"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.tr">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.lang"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+</xs:schema>

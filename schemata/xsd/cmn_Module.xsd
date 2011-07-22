@@ -1,0 +1,2132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            cmn_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+  
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+  
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import schemaLocation="analysis_Module.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <!-- CMN module -->
+  <!-- Declare module attr classes -->
+  <xs:attributeGroup name="att.beamed">
+    <xs:annotation>
+      <xs:documentation>Attributes that indicate whether an event
+      lies under a beam</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="beam" type="mei:data.BEAMS">
+      <xs:annotation>
+        <xs:documentation>indicates that this event is "under a
+          beam".</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamedwith">
+    <xs:annotation>
+      <xs:documentation>Attributes indicating cross-staff
+      beaming</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="beam.with" type="mei:data.OTHERSTAFF">
+      <xs:annotation>
+        <xs:documentation>In the case of cross-staff beams, the
+          with attribute is used to indicate which staff the beam is connected
+          to; that is, the staff above or the staff below.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beaming.log">
+    <xs:annotation>
+      <xs:documentation>Used by layerdef, staffdef, and scoredef to provide default
+      values for attributes in the logical domain related to
+      beaming</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="beam.group">
+      <xs:annotation>
+        <xs:documentation>provides an example of how automated
+          beaming (including secondary beams) is to be performed. It can be used
+          to set a default beaming pattern to be used when no beaming is
+          indicated at the event level. beam.group must contain a
+          comma-separated list of time values that add up to a measure, e.g., in
+          4/4 time '4,4,4,4' indicates each quarter note worth of shorter notes
+          would be beamed together. Parentheses can be used to indicate
+          sub-groupings of secondary beams. For example, '(4.,4.,4.)' in 9/8
+          meter indicates one outer beam per measure with secondary beams broken
+          at each dotted quarter duration, while a measure of 16th notes in 4/4
+          with beam.group equal to '(4,4),(4,4)' will result in a primary beam
+          covering all the notes and secondary beams each group of 4 notes. This
+          beaming "directive" can be overridden by using &lt;beam&gt;
+          elements. If neither &lt;beam&gt; elements or the beam.group
+          attribute is used, then no beaming is rendered. Beaming can be 'turned
+          off' by setting beam.group to an empty string.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="beam.rests" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>indicates whether automatically-drawn
+          beams should include rests shorter than a quarter note
+          duration.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamrend">
+    <xs:annotation>
+      <xs:documentation>Attributes that record the visual rendition
+      of beams</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="rend">
+      <xs:annotation>
+        <xs:documentation>captures whether a beam is feathered and
+          in which direction: 'acc' indicates that the secondary beams get
+          progressively closer together, coming together at the end of the beam,
+          while 'rit' means that the secondary beams start at the same point and
+          get progressively more distant.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="acc"/>
+          <xs:enumeration value="rit"/>
+          <xs:enumeration value="norm"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="slope" type="xs:decimal">
+      <xs:annotation>
+        <xs:documentation>records the slope of the
+          beam.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamsecondary">
+    <xs:annotation>
+      <xs:documentation>Attributes that capture informtion about
+      secondary beaming</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="breaksec" type="xs:positiveInteger">
+      <xs:annotation>
+        <xs:documentation>presence of this attribute indicates
+          that the secondary beam should be broken following this note/chord.
+          The value of the attribute records the number of beams which should
+          remain unbroken.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.cutout">
+    <xs:annotation>
+      <xs:documentation>Attributes that indicate how to render
+      stafflines behind a measure</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="cutout">
+      <xs:annotation>
+        <xs:documentation>Presence of the cutout attribute
+          indicates that the staff lines should not be drawn for the measure
+          containing this element.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="cutout"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.expandable">
+    <xs:annotation>
+      <xs:documentation>Attributes that indicate whether to render a
+      repeat symbol or the source material to which it refers</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="expand" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>indicates whether to render a repeat
+          symbol or the source material to which it refers.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.graced">
+    <xs:annotation>
+      <xs:documentation>Attributes that mark a note or chord as a
+      "grace", how it should "steal" time, and how much time should be allotted
+      to the grace note/chord.</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="grace" type="mei:data.GRACE">
+      <xs:annotation>
+        <xs:documentation>marks a note or chord as a "grace"
+          (without a definitive written duration) and records from which other
+          note/chord it should "steal" time.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="grace.time" type="mei:data.PERCENT">
+      <xs:annotation>
+        <xs:documentation>records the amount of time to be
+          "stolen" from a non-grace note/chord.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.lvpresent">
+    <xs:annotation>
+      <xs:documentation>Attributes that indicate the presence of an
+      l.v. (laissez vibrer) marking attached to a feature</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="lv" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>indicates the attachment of an l.v.
+          (laissez vibrer) sign to this element.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.measure.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.barplacement"/>
+    <xs:attributeGroup ref="mei:att.measurement"/>
+    <xs:attributeGroup ref="mei:att.width"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.numbered">
+    <xs:annotation>
+      <xs:documentation>Attributes that record numbers to be
+      displayed with a feature</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="num" type="xs:positiveInteger">
+      <xs:annotation>
+        <xs:documentation>used to store a number to be rendered
+          along with a feature.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.numberplacement">
+    <xs:annotation>
+      <xs:documentation>Attributes that record the placement and
+      visibility of numbers that accompany a bowed tremolo or
+      tuplet</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="num.place" type="mei:data.PLACE">
+      <xs:annotation>
+        <xs:documentation>states where the tuplet number will be
+          placed in relation to the noteheads.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="num.visible" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>determines if the tuplet number is
+          visible.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.slurrend">
+    <xs:annotation>
+      <xs:documentation>Attributes that describe the rendition of
+      slurs</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="slur.rend" type="mei:data.CURVERENDITION">
+      <xs:annotation>
+        <xs:documentation>describes the appearance of
+          slurs.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tierend">
+    <xs:annotation>
+      <xs:documentation>Attributes that describe the rendition of
+      ties</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="tie.rend" type="mei:data.CURVERENDITION">
+      <xs:annotation>
+        <xs:documentation>describes the appearance of
+          ties.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.arpeg.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.arpeg.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attribute name="order">
+      <xs:annotation>
+        <xs:documentation>describes the direction in which the
+          arpeggio is to be performed (up = lowest to highest, down = highest to
+          lowest) or a return to a non-arpeggiated style (nonarp, usually
+          rendered with a preceding bracket instead of a wavy
+          line).</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="up"/>
+          <xs:enumeration value="down"/>
+          <xs:enumeration value="nonarp"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.arpeg.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attribute name="arrow" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>may be used when an arrowhead is to be
+          drawn as part of the arpeggiation symbol.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beam.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beam.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.beamedwith"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beam.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.beamrend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamspan.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamspan.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamspan.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attributeGroup ref="mei:att.beamedwith"/>
+    <xs:attributeGroup ref="mei:att.duration.musical"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beamspan.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.beamrend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beatrpt.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beatrpt.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.beatrpt.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.expandable"/>
+    <xs:attribute name="rend" use="required" type="mei:data.BEATRPT.REND">
+      <xs:annotation>
+        <xs:documentation>indicates the number of slashes required
+        to render the appropriate beat repeat symbol. When a single beat is
+        repeated, consisting of a single note or chord, it is indicated by a
+        single thick, slanting slash; therefore, the value '1' should be used.
+        The following values should be used when the beat is divided into even
+        notes: 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5. When the
+        beat is comprised of mixed duration values, the symbol is always
+        rendered as 2 slashes and 2 dots.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.bend.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.bend.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="amount" type="mei:data.BEND.AMOUNT">
+      <xs:annotation>
+        <xs:documentation>records the amount of detuning. The
+          decimal values should be rendered as a fraction (or an integer plus a
+          fraction) along with the bend symbol.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.bend.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.bend.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes. If the bulge or
+      bezier attributes are present, the bend should be rendered as a curve.
+      Otherwise, it should be rendered using lines. The ho and vo attributes
+      describe the visual offset of the entire rendered bend. The endho, endvo
+      and startho, startvo attribute pairs may be used to encode start and end
+      points relative to their programmatic placement. For exact placement of
+      the endpoints of the bend, use the x and y attributes.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.xy2"/>
+    <xs:attributeGroup ref="mei:att.curvature"/>
+    <xs:attributeGroup ref="mei:att.curverend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.breath.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.breath.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.breath.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.btrem.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.btrem.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.numbered"/>
+    <xs:attributeGroup ref="mei:att.slashcount"/>
+    <xs:attribute name="form">
+      <xs:annotation>
+        <xs:documentation>describes the bowed tremolo as measured
+          or unmeasured.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="meas"/>
+          <xs:enumeration value="unmeas"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.btrem.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.numberplacement"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.fermata.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.fermata.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.fermata.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.fermata.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attribute name="form">
+      <xs:annotation>
+        <xs:documentation>describes the visual appearance of the
+          fermata.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="inv"/>
+          <xs:enumeration value="norm"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ftrem.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ftrem.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="form">
+      <xs:annotation>
+        <xs:documentation>describes whether the tremolo is
+          measured or unmeasured.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="meas"/>
+          <xs:enumeration value="unmeas"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ftrem.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ftrem.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.slashcount"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.gliss.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.gliss.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.gliss.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.xy2"/>
+    <xs:attributeGroup ref="mei:att.linerend"/>
+    <xs:attribute name="text">
+      <xs:annotation>
+        <xs:documentation>records any text, such as 'gliss', that
+          accompanies the glissando mark.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.hairpin.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.hairpin.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.hairpin.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attributeGroup ref="mei:att.duration.timestamp"/>
+    <xs:attribute name="form" use="required">
+      <xs:annotation>
+        <xs:documentation>captures the form and function of the
+        hairpin.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="cres"/>
+          <xs:enumeration value="dim"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.hairpin.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes. The startho and
+      startvo attributes record the horizontal and vertical offsets of the left
+      end, endho and endvo record the horizontal and vertical offsets of the
+      right end, and the width attribute records the width of the opening on the
+      open end in one-half staff inter-line units. The x1 and y1 attributes give
+      the absolute coordinates of the left side of the top line of the hairpin
+      while x2 and y2 record the coordinates of the right side of the top line.
+      The position of the end points of the bottom line can be calculated using
+      the top line coordinates and the value of the width
+      attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.xy2"/>
+    <xs:attribute name="opening" type="mei:data.INTERLINE">
+      <xs:annotation>
+        <xs:documentation>specifies the distance between the
+          points of the open end of a hairpin dynamic mark.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.halfmrpt.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.halfmrpt.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.duration.musical"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.halfmrpt.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.expandable"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harppedal.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harppedal.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harppedal.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes. The pedal
+      setting, i.e., flat, natural, or sharp, for each diatonic pitch name is
+      indicated by the seven letter-named attributes.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attribute name="c" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's C strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="d" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's D strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="e" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's E strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="f" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's F strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="g" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's G strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="a" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's A strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="b" default="n">
+      <xs:annotation>
+        <xs:documentation>indicates the pedal setting, i.e., flat,
+          natural, or sharp, for the harp's B strings.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="f"/>
+          <xs:enumeration value="n"/>
+          <xs:enumeration value="s"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.harppedal.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrest.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrest.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+    <xs:attributeGroup ref="mei:att.instrumentident"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrest.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.fermatapresent"/>
+    <xs:attributeGroup ref="mei:att.duration.musical"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrest.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.cutout"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visibility"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.relativesize"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.expandable"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt2.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt2.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mrpt2.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.expandable"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mspace.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain attributes. Use the n
+      attribute to explicitly encode this measure's position in a string of
+      measures containing only &lt;mrest&gt; elements.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mspace.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+    <xs:attributeGroup ref="mei:att.instrumentident"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mspace.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.fermatapresent"/>
+    <xs:attributeGroup ref="mei:att.duration.musical"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.mspace.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.cutout"/>
+    <xs:attributeGroup ref="mei:att.visibility"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirest.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirest.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+    <xs:attributeGroup ref="mei:att.instrumentident"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirest.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.numbered"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirest.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attribute name="block" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>When the block attribute is used,
+          combinations of the 1, 2, and 4 measure rest forms (Read, p. 104)
+          should be rendered instead of the modern form or the alternative
+          symbol.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirpt.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirpt.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.numbered"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.multirpt.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.expandable"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.octave.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.octave.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.octave.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.octavedisplacement"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attributeGroup ref="mei:att.duration.timestamp"/>
+    <xs:attribute name="coll">
+      <xs:annotation>
+        <xs:documentation>indicates whether the octave
+          displacement should be performed simultaneously with the written
+          notes, i.e., 'coll' ottava'. Unlike other octave signs which are
+          indicated by broken lines, coll' ottava uses an unbroken line or a
+          series of longer broken lines, ending with a short vertical stroke.
+          See Read, p. 47-48.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="coll"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.octave.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2.ho"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2.to"/>
+    <xs:attributeGroup ref="mei:att.linerend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ossia.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.pedal.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.pedal.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attribute name="dir" use="required">
+      <xs:annotation>
+        <xs:documentation>records the position of the piano damper
+        pedal.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="down"/>
+          <xs:enumeration value="up"/>
+          <xs:enumeration value="half"/>
+          <xs:enumeration value="bounce"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.pedal.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes. The place
+      attribute captures the placement of the pedal marking with respect to the
+      staff with which it is associated. Modern publishing standards require the
+      place to be 'below'; however, for transcriptions of manuscript works, this
+      attribute class allows the full range of values.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attribute name="style">
+      <xs:annotation>
+        <xs:documentation>When style is set to 'line', the pedal
+          mark is rendered with a continuous line. When it's set to pedstar, a
+          pedal down and a half pedal are rendered with "Ped.", a pedal up is
+          rendered as "*", and a pedal "bounce" (up then immediately down) is
+          rendered with "* Ped.". When set to altpedstar, pedal up and down
+          indications are the same as with pedstar but a bounce is rendered with
+          "Ped." only.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="line"/>
+          <xs:enumeration value="pedstar"/>
+          <xs:enumeration value="altpedstar"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.pianopedals">
+    <xs:annotation>
+      <xs:documentation>Used by scoredef and staffdef to provide
+      default description of piano pedal rendition</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="pedal.style">
+      <xs:annotation>
+        <xs:documentation>determines whether piano pedal marks
+          should be drawn as lines or as terms (e.g. 'Ped.' for pedal down and
+          '*' for pedal up).</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="line"/>
+          <xs:enumeration value="pedstar"/>
+          <xs:enumeration value="altpedstar"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.rehearsal">
+    <xs:annotation>
+      <xs:documentation>Attributes used by scoredef and staffdef to
+      provide default information about rehearsal
+      numbers/letters</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="reh.enclose">
+      <xs:annotation>
+        <xs:documentation>describes the enclosing shape for
+          rehearsal marks.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="box"/>
+          <xs:enumeration value="circle"/>
+          <xs:enumeration value="none"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.reh.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.reh.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.staffident"/>
+    <xs:attributeGroup ref="mei:att.startid"/>
+    <xs:attributeGroup ref="mei:att.timestamp.musical"/>
+    <xs:attributeGroup ref="mei:att.timestamp.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.reh.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.placement"/>
+    <xs:attributeGroup ref="mei:att.typography"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.slur.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+    <xs:attributeGroup ref="mei:att.joined"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.slur.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.slur.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attributeGroup ref="mei:att.duration.timestamp"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.slur.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes for slur. The vo
+      attribute is the vertical offset (from its normal position) of the entire
+      rendered slur/phrase mark.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.xy2"/>
+    <xs:attributeGroup ref="mei:att.curvature"/>
+    <xs:attributeGroup ref="mei:att.curverend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tie.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tie.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.controlevent"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tie.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes. The vo attribute
+      is the vertical offset (from its normal position) of the entire rendered
+      tie. The startho, startvo, endho, and endvo attributes describe the
+      horizontal and vertical offsets of the start and end points of the tie in
+      terms of staff interline distance. Startto and endto describe the start
+      and end points in terms of time; that is, beats.</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.visualoffset"/>
+    <xs:attributeGroup ref="mei:att.visualoffset2"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.xy2"/>
+    <xs:attributeGroup ref="mei:att.curvature"/>
+    <xs:attributeGroup ref="mei:att.curverend"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tuplet.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tuplet.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.duration.performed"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tuplet.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.beamedwith"/>
+    <xs:attributeGroup ref="mei:att.augmentdots"/>
+    <xs:attributeGroup ref="mei:att.duration.ratio"/>
+    <xs:attributeGroup ref="mei:att.startendid"/>
+    <xs:attribute name="dur">
+      <xs:annotation>
+        <xs:documentation>captures the time taken up by the
+          tuplet. Unlike other control events where the dur attribute is
+          expressed as a time stamp, dur here is a true duration. If dur is
+          omitted, the default is to calculate the total duration of the
+          included notes and use the next shorter un-dotted value. Irrational
+          durations, such as two quarter notes in the time of five 8th notes in
+          5/8 time, may be expressed as a list of durations which are to be
+          added together to form the total duration of the tuplet. In this case,
+          possbile values for the dur attribute include "2 8" and "8 8 8 8
+          8".</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:simpleType>
+            <xs:list itemType="mei:data.DURATION"/>
+          </xs:simpleType>
+          <xs:minLength value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tuplet.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.numberplacement"/>
+    <xs:attribute name="bracket.place" type="mei:data.PLACE">
+      <xs:annotation>
+        <xs:documentation>used to state where a tuplet bracket
+          will be placed in relation to the noteheads.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="bracket.visible" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>states whether a bracket should be
+          rendered with a tuplet.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="dur.visible" type="mei:data.BOOLEAN">
+      <xs:annotation>
+        <xs:documentation>determines if the tuplet duration is
+          visible.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="num.format">
+      <xs:annotation>
+        <xs:documentation>controls how the num:numbase ratio is to
+          be displayed. When set to 'count' only the num attribute is displayed,
+          e.g., '7'; however, when set to 'ratio', both the num and numbase
+          attributes are displayed, e.g., '7:4'.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="count"/>
+          <xs:enumeration value="ratio"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tupletspan.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.tuplet.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tupletspan.ges">
+    <xs:annotation>
+      <xs:documentation>Gestural domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.tuplet.ges"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tupletspan.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.tuplet.log"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.tupletspan.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.tuplet.vis"/>
+  </xs:attributeGroup>
+  <!-- Declare module model classes -->
+  <xs:group name="model.eventLike.measureFilling">
+    <xs:annotation>
+      <xs:documentation>groups events that appear in CMN notation
+      and that completely fill a measure.</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element ref="mei:mrest"/>
+      <xs:element ref="mei:mrpt"/>
+      <xs:element ref="mei:mrpt2"/>
+      <xs:element ref="mei:mspace"/>
+      <xs:element ref="mei:multirest"/>
+      <xs:element ref="mei:multirpt"/>
+    </xs:choice>
+  </xs:group>
+  <xs:group name="model.measureLike">
+    <xs:annotation>
+      <xs:documentation>groups measure-like
+      elements.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:measure"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.measurePart">
+    <xs:annotation>
+      <xs:documentation>groups elements that may appear as part of a
+      measure.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="mei:model.staffLike"/>
+        <xs:group ref="mei:model.ossiaLike"/>
+      </xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="mei:model.controleventLike"/>
+        <xs:group ref="mei:model.lyricsLike"/>
+        <xs:group ref="mei:model.midiLike"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.ossiaLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that function like
+      ossia.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:ossia"/>
+    </xs:sequence>
+  </xs:group>
+  <!-- Declare module elements -->
+  <xs:element name="arpeg">
+    <xs:annotation>
+      <xs:documentation>arpeggiation ― Indicates that the notes of
+        a chord are to be performed successively rather than simultaneously,
+        usually from lowest to highest. Sometimes called a "roll". The modern
+        symbol is a vertical wavy line preceding the chord. When the notes of
+        the chord are to be performed from highest to lowest, an arrowhead may
+        be added to the lower end of the line. Even though it is redundant, an
+        arrowhead is sometimes added to the upper end of the line for the sake
+        of consistency or when the direction of successive arpeggios alternates.
+        In music for keyboard instruments, sometimes a distinction is made
+        between a single arpeggio in which both hands play successively and
+        simultaneous arpeggios in two hands. In the case of the former, multiple
+        values may be required in the staff and layer attributes. Arpeggios that
+        do not cross staves, but still involve more than one layer require
+        multiple values for the layer attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.arpeg"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.arpeg">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.arpeg.log"/>
+    <xs:attributeGroup ref="mei:att.arpeg.vis"/>
+    <xs:attributeGroup ref="mei:att.arpeg.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.beam">
+    <xs:choice maxOccurs="unbounded">
+      <xs:group ref="mei:model.eventLike"/>
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="beam">
+    <xs:annotation>
+      <xs:documentation>beam ― A container for a series of
+        explicitly beamed events that begins and ends entirely within a measure.
+        For beams that cross the barline, use the beamspan element. Secondary
+        beams may be broken explicitly using the breaksec attribute on the notes
+        or chords under the beam. Automated beaming, as opposed to explicitly
+        marked beams, may be indicated for an entire score, part or section by
+        using the beam.group and beam.rests attributes on these
+        elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.beam">
+          <xs:attributeGroup ref="mei:attlist.beam"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.beam">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.beam.log"/>
+    <xs:attributeGroup ref="mei:att.beam.vis"/>
+    <xs:attributeGroup ref="mei:att.beam.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="beamspan">
+    <xs:annotation>
+      <xs:documentation>beam span ― Alternative element for
+        explicitly encoding beams which extend across barlines. The starting
+        point of the beam may be indicated by either a tstamp, tstamp.ges,
+        tstamp.real or startid attribute, while the ending point may be recorded
+        by either a dur, dur.ges or endid attribute. It is a semantic error not
+        to specify one starting and one ending type of
+        attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.beamspan"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.beamspan">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.beamspan.log"/>
+    <xs:attributeGroup ref="mei:att.beamspan.vis"/>
+    <xs:attributeGroup ref="mei:att.beamspan.ges"/>
+    <xs:attributeGroup ref="mei:att.beamspan.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="beatrpt">
+    <xs:annotation>
+      <xs:documentation>beat repeat ― An indication that material
+        on a preceding beat should be repeated. It is also used in guitar or
+        rhythm parts to indicate where chord changes occur. When these parts
+        require durations longer or shorter than a beat, however, note elements
+        with appropriately-shaped note heads should be
+        employed.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.beatrpt"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.beatrpt">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.beatrpt.log"/>
+    <xs:attributeGroup ref="mei:att.beatrpt.vis"/>
+    <xs:attributeGroup ref="mei:att.beatrpt.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.bend">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="mei:note"/>
+      <xs:element ref="mei:rest"/>
+      <xs:element ref="mei:tuplet"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="bend">
+    <xs:annotation>
+      <xs:documentation>bend ― A variation in pitch (often
+        microtonal) upwards or downwards during the course of a note. Typically,
+        the performer attacks the note at "true" pitch, bends the intonation,
+        then returns to true pitch. The bend element can also be used for scoop,
+        plop, falloff, and doit performance effects. It should *not* be used for
+        l.v. (laissez vibrer) indications. Precise performance data that differs
+        from the logical events in a measure may be recorded within the bend
+        element. The starting point of the bend may be indicated by either a
+        tstamp, tstamp.ges, tstamp.real or startid attribute. It is a semantic
+        error not to specify a starting attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.bend">
+          <xs:attributeGroup ref="mei:attlist.bend"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.bend">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.bend.log"/>
+    <xs:attributeGroup ref="mei:att.bend.vis"/>
+    <xs:attributeGroup ref="mei:att.bend.ges"/>
+    <xs:attributeGroup ref="mei:att.bend.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="breath">
+    <xs:annotation>
+      <xs:documentation>breath mark ― A indication of a point at
+        which the performer on an instrument requiring breath (including the
+        voice) may breathe. It also may indicate a short pause or break for
+        instruments *not* requiring breath. Therefore, it oftens functions as a
+        guide to phrasing. The usual sign for the breath mark is a comma;
+        however, other visual forms of the breath mark may be indicated using
+        the altsym attribute. The starting point of the breath mark may be
+        indicated by either a tstamp, tstamp.ges, tstamp.real or startid
+        attribute. It is a semantic error not to specify a starting point
+        attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.breath"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.breath">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.breath.log"/>
+    <xs:attributeGroup ref="mei:att.breath.vis"/>
+    <xs:attributeGroup ref="mei:att.breath.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.btrem">
+    <xs:choice>
+      <xs:element ref="mei:chord"/>
+      <xs:element ref="mei:note"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="btrem">
+    <xs:annotation>
+      <xs:documentation>bowed tremolo ― A rapid alternation on a
+        single pitch or chord. This element should also be used for wind double
+        and triple tonguing and for flutter tonguing when these are expressed as
+        tremolandi. For alternation between a pair of notes or chords, use the
+        ftrem element. The num attribute can be used to store a number to be
+        rendered along with a tremolo. The slash attribute indicates the number
+        of slashes to be drawn. The number of slashes indicates the exact note
+        values in an aural rendition of measured tremolandi, i.e., 4ths or
+        8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5, 256ths=6. See Read, p.
+        393-394. The stem modifier (slash or z) must also be explicity set on
+        the child &lt;note&gt; or &lt;chord&gt; element for a
+        complete visual representation. See Read, p. 394, ex. 23-21, line
+        5.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.btrem">
+          <xs:attributeGroup ref="mei:attlist.btrem"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.btrem">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.btrem.log"/>
+    <xs:attributeGroup ref="mei:att.btrem.vis"/>
+    <xs:attributeGroup ref="mei:att.btrem.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="fermata">
+    <xs:annotation>
+      <xs:documentation>fermata ― An indication placed over a note
+        or rest to indicated that it should be held longer than its written
+        value. May also occur over a barline to indicate the end of a phrase or
+        section. Sometimes called a 'hold' or 'pause'. The
+        &lt;fermata&gt; element is a specialized form of, i.e.,
+        syntactic sugar for, dir/@type="fermata" with &amp;ferm; or
+        &amp;uferm; as its PCDATA content. Other visual forms of a fermata
+        may be indicated via the altsym attribute. The starting point of the
+        fermata may be indicated by either a tstamp, tstamp.ges, tstamp.real or
+        startid attribute. It is a semantic error not to specify a starting
+        point attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.fermata"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.fermata">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.fermata.log"/>
+    <xs:attributeGroup ref="mei:att.fermata.vis"/>
+    <xs:attributeGroup ref="mei:att.fermata.ges"/>
+    <xs:attributeGroup ref="mei:att.fermata.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.ftrem">
+    <xs:choice>
+      <xs:sequence>
+        <xs:element ref="mei:chord"/>
+        <xs:choice>
+          <xs:element ref="mei:chord"/>
+          <xs:element ref="mei:note"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:sequence>
+        <xs:element ref="mei:note"/>
+        <xs:choice>
+          <xs:element ref="mei:chord"/>
+          <xs:element ref="mei:note"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="ftrem">
+    <xs:annotation>
+      <xs:documentation>fingered tremolo ― A rapid alternation
+        between a pair of notes (or chords or perhaps between a note and a
+        chord) that are (usually) farther apart than a major second. For rapid
+        alternation between notes on the same pitch (bowed tremolo, double
+        &amp;amp; triple tonguing, and flutter tonguing) use the
+        &lt;btrem&gt; element. The slash attribute records the number of
+        slashes required — 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5,
+        256ths=6.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.ftrem">
+          <xs:attributeGroup ref="mei:attlist.ftrem"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.ftrem">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.ftrem.log"/>
+    <xs:attributeGroup ref="mei:att.ftrem.vis"/>
+    <xs:attributeGroup ref="mei:att.ftrem.ges"/>
+    <xs:attributeGroup ref="mei:att.ftrem.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="hairpin">
+    <xs:annotation>
+      <xs:documentation>hairpin ― Indicates continuous dynamics
+        expressed on the score as wedge-shaped graphics, e.g. &lt; and
+        &gt;. The starting point of the hairpin may be indicated by either a
+        tstamp, tstamp.ges, tstamp.real or startid attribute, while the ending
+        point may be recorded by either a dur, dur.ges or endid attribute. It is
+        a semantic error not to specify one starting and one ending type of
+        attribute. Please note that the value of the dur attribute is not a true
+        duration, but rather a time stamp for the end point of the
+        hairpin.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.hairpin"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.hairpin">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.hairpin.log"/>
+    <xs:attributeGroup ref="mei:att.hairpin.vis"/>
+    <xs:attributeGroup ref="mei:att.hairpin.ges"/>
+    <xs:attributeGroup ref="mei:att.hairpin.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="harppedal">
+    <xs:annotation>
+      <xs:documentation>harp pedal ― Harp pedal diagram. The
+        starting point of the harp pedal diagram may be indicated by either a
+        tstamp, tstamp.ges, tstamp.real or startid attribute. It is a semantic
+        error not to specify a starting point attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.harppedal"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.harppedal">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.harppedal.log"/>
+    <xs:attributeGroup ref="mei:att.harppedal.vis"/>
+    <xs:attributeGroup ref="mei:att.harppedal.ges"/>
+    <xs:attributeGroup ref="mei:att.harppedal.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.gliss">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="mei:note"/>
+      <xs:element ref="mei:rest"/>
+      <xs:element ref="mei:tuplet"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="gliss">
+    <xs:annotation>
+      <xs:documentation>glissando ― A continuous or sliding
+        movement from one pitch to another, usually indicated by a straight or
+        wavy line. Commonly also called a 'slide'. The term 'glissando' is
+        frequently used to indicate both the case where distinct intermediate
+        pitches are produced (as on the piano) and the case where they are not
+        (as on the trombone), though the latter is sometimes referred to as
+        'portamento'. The visual appearance of the indicating line may be
+        recorded in the rend attribute. Precise performance data, that is, exact
+        pitches, may be recorded within the &lt;gliss&gt; element. The
+        starting point of the glissando may be indicated by either a tstamp,
+        tstamp.ges, tstamp.real or startid attribute. It is a semantic error not
+        to specify a starting point attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.gliss">
+          <xs:attributeGroup ref="mei:attlist.gliss"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.gliss">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.gliss.log"/>
+    <xs:attributeGroup ref="mei:att.gliss.vis"/>
+    <xs:attributeGroup ref="mei:att.gliss.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.halfmrpt">
+    <xs:group minOccurs="0" maxOccurs="unbounded" ref="mei:model.eventLike"/>
+  </xs:complexType>
+  <xs:element name="halfmrpt">
+    <xs:annotation>
+      <xs:documentation>half-measure repeat ― A half-measure
+        repeat in any meter.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.halfmrpt">
+          <xs:attributeGroup ref="mei:attlist.halfmrpt"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.halfmrpt">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.halfmrpt.log"/>
+    <xs:attributeGroup ref="mei:att.halfmrpt.vis"/>
+    <xs:attributeGroup ref="mei:att.halfmrpt.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.measure">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.divLike"/>
+      <xs:group ref="mei:model.milestoneLike.music"/>
+      <xs:group ref="mei:model.scoredefLike"/>
+      <xs:group ref="mei:model.staffdefLike"/>
+      <xs:group ref="mei:model.staffgrpLike"/>
+      <xs:group ref="mei:model.annotLike"/>
+      <xs:group ref="mei:model.graphicprimitiveLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+      <xs:group ref="mei:model.measurePart"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="measure">
+    <xs:annotation>
+      <xs:documentation>measure ― "Unit of musical time consisting
+        of a fixed number of note-values of a given type, as determined by the
+        prevailing meter, and delimited in musical notation by two bar lines."
+        (New Harvard Dictionary of Music) In MEI, the measure element is a
+        grouping mechanism for events and control events. It is also a linking
+        element that uses attributes to connect the MEI document to an external
+        electronic object or to another location within the MEI
+        instance.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.measure">
+          <xs:attributeGroup ref="mei:attlist.measure"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.measure">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attributeGroup ref="mei:att.link.common"/>
+    <xs:attributeGroup ref="mei:att.link.internal"/>
+    <xs:attributeGroup ref="mei:att.link.external"/>
+    <xs:attributeGroup ref="mei:att.measure.log"/>
+    <xs:attributeGroup ref="mei:att.measure.vis"/>
+    <xs:attributeGroup ref="mei:att.measure.ges"/>
+    <xs:attributeGroup ref="mei:att.measure.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="mrest">
+    <xs:annotation>
+      <xs:documentation>measure rest ― Complete measure rest in
+        any meter (Read, p. 97-98). Automatically-generated numbering of
+        consecutive measures of rest may be controlled via the multi.number
+        attribute on the scoredef or staffdef elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.mrest"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.mrest">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.mrest.log"/>
+    <xs:attributeGroup ref="mei:att.mrest.vis"/>
+    <xs:attributeGroup ref="mei:att.mrest.ges"/>
+    <xs:attributeGroup ref="mei:att.mrest.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="mrpt">
+    <xs:annotation>
+      <xs:documentation>measure repeat ― An indication that the
+        previous measure should be repeated. The automated numbering of
+        consecutive measures of rest may be controlled via the multi.number
+        attribute on the scoredef or staffdef elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.mrpt"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.mrpt">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.mrpt.log"/>
+    <xs:attributeGroup ref="mei:att.mrpt.vis"/>
+    <xs:attributeGroup ref="mei:att.mrpt.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="mrpt2">
+    <xs:annotation>
+      <xs:documentation>2-measure repeat ― An indication that the
+        previous two measures should be repeated.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.mrpt2"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.mrpt2">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.mrpt2.log"/>
+    <xs:attributeGroup ref="mei:att.mrpt2.vis"/>
+    <xs:attributeGroup ref="mei:att.mrpt2.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="mspace">
+    <xs:annotation>
+      <xs:documentation>measure space ― Complete measure
+        consisting of empty space in any meter. The automated numbering of
+        consecutive measures of space may be controlled via the multi.number
+        attribute on the scoredef or staffdef elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.mspace"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.mspace">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.mspace.log"/>
+    <xs:attributeGroup ref="mei:att.mspace.vis"/>
+    <xs:attributeGroup ref="mei:att.mspace.ges"/>
+    <xs:attributeGroup ref="mei:att.mspace.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="multirest">
+    <xs:annotation>
+      <xs:documentation>multi-rest ― Multiple measures of rest
+        compressed into a single symbol, frequently found in performer parts.
+        The num attribute can used to store a number to be rendered along with
+        the note. See Read, p. 102-105.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.multirest"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.multirest">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.multirest.log"/>
+    <xs:attributeGroup ref="mei:att.multirest.vis"/>
+    <xs:attributeGroup ref="mei:att.multirest.ges"/>
+    <xs:attributeGroup ref="mei:att.multirest.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="multirpt">
+    <xs:annotation>
+      <xs:documentation>multi-repeat ― Multiple repeated measures.
+        In modern publishing practice, repeats of more than two measures should
+        be written out using repeat signs. This element, however, is provided
+        for handling non-standard practices often found in manuscript. The num
+        attribute records the number of measures to be
+        repeated.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.multirpt"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.multirpt">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.multirpt.log"/>
+    <xs:attributeGroup ref="mei:att.multirpt.vis"/>
+    <xs:attributeGroup ref="mei:att.multirpt.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="octave">
+    <xs:annotation>
+      <xs:documentation>octave ― An indication that a passage
+        should be performed one or more octaves above or below its written
+        pitch. The dis and dis.place attributes record the amount and direction
+        of displacement, respectively. The rend attribute captures the
+        appearance of the continuation line associated with the octave
+        displacement. The starting point of the octave displacement may be
+        indicated by either a tstamp, tstamp.ges, tstamp.real or startid
+        attribute, while the ending point may be recorded by either a dur,
+        dur.ges or endid attribute. It is a semantic error not to specify one
+        starting and one ending type of attribute. Please note that the dur
+        attribute here is not a true duration, but rather a time stamp for the
+        end point of the octave displacement. Also, note that the dur attribute
+        is not required because the octave displacement can be visually
+        instantaneous.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.octave"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.octave">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.octave.log"/>
+    <xs:attributeGroup ref="mei:att.octave.vis"/>
+    <xs:attributeGroup ref="mei:att.octave.ges"/>
+    <xs:attributeGroup ref="mei:att.octave.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.ossia">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.divLike"/>
+      <xs:group ref="mei:model.milestoneLike.music"/>
+      <xs:group ref="mei:model.scoredefLike"/>
+      <xs:group ref="mei:model.staffdefLike"/>
+      <xs:group ref="mei:model.staffgrpLike"/>
+      <xs:group ref="mei:model.annotLike"/>
+      <xs:group ref="mei:model.graphicprimitiveLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+      <xs:group ref="mei:model.measurePart"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="ossia">
+    <xs:annotation>
+      <xs:documentation>ossia ― An alternative, usually simpler,
+        version of a measure *present in the source being transcribed*.
+        Typically, it is rendered above the staff on a reduced-size
+        staff.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.ossia">
+          <xs:attributeGroup ref="mei:attlist.ossia"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.ossia">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.ossia.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="pedal">
+    <xs:annotation>
+      <xs:documentation>pedal ― Piano pedal mark (Read, p.
+        317-318). The starting point of the pedal mark may be indicated by
+        either a tstamp, tstamp.ges, tstamp.real or startid attribute. It is a
+        semantic error not to specify a starting point
+        attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.pedal"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.pedal">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.pedal.log"/>
+    <xs:attributeGroup ref="mei:att.pedal.vis"/>
+    <xs:attributeGroup ref="mei:att.pedal.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.reh" mixed="true">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.lbLike"/>
+      <xs:group ref="mei:model.rendLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="reh">
+    <xs:annotation>
+      <xs:documentation>rehearsal mark ― In an orchestral score
+        and its corresponding parts, a mark indicating a convenient point from
+        which to resume rehearsal after a break. It may also be called a
+        rehearsal figure, or when numbers are used instead of letters, a
+        rehearsal number. See Read, p. 443. &lt;reh&gt; uses a subset of
+        model.textphraseLike.limited.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.reh">
+          <xs:attributeGroup ref="mei:attlist.reh"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.reh">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.reh.log"/>
+    <xs:attributeGroup ref="mei:att.reh.vis"/>
+    <xs:attributeGroup ref="mei:att.reh.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="slur">
+    <xs:annotation>
+      <xs:documentation>slur ― Historically, the term "slur"
+        indicated two notes performed legato, while the term "phrase" was used
+        for a "unified melodic idea". Nowadays, however, "slur" often has the
+        same meaning as "phrase" (See Read, p. 265-266), since the visual
+        rendition of the two concepts is the same. MEI provides two distinct
+        elements so that those users wishing to maintain a distinction for
+        historical reasons may do so. If the user does not want to maintain the
+        distinction, then the more generic &lt;slur&gt; element should
+        be employed. The starting point of the slur may be indicated by either a
+        tstamp, tstamp.ges, tstamp.real or startid attribute, while the ending
+        point may be recorded by either a dur, dur.ges or endid attribute. It is
+        a semantic error not to specify one starting and one ending type of
+        attribute. Either place, bulge, or bezier attributes may be used to
+        record the curvature of the slur. The slur and tie elements may be used
+        instead of the slur.* and tie.* attributes provided on chord and note
+        elements when 1) they are required by software, or 2) multiple,
+        alternative slurs are needed. Please note that the dur attribute is not
+        a true duration, but rather a time stamp for the end point of the
+        slur.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.slur"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.slur">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attributeGroup ref="mei:att.slur.log"/>
+    <xs:attributeGroup ref="mei:att.slur.vis"/>
+    <xs:attributeGroup ref="mei:att.slur.ges"/>
+    <xs:attributeGroup ref="mei:att.slur.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="tie">
+    <xs:annotation>
+      <xs:documentation>tie ― An indication that two notes of the
+        same pitch form a single note with their combined rhythmic values. Most
+        often it is rendered as a curved line connecting the two notes. See
+        Read, p. 110-111, 122.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.tie"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.tie">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attributeGroup ref="mei:att.tie.log"/>
+    <xs:attributeGroup ref="mei:att.tie.vis"/>
+    <xs:attributeGroup ref="mei:att.tie.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.tuplet">
+    <xs:choice maxOccurs="unbounded">
+      <xs:group ref="mei:model.eventLike"/>
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="tuplet">
+    <xs:annotation>
+      <xs:documentation>tuplet ― A group of notes with "irregular"
+        (sometimes called "irrational") rhythmic values, for example, three
+        notes in the time normally occupied by two or nine in the time of five.
+        The beam sub-element is allowed so that custom beaming may be indicated,
+        e.g., a septuplet may be divided into a group of three plus a group of
+        four notes. See Read, p. 187-215. The tuplet element may also used for
+        bowed tremolo (Read, p. 394) and double, triple, or flutter tonguing
+        (Read, p. 348-349); that is, for repetition of the same pitch. In the
+        case of irrational durations, such as such as two quarter notes in the
+        time of five 8th notes in a measure of 5/8 time, decimal values may be
+        used in the dur.ges attribute. For example, the dur.ges attribute would
+        take the value "2.5" if the midi.div attribute's value was "1". The num
+        and numbase attributes may be used for explicit labelling of a tuplet,
+        such as, '3' with an 8th-note triplet, '3:2' over a quarter-note
+        triplet, etc. The rendering of the ratio, however, is dependent on the
+        num.format attribute found in the att.vis.tuplet attribute
+        class.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.tuplet">
+          <xs:attributeGroup ref="mei:attlist.tuplet"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.tuplet">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.tuplet.log"/>
+    <xs:attributeGroup ref="mei:att.tuplet.vis"/>
+    <xs:attributeGroup ref="mei:att.tuplet.ges"/>
+    <xs:attributeGroup ref="mei:att.tuplet.anl"/>
+  </xs:attributeGroup>
+  <xs:element name="tupletspan">
+    <xs:annotation>
+      <xs:documentation>tuplet span ― Alternative element for
+        encoding tuplets, especially useful for tuplets that extend across
+        barlines. The starting point of the tuplet may be indicated by either a
+        tstamp, tstamp.ges, tstamp.real or startid attribute, while the ending
+        point may be recorded using a dur, dur.ges or endid attribute. It is a
+        semantic error not to specify one starting and one ending type of
+        attribute.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attributeGroup ref="mei:attlist.tupletspan"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.tupletspan">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.tupletspan.log"/>
+    <xs:attributeGroup ref="mei:att.tupletspan.vis"/>
+    <xs:attributeGroup ref="mei:att.tupletspan.ges"/>
+    <xs:attributeGroup ref="mei:att.tupletspan.anl"/>
+  </xs:attributeGroup>
+</xs:schema>

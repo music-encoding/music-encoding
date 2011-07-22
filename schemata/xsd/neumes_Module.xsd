@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ************************************************************** -->
+<!--
+  NAME:     Music Encoding Initiative (MEI) schema component:
+            neumes_Module.rng
+  
+  NOTICE:   Copyright (c) 2010 by the Music Encoding Initiative (MEI)
+            Council.
+  
+            Licensed under the Educational Community License, Version
+            2.0 (the "License"); you may not use this file except in
+            compliance with the License. You may obtain a copy of the
+            License at http://www.osedu.org/licenses/ECL-2.0.
+  
+            Unless required by applicable law or agreed to in writing,
+            software distributed under the License is distributed on
+            an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+            KIND, either express or implied. See the License for the
+            specific language governing permissions and limitations
+            under the License.
+  
+            This is a derivative work based on earlier versions of the
+            schema copyright (c) 2001-2006 Perry Roland and the Rector
+            and Visitors of the University of Virginia; licensed under
+            the Educational Community License version 1.0.
+  
+  CONTACT:  contact@music-encoding.org 
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.music-encoding.org/ns/mei" xmlns:mei="http://www.music-encoding.org/ns/mei" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <xs:import schemaLocation="analysis_Module.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+  <!-- Neumes Module -->
+  <!-- Declare module attr classes -->
+  <xs:attributeGroup name="att.ineume.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ineume.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="form" type="mei:data.INEUMEFORM">
+      <xs:annotation>
+        <xs:documentation>provides a subclass or functional label
+          for the neume.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="name" type="mei:data.INEUMENAME">
+      <xs:annotation>
+        <xs:documentation>records a name of an interrupted
+          neume.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.ineume.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.color"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.uneume.anl">
+    <xs:annotation>
+      <xs:documentation>Analytical domain
+      attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="att.common.anl"/>
+    <xs:attributeGroup ref="att.harmonicfunction"/>
+    <xs:attributeGroup ref="att.melodicfunction"/>
+    <xs:attributeGroup ref="att.intervallicdesc"/>
+    <xs:attributeGroup ref="att.solfa"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.uneume.log">
+    <xs:annotation>
+      <xs:documentation>Logical domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.event"/>
+    <xs:attributeGroup ref="mei:att.syltext"/>
+    <xs:attribute name="form" type="mei:data.UNEUMEFORM">
+      <xs:annotation>
+        <xs:documentation>provides a subclass or functional label
+          for the neume.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="name" type="mei:data.UNEUMENAME">
+      <xs:annotation>
+        <xs:documentation>records the name of an uninterrupted
+          neume.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="att.uneume.vis">
+    <xs:annotation>
+      <xs:documentation>Visual domain attributes</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="mei:att.altsym"/>
+    <xs:attributeGroup ref="mei:att.color"/>
+    <xs:attributeGroup ref="mei:att.relativesize"/>
+    <xs:attributeGroup ref="mei:att.visualoffset.ho"/>
+    <xs:attributeGroup ref="mei:att.xy"/>
+    <xs:attributeGroup ref="mei:att.visibility"/>
+  </xs:attributeGroup>
+  <!-- Declare module model classes -->
+  <xs:group name="model.eventLike.neumes">
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="mei:ineume"/>
+        <xs:element ref="mei:uneume"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.syllableLike">
+    <xs:annotation>
+      <xs:documentation>groups elements that accommodate neumed
+      text.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="mei:syllable"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="model.syllablePart">
+    <xs:annotation>
+      <xs:documentation>groups elements that may appear as part of
+      content of a syllable.</xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:group ref="mei:model.sylLike"/>
+      <xs:group ref="mei:model.eventLike"/>
+      <xs:group ref="mei:model.eventLike.neumes"/>
+      <xs:group ref="mei:model.midiLike"/>
+      <xs:group ref="mei:model.controleventLike"/>
+      <xs:group ref="mei:model.lyricsLike"/>
+      <xs:group ref="mei:model.noteModifierLike"/>
+      <xs:group ref="mei:model.verseLike"/>
+    </xs:choice>
+  </xs:group>
+  <!-- Declare module elements -->
+  <xs:complexType name="content.ineume">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.eventLike"/>
+      <xs:group ref="mei:model.eventLike.neumes"/>
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+      <xs:group ref="mei:model.verseLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="ineume">
+    <xs:annotation>
+      <xs:documentation>interrupted neume ― a graphically
+        interrupted neume; that is, a neume which is logically a single entity
+        but is written using multiple signs. The constituent signs may be
+        encoded using ineume and uneume sub-elements.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.ineume">
+          <xs:attributeGroup ref="mei:attlist.ineume"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.ineume">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attributeGroup ref="mei:att.ineume.log"/>
+    <xs:attributeGroup ref="mei:att.ineume.vis"/>
+    <xs:attributeGroup ref="mei:att.ineume.anl"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.syllable">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.divLike"/>
+      <xs:group ref="mei:model.milestoneLike.music"/>
+      <xs:group ref="mei:model.scoredefLike"/>
+      <xs:group ref="mei:model.staffdefLike"/>
+      <xs:group ref="mei:model.staffgrpLike"/>
+      <xs:group ref="mei:model.annotLike"/>
+      <xs:group ref="mei:model.graphicprimitiveLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+      <xs:group ref="mei:model.syllablePart"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="syllable">
+    <xs:annotation>
+      <xs:documentation>syllable ― Neume notation can be thought
+        of as "neumed text". Therefore, the syllable element provides high-level
+        organization in this repertoire.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.syllable">
+          <xs:attributeGroup ref="mei:attlist.syllable"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.syllable">
+    <xs:attributeGroup ref="mei:att.common"/>
+  </xs:attributeGroup>
+  <xs:complexType name="content.uneume">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:group ref="mei:model.eventLike"/>
+      <xs:group ref="mei:model.appLike"/>
+      <xs:group ref="mei:model.editLike"/>
+      <xs:group ref="mei:model.transcriptionLike"/>
+      <xs:group ref="mei:model.verseLike"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:element name="uneume">
+    <xs:annotation>
+      <xs:documentation>uninterrupted neume ― A
+        graphically-uninterrupted neume sign. While ineume is allowed as a
+        sub-element of uneume here as part of the model.eventLike.neume class,
+        it is unlikely that an uninterrupted neume containing an interrupted
+        neume is a meaningful construct.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mei:content.uneume">
+          <xs:attributeGroup ref="mei:attlist.uneume"/>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+  <xs:attributeGroup name="attlist.uneume">
+    <xs:attributeGroup ref="mei:att.common"/>
+    <xs:attributeGroup ref="mei:att.facsimile"/>
+    <xs:attributeGroup ref="mei:att.typed"/>
+    <xs:attributeGroup ref="mei:att.uneume.log"/>
+    <xs:attributeGroup ref="mei:att.uneume.vis"/>
+    <xs:attributeGroup ref="mei:att.uneume.anl"/>
+  </xs:attributeGroup>
+</xs:schema>
