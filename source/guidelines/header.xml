@@ -6,33 +6,36 @@
   You may obtain a copy of the License at http://creativecommons.org/licenses/by-nd/3.0/.
 -->
 
-<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="header" n="0">
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="header1" n="0">
   <head>The MEI Header</head>
-  <p>This chapter addresses the description of an encoded item so that the text, its source, its
-    encoding, and its revisions are all thoroughly documented. Such documentation is necessary for
-    scholars using the texts, for software processing them, and for catalogers in libraries and
-    archives. Together these descriptions and declarations provide an electronic analog to the title
-    page attached to a printed work. They also constitute an equivalent for the content of the code
-    books or introductory manuals customarily accompanying electronic data sets.</p>
+  <p>This chapter addresses the description of an encoded item so that the musical text, as well as
+    its sources, encoding, and revisions are all thoroughly documented. Such documentation is
+    necessary for scholars using the texts, for software processing them, and for catalogers in
+    libraries and archives. Together these descriptions and declarations provide an electronic
+    analog to the title page attached to a printed work. They also constitute an equivalent for the
+    content of the code books or introductory manuals customarily accompanying electronic data
+    sets.</p>
   <p>Every MEI-conformant text must carry such a set of descriptions, prefixed to it and encoded as
     described in this chapter. The set is known as the MEI header, tagged <gi>meiHead</gi>, and has
-    four major parts:</p>
+    five major parts:</p>
   <list type="ordered">
+    <item>one or more identifiers, tagged with <gi>altId</gi>, each of which provides an identifying
+      name or number associated with the file.</item>
     <item>a <term>file description</term>, tagged <gi>fileDesc</gi>, containing a full
       bibliographical description of the computer file itself, from which a user of the text could
       derive a proper bibliographic citation, or which a librarian or archivist could use in
       creating a catalog entry recording its presence within a library or archive. The term
-        <term>computer file</term> here is to be understood as referring to the whole entity or
-      document described by the header, even when this is stored in several distinct operating
-      system files. The file description also includes information about the source or sources from
-      which the electronic document was derived. The MEI elements used to encode the file
-      description are described in section <ptr target="#"/> The File Description below.</item>
+        <term>computer file</term> here is to be understood as referring to the whole intellectual
+      entity or document described by the header, even when this is stored in multiple physical
+      operating system files. The file description also includes information about the source or
+      sources from which the electronic document was derived. The MEI elements used to encode the
+      file description are described in section <ptr target="#header1.1"/> below.</item>
     <item>an <term>encoding description</term>, tagged <gi>encodingDesc</gi>, which describes the
       relationship between an electronic text and its source or sources. It allows for detailed
       description of whether (or how) the text was normalized during transcription, how the encoder
       resolved ambiguities in the source, what levels of encoding or analysis were applied, and
       similar matters. The MEI elements used to encode the encoding description are described in
-      section <ptr target="#"/> The Encoding Description below.</item>
+      section <ptr target="#header1.2"/> below.</item>
     <item>a <term>work description</term>, tagged <gi>workDesc</gi>, containing classification and
       contextual information about the text, such as its subject matter, the situation in which it
       was produced, the individuals described by or participating in producing it, and so forth.
@@ -40,253 +43,91 @@
       or language collections, where it is often highly desirable to enforce a controlled
       descriptive vocabulary or to perform retrievals from a body of text in terms of text type or
       origin. The text profile may however be of use in any form of automatic text processing. The
-      MEI elements used to encode the <term>work description</term> are described in section <ptr target="#"/>
-      The Work Description below.</item>
+      MEI elements used to encode the <term>work description</term> are described in section <ptr
+        target="#header1.3"/> below.</item>
     <item>a <term>revision history</term>, tagged <gi>revisionDesc</gi>, which allows the encoder to
       provide a history of changes made during the development of the electronic text. The revision
       history is important for <term>version control</term> and for resolving questions about the
       history of a file. The MEI elements used to encode the revision description are described in
-      section <ptr target="#"/> The Revision Description below.</item>
+      section <ptr target="#header1.4"/> below.</item>
   </list>
-  <p>An MEI header can be a very large and complex object, or it may be a very simple one. Some
-    application areas (for example, the construction of language corpora and the transcription of
-    spoken texts) may require more specialized and detailed information than others.
-    <!--The present
-    proposals therefore define both a core set of elements (all of which may be used without
-    formality in any MEI header) and some additional elements which become available within the
-    header as the result of including additional specialized modules within the schema. When the
-    module for language corpora (described in chapter <ptr target="#"/> Language Corpora) is in use, for example,
-    several additional elements are available, as further detailed in that chapter.--></p>
-  <p>The next section of the present chapter briefly introduces the overall structure of the header
-    and the kinds of data it may contain. This is followed by a detailed description of all the
-    constituent elements which may be used in the core header. Section <ptr target="#"/> Minimal and
-    Recommended Headers, at the end of the present chapter, discusses the recommended content of a
-    minimal MEI header and its relation to standard library cataloging practices.</p>
-  <div>
-    <head>Organization</head>
-    <div>
-      <head>Components</head>
-      <p>The <gi>meiHead</gi> element should be clearly distinguished from the front matter of the
-        text itself (for which see section <ptr target="#"/> Front Matter). A composite text, such
-        as a corpus or collection, may contain several headers, as further discussed below. In the
-        general case, however, an MEI-conformant text will contain a single meiHead element,
-        followed by a single text or facsimile element, or both.</p>
-      <p>The header element has the following description:</p>
-      <p><gi>meiHead</gi> (MEI Header) supplies the descriptive and declarative information making
-        up an electronic title page prefixed to every MEI-conformant text.@type specifies the kind
-        of document to which the header is attached, for example whether it is a corpus or
-        individual text.</p>
-      <p>As discussed above, the meiHead element has four principal components:</p>
-      <list type="simple">
-        <item><gi>fileDesc</gi> (file description) contains a bibliographic description of an
-          electronic file.</item>
-        <item><gi>encodingDesc</gi> (encoding description) documents the relationship between an
-          electronic text and the source or sources from which it was derived.</item>
-        <item><gi>workDesc</gi> (text-work description) provides a detailed description of
-          non-bibliographic aspects of a text, specifically the languages and sublanguages used, the
-          situation in which it was produced, the participants and their setting.</item>
-        <item><gi>revisionDesc</gi> (revision description) summarizes the revision history for a
-          file.</item>
-      </list>
-      <p>Of these, only the <gi>fileDesc</gi> element is required in all MEI headers; the others are
-        optional. Only one of the four components of the MEI header (the <gi>fileDesc</gi>) is
-        mandatory, and it also has some mandatory components, as further discussed in <ptr
-          target="#"/> The File Description below. The smallest possible valid MEI Header thus looks
-        like this:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <meiHead>
-          <fileDesc>
-            <titleStmt><title><!-\- title of the resource  ... -\-></title></titleStmt>
-            <publicationStmt>
-              <p>(Information about distribution of the resource)</p>
-            </publicationStmt>
-            <sourceDesc>
-              <p>(Information about source from which the resource is derived)</p>
-            </sourceDesc>
-          </fileDesc>
-        </meiHead></egXML>-->
-      <p>The content of the elements making up an MEI Header may be given in any language, not
-        necessarily that of the text to which the header applies, and not necessarily English. As
-        elsewhere, the @xml:lang attribute should be used at an appropriate level to specify the
-        language. For example, in the following schematic example, an English text has been given a
-        French header:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <MEI>
-          <meiHead xml:lang="fra"><!-\- ... -\->
-          </meiHead>
-          <music xml:lang="eng"><!-\- ... -\->
-          </music>
-        </MEI></egXML>-->
-      <p>In the case of language corpora or collections, it may be desirable to record header
-        information either at the level of the individual components in the corpus or collection, or
-        at the level of the corpus or collection itself (more details concerning the tagging of
-        composite texts are given in section <ptr target="#"/> Language Corpora, which should be
-        read in conjunction with the current chapter). The @type attribute may be used to indicate
-        whether the header applies to a corpus or a single text. A corpus may thus take the
-        form:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <meiCorpus>
-          <meiHead type="corpus"><!-\- corpus-level metadata here -\-></meiHead>
-          <MEI>
-            <meiHead type="text"><!-\- metadata specific to this text here -\-></meiHead>
-            <music><!-\- ... -\->
-            </music>
-          </MEI>
-          <MEI>
-            <meiHead type="text"><!-\- metadata specific to this text here -\-></meiHead>
-            <music><!-\- ... -\->
-            </music>
-          </MEI>
-        </meiCorpus></egXML>-->
-    </div>
-    <div>
-      <head>Types of header content</head>
-      <p>The elements occurring within the MEI header may contain several types of content; the
-        following list indicates how these types of content are described in the following
-        sections:</p>
-      <list type="gloss">
-        <label>free prose</label>
-        <item>Most elements contain simple running prose at some level. Many elements may contain
-          either prose (possibly organized into paragraphs) or more specific elements, which
-          themselves contain prose. In this chapter's descriptions of element content, the phrase
-          prose description should be understood to imply a series of paragraphs, each marked as a p
-          element. The word phrase, by contrast, should be understood to imply character data,
-          interspersed as need be with phrase-level elements, but not organized into paragraphs. For
-          more information on paragraphs, highlighted phrases, lists, etc., see section <ptr
-            target="#"/> Paragraphs.</item>
-        <label>grouping elements</label>
-        <item>Elements whose names end with the suffix Stmt (e.g. <gi>editionStmt</gi>,
-            <gi>titleStmt</gi>) usually enclose a group of specialized elements recording some
-          structured information. In the case of the bibliographic elements, the suffix Stmt is used
-          in names of elements corresponding to the ‘areas’ of the International Standard
-          Bibliographic Description. In most cases grouping elements may contain prose descriptions
-          as an alternative to the set of specialized elements, thus allowing the encoder to choose
-          whether or not the information concerned should be presented in a structured form or in
-          prose.</item>
-        <label>declarations</label>
-        <item>Elements whose names end with the suffix Decl (e.g. <gi>editorialDecl</gi>) enclose
-          information about specific encoding practices applied in the electronic text; often these
-          practices are described in coded form. Typically, such information takes the form of a
-          series of declarations, identifying a code with some more complex structure or
-          description. A declaration which applies to more than one text or division of a text need
-          not be repeated in the header of each such text or subdivision. Instead, the @decls
-          attribute of each text (or subdivision of the text) to which the declaration applies may
-          be used to supply a cross-reference to it, as further described in section <ptr target="#"
-          /> Associating Contextual Information with a Text.</item>
-        <label>descriptions</label>
-        <item>Elements whose names end with the suffix Desc (e.g. <gi>projectDesc</gi>) contain a
-          prose description, possibly, but not necessarily, organized under some specific headings
-          by suggested sub-elements.</item>
-      </list>
-    </div>
-    <div>
-      <head>Model classes</head>
-      <p>The MEI Header provides a very rich collection of metadata categories, but makes no claim
-        to be exhaustive. It is certainly the case that individual projects may wish to record
-        specialized metadata which either does not fit within one of the predefined categories
-        identified by the MEI Header or requires a more specialized element structure than is
-        proposed here. To overcome this problem, the encoder may elect to define additional elements
-        using the customization methods discussed in <ptr target="#"/> Personalization and
-        Customization. The MEI class system makes such customizations simpler to effect and easier
-        to use in interchange.</p>
-      <p>These classes are specific to parts of the header:</p>
-      <!--<p>[MEI classes used in the header using the following example as a guide]</p>
-      <p>
-        <hi rend="strikethrough">model.applicationLike groups elements used to record
-          application-specific information about a document in its header.</hi>
-      </p>-->
-    </div>
-  </div>
-  <div>
+  <div xml:id="header1.1" type="div2">
     <head>File description</head>
-    <p>This section describes the <gi>fileDesc</gi> element, which is the first component of the
-      meiHead element.</p>
-    <p>The bibliographic description of a machine-readable or digital text resembles in structure
-      that of a book, an article, or any other kind of textual object. The file description element
-      of the MEI header has therefore been closely modeled on existing standards in library
-      cataloging; it should thus provide enough information to allow users to give standard
-      bibliographic references to the electronic text, and to allow catalogers to catalog it.
-      Bibliographic citations occurring elsewhere in the header, and also in the text itself, are
-      derived from the same model (on bibliographic citations in general, see further section <ptr
-        target="#"/> Bibliographic Citations and References). See further section <ptr target="#"/>
-      Note for Library catalogers.</p>
+    <p>The bibliographic description of a machine-readable or digital text resembles that of a book,
+      an article, or any other kind of textual object. The file description element of the MEI
+      header has therefore been closely modeled on existing standards in library cataloging; it
+      should thus provide enough information to allow users to give standard bibliographic
+      references to the electronic text, and to allow catalogers to catalog it. Bibliographic
+      citations occurring elsewhere in the header, and also in the text itself, are derived from the
+      same model.</p>
     <p>The bibliographic description of an electronic text should be supplied by the mandatory
-      fileDesc element:</p>
-    <p><gi>fileDesc</gi> (file description) contains a full bibliographic description of an
-      electronic file.</p>
-    <p>The <gi>fileDesc</gi> element contains three mandatory elements and four optional elements,
-      each of which is described in more detail in sections <ptr target="#"/> The Title Statement to
-        <ptr target="#"/> The Notes Statement below. These elements are listed below in the order in
-      which they must be given within the <gi>fileDesc</gi> element.</p>
-    <p><gi>titleStmt</gi> (title statement) groups information about the title of a work and those
-      responsible for its intellectual content.</p>
-    <p><gi>editionStmt</gi> (edition statement) groups information relating to one edition of a
-      text.</p>
-    <p><gi>extent</gi> describes the approximate size of a text as stored on some carrier medium,
-      whether digital or non-digital, specified in any convenient units.</p>
-    <p><gi>publicationStmt</gi> (publication statement) groups information concerning the
-      publication or distribution of an electronic or other text.</p>
-    <p><gi>seriesStmt</gi> (series statement) groups information about the series, if any, to which
-      a publication belongs.</p>
-    <p><gi>notesStmt</gi> (notes statement) collects together any notes providing information about
-      a text additional to that recorded in other parts of the bibliographic description.</p>
-    <p><gi>sourceDesc</gi> (source description) describes the source from which an electronic text
-      was derived or generated, typically a bibliographic description in the case of a digitized
-      text, or a phrase such as "born digital" for a text which has no previous existence.</p>
+        <gi>fileDesc</gi> element:</p>
+    <p>
+      <specList>
+        <specDesc key="fileDesc"/>
+      </specList>
+    </p>
+    <p>The <gi>fileDesc</gi> element contains two mandatory and six optional elements, each of which
+      is described in more detail below. These elements are listed below in the order in which they
+      must be given within the <gi>fileDesc</gi> element.</p>
+    <p>
+      <specList>
+        <specDesc key="titleStmt"/>
+        <specDesc key="editionStmt"/>
+        <specDesc key="extent"/>
+        <specDesc key="fingerprint"/>
+        <specDesc key="publicationStmt"/>
+        <specDesc key="seriesStmt"/>
+        <specDesc key="notesStmt"/>
+        <specDesc key="sourceDesc"/>
+      </specList>
+    </p>
     <p>A complete file description containing all possible sub-elements might look like this:</p>
-    <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+
+    <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
       <meiHead>
         <fileDesc>
           <titleStmt>
-            <title><!-\- title of the resource -\-></title>
+            <title><!-- title of the resource --></title>
           </titleStmt>
           <editionStmt>
-            <p><!-\- information about the edition of the resource -\-></p>
+            <!-- information about the edition of the resource -->
           </editionStmt>
-          <extent><!-\- description of the size of the resource -\-></extent>
+          <extent><!-- description of the size of the resource --></extent>
           <publicationStmt>
-            <p><!-\- information about the distribution of the resource -\-></p>
+            <!-- information about the distribution of the resource -->
           </publicationStmt>
           <seriesStmt>
-            <p><!-\- information about any series to which the resource belongs -\-></p>
+            <!-- information about any series to which the resource belongs -->
           </seriesStmt>
           <notesStmt>
-            <note><!-\- notes on other aspects of the resource -\-></note>
+            <annot><!-- notes on other aspects of the resource --></annot>
           </notesStmt>
           <sourceDesc>
-            <p><!-\- information about the source from which the resource was derived -\-></p>
+            <!-- information about the source from which the resource was derived -->
           </sourceDesc>
         </fileDesc>
-      </meiHead></egXML>-->
-    <p>Of these elements, only the <gi>titleStmt</gi>, <gi>publicationStmt</gi>, and
-        <gi>sourceDesc</gi> are required; the others may be omitted unless considered useful.</p>
-    <div>
+      </meiHead>
+    </egXML>
+
+    <p>Of these elements, only the <gi>titleStmt</gi> and <gi>publicationStmt</gi> are required; the
+      others may be omitted unless considered useful.</p>
+    <div xml:id="header1.1.1" type="div3">
       <head>Title statement</head>
       <p>The <gi>titleStmt</gi> element is the first component of the <gi>fileDesc</gi> element, and
         is mandatory:</p>
-      <p><gi>titleStmt</gi> (title statement) groups information about the title of a work and those
-        responsible for its intellectual content.</p>
+      <p>
+        <specDesc key="titleStmt"/>
+      </p>
       <p>It contains the title given to the electronic work, together with one or more optional
         statements of responsibility which identify the encoder, editor, author, compiler, or other
         parties responsible for it:</p>
-      <p><gi>title</gi> contains a title for any kind of work.</p>
-      <!--<p><gi>author</gi> in a bibliographic reference, contains the name(s) of the author(s),
-        personal or corporate, of a work; for example in the same form as that provided by a
-        recognized bibliographic name authority.</p>
-      <p><gi>editor</gi> secondary statement of responsibility for a bibliographic item, for example
-        the name of an individual, institution or organization, (or of several such) acting as
-        editor, compiler, translator, etc.</p>
-      <p><gi>sponsor</gi> specifies the name of a sponsoring organization or institution.</p>
-      <p><gi>funder</gi> (funding body) specifies the name of an individual, institution, or
-        organization responsible for the funding of a project or text.</p>
-      <p><gi>principal</gi> (principal researcher) supplies the name of the principal researcher
-        responsible for the creation of an electronic text.</p>-->
-      <p><gi>respStmt</gi> (statement of responsibility) supplies a statement of responsibility for
-        the intellectual content of a text, edition, recording, or series, where the specialized
-        elements for authors, editors, etc. do not suffice or do not apply.</p>
-      <p><gi>resp</gi> (responsibility) contains a phrase describing the nature of a person's
-        intellectual responsibility.</p>
-      <p><gi>name</gi> (name, proper noun) contains a proper noun or noun phrase.</p>
+      <p>
+        <specList>
+          <specDesc key="title"/>
+          <specDesc key="respStmt"/>
+        </specList>
+      </p>
       <p>The <gi>title</gi> element contains the chief name of the electronic work, including any
         alternative title or subtitles it may have. It may be repeated, if the work has more than
         one title (perhaps in different languages) and takes whatever form is considered appropriate
@@ -306,26 +147,30 @@
       <p>Helpful guidance on the formulation of useful descriptive titles in difficult cases may be
         found in the Anglo-American Cataloguing Rules (Gorman and Winkler, 1978, chapter 25) or in
         equivalent national-level bibliographical documentation.</p>
-      <!--<p>The elements author, editor, sponsor, funder, and principal, are specializations of the
-        more general respStmt element. These elements are used to provide the statements of
-        responsibility which identify the person(s) responsible for the intellectual or artistic
-        content of an item and any corporate bodies from which it emanates.</p>-->
-      <p>Any number of such statements may occur within the title statement. At a minimum, identify
-        the author of the text and (where appropriate) the creator of the file. If the bibliographic
-        description is for a corpus, identify the creator of the corpus. Optionally include also
-        names of others involved in the transcription or elaboration of the text, sponsors, and
-        funding agencies. The name of the person responsible for physical data input need not
-        normally be recorded, unless that person is also intellectually responsible for some aspect
-        of the creation of the file.</p>
-      <p>Where the person whose responsibility is to be documented is not an author, sponsor,
-        funding body, or principal researcher, the respStmt element should be used. This has two
-        subcomponents: a name element identifying a responsible individual or organization, and a
-        resp element indicating the nature of the responsibility. No specific recommendations are
-        made at this time as to appropriate content for the resp: it should make clear the nature of
-        the responsibility concerned, as in the examples below.</p>
-      <p>Names given may be personal names or corporate names. Give all names in the form in which
-        the persons or bodies wish to be publicly cited. This would usually be the fullest form of
-        the name, including first names.</p>
+      <p>Any number of responsibility statements may occur within the title statement. The
+          <gi>respStmt</gi> element has two subcomponents: a <gi>name</gi> element identifying a
+        responsible individual or organization, and a <gi>resp</gi> element indicating the nature of
+        the responsibility. All names should be stated in the form in which the persons or bodies
+        wish to be publicly cited. This would usually be the fullest form of the name, including
+        first names. No specific recommendations are made at this time as to appropriate content for
+          <gi>resp</gi>. However, it should make clear the nature of the responsibility concerned,
+        as in the examples below.</p>
+      <p>At a minimum, the author of the text and (where appropriate) the creator of the file should
+        be identified. If the bibliographic description is for a corpus, identify the creator of the
+        corpus. Optionally also include the names of others involved in the transcription or
+        elaboration of the text, sponsors, and funding agencies. The name of the person responsible
+        for physical data input need not normally be recorded, unless that person is also
+        intellectually responsible for some aspect of the creation of the file.</p>
+      <p>Names given may be personal names or corporate names. When the MEI.namesdates module is
+        enabled, two additional elements are permitted:</p>
+      <p>
+        <specList>
+          <specDesc key="corpName"/>
+          <specDesc key="persName"/>
+        </specList>
+      </p>
+      <p>These elements allow for more precise identification of the entity associated with the name
+        than is permitted by the simpler <gi>name</gi> element.</p>
       <p>Examples:</p>
       <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <titleStmt>
@@ -362,30 +207,32 @@
           </respStmt></titleStmt>
       </egXML>-->
     </div>
-    <div>
+    <div xml:id="header1.1.2" type="div3">
       <head>Edition statement</head>
       <p>The <gi>editionStmt</gi> element is the second component of the <gi>fileDesc</gi> element.
-        It is optional but recommended.</p>
-      <p><gi>editionStmt</gi> (edition statement) groups information relating to one edition of a
-        text.</p>
+        It is optional but recommended when applicable.</p>
+      <p>
+        <specDesc key="editionStmt"/>
+      </p>
       <p>It contains either phrases or more specialized elements identifying the edition and those
         responsible for it:</p>
-      <p><gi>edition</gi> (edition) describes the particularities of one edition of a text.</p>
-      <p><gi>respStmt</gi> (statement of responsibility) supplies a statement of responsibility for
-        the intellectual content of a text, edition, recording, or series, where the specialized
-        elements for authors, editors, etc. do not suffice or do not apply.</p>
-      <p><gi>name</gi> (name, proper noun) contains a proper noun or noun phrase.</p>
-      <p><gi>resp</gi> (responsibility) contains a phrase describing the nature of a person's
-        intellectual responsibility.</p>
+      <p>
+        <specList>
+          <specDesc key="edition"/>
+          <specDesc key="respStmt"/>
+        </specList>
+      </p>
       <p>For printed texts, the word edition applies to the set of all the identical copies of an
         item produced from one master copy and issued by a particular publishing agency or a group
         of such agencies. A change in the identity of the distributing body or bodies does not
         normally constitute a change of edition, while a change in the master copy does.</p>
       <p>For electronic texts, the notion of a ‘master copy’ is not entirely appropriate, since they
-        are far more easily copied and modified than printed ones; nonetheless the term edition may
+        are far more easily copied and modified than printed ones; nonetheless, the term edition may
         be used for a particular state of a machine-readable text at which substantive changes are
-        made and fixed. Synonymous terms used in these Guidelines are version, level, and release.
-        The words revision and update, by contrast, are used for minor changes to a file which do
+        made and fixed. Synonymous terms used in these Guidelines are
+        <mentioned>version</mentioned>, <mentioned>level</mentioned>, and
+          <mentioned>release</mentioned>. The words <mentioned>revision</mentioned> and
+          <mentioned>update</mentioned>, by contrast, are used for minor changes to a file which do
         not amount to a new edition.</p>
       <p>No simple rule can specify how ‘substantive’ changes have to be before they are regarded as
         producing a new edition, rather than a simple update. The general principle proposed here is
@@ -395,15 +242,15 @@
         representation to another would not. Changes relating to the character code or physical
         storage details, corrections of misspellings, simple changes in the arrangement of the
         contents and changes in the output format do not normally constitute a new edition, whereas
-        the addition of new information (e.g. a linguistic analysis expressed in part-of-speech
+        the addition of new information (e.g., a linguistic analysis expressed in part-of-speech
         tagging, sound or graphics, referential links to external data sets) almost always does.</p>
       <p>Clearly, there will always be borderline cases and the matter is somewhat arbitrary. The
         simplest rule is: if you think that your file is a new edition, then call it such. An
         edition statement is optional for the first release of a computer file; it is mandatory for
-        each later release, though this requirement cannot be enforced by the parser.</p>
+        each later release, though this requirement cannot be enforced.</p>
       <p>Note that all changes in a file, whether or not they are regarded as constituting a new
         edition or simply a new revision, should be independently noted in the revision description
-        section of the file header (see section <ptr target="#"/> The Revision Description).</p>
+        section of the file header (see section <ptr target="#header1.4"/>).</p>
       <p>The edition element should contain phrases describing the edition or version, including the
         word edition, version, or equivalent, together with a number or date, or terms indicating
         difference from other editions such as new edition, revised edition etc. Any dates that
@@ -414,8 +261,7 @@
         responsibility for the edition in question. These may refer to individuals or corporate
         bodies and can indicate functions such as that of a reviser, or can name the person or body
         responsible for the provision of supplementary matter, of appendices, etc., in a new
-        edition. For further detail on the <gi>respStmt</gi> element, see section <ptr target="#"/>
-        Bibliographic Citations and References.</p>
+        edition.</p>
       <p>Some examples follow:</p>
       <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <editionStmt>
@@ -430,12 +276,18 @@
           </respStmt>
         </editionStmt></egXML>-->
     </div>
-    <div>
+    <div xml:id="header1.1.3" type="div3">
       <head>Physical description of the file</head>
-      <p>The <gi>extent</gi> element is the third component of the <gi>fileDesc</gi> element. It is
-        optional.</p>
-      <p><gi>extent</gi> describes the approximate size of a text as stored on some carrier medium,
-        whether digital or non-digital, specified in any convenient units.</p>
+      <p>The third component of the fileDesc is a description of the physical qualities of the file.
+        Two elements, both optional, are provided for this purpose:</p>
+      <p>
+        <specList>
+          <specDesc key="extent"/>
+          <specDesc key="fingerprint"/>
+        </specList>
+      </p>
+      <p>The <gi>extent</gi> element describes the approximate size of a text as stored on some
+        carrier medium, whether digital or non-digital, specified in any convenient units.</p>
       <p>For printed books, information about the carrier, such as the kind of medium used and its
         size, are of great importance in cataloging procedures. The print-oriented rules for
         bibliographic description of an item's medium and extent need some re-interpretation when
@@ -456,7 +308,7 @@
         the size or approximate size of the computer file in one of the following ways:</p>
       <list type="simple">
         <item>in bytes of a specified length (e.g. ‘4000 16-bit bytes’)</item>
-        <item>as falling within a range of categories, for example: <list type="simple">
+        <item>as falling within a range of values, for example: <list type="simple">
             <item>less than 1 Mb</item>
             <item>between 1 Mb and 5 Mb</item>
             <item>between 6 Mb and 10 Mb</item>
@@ -470,58 +322,67 @@
       <p>The use of standard abbreviations for units of quantity is recommended where applicable,
         here as elsewhere (see http://physics.nist.gov/cuu/Units/binary.html).</p>
       <p>Examples:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <extent>between 1 16-bit MB and 2 16-bit MB</extent>
         <extent>4.2 MiB</extent>
         <extent>4532 Mbytes</extent>
         <extent>3200 sentences</extent>
-        <extent>5 90 mm High Density Diskettes</extent></egXML>-->
+        <extent>5 90 mm High Density Diskettes</extent>
+      </egXML>
+      <p>In one sense, the <gi>fingerprint</gi> element holds an identifier for the file. However,
+        because this identifier, often referred to as a <term>checksum</term>, is computed from the
+        file's contents, it can also be said to capture physical information about the file. The
+        computed fingerprint can be used to distinguish between different versions of the file. That
+        is, if the checksum of two files do not match, the data may have been altered or corrupted.
+        MEI does not prescribe any particular method for computing the checksum/fingerprint.</p>
     </div>
-    <div>
+    <div xml:id="header1.1.4" type="div3">
       <head>Publication, Distribution, etc.</head>
       <p>The <gi>publicationStmt</gi> element is the fourth component of the <gi>fileDesc</gi>
         element and is mandatory.</p>
-      <p><gi>publicationStmt</gi> (publication statement) groups information concerning the
-        publication or distribution of an electronic or other text.</p>
-      <p>It may contain either a simple prose description organized as one or more paragraphs, or
-        one or more elements from the model.publicationStmt class. This class groups a number of
-        elements which are discussed in order below.</p>
-      <p><gi>publisher</gi> provides the name of the organization responsible for the publication or
-        distribution of a bibliographic item.</p>
-      <p><gi>distributor</gi> supplies the name of a person or other agency responsible for the
-        distribution of a text.</p>
-      <p><gi>authority</gi> (release authority) supplies the name of a person or other agency
-        responsible for making an electronic file available, other than a publisher or
-        distributor.</p>
-      <p>The publisher is the person or institution by whose authority a given edition of the file
-        is made public. The distributor is the person or institution from whom copies of the text
-        may be obtained. Where a text is not considered formally published, but is nevertheless made
-        available for circulation by some individual or organization, this person or institution is
-        termed the release authority.</p>
-      <p>At least one of the above three elements must be present, unless the entire publication
-        statement is given as prose. Each may be followed by one or more of the following elements,
-        in the following order:</p>
-      <p><gi>pubPlace</gi> (publication place) contains the name of the place where a bibliographic
-        item was published.</p>
-      <p><gi>address</gi> contains a postal address, for example of a publisher, an organization, or
-        an individual.</p>
-      <p><gi>identifier</gi> (identifier) supplies any form of identifier used to identify some
-        object, such as a bibliographic item, a person, a title, an organization, etc. in a
-        standardized way.@type categorizes the identifier, for example as an ISBN, Social Security
-        number, etc.</p>
-      <p><gi>availability</gi> supplies information about the availability of a text, for example
-        any restrictions on its use or distribution, its copyright status, etc.@status supplies a
-        code identifying the current availability of the text.</p>
-      <p><gi>date</gi> contains a date in any format.</p>
+      <p>
+        <specDesc key="publicationStmt"/>
+      </p>
+      <p>It may contain either a single <gi>unpub</gi> element, indicating that the file has yet to
+        be published, or one or more elements from the model.addressLike, model.dateLike,
+        model.identifierLike, or model.nameLike.geogname classes or the <gi>availability</gi> and
+          <gi>respStmt</gi> elements. The use of <gi>unpub</gi> is recommended for unpublished
+        manuscript materials.</p>
+      <p>
+        <specDesc key="respStmt"/>
+      </p>
+      <p>The respStmt element may be used to identify the publisher and distributor of the file. The
+        publisher is the person or institution by whose authority a given edition of the file is
+        made public. The distributor is the person or institution from whom copies of the text may
+        be obtained.</p>
+      <p>The following elements may be used to provide additional details regarding the publication
+        and distribution of a bibliographic entity:</p>
+      <p>
+        <specList>
+          <specDesc key="geogName"/>
+          <specDesc key="address"/>
+          <specDesc key="identifier"/>
+          <specDesc key="availability"/>
+          <specDesc key="date"/>
+        </specList>
+      </p>
+      <p>The sub-elements of availability should be used to provide detailed information regarding
+        the availability of an item.</p>
+      <p>
+        <specList>
+          <specDesc key="acqSource"/>
+          <specDesc key="accessRestrict"/>
+          <specDesc key="price"/>
+          <specDesc key="useRestrict"/>
+          <specDesc key="sysReq"/>
+        </specList>
+      </p>
       <p>Note that the dates, places, etc., given in the publication statement relate to the
         publisher, distributor, or release authority most recently mentioned. If the text was
         created at some date other than its date of publication, its date of creation should be
-        given within the workDesc element, not in the publication statement. Give any other useful
-        dates (e.g., dates of collection of data) in a note.</p>
-      <p>Additional detailed elements may be used for the encoding of names, dates, and addresses,
-        as further described in section <ptr target="#"/> Names, Numbers, Dates, Abbreviations, and
-        Addresses when the module described in chapter <ptr target="#"/> Names, Dates, People, and
-        Places is included in a schema.</p>
+        given within the <gi>workDesc</gi> element, not in the publication statement. Give any other
+        useful dates (e.g., dates of collection of data) in an <gi>annotation</gi> within the notes
+        statement.</p>
       <p>Examples:</p>
       <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <publicationStmt>
@@ -556,13 +417,14 @@
           </availability>
         </publicationStmt></egXML>-->
     </div>
-    <div>
+    <div xml:id="header1.1.5" type="div3">
       <head>Series statement</head>
       <p>The <gi>seriesStmt</gi> element is the fifth component of the <gi>fileDesc</gi> element and
         is optional.</p>
-      <p><gi>seriesStmt</gi> (series statement) groups information about the series, if any, to
-        which a publication belongs.</p>
-      <p>In bibliographic parlance, a series may be defined in one of the following ways:</p>
+      <p>
+        <specDesc key="seriesStmt"/>
+      </p>
+      <p>A series may be defined in one of the following ways:</p>
       <list type="simple">
         <item>A group of separate items related to one another by the fact that each item bears, in
           addition to its own title proper, a collective title applying to the group as a whole. The
@@ -571,22 +433,33 @@
           character and issued in sequence.</item>
         <item>A separately numbered sequence of volumes within a series or serial.</item>
       </list>
-      <p>The <gi>seriesStmt</gi> element may contain a prose description or one or more of the
-        following more specific elements:</p>
-      <p><gi>title</gi> contains a title for any kind of work.</p>
-      <p><gi>identifier</gi> supplies any form of identifier used to identify some object, such as a
-        bibliographic item, a person, a title, an organization, etc. in a standardized way.</p>
-      <p><gi>respStmt</gi> (statement of responsibility) supplies a statement of responsibility for
-        the intellectual content of a text, edition, recording, or series, where the specialized
-        elements for authors, editors, etc. do not suffice or do not apply.</p>
-      <p><gi>resp</gi> (responsibility) contains a phrase describing the nature of a person's
-        intellectual responsibility.</p>
-      <p><gi>name</gi> (name, proper noun) contains a proper noun or noun phrase.</p>
-      <p>The identifier may be used to supply any identifying number associated with the item,
-        including both standard numbers such as an ISSN and particular issue numbers. (Arabic
-        numerals separated by punctuation are recommended for this purpose: '6.19.33', for example,
-        rather than 'VI/xix:33'). Its @type attribute is used to categorize the number further,
-        taking the value 'ISSN' for an ISSN for example.</p>
+      <p>The <gi>seriesStmt</gi> element may contain one or more of the following more specific
+        elements:</p>
+      <p>
+        <specList>
+          <specDesc key="title"/>
+          <specDesc key="respStmt"/>
+          <specDesc key="identifier"/>
+          <specDesc key="contents"/>
+          <specDesc key="seriesStmt"/>
+        </specList>
+      </p>
+      <p>The <gi>title</gi> and <gi>respStmt</gi> elements have the same function described above:
+        identification of the item, in this case the series, and the individuals or groups
+        responsible for its creation and production.</p>
+      <p>The <gi>identifier</gi> element may be used to supply any identifying number associated
+        with the series, including both standard numbers such as an ISSN and particular issue
+        numbers. (Arabic numerals separated by punctuation are recommended for this purpose:
+        '6.19.33', for example, rather than 'VI/xix:33'). Its @type attribute is used to categorize
+        the number further, taking the value 'ISSN' for an ISSN for example.</p>
+      <p>The contents of the series may be enumerated using the <gi>contents</gi> element. Use of
+        this element should be determined by the complexity of the resource and whether or not the
+        information is readily available. The description may consist of a single paragraph or
+          <gi>contentItem</gi> elements may be used to provide structured information. A link to an
+        external table of contents may be supplied in lieu of or in addition to this element's child
+        elements.</p>
+      <p>The <gi>seriesStmt</gi> element is allowed to within itself in order to accommodate series
+        within series.</p>
       <p>Examples:</p>
       <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <seriesStmt>
@@ -596,19 +469,19 @@
             <name>Jan Gonda</name>
           </respStmt>
           <identifier type="vol">1.2</identifier>
-          <identifier type="ISSN">0 345 6789</identifier></seriesStmt>
+          <identifier type="ISSN">0 345 6789</identifier>
+        </seriesStmt>
       </egXML>-->
     </div>
-    <div>
+    <div xml:id="header1.1.6" type="div3">
       <head>Notes statement</head>
       <p>The <gi>notesStmt</gi> element is the sixth component of the <gi>fileDesc</gi> element and
-        is optional. If used, it contains one or more note elements, each containing a single piece
-        of descriptive information of the kind treated as ‘general notes’ in traditional
-        bibliographic descriptions.</p>
-      <p><gi>notesStmt</gi> (notes statement) collects together any notes providing information
-        about a text additional to that recorded in other parts of the bibliographic
-        description.</p>
-      <p><gi>annot</gi> contains a textual note or annotation.</p>
+        is optional. If used, it contains one or more <gi>annot</gi> elements, each containing a
+        single piece of descriptive information of the kind treated as ‘general notes’ in
+        traditional bibliographic descriptions.</p>
+      <p>
+        <specDesc key="notesStmt"/>
+      </p>
       <p>Some information found in the notes area in conventional bibliography has been assigned
         specific elements in these Guidelines; in particular the following items should be tagged as
         indicated, rather than as general notes:</p>
@@ -616,28 +489,27 @@
         <item>the nature, scope, artistic form, or purpose of the file; also the genre or other
           intellectual category to which it may belong: e.g. ‘Text types: newspaper editorials and
           reportage, science fiction, westerns, and detective stories’. These should be formally
-          described within the <gi>workDesc</gi> element (section <ptr target="#"/> The Work
-          Description).</item>
+          described within the <gi>workDesc</gi> element (section <ptr target="#header1.3"
+          />).</item>
         <item>summary description providing a factual, non-evaluative account of the subject content
           of the file: e.g. ‘Transcribes interviews on general topics with native speakers of
           English in 17 cities during the spring and summer of 1963.’ These should also be formally
-          described within the <gi>workDesc</gi> element (section <ptr target="#"/> The Work
-          Description).</item>
+          described within the <gi>workDesc</gi> element (section <ptr target="#header1.3"
+          />).</item>
         <item>bibliographic details relating to the source or sources of an electronic text: e.g.
           ‘Transcribed from the Norton facsimile of the 1623 Folio’. These should be formally
-          described in the <gi>sourceDesc</gi> element (section <ptr target="#"/> The Source
-          Description).</item>
+          described in the <gi>sourceDesc</gi> element (section <ptr target="#header1.1.7"
+          />).</item>
         <item>further information relating to publication, distribution, or release of the text,
           including sources from which the text may be obtained, any restrictions on its use or
           formal terms on its availability. These should be placed in the appropriate division of
-          the <gi>publicationStmt</gi> element (section <ptr target="#"/> Publication, Distribution,
-          etc.).</item>
+          the <gi>publicationStmt</gi> element (section <ptr target="#header1.1.4"/>).</item>
         <item>publicly documented numbers associated with the file: e.g. ‘ICPSR study number 1803’
-          or ‘Oxford Text Archive text number 1243’. These should be placed in an identifier element
-          within the appropriate division of the publicationStmt element. International Standard
-          Serial Numbers (ISSN), International Standard Book Numbers (ISBN), and other
-          internationally agreed upon standard numbers that uniquely identify an item, should be
-          treated in the same way, rather than as specialized bibliographic notes.</item>
+          or ‘Oxford Text Archive text number 1243’. These should be placed in an <gi>altId</gi>
+          element within the <gi>meiHead</gi> element. International Standard Serial Numbers (ISSN),
+          International Standard Book Numbers (ISBN), and other internationally agreed upon standard
+          numbers that uniquely identify an item, should be treated in the same way, rather than as
+          specialized bibliographic notes.</item>
       </list>
       <p>Nevertheless, the <gi>notesStmt</gi> element may be used to record potentially significant
         details about the file and its features, e.g.:</p>
@@ -658,134 +530,95 @@
         <item>lists of related publications, either describing the source itself, or concerned with
           the creation or use of the electronic work, e.g. ‘Texts used in Burrows (1987)’</item>
       </list>
-      <p>Each such item of information may be tagged using the general-purpose note element, which
-        is described in section <ptr target="#"/> Notes, Annotation, and Indexing. Groups of notes
-        are contained within the notesStmt element, as in the following example:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <p>Each such item of information may be tagged using the general-purpose <gi>annot</gi>
+        element. Groups of annotations are contained within the <gi>notesStmt</gi> element, as in
+        the following example:</p>
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <notesStmt>
-          <note>Historical commentary provided by Mark Cohen.</note>
-          <note>OCR scanning done at University of Toronto.</note>
-        </notesStmt></egXML>-->
+          <annot>Historical commentary provided by John Smith.</annot>
+          <annot>OCR scanning done at University of Virginia.</annot>
+        </notesStmt>
+      </egXML>
       <p>There are advantages, however, to encoding such information with more precise elements
         elsewhere in the MEI header, when such elements are available. For example, the notes above
         might be encoded as follows:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <titleStmt>
           <title>…</title>
           <respStmt>
-            <persName>Mark Cohen</persName>
+            <persName>John Smith</persName>
             <resp>historical commentary</resp>
           </respStmt>
           <respStmt>
-            <orgName>University of Toronto</orgName>
+            <orgName>University of Virginia</orgName>
             <resp>OCR scanning</resp>
           </respStmt>
-        </titleStmt></egXML>-->
+        </titleStmt>
+      </egXML>
     </div>
-    <div>
+    <div xml:id="header1.1.7" type="div3">
       <head>Source description</head>
       <p>The <gi>sourceDesc</gi> element is the seventh and final component of the <gi>fileDesc</gi>
-        element. It is a mandatory element and is used to record details of the source or sources
+        element. It is used to record details of each of the sources, tagged with <gi>source</gi>,
         from which a computer file is derived. This might be a printed text or manuscript, another
         computer file, an audio or video recording of some kind, or a combination of these. An
         electronic file may also have no source, if what is being cataloged is an original text
         created in electronic form.</p>
-      <p><gi>sourceDesc</gi> (source description) describes the source from which an electronic text
-        was derived or generated, typically a bibliographic description in the case of a digitized
-        text, or a phrase such as "born digital" for a text which has no previous existence.</p>
-      <p>The <gi>sourceDesc</gi> element may contain little more than a simple prose description, or
-        a brief note stating that the document has no source:</p>
+      <p>
+        <specList>
+          <specDesc key="sourceDesc"/>
+          <specDesc key="source"/>
+        </specList>
+      </p>
+      <p>The <gi>source</gi> element may contain nothing more than a notes statement giving a simple
+        prose description, or a brief note stating that the document has no source:</p>
       <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <sourceDesc>
-          <p>Born digital.</p>
-        </sourceDesc></egXML>
-      <p>Alternatively, it may contain elements drawn from the following three classes:</p>
-      <p>model.biblLike groups elements containing a bibliographic description.</p>
-      <p>model.sourceDescPart groups elements which may be used inside <gi>sourceDesc</gi> and
-        appear multiple times.</p>
-      <p>model.listLike groups list-like elements.</p>
-      <p>These classes make available by default a range of ways of providing bibliographic
-        citations which specify the provenance of the text. For written or printed sources, the
-        source may be described in the same way as any other bibliographic citation, using one of
-        the following elements:</p>
-      <p><gi>bibl</gi> (bibliographic citation) contains a loosely-structured bibliographic citation
-        of which the sub-components may or may not be explicitly tagged.</p>
-      <p><gi>biblStruct</gi> (structured bibliographic citation) contains a structured bibliographic
-        citation, in which only bibliographic sub-elements appear and in a specified order.</p>
-      <p><gi>listBibl</gi> (citation list) contains a list of bibliographic citations of any
-        kind.</p>
-      <p>These elements are described in more detail in section <ptr target="#"/> Bibliographic
-        Citations and References. Using them, a source might be described in very simple terms:</p>
-      <p>
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <sourceDesc>
-            <bibl>The first folio of Shakespeare, prepared by Charlton Hinman (The Norton Facsimile,
-              1968)</bibl>
-          </sourceDesc></egXML>-->
-        or with more elaboration:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <sourceDesc>
-            <biblStruct xml:lang="fr">
-              <monogr>
-                <author>Eugène Sue</author>
-                <title>Martin, l'enfant trouvé</title>
-                <title type="sub">Mémoires d'un valet de chambre</title>
-                <imprint>
-                  <pubPlace>Bruxelles et Leipzig</pubPlace>
-                  <publisher>C. Muquardt</publisher>
-                  <date when="1846">1846</date>
-                </imprint>
-              </monogr>
-            </biblStruct>
-          </sourceDesc></egXML>-->
-      <!--When the header describes a text derived from some pre-existing MEI-conformant or other
-        digital document, it may be simpler to use the following element:</p>
-      <p><gi>biblFull</gi> (fully-structured bibliographic citation) contains a fully-structured
-        bibliographic citation, in which all components of the MEI file description are present.</p>
-      <p>since this is designed specifically for documents derived from texts which were ‘born
-        digital’, as further discussed in section <ptr target="#"/> Computer Files Derived from
-        Other Computer Files .</p>
-      <p>When the module for manuscript description is included in a schema, this class also makes
-        available the following element:</p>
-      <p><gi>msDesc</gi> (manuscript description) contains a description of a single identifiable
-        manuscript or other text-bearing object.</p>
-      <p>which enables the encoder to record very detailed information about one or more manuscript
-        or analogous sources, as further discussed in 10 Manuscript Description.</p>
-      <p>The model.sourceDescPart class also makes available additional elements when additional
-        modules are included. For example, when the spoken module is included, the sourceDesc
-        element may also include the following special-purpose elements, intended for cases where an
-        electronic text is derived from a spoken text rather than a written one:</p>
-      <p><gi>scriptStmt</gi> (script statement) contains a citation giving details of the script
-        used for a spoken text.</p>
-      <p><gi>recordingStmt</gi> (recording statement) describes a set of recordings used as the
-        basis for transcription of a spoken text.</p>
-      <p>Full descriptions of these elements and their contents are given in section <ptr target="#"
-        /> Documenting the Source of Transcribed Speech.</p>-->
-      <p>A single electronic text may be derived from multiple source documents, in whole or in
-        part. The <gi>sourceDesc</gi> may therefore contain
-        <!--a listBibl element grouping together bibl,
-        biblStruct, or msDesc elements for each of the sources concerned. It is also possible to
-        repeat the <gi>sourceDesc</gi> element in such a case.-->
-        The @decls attribute described in section <ptr target="#"/> Associating Contextual
+          <source>
+            <notesStmt>
+              <annot>Born digital.</annot>
+            </notesStmt>
+          </source>
+        </sourceDesc>
+      </egXML>
+      <p>Alternatively, it may contain a more detailed bibliographic description:</p>
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <sourceDesc>
+          <source>
+            <notesStmt>
+              <annot>The first folio of Shakespeare, prepared by Charlton Hinman (The Norton
+                Facsimile, 1968)</annot>
+            </notesStmt>
+          </source>
+        </sourceDesc>
+      </egXML>
+      <p>or with still more elaboration:</p>
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <sourceDesc>
+          <source xml:lang="fr">
+            <titleStmt>
+              <title>Martin, l'enfant trouvé</title>
+              <title type="sub">Mémoires d'un valet de chambre</title>
+              <respStmt>
+                <name>Eugène Sue</name>
+              </respStmt>
+            </titleStmt>
+            <pubStmt>
+              <geogName>Bruxelles et Leipzig</geogName>
+              <respStmt>
+                <name>C. Muquardt</name>
+                <role>publisher</role>
+              </respStmt>
+              <date when="1846">1846</date>
+            </pubStmt>
+          </source>
+        </sourceDesc>
+      </egXML>
+      <p>The @decls attribute described in section <ptr target="#"/> Associating Contextual
         Information with a Text may be used to associate parts of the encoded text with the
-        bibliographic element from which it derives in either case.</p>
-      <!--<p>The source description may also include lists of names, persons, places, etc. when these
-        are considered to form part of the source for an encoded document. When such information is
-        recorded using the specialized elements discussed in the namesdates module (Names, Dates,
-        People, and Places), the class model.listLike makes available the following elements to hold
-        such information:</p>
-      <p><gi>listNym</gi> (list of canonical names) contains a list of nyms, that is, standardized
-        names for any thing.</p>
-      <p><gi>listOrg</gi> (list of organizations) contains a list of elements, each of which
-        provides information about an identifiable organization.</p>
-      <p><gi>listPerson</gi> (list of persons) contains a list of descriptions, each of which
-        provides information about an identifiable person or a group of people, for example the
-        participants in a language interaction, or the people referred to in a historical
-        source.</p>
-      <p><gi>listPlace</gi> (list of places) contains a list of places, optionally followed by a
-        list of relationships (other than containment) defined amongst them.</p>-->
+        bibliographic element from which it derives.</p>
     </div>
-    <div>
+    <div xml:id="header1.1.8" type="div3">
       <head>Computer files derived from other computer files</head>
       <p>If a computer file (call it B) is derived not from a printed source but from another
         computer file (call it A) which includes an MEI file header, then the source text of
@@ -812,169 +645,29 @@
           dates of major updates or versions, such information must be clearly marked as relating to
           A rather than to B.</item>
       </list>
-      <p>This concludes the discussion of the fileDesc element and its contents.</p>
     </div>
-    <div>
-      <head>Encoding description</head>
-      <p>The <gi>encodingDesc</gi> element is the second major subdivision of the MEI header. It
-        specifies the methods and editorial principles which governed the transcription or encoding
-        of the text in hand and may also include sets of coded definitions used by other components
-        of the header. Though not formally required, its use is highly recommended.</p>
-      <p><gi>encodingDesc</gi> (encoding description) documents the relationship between an
-        electronic text and the source or sources from which it was derived.</p>
-      <p>The encoding description may contain any combination of paragraphs of text, marked up using
-        the p element, along with more specialized elements taken from the model.encodingDescPart
-        class. By default, this class makes available the following elements:</p>
-      <p><gi>projectDesc</gi> (project description) describes in detail the aim or purpose for which
-        an electronic file was encoded, together with any other relevant information concerning the
-        process by which it was assembled or collected.</p>
-      <p><gi>samplingDecl</gi> (sampling declaration) contains a prose description of the rationale
-        and methods used in sampling texts in the creation of a corpus or collection.</p>
-      <p><gi>editorialDecl</gi> (editorial practice declaration) provides details of editorial
-        principles and practices applied during the encoding of a text.</p>
-      <!--<p><gi>tagsDecl</gi> (tagging declaration) provides detailed information about the tagging
-        applied to a document.</p>
-      <p><gi>refsDecl</gi> (references declaration) specifies how canonical references are
-        constructed for this text.</p>-->
-      <p><gi>classification</gi> contains one or more taxonomies defining any classificatory codes
-        used elsewhere in the text.</p>
-      <p><gi>appInfo</gi> (application information) records information about an application which
-        has edited the MEI file.</p>
-      <p>Each of these elements is further described in the appropriate section below. Other modules
-        have the ability to extend this class; examples are noted in section <ptr target="#"/>
-        Module-Specific Declarations</p>
-    </div>
-    <div>
-      <head>Project description</head>
-      <p>The <gi>projectDesc</gi> element may be used to describe, in prose, the purpose for which a
-        digital resource was created, together with any other relevant information concerning the
-        process by which it was assembled or collected. This is of particular importance for corpora
-        or miscellaneous collections, but may be of use for any text, for example to explain why one
-        kind of encoding practice has been followed rather than another.</p>
-      <p><gi>projectDesc</gi> (project description) describes in detail the aim or purpose for which
-        an electronic file was encoded, together with any other relevant information concerning the
-        process by which it was assembled or collected.</p>
-      <p>For example:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <encodingDesc>
-          <projectDesc>
-            <p>Texts collected for use in the Claremont Shakespeare Clinic, June 1990.</p>
-          </projectDesc>
-          </encodingDesc></egXML>-->
-    </div>
-    <div>
-      <head>Declaration of editorial principles</head>
-      <p>The <gi>editorialDecl</gi> element is used to provide details of the editorial practices
-        applied during the encoding of a text.</p>
-      <p><gi>editorialDecl</gi> (editorial practice declaration) provides details of editorial
-        principles and practices applied during the encoding of a text.</p>
-      <p>It may contain a prose description only, or one or more of a set of specialized elements,
-        members of the MEI model.editorialDeclPart class. Where an encoder wishes to record an
-        editorial policy not specified above, this may be done by adding a new element to this
-        class, using the mechanisms discussed in chapter <ptr target="#"/> Personalization and
-        Customization.</p>
-      <p>Some of these policy elements carry attributes to support automated processing of certain
-        well-defined editorial decisions; all of them contain a prose description of the editorial
-        principles adopted with respect to the particular feature concerned. Examples of the kinds
-        of questions which these descriptions are intended to answer are given in the list
-        below.</p>
-      <list type="gloss">
-        <label>correction</label>
-        <item><p><gi>correction</gi> (correction principles) states how and under what circumstances
-            corrections have been made in the text.@status indicates the degree of correction
-            applied to the text.</p>
-          <p>@method indicates the method adopted to indicate corrections within the text.</p>
-          <p>Was the text corrected during or after data capture? If so, were corrections made
-            silently or are they marked using the tags described in section <ptr target="#"/> Simple
-            Editorial Changes? What principles have been adopted with respect to omissions,
-            truncations, dubious corrections, alternate readings, false starts, repetitions,
-            etc.?</p></item>
-        <label>normalization</label>
-        <item><p><gi>normalization</gi> indicates the extent of normalization or regularization of
-            the original source carried out in converting it to electronic form.@source indicates
-            the authority for any normalization carried out.</p>
-          <p>@method indicates the method adopted to indicate normalizations within the text.</p>
-          <p>Was the text normalized, for example by regularizing any non-standard spellings,
-            dialect forms, etc.? If so, were normalizations performed silently or are they marked
-            using the tags described in section <ptr target="#"/> Simple Editorial Changes? What
-            authority was used for the regularization? Also, what principles were used when
-            normalizing numbers to provide the standard values for the @value attribute described in
-            section <ptr target="#"/> Numbers and Measures and what format used for them?</p></item>
-        <!--<label>quotation</label>
-        <item><p><gi>quotation</gi> specifies editorial practice adopted with respect to quotation
-            marks in the original. @marks (quotation marks) indicates whether or not quotation marks
-            have been retained as content within the text.</p>
-          <p>@form specifies how quotation marks are indicated within the text.</p>
-          <p>How were quotation marks processed? Are apostrophes and quotation marks distinguished?
-            How? Are quotation marks retained as content in the text or replaced by markup? Are
-            there any special conventions regarding for example the use of single or double
-            quotation marks when nested? Is the file consistent in its practice or has this not been
-            checked?</p></item>
-        <label>hyphenation</label>
-        <item><p><gi>hyphenation</gi> summarizes the way in which hyphenation in a source text has
-            been treated in an encoded version of it.@eol (end-of-line) indicates whether or not
-            end-of-line hyphenation has been retained in a text.</p>
-          <p>Does the encoding distinguish ‘soft’ and ‘hard’ hyphens? What principle has been
-            adopted with respect to end-of-line hyphenation where source lineation has not been
-            retained? Have soft hyphens been silently removed, and if so what is the effect on
-            lineation and pagination?</p></item>-->
-        <label>segmentation</label>
-        <item><p><gi>segmentation</gi> describes the principles according to which the text has been
-            segmented, for example into sentences, tone-units, graphemic strata, etc.</p>
-          <p>How is the text segmented? If s or seg segmentation units have been used to divide up
-            the text for analysis, how are they marked and how was the segmentation arrived
-          at?</p></item>
-        <label>stdVals</label>
-        <item><p><gi>stdVals</gi> (standard values) specifies the format used when standardized date
-            or number values are supplied.</p>
-          <p>In most cases, attributes bearing standardized values (such as the @when or @when-iso
-            attribute on dates) should conform to a defined W3C or ISO datatype. In cases where this
-            is not appropriate, this element may be used to describe the standardization methods
-            underlying the values supplied.</p></item>
-        <label>interpretation</label>
-        <item><p><gi>interpretation</gi> describes the scope of any analytic or interpretive
-            information added to the text in addition to the transcription.</p>
-          <p>Has any analytic or ‘interpretive’ information been provided — that is, information
-            which is felt to be non-obvious, or potentially contentious? If so, how was it
-            generated? How was it encoded? If feature-structure analysis has been used, are fsdDecl
-            elements (section <ptr target="#"/> Feature System Declaration) present?</p></item>
-      </list>
-      <p>Any information about the editorial principles applied not falling under one of the above
-        headings should be recorded in a distinct list of items. Experience shows that a full record
-        should be kept of decisions relating to editorial principles and encoding practice, both for
-        future users of the text and for the project which produced the text in the first instance.
-        Some simple examples follow:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <editorialDecl>
-          <segmentation>
-            <p>
-              <gi>s</gi> elements mark orthographic sentences and are numbered sequentially within
-              their parent <gi>div</gi> element</p>
-          </segmentation>
-          <interpretation>
-            <p>The part of speech analysis applied throughout section 4 was added by hand and has
-              not been checked.</p>
-          </interpretation>
-          <correction>
-            <p>Errors in transcription controlled by using the WordPerfect spelling checker.</p>
-          </correction>
-          <normalization source="http://szotar.sztaki.hu/webster/">
-            <p>All words converted to Modern American spelling following Webster’s 9th Collegiate
-              dictionary.</p>
-          </normalization>
-          <quotation marks="all" form="std">
-            <p>All opening quotation marks represented by entity reference <ident type="ge"
-                >odq</ident>; all closing quotation marks represented by entity reference <ident
-                type="ge">cdq</ident>.</p>
-          </quotation>
-        </editorialDecl></egXML>-->
-      <p>An editorial practices declaration which applies to more than one text or division of a
-        text need not be repeated in the header of each such text. Instead, the @decls attribute of
-        each text (or subdivision of the text) to which it applies may be used to supply a
-        cross-reference to it, as further described in section <ptr target="#"/> Associating
-        Contextual Information with a Text.</p>
-    </div>
-    <div>
+  </div>
+  <div xml:id="header1.2" type="div2">
+    <head>Encoding description</head>
+    <p>The <gi>encodingDesc</gi> element is the second major subdivision of the MEI header. It
+      specifies the methods and editorial principles which governed the transcription or encoding of
+      the text in hand and may also include sets of coded definitions used by other components of
+      the header. Though not formally required, its use is highly recommended.</p>
+    <p>
+      <specDesc key="encodingDesc"/>
+    </p>
+    <p>The encoding description may contain specialized elements taken from the model.encodingPart
+      class. By default, this class makes available the following elements:</p>
+    <p>
+      <specList>
+        <specDesc key="appInfo"/>
+        <specDesc key="editorialDecl"/>
+        <specDesc key="projectDesc"/>
+        <specDesc key="samplingDecl"/>
+      </specList>
+    </p>
+    <p>Each of these elements is further described in the appropriate section below.</p>
+    <div xml:id="header1.2.1" type="div3">
       <head>Application information</head>
       <p>It is sometimes convenient to store information relating to the processing of an encoded
         resource within its header. Typical uses for such information might be:</p>
@@ -989,362 +682,466 @@
           edited, so that other applications or human editors may be more wary of making changes to
           those sections of the file.</item>
       </list>
-      <p>The class model.applicationLike provides an element, application, which may be used to
-        record such information within the appInfo element.</p>
-      <p><gi>appInfo</gi> (application information) records information about an application which
-        has edited the MEI file.</p>
-      <p><gi>application</gi> provides information about an application which has acted upon the
-        document.@ident Supplies an identifier for the application, independent of its version
-        number or display name.</p>
-      <p>@version Supplies a version number for the application, independent of its identifier or
-        display name.</p>
-      <p>Each application element identifies the current state of one software application with
-        regard to the current file. This element is a member of the att.datable class, which
+      <p>
+        <specList>
+          <specDesc key="appInfo"/>
+          <specDesc key="application" atts="version"/>
+        </specList>
+      </p>
+      <p>Each <gi>application</gi> element identifies the current state of one software application
+        with regard to the current file. This element is a member of the att.datable class, which
         provides a variety of attributes for associating this state with a date and time, or a
-        temporal range. The @ident and @version attributes should be used to uniquely identify the
+        temporal range. The @xml:id and @version attributes should be used to uniquely identify the
         application and its major version number (for example, 'ImageMarkupTool 1.5'). It is not
-        intended that an application should add a new application each time it touches the file.</p>
+        intended that a software application should add a new <gi>application</gi> element each time
+        it touches the file.</p>
       <p>The following example shows how these elements might be used to document the fact that
         version 1.5 of an application called ‘Image Markup Tool’ has an interest in two parts of a
         document which was last saved on June 6 2006. The parts concerned are accessible at the URLs
-        given as target for the two ptr elements.</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        given as target for the two <gi>ptr</gi> elements.</p>
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
         <appInfo>
-          <application version="1.5" ident="ImageMarkupTool" notAfter="2006-06-01">
-            <label>Image Markup Tool</label>
+          <application xml:id="ImageMarkupTool" version="1.5" notAfter="2006-06-01">
+            <name>Image Markup Tool</name>
             <ptr target="#P1"/>
             <ptr target="#P2"/>
           </application>
-        </appInfo></egXML>-->
+        </appInfo>
+      </egXML>
+    </div>
+    <div xml:id="header1.2.2" type="div3">
+      <head>Declaration of editorial principles</head>
+      <p>The <gi>editorialDecl</gi> element is used to provide details of the editorial practices
+        applied during the encoding of a musical text.</p>
+      <p>It may contain a prose description only, or one or more of a set of specialized elements,
+        members of the MEI model.editorialDeclPart class. Where an encoder wishes to record an
+        editorial policy not specified above, this may be done by adding a new element to this
+        class, using the mechanisms discussed in chapter <ptr target="#"/> Personalization and
+        Customization.</p>
+      <p>Some of these policy elements carry attributes to support automated processing of certain
+        well-defined editorial decisions; all of them contain a prose description of the editorial
+        principles adopted with respect to the particular feature concerned. Examples of the kinds
+        of questions which these descriptions are intended to answer are given in the list
+        below.</p>
+      <list type="gloss">
+        <label>correction</label>
+        <item>
+          <specDesc key="correction" atts="corrlevel"/>
+          <p>@method indicates the method adopted to indicate normalizations within the text.</p>
+          <p>Was the text corrected during or after data capture? If so, were corrections made
+            silently or are they marked using the tags described in section <ptr target="#"/> Simple
+            Editorial Changes? What principles have been adopted with respect to omissions,
+            truncations, dubious corrections, alternate readings, false starts, repetitions,
+            etc.?</p></item>
+        <label>interpretation</label>
+        <item>
+          <specDesc key="interpretation"/>
+          <p>Has any analytic or ‘interpretive’ information been provided — that is, information
+            which is felt to be non-obvious, or potentially contentious? If so, how was it
+            generated? How was it encoded?</p></item>
+        <label>normalization</label>
+        <item>
+          <specDesc key="normalization"/>
+          <p>@method indicates the method adopted to indicate normalizations within the text.</p>
+          <p>Was the text normalized, for example by regularizing any non-standard spellings,
+            dialect forms, etc.? If so, were normalizations performed silently or are they marked
+            using the tags described in section <ptr target="#"/> Simple Editorial Changes? What
+            authority was used for the regularization? Also, what principles were used when
+            normalizing numbers to provide the standard values for the @value attribute described in
+            section <ptr target="#"/> Numbers and Measures and what format used for them?</p></item>
+        <label>segmentation</label>
+        <item>
+          <specDesc key="segmentation"/>
+          <p>How is the musical text segmented? If mdiv and/or section elements have been used to
+            divide up the music for analysis, how are they marked and how was the segmentation
+            arrived at?</p></item>
+        <label>stdVals</label>
+        <item>
+          <specDesc key="stdVals"/>
+          <p>In most cases, attributes bearing standardized values should conform to a defined
+            datatype. In cases where this is not appropriate, this element may be used to describe
+            the standardization methods underlying the values supplied.</p></item>
+      </list>
+      <p>Any information about the editorial principles applied not falling under one of the above
+        headings should be recorded in a distinct list of items. Experience shows that a full record
+        should be kept of decisions relating to editorial principles and encoding practice, both for
+        future users of the text and for the project which produced the text in the first instance.
+        Some simple examples follow:</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <editorialDecl>
+      <segmentation>
+      <p>
+      <gi>s</gi> elements mark orthographic sentences and are numbered sequentially within
+      their parent <gi>div</gi> element</p>
+      </segmentation>
+      <interpretation>
+      <p>The part of speech analysis applied throughout section 4 was added by hand and has
+      not been checked.</p>
+      </interpretation>
+      <correction>
+      <p>Errors in transcription controlled by using the WordPerfect spelling checker.</p>
+      </correction>
+      <normalization source="http://szotar.sztaki.hu/webster/">
+      <p>All words converted to Modern American spelling following Webster’s 9th Collegiate
+      dictionary.</p>
+      </normalization>
+      <quotation marks="all" form="std">
+      <p>All opening quotation marks represented by entity reference <ident type="ge"
+      >odq</ident>; all closing quotation marks represented by entity reference <ident
+      type="ge">cdq</ident>.</p>
+      </quotation>
+      </editorialDecl></egXML>-->
+      <p>An editorial practices declaration which applies to more than one text or division of a
+        text need not be repeated in the header of each text or division. Instead, the @decls
+        attribute of each text (or subdivision of the text) to which it applies may be used to
+        supply a cross-reference to the declaration, as further described in section <ptr target="#"
+        /> Associating Contextual Information with a Text.</p>
+    </div>
+    <div xml:id="header1.2.3" type="div3">
+      <head>Project description</head>
+      <p>The <gi>projectDesc</gi> element may be used to describe, in prose, the purpose for which a
+        digital resource was created, together with any other relevant information concerning the
+        process by which it was assembled or collected. This is of particular importance for corpora
+        or miscellaneous collections, but may be of use for any text, for example to explain why one
+        kind of encoding practice has been followed rather than another.</p>
+      <p>
+        <specDesc key="projectDesc"/>
+      </p>
+      <p>For example:</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <encodingDesc>
+      <projectDesc>
+      <p>Texts collected for use in the Claremont Shakespeare Clinic, June 1990.</p>
+      </projectDesc>
+      </encodingDesc></egXML>-->
+    </div>
+    <div xml:id="header1.2.4" type="div3">
+      <head>Sampling Declaration</head>
+    </div>
+  </div>
+  <div xml:id="header1.3" type="div2">
+    <head>Work Description</head>
+    <p>The <gi>workDesc</gi> element is the third major subdivision of the MEI Header. It is an
+      optional element, the purpose of which is to enable information characterizing various
+      descriptive aspects of a text or a corpus to be recorded within a single unified
+      framework.</p>
+    <p>
+      <specDesc key="workDesc"/>
+      <!--<gi>workDesc</gi> (text-work description) provides a detailed description of
+      non-bibliographic aspects of a text, specifically the languages and sublanguages used, the
+      situation in which it was produced, the participants and their setting.--></p>
+    <p>In principle, almost any component of the header might be of importance as a means of
+      characterizing a text. The author of a written text, its title or its date of publication, may
+      all be regarded as characterizing it at least as strongly as any of the parameters discussed
+      in this section. The rule of thumb applied has been to exclude from discussion here most of
+      the information which generally forms part of a standard bibliographic style description, if
+      only because such information has already been included elsewhere in the MEI header.</p>
+    <p>The <gi>workDesc</gi> element contains an optional creation element, followed by any number
+      of additional elements taken from the model.workDesc class. In the simplest case, this means
+      it may contain the following elements:</p>
+    <div>
+      <head>Title statement</head>
     </div>
     <div>
-      <head>Work description</head>
-      <p>The <gi>workDesc</gi> element is the third major subdivision of the MEI Header. It is an
-        optional element, the purpose of which is to enable information characterizing various
-        descriptive aspects of a text or a corpus to be recorded within a single unified
-        framework.</p>
-      <p><gi>workDesc</gi> (text-work description) provides a detailed description of
-        non-bibliographic aspects of a text, specifically the languages and sublanguages used, the
-        situation in which it was produced, the participants and their setting.</p>
-      <p>In principle, almost any component of the header might be of importance as a means of
-        characterizing a text. The author of a written text, its title or its date of publication,
-        may all be regarded as characterizing it at least as strongly as any of the parameters
-        discussed in this section. The rule of thumb applied has been to exclude from discussion
-        here most of the information which generally forms part of a standard bibliographic style
-        description, if only because such information has already been included elsewhere in the MEI
-        header.</p>
-      <p>The <gi>workDesc</gi> element contains an optional creation element, followed by any number
-        of additional elements taken from the model.workDesc class. In the simplest case, this means
-        it may contain the following elements:</p>
-      <div>
-        <head>Title statement</head>
-      </div>
-      <div>
-        <head>History</head>
-      </div>
-      <div>
-        <head>Language usage</head>
-        <p>The <gi>langUsage</gi> element is used within the <gi>workDesc</gi> element to describe
-          the languages, sublanguages, registers, dialects, etc. represented within a text. It
-          contains one or more language elements, each of which provides information about a single
-          language, notably the quantity of that language present in the text.
-          <!--Note that this element should not be used
+      <head>History</head>
+    </div>
+    <div>
+      <head>Language usage</head>
+      <p>The <gi>langUsage</gi> element is used within the <gi>workDesc</gi> element to describe the
+        languages, sublanguages, registers, dialects, etc. represented within a text. It contains
+        one or more language elements, each of which provides information about a single language,
+        notably the quantity of that language present in the text.
+        <!--Note that this element should not be used
           to supply information about any non-standard characters or glyphs used by this language;
           such information should be recorded in the charDecl element in the encoding description
           (see further Representation of Non-standard Characters and Glyphs).--></p>
-        <p><gi>langUsage</gi> (language usage) describes the languages, sublanguages, registers,
-          dialects, etc. represented within a text.</p>
-        <p><gi>language</gi> characterizes a single language or sublanguage used within a
-          text.@usage specifies the approximate percentage (by volume) of the text which uses this
-          language.</p>
-        <p>@ident (identifier) Supplies a language code constructed as defined in BCP 47 which is
-          used to identify the language documented by this element, and which is referenced by the
-          global @xml:lang attribute.</p>
-        <p>A language element may be supplied for each different language used in a document. If
-          used, its @ident attribute should specify an appropriate language identifier, as further
-          discussed in section vi.1. Language identification. This is particularly important if
-          extended language identifiers have been used as the value of @xml:lang attributes
-          elsewhere in the document.</p>
-        <p>Here is an example of the use of this element:</p>
-        <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <langUsage>
-            <language ident="fr-CA" usage="60">Québecois</language>
-            <language ident="en-CA" usage="20">Canadian business English</language>
-            <language ident="en-GB" usage="20">British English</language>
-          </langUsage></egXML>
-      </div>
-      <div>
-        <head>Key, tempo, and meter</head>
-      </div>
-      <div>
-        <head>Performance medium</head>
-      </div>
-      <div>
-        <head>Notes statement</head>
-      </div>
-      <div>
-        <head>Classification</head>
-        <p>The second component of the core <gi>workDesc</gi> element is the <gi>classification</gi>
-          element. This element is used to classify a text according to one or more of the following
-          methods:</p>
-        <list type="simple">
-          <item>by reference to a recognized international classification such as the Dewey Decimal
-            Classification, the Universal Decimal Classification, the Colon Classification, the
-            Library of Congress Classification, or any other system widely used in library and
-            documentation work</item>
-          <item>by providing a set of keywords, as provided for example by British Library or
-            Library of Congress Cataloguing in Publication data</item>
-          <item>by referencing any other taxonomy of text categories recognized in the field
-            concerned, or peculiar to the material in hand; this may include one based on recurring
-            sets of values for the situational parameters defined in section <ptr target="#"/> The
-            Text Description, or the demographic elements described in section <ptr target="#"/> The
-            Participant Description</item>
-        </list>
-        <p>The last of these may be particularly important for dealing with existing corpora or
-          collections, both as a means of avoiding the expense or inconvenience of reclassification
-          and as a means of documenting the organizing principles of such materials.</p>
-        <p>The following elements are provided for this purpose:</p>
-        <p><gi>keywords</gi> contains a list of keywords or phrases identifying the topic or nature
-          of a text.@scheme identifies the controlled vocabulary within which the set of keywords
-          concerned is defined.</p>
-        <p><gi>classCode</gi> (classification code) contains the classification code used for this
-          text in some standard classification system.@scheme identifies the classification system
-          or taxonomy in use.</p>
-        <p><gi>catRef</gi> (category reference) specifies one or more defined categories within some
-          taxonomy or text typology.</p>
-        <p>The keywords element simply categorizes an individual text by supplying a list of
-          keywords which may describe its topic or subject matter, its form, date, etc. In some
-          schemes, the order of items in the list is significant, for example, from major topic to
-          minor; in others, the list has an organized substructure of its own. No recommendations
-          are made here as to which method is to be preferred. Wherever possible, such keywords
-          should be taken from a recognized source, such as the British Library/Library of Congress
-          Cataloguing in Publication data in the case of printed books, or a published thesaurus
-          appropriate to the field.</p>
-        <p>The @scheme attribute should be used to indicate the source of the keywords used. If the
-          keywords are taken from some externally defined authority which is available online, this
-          attribute should point directly to it, as in the following examples:</p>
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <keywords scheme="http://classificationweb.net">
-            <term>Babbage, Charles</term>
-            <term>Mathematicians - Great Britain - Biography</term>
-          </keywords></egXML>-->
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <keywords scheme="http://id.loc.gov/authorities/about.html#lcsh">
-            <term>English literature -\- History and criticism -\- Data processing.</term>
-            <term>English literature -\- History and criticism -\- Theory, etc.</term>
-            <term>English language -\- Style -\- Data processing.</term>
-            <term>Style, Literary -\- Data processing.</term>
-          </keywords></egXML>-->
-        <p>If the authority file is not available online, but is generally recognized and commonly
-          cited, a bibliographic description for it should be supplied within the taxonomy element
-          described in section <ptr target="#"/> The Classification Declaration; the @scheme
-          attribute may then reference that taxonomy element by means of its identifier in the usual
-          way:</p>
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <keywords scheme="#welch">
-            <term>ceremonials</term>
-            <term>fairs</term>
-            <term>street life</term>
-          </keywords>
-          <!-\- elsewhere in the document -\->
-          <taxonomy xml:id="welch">
-            <bibl>
-              <title>Notes on London Municipal Literature, and a Suggested Scheme for Its
-                Classification</title>
-              <author>Charles Welch</author>
-              <edition>1895</edition>
-            </bibl>
-          </taxonomy></egXML>-->
-        <p>Alternatively, if the keyword vocabulary itself is locally defined, the @scheme attribute
-          will point to the local definition, which will typically be held in a taxonomy element
-          within the classDecl part of the encoding description (see section <ptr target="#"/> The
-          Classification Declaration).</p>
-        <p>The <gi>classCode</gi> element also categorizes an individual text, by supplying a
-          numerical or other code rather than descriptive terms. Such codes constitute a recognized
-          classification scheme, such as the Dewey Decimal Classification. The @scheme attribute is
-          used to indicate the source of the classification scheme in the same way as for keywords:
-          this may be a pointer of any kind, either to an MEI element, possibly in the current
-          document, as in the keywords examples above, or to some canonical source for the scheme,
-          as in the following example:</p>
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <classCode scheme="http://www.udcc.org/udcsummary/php/index.php">005.756</classCode>
+      <p><gi>langUsage</gi> (language usage) describes the languages, sublanguages, registers,
+        dialects, etc. represented within a text.</p>
+      <p><gi>language</gi> characterizes a single language or sublanguage used within a text.@usage
+        specifies the approximate percentage (by volume) of the text which uses this language.</p>
+      <p>@ident (identifier) Supplies a language code constructed as defined in BCP 47 which is used
+        to identify the language documented by this element, and which is referenced by the global
+        @xml:lang attribute.</p>
+      <p>A language element may be supplied for each different language used in a document. If used,
+        its @ident attribute should specify an appropriate language identifier, as further discussed
+        in section vi.1. Language identification. This is particularly important if extended
+        language identifiers have been used as the value of @xml:lang attributes elsewhere in the
+        document.</p>
+      <p>Here is an example of the use of this element:</p>
+      <egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <langUsage>
+          <language ident="fr-CA" usage="60">Québecois</language>
+          <language ident="en-CA" usage="20">Canadian business English</language>
+          <language ident="en-GB" usage="20">British English</language>
+        </langUsage></egXML>
+    </div>
+    <div>
+      <head>Key, tempo, and meter</head>
+    </div>
+    <div>
+      <head>Performance medium</head>
+    </div>
+    <div>
+      <head>Notes statement</head>
+    </div>
+    <div>
+      <head>Classification</head>
+      <p>The second component of the core <gi>workDesc</gi> element is the <gi>classification</gi>
+        element. This element is used to classify a text according to one or more of the following
+        methods:</p>
+      <list type="simple">
+        <item>by reference to a recognized international classification such as the Dewey Decimal
+          Classification, the Universal Decimal Classification, the Colon Classification, the
+          Library of Congress Classification, or any other system widely used in library and
+          documentation work</item>
+        <item>by providing a set of keywords, as provided for example by British Library or Library
+          of Congress Cataloguing in Publication data</item>
+        <item>by referencing any other taxonomy of text categories recognized in the field
+          concerned, or peculiar to the material in hand; this may include one based on recurring
+          sets of values for the situational parameters defined in section <ptr target="#"/> The
+          Text Description, or the demographic elements described in section <ptr target="#"/> The
+          Participant Description</item>
+      </list>
+      <p>The last of these may be particularly important for dealing with existing corpora or
+        collections, both as a means of avoiding the expense or inconvenience of reclassification
+        and as a means of documenting the organizing principles of such materials.</p>
+      <p>The following elements are provided for this purpose:</p>
+      <p><gi>keywords</gi> contains a list of keywords or phrases identifying the topic or nature of
+        a text.@scheme identifies the controlled vocabulary within which the set of keywords
+        concerned is defined.</p>
+      <p><gi>classCode</gi> (classification code) contains the classification code used for this
+        text in some standard classification system.@scheme identifies the classification system or
+        taxonomy in use.</p>
+      <p><gi>catRef</gi> (category reference) specifies one or more defined categories within some
+        taxonomy or text typology.</p>
+      <p>The keywords element simply categorizes an individual text by supplying a list of keywords
+        which may describe its topic or subject matter, its form, date, etc. In some schemes, the
+        order of items in the list is significant, for example, from major topic to minor; in
+        others, the list has an organized substructure of its own. No recommendations are made here
+        as to which method is to be preferred. Wherever possible, such keywords should be taken from
+        a recognized source, such as the British Library/Library of Congress Cataloguing in
+        Publication data in the case of printed books, or a published thesaurus appropriate to the
+        field.</p>
+      <p>The @scheme attribute should be used to indicate the source of the keywords used. If the
+        keywords are taken from some externally defined authority which is available online, this
+        attribute should point directly to it, as in the following examples:</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <keywords scheme="http://classificationweb.net">
+        <term>Babbage, Charles</term>
+        <term>Mathematicians - Great Britain - Biography</term>
+        </keywords></egXML>-->
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <keywords scheme="http://id.loc.gov/authorities/about.html#lcsh">
+        <term>English literature -\- History and criticism -\- Data processing.</term>
+        <term>English literature -\- History and criticism -\- Theory, etc.</term>
+        <term>English language -\- Style -\- Data processing.</term>
+        <term>Style, Literary -\- Data processing.</term>
+        </keywords></egXML>-->
+      <p>If the authority file is not available online, but is generally recognized and commonly
+        cited, a bibliographic description for it should be supplied within the taxonomy element
+        described in section <ptr target="#"/> The Classification Declaration; the @scheme attribute
+        may then reference that taxonomy element by means of its identifier in the usual way:</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <keywords scheme="#welch">
+        <term>ceremonials</term>
+        <term>fairs</term>
+        <term>street life</term>
+        </keywords>
+        <!-\- elsewhere in the document -\->
+        <taxonomy xml:id="welch">
+        <bibl>
+        <title>Notes on London Municipal Literature, and a Suggested Scheme for Its
+        Classification</title>
+        <author>Charles Welch</author>
+        <edition>1895</edition>
+        </bibl>
+        </taxonomy></egXML>-->
+      <p>Alternatively, if the keyword vocabulary itself is locally defined, the @scheme attribute
+        will point to the local definition, which will typically be held in a taxonomy element
+        within the classDecl part of the encoding description (see section <ptr target="#"/> The
+        Classification Declaration).</p>
+      <p>The <gi>classCode</gi> element also categorizes an individual text, by supplying a
+        numerical or other code rather than descriptive terms. Such codes constitute a recognized
+        classification scheme, such as the Dewey Decimal Classification. The @scheme attribute is
+        used to indicate the source of the classification scheme in the same way as for keywords:
+        this may be a pointer of any kind, either to an MEI element, possibly in the current
+        document, as in the keywords examples above, or to some canonical source for the scheme, as
+        in the following example:</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <classCode scheme="http://www.udcc.org/udcsummary/php/index.php">005.756</classCode>
         </egXML>-->
-        <!--<p>The catRef element categorizes an individual text by pointing to one or more category
-          elements using the @target attribute, which it inherits from the att.pointing class. The
-          category element (which is fully described in section <ptr target="#"/> The Classification
-          Declaration) holds information about a particular classification or category within a
-          given taxonomy. Each such category must have a unique identifier, which may be supplied as
-          the value of the @target attribute for catRef elements which are regarded as falling
-          within the category indicated.</p>-->
-        <!--<p>A text may, of course, fall into more than one category, in which case more than one
-          identifier will be supplied as the value for the @target attribute on the catRef element,
-          as in the following example:</p>-->
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <catRef target="#b.a4 #b.d2"/></egXML>-->
-        <p>The @scheme attribute may be supplied to specify the taxonomy to which the categories
-          identified by the target attribute belong, if this is not adequately conveyed by the
-          resource pointed to. For example,</p>
-        <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-          <catRef target="#b.a4 #b.d2" scheme="http://www.example.com/browncorpus"/>
-          <catRef target="http://www.example.com/SUC/#A45"/>
+      <!--<p>The catRef element categorizes an individual text by pointing to one or more category
+        elements using the @target attribute, which it inherits from the att.pointing class. The
+        category element (which is fully described in section <ptr target="#"/> The Classification
+        Declaration) holds information about a particular classification or category within a
+        given taxonomy. Each such category must have a unique identifier, which may be supplied as
+        the value of the @target attribute for catRef elements which are regarded as falling
+        within the category indicated.</p>-->
+      <!--<p>A text may, of course, fall into more than one category, in which case more than one
+        identifier will be supplied as the value for the @target attribute on the catRef element,
+        as in the following example:</p>-->
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <catRef target="#b.a4 #b.d2"/></egXML>-->
+      <p>The @scheme attribute may be supplied to specify the taxonomy to which the categories
+        identified by the target attribute belong, if this is not adequately conveyed by the
+        resource pointed to. For example,</p>
+      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+        <catRef target="#b.a4 #b.d2" scheme="http://www.example.com/browncorpus"/>
+        <catRef target="http://www.example.com/SUC/#A45"/>
         </egXML>-->
-        <p>Here the same text has been classified as of categories 'b.a4' and 'b.d2' within the
-          Brown classification scheme (presumed to be available from
-          http://www.example.com/browncorpus), and as of category ‘A45’ within the SUC
-          classification scheme documented at the URL given.</p>
-        <!--<p>The distinction between the catRef and classCode elements is that the values used as
-          identifying codes are exhaustively enumerated, typically with the header, for the former,
-          while the latter may be used to indicate a more open ended or descriptive classification
-          system.</p>-->
-      </div>
-      <div>
-        <head>Cast list</head>
-      </div>
-      <div>
-        <head>Incipit</head>
-      </div>
-      <div>
-        <head>Contents note</head>
-      </div>
-      <div>
-        <head>Related item</head>
-      </div>
+      <p>Here the same text has been classified as of categories 'b.a4' and 'b.d2' within the Brown
+        classification scheme (presumed to be available from http://www.example.com/browncorpus),
+        and as of category ‘A45’ within the SUC classification scheme documented at the URL
+        given.</p>
+      <!--<p>The distinction between the catRef and classCode elements is that the values used as
+        identifying codes are exhaustively enumerated, typically with the header, for the former,
+        while the latter may be used to indicate a more open ended or descriptive classification
+        system.</p>-->
     </div>
     <div>
-      <head>Revision description</head>
-      <p>The final sub-element of the MEI header, the <gi>revisionDesc</gi> element, provides a
-        detailed change log in which each change made to a text may be recorded. Its use is optional
-        but highly recommended. It provides essential information for the administration of large
-        numbers of files which are being updated, corrected, or otherwise modified as well as
-        extremely useful documentation for files being passed from researcher to researcher or
-        system to system. Without change logs, it is easy to confuse different versions of a file,
-        or to remain unaware of small but important changes made in the file by some earlier link in
-        the chain of distribution. No change should be made in any MEI-conformant file without
-        corresponding entries being made in the change log.</p>
-      <p><gi>revisionDesc</gi> (revision description) summarizes the revision history for a
-        file.</p>
-      <p><gi>change</gi> summarizes a particular change or correction made to a particular version
-        of an electronic text which is shared between several researchers.</p>
-      <p>The main purpose of the revision description is to record changes in the text to which a
-        header is prefixed. However, it is recommended MEI practice to include entries also for
-        significant changes in the header itself (other than the revision description itself, of
-        course). At the very least, an entry should be supplied indicating the date of creation of
-        the header.</p>
-      <p>The log consists of a list of entries, one for each change. This may be encoded using
-        either the regular list element, as described in section <ptr target="#"/> Lists or as a
-        series of special purpose change elements, each of which contains a more detailed
-        description of the changes made. The attributes @when and @who are used to indicate the date
-        of the change and the person responsible for it respectively. The description of the change
-        itself can range from a simple phrase to a series of paragraphs. If a number is to be
-        associated with one or more changes (for example, a revision number), the global @n
-        attribute may be used to indicate it.</p>
-      <p>It is recommended to give changes in reverse chronological order, most recent first.</p>
-      <p>For example:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <revisionDesc>
-          <change n="RCS:1.39" when="2007-08-08" who="#jwernimo.lrv">Changed <val>drama.verse</val>
-            <gi>lg</gi>s to <gi>p</gi>s. <note>we have opened a discussion about the need for a new
-              value for <att>type</att> of <gi>lg</gi>, <val>drama.free.verse</val>, in order to
-              address the verse of Behn which is not in regular iambic pentameter. For the time
-              being these instances are marked with a comment note until we are able to fully
-              consider the best way to encode these instances.</note>
-          </change>
-          <change n="RCS:1.33" when="2007-06-28" who="#pcaton.xzc">Added <att>key</att> and
-              <att>reg</att> to <gi>name</gi>s.</change>
-          <change n="RCS:1.31" when="2006-12-04" who="#wgui.ner">Completed renovation.
-            Validated.</change>
-        </revisionDesc></egXML>-->
-      <p>In the above example, the @who attributes point to respStmt elements which have been
-        included earlier in the titleStmt of the same header:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <titleStmt>
-          <title>The Amorous Prince, or, the Curious Husband, 1671</title>
-          <author>
-            <persName ref="#abehn.aeh">Behn, Aphra</persName>
-          </author>
-          <respStmt xml:id="pcaton.xzc">
-            <persName>Caton, Paul</persName>
-            <resp>electronic publication editor</resp>
-          </respStmt>
-          <respStmt xml:id="wgui.ner">
-            <persName>Gui, Weihsin</persName>
-            <resp>encoder</resp>
-          </respStmt>
-          <respStmt xml:id="jwernimo.lrv">
-            <persName>Wernimont, Jacqueline</persName>
-            <resp>encoder</resp>
-          </respStmt>
-        </titleStmt></egXML>-->
-      <p>There is however no requirement that the <gi>respStmt</gi> be used for this person, or that
-        the elements indicated be contained within the same document. A project might for example
-        maintain a separate document listing all of its personnel in which they were represented
-        using the person element described in <ptr target="#"/> The Participant Description.</p>
+      <head>Cast list</head>
     </div>
     <div>
-      <head>Minimal and recommended header information</head>
-      <p>The MEI header allows for the provision of a very large amount of information concerning
-        the text itself, its source, its encodings, and revisions of it, as well as a wealth of
-        descriptive information such as the languages it uses and the situation(s) in which it was
-        produced, together with the setting and identity of participants within it. This diversity
-        and richness reflects the diversity of uses to which it is envisaged that electronic texts
-        conforming to these Guidelines will be put. It is emphatically not intended that all of the
-        elements described above should be present in every MEI Header.</p>
-      <p>The amount of encoding in a header will depend both on the nature and the intended use of
-        the text. At one extreme, an encoder may expect that the header will be needed only to
-        provide a bibliographic identification of the text adequate to local needs. At the other,
-        wishing to ensure that their texts can be used for the widest range of applications,
-        encoders will want to document as explicitly as possible both bibliographic and descriptive
-        information, in such a way that no prior or ancillary knowledge about the text is needed in
-        order to process it. The header in such a case will be very full, approximating to the kind
-        of documentation often supplied in the form of a manual. Most texts will lie somewhere
-        between these extremes; textual corpora in particular will tend more to the latter extreme.
-        In the remainder of this section we demonstrate first the minimal, and next a commonly
-        recommended, level of encoding for the bibliographic information held by the MEI header.</p>
-      <p>Supplying only the minimal level of encoding required, the MEI header of a single text
-        might look like the following example:</p>
-      <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
-        <meiHead>
-          <fileDesc>
-            <titleStmt>
-              <title>Thomas Paine: Common sense, a machine-readable transcript</title>
-              <respStmt>
-                <resp>compiled by</resp>
-                <name>Jon K Adams</name>
-              </respStmt>
-            </titleStmt>
-            <publicationStmt>
-              <distributor>Oxford Text Archive</distributor>
-            </publicationStmt>
-            <sourceDesc>
-              <bibl>The complete writings of Thomas Paine, collected and edited by Phillip S. Foner
-                (New York, Citadel Press, 1945)</bibl>
-            </sourceDesc>
-          </fileDesc>
-        </meiHead></egXML>-->
-      <p>The only mandatory component of the MEI Header is the <gi>fileDesc</gi> element. Within
-        this, <gi>titleStmt</gi>, <gi>publicationStmt</gi>, and <gi>sourceDesc</gi> are all required
-        constituents. Within the title statement, a title is required, and an author should be
-        specified, even if it is unknown, as should some additional statement of responsibility,
-        here given by the respStmt element. Within the <gi>publicationStmt</gi>, a publisher,
-        distributor, or other agency responsible for the file must be specified. Finally, the source
-        description should contain at the least a loosely structured bibliographic citation
-        identifying the source of the electronic text if (as is usually the case) there is one.</p>
-      <p>We now present the same example header, expanded to include additionally recommended
-        information, adequate to most bibliographic purposes, in particular to allow for the
-        creation of an AACR2-conformant bibliographic record. We have also added information about
-        the encoding principles used in this (imaginary) encoding, about the text itself (in the
-        form of Library of Congress subject headings), and about the revision of the file.</p>
-      <p><!--[MEI head example here]--></p>
-      <p>Many other examples of recommended usage for the elements discussed in this chapter are
-        provided here, in the reference index and in the associated tutorials.</p>
+      <head>Incipit</head>
     </div>
     <div>
-      <head>The MEI header module</head>
-      <p>The module described in this chapter makes available the following components:</p>
-      <p>Module header: The MEI Header</p>
-      <p>Elements defined: [list of MEI elements]</p>
-      <p>The selection and combination of modules to form an MEI schema is described in <ptr
-          target="#"/> Defining an MEI Schema.</p>
+      <head>Contents note</head>
     </div>
+    <div>
+      <head>Related item</head>
+    </div>
+  </div>
+  <div xml:id="header1.4" type="div2">
+    <head>Revision description</head>
+    <p>The final sub-element of the MEI header, the <gi>revisionDesc</gi> element, provides a
+      detailed change log in which each change made to a text may be recorded. Its use is optional
+      but highly recommended. It provides essential information for the administration of large
+      numbers of files which are being updated, corrected, or otherwise modified as well as
+      extremely useful documentation for files being passed from researcher to researcher or system
+      to system. Without change logs, it is easy to confuse different versions of a file, or to
+      remain unaware of small but important changes made in the file by some earlier link in the
+      chain of distribution. No change should be made in any MEI-conformant file without
+      corresponding entries being made in the change log.</p>
+    <p><gi>revisionDesc</gi> (revision description) summarizes the revision history for a file.</p>
+    <p><gi>change</gi> summarizes a particular change or correction made to a particular version of
+      an electronic text which is shared between several researchers.</p>
+    <p>The main purpose of the revision description is to record changes in the text to which a
+      header is prefixed. However, it is recommended MEI practice to include entries also for
+      significant changes in the header itself (other than the revision description itself, of
+      course). At the very least, an entry should be supplied indicating the date of creation of the
+      header.</p>
+    <p>The log consists of a list of entries, one for each change. This may be encoded using either
+      the regular list element, as described in section <ptr target="#"/> Lists or as a series of
+      special purpose change elements, each of which contains a more detailed description of the
+      changes made. The attributes @when and @who are used to indicate the date of the change and
+      the person responsible for it respectively. The description of the change itself can range
+      from a simple phrase to a series of paragraphs. If a number is to be associated with one or
+      more changes (for example, a revision number), the global @n attribute may be used to indicate
+      it.</p>
+    <p>It is recommended to give changes in reverse chronological order, most recent first.</p>
+    <p>For example:</p>
+    <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <revisionDesc>
+      <change n="RCS:1.39" when="2007-08-08" who="#jwernimo.lrv">Changed <val>drama.verse</val>
+      <gi>lg</gi>s to <gi>p</gi>s. <note>we have opened a discussion about the need for a new
+      value for <att>type</att> of <gi>lg</gi>, <val>drama.free.verse</val>, in order to
+      address the verse of Behn which is not in regular iambic pentameter. For the time
+      being these instances are marked with a comment note until we are able to fully
+      consider the best way to encode these instances.</note>
+      </change>
+      <change n="RCS:1.33" when="2007-06-28" who="#pcaton.xzc">Added <att>key</att> and
+      <att>reg</att> to <gi>name</gi>s.</change>
+      <change n="RCS:1.31" when="2006-12-04" who="#wgui.ner">Completed renovation.
+      Validated.</change>
+      </revisionDesc></egXML>-->
+    <p>In the above example, the @who attributes point to respStmt elements which have been included
+      earlier in the titleStmt of the same header:</p>
+    <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <titleStmt>
+      <title>The Amorous Prince, or, the Curious Husband, 1671</title>
+      <author>
+      <persName ref="#abehn.aeh">Behn, Aphra</persName>
+      </author>
+      <respStmt xml:id="pcaton.xzc">
+      <persName>Caton, Paul</persName>
+      <resp>electronic publication editor</resp>
+      </respStmt>
+      <respStmt xml:id="wgui.ner">
+      <persName>Gui, Weihsin</persName>
+      <resp>encoder</resp>
+      </respStmt>
+      <respStmt xml:id="jwernimo.lrv">
+      <persName>Wernimont, Jacqueline</persName>
+      <resp>encoder</resp>
+      </respStmt>
+      </titleStmt></egXML>-->
+    <p>There is however no requirement that the <gi>respStmt</gi> be used for this person, or that
+      the elements indicated be contained within the same document. A project might for example
+      maintain a separate document listing all of its personnel in which they were represented using
+      the person element described in <ptr target="#"/> The Participant Description.</p>
+  </div>
+  <div xml:id="header1.5" type="div2">
+    <head>Minimal and recommended header information</head>
+    <p>The MEI header allows for the provision of a very large amount of information concerning the
+      text itself, its source, its encodings, and revisions of it, as well as a wealth of
+      descriptive information such as the languages it uses and the situation(s) in which it was
+      produced, together with the setting and identity of participants within it. This diversity and
+      richness reflects the diversity of uses to which it is envisaged that electronic texts
+      conforming to these Guidelines will be put. It is emphatically not intended that all of the
+      elements described above should be present in every MEI Header.</p>
+    <p>The amount of encoding in a header will depend both on the nature and the intended use of the
+      text. At one extreme, an encoder may expect that the header will be needed only to provide a
+      bibliographic identification of the text adequate to local needs. At the other, wishing to
+      ensure that their texts can be used for the widest range of applications, encoders will want
+      to document as explicitly as possible both bibliographic and descriptive information, in such
+      a way that no prior or ancillary knowledge about the text is needed in order to process it.
+      The header in such a case will be very full, approximating to the kind of documentation often
+      supplied in the form of a manual. Most texts will lie somewhere between these extremes;
+      textual corpora in particular will tend more to the latter extreme. In the remainder of this
+      section we demonstrate first the minimal, and next a commonly recommended, level of encoding
+      for the bibliographic information held by the MEI header.</p>
+    <p>Supplying only the minimal level of encoding required, the MEI header of a single text might
+      look like the following example:</p>
+    <!--<egXML xml:lang="und" xmlns="http://www.tei-c.org/ns/Examples">
+      <meiHead>
+      <fileDesc>
+      <titleStmt>
+      <title>Thomas Paine: Common sense, a machine-readable transcript</title>
+      <respStmt>
+      <resp>compiled by</resp>
+      <name>Jon K Adams</name>
+      </respStmt>
+      </titleStmt>
+      <publicationStmt>
+      <distributor>Oxford Text Archive</distributor>
+      </publicationStmt>
+      <sourceDesc>
+      <bibl>The complete writings of Thomas Paine, collected and edited by Phillip S. Foner
+      (New York, Citadel Press, 1945)</bibl>
+      </sourceDesc>
+      </fileDesc>
+      </meiHead></egXML>-->
+    <p>The only mandatory component of the MEI Header is the <gi>fileDesc</gi> element. Within this,
+        <gi>titleStmt</gi> and <gi>publicationStmt</gi> are required constituents. Within the title
+      statement, a title is required, and an author should be specified, even if it is unknown, as
+      should some additional statement of responsibility, here given by the respStmt element. Within
+      the <gi>publicationStmt</gi>, a publisher, distributor, or other agency responsible for the
+      file should be specified. Finally, the source description should contain at the least a
+      loosely structured bibliographic citation identifying the source of the electronic text if (as
+      is usually the case) there is one.</p>
+    <p>We now present the same example header, expanded to include additionally recommended
+      information, adequate for most bibliographic purposes, in particular to allow for the creation
+      of an AACR2-conformant bibliographic record. We have also added information about the encoding
+      principles used in this (imaginary) encoding, about the text itself (in the form of Library of
+      Congress subject headings), and about the revision of the file.</p>
+    <p><!--[Fuller MEI head example here]--></p>
+  </div>
+  <div xml:id="header1.6" type="div2">
+    <head>The MEI header module</head>
+    <p>The module described in this chapter makes available the following components:</p>
+    <p>Module header: The MEI Header</p>
+    <p>Elements defined: [list of MEI elements]</p>
+    <p>The selection and combination of modules to form an MEI schema is described in <ptr
+        target="#"/> Defining an MEI Schema.</p>
   </div>
 </div>
