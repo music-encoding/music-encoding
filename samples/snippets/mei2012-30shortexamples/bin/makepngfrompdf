@@ -1,0 +1,117 @@
+#!/usr/bin/perl
+#
+# Programmer:    Craig Stuart Sapp <craig.stanford.edu>
+# Creation Date: Mon Nov 16 15:05:23 PST 2009
+# Last Modified: Mon Nov 16 15:34:45 PST 2009
+# Filename:      short-examples/bin/makepngfrompdf
+# Syntax:        perl 5
+#
+# Description:   Searches each subdirectory in the first argument to 
+#                the program for PDF files.  If it finds any, then it
+#                will create a PNG bitmap image of that PDF in the DPI
+#                resolution given as the second parameter to the program.
+#                The PNG file will have the same name as the PDF file,
+#                but will append the DPI number before the .png extension.
+#                If the PNG file already exists, then it will not be
+#                overwritten.
+#           
+#                Basic command being used:
+#
+#                convert -density 300x300 -quality 90 -trim file.pdf file300.png
+# 
+#                -density 300x300: means convert at 300 DPI resolution
+#                -quality 90:      "9" for highest PNG compression level
+#                                  "0" for no filtering
+#                -trim:            crop border around image
+#
+
+use strict;
+
+die "Usage: $0 basedir dpi\n" if @ARGV != 2;
+
+my $basedir = $ARGV[0];
+my $dpi     = int($ARGV[1]);
+$dpi = 72  if $dpi <= 0;
+$dpi = 300 if $dpi > 2400;
+
+my @subdirs = getSubdirs($basedir);
+
+my $dir;
+foreach $dir (@subdirs) {
+   processDirectory("$basedir/$dir", $dpi);
+}
+
+exit(0);
+
+
+###########################################################################
+
+##############################
+##
+## getSubdirs -- return a list of subdirectories in the given directory.
+##
+
+sub getSubdirs {
+   my ($basedir) = @_;
+   opendir (DIR, $basedir) or die;
+   my $file;
+   my @output;
+   while ($file = readdir(DIR)) {
+      next if !-d "$basedir/$file";
+      next if $file =~ /^\./;
+      $output[@output] = $file;
+   }
+   closedir(DIR);
+   return sort @output;
+}
+
+
+
+##############################
+##
+## processDirectory -- check a directory for PDF files.  Create a
+##     PNG image for each PDF file according to the DPI setting.
+##     Don't create a PNG image if it already exists.
+##
+
+sub processDirectory {
+   my ($directory, $dpi) = @_;
+
+   my $file;
+   opendir (DIR, $directory) or die;
+
+   my $base;
+   while ($file = readdir(DIR)) {
+      next if $file =~ /^\./;
+      next if -d "$directory/$file";
+      next if !-r "$directory/$file";
+      next if $file !~ /\.pdf$/i;
+      $base = $file;
+      $base =~ s/\.pdf$//i;
+      if ($file =~ /\.PDF$/) {
+         `mv $directory/$file $directory/temporary.pdf`;
+	 `mv $directory/temporary.pdf $directory/$base.pdf`;
+      }
+      next if -r "$directory/$base-$dpi.png";
+      createPng($directory, $base, $dpi);
+   }
+
+   closedir(DIR);
+}
+
+
+
+##############################
+##
+## createPng -- create a PNG file from a given PDF file
+##
+
+sub createPng {
+   my ($dir, $base, $dpi) = @_;
+   my $program = "convert -density ${dpi}x$dpi -quality 90 -trim";
+   print "Creating $dir/$base-$dpi.png...\n";
+   `(cd $dir; $program $base.pdf $base-$dpi.png)`;
+}
+
+
+
