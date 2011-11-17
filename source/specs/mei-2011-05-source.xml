@@ -239,6 +239,7 @@
     </macroSpec>
     <macroSpec ident="data.MIDINAMES" module="MEI" type="dt">
       <desc>General MIDI instrument names</desc>
+      <!-- list at http://www.midi.org/techspecs/gm1sound.php presumed to be authority -->
       <content>
         <rng:choice>
           <rng:value>Acoustic_Grand_Piano</rng:value>
@@ -369,6 +370,54 @@
           <rng:value>Helicopter</rng:value>
           <rng:value>Applause</rng:value>
           <rng:value>Gunshot</rng:value>
+          <!-- the following percussion sounds are available when channel is set to 10 -->
+          <rng:value>Acoustic_Bass_Drum</rng:value>
+          <rng:value>Bass_Drum_1</rng:value>
+          <rng:value>Side_Stick</rng:value>
+          <rng:value>Acoustic_Snare</rng:value>
+          <rng:value>Hand_Clap</rng:value>
+          <rng:value>Electric_Snare</rng:value>
+          <rng:value>Low_Floor_Tom</rng:value>
+          <rng:value>Closed_Hi_Hat</rng:value>
+          <rng:value>High_Floor_Tom</rng:value>
+          <rng:value>Pedal_Hi-Hat</rng:value>
+          <rng:value>Low_Tom</rng:value>
+          <rng:value>Open_Hi-Hat</rng:value>
+          <rng:value>Low-Mid_Tom</rng:value>
+          <rng:value>Hi-Mid_Tom</rng:value>
+          <rng:value>Crash_Cymbal_1</rng:value>
+          <rng:value>High_Tom</rng:value>
+          <rng:value>Ride_Cymbal_1</rng:value>
+          <rng:value>Chinese_Cymbal</rng:value>
+          <rng:value>Ride_Bell</rng:value>
+          <rng:value>Tambourine</rng:value>
+          <rng:value>Splash_Cymbal</rng:value>
+          <rng:value>Cowbell</rng:value>
+          <rng:value>Crash_Cymbal_2</rng:value>
+          <rng:value>_Vibraslap</rng:value>
+          <rng:value>Ride_Cymbal_2</rng:value>
+          <rng:value>Hi_Bongo</rng:value>
+          <rng:value>Low_Bongo</rng:value>
+          <rng:value>Mute_Hi_Conga</rng:value>
+          <rng:value>Open_Hi_Conga</rng:value>
+          <rng:value>Low_Conga</rng:value>
+          <rng:value>High_Timbale</rng:value>
+          <rng:value>Low_Timbale</rng:value>
+          <rng:value>High_Agogo</rng:value>
+          <rng:value>Low_Agogo</rng:value>
+          <rng:value>Cabasa</rng:value>
+          <rng:value>Maracas</rng:value>
+          <rng:value>Short_Whistle</rng:value>
+          <rng:value>Long_Whistle</rng:value>
+          <rng:value>Short_Guiro</rng:value>
+          <rng:value>Long_Guiro</rng:value>
+          <rng:value>Claves</rng:value>
+          <rng:value>Hi_Wood_Block</rng:value>
+          <rng:value>Low_Wood_Block</rng:value>
+          <rng:value>Mute_Cuica</rng:value>
+          <rng:value>Open_Cuica</rng:value>
+          <rng:value>Mute_Triangle</rng:value>
+          <rng:value>Open_Triangle</rng:value>
         </rng:choice>
       </content>
     </macroSpec>
@@ -2676,7 +2725,7 @@
       <desc>Attributes that record the version of MEI in use</desc>
       <attList>
         <attDef ident="meiversion" usage="opt">
-          <desc>records the version of MEI used by the file.</desc>
+          <desc>specifies the version number of the MEI Guidelines in use.</desc>
           <defaultVal>2012</defaultVal>
           <valList type="closed">
             <valItem ident="2012">
@@ -8309,12 +8358,12 @@
       </content>
     </elementSpec>
     <elementSpec ident="body" module="MEI.shared">
-      <desc>body ― This element contains the actual music data of the MEI encoding, as opposed to
-        the header, front, and back elements, which do not. When the music can be broken into
-        high-level, discrete, linear segments, such as movements of a symphony, there may be
-        multiple &lt;mdiv&gt; elements within this element. This is the highest level indication of
-        the structure of the music. This element is modelled on an element in the Text Encoding
-        Initiative (TEI).</desc>
+      <desc>body ― Contains the whole of a single musical text, excluding any front or back matter.
+        This element is modelled on an element in the Text Encoding Initiative
+        (TEI).<!-- When the music
+        can be broken into high-level, discrete, linear segments, such as movements of a symphony,
+        there may be multiple &lt;mdiv&gt; elements within this element. This is the highest level
+        indication of the structure of the music. --></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
@@ -8799,9 +8848,12 @@
       </content>
     </elementSpec>
     <elementSpec ident="group" module="MEI.shared">
-      <desc>group ― Enables the gathering of multiple documents into a single file. Because its
-        model contains the music element, each of the documents can have its own front and back
-        matter. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+      <desc>group ― Contains a composite musical text, grouping together a sequence of distinct
+        musical texts (or groups of such musical texts) which are regarded as a unit for some
+        purpose, for example, the collected works of a composer. This element is modelled on an
+        element in the Text Encoding Initiative
+        (TEI).<!-- Because its model contains the music element,
+        each of the documents can have its own front and back matter. --></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
@@ -9126,10 +9178,12 @@
       </content>
     </elementSpec>
     <elementSpec ident="mei" module="MEI.shared">
-      <desc>mei ― The document element for a single document, containing a header and data. The
-        &lt;mei&gt; element defines a particular instance of a document encoded with the MEI schema.
-        The name of this element should not be changed in order to assure an absolute minimum level
-        of MEI compliance.</desc>
+      <desc>mei ― Contains a single MEI-conformant document, consisting of an MEI header and a
+        musical text, either in isolation or as part of an meiCorpus element.
+        <!-- The document element for a
+          single document, containing a header and data. The &lt;mei&gt; element defines a particular
+        instance of a document encoded with the MEI schema. The name of this element should not be
+        changed in order to assure an absolute minimum level of MEI compliance.--></desc>
       <classes>
         <memberOf key="att.meiversion"/>
       </classes>
@@ -9165,7 +9219,8 @@
       </attList>
     </elementSpec>
     <elementSpec ident="music" module="MEI.shared">
-      <desc>music ― Container for everything else in the document apart from the header.</desc>
+      <desc>music ― Contains a single musical text of any kind, whether unitary or composite, for
+        example, an etude, opera, song cycle, symphony, or anthology of piano solos.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
@@ -10206,8 +10261,11 @@
       </content>
     </elementSpec>
     <elementSpec ident="meiHead" module="MEI.header">
-      <desc>mei header ― A wrapper for general bibliographic and descriptive information about the
-        encoded file. This information is often essential in a machine-readable environment. Five
+      <desc>mei header ― Supplies the descriptive and declarative metadata prefixed to every
+        MEI-conformant text. In order to encourage uniformity in the provision of metadata across
+        document types, this element is modelled on an element in the Text Encoding Initiative
+        (TEI).
+        <!--This information is often essential in a machine-readable environment. Five
         sub-elements must be encoded in the following order: &lt;altId&gt;(optional),
         &lt;fileDesc&gt;(required), &lt;encodingDesc&gt;(optional), &lt;workDesc;&gt;(optional), and
         &lt;revisionDesc&gt;(optional). These elements and their sub-elements provide: a unique
@@ -10215,8 +10273,7 @@
         information about the encoding process, information about the creation of the work being
         encoded, and statements regarding significant revisions of the file. The xml:lang attribute
         may be used to indicate the language in which the metadata content of the header is
-        provided. In order to encourage uniformity in the provision of metadata across document
-        types, this element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+        provided.--></desc>
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
@@ -11705,8 +11762,8 @@
       </content>
     </elementSpec>
     <elementSpec ident="workDesc" module="MEI.header">
-      <desc>work description ― A container for description of the work(s) used in the creation of
-        the electronic file.</desc>
+      <desc>work description ― Grouping mechanism for information describing non-bibliographic
+        aspects of a text</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="model.headerPart"/>
@@ -11718,7 +11775,9 @@
       </content>
     </elementSpec>
     <elementSpec ident="work" module="MEI.header">
-      <desc/>
+      <desc>work ― Provides a detailed description of the non-bibliographic aspects of a text,
+        specifically its history, language use, and high-level musical attributes: key, tempo,
+        meter, and medium of performance</desc>
       <classes>
         <memberOf key="att.datapointing"/>
         <memberOf key="att.common"/>
@@ -12835,12 +12894,13 @@
       </content>
     </elementSpec>
     <elementSpec ident="meiCorpus" module="MEI.corpus">
-      <desc>meiCorpus ― The document element for a group of related MEI documents, each with its own
-        complete header, contains a header for the group, and one or more &lt;mei&gt; elements. The
-        group may be related in a number of ways, for example, by composer, by similar
-        instrumentation, by holding institution, etc. This element's name should not be changed in
-        order to assure an absolute minimum level of MEI compliance. This element is modelled on the
-        teiCorpus element in the Text Encoding Initiative (TEI).</desc>
+      <desc>meiCorpus ― A group of related MEI documents, consisting of a header for the group, and
+        one or more &lt;mei&gt; elements, each with its own complete header. This element is
+        modelled on the teiCorpus element in the Text Encoding Initiative (TEI).
+        <!--The group may be
+        related in a number of ways, for example, by composer, by similar instrumentation, by
+        holding institution, etc. This element's name should not be changed in order to assure an
+        absolute minimum level of MEI compliance.--></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.meiversion"/>
@@ -14581,8 +14641,10 @@
       </content>
     </elementSpec>
     <elementSpec ident="back" module="MEI.text">
-      <desc>back ― Back matter such as indexes, advertisements, etc. following the main part of a
-        text. This element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+      <desc>back matter ― Contains any appendixes, advertisements, indexes, etc. following the main
+        body of a musical text. This element is modelled on an element in the Text Encoding
+        Initiative
+        (TEI).<!-- Back matter such as indexes, advertisements, etc. following the main part of a text. --></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
@@ -14656,13 +14718,14 @@
       </content>
     </elementSpec>
     <elementSpec ident="front" module="MEI.text">
-      <desc>front ― Bundles prefatory text found before the start of the musical text.
-        &lt;titlePage&gt; may be used to transcribe the item's title page. Other front matter
-        structures, such as a preface, dedication, or table of contents, may be encoded as textual
-        divisions; that is, as &lt;div&gt;s, with an optional &lt;head&gt; sub-element describing
-        the nature of the division. The &lt;pb&gt; element is allowed here in order to accommodate
-        page images, e.g. cover, endpapers, etc. before and after the actual textual matter. This
-        element is modelled on an element in the Text Encoding Initiative (TEI).</desc>
+      <desc>front matter ― Bundles prefatory text found before the start of the musical text. This
+        element is modelled on an element in the Text Encoding Initiative (TEI).
+        <!-- &lt;titlePage&gt; may be
+        used to transcribe the item's title page. Other front matter structures, such as a preface,
+        dedication, or table of contents, may be encoded as textual divisions; that is, as
+        &lt;div&gt;s, with an optional &lt;head&gt; sub-element describing the nature of the
+        division. The &lt;pb&gt; element is allowed here in order to accommodate page images, e.g.
+        cover, endpapers, etc. before and after the actual textual matter.--></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
