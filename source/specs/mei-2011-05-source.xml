@@ -1911,15 +1911,10 @@
     </classSpec>
     <classSpec ident="att.common" module="MEI.shared" type="atts">
       <desc>Attributes common to many elements</desc>
+      <classes>
+        <memberOf key="att.id"/>
+      </classes>
       <attList>
-        <attDef ident="id" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
-          <desc>regularizes the naming of an element and thus facilitates building links between it
-            and other resources. Each id attribute within a document must have a unique
-            value.</desc>
-          <datatype>
-            <rng:data type="ID"/>
-          </datatype>
-        </attDef>
         <attDef ident="label" usage="opt">
           <desc>provides a label for an element. The value may be any string.</desc>
         </attDef>
@@ -1927,14 +1922,14 @@
           <desc>provides a name or number designation for an element. While the value need not be
             unique, it is required to be a single token.</desc>
           <datatype>
-            <rng:data type="NMTOKEN"/>
+            <rng:data xmlns:rng="http://relaxng.org/ns/structure/1.0" type="NMTOKEN"/>
           </datatype>
         </attDef>
         <attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
           <desc>provides a base URI reference with which applications can resolve relative URI
             references into absolute URI references.</desc>
           <datatype>
-            <rng:ref name="data.URI"/>
+            <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -2258,6 +2253,19 @@
               <desc>left and right aligned</desc>
             </valItem>
           </valList>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.id" module="MEI.shared" type="atts">
+      <desc>Attributes that uniquely identify an element</desc>
+      <attList>
+        <attDef ident="id" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
+          <desc>regularizes the naming of an element and thus facilitates building links between it
+            and other resources. Each id attribute within a document must have a unique
+            value.</desc>
+          <datatype>
+            <rng:data xmlns:rng="http://relaxng.org/ns/structure/1.0" type="ID"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -9043,41 +9051,32 @@
         musical text, either in isolation or as part of an meiCorpus element.
         <!-- The document element for a
           single document, containing a header and data. The &lt;mei&gt; element defines a particular
-        instance of a document encoded with the MEI schema. The name of this element should not be
-        changed in order to assure an absolute minimum level of MEI compliance.--></desc>
+          instance of a document encoded with the MEI schema. The name of this element should not be
+          changed in order to assure an absolute minimum level of MEI compliance.--></desc>
       <classes>
         <memberOf key="att.meiversion"/>
+        <memberOf key="att.id"/>
       </classes>
       <content>
-        <rng:ref name="meiHead"/>
-        <rng:ref name="music"/>
+        <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="meiHead"/>
+        <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="music"/>
       </content>
       <constraintSpec ident="set_ns" scheme="isoschematron">
         <constraint>
-          <sch:ns uri="http://www.music-encoding.org/ns/mei" prefix="mei"/>
+          <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
+            uri="http://www.music-encoding.org/ns/mei"/>
         </constraint>
       </constraintSpec>
       <constraintSpec ident="Check_staff" scheme="isoschematron">
         <constraint>
-          <sch:rule context="mei:*[@staff]">
+          <sch:rule xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@staff]">
             <sch:assert
-              test="every $i in tokenize(@staff, '\s+') satisfies
-                $i=//mei:staffDef/@n"
+              test="every $i in tokenize(@staff, '\s+') satisfies                 $i=//mei:staffDef/@n"
               >The values in @staff must correspond to @n attribute of a staffDef
               element.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
-      <attList>
-        <attDef ident="id" ns="http://www.w3.org/XML/1998/namespace" usage="opt">
-          <desc>regularizes the naming of an element and thus facilitates building links between it
-            and other resources. Each id attribute within a document must have a unique
-            value.</desc>
-          <datatype>
-            <rng:data type="ID"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="music" module="MEI.shared">
       <desc>music ― Contains a single musical text of any kind, whether unitary or composite, for
