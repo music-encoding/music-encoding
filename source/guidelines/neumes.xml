@@ -8,5 +8,167 @@
 
 <div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="neumes" n="0">
   <head>Neume Notation</head>
-  <p>This chapter describes ...</p>
+  <p>This chapter describes the elements, model classes, and attribute classes that are part of the
+  MEI.neumes module.</p>
+  <div type="div2" xml:id="neumes1.1">
+    <head>Project Background</head>
+    <p>Neume encoding in MEI was initially developed as part of the Hildegard von Bingen project at the University of Tübingen.
+      MEI was chosen as the basic representation format after a <ref target="http://www.dimused.uni-tuebingen.de/tuebingen_phase1_e.php">comparison of existing music encoding formats</ref>.
+      The initial work on this module was performed by Gregor Schräder <ref target="http://www.dimused.uni-tuebingen.de/downloads/studienarbeit.pdf">(Ein XML-Datenformat zur Repräsentation kritischer Musikedition unter besonderer Berücksichtigung von Neumennotation)</ref>, supervised by Prof. Stefan Morent.
+    </p>
+    <p>This module was originally developed against version 1.8 of the MEI DTD, and has subsequently been translated to the TEI ODD schema.</p>
+  </div>
+  <div type="div2" xml:id="neumes1.2">
+    <head>Neume Encoding Overview</head>
+    <p>
+      Most neume notation is used to set music to an existing text. The syllable is the fundamental unit of structure, with
+      the neumes themselves serving as a means of "sonifying" the text. A syllable may be expressed via one or more neumes,
+      with the particular neume shape chosen depending on the pitch contour that is being employed and the desired interpretation. For example,
+      two pitches in rising succession might be encoded as a "podatus" (sometimes also called a "pes"), or it might be encoded as two separate punctums,
+      depending on whether it should be sung smoothly connected or with a slight amount of space between the notes.</p>
+    <p>
+      There are a limited number of possiblities for the most popular musical contours. In general, groups of two to four notes are given
+      unique names, assigned depending on their contour. A "clivis" would be two joined descending notes, while a "podatus" is two joined ascending
+      notes. Table XX shows most of the named neume shapes. Neume groups of more than four notes are simply called "compound" neumes.</p>
+    <!-- Insert a table showing the most popular neume groupings. -->
+    <p>
+      As shown in Table XX, it is possible to have many different styles of neume shapes, derived from local practices of regional groups.
+      In general, these styles are all interpreted in a similar fashion; however there is evidence that the performance practice of some styles of neume notation
+      differed with regards to rhythm and cadence. This version of the MEI neumes module does not attempt to encode any rhythmic information present in the
+      neume notation. While it may be possible to encode rhythmic values on <gi>note</gi> elements, this practice is highly discouraged and, if present,
+      should be interpreted as a modern transcription not present in the original sources. 
+    </p>
+    <p>
+      Neume notation existed before the invention of the staff. Staffless neume notation ("adiastemtic", "cheironomic" or "in campo aperto")
+      existed primarily as mnemonic devices, reminding performers of the contour of the melody but lacking any absolute pitch information. These neumes were
+      written above the text. With the invention of the staff lines and the clef, "heightened" or "diastematic" neume notation could be used to provide exact interval information. In some cases
+      the staff lines are not actually drawn on the page, but their position relative to an imaginary line and initial clef is consistent.
+    </p>
+    </div>
+    <div type="div2" xml:id="neumes1.3">
+      <head>Elements</head>
+      <p>The MEI Neumes Module defines three unique elements:</p>
+      <p>
+        <specList>
+          <specDesc key="ineume"/>
+          <specDesc key="uneume"/>
+          <specDesc key="syllable"/>
+        </specList>
+      </p>
+      <p>The <gi>syllable</gi> element is used as the primary organizational element for neume notation within a <gi>layer</gi> element.
+      Within <gi>syllable</gi>, the <gi>syl</gi> element defined in the MEI.shared module is used for encoding the textual content, while the
+      <gi>uneume</gi> and <gi>ineume</gi> elements are used to encode the neumes themeselves. Within these neume module elements, other
+      standard MEI mechanisms are available to accommodate, for example, editorial or critical markup.</p>
+    </div>
+    <div type="div2" xml:id="neumes1.4">
+      <head>Examples</head>
+      <p>Some of these examples are excerpts from works of Hildegard von Bingen, with the encoding performed by Stefan Morent and Gregor Schräder.</p>
+      <div type="div3" xml:id="neumes1.4.1">
+        <head>Basic Encoding</head>
+        <p>The example illustrates the most basic encoding of neume notation. Encoded here is the opening of Hildegarde's "O Splendidissima Gemma" with
+        the text "O splendidissima". Information about the staff has been omitted for brevity, but it was originally encoded on a 5-line staff with two clefs,
+        a "C" and a "F" on lines 5 and 3, respectively.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+        <syllable>
+          <syl n="initial">
+            <rend color="red">O</rend>
+          </syl>
+          <uneume name="porrectus">
+            <note pname="e" oct="3"/>
+            <note pname="d" oct="3"/>
+            <note pname="e" oct="3"/>
+          </uneume>
+        </syllable>
+        <syllable>
+          <syl>splen_</syl>
+          <uneume name="clivis">
+            <note pname="g" oct="3"/>
+            <note pname="e" oct="3"/>
+          </uneume>
+          <uneume name="pes">
+            <note pname="d" oct="3"/>
+            <note pname="e" oct="3"/>
+          </uneume>
+        </syllable>
+        <syllable>
+          <syl>di_</syl>
+          <ineume name="climacus">
+            <uneume name="virga">
+              <note pname="f" oct="3"/>
+            </uneume>
+            <uneume name="punctum">
+              <note pname="d" oct="3"/>
+            </uneume>
+            <uneume name="punctum">
+              <note pname="c" oct="3"/>
+            </uneume>
+          </ineume>
+        </syllable>
+        <syllable>
+          <syl>dis_</syl>
+          <uneume name="virga">
+            <note pname="e" oct="3"/>
+          </uneume>
+        </syllable>
+        <syllable>
+          <syl>si_</syl>
+          <ineume name="scandicus">
+            <uneume name="punctum">
+              <note pname="a" oct="2"/>
+            </uneume>
+            <uneume name="punctum">
+              <note pname="b" oct="2"/>
+            </uneume>
+            <uneume name="virga">
+              <note pname="c" oct="3"/>
+            </uneume>
+          </ineume>
+        </syllable>
+        <syllable>
+          <syl>ma</syl>
+          <uneume name="clivis">
+            <note pname="b" oct="2"/>
+            <note pname="a" oct="2"/>
+          </uneume>
+        </syllable>
+        </layer>
+      </egXML>
+      </div>
+      <div type="div3" xml:id="neumes1.4.2">
+        <head>Encoding Variants</head>
+        <p>Variant readings across sources may be encoded. In this example, source "D" has a punctum on the syllable "so" that is not present in source "R".</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <syllable>
+            <syl>so_</syl>
+            <uneume xml:id="d18e" name="punctum">
+              <note pname="g" oct="3"/>
+            </uneume>
+            <app xml:id="app1">
+              <rdg source="D">
+                <uneume xml:id="d19e" name="punctum">
+                  <note pname="g" oct="3"/>
+                </uneume>
+              </rdg>
+              <rdg source="R"/>
+            </app>
+          </syllable>
+        </egXML>
+      </div>
+      <div type="div3" xml:id="neumes1.4.3">
+        <head>Supplied Notes</head>
+        <p>In the case of neume notation where no absolute pitch is given, you may use the <gi>supplied</gi> tag to indicate an editorially-added pitch. The @source
+        attribute may be used to supply a reference to a source with the absolute pitch provided.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <syllable>
+            <syl>so_</syl>
+            <uneume xml:id="d13" name="podatus">
+              <supplied>
+                <note pname="g" oct="3" />
+              </supplied>
+            </uneume>
+          </syllable>          
+        </egXML>
+      </div>
+    </div>
 </div>
