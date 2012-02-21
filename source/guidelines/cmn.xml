@@ -10,44 +10,536 @@
   <head>Common Music Notation</head>
   <p>This chapter describes ...</p>
   <div type="div2" xml:id="cmnOverview">
-    <!-- Overview -->
     <head>Overview of the CMN Module</head>
-    <p>The module described in this chapter makes available the following components:</p>
-    <div type="div3" xml:id="cmnElements">
-      <head>Elements</head>
+    <p>The module described in this chapter offers the means to describe music from the so-called 
+      <soCalled>Common Music Notation</soCalled> (<term>CMN</term>, sometimes referred to as <soCalled>Common Western Music Notation</soCalled>). 
+      For this purpose, it offers a number of special elements and adds an even larger number of additional
+      attribute classes to elements from the <ref target="#shared">Shared</ref> module.
+    </p>
+  </div>
+  
+  <div type="div2" xml:id="cmnBasics">
+    <head>Basic Elements and Data Structures of CMN</head>
+    <p>
+      
+    </p>
+    
+    <div type="div3" xml:id="cmnMeasures">
+      <head>The role of the measure element</head>
+      <p>The most important element of the CMN module is the <gi>measure</gi> element. It is used as structural
+        unit inside of <gi>section</gi>s and acts as container for "events" like <gi>note</gi>s, <gi>chord</gi>s
+        and <gi>rest</gi>s as well as "control events" like <gi>slur</gi>s and indications of <gi>dynam</gi>ics. 
+      </p>
+      <p>The following example demonstrates the use of the measure element in the context of a <gi>section</gi>.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" >
+        <section>
+          <measure n="1">
+            <staff n="1">
+              <layer>
+                <chord dur="1">
+                  <note pname="c" oct="5"/>
+                  <note pname="g" oct="4"/>
+                  <note pname="e" oct="4"/>
+                </chord>
+              </layer>
+            </staff>
+            <staff n="2">
+              <layer>
+                <note pname="c" oct="3" dur="1"/>
+              </layer>
+            </staff>
+          </measure>
+        </section>
+      </egXML>
+      <p>
+        A measure slices the flow of a score or part in chunks that normally comply to a duration determined by the meter
+        within a preceding <gi>scoreDef</gi> or <gi>staffDef</gi> element. <!-- TODO: ptr to shared module --> Each stave
+        in the source is represented by a <gi>staff</gi> element, which may again hold a number of <gi>layer</gi> elements 
+        to reflect multiple <soCalled>voices</soCalled>. As the order of these elements in the file does not have to reflect
+        their original order in the document, they should always refer to a <gi>staffDef</gi> (or <gi>layerDef</gi>) element
+        using either the <att>n</att>- or <att>def</att>-attribute. Whereas the <att>def</att>-attribute should refer to a 
+        <gi>staffDef</gi> / <gi>layerDef</gi> resp. using the <term>xs:anyURI</term> datatype, the <att>n</att> refers to the 
+        closest preceding <gi>staffDef</gi> / <gi>layerDef</gi> with the same value in its <att>n</att>-attribute. 
+      </p>
+    </div>
+    
+    <div type="div4" xml:id="cmnDefs">
+      <head>Defining Score parameters for CMN</head>
+      <p>
+        
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnNotesChords">
+      <head>Notes, chords and rests in CMN MEI</head>
       <p>
         <specList>
-          <specDesc key="arpeg"/>
-          <specDesc key="beam"/>
-          <specDesc key="beamSpan"/>
-          <specDesc key="beatRpt"/>
-          <specDesc key="bend"/>
-          <specDesc key="breath"/>
-          <specDesc key="bTrem"/>
-          <specDesc key="fermata"/>
-          <specDesc key="fTrem"/>
-          <specDesc key="hairpin"/>
-          <specDesc key="harpPedal"/>
-          <specDesc key="gliss"/>
-          <specDesc key="halfmRpt"/>
-          <specDesc key="measure"/>
+          <specDesc key="note"/>
           <specDesc key="mRest"/>
-          <specDesc key="mRpt"/>
-          <specDesc key="mRpt2"/>
-          <specDesc key="mSpace"/>
           <specDesc key="multiRest"/>
-          <specDesc key="multiRpt"/>
-          <specDesc key="octave"/>
-          <specDesc key="ossia"/>
-          <specDesc key="pedal"/>
-          <specDesc key="reh"/>
-          <specDesc key="slur"/>
-          <specDesc key="tie"/>
+          <specDesc key="mSpace"/>
+        </specList>
+      </p>
+      <div type="div4" xml:id="cmnNotes">
+        <head>Notes</head>
+        <p>The most important element to encode music notation is the <gi>note</gi>-element as defined 
+          in the shared module. <!-- TODO add reference --> This chapter describes the usage of <gi>note</gi>
+          in the CMN repertoire as well as some CMN-specific additions to the definition in the shared module.
+        </p>
+        <div type="div5" xml:id="cmnNotesBasic">
+          <head>Basic usage of note in CMN</head>
+          <p>
+            In CMN, notes are determined by three basic 
+            parameters:
+            <list>
+              <item>pitch name (using <att>pname</att>)</item>
+              <item>octave (using <att>oct</att>)</item>
+              <item>duration (using <att>dur</att>)</item>
+            </list>
+            A typical note is therefore encoded like such:
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <note pname="c" oct="4" dur="4"/>
+            </egXML>
+            While this structure is the same as for other repertoires (see mensural), <!-- TODO add reference -->
+            the allowed values for <att>dur</att> are specific to CMN:
+            <list>
+              <label>1</label>
+              <item>whole note</item>
+              <label>2</label>
+              <item>half note</item>
+              <label>4</label>
+              <item>quarter note</item>
+              <label>8</label>
+              <item>eighth note</item>
+              <label>16</label>
+              <item>sixteenth note</item>
+              <label>…</label>
+              <item>…</item>
+              <label>2048</label>
+              <item>2048th note <!-- TODO: as seen in http://www.informatics.indiana.edu/donbyrd/InterestingMusicNotation.html --></item>
+            </list>
+            The following two values are additionally allowed as they appear quite regularly in CMN music:
+            <list>
+              <label>breve</label>
+              <item>double whole</item>
+              <label>longa</label>
+              <item>quadruple whole</item>
+            </list>
+          </p>
+        </div>
+        <div type="div5" xml:id="cmnNotesGrace">
+          <head>Grace notes</head>
+          <p>
+            The CMN module adds two optional attributes <att>grace</att> and <att>grace.time</att> to <gi>note</gi>
+            and <gi>chord</gi>. The presence of <att>grace</att> indicates a grace note. 
+            <figure>
+              <figDesc></figDesc>
+              <graphic url="../samples/snippets/mei2012-30shortexamples/beam-grace/grace-300.png" width="500px"/>
+            </figure>
+            The encoding of the left example would look like so:
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <beam>
+                <note pname="d" oct="5" dur="8" stem.dir="down"/>
+                <note pname="e" oct="5" dur="8" grace="acc" stem.dir="up"/>
+                <note pname="d" oct="5" dur="8" stem.dir="down"/>
+                <note pname="c" accid="s" oct="5" dur="8" grace="acc" stem.dir="up"/>
+                <note pname="d" oct="5" dur="8" stem.dir="down"/>
+                <note pname="b" oct="4" dur="8" stem.dir="down"/>
+              </beam>
+            </egXML>
+            The values of <att>grace</att> indicate from which note time is <soCalled>borrowed</soCalled> to perform
+            the grace note: The preceding note ('unacc'ented) or the following note ('acc'ented). Technically
+            this determines if the note following the grace will keep its original onset timestamp or will be slightly delayed to 
+            allow an accent on the grace itself. Sometimes it is not clear how to perform a grace; in these situations the value 
+            'unknown' allows to indicate a grace without saying anything about its performance.
+          </p>
+          <p>
+            The <att>grace.time</att>-attribute is only to be used in combination with the <att>grace</att>-attribute. It records
+            the amount of time (as percentage of the duration) that the grace note should 'steal' from the preceding 
+            (<att>grace</att>="unacc") or following (<att>grace</att>="acc") note.
+          </p>
+        </div>
+        <div type="div5" xml:id="cmnNotesStems">
+          <head>Stem modifications</head>
+          <p>
+            The CMN module also makes the attribute class <classRef key="att.stemmed.cmn"/> available, which adds <att>stem.mod</att>
+            and <att>stem.with</att> to <gi>note</gi> and <gi>chord</gi>.
+          </p>
+          <p>
+            <att>stem.mod</att> allows to indicate the presence of different stem modifiers. These symbols are placed on top of 
+            the note's or chord's stem and indicate different types of tremolo or Sprechstimme. The following values are allowed:
+            <list>
+              <label>1slash</label>
+              <item>1 slash through stem</item>
+              <label>2slash</label>
+              <item>2 slashes through stem</item>
+              <label>3slash</label>
+              <item>3 slashes through stem</item>
+              <label>4slash</label>
+              <item>4 slashes through stem</item>
+              <label>5slash</label>
+              <item>5 slashes through stem</item>
+              <label>6slash</label>
+              <item>6 slashes through stem</item>
+              <label>sprech</label>
+              <item>X placed on stem</item>
+              <label>z</label>
+              <item>Z placed on stem</item>
+            </list>
+            The use of <att>stem.mod</att> is optional.
+            <!-- TODO: Include image and example -->
+          </p>
+          <p>
+            <att>stem.with</att> allows to place a note on the staff above or below the current staff, even though it 
+            logically belongs to the current staff. Its use is optional.
+            <!-- TODO: Include image and example -->
+          </p>
+        </div>
+      </div>
+      <div type="div4" xml:id="cmnRests">
+        <head>Rests</head>
+        <p>
+          The use of rests in CMN is quite similar to other repertoires in MEI. The <att>dur</att>-attribute on
+          <gi>rest</gi> allows the same values as on <gi>note</gi> and <gi>chord</gi> in CMN. However, the CMN
+          module makes three more elements available:
+          <list>
+            <item><gi>mRest</gi></item>
+            <item><gi>multiRest</gi></item>
+            <item><gi>mSpace</gi></item>
+          </list>
+          These elements are used for special forms of rests.
+        </p>
+        <div type="div5" xml:id="cmnRestsMRest">
+          <head>mRest</head>
+          <p>
+            The <gi>mRest</gi> (<expan>measure rest</expan>) element is used to indicate a complete measure rest, independent
+            from the current meter of the <gi>measure</gi>. Although it offers a <att>dur</att>-attribute for convenience, 
+            by definition its value has to match the full duration of the measure. <!-- TODO: Should we drop or deprecate it? -->
+          </p>
+          <p>
+            The <att>cutout</att>-attribute allows to visually describe the rendition of the <gi>mRest</gi>. By default, it is 
+            rendered as whole rest (see below), independent of its actual duration. If <att>cutout</att> is set to 'cutout' (the
+            only value allowed), then the complete staff including the staff lines will not be rendered for this measure. 
+            <!-- TODO: Include image and example -->
+          </p>
+          <p>
+            It is a semantic error to mix an <gi>mRest</gi> with other events within one <gi>layer</gi>. There may be other 
+            controlevents like <gi>fermata</gi>s, though.
+          </p>
+        </div>
+        <div type="div5" xml:id="cmnRestsMultiRest">
+          <head>multiRest</head>
+          <p>
+            The <gi>multiRest</gi> (<expan>multiple measure rest</expan>) element is used to encode rests with a duration of 
+            multiple measures. It is commonly used in performer parts, but due to the synchronicity with other staves literally
+            unknown in scores. A numeric or other symbol indicates the number of resting measures, which can be stored in the 
+            <att>num</att>-attribute. 
+            <!-- TODO: Include image and example -->
+          </p>
+        </div>
+        <div type="div5" xml:id="cmnRestsMSpace">
+          <head>mSpace</head>
+          <p>
+            The <gi>mSpace</gi> (<expan>measure space</expan>) element is closely related to a <gi>space</gi> element. By definition,
+            the value of the <att>dur</att>-attribute has to match the duration of the measure, independent from its meter. 
+            Therefore, <gi>mSpace</gi> can be interpreted as 'invisible <gi>mRest</gi>'.
+            <!-- TODO: Include image and example -->
+          </p>
+        </div>
+      </div>
+    </div>
+    <div type="div3" xml:id="cmnTstamp">
+      <head>The concept of timestamps and durations</head>
+      <!-- TODO: add information about note's @dur -->
+      <p>
+        MEI offers multiple ways of defining on- and offsets of timed musical events like notes and slurs. The most 
+        semantic approach to this is by the use of a combination of the attributes <att>tstamp</att> and <att>dur</att>,
+        which are made available with the attribute classes <classRef key="att.timestamp.musical"/> (which is inherited
+        by <classRef key="att.controlevent"/>) and <classRef key="att.duration.musical"/>, both from the shared module.
+      </p>
+      <p>
+        The <term>timestamp</term> (<att>tstamp</att>) of a musical event is calculated in relation to the meter of the 
+        current measure and resembles the so-called <soCalled>beat</soCalled>. In a Common time <!-- TODO: add reference -->
+        meter with four quarters per measure, the timestamp of each quarter equals its position in the measure: The first quarter 
+        has a timestamp of 1, the second one has a timestamp of 2 and so on. MEI defines the value of <att>tstamp</att> as real
+        number; the second eighth note in a measure would thus get the value of "1.5". The range of values is defined to start 
+        with zero and end with the meter unit <!-- TODO: add reference --> + 1. This allows to capture all events starting from 
+      </p>
+    </div>
+  </div>
+  
+  <div type="div2" xml:id="additionalMeasureContent">
+    <head>Advanced CMN Features</head>
+    <p>
+      
+    </p>
+    
+    <div type="div3" xml:id="cmnBeams">
+      <head>Beams</head>
+      <!-- TODO: What about @beam on notes? maybe deprecate? Do we need all of these [imt][1-6] datatypes?-->
+      <p>
+        A very common feature of music from the CMN repertoire is the beaming of eighth or shorter notes. Encoding a beam in MEI
+        is absolutely straightforward:
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+          …
+          <beam>
+            <note dur="8"/>
+            <note dur="8"/>
+          </beam>
+          …
+        </layer>
+      </egXML>
+      <p>
+        Whereas in music notation every note value shorter than an eighth adds another beam (sometimes referred to as 
+        <soCalled>secondary beams</soCalled>), in MEI only one beam element is used, no matter what the durations of 
+        the contained notes are:
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+          …
+          <beam>
+            <note dur="16"/>
+            <note dur="32"/>
+            <note dur="32"/>
+            <note dur="16" dots="1"/>
+            <note dur="32"/>
+          </beam>
+          …
+        </layer>
+      </egXML>
+      <p>
+        From the 19th century onwards, it became quite common to break secondary beams to increase readability of
+        longer beamed passages. 
+        <!-- TODO: Include image -->
+        It is possible to encode situations like this in MEI even without nested beams. Instead the optional 
+        <att>breaksec</att>-attribute on <gi>note</gi>s and <gi>chord</gi>s under the beam may be used to encode the
+        breaking of secondary beams <emph>after</emph> the note or chord wearing the attribute. The value of the 
+        <att>breaksec</att> indicates the number of continuous beams. The following encoding matches the image above:
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+          …
+          <beam>
+            <note dur="16"/>
+            <note dur="16"/>
+            <note dur="16"/>
+            <note dur="16" breaksec="1"/>
+            <note dur="32"/>
+            <note dur="32"/>
+            <note dur="32"/>
+            <note dur="32" breaksec="2"/>
+            <note dur="32"/>
+            <note dur="32"/>
+            <note dur="32"/>
+            <note dur="32"/>
+          </beam>
+          …
+        </layer>
+      </egXML>
+      <p>
+        In the music of the second half of the 20th century, it is quite common to indicate acceleration 
+        or deceleration using branching beams like in the image below:
+        <figure>
+          <graphic url="guidelines/Images/modules/cmn/beamAcc-Rit.png" width="500px"/>
+        </figure>
+        The encoding of such a beam is done using the <att>rend</att>-attribute of the beam, which allows the
+        following values:
+        <list>
+          <label>acc</label>
+          <item>
+            The secondary beams are starting in their regular position and constantly converge until they meet
+            with the primary beam on the last note (or, the first eighth note under the beam).
+          </item>
+          <label>rit</label>
+          <item>
+            The beamed notes start with only one primary beam, which constantly diverge until they reach their regular
+            distance. 
+          </item>
+          <label>norm</label>
+          <item>
+            The bea is rendered as usual (default).
+          </item>
+        </list>
+        The examples above may be encoded like so:
+      </p>
+      <!-- TODO: Do we need to specify durations for the notes in the middle? They don't have exact values! -->
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+          …
+          <beam rend="acc">
+            <note dur="8"/>
+            <note dur="8"/>
+            <note />
+            <note />
+            <note />
+            <note dur="32"/>
+          </beam>
+          …
+        </layer>
+      </egXML>
+      <p>
+        Due to the problem of overlapping hierarchies, the <gi>beam</gi>-element allows only to encode beams that do 
+        not cross layers, staves or barlines. Situations like these require the use of the <gi>beamSpan</gi>-element.
+        This element is not used in a structural way like <gi>beam</gi>, which contains all beamed notes or chords as 
+        childs. Instead, it references the <att>xml:id</att>s of all affected notes in its <att>plist</att>-attribute.
+        
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <beamSpan plist="#note1 #note2 #note3 #note4"/>
+      </egXML>
+      <p>
+        MEI requires to specify one starting point for the beam as well as one ending point. This can be achieved as
+        described in <!-- TODO: Add reference here (or, if there is no such chapter in shared, add one such -->
+      </p>
+      <p>
+        The following image demonstrates a typical example of such hierarchy-crossing beams.
+      </p>
+      <!-- TODO: Include figure and encoding -->
+      <p>  
+        <specList>
+          <specDesc key="beam"/>
+          <!-- note/@breaksec -->
+          <specDesc key="beamSpan"/>
+        </specList>
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnSlurTies">
+      <head>Slurs and Ties</head>
+      <p>
+        
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnDynam">
+      <head>Dynamics in CMN</head>
+      <p>
+        <specList>
+          <specDesc key="dynam"/> <!-- shared! -->
+          <specDesc key="hairpin"/>
+        </specList>
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnTuplets">
+      <head>Tuplets</head>
+      <p>
+        <specList>
           <specDesc key="tuplet"/>
           <specDesc key="tupletSpan"/>
         </specList>
       </p>
     </div>
+    
+    <div type="div3" xml:id="cmnArtic">
+      <head>Articulation and performance instructions in CMN</head>
+      <p>
+        <specList>
+          <specDesc key="arpeg"/>
+          <specDesc key="bend"/>
+          <specDesc key="bTrem"/>
+          <specDesc key="fermata"/>
+          <specDesc key="fTrem"/>
+          <specDesc key="gliss"/>
+          <specDesc key="octave"/>
+        </specList>
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnInstr">
+      <head>Instrument-specific symbols in CMN</head>
+      <p>
+        <specList>
+          <specDesc key="breath"/>
+          <specDesc key="harpPedal"/>
+          <specDesc key="pedal"/>
+        </specList>
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnOssia">
+      <head>Ossia</head>
+      <p>
+        
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnDir">
+      <head>Directions</head>
+      <p>
+        <specList>
+          <specDesc key="dir"/><!-- shared! -->
+          <specDesc key="reh"/>
+        </specList>
+      </p>
+    </div>
+    
+    <div type="div3" xml:id="cmnRep">
+      <head>Repetition in CMN</head>
+      <p>
+        
+      </p>
+      <div type="div4" xml:id="cmnRepStruct">
+        <head>Structural Repetition</head>
+        <p>
+          
+        </p>
+      </div>
+      <div type="div4" xml:id="cmnRepSym">
+        <head>Repetition Symbols</head>
+        <p>
+          <specList>
+            <specDesc key="beatRpt"/>
+            <specDesc key="halfmRpt"/>
+            <specDesc key="mRpt"/>
+            <specDesc key="mRpt2"/>
+            <specDesc key="multiRpt"/>
+          </specList>
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <div type="div2" xml:id="originalContent">  
+    <head>Overview of the CMN Module</head>
+    <p>The module described in this chapter makes available the following components:</p>
+    <!--<div type="div3" xml:id="cmnElements">
+      <head>Elements</head>
+      <p>
+        <specList>
+          <specDesc key="_arpeg"/>
+          <specDesc key="_beam"/>
+          <specDesc key="_beamSpan"/>
+          <specDesc key="_beatRpt"/>
+          <specDesc key="_bend"/>
+          <specDesc key="_breath"/>
+          <specDesc key="_bTrem"/>
+          <specDesc key="_fermata"/>
+          <specDesc key="_fTrem"/>
+          <specDesc key="_hairpin"/>
+          <specDesc key="_harpPedal"/>
+          <specDesc key="_gliss"/>
+          <specDesc key="_halfmRpt"/>
+          <specDesc key="_measure"/>
+          <specDesc key="_mRest"/>
+          <specDesc key="_mRpt"/>
+          <specDesc key="_mRpt2"/>
+          <specDesc key="_mSpace"/>
+          <specDesc key="_multiRest"/>
+          <specDesc key="_multiRpt"/>
+          <specDesc key="_octave"/>
+          <specDesc key="_ossia"/>
+          <specDesc key="_pedal"/>
+          <specDesc key="_reh"/>
+          <specDesc key="_slur"/>
+          <specDesc key="_tie"/>
+          <specDesc key="_tuplet"/>
+          <specDesc key="_tupletSpan"/>
+        </specList>
+      </p>
+    </div>-->
     <div type="div3" xml:id="cmnAttributeClasses">
       <head>Attribute Classes</head>
       <p>
