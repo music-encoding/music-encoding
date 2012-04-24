@@ -9,8 +9,8 @@
 <div type="div1" xml:id="shared" n="1" xmlns="http://www.tei-c.org/ns/1.0">
   <head>Shared Elements, Model Classes, and Attribute Classes</head>
   <p>This chapter describes the elements, model classes, and attribute classes that are part of the
-    MEI.shared module.</p>
-  <!--<p>Definition of "shared" here</p>-->
+    MEI.shared module. The shared module contains declarations that are shared among two or more
+    other modules.</p>
   <div type="div2" xml:id="structuralElements">
     <!-- Structural Elements -->
     <head>Structural Elements</head>
@@ -31,16 +31,18 @@
           <gi>music</gi> element. The <gi>meiHead</gi> element, formally declared in the MEI.header
         module, is described in chapter <ptr target="#header"/></p>
       <p>Other variations on this basic form are also available for the representation of a:</p>
-      <list type="simple">
-        <item>collection of related MEI-encoded texts</item>
+      <list type="bulleted">
+        <item>collection of related MEI-encoded texts, each with its own metadata, known as a
+          corpus</item>
         <item>document that contain only metadata, known as an independent or stand-alone
-          header.</item>
-        <item>musical text that is intended to be embedded within another kind of markup, such as
-          TEI, via XML namespaces.</item>
+          header</item>
+        <item>music markup without metadata, typically intended to be embedded within another kind
+          of markup, such as TEI</item>
       </list>
       <p>Further information regarding the organization and encoding of music corpora is given in
         chapter <ptr target="#"/><!--“Music Corpora”.-->. Stand-alone headers are more fully
-        described in chapter <ptr target="#header"/>.</p>
+        described in chapter <ptr target="#header"/>. Additional information about embedding MEI in
+        other XML files is covered in chapter <!-- ?  -->.</p>
     </div>
     <div type="div3" xml:id="musicElement">
       <head>Music Element</head>
@@ -125,32 +127,74 @@
         </mei>
       </egXML>
       <div type="div4">
+        <head>Grouped texts</head>
+        <p>The <gi>group</gi> element may be used to represent a collection of independent musical
+          texts which is to be regarded as a single unit for processing or other purposes.</p>
+        <p>
+          <specList>
+            <specDesc key="group"/>
+          </specList>
+        </p>
+        <p>Examples of composite texts which may be represented using the <gi>group</gi> element
+          include anthologies and other collections. The presence of common front matter referring
+          to the whole collection, possibly in addition to front matter relating to each individual
+          musical text, is a good indication that a given musical text might usefully be encoded in
+          this way.</p>
+        <p>For example, the overall structure of a collection of songs might be encoded as follows: </p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <music>
+            <group>
+              <music><!-- song 1 --></music>
+              <music><!-- song 2 --></music>
+              <!-- additional songs here -->
+            </group>
+          </music>
+        </egXML>
+        <p>A group of musical texts may contain unitary and grouped texts:</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <music>
+            <group>
+              <music><!-- song 1 --></music>
+              <group>
+                <!-- songs sharing some characteristics, treated as a group -->
+                <music><!-- song 2 --></music>
+                <music><!-- song 3 --></music>
+              </group>
+            </group>
+          </music>
+        </egXML>
+        <p>The group element may be used to encode any kind of collection in which the constituents
+          are regarded by the encoder as works in their own right, such as <foreign>ad hoc</foreign>
+          single- or multiple-composer collections or anthologies of works not originally conceived
+          of as a single composition.</p>
+      </div>
+      <div type="div4">
         <head>Divisions of the body</head>
         <p>This section describes sub-division of the body of a musical text. Front and back matter
           are described in chapter <ptr target="#"/><!-- “Text in MEI” -->.</p>
         <p>The body of a unitary musical text may contain one or more discrete, linear segments. The
-          names commonly used for these structural subdivisions vary with the genre and period of
-          the music, or even at the whim of the author, editor, or publisher. For example, a major
-          subdivision of a symphony is generally referred to as a ‘movement’. An opera, on the other
-          hand, is usually organized into ‘acts’ and then further by ‘scenes’. All such divisions
-          are treated as occurrences of the same neutrally-named element, with an attribute @type
-          used to categorize them independently of their hierarchic level.</p>
+          names commonly used for these structural subdivisions vary with the genre, style, and time
+          period of the music, or even at the whim of the author, editor, or publisher. For example,
+          a major subdivision of a symphony is generally referred to as a ‘movement’. An opera, on
+          the other hand, is usually organized into ‘acts’ and then further by ‘scenes’. All such
+          divisions are treated as occurrences of the same neutrally-named element, with an
+          attribute @type used to categorize them independently of their hierarchic level.</p>
         <p>The following element is used to identify musical subdivisions: </p>
         <p>
           <specList>
             <specDesc key="mdiv"/>
           </specList>
         </p>
-        <p>As a member of the class att.typed, this element has attributes which can be used to
-          classify or sub-classify elements.</p>
+        <p>As a member of the class att.typed, the <gi>mdiv</gi> element has attributes which can be
+          used to classify or sub-classify it.</p>
         <p>
           <specList>
             <specDesc key="mdiv" atts="type subtype"/>
           </specList>
         </p>
-        <p>To accommodate “divisions within divisions”, an <gi>mdiv</gi> element may contain
-          additional <gi>mdiv</gi> elements down to any level required. For example, the encoding of
-          a symphony might have the following structure:</p>
+        <p>To accommodate "divisions within divisions", an <gi>mdiv</gi> element may contain
+          additional <gi>mdiv</gi> sub-elements nested to any level required. For example, the
+          encoding of a symphony might have the following structure:</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <body xmlns="http://www.music-encoding.org/ns/mei">
             <mdiv type="symphony">
@@ -169,8 +213,8 @@
             </mdiv>
           </body>
         </egXML>
-        <p>Dramatic works, such as Verdi's opera, <title> Il Trovatore</title> often have a more
-          deeply-nested structure:</p>
+        <p>while dramatic works, such as Verdi's opera, <title> Il Trovatore</title> often have a
+          more deeply-nested structure:</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <body>
             <mdiv type="opera">
@@ -199,8 +243,8 @@
             </mdiv>
           </body>
         </egXML>
-        <p>Conventionally, the musical structures represented by <gi>mdiv</gi> elements are
-          separated by pauses; however, <foreign>attacca</foreign>, <foreign>attacca
+        <p>Conventionally, in performance the musical structures represented by <gi>mdiv</gi>
+          elements are separated by pauses; however, <foreign>attacca</foreign>, <foreign>attacca
             subito</foreign>, <foreign>seque</foreign>, or similar terms are sometimes used at the
           end of an <gi>mdiv</gi> to indicate that the next <gi>mdiv</gi> should begin immediately
           after the conclusion of the current one.</p>
@@ -215,14 +259,12 @@
             <specDesc key="parts"/>
           </specList>
         </p>
-        <p>The score element contains all the parts of an ensemble arranged on vertically aligned
-          staves, while the parts element contains only the notation for a particular performer.
-          Score and parts views are intended to accommodate different methods of organizing the
-          markup – no particular presentation is implied, and software may render a collection of
-          parts as a score or a score as a collection of parts. The explicit encoding of two views
-          is necessary because it is not always possible or desirable to automatically derive one
-          view from the other. In addition, separating scores and parts can eliminate a great deal
-          of markup complexity.</p>
+        <p>Most often, the <gi>score</gi> element represents notation in which all the parts of an
+          ensemble are arranged on vertically aligned staves, while the <gi>parts</gi> element
+          represents only the notation for a particular performer or group of performers. The
+          explicit encoding of two views is often necessary because it is not always possible or
+          desirable to automatically derive one view from the other. In addition, separating scores
+          and parts can eliminate a great deal of markup complexity.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <body>
             <mdiv type="movement" n="1">
@@ -236,7 +278,11 @@
             <!-- additional movements go here -->
           </body>
         </egXML>
-        <p>Performers' parts are contained within <gi>part</gi> elements:</p>
+        <p>Score and parts views may also be employed to accommodate different methods of organizing
+          the markup – with no particular presentation implied. In this case, software may render a
+          collection of parts as a score or a score as a collection of parts.</p>
+        <p>Within the collective <gi>parts</gi> element, notation for a single performer is
+          represented by the <gi>part</gi>element:</p>
         <p>
           <specList>
             <specDesc key="part"/>
@@ -244,7 +290,7 @@
         </p>
         <p>A <gi>part</gi> is effectively a mini-score requiring all the encoding features of a full
           score. <gi>Part</gi> elements are useful for encoding performing parts when there is no
-          score, such as in early music part books, when the music has non-aligning bar lines, when
+          score, such as in early music part books, when the parts have non-aligning bar lines, when
           different layout, such as page turns, are needed for the score and parts, or for
           accommodating software that requires part-by-part encoding. Please note that part elements
           in MEI are not an indication of voice leading. Voice leading can be encoded using the next
@@ -261,11 +307,11 @@
           </parts>
         </egXML>
         <p>In both score and part views, the <gi>scoredef</gi> element is used to describe logical
-          characteristics of the encoded music, such as key signature, the "actual" key (as opposed
+          characteristics of the encoded music, such as key signature, the sounding key (as opposed
           to the notated key signature), meter, etc. and visual features, such as page size, staff
           groupings and labels, etc.</p>
         <p>A <gi>part</gi> or <gi>score</gi> may be further divided into linear segments called
-          “sections”.</p>
+          "sections".</p>
         <p>
           <specList>
             <specDesc key="section"/>
@@ -275,8 +321,8 @@
           meter signatures, plus metronome, tempo, and expression markings. Their use minimizes the
           need for backward scanning to establish context when the starting point for access is not
           at the beginning of the score. <gi>Section</gi> elements may also be used for other
-          user-defined, i.e., analytical or editorial, purposes, and arbitrarily nested to any
-          desired level. </p>
+          user-defined, i.e., analytical or editorial, purposes, and so may be arbitrarily nested to
+          any desired level.</p>
         <p>The <gi>ending</gi> element shares the same model as the <gi>section</gi> element; unlike
             <gi>section</gi>, however, it may not be recursively nested.</p>
         <p>
@@ -287,20 +333,26 @@
         <p>The most common (non-analytical, non-editorial) use of <gi>section</gi> and
             <gi>ending</gi> elements is illustrated below:</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <score>
-            <section>
-              <!-- section one to be repeated -->
-            </section>
-            <ending n="1">
-              <!-- 1st ending -->
-            </ending>
-            <ending n="2">
-              <!-- 2nd ending -->
-            </ending>
-            <section>
-              <!-- next section -->
-            </section>
-          </score>
+          <music>
+            <body>
+              <mdiv>
+                <score>
+                  <section>
+                    <!-- section one to be repeated -->
+                  </section>
+                  <ending n="1">
+                    <!-- 1st ending -->
+                  </ending>
+                  <ending n="2">
+                    <!-- 2nd ending -->
+                  </ending>
+                  <section>
+                    <!-- next section -->
+                  </section>
+                </score>
+              </mdiv>
+            </body>
+          </music>
         </egXML>
         <p>Within <gi>section</gi> elements, several methods of organization are possible, depending
           upon the notational style of the source material and the encoder's needs. For example,
@@ -315,51 +367,64 @@
           staff-by-staff organization may be used and the ends of measures marked using
             <gi>barLine</gi> elements. In certain circumstances, this approach may be preferable for
           reproduction of the visual layout of the music. However, the simultaneous use of the
-            <gi>measure</gi> and <gi>barLine</gi> elements should be avoided.</p>
+            <gi>measure</gi> and <gi>barLine</gi> elements must be avoided.</p>
+        <p>Typically, MEI follows the order of sections as they appear in the document being
+          encoded. When performance requires a different order, for instance in the case of D.C. and
+          D.S. directives, the following element may be used to define the performance order.</p>
         <p>
           <specList>
             <specDesc key="expansion"/>
           </specList>
         </p>
-        <p>The remainder of this chapter covers the remaining elements available within the music
-          element.</p>
-      </div>
-      <div type="div4">
-        <head>Grouped texts</head>
-        <p>The group element may be used to represent a collection of independent musical texts
-          which is to be regarded as a single unit for processing or other purposes.</p>
-        <p>
-          <specList>
-            <specDesc key="group"/>
-          </specList>
-        </p>
-        <p>Examples of composite texts which should be represented using the <gi>group</gi> element
-          include anthologies and other collections. The presence of common front matter referring
-          to the whole collection, possibly in addition to front matter relating to each individual
-          musical text, is a good indication that a given musical text might usefully be encoded in
-          this way; however, this structure may be found useful in other circumstances as well. </p>
-        <p>For example, the overall structure of a collection of songs might be encoded as follows: </p>
+        <p>In the following example, <gi>expansion</gi> is used to indicate how the notated sections
+          should be ordered in a "through-composed" rendition, for example for machine performance
+          or analysis. The plist attribute contains an ordered list of identifiers of descendant
+          &lt;section&gt;, &lt;ending&gt;, &lt;lem&gt;, or &lt;rdg&gt; elements. The sequence "#A #B
+          #A" indicates that the section labelled 'A' comes first, then the section labelled 'B',
+          followed by the 'A' section again. This mechanism must be specified independently of any
+          textual directives, such as "Da capo" or "D.S. al Fine", that may be present in the
+          document.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <music>
-            <group>
-              <!-- Example incomplete! -->
-            </group>
+            <body>
+              <mdiv>
+                <score>
+                  <section>
+                    <expansion plist="#A #B #A"/>
+                    <section xml:id="A">
+                      <!-- "A" section -->
+                    </section>
+                    <section xml:id="B">
+                      <!-- "B" section -->
+                    </section>
+                  </section>
+                </score>
+              </mdiv>
+            </body>
           </music>
         </egXML>
-        <p>A musical text which is a member of a group may itself contain groups:</p>
+        <p>Because the same musical material, drawn from different sources for example, may require
+          different expansions, the <gi>expansion</gi> element is repeatable. For instance:</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <music>
-            <group>
-              <!-- Example incomplete! -->
-            </group>
-          </music>
+          <score>
+            <section>
+              <expansion plist="#A #B #A"/>
+              <expansion plist="#A #A #B #A #A"/>
+              <section xml:id="A">
+                <!-- "A" section -->
+              </section>
+              <section xml:id="B">
+                <!-- "B" section -->
+              </section>
+            </section>
+          </score>
         </egXML>
-        <p>The group element may be used in this way to encode any kind of collection in which the
-          constituents are regarded by the encoder as works in their own right, such as <foreign>ad
-            hoc</foreign> single- or multiple-composer collections or anthologies of works not
-          originally conceived of as a single composition.</p>
+        <p>The n and label attributes may be used to assign a name to an expansion, the source
+          attribute provides for specifying the bibliographic source of the expansion, and the type
+          and subtype attributes allow for its classification.</p>
       </div>
-      <div type="div4">
+      <!-- This belongs in MEI text chapter. -->
+      <!-- <div type="div4">
         <head>Front matter</head>
         <p>By front matter we mean distinct sections of a text (usually, but not necessarily, a
           printed one), prefixed to it by way of introduction or identification as a part of its
@@ -373,7 +438,7 @@
           instead, generic div (“division”) elements may be used, which should not be confused with
           mdiv (“musical division”) elements. The following suggested values for the @type attribute
           may be used to distinguish various kinds of division characteristic of front matter: </p>
-        <list type="unordered">
+        <list type="bulleted">
           <item>'preface' – A foreword or preface addressed to the reader in which the author or
             publisher explains the content, purpose, or origin of the text. </item>
           <item>'ack' – A formal declaration of acknowledgment by the author in which persons and
@@ -387,62 +452,63 @@
         </list>
         <p>The following extended example demonstrates how various parts of the front matter of a
           text may be encoded. The front part begins with a title page, which is presented in
-          section <!--XX,
-        “Title Pages”-->, below. This is followed by a dedication and a
+          section <!-\-XX,
+        “Title Pages”-\->, below. This is followed by a dedication and a
           preface, each of which is encoded as a distinct div: </p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <titlePage><!-- transcription of title page --></titlePage>
+          <titlePage><!-\- transcription of title page -\-></titlePage>
           <div type="dedication">
-            <p><!-- Dedicatory text --></p>
+            <p><!-\- Dedicatory text -\-></p>
           </div>
           <div type="preface">
             <head>Preface</head>
-            <p><!-- paragraph 1 --></p>
-            <p><!-- paragraph 2 --></p>
-            <!-- additional material -->
+            <p><!-\- paragraph 1 -\-></p>
+            <p><!-\- paragraph 2 -\-></p>
+            <!-\- additional material -\->
           </div>
         </egXML>
         <p>The front matter concludes with another <gi>div</gi> element, shown in the next example,
           this time containing a table of contents, which contains a <gi>list</gi> element (as
-          described in chapter <ptr target="#"/><!-- section 3.7 Lists -->). Note the use of the
+          described in chapter <ptr target="#"/><!-\- section 3.7 Lists -\->). Note the use of the
             <gi>ptr</gi> element to provide page-references: the implication here is that the target
           identifiers (song1, song2, etc.) will correspond with identifiers used for the
             <gi>mdiv</gi> elements containing the individual songs. (For a description of the
-            <gi>ptr</gi> element, see chapter <!--XX, “Simple Links and Cross-References”-->.) </p>
+            <gi>ptr</gi> element, see chapter <!-\-XX, “Simple Links and Cross-References”-\->.) </p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <div type="contents">
             <head>Contents</head>
-            <list>
-              <item n="1">On Wenlock Edge <ptr target="#song1"/></item>
-              <item n="2">From Far, From Eve and Morning <ptr target="#song2"/></item>
-              <item n="3">Is My Team Ploughing? <ptr target="#song3"/></item>
-              <item n="4">Oh, When I Was In Love With You <ptr target="#song4"/></item>
-              <item n="5">Bredon Hill <ptr target="#song5"/></item>
-              <item n="6">Clun <ptr target="#song6"/></item>
+            <list form="ordered">
+              <item>On Wenlock Edge <ptr target="#song1"/></item>
+              <item>From Far, From Eve and Morning <ptr target="#song2"/></item>
+              <item>Is My Team Ploughing? <ptr target="#song3"/></item>
+              <item>Oh, When I Was In Love With You <ptr target="#song4"/></item>
+              <item>Bredon Hill <ptr target="#song5"/></item>
+              <item>Clun <ptr target="#song6"/></item>
             </list>
           </div>
         </egXML>
         <p>Alternatively, the pointers in the table of contents might link to the page breaks at
           which a song begins, assuming that these have been included in the markup: </p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <list>
-            <item n="1">On Wenlock Edge <ref target="#song1-p1">1</ref></item>
-            <item n="2">From Far, From Eve and Morning <ref target="#song2-p15">15</ref></item>
-            <!-- .... -->
+          <list form="ordered">
+            <item>On Wenlock Edge <ref target="#song1-p1">1</ref></item>
+            <item>From Far, From Eve and Morning <ref target="#song2-p15">15</ref></item>
+            <!-\- .... -\->
           </list>
-          <!-- Later in the document -->
+          <!-\- Later in the document -\->
           <mdiv type="song">
             <pb xml:id="song1-p1"/>
-            <!-- .... -->
+            <!-\- .... -\->
           </mdiv>
           <mdiv type="song">
             <pb xml:id="song2-p15"/>
-            <!-- .... -->
+            <!-\- .... -\->
           </mdiv>
-          <!-- .... -->
+          <!-\- .... -\->
         </egXML>
-      </div>
-      <div type="div4">
+      </div>-->
+      <!-- This belongs in MEI text chapter. -->
+      <!-- <div type="div4">
         <head>Title pages</head>
         <p>Detailed analysis of the title page and other preliminaries of older printed books and
           manuscripts is of major importance in descriptive bibliography and the cataloging of
@@ -459,10 +525,10 @@
             <specDesc key="lg"/>
           </specList>
         </p>
-        <!-- NOT CURRENTLY ALLOWED! <p>The graphic element is included so as to enable
+        <!-\- NOT CURRENTLY ALLOWED! <p>The graphic element is included so as to enable
           encoders to record the presence of complex non-textual material on a title page. For
           simple cases such as printers' ornaments or illustrations, the graphic element discussed
-          in section <!-\-XX, “Graphics and other non-textual components”-\->, should be adequate. </p>-->
+          in section <!-\-XX, “Graphics and other non-textual components”-\->, should be adequate. </p>-\->
         <p>The following example shows the title page of the work presented above. Note the use of
           the <gi>lb</gi> tag to mark the line breaks of the original where necessary.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -487,26 +553,27 @@
         </egXML>
         <p>The physical rendition of title page information is often of considerable importance. One
           approach to this requirement would be to use the <gi>rend</gi> element, described in
-          chapter <!--? --> to specify the rendition of each of the components of the title page.
+          chapter <!-\-? -\-> to specify the rendition of each of the components of the title page.
           Another would be to employ a CSS stylesheet. Finally, a module customized for the
           description of typographic entities such as pages, lines, rules, etc., bearing
           special-purpose attributes to describe line-height, leading, degree of kerning, font, etc.
           could be employed. Further discussion of these issues is provided in chapter
-          <!--XX, “Representation of Primary Sources”-->.</p>
-      </div>
-      <div type="div4">
+          <!-\-XX, “Representation of Primary Sources”-\->.</p>
+      </div>-->
+      <!-- This belongs in MEI text chapter.
+        <div type="div4">
         <head>Back matter</head>
         <p>Conventions vary as to which elements are grouped as back matter and which as front. For
           example, some books place the table of contents at the front, and others at the back.
-          <!--Even
+          <!-\-Even
           title pages may appear at the back of a book as well as at the front. The content model
           for back and front elements are therefore identical. <hi rend="color(FF0000)">(NOT YET IN
-            MEI!)</hi>-->
+            MEI!)</hi>-\->
         </p>
         <p>The following suggested values may be used for the @type attribute on all division
           elements, in order to distinguish various kinds of divisions characteristic of back
           matter: </p>
-        <list type="unordered">
+        <list type="bulleted">
           <item>'appendix' – An ancillary self-contained section of a work, often providing
             additional but in some sense extra-canonical text.</item>
           <item>'glossary' – A list of terms associated with definition texts (‘glosses’).</item>
@@ -546,14 +613,17 @@
           <item>Afterbeats, <ref target="#P77">77</ref>
           </item>
         </egXML>
-      </div>
+      </div>-->
     </div>
   </div>
   <div type="div2" xml:id="MusicalElements">
     <!-- Musical Elements -->
     <head>Shared Musical Elements</head>
+    <p>This section lists the elements defined in the shared module that are available within the
+      music element.</p>
     <div type="div3" xml:id="ScoreAndParts">
       <head>Score and Parts</head>
+      <p>The following elements are provided for the capture of scores and parts:</p>
       <p>
         <specList>
           <specDesc key="score"/>
@@ -574,6 +644,8 @@
     </div>
     <div type="div3" xml:id="instruments">
       <head>Instruments</head>
+      <p>These elements record information about the instruments indicated by a music notation
+        document:</p>
       <p>
         <specList>
           <specDesc key="instrDef"/>
@@ -584,6 +656,7 @@
     </div>
     <div type="div3" xml:id="stavesAndLayers">
       <head>Staves and Layers</head>
+      <p>The elements below are used to capture the logical organization of musical notation:</p>
       <p>
         <specList>
           <specDesc key="staff"/>
@@ -595,6 +668,7 @@
       <head>Expression Marks</head>
       <div type="div4" xml:id="textDirectives">
         <head>Text Directives</head>
+        <p>Text directives are ...</p>
         <p>
           <specList>
             <specDesc key="dir"/>
@@ -604,6 +678,7 @@
       </div>
       <div type="div4" xml:id="dynamics">
         <head>Dynamics</head>
+        <p>Dynamics are ...</p>
         <p>
           <specList>
             <specDesc key="dynam"/>
@@ -612,6 +687,7 @@
       </div>
       <div type="div4" xml:id="phraseMarks">
         <head>Phrase Marks</head>
+        <p>Phrase marks indicate ...</p>
         <p>
           <specList>
             <specDesc key="phrase"/>
@@ -621,6 +697,7 @@
     </div>
     <div type="div3" xml:id="basicEvents">
       <head>Basic Music Events</head>
+      <p>The basic features of music notation are represented by the following elements:</p>
       <p>
         <specList>
           <specDesc key="note"/>
@@ -631,9 +708,10 @@
     </div>
     <div type="div3" xml:id="otherEvents">
       <head>Other "Events"</head>
-      <p><!-- Some elements are treated as events because ... --></p>
+      <p>Some elements are treated as events because ... </p>
       <div type="div4" xml:id="keySignaturesAndClefs">
         <head>Key Signatures and Clefs</head>
+        <p>The elements below ...</p>
         <p>
           <specList>
             <specDesc key="keySig"/>
@@ -645,6 +723,7 @@
       </div>
       <div type="div4" xml:id="barlines">
         <head>Bar Lines</head>
+        <p>Measure separators ...</p>
         <p>
           <specList>
             <specDesc key="barLine"/>
@@ -653,6 +732,7 @@
       </div>
       <div type="div4" xml:id="accidentalsArticulations">
         <head>Accidentals, Articulation Symbols, Dots of Augmentation, and Custos Signs</head>
+        <p>The following elements ...</p>
         <p>
           <specList>
             <specDesc key="accid"/>
@@ -664,6 +744,7 @@
       </div>
       <div type="div4" xml:id="lyricSyllables">
         <head>Lyric Syllables</head>
+        <p>The following element ...</p>
         <p>
           <specList>
             <specDesc key="syl"/>
@@ -672,6 +753,7 @@
       </div>
       <div type="div4" xml:id="noteSpacing">
         <head>Note Spacing</head>
+        <p>These elements ...</p>
         <p>
           <specList>
             <specDesc key="pad"/>
@@ -684,8 +766,11 @@
   <div type="div2" xml:id="textualElements">
     <!-- Textual Elements -->
     <head>Shared Textual Elements</head>
+    <p>This section lists elements declared in the shared module that pertain to the encoding of
+      prose.</p>
     <div type="div3" xml:id="paragraphs">
       <head>Paragraphs</head>
+      <p>...</p>
       <p>
         <specList>
           <specDesc key="p"/>
@@ -694,6 +779,7 @@
     </div>
     <div type="div3" xml:id="textRendition">
       <head>Text Rendition</head>
+      <p>...</p>
       <p><specList>
           <specDesc key="rend"/>
         </specList></p>
@@ -702,6 +788,7 @@
       <head>Names, Numbers, Dates, Abbreviations, and Addresses</head>
       <div type="div4" xml:id="names">
         <head>Names</head>
+        <p>...</p>
         <p>
           <specList>
             <specDesc key="name"/>
@@ -710,6 +797,7 @@
       </div>
       <div type="div4" xml:id="numbers">
         <head>Numbers</head>
+        <p>...</p>
         <p>
           <specList>
             <specDesc key="num"/>
@@ -718,6 +806,7 @@
       </div>
       <div type="div4" xml:id="dates">
         <head>Dates</head>
+        <p>...</p>
         <p>
           <specList>
             <specDesc key="date"/>
@@ -726,6 +815,7 @@
       </div>
       <div type="div4" xml:id="abbreviations">
         <head>Abbreviations</head>
+        <p>...</p>
         <p>
           <specList>
             <specDesc key="abbr"/>
@@ -735,6 +825,7 @@
       </div>
       <div type="div4" xml:id="addresses">
         <head>Addresses</head>
+        <p>...</p>
         <p>
           <specList>
             <specDesc key="address"/>
@@ -744,17 +835,19 @@
     </div>
     <div type="div3" xml:id="annotations">
       <head>Annotations</head>
+      <p>...</p>
       <p>
         <specList>
           <specDesc key="annot"/>
         </specList>
       </p>
     </div>
-    <div type="div3" xml:id="referenceSystems">
+    <!--<div type="div3" xml:id="referenceSystems">
       <head>Reference Systems</head>
-    </div>
+    </div>-->
     <div type="div3" xml:id="bibliographicCitations">
       <head>Bibliographic Citations and References</head>
+      <p>...</p>
       <p>
         <specList>
           <specDesc key="bibl"/>
