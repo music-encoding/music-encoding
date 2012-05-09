@@ -10,16 +10,25 @@
   <head>Names and Dates</head>
   <p>This chapter describes a module which may be used for the encoding of names (names of persons
     or corporations/organizations) or descriptive phrases for styles, periods or geographical
-    indications. ...</p>
-  <!-- In module xy (header) it was noted that it is highly recommended to use controlled vocabularies... -->
-  <!-- places -->
-  <div type="div2" xml:id="namesdatesOverview">
-    <head>Overview of the namesdates Module</head>
-    <p>The module described in this chapter makes available the following components:</p>
+    indications. In section xy Names, Numbers, Dates, Abbreviations, and Addresses it was noted that
+    the elements provided in the core module alow an encoder to specify that a given text segment is
+    a proper noun, or a referring string. The elements provided by the present module allow the
+    encoder to supply a detailed sub-structure for such referring strings, and to distinguish
+    explicitly between persons and organizations, and between stylistic, periodical or geographical
+    indications.</p>
+  <p>The chapter begins by discussing the elements provided for the encoding of corporate names
+    (corpName), geographical names (geogName), period names (periodName), personal names (persName)
+    and style names (styleName). As it is recommended to use referring strings conforming to
+    standards and to record the names and web-accessible locations of utilized controlled
+    vocabularies the chapter is closed with a survey of controlled vocabularies for geographical,
+    organizational and personal names.</p>
 
+  <div type="div2" xml:id="namesdatesOverview">
+    <head>Overview of the namesDates module</head>
+    <p>The module described in this chapter makes available the following components:</p>
     <div type="div3" xml:id="namesdatesElements">
       <head>Elements</head>
-      <p>Basic Elements and Data Structures of the namesdates module:</p>
+      <p>Basic Elements and Data Structures of the namesDates module are:</p>
       <p>
         <specList>
           <specDesc key="corpName"/>
@@ -31,10 +40,6 @@
       </p>
     </div>
 
-    <!--Normdaten bündeln: Vocabulary Encoding Schemes: GND, EST, DDC, Locc, TGN etc.
-    Standards: MARC code list for relators-->
-    <!-- examples-->
-
     <div type="div3" xml:id="corpName">
       <head>corpName</head>
       <p>Corporate names are non-personal names which refer to structured bodies of one or more
@@ -43,61 +48,112 @@
         or ethnic groupings or political factions where these are regarded as forming a single
         agency. Organization names typically include some type of indicator or pattern or words that
         help identify them as non-personal names.</p>
-      <p>Secondary name parts may be encoded in corpName sub-elements. CorpName elements as well as
-        corpName sub-elements can be replanished with address-elements to note postal addresses of
-        organizations within several addrLine-elements. To enable a localization of an organization,
-        it is recommendable to use a controlled vocabulary for names of places and countries. The
-        name of the list from which a controlled value is taken, such as the Thesaurus of Geographic
-        Names (TGN), may be recorded using the authority attribute. The web-accessible location of
-        the controlled vocabulary from which the value is taken could be recorded using the authURI
-        attribute. The dbkey attribute should be used to record a value which serves as a primary
-        key in an external database.</p>
-      <!-- examples -->
+      <p>Secondary name parts may be encoded in corpName sub-elements, for example: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <corpName>Federal Research Division, <corpName>Library of Congress</corpName>
+          </corpName>
+        </egXML></p>
+      <p>CorpName elements as well as corpName sub-elements can be replanished with address-elements
+        to note postal addresses of organizations within several addrLine-elements. <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <corpName>German Research Foundation
+            <address>
+            <addrLine>Kennedyallee 40</addrLine>
+            <addrLine>53175 Bonn</addrLine>
+            <addrLine>Germany</addrLine>
+          </address>
+          </corpName>
+        </egXML>
+      </p>
     </div>
 
     <div type="div3" xml:id="geogName">
       <head>geogName</head>
       <p>Geographical names are proper noun designations for places (e.g. Baltimore, Maryland),
         natural features (e.g. Black Forest) or political jurisdictions (e.g. Quartier Latin,
-        Paris). Name sub-parts may be encoded in geogName sub-elements. The name of the list from
-        which a controlled value is taken, such as the Thesaurus of Geographic Names (TGN), may be
-        recorded using the authority attribute. The web-accessible location of the controlled
-        vocabulary from which the value is taken could be recorded using the authURI attribute. The
-        dbkey attribute should be used to record a value which serves as a primary key in an
-        external database. <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <corpName role="funder" dbkey="2007744-0" authURI="http://d-nb.info/gnd" authority="GND"
-            >German Research Foundation
+        Paris). Like other proper nouns or noun phrases used as names, they can simply be marked up
+        with the geogName element.<egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <geogName>Baltimore, Maryland</geogName>
+        </egXML></p>
+      <p>Name sub-parts may be encoded in geogName sub-elements. For example: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <geogName>Baltimore, <geogName>Maryland</geogName></geogName>
+        </egXML></p>
+      <!--Maryland in geogName sinnvoll oder lieber anderes Beispiel wählen?-->
+      <p>To enable a localization of an organization or to specify names of places with identical
+        names it is recommendable to use a controlled vocabulary for names of places and countries.
+        In this case the following attributes are particularly relevant: <list>
+          <item>@authority: to record the list from which a controlled value is taken, e.g. the
+            Thesaurus of Geographic Names (TGN),</item>
+          <item>@authURI (authority URI): to record the web-accessible location of the controlled
+            vocabulary from which the value is taken,</item>
+          <item>@dbkey (database key): to record a value which serves as a primary key in an
+            external database.</item>
+        </list></p>
+      <p>The encoder may use these attributes in combination. For example: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <geogName dbkey="7016099" authority="TGN"
+            authURI="www.getty.edu/research/tools/vocabularies/tgn">Baltimore, <geogName
+              dbkey="7007516" authority="TGN" authURI="ww.getty.edu/research/tools/vocabularies/tgn"
+              >Maryland</geogName>
+          </geogName>
+        </egXML> or with regard to the example given in chapter corpName: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <corpName dbkey="2007744-0" authURI="http://d-nb.info/gnd" authority="GND">German Research
+            Foundation
             <address>
-                     <addrLine>Kennedyallee 40</addrLine>
-                     <addrLine>53175 <geogName dbkey="7005090" authURI="www.getty.edu/research/tools/vocabularies/tgn" authority="TGN">Bonn</geogName></addrLine>
-                     <addrLine><geogName dbkey="7000084" authURI="www.getty.edu/research/tools/vocabularies/tgn" authority="TGN">Germany</geogName></addrLine>
-                  </address>
+            <addrLine>Kennedyallee 40</addrLine>
+            <addrLine>53175 <geogName dbkey="7005090" authURI="www.getty.edu/research/tools/
+                vocabularies/tgn" authority="TGN">Bonn</geogName></addrLine>
+            <addrLine><geogName dbkey="7000084" authURI="www.getty.edu/research/tools/
+                vocabularies/tgn" authority="TGN">Germany</geogName></addrLine>
+            </address>
           </corpName>
         </egXML>
       </p>
     </div>
+
     <div type="div3" xml:id="periodName">
       <head>periodName</head>
       <p>PeriodNames are names which describe a particular period of time, for example 'Baroque' or
-        '3rd Style Period'. <!-- Beispiel -->
+        '3rd Style Period'. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <periodName>Baroque</periodName>
+        </egXML>
       </p>
+      <!-- Weiteres? -->
     </div>
 
     <div type="div3" xml:id="persName">
       <head>persName</head>
-      <p/>
-      <!--
-      <p>MARC code list for relators: librettist, composer, lyricist, arranger, transcriber, encoder, publisher, printer, funder,  etc.</p>
-      <p>Personen und Körperschaften können auch, ohne Komponist oder Urheber zu sein, als
-        Bearbeiter, Herausgeber, Textdichter, Interpreten usw. an einem Werk oder einer Ausgabe
-        eines Werkes beteiligt sein</p>-->
-      <p>The element persName contains a propernoun or proper-noun phrase referring to an individual
-        person. Personal names consist of forenames, surnames, honorifics, added names etc. It is
-        recommended to record personal names by using a standard for personal names.</p>
-      <p>role, dbkey, authURI, authority</p>
-      <!-- Name sub-parts may be recorded in persName sub-elements. The name of the list from which a controlled 
-      value is taken may be recorded using the authority attribute.-->
-      <!-- Normdatei für Personen in Amerika: Name Authorities der Library of Congress -->
+      <p>Personal names within an MEI-Doument could simply be marked up with the persName element
+        which contains a propernoun or proper-noun phrase referring to an individual person.
+        Personal names consist of several components. Forenames and surnames, but also other
+        components like inherited or life-time titles of nobility, honorific or academic prefixes,
+        military ranks or traditional descriptive phrases could not be marked up separately in
+        MEI.</p>
+      <p>
+        <list>
+          <label>@role</label>
+          <item>Apart from the composer or originator of a musical work, there could be a lot of
+            other persons being involved into the genesis of a musical work, like librettists,
+            lyricists, arrangers, editors, transcripers, printers, publishers etc. The special roles
+            of these persons could be marked up with the role attribute. For example: <egXML
+              xmlns="http://www.tei-c.org/ns/Examples">
+              <persName role="composer">Wolfgang Amadeus Mozart</persName>
+            </egXML>
+          </item>
+        </list>
+      </p>
+      <p>It is recommended to record personal names by using a standard for personal names, such as
+        the Gemeinsame Normdatei (GND) or the Library of Congress Name Authorities. The name of the
+        list as well as the web-accessible location from which a controlled value is taken may be
+        recorded using the authority and the authURI attribute. To record a value which serves as a
+        primary key in an external database, the dbkey attribute may be used.</p>
+      <p>The encoder may use these attributes in combination. For example: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <persName role="composer" dbkey="118584596" authURI="http://d-nb.info/gnd" authority="GND"
+            >Wolfgang Amadeus Mozart</persName>
+        </egXML></p>
     </div>
 
     <div type="div3" xml:id="styleName">
@@ -105,75 +161,116 @@
       <p>Music can be devided into many genres different ways. These classifications are often
         arbitrary and closely related styles often overlap. The label styleName describes a
         characteristic style of writing or performance, for example 'bebop' or 'rock-n-roll'. This
-        element should not be confused with the periodName element.</p>
-      <!--<p>The name of the list from which a
-        controlled value is taken may be recorded using the authority attribute.</p>-->
+        element should not be confused with the periodName element (see above). <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <styleName>bebop</styleName>
+        </egXML>
+      </p>
     </div>
+    <!--Standards: GND, Name Authorities der Library of Congress, TGN, MARC code list for relators-->
+    <!-- Normdatei: Authority control is the practice of creating and maintaining index terms for bibliographic 
+      material in a catalog in library and information science. Authority control fulfills two important functions. 
+      First, it enables catalogers to disambiguate items with similar or identical headings. For example, two authors 
+      who happen to have published under the same name can be distinguished from each other by adding middle initials, 
+      birth and/or death (or flourished, if these are unknown) dates, or a descriptive epithet to the heading of one (or both) 
+      authors. Second, authority control is used by catalogers to collocate materials that logically belong together, 
+      although they present themselves differently. For example, authority records are used to establish uniform titles, 
+      which can collocate all versions of a given work together even when they are issued under different titles.
+      
+      Although theoretically any piece of information on a given book is amenable to authority control, catalogers typically 
+      focus on authors and titles. Subject headings fulfill a function similar to authority records, although they are usually 
+      considered separately. 
+      
+      Normdatei: im Englischen als authority files bezeichnet
+      eine Normdatei ist ein Verzeichnis von normierten Begriffen zur Verwendung als Deskriptor in der Dokumentation.
+      eine Normdatei ist damit eine Form eines kontrollierten Vokabulars, in dem festgelegt wird, welche Ansetzung bei der Erschließung
+      zu verwenden ist.
+      normierte Begriffe können Personennamen, Körperschaften und beliebige andere Mengen von Bezeichnungen von Dingen,
+      Vorgängen oder abstrakten Begriffen sein.
+      der Bildung von Normbegriffen liegt eine Ontologie zugrunde, die die jeweils zu normierenden Begriffe und die Art der
+      Normierung festlegt.
+      
+      Beispiele für Normdateien sind die Library of Congress Authorities Files (LCNAF) im englischsprachigen Raum,
+      die PND, die GKD und die SWD im deutschsprachigen Raum (GND)
+      
+      in dem Projekt VIAF (Virtual International Authority File) werden PND und andere Normdaten über eine Konkordanz
+      zu einer virtuellen internationalen Normdatei verbunden.
+      
+      PND
+      für jede in die PND aufgenommene Person gibt es einen Datensatz, auf den mit Hilfe eines eindeutigen Identifiers, der 
+      PND-Nummer, verwiesen werden kann.
+      die PND enthält sowohl für einzelne Personen, sog. individualisierte Datensätze mit zusätzlichen Angaben (Pseudonyme,
+      Lebensdaten, Beruf...) als auch nicht-individualisierte Datensätze, die lediglich eine für mehrere Personen verwendbare
+      Namensansetzung beinhalten.
+      
+      Problematik: Namensvettern und Schreibvarianten
+      
+      einheitliche Ansetzung dringend erforderlich, nur so ist ein zuverlässiger Datenaustausch möglich
+      
+      Autoren gleichen Namens können voneinander unterschieden werden
+      
+      in den Normdateien soll die originalschriftliche Namensform von Personen und Körperschaften die Hauptansetzungsform werden.
+      
+    
+    Normdatei 
+    Normdateien legen regelgerechte Ansetzungs- und Verweisungsformen für z.B. Personennamen, Körperschaftsnamen oder Schlagwörter 
+    fest, und führen bei den Anwendern zu einer einheitlichen Ansetzungspraxis. Der Katalogisierer kann für die Ansetzung eines 
+    Verfassernamens aus einer Normdatei für Personennamen die richtige Ansetzungsform und die zugehörigen Verweisungen entnehmen 
+    und sich damit eigene Überlegungen und Nachforschungen ersparen. Normdateien ermöglichen somit Arbeitserleichterung und 
+    Qualitätssteigerung, was zu Rationalisierungen bei der Erschließung führt. Bei Der Deutschen Bibliothek werden drei Normdateien 
+    geführt: die Schlagwortnormdatei (SWD), die Gemeinsame Körperschaftsdatei (GKD) und die Personennamendatei (PND). 
+    -->
+    <!-- PND: For each person there is a record with his name, birth and occupation connected with a unique identifier, the PND number.  
+      In der Personennamendatei (PND) werden alle für Formal- und Sacherschließung sowie nationale Katalogisierungsunternehmungen 
+      wesentlichen Namen zusammengeführt. Sie stellt vor allem eine Dienstleistung zur Vermeidung von Mehrfacharbeit bei der Ansetzung 
+      von Personennamen sowie zur Vereinheitlichung der Ansetzungsformen dar. Die PND wurde von 1995 bis 1998 in einem von der Deutschen 
+      Forschungsgemeinschaft (DFG) geförderten Projekt aufgebaut und ist auf der Normdaten-CD-ROM Der Deutschen Bibliothek enthalten. -->
 
-    <div type="div3" xml:id="standards">
-      <head>Use of Standards (selection)</head>
-      <div type="div4" xml:id="ddc">
-        <head>Dewey Decimal Classification (DDC)</head>
-        <p/>
-      </div>
+    <!-- Metadatenstandards: sind standardisierte Beschreibungsschemata: Spezifikationen, die Metadatenterme detailliert beschreiben,
+dienen der Festlegung von Elementen, deren Struktur und deren Beschreibung,
+ermöglichen die semantische Interoperabilität zwischen Anwendungen, die diesen Standard verwenden,
+Ziel: einheitliche, maschinenverarbeitbare Beschreibungen von Ressourcen und der Austausch dieser Beschreibungen.
 
-      <div type="div4" xml:id="est">
-        <head>Einheitssachtiteldatei (EST)</head>
-        <p/>
-      </div>
+Warum sind Standards so wichtig?
+"gemeinsame Sprache", Austausch von Metadaten durch Standard verständlich und interpretierbar,
+notwendig für effektive Datenhaltung, konsistente Daten für effektives Retrieval,
+Dokumentation, Transparenz, Verknüpfungen von Objekten
 
-      <div type="div4" xml:id="gnd">
-        <head>Gemeinsame Normdatei (GND)</head>
-        <p/>
-      </div>
+Standards-Auswahl: Dublin Core, MODS, METS, MAB, DDC, RDA, RAK, MARC 21, EAD etc.
 
-      <div type="div4" xml:id="locc">
-        <head>Library of Congress Classification (LCC)</head>
-       <!-- <p>The Library of Congress Classification (LCC) is a classification system that was first
-          developed in the late nineteenth and early twentieth centuries. The system divides all
-          knowledge into twnty-one basic classes, each identified by a single letter of the
-          alphabet. Most of theses alphabetical classes are further divided into more specific
-          subclasses, identiefied by two-letter, or occasionally three-letter, combinations. 
-          For example, class N, Art, has subclasses NA, Architecture; NB, Sculpture, ND, Painting; 
-          as well as several other subclasses. Each subclass includes a loosely hierarchical arrangement 
-          of the topics pertinent to the subclass, going from the general to the more specific. Individual 
-          topics are often broken down by specific places, time periods, or bibliographic forms 
-          (such as periodicals, biographies, etc.). Each topic (often referred to as a caption) is assigned 
-          a single number or a span of numbers. Whole numbers used in LCC may range from one to four digits 
-          in length, and may be further extended by the use of decimal numbers. Some subtopics appear in 
-          alphabetical, rather than hierarchical, lists and are represented by decimal numbers that combine 
-          a letter of the alphabet with a numeral , e.g. .B72 or .K535. Relationships among topics in LCC 
-          are shown not by the numbers that are assigned to them, but by indenting subtopics under the larger 
-          topics that they are a part of, much like an outline. In this respect, it is different from more 
-          strictly hierarchical classification systems, such as the Dewey Decimal Classification, where 
-          hierarchical relationships among topics are shown by numbers that can be continuously subdivided.
-          see: http://www.loc.gov/catdir/cpso/lcc.html</p>-->
-      </div>
+Typen von Metadatenstandards: Datenstruktur und Semantik: Formate (z.B. DC, PICA, MARC) und Syntax (z.B. XML, RDF)
+Inhalte: Regelwerke (z.B. RAK-WB, AACR2, RDA),
+Werte: Normdaten, kontrollierte Vokabulare (z.B. PND, LCSH, DDC),
+Kommunikation: Schnittstellen, Protokolle (z.B. Z39.50, SRU, OAI).
 
-      <div type="div4" xml:id="marcCodeListRelators">
-        <head>MARC code list for relators</head>
-        <p>...was developed for use in MARC 21 bibliographic records to express the relationship between a name and a work....
-          see: http://dublincore.org/documents/usageguide/appendix_roles.shtml</p>
-      </div>
+Normdateien: 
+nationale Normdateien: PND, GKD, SWD (GND)
+Internationale Normdateien: z.B. Library of Congress Authorities, RAMEAU
+Mappings und Crosskonkordanzen: VIAF, MACS, CrissCross
+http://www.viaf.org/ : 13 Nationalbibliotheken beteiligt (Anwendung)
 
-      <div type="div4" xml:id="nameAuthorities">
-        <head>Name Authorities der Library of Congress</head>
-        <p/>
-      </div>
+Weitere kontrollierte Vokabulare:
+Klassifikationen: z.B. Dewey Decimal Classification (DDC), Universal Decimal Classification (UDC),
+Library of Congress Classification, Regensburger Verbundklassifikation (RVK)
+Thesauri: z.B. Standard Thesaurus Wirtschaft (STW), Getty Thesaurus for Geographic Names (TGN)
+sonstige Vokabulare: z.B. MARC Relator Codes
 
-      <div type="div4" xml:id="tgn">
-        <head>Thesaurus of Geographic Names (TGN)</head>
-        <p/>
-      </div>
-    </div>
+TGN: Geografika (politische und physische Entitäten), Fokus auf Orte, die im Bereich Kunst und
+Architektur von Bedeutung sind
+Pflege und Weiterentwicklung: durch Getty
+Umfang: ca. 895.000 Deskriptoren (multilingual), über 1 Mio. Terme, Namen, Koordinaten, Datumsangaben,
+Ortstypen, Erläuterungen, Quellenangaben 
+http://www.getty.edu/
+
+Library of Congress Authorities:
+http://authorities.loc.gov/
+
+-->
 
     <div type="div3" xml:id="namesdatesAttributeClasses">
       <head>Attribute Classes</head>
       <p>No attribute classes are defined in this module.</p>
-      <!-- ? -->
     </div>
-
-
     <div type="div3" xml:id="namesdatesModelClasses">
       <head>Model Classes</head>
       <p>
