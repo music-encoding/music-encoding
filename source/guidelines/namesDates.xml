@@ -11,17 +11,26 @@
   <p>This chapter describes a module which may be used for the encoding of names (names of persons
     or corporations/organizations) or descriptive phrases for styles, periods or geographical
     indications. In section xy Names, Numbers, Dates, Abbreviations, and Addresses it was noted that
-    the elements provided in the core module alow an encoder to specify that a given text segment is
-    a proper noun, or a referring string. The elements provided by the present module allow the
-    encoder to supply a detailed sub-structure for such referring strings, and to distinguish
-    explicitly between persons and organizations, and between stylistic, periodical or geographical
-    indications.</p>
-  <p>The chapter begins by discussing the elements provided for the encoding of corporate names
-    (corpName), geographical names (geogName), period names (periodName), personal names (persName)
-    and style names (styleName). As it is recommended to use referring strings conforming to
-    standards and to record the names and web-accessible locations of utilized controlled
-    vocabularies the chapter is closed with a survey of controlled vocabularies for geographical,
-    organizational and personal names.</p>
+    the elements provided in the core module allow an encoder to specify that a given text segment
+    is a proper noun. <!--ToDo: synchronisation with section Names, Numbers etc. !--> The elements
+    provided by the present module allow the encoder to supply a detailed sub-structure for such
+    proper nouns, and to distinguish explicitly between persons and organizations, and between
+    stylistic, periodical or geographical indications.</p>
+  <p>The chapter begins by discussing the elements provided for the encoding of names
+    (<gi>name</gi>) and dates (<gi>date</gi>) in general, up to more specifical elements like
+    corporate names (<gi>corpName</gi>), geographical names (<gi>geogName</gi>), period names
+      (<gi>periodName</gi>), personal names (<gi>persName</gi>) and style names
+    (<gi>styleName</gi>). In general it is recommended to use standardised spelling forms of proper
+    nouns conforming to standards and to record the names and web-accessible locations of used
+    controlled vocabularies. Especially for geographical, organizational and personal names there
+    are several authority files, such as the Gemeinsame Normdatei (GND), the Library of Congress
+    Authorities, the Getty Thesaurus of Geographic Names (TGN) or the MARC code list for relators.
+    Recommendations on which standards could be used can be found in the descriptions of the
+    individual elements.
+    <!-- Generell: Vielleicht an den Stellen, wo eines der nachfolgenden Elemente in vielen Elementen erlaubt ist,
+    auf die model.Klasse verweisen, in Form von: These elements are all members of the model.placeNamePart etc.,
+    wird in TEI ebenfalls so gehandhabt.--><!-- #MH: finde ich gut! -->
+  </p>
 
   <div type="div2" xml:id="namesdatesOverview">
     <head>Overview of the namesDates module</head>
@@ -31,12 +40,82 @@
       <p>Basic Elements and Data Structures of the namesDates module are:</p>
       <p>
         <specList>
+          <specDesc key="name"/>
+          <specDesc key="date"/>
           <specDesc key="corpName"/>
           <specDesc key="geogName"/>
-          <specDesc key="periodName"/>
           <specDesc key="persName"/>
+          <specDesc key="periodName"/>
           <specDesc key="styleName"/>
         </specList>
+      </p>
+    </div>
+
+    <div type="div3" xml:id="name">
+      <head>name</head>
+      <p>The <gi>name</gi> element contains the name of an entity that is difficult to tag more
+        specifically as a <gi>corpName</gi>, <gi>geogName</gi>, <gi>persName</gi>, or
+        <gi>title</gi>. In section xy Names, Numbers, Dates, Abbreviations, and Addresses
+        <!--ToDo: link to chapter shared--> it was noted that the <gi>name</gi> element may be used
+        in place of the more specific elements when it is not known what kind of name is being
+        described or when a high degree of precision is not necessary. For example, the
+          <gi>name</gi> element might be used when it is not clear whether the name "Bach" refers to
+        a person or a geographic feature. When name parts are needed, use <gi>name</gi>
+        sub-elements. The recommended values for the <att>type</att> attribute are: pers, corp,
+        place, process. The date sub-element is available within <gi>name</gi> in order to record
+        any dates, associated with the name, i.e. creation and dissolution in the case of a
+        corporate entity or place. The name of the list from which a controlled value is taken, such
+        as the Library of Congress Name Authority File (LCNAF), may be recorded using the authority
+        attribute.</p>
+      <p>Examples for the use of the <gi>name</gi> element are: <list>
+          <item>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <name type="pers">Henry VIII, King of England</name>
+            </egXML>
+          </item>
+          <item>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <name type="corp">The Beatles</name>
+            </egXML>
+          </item>
+          <item>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <name type="place">Bach</name>
+            </egXML>
+          </item>
+          <item>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <name type="process"/>
+              <!--ToDo: Fill in example-->
+            </egXML>
+          </item>
+        </list>
+      </p>
+    </div>
+
+    <div type="div3" xml:id="date">
+      <head>date</head>
+      <p>The element <gi>date</gi> contains a date in any format, including a date range, which may
+        be expressed either as textual content, e.g., <date>March 1-21, 1812</date>, or using date
+        sub-elements, possibly combined with text, e.g., <date><date>March 1, 1812</date> -
+            <date>March 21, 1812</date></date>. The latter form is useful when the starting and
+        ending points of the date range require qualification. The <gi>date</gi> element may occur
+        within a set of elements. To specify the given data the following attributes can be used: <list>
+          <item><att>calendar</att>: indicates the system or calendar to which a date belongs, for
+            example, Gregorian, Julian, Roman, Mosaic, Revolutionary, Islamic, etc.</item>
+          <item><att>cert</att>: signifies the degree of certainty or precision associated with a
+            feature (high, medium, low, unknown)</item>
+          <item><att>enddate</att>: contains the end point of a date range</item>
+          <item><att>notafter</att>: contains an upper boundary for an uncertain date</item>
+          <item><att>notbefore</att>: contains a lower boundary for an uncertain date</item>
+          <item><att>reg</att>: gives the value of a date in standard ISO form.</item>
+          <item><att>startdate</att>: contains the starting point of a date range</item>
+        </list></p>
+      <p>
+        <!--Text/Standardisierung empfehlen, einleitenden Text zum reg attribute schreiben-->
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <date reg="2011-05-12"/>
+        </egXML>
       </p>
     </div>
 
@@ -48,23 +127,52 @@
         or ethnic groupings or political factions where these are regarded as forming a single
         agency. Organization names typically include some type of indicator or pattern or words that
         help identify them as non-personal names.</p>
-      <p>Secondary name parts may be encoded in corpName sub-elements, for example: <egXML
-          xmlns="http://www.tei-c.org/ns/Examples">
+      <p>The <gi>corpName</gi> element is particularly used within the <ref target="#header"
+          >header</ref> of an MEI document. It might be enclosed in the <gi>respStmt</gi> element
+        (example 1) <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <respStmt>
+            <corpName>Library of Congress</corpName>
+          </respStmt>
+        </egXML> or could be used whereever it is necessary to mark up a corporate name, for example
+        if a corporation is responsible for a certain event in the history of a musical work
+        (example 2) <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <history>
+            <eventList>
+              <event>
+                <corpName/>
+              </event>
+            </eventList>
+          </history>
+        </egXML>
+      </p>
+      <p>When name parts are needed, they could be encoded in <gi>corpName</gi> sub-elements, for
+        example: <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <corpName>Federal Research Division, <corpName>Library of Congress</corpName>
-          </corpName>
-        </egXML></p>
-      <p>CorpName elements as well as corpName sub-elements can be replanished with address-elements
-        to note postal addresses of organizations within several addrLine-elements. <egXML
-          xmlns="http://www.tei-c.org/ns/Examples">
-          <corpName>German Research Foundation
-            <address>
-            <addrLine>Kennedyallee 40</addrLine>
-            <addrLine>53175 Bonn</addrLine>
-            <addrLine>Germany</addrLine>
-          </address>
           </corpName>
         </egXML>
       </p>
+      <p>CorpName elements as well as <gi>corpName</gi> sub-elements might also be completed with
+        address-elements for entering postal addresses of organizations within several
+          <gi>addrLine</gi> elements. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <corpName>German Research Foundation
+            <address>
+              <addrLine>Kennedyallee 40</addrLine>
+              <addrLine>53175 Bonn</addrLine>
+              <addrLine>Germany</addrLine>
+            </address>
+          </corpName>
+        </egXML>
+      </p>
+      <p>Exact designations of corporate names can be taken from a controlled vocabulary, such as
+        the Gemeinsame Normdatei (GND). If a controlled value is used, the list, from which it is
+        taken should be recorded. In this case the following attributes are particularly relevant: <list>
+          <item><att>authority</att>: to record the list from which a controlled value is
+            taken,</item>
+          <item><att>authURI</att> (authority URI): to record the web-accessible location of the
+            controlled vocabulary from which the value is taken,</item>
+          <item><att>dbkey</att> (database key): to record a value which serves as a primary key in
+            an external database.</item>
+        </list></p>
     </div>
 
     <div type="div3" xml:id="geogName">
@@ -72,33 +180,45 @@
       <p>Geographical names are proper noun designations for places (e.g. Baltimore, Maryland),
         natural features (e.g. Black Forest) or political jurisdictions (e.g. Quartier Latin,
         Paris). Like other proper nouns or noun phrases used as names, they can simply be marked up
-        with the geogName element.<egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <geogName>Baltimore, Maryland</geogName>
-        </egXML></p>
-      <p>Name sub-parts may be encoded in geogName sub-elements. For example: <egXML
+        with the <gi>geogName</gi> element.</p>
+      <p>The element can be used, e.g., to label geographical names in titles: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <title><geogName>Bohemian</geogName> folk songs</title>
+        </egXML> or <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <title>Music in the <geogName>German Democratic Republic</geogName></title>
+        </egXML>
+      </p>
+      <p>Name sub-parts may be encoded in <gi>geogName</gi> sub-elements. For example: <egXML
           xmlns="http://www.tei-c.org/ns/Examples">
           <geogName>Baltimore, <geogName>Maryland</geogName></geogName>
         </egXML></p>
-      <!--Maryland in geogName sinnvoll oder lieber anderes Beispiel wählen?-->
       <p>To enable a localization of an organization or to specify names of places with identical
         names it is recommendable to use a controlled vocabulary for names of places and countries.
         In this case the following attributes are particularly relevant: <list>
-          <item>@authority: to record the list from which a controlled value is taken, e.g. the
-            Thesaurus of Geographic Names (TGN),</item>
-          <item>@authURI (authority URI): to record the web-accessible location of the controlled
-            vocabulary from which the value is taken,</item>
-          <item>@dbkey (database key): to record a value which serves as a primary key in an
-            external database.</item>
+          <item><att>authority</att>: to record the list from which a controlled value is taken,
+            e.g. the Thesaurus of Geographic Names (TGN),</item>
+          <item><att>authURI</att> (authority URI): to record the web-accessible location of the
+            controlled vocabulary from which the value is taken,</item>
+          <item><att>dbkey</att> (database key): to record a value which serves as a primary key in
+            an external database.</item>
         </list></p>
-      <p>The encoder may use these attributes in combination. For example: <egXML
-          xmlns="http://www.tei-c.org/ns/Examples">
-          <geogName dbkey="7016099" authority="TGN"
-            authURI="www.getty.edu/research/tools/vocabularies/tgn">Baltimore, <geogName
-              dbkey="7007516" authority="TGN" authURI="ww.getty.edu/research/tools/vocabularies/tgn"
-              >Maryland</geogName>
-          </geogName>
-        </egXML> or with regard to the example given in chapter corpName: <egXML
-          xmlns="http://www.tei-c.org/ns/Examples">
+      <p>The encoder may use these attributes in combination. In case of the city Frankfurt, for
+        example, a clarification whether Frankfurt am Main or Frankfurt an der Oder is meant, can be
+        achieved by indicating the ID of the TGN entry. <list>
+          <item>Frankfurt am Main: <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <geogName dbkey="7005293" authority="TGN"
+                authURI="www.getty.edu/research/tools/vocabularies/tgn">Frankfurt</geogName>
+            </egXML>
+          </item>
+          <item>Frankfurt an der Oder: <egXML xmlns="http://www.tei-c.org/ns/Examples">
+              <geogName dbkey="7005972" authority="TGN"
+                authURI="www.getty.edu/research/tools/vocabularies/tgn">Frankfurt</geogName>
+            </egXML>
+          </item>
+        </list>
+      </p>
+      <p>The names of places given within addresses could be marked up with <gi>geogName</gi>
+        elements as well, for example: <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <corpName dbkey="2007744-0" authURI="http://d-nb.info/gnd" authority="GND">German Research
             Foundation
             <address>
@@ -115,157 +235,125 @@
 
     <div type="div3" xml:id="periodName">
       <head>periodName</head>
-      <p>PeriodNames are names which describe a particular period of time, for example 'Baroque' or
-        '3rd Style Period'. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <p>PeriodNames are names which describe a particular period of time, which were characterized
+        by obvious similarities in style, for example 'Baroque' or '3rd Style Period'. <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
           <periodName>Baroque</periodName>
-        </egXML>
+        </egXML></p>
+      <p>Each epochal term is to be seen as problematic, as it creates the impression that various
+        styles replace each other directly and completely. This creates a number of differentiation
+        issues, as there had indeed been simultaneous stylistic tendencies with little in common
+        (and even often contradictory).</p>
+      <p>The date sub-element is available within <gi>periodName</gi> in order to record any dates,
+        associated with the periodName, i.e. the startdate and the enddate of a certain epoch:
+          <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <periodName><date startdate="1600" enddate="1750"/>Baroque</periodName>
+        </egXML>. The startdate and the enddate of a certain period may also be recorded by using
+        the <att>startdate</att> and <att>enddate</att> attributes. <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <periodName startdate="1600" enddate="1750">Baroque</periodName>
+        </egXML>.</p>
+      <p>If a controlled value is used, the list, from which it is taken should be recorded. In this
+        case the following attributes are particularly relevant: <list>
+          <item><att>authority</att>: to record the list from which a controlled value is
+            taken,</item>
+          <item><att>authURI</att> (authority URI): to record the web-accessible location of the
+            controlled vocabulary from which the value is taken,</item>
+          <item><att>dbkey</att> (database key): to record a value which serves as a primary key in
+            an external database.</item>
+        </list>
       </p>
-      <!-- Weiteres? -->
+      <!--general question: which element should be used for the encoding of genres, forms etc.?-->
     </div>
 
     <div type="div3" xml:id="persName">
       <head>persName</head>
-      <p>Personal names within an MEI-Doument could simply be marked up with the persName element
-        which contains a propernoun or proper-noun phrase referring to an individual person.
-        Personal names consist of several components. Forenames and surnames, but also other
+      <p>Personal names within an MEI-Doument could simply be marked up with the <gi>persName</gi>
+        element which contains a propernoun or proper-noun phrase referring to an individual person.
+        Personal names consist of several components, like forenames and surnames, but also other
         components like inherited or life-time titles of nobility, honorific or academic prefixes,
-        military ranks or traditional descriptive phrases could not be marked up separately in
-        MEI.</p>
-      <p>
-        <list>
-          <label>@role</label>
-          <item>Apart from the composer or originator of a musical work, there could be a lot of
-            other persons being involved into the genesis of a musical work, like librettists,
-            lyricists, arrangers, editors, transcripers, printers, publishers etc. The special roles
-            of these persons could be marked up with the role attribute. For example: <egXML
-              xmlns="http://www.tei-c.org/ns/Examples">
-              <persName role="composer">Wolfgang Amadeus Mozart</persName>
-            </egXML>
-          </item>
-        </list>
+        military ranks or traditional descriptive phrases. It is not possible to mark up each of
+        these components separately in MEI.
+        <!-- #MH: warum nicht, und was muss man tun, wenn man das aber gerne machen möchte? --></p>
+      <p>The <gi>persName</gi> element is often enclosed in the <gi>respStmt</gi> element which may
+        occur within <gi>titleStmt</gi>, <gi>pubStmt</gi>, <gi>seriesStmt</gi> and <gi>change</gi>.
+        A typical environment of the <gi>persName</gi> element would look like this: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <sourceDesc>
+            <source>
+              <titleStmt>
+                <title>Im wunderschönen Monat Mai</title>
+                <respStmt>
+                  <persName>Robert Schumann</persName>
+                </respStmt>
+              </titleStmt>
+            </source>
+          </sourceDesc>
+        </egXML>
       </p>
+      <p>Apart from the composer or originator of a musical work, there could be a lot of other
+        persons being involved into the genesis of a musical work, like librettists, lyricists,
+        arrangers, editors, transcripers, printers, publishers etc. The special roles of these
+        persons may be marked up with the <att>role</att> attribute. For example: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <persName role="composer">Wolfgang Amadeus Mozart</persName>
+        </egXML> or <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <persName role="lyricist">Heinrich Heine</persName>
+        </egXML>The <ref target="http://www.loc.gov/marc/relators/relaterm.html">Marc code list for
+          relators</ref> offers a variety of controlled terms on this concern.</p>
       <p>It is recommended to record personal names by using a standard for personal names, such as
-        the Gemeinsame Normdatei (GND) or the Library of Congress Name Authorities. The name of the
-        list as well as the web-accessible location from which a controlled value is taken may be
-        recorded using the authority and the authURI attribute. To record a value which serves as a
-        primary key in an external database, the dbkey attribute may be used.</p>
-      <p>The encoder may use these attributes in combination. For example: <egXML
+        the Gemeinsame Normdatei (GND) or the Library of Congress Name Authorities.
+        <!-- ToDo: Add link to GND und LoC Authorities --> The name of the list as well as the
+        web-accessible location from which a controlled value is taken may be recorded using the
+          <att>authority</att> and the <att>authURI</att> attribute. To record a value which serves
+        as a primary key in an external database, the <att>dbkey</att> attribute may be used.</p>
+      <p>Ideally, the three attributes are used in combination. For example: <egXML
           xmlns="http://www.tei-c.org/ns/Examples">
           <persName role="composer" dbkey="118584596" authURI="http://d-nb.info/gnd" authority="GND"
             >Wolfgang Amadeus Mozart</persName>
-        </egXML></p>
+        </egXML>
+      </p>
+      <p>Any data according to a person can be marked up by using the date sub-element. However,
+        life data should not be marked up separately when taking a controlled value, as information
+        relating to the biography of a person should be recorded in the linked database. </p>
     </div>
 
     <div type="div3" xml:id="styleName">
       <head>styleName</head>
-      <p>Music can be devided into many genres different ways. These classifications are often
-        arbitrary and closely related styles often overlap. The label styleName describes a
-        characteristic style of writing or performance, for example 'bebop' or 'rock-n-roll'. This
-        element should not be confused with the periodName element (see above). <egXML
+      <p>Music can be devided into different genres, forms and styles. The term style denotes a mode
+        of expression or more particularly the manner in which a work of art is executed. "In the
+        discussion of music, which is orientated towards relationships rather than meanings, the
+        term raises special difficulties; it may be used to denote music characterized of an
+        individual composer, of a period, of a geographical area or centre, or of a society or
+        social function. For the aesthetician style concerns surface or appearance, though in music
+        appearance and essence are ultimately inseparable. For the historian a style is a
+        distinguishing and ordering concept, both consistent of and denoting generalities; he or she
+        groups examples of music according to similarities between them." (Source: Grove Music
+        Online, Article: Style, request date: 27.04.2012) Musical styles have to be distinguished
+        from musical genres. The transitions are, however, fluent. The <gi>styleName</gi> element
+        should not be confused with the <gi>periodName</gi> element (see above).
+        <!--ToDo: add link to sub-chapter--></p>
+      <p>StyleNames can be simply marked up with the <gi>styleName</gi> element, for example: <egXML
           xmlns="http://www.tei-c.org/ns/Examples">
           <styleName>bebop</styleName>
-        </egXML>
+        </egXML>. It may be, e.g., used for recording a stylename within a title: <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <title>La voix du <styleName>bebop</styleName></title>
+        </egXML>, or to record a style of a certain epoch by using the <gi>styleName</gi>
+        sub-element: <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <periodName>Moderne <styleName>Jazz</styleName></periodName>
+        </egXML></p>
+      <p>If a controlled value is used, the list, from which it is taken should be recorded. In this
+        case the following attributes are particularly relevant: <list>
+          <item><att>authority</att>: to record the list from which a controlled value is
+            taken,</item>
+          <item><att>authURI</att> (authority URI): to record the web-accessible location of the
+            controlled vocabulary from which the value is taken,</item>
+          <item><att>dbkey</att> (database key): to record a value which serves as a primary key in
+            an external database.</item>
+        </list>
       </p>
     </div>
-    <!--Standards: GND, Name Authorities der Library of Congress, TGN, MARC code list for relators-->
-    <!-- Normdatei: Authority control is the practice of creating and maintaining index terms for bibliographic 
-      material in a catalog in library and information science. Authority control fulfills two important functions. 
-      First, it enables catalogers to disambiguate items with similar or identical headings. For example, two authors 
-      who happen to have published under the same name can be distinguished from each other by adding middle initials, 
-      birth and/or death (or flourished, if these are unknown) dates, or a descriptive epithet to the heading of one (or both) 
-      authors. Second, authority control is used by catalogers to collocate materials that logically belong together, 
-      although they present themselves differently. For example, authority records are used to establish uniform titles, 
-      which can collocate all versions of a given work together even when they are issued under different titles.
-      
-      Although theoretically any piece of information on a given book is amenable to authority control, catalogers typically 
-      focus on authors and titles. Subject headings fulfill a function similar to authority records, although they are usually 
-      considered separately. 
-      
-      Normdatei: im Englischen als authority files bezeichnet
-      eine Normdatei ist ein Verzeichnis von normierten Begriffen zur Verwendung als Deskriptor in der Dokumentation.
-      eine Normdatei ist damit eine Form eines kontrollierten Vokabulars, in dem festgelegt wird, welche Ansetzung bei der Erschließung
-      zu verwenden ist.
-      normierte Begriffe können Personennamen, Körperschaften und beliebige andere Mengen von Bezeichnungen von Dingen,
-      Vorgängen oder abstrakten Begriffen sein.
-      der Bildung von Normbegriffen liegt eine Ontologie zugrunde, die die jeweils zu normierenden Begriffe und die Art der
-      Normierung festlegt.
-      
-      Beispiele für Normdateien sind die Library of Congress Authorities Files (LCNAF) im englischsprachigen Raum,
-      die PND, die GKD und die SWD im deutschsprachigen Raum (GND)
-      
-      in dem Projekt VIAF (Virtual International Authority File) werden PND und andere Normdaten über eine Konkordanz
-      zu einer virtuellen internationalen Normdatei verbunden.
-      
-      PND
-      für jede in die PND aufgenommene Person gibt es einen Datensatz, auf den mit Hilfe eines eindeutigen Identifiers, der 
-      PND-Nummer, verwiesen werden kann.
-      die PND enthält sowohl für einzelne Personen, sog. individualisierte Datensätze mit zusätzlichen Angaben (Pseudonyme,
-      Lebensdaten, Beruf...) als auch nicht-individualisierte Datensätze, die lediglich eine für mehrere Personen verwendbare
-      Namensansetzung beinhalten.
-      
-      Problematik: Namensvettern und Schreibvarianten
-      
-      einheitliche Ansetzung dringend erforderlich, nur so ist ein zuverlässiger Datenaustausch möglich
-      
-      Autoren gleichen Namens können voneinander unterschieden werden
-      
-      in den Normdateien soll die originalschriftliche Namensform von Personen und Körperschaften die Hauptansetzungsform werden.
-      
-    
-    Normdatei 
-    Normdateien legen regelgerechte Ansetzungs- und Verweisungsformen für z.B. Personennamen, Körperschaftsnamen oder Schlagwörter 
-    fest, und führen bei den Anwendern zu einer einheitlichen Ansetzungspraxis. Der Katalogisierer kann für die Ansetzung eines 
-    Verfassernamens aus einer Normdatei für Personennamen die richtige Ansetzungsform und die zugehörigen Verweisungen entnehmen 
-    und sich damit eigene Überlegungen und Nachforschungen ersparen. Normdateien ermöglichen somit Arbeitserleichterung und 
-    Qualitätssteigerung, was zu Rationalisierungen bei der Erschließung führt. Bei Der Deutschen Bibliothek werden drei Normdateien 
-    geführt: die Schlagwortnormdatei (SWD), die Gemeinsame Körperschaftsdatei (GKD) und die Personennamendatei (PND). 
-    -->
-    <!-- PND: For each person there is a record with his name, birth and occupation connected with a unique identifier, the PND number.  
-      In der Personennamendatei (PND) werden alle für Formal- und Sacherschließung sowie nationale Katalogisierungsunternehmungen 
-      wesentlichen Namen zusammengeführt. Sie stellt vor allem eine Dienstleistung zur Vermeidung von Mehrfacharbeit bei der Ansetzung 
-      von Personennamen sowie zur Vereinheitlichung der Ansetzungsformen dar. Die PND wurde von 1995 bis 1998 in einem von der Deutschen 
-      Forschungsgemeinschaft (DFG) geförderten Projekt aufgebaut und ist auf der Normdaten-CD-ROM Der Deutschen Bibliothek enthalten. -->
-
-    <!-- Metadatenstandards: sind standardisierte Beschreibungsschemata: Spezifikationen, die Metadatenterme detailliert beschreiben,
-dienen der Festlegung von Elementen, deren Struktur und deren Beschreibung,
-ermöglichen die semantische Interoperabilität zwischen Anwendungen, die diesen Standard verwenden,
-Ziel: einheitliche, maschinenverarbeitbare Beschreibungen von Ressourcen und der Austausch dieser Beschreibungen.
-
-Warum sind Standards so wichtig?
-"gemeinsame Sprache", Austausch von Metadaten durch Standard verständlich und interpretierbar,
-notwendig für effektive Datenhaltung, konsistente Daten für effektives Retrieval,
-Dokumentation, Transparenz, Verknüpfungen von Objekten
-
-Standards-Auswahl: Dublin Core, MODS, METS, MAB, DDC, RDA, RAK, MARC 21, EAD etc.
-
-Typen von Metadatenstandards: Datenstruktur und Semantik: Formate (z.B. DC, PICA, MARC) und Syntax (z.B. XML, RDF)
-Inhalte: Regelwerke (z.B. RAK-WB, AACR2, RDA),
-Werte: Normdaten, kontrollierte Vokabulare (z.B. PND, LCSH, DDC),
-Kommunikation: Schnittstellen, Protokolle (z.B. Z39.50, SRU, OAI).
-
-Normdateien: 
-nationale Normdateien: PND, GKD, SWD (GND)
-Internationale Normdateien: z.B. Library of Congress Authorities, RAMEAU
-Mappings und Crosskonkordanzen: VIAF, MACS, CrissCross
-http://www.viaf.org/ : 13 Nationalbibliotheken beteiligt (Anwendung)
-
-Weitere kontrollierte Vokabulare:
-Klassifikationen: z.B. Dewey Decimal Classification (DDC), Universal Decimal Classification (UDC),
-Library of Congress Classification, Regensburger Verbundklassifikation (RVK)
-Thesauri: z.B. Standard Thesaurus Wirtschaft (STW), Getty Thesaurus for Geographic Names (TGN)
-sonstige Vokabulare: z.B. MARC Relator Codes
-
-TGN: Geografika (politische und physische Entitäten), Fokus auf Orte, die im Bereich Kunst und
-Architektur von Bedeutung sind
-Pflege und Weiterentwicklung: durch Getty
-Umfang: ca. 895.000 Deskriptoren (multilingual), über 1 Mio. Terme, Namen, Koordinaten, Datumsangaben,
-Ortstypen, Erläuterungen, Quellenangaben 
-http://www.getty.edu/
-
-Library of Congress Authorities:
-http://authorities.loc.gov/
-
--->
 
     <div type="div3" xml:id="namesdatesAttributeClasses">
       <head>Attribute Classes</head>
