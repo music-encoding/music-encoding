@@ -8,11 +8,22 @@
 
 <div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="facsimile" n="0">
   <head>Facsimiles</head>
-  <p>This chapter describes ...</p>
+  <p>This chapter describes the usage of the facsimile module its elements and attributes.
+  Facsimiles contain a representation of some written source in the form of a set of images, 
+  so the chapter defines a module 
+  intended for use in the representation of sources.
+  The following paragraphs recommend the usage of the allowed elements and attributes in a MEI file and
+  discusses the way of encoding transcription of such material. This module seems to be useful for the encoding
+  of critical editions, but therefore it is recommend to use the elements of the critapp module.
+  In this section elements and attributes will be presented, designed to support various possibilities in this module and
+  discuss the associated mechanisms provided by theses Guidelines.
   <div type="div2" xml:id="facsimileOverview">
     <!-- Overview -->
     <head>Overview of the facsimile Module</head>
-    <p>The module described in this chapter makes available the following components:</p>
+    <p>The module includes elements and attributes for encoding facsimiles which are in the simplest way a 
+    collection of images with some metadata. </p>
+    <p>The module described in this chapter makes available the following components:
+    </p>
     <div type="div3" xml:id="facsimileElements">
       <head>Elements in the facsimile module</head>
       <p>
@@ -24,7 +35,8 @@
       </p>
       <p>
         The facsimile module adds a separate subtree to MEI, starting as child of the 
-        <gi>music</gi> element and preceding sibling to the <gi>body</gi>. 
+        <gi>music</gi> element and preceding sibling to the <gi>body</gi>.
+         The following example shows how to add a <gi>facsimile</gi> to MEI in the simplest form.
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <mei>
             <meiHead/>
@@ -38,31 +50,97 @@
             </music>
           </mei>
         </egXML>
-        This simplified example shows how to add a <gi>facsimile</gi> to MEI.
+        The next example illustrates the use of the <att>decls</att> attribute which is to be used to link the 
+        collection of images with a particular source described in the header.
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <mei>
+            <meiHead>
+              <!-- defined source -->
+            </meiHead>
+            <music>
+              <facsimile decls="#defined source"/>
+              <body/>
+            </music>
+          </mei>
+        </egXML>
+      </p>
+       <!--<head>Surface</head>-->
+      <p> The surface element defines a written surface as a two-dimensional coordinate space 
+        on some physical surface forming part of the source material such as a piece of paper 
+        or anything else, optionally grouping one or more graphic representations
+        of that space and zones. A surface establishes a coordinate system which may be used to 
+        address parts or the whole of some digital representation of a written surface.
+        To define coordinates it is recommend to use the specific attributes 
+      which are part of the att.coordinated.class. illustrated in the following example. The 
+      @ulx, @uly, @lrx and the @lry (...). The startid attribute may be used to hold a reference to the first
+      feature occurring on this surface. The surface element is modelled on an element in the 
+      Text Encoding Initiative (TEI).
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <facsimile>
+          <surface startid="#xy"/>
+          <surface lrx="123" lry="456" ulx="78" uly="910"/>
+        </facsimile>
+        </egXML>
+        The surface element may however contain graphic representations of zones and indicates the location of an inline graphic
+        illustration, or figure. For further information please read the chapter (X).
       </p>
       <p>
-        <!-- Einführung des Beispiels, bzw. eigentlich besser Zweck des ganzen… -->
+        The following example illustrates the usage of the <gi>graphic</gi> element within a surface element.
+        It is also possible to encode more than one graphic in a facsimile. 
       </p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <facsimile>
           <surface xml:id="page1">
+            <graphic/>
             <graphic/>
             <zone/>
             <zone/>
           </surface>
           <surface xml:id="page2">
             <graphic/>
-            <zone xml:id="zone3" ulx="10" uly="10" lrx="100" lry="100"/>
+            <zone/>
             <zone/>
           </surface>
         </facsimile>
       </egXML>
       <p>
-        Erläuterung des Beispiels, vor allem mit Hinweis auf graphic (dabei auch Hinweis auf anderes Kapitel der Guidelines…)
+        The example shows the graphic element within a surface element which indicates the location of an illustration. The graphic element is member of 
+        the figtable Module, so please read that chapter for further information about the graphic element and its usage in a MEI file.
       </p>
+      <!--<head>Zone</head>-->
+      <p>A zone, by contrast to the surface element, defines any arbitrary area of interest relative to that surface, using the same coordinate system
+        and defines a rectangular area within a surface element. 
+        The position of every zone for a given surface is always defined by reference to the coordinate system defined for that surface.
+        <!-- is only permitted within the surface element -->
+     <!-- A graphic element contained by a zone represents the whole of the zone.-->
+      The example shows...
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <facsimile>
+          <surface>
+            <zone xml:id="zone3" ulx="10" uly="10" lrx="100" lry="100"/>
+            <zone/>
+            <zone/>
+          </surface>
+        </facsimile>
+      </egXML>
+      The zone element may be enriched by some attributes similar to those allowed on surface
+      and may contain the graphic and the figDesc element.
+      The zone element makes it possible to describe and define any region of interest, such a detail or a illustration.
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <facsimile>
+          <surface>
+            <zone >
+              <graphic/>
+            </zone>
+          </surface>
+        </facsimile>
+      </egXML>
+      </p>
+     <!--<head>Attributes</head>-->
       <p>
-        Verknüpfung mit Inhalten
-      </p>
+        <!-- The facs attribute associate a feature corresponding with all or part of an image -->
+        The <att>facs</att> attribute permits the current element to reference a facsimile image or zone which corresponds to it.
+        The following examples show how to use the attributes on several elements.
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure>
           <!-- … -->
@@ -72,10 +150,21 @@
           <!-- … -->
         </measure>
       </egXML>
+        This example illustrates the <att>facs</att> on the <gi>pb</gi> element to associate an image with an appropriate point in the encoding. 
+        The image indicated by the <att>facs</att> attribute represents the whole of the music following the <gi>pb</gi> element.
+        The second measure including the <att>facs</att> indicates the belonging
+      to a zone withe the ID "zone3" defined elsewhere in the document.</p> 
       <p>
-        Weitere Beispiele für @facs
+        The next example shows a note including the <att>facs</att> attribute (...)
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+       <staff>
+         <layer> 
+           <note facs="#zoneXY">
+           </note>
+         </layer>
+       </staff>
+      </egXML>
       </p>
-      
     </div>
     <div type="div3" xml:id="facsimileAttributeClasses">
       <head>Attribute Classes</head>
