@@ -29,7 +29,7 @@
       <p>A typical MEI document contains an <gi>mei</gi> element, which in turn contains metadata,
         represented by an <gi>meiHead</gi> element, and the musical text itself, represented by a
           <gi>music</gi> element. The <gi>meiHead</gi> element, formally declared in the MEI.header
-        module, is described in chapter <ptr target="#header"/></p>
+        module, is described in chapter <ptr target="#header"/>. </p>
       <p>Other variations on this basic form are also available for the representation of a:</p>
       <list type="bulleted">
         <item>collection of related MEI-encoded texts, each with its own metadata, known as a
@@ -40,9 +40,9 @@
           of markup, such as TEI</item>
       </list>
       <p>Further information regarding the organization and encoding of music corpora is given in
-        chapter <ptr target="#"/><!--“Music Corpora”.-->. Stand-alone headers are more fully
-        described in chapter <ptr target="#header"/>. Additional information about embedding MEI in
-        other XML files is covered in chapter <!-- ?  -->.</p>
+        chapter <ptr target="#"/><!--"Music Corpora".-->. Stand-alone headers are more fully
+        described in chapter <ptr target="#independentHeader"/>. Additional information about
+        embedding MEI in other XML files is covered in chapter <!-- ?  -->.</p>
     </div>
     <div type="div3" xml:id="musicElement">
       <head>Music Element</head>
@@ -53,8 +53,8 @@
         independent of each other. The distinction is not always entirely obvious. For example, a
         collection of songs might be regarded as a single item in some circumstances, or as a number
         of distinct items in others. In such borderline cases, the encoder must choose whether to
-        treat the text as unitary or composite; each may have advantages and disadvantages in a
-        given situation.</p>
+        treat the text as unitary or composite; each option may have advantages and
+        disadvantages.</p>
       <p>Whether unitary or composite, the musical text is marked with the <gi>music</gi> tag and
         may contain front matter, a body, and back matter. In unitary texts, the body is tagged
         using the <gi>body</gi> element; in composite texts, however, where the textual body
@@ -69,10 +69,11 @@
           <specDesc key="back"/>
         </specList>
       </p>
-      <!--<p>Critical editions and collections of works often contain extensive text, such as a table of
-      contents, an introductory essay, commentary, biographical sketch, index, etc. These textual
-      items may appear in either the front or back elements. In addition, <gi>titlePage</gi> may be
-      used to transcribe the item's title page.</p>-->
+      <p>Critical editions and collections of works often contain extensive text, such as a title
+        page, table of contents, an introductory essay, commentary, biographical sketch, index, etc.
+        These textual items may appear in either the front or back elements. The front and back
+        elements, available only when the MEI.text module is activated, are described more fully in
+        chapter <ptr target="#"/> "Text in MEI".</p>
       <p>The overall structure of a single musical text is:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <mei>
@@ -92,7 +93,8 @@
           </music>
         </mei>
       </egXML>
-      <p>The overall structure of a composite musical text made up of two unitary musical texts is: </p>
+      <p>The top-level structure of a composite musical text made up of two unitary musical texts
+        is: </p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <mei>
           <meiHead>
@@ -156,22 +158,22 @@
             <group>
               <music><!-- song 1 --></music>
               <group>
-                <!-- songs sharing some characteristics, treated as a group -->
+                <!-- songs sharing one or more characteristics, treated as a group -->
                 <music><!-- song 2 --></music>
                 <music><!-- song 3 --></music>
               </group>
             </group>
           </music>
         </egXML>
-        <p>The group element may be used to encode any kind of collection in which the constituents
-          are regarded by the encoder as works in their own right, such as <foreign>ad hoc</foreign>
-          single- or multiple-composer collections or anthologies of works not originally conceived
-          of as a single composition.</p>
+        <p>The <gi>group</gi> element may be used to encode any kind of collection in which the
+          constituents are regarded by the encoder as works in their own right, such as <foreign>ad
+            hoc</foreign> single- or multiple-composer collections or anthologies of works not
+          originally conceived of as a single composition.</p>
       </div>
       <div type="div4">
         <head>Divisions of the Body</head>
         <p>This section describes sub-division of the body of a musical text. Front and back matter
-          are described in chapter <ptr target="#"/><!-- “Text in MEI” -->.</p>
+          are described in chapter <ptr target="#"/> "Text in MEI".</p>
         <p>The body of a unitary musical text may contain one or more discrete, linear segments. The
           names commonly used for these structural subdivisions vary with the genre, style, and time
           period of the music, or even at the whim of the author, editor, or publisher. For example,
@@ -261,7 +263,7 @@
         </p>
         <p>Most often, the <gi>score</gi> element represents notation in which all the parts of an
           ensemble are arranged on vertically aligned staves, while the <gi>parts</gi> element
-          represents only the notation for a particular performer or group of performers. The
+          collects the individually notated parts for each performer or group of performers. The
           explicit encoding of two views is often necessary because it is not always possible or
           desirable to automatically derive one view from the other. In addition, separating scores
           and parts can eliminate a great deal of markup complexity.</p>
@@ -289,12 +291,13 @@
           </specList>
         </p>
         <p>A <gi>part</gi> is effectively a mini-score requiring all the encoding features of a full
-          score. <gi>Part</gi> elements are useful for encoding performing parts when there is no
-          score, such as in early music part books, when the parts have non-aligning bar lines, when
-          different layout, such as page turns, are needed for the score and parts, or for
-          accommodating software that requires part-by-part encoding. Please note that part elements
-          in MEI are not an indication of voice leading. Voice leading can be encoded using the next
-          attribute available on all event-type elements.</p>
+          score, such as multiple staves, performance directives, and so on. <gi>Part</gi> elements
+          are useful for encoding performing parts when there is no score, such as in early music
+          part books, or when the parts have non-aligning bar lines, or when different layout, such
+          as page turns, are needed for the score and parts, or for accommodating software that
+          requires part-by-part encoding. Please note that part elements in MEI are not an
+          indication of voice leading. Voice leading can be encoded using the @next attribute
+          available on all event-type elements.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <parts>
             <part>
@@ -308,7 +311,7 @@
         </egXML>
         <p>In both score and part views, the <gi>scoredef</gi> element is used to describe logical
           characteristics of the encoded music, such as key signature, the sounding key (as opposed
-          to the notated key signature), meter, etc. and visual features, such as page size, staff
+          to the notated key signature), meter, etc., and visual features, such as page size, staff
           groupings and labels, etc.</p>
         <p>A <gi>part</gi> or <gi>score</gi> may be further divided into linear segments called
           "sections".</p>
@@ -358,16 +361,21 @@
           upon the notational style of the source material and the encoder's needs. For example,
           when the MEI.cmn module is used, the default organization is measure-by-measure, with
             <gi>staff</gi> and <gi>layer</gi> sub-elements within each <gi>measure</gi>. Further
-          discussion of CMN notation is continued in chapter <!-- XX, “CMN notation”-->.</p>
+          discussion of CMN notation is continued in chapter <ptr target="#"/> "CMN notation".</p>
         <p>However, staff-by-staff organization is more appropriate for music without measures and
-          is provided when the MEI.mensural module is employed. Coverage of mensural notation is
-          provided in chapter <!--XX, “Mensural notation”-->.</p>
+          is provided when either the MEI.mensural or MEI.neumes module is employed. Coverage of
+          mensural notation is provided in chapter <ptr target="#"/> "Mensural notation", while <ptr
+            target="#"/> "Neume notation" describes neumatic notation.</p>
         <p>It must be noted that, when both the MEI.cmn and MEI.mensural modules are available, it
           is possible to encode CMN notation without using <gi>measure</gi> elements; that is,
           staff-by-staff organization may be used and the ends of measures marked using
-            <gi>barLine</gi> elements. In certain circumstances, this approach may be preferable for
-          reproduction of the visual layout of the music. However, the simultaneous use of the
-            <gi>measure</gi> and <gi>barLine</gi> elements must be avoided.</p>
+            <gi>barLine</gi> elements.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <!-- NEED EXAMPLE HERE! -->
+        </egXML>
+        <p>In certain circumstances, this approach may be preferable for reproduction of the visual
+          layout of the music. However, the simultaneous use of the <gi>measure</gi> and
+            <gi>barLine</gi> elements must be avoided.</p>
         <p>Typically, MEI follows the order of sections as they appear in the document being
           encoded. When performance requires a different order, for instance in the case of D.C. and
           D.S. directives, the following element may be used to define the performance order.</p>
@@ -419,9 +427,9 @@
             </section>
           </score>
         </egXML>
-        <p>The n and label attributes may be used to assign a name to an expansion, the source
-          attribute provides for specifying the bibliographic source of the expansion, and the type
-          and subtype attributes allow for its classification.</p>
+        <p>The label and n attributes may be used to assign a name and number to an expansion, the
+          source attribute provides for specifying the bibliographic source of the expansion, and
+          the type and subtype attributes allow for its classification.</p>
       </div>
       <!-- This belongs in MEI text chapter. -->
       <!-- <div type="div4">
@@ -616,7 +624,7 @@
       </div>-->
     </div>
   </div>
-  <div type="div2" xml:id="MusicalElements">
+  <div type="div2" xml:id="musicalElements">
     <!-- Musical Elements -->
     <head>Shared Musical Elements</head>
     <p>This section lists the elements defined in the shared module that are available within the
@@ -666,6 +674,7 @@
     </div>
     <div type="div3" xml:id="expressionMarks">
       <head>Expression Marks</head>
+      <p>Expression marks ...</p>
       <div type="div4" xml:id="textDirectives">
         <head>Text Directives</head>
         <p>Text directives are ...</p>
@@ -708,10 +717,14 @@
     </div>
     <div type="div3" xml:id="otherEvents">
       <head>Other "Events"</head>
-      <p>Some elements are treated as events because ... </p>
+      <p>Because they can occur in the context of a stream of events on the staff, some elements
+        which are used in other contexts are also treated as events. For example, in addition to
+        being used to define the initial clef of a staff, the clef element can also be used to
+        indicate a clef change.</p>
       <div type="div4" xml:id="keySignaturesAndClefs">
         <head>Key Signatures and Clefs</head>
-        <p>The elements below ...</p>
+        <p>Key signatures and clefs as well as inter-staff changes to these musical parameters are
+          treated as events.</p>
         <p>
           <specList>
             <specDesc key="keySig"/>
@@ -722,23 +735,25 @@
         </p>
       </div>
       <div type="div4" xml:id="barlines">
-        <head>Bar Lines</head>
-        <p>Measure separators ...</p>
+        <head>Bar Lines and Custos Signs</head>
+        <p>Measure separators, i.e., bar lines, and custos signs are also considered to be
+          events.</p>
         <p>
           <specList>
             <specDesc key="barLine"/>
+            <specDesc key="custos"/>
           </specList>
         </p>
       </div>
       <div type="div4" xml:id="accidentalsArticulations">
         <head>Accidentals, Articulation Symbols, Augmentation Dots, and Custos Signs</head>
-        <p>The following elements ...</p>
+        <p>The following elements are regarded as events primarily because they sometimes occur
+          independently of any associated notes, rests, or chords.</p>
         <p>
           <specList>
             <specDesc key="accid"/>
             <specDesc key="artic"/>
             <specDesc key="dot"/>
-            <specDesc key="custos"/>
           </specList>
         </p>
       </div>
