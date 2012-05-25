@@ -7,32 +7,673 @@
 -->
 
 <div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="analysis" n="0">
-    <head>Analytical Information</head>
-    <p>This chapter describes the use of attributes for describing several analytical issues, e.g.
-        in a harmonic analysis. The phrase "musical analysis" embraces a large number of diverse
-        activities, so this chapter of the guidelines recommend the use of elements and attributes
-        offered in MEI. The module contains attributes indicating relations between <gi>notes</gi>,
-            <gi>chords</gi>, intervals and melodies in an analytical context. To describe analytical
-        information within a <gi>note</gi> or other elements, the model offers a various range of
-        attributes which can be used for several analytical interpretations. That makes available
-        individual application of users and offers different results, depending on the purpose of an
-        analysis. The guidelines recommend commonly accepted realizations and encodings of different
-        practices in analysis, such as a "Functional analysis", "Schenkerian analysis" or other
-        methods. For further information of musical analysis, please read the Grove Music Online,
-        article: analysis, May 2012 <ref
+    <head>Analytical information</head>
+    <p>This chapter describes the use of attributes that capture data which may be useful for
+        analytical purposes. The analysis module provides attributes that record relationships
+        between entities found in the encoding. These attributes may be used differently by
+        different users, depending on the purpose of the analysis. These Guidelines recommend that
+        encoders employ commonly accepted analytical practices, such as "functional analysis" or
+        "Schenkerian analysis", and document their use in the <gi>encodingDesc</gi> described in
+        section <ptr target="#encodingDescription"/>. For general information on musical analysis,
+        please consult Grove Music Online, "<ref
             target="http://www.oxfordmusiconline.com/subscriber/article/grove/music/41862pg1#S41862.1"
-        /></p>
+            >Analysis</ref>".</p>
+    <div type="div3">
+        <head>Describing relationships between elements</head>
+        <p>The relationships between event elements, such as note, chord, and rest, are the basic
+            material of musical analysis; the analytical attributes described below ensure a closed
+            network of these relations and provide the opportunity to record data useful for common
+            analytical tasks.</p>
+        <p> In addition to the common attributes found in the <ref target="#commonAttributes">Shared
+                Module</ref>, the analysis module offers seven attributes in the att.common.anl
+            class:</p>
+        <p>
+            <specList>
+                <specDesc key="att.harmonicfunction" atts="hfunc"/>
+                <specDesc key="att.intervalharmonic" atts="inth"/>
+                <specDesc key="att.intervallicdesc" atts="intm"/>
+                <specDesc key="att.melodicfunction" atts="mfunc"/>
+                <specDesc key="att.pitchclass" atts="pclass"/>
+                <specDesc key="att.solfa" atts="psolfa"/>
+                <specDesc key="att.alignment" atts="when"/>
+            </specList>
+        </p>
+        <p>It is important to note that the <att>when</att> attribute is only available when the
+            linkAlign module is included because the <gi>when</gi> element, which is the target of
+            the <att>when</att> attribute, is defined there.</p>
+        <p>These attributes accommodate the encoding of linkages between the element carrying the
+            attribute and one or more other elements. All of them use URIs to establish the link. In
+            the context of a formal analysis, for instance, the attributes presented here might be
+            useful to capture information about the structure of a musical work.</p>
+        <p>The <att>copyof</att> attribute points to an element of which the current element is a
+            copy. It can be used to repeat a note, for example, without encoding the whole
+                <gi>note</gi> element again. The copy is a <soCalled>deep</soCalled>one; that is,
+            the <att>copyof</att> attribute copies all attributes and child elements which belong to
+            the copied element, such as the <att>dur</att> and <att>oct</att> attributes of a copied
+                <gi>note</gi>. The value of the <att>copyof</att>-attribute must be a URI, which
+            usually refers to an element in the current document. The following example demonstrates
+            the <att>copyof</att> attribute:</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure n="1">
+                <staff n="1">
+                    <layer>
+                        <note pname="g" oct="4" dur="4" xml:id="note1"/>
+                    </layer>
+                </staff>
+            </measure>
+            <measure n="2">
+                <staff n="1">
+                    <layer>
+                        <note copyof="#note1"/>
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>In this example. the <gi>note</gi> in the second measure would have exactly the same
+            characteristics as the <gi>note</gi> in the first <gi>measure</gi>.</p>
+        <p>Using <att>copyof</att> is not limited to copying events. The <att>copyof</att> attribute
+            can also be used to copy an entire <gi>measure</gi> or <gi>staff</gi>. When there are
+            many repeated features, the use of the <att>copyof</att> greatly reduces encoding
+            effort. The image and the following encoding of the beginning of Schubert's "Erlkönig"
+            illustrates the benefit of using the <att>copyof</att> attribute.</p>
+        <figure>
+            <head>First measure of Schubert's Erlkönig</head>
+            <figDesc/>
+            <!-- NEED IMAGE HERE -->
+            <graphic url=""/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure>
+                <staff n="1">
+                    <layer>
+                        <mRest/>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer>
+                        <tuplet xml:id="tuplet1" num="3" num.visible="true">
+                            <chord dur="8">
+                                <note pname="g" oct="3"/>
+                                <note pname="g" oct="4"/>
+                            </chord>
+                            <chord dur="8">
+                                <note pname="g" oct="3"/>
+                                <note pname="g" oct="4"/>
+                            </chord>
+                            <chord dur="8">
+                                <note pname="g" oct="3"/>
+                                <note pname="g" oct="4"/>
+                            </chord>
+                        </tuplet>
+                        <!-- THIS EXAMPLE DOESN'T VALIDATE BECAUSE <tuplet> REQUIRES CONTENT! ISSUE FILED. -->
+                        <tuplet xml:id="tuplet2" copyof="#tuplet1"/>
+                        <tuplet xml:id="tuplet3" copyof="#tuplet1"/>
+                        <tuplet xml:id="tuplet4" copyof="#tuplet1"/>
+                    </layer>
+                </staff>
+                <staff n="3">
+                    <layer>
+                        <mRest/>
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>This example can be reduced further by using <att>copyof</att> in the initial tuplet:</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure>
+                <staff n="1">
+                    <layer>
+                        <mRest/>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer>
+                        <tuplet xml:id="tuplet1" num="3" num.visible="true">
+                            <chord dur="8" xml:id="t1c1">
+                                <note pname="g" oct="3"/>
+                                <note pname="g" oct="4"/>
+                            </chord>
+                            <chord copyof="#t1c1"/>
+                            <chord copyof="#t1c1"/>
+                        </tuplet>
+                        <!-- THIS EXAMPLE DOESN'T VALIDATE BECAUSE <tuplet> REQUIRES CONTENT! ISSUE FILED. -->
+                        <tuplet xml:id="tuplet2" copyof="#tuplet1"/>
+                        <tuplet xml:id="tuplet3" copyof="#tuplet1"/>
+                        <tuplet xml:id="tuplet4" copyof="#tuplet1"/>
+                    </layer>
+                </staff>
+                <staff n="3">
+                    <layer>
+                        <mRest/>
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>While <att>copyof</att> signifies a more-or-less duplicate copy of an element, the
+                <att>sameas</att> indicates that the current element represents exactly same entity
+            as the one referenced in <att>sameas</att>. Use of <att>sameas</att> is used for
+            describing the same entity from multiple perspectives, e.g., the same event in two
+            layers. The following example illustrates the sharing of one note head between two
+            voices:</p>
+        <figure>
+            <head>Bach Chorale</head>
+            <figDesc>Ach Gott, vom Himmel sieh' darein</figDesc>
+            <graphic url="Images/modules/analysis/chor03_m1-2.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure n="0" xml:id="mx_sc_14" left="invis" metcon="false">
+                <staff n="1">
+                    <layer n="1">
+                        <note xml:id="n_sc_21_3" pname="b" oct="4" dur="4"/>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_21_2" pname="g" accid="s" oct="4" dur="4"/>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer n="1">
+                        <note xml:id="n_sc_21_1" pname="e" oct="4" dur="4"/>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_21_0" pname="e" oct="3" dur="4"/>
+                    </layer>
+                </staff>
+            </measure>
+            <measure n="1" xml:id="m_sc_22">
+                <staff n="1">
+                    <staff n="1">
+                        <layer n="1">
+                            <note xml:id="n_sc_23_3" pname="c" oct="5" dur="4"/>
+                            <note xml:id="n_sc_24_3" pname="b" oct="4" dur="4"/>
+                            <note xml:id="n_sc_25_3" pname="a" oct="4" dur="4" sameas="n_sc_25_2"/>
+                            <note xml:id="n_sc_26_3" pname="e" oct="5" dur="4"/>
+                        </layer>
+                        <layer n="2">
+                            <note xml:id="n_sc_23_2" pname="a" oct="4" dur="4"/>
+                            <note xml:id="n_sc_24_2" pname="g" accid="s" oct="4" dur="4"/>
+                            <note xml:id="n_sc_25_2" pname="a" oct="4" dur="4" sameas="n_sc_25_3"/>
+                            <beam>
+                                <note xml:id="n_sc_26_2" pname="g" oct="4" dur="8"/>
+                                <note xml:id="n_sc_27_2" pname="a" oct="4" dur="8"/>
+                            </beam>
+                        </layer>
+                    </staff>
+                </staff>
+                <staff n="2">
+                    <layer n="1">
+                        <note xml:id="n_sc_23_1" pname="e" oct="4" dur="4"/>
+                        <note xml:id="n_sc_24_1" pname="d" oct="4" dur="4"/>
+                        <note xml:id="n_sc_25_1" pname="e" oct="4" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_26_1" pname="d" oct="4" dur="8"/>
+                            <note xml:id="n_sc_27_1" pname="c" oct="4" dur="8"/>
+                        </beam>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_23_0" pname="a" oct="3" dur="4"/>
+                        <note xml:id="n_sc_24_0" pname="b" oct="3" dur="4"/>
+                        <note xml:id="n_sc_25_0" pname="c" oct="4" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_26_0" pname="b" oct="3" dur="8"/>
+                            <note xml:id="n_sc_27_0" pname="a" oct="3" dur="8"/>
+                        </beam>
+                    </layer>
+                </staff>
+            </measure>
+            <measure n="2" xml:id="m_sc_28">
+                <staff n="1">
+                    <layer n="1">
+                        <beam>
+                            <note xml:id="n_sc_29_3" pname="e" oct="5" dur="8"/>
+                            <note xml:id="n_sc_30_3" pname="d" oct="5" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_31_3" pname="c" oct="5" dur="4"/>
+                        <note xml:id="n_sc_33_3" pname="b" oct="4" dur="4" fermata="above"/>
+                        <note xml:id="n_sc_34_3" pname="d" oct="5" dur="4"/>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_29_2" pname="b" oct="4" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_31_2" pname="e" oct="4" dur="8"/>
+                            <note xml:id="n_sc_32_2" pname="f" accid="s" oct="4" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_33_2" pname="g" accid="s" oct="4" dur="4"/>
+                        <note xml:id="n_sc_34_2" pname="g" oct="4" dur="4" fermata="below"/>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer n="1">
+                        <note xml:id="n_sc_29_1" pname="b" oct="3" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_31_1" pname="c" oct="4" dur="8"/>
+                            <note xml:id="n_sc_32_1" pname="d" oct="4" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_33_1" pname="e" oct="4" dur="4" fermata="above"/>
+                        <note xml:id="n_sc_34_1" pname="f" accid="n" oct="4" dur="4"/>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_29_0" pname="g" accid="s" oct="3" dur="4"/>
+                        <note xml:id="n_sc_31_0" pname="a" oct="3" dur="4"/>
+                        <note xml:id="n_sc_33_0" pname="e" oct="3" dur="4" fermata="below"/>
+                        <note xml:id="n_sc_34_0" pname="b" oct="2" dur="4"/>
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>While <att>copyof</att> and <att>sameas</att> have defined semantics, the
+                <att>corresp</att> may be used to create user-defined relationships between
+            elements. The example below demonstrates the encoding of a relationship between #note3
+            and the fermata, even though the fermata is not placed directly above the note.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure n="1" right="end">
+                <staff n="1">
+                    <layer n="1">
+                        <note pname="c" oct="4" dur="4" xml:id="note1"/>
+                        <note pname="d" oct="4" dur="4" xml:id="note2"/>
+                        <note pname="e" oct="4" dur="2" xml:id="note3"/>
+                    </layer>
+                </staff>
+                <fermata place="above" tstamp="4.75" corresp="#note3"/>
+            </measure>
+        </egXML>
+        <p>The <att>corresp</att> attribute only marks the correspondence between the current
+            element and one or more other entities. To describe the nature of the correspondence,
+            one must use <gi>annot</gi>.</p>
+        <p>The <att>next</att> and <att>prev</att> attributes point to elements which follow or
+            precede the current element in some fashion other than encoded order. The use of these
+            attributes helps to avoids confusion in the sequence of events, for example, voice
+            leading across layers or staves when the encoding reflects the physical arrangement of
+            voices. In the second measure of the following example, the target of the next attribute
+            occurs after the pointing element in time, but before it in encoding order:</p>
+        <figure>
+            <head>Bach Chorale</head>
+            <figDesc>Ach Gott, vom Himmel sieh' darein</figDesc>
+            <graphic url="Images/modules/analysis/chor03_m6-7.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure n="6" xml:id="m_sc_62">
+                <staff n="1">
+                    <layer n="1">
+                        <note xml:id="n_sc_63_3" pname="g" oct="4" dur="4"/>
+                        <note xml:id="n_sc_65_3" pname="a" oct="4" dur="4"/>
+                        <note xml:id="n_sc_67_3" pname="b" oct="4" dur="4" fermata="above"/>
+                        <note xml:id="n_sc_68_3" pname="g" oct="4" dur="4"/>
+                    </layer>
+                    <layer n="2">
+                        <beam>
+                            <note xml:id="n_sc_63_2" pname="e" oct="4" dur="8"/>
+                            <note xml:id="n_sc_64_2" pname="g" oct="4" dur="8"/>
+                        </beam>
+                        <beam>
+                            <note xml:id="n_sc_65_2" pname="f" oct="4" dur="8"/>
+                            <note xml:id="n_sc_66_2" pname="e" oct="4" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_67_2" pname="d" accid="s" oct="4" dur="4"
+                            next="n_sc_67_0"/>
+                        <beam>
+                            <note xml:id="n_sc_68_1" pname="e" oct="4" dur="8"/>
+                            <note xml:id="n_sc_69_1" pname="d" accid="n" oct="4" dur="8"/>
+                        </beam>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer n="1">
+                        <note xml:id="n_sc_63_1" pname="b" oct="3" dur="4"/>
+                        <note xml:id="n_sc_65_1" pname="c" oct="4" dur="4"/>
+                        <note xml:id="n_sc_67_1" pname="f" oct="3" dur="4"/>
+                        <note xml:id="n_sc_68_2" pname="b" oct="3" dur="4"/>
+                    </layer>
+                    <layer n="1">
+                        <beam>
+                            <note xml:id="n_sc_63_0" pname="e" oct="3" dur="8"/>
+                            <note xml:id="n_sc_64_0" pname="d" oct="3" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_65_0" pname="c" oct="3" dur="4"/>
+                        <note xml:id="n_sc_67_0" pname="b" oct="2" dur="4" fermata="below"/>
+                        <note xml:id="n_sc_68_0" pname="e" oct="3" dur="4"/>
+                    </layer>
+                </staff>
+            </measure>
+            <measure n="7" xml:id="m_sc_70">
+                <staff n="1">
+                    <layer n="1">
+                        <beam>
+                            <note xml:id="n_sc_71_3" pname="a" oct="4" dur="8"/>
+                            <note xml:id="n_sc_72_3" pname="b" oct="4" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_73_3" pname="c" oct="5" dur="4"/>
+                        <note xml:id="n_sc_75_3" pname="b" oct="4" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_76_3" pname="c" oct="5" dur="8"/>
+                            <note xml:id="n_sc_77_3" pname="b" oct="4" dur="8"/>
+                        </beam>
+                    </layer>
+                    <layer n="2">
+                        <beam>
+                            <note xml:id="n_sc_71_1" pname="c" oct="4" dur="8"/>
+                            <note xml:id="n_sc_72_1" pname="d" oct="4" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_73_2" pname="a" oct="4" dur="4"/>
+                        <note xml:id="n_sc_75_2" pname="g" accid="s" oct="4" dur="4"/>
+                        <note xml:id="n_sc_76_2" pname="a" oct="4" dur="4"/>
+                    </layer>
+                    <layer n="3">
+                        <space dur="4"/>
+                        <note xml:id="n_sc_73_1" pname="e" oct="4" dur="4"/>
+                        <note xml:id="n_sc_75_1" pname="e" oct="4" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_76_1" pname="e" oct="4" dur="8"/>
+                            <note xml:id="n_sc_77_1" pname="d" oct="4" dur="8"/>
+                        </beam>
+                    </layer>
+                </staff>
+                <staff n="2">
+                    <layer n="1">
+                        <note xml:id="n_sc_71_2" pname="a" oct="3" dur="4" next="n_sc_73_2"/>
+                    </layer>
+                    <layer n="2">
+                        <note xml:id="n_sc_71_0" pname="f" accid="n" oct="3" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_73_0" pname="c" oct="3" dur="8"/>
+                            <note xml:id="n_sc_74_0" pname="d" oct="3" dur="8"/>
+                        </beam>
+                        <note xml:id="n_sc_75_0" pname="e" oct="3" dur="4"/>
+                        <beam>
+                            <note xml:id="n_sc_76_0" pname="a" oct="2" dur="8"/>
+                            <note xml:id="n_sc_77_0" pname="b" oct="2" dur="8"/>
+                        </beam>
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>This attribute may also be useful to clarify a sequence of entites which occurs across
+            some form of interruption, in this case, notes before and after a system or page break
+            where there is no custos or direct in the source:</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <measure n="1">
+                <staff n="1">
+                    <layer>
+                        <note pname="f" oct="4" dur="4" stem.dir="up" xml:id="m1s1e1" next="m1s1e2"/>
+                        <pb/>
+                        <note pname="b" oct="3" dur="8" stem.dir="up" xml:id="m1s1e2" prev="m1s1e1"
+                            next="m1s1e3"/>
+                        <note pname="c" oct="4" dur="8" stem.dir="up" xml:id="m1s1e3" prev="m1s1e2"
+                        />
+                    </layer>
+                </staff>
+            </measure>
+        </egXML>
+        <p>There can be a one-to-many relationship between the current element and the entities
+            being referred to.</p>
+        <p>The <att>synch</att> attribute points to an element that is synchronous with, that is,
+            begins at the same moment in time, as the current element. It is useful when the
+            encoding order differs from the order in which entities occur in time.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <!-- NEED EXAMPLE HERE -->
+        </egXML>
+        <p>It is also useful for eliminating confusion when the source has obvious timing errors. In
+            the following fictitious example, </p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <!-- NEED EXAMPLE HERE -->
+        </egXML>
+        <p>The <att>when</att> attribute may be used to indicate the point of occurrence of the
+            feature bearing this attribute along a time line. Its value must be the ID of a
+            &lt;when&gt; element. For more detailed information regarding the use of
+            <att>when</att>, please see <ptr target="#linkAlign"/>.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <!-- NEED EXAMPLE HERE -->
+        </egXML>
+        <p>The intention behind the attributes defined by the analysis module is to provide the
+            opportunity to refer to other events by the use of a URI. Using these attributes makes
+            it possible to create relationships between events, which are often widely-spaced in
+            both encoded order and time. The attributes allow a large number of connections,
+            enhancing the informational content, and therefore the potential usefulness, of the
+            encoding.</p>
+        <div type="div3">
+            <head>Harmonic function</head>
+
+            <!-- inth was intended to carry numeric values (half-steps above the root), even though it seems that intention 
+                        didn't get expressed properly in the move from the original RNG to ODD.  The datatype of inth should be a 
+                        list of numbers, not NMTOKENS.  This is an error that should be corrected even now in the frozen 2012 release.
+                        
+                        remove mfunc from chord and allow it only on <note>, <ineume>, and <uneume>.  In addition, only <chord> 
+                        should allow hfunc.  That leaves the resolution of the difference between hfunc and <harm>, which I believe 
+                        can be drawn as "transcriptional" (<harm>) vs. "analytical" (hfunc), although when multiple analytical labels 
+                        are required, as in the examples raised by Eleanor, then even the analytical labels should go in <harm>.
+                        
+                        The final result:
+                           Elements carrying mfunc: note, ineume, uneume
+                           Elements carrying hfunc: chord -->
+
+            <p>This section makes recommendations regarding the use of the <att>hfunc</att>
+                attribute to describe the harmonic function of notes and chords.</p>
+            <p>
+                <specDesc key="att.harmonicfunction" atts="hfunc"/>
+            </p>
+            <p>The term <term>functional harmony</term> derives from Hugo Riemann and his textbooks
+                on harmony in the late 19th century, but the basic principles of harmonic
+                relationships between notes (and the chords built upon them) were described in
+                Jean-Philippe Rameau's theoretical works. These principles serve as a comprehensive
+                theoretical basis for understanding harmonic relationships typical of the Baroque,
+                Classical and Romantic periods.</p>
+            <p>For further information about methods of harmonic analysis, please see: <list
+                    type="bulleted">
+                    <item>Grove Online. "Analysis, §I: General".</item>
+                    <item>Forte, A. "Schenker´s Conception of Musical Structure." Journal of Music
+                        Theory 3(1):1-30.</item>
+                    <item>Pankhurst, Tom. "Schenker Guide: A Brief Handbook and a Website for
+                        Schenkerian Analysis". Music Analysis, 28: 145-151.</item>
+                </list>
+            </p>
+            <p>Since there are many approaches to harmonic analysis, the values chosen for
+                    <att>hfunc</att> depend on the musical context and the intention of the encoder.
+                For example, depending on context, a tonic chord may be labeled using natural
+                language terms, such as "tonic"; abbrevations, such as "T" for "Tonika" (German); or
+                Roman numerals, such as "I" or "vii". Therefore, <att>hfunc</att> allows any string
+                value drawn from any convenient typology. Of course, it is recommended that the
+                    <att>hfunc</att> attribute be used in a consistent manner. The example below
+                demonstrates labeling the harmonic function of notes and chords using Roman
+                numerals.</p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <!-- NEED EXAMPLE HERE -->
+            </egXML>
+            <p>The <gi>harm</gi> element, described in chapter <ptr target="#harmony"/> should be
+                used instead of <att>hfunc</att> when the harmonic analysis occurs in the material
+                being transcribed, as sometimes occurs in pedagogical editions. It should also be
+                used when the harmonic label itself requires the use of markup, such as indications
+                of superscript or subscript.</p>
+        </div>
+        <div type="div3">
+            <head>Harmonic intervals</head>
+            <p>
+                <specDesc key="att.intervalharmonic" atts="inth"/>
+            </p>
+            <p>The <att>inth</att> is used to encode the harmonic interval between the current note
+                and other pitches occurring at the same moment in time. The notes of interest may or
+                may not be marked as a <gi>chord</gi>. For example, </p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure>
+                    <staff>
+                        <layer n="1">
+                            <note xml:id="e1" pname="c" oct="4" dur="4" inth="0"/>
+                        </layer>
+                        <layer n="2">
+                            <note xml:id="e2" pname="e" oct="4" dur="4" inth="3"/>
+                        </layer>
+                    </staff>
+                    <staff n="2">
+                        <layer n="3">
+                            <note xml:id="e3" pname="g" oct="4" dur="4" inth="5"/>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+            <p>Use of the <att>inth</att> permits detailed specification of intervallic information
+                about every note and its function in relation to other simultaneously-occurring
+                notes and hence about the harmonic nature of the musical work.</p>
+            <p>To describe the intervals between sequential notes, use the <att>intm</att>, which is
+                explained below.</p>
+        </div>
+        <div type="div3">
+            <head>Melodic function</head>
+            <p>The <att>mfunc</att> attribute describes melodic function in any convenient typology.
+                The values of this attribute could be a name or a number. However, <att>mfunc</att>
+                should be used for describing passing notes or passing chords for a better
+                distinction and assignment of notes. Currently, <att>mfunc</att> is allowed on notes
+                and chords. The following example illustrates the <att>mfunc</att> on a chord and on
+                a note, indicating the first chord as a tonic, the following note as a passing note
+                and the second chord as a dominant. </p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure n="2">
+                    <staff n="1">
+                        <layer>
+                            <chord dur="4" stem.dir="up" xml:id="chord1" mfunc="start_as_I">
+                                <note pname="f" oct="4" dur="4" xml:id="m2e1"/>
+                                <note pname="a" oct="4" dur="4" xml:id="m2e2"/>
+                                <note pname="c" oct="5" dur="4" xml:id="m2e3"/>
+                            </chord>
+                            <note pname="b" oct="4" dur="4" stem.dir="down" xml:id="m2e4" accid="f"
+                                mfunc="passing-note"/>
+                        </layer>
+                    </staff>
+                    <staff n="2">
+                        <layer>
+                            <chord dur="4" stem.dir="up" xml:id="chord2" mfunc="leads_to_I">
+                                <note pname="c" oct="4" dur="4" xml:id="m2e5"/>
+                                <note pname="e" oct="4" dur="4" xml:id="m2e6"/>
+                                <note pname="g" oct="4" dur="4" xml:id="m2e7"/>
+                            </chord>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+            <p>Even the description of motifs is possible, e.g. if some sequenced notes are part of
+                a motif, all about in the combination with the <att>intm</att>. The attribute is
+                still allowed on a chord so another example shows a part of an encoding including a
+                chord, which might be identified as the "Tristan-chord". </p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure n="5">
+                    <staff n="1">
+                        <layer>
+                            <chord n="1" mfunc="Tristan_chord">
+                                <note pname="f" oct="4" dur="2" dots="1"/>
+                                <note pname="b" oct="4" dur="2" dots="1"/>
+                                <note pname="d" accid="s" oct="3" dur="2" dots="1"/>
+                                <note pname="g" accid="s" dur="2" dots="1"/>
+                            </chord>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+        </div>
+        <div type="div3">
+            <head>Melodic intervals</head>
+            <p>The<att>intm</att>is used to encode the melodic interval coming from the previous
+                pitch using a decimal number or the Parson´s Code (d/u/s). The attribute is only
+                permitted on the <gi>note</gi> and the <gi>uneueme</gi>. The decimal numbers allow
+                the description of the interval in a very precise way, so that is also possible to
+                encode minute intervals. At first an example which shows a simple melody with
+                intervals represented by numbers (half steps).</p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure>
+                    <staff>
+                        <layer>
+                            <note pname="c" oct="4" dur="4"/>
+                            <note pname="d" oct="4" dur="4" intm="1"/>
+                            <note pname="d" oct="5" dur="4" intm="8"/>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+            <p>In a diatonic melody it is quite sufficient to use the Parsons Code. The shortcuts
+                are intended to give the direction of the notes/ melody (up, down or the same). For
+                more information about the Parsons Code please read the "The Directory of Tunes and
+                Musical Themes" by Denys Parsons (2002). The next example shows the encoded
+                beginning of a melody including the Parsons Code.</p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure n="1">
+                    <staff n="1">
+                        <layer>
+                            <note pname="c" oct="4" dur="4"/>
+                            <note pname="d" oct="4" dur="4" intm="u"/>
+                            <note pname="e" oct="4" dur="4" intm="u"/>
+                            <note pname="f" oct="4" dur="4" intm="u"/>
+                            <note pname="g" oct="4" dur="2" intm="u"/>
+                            <note pname="g" oct="4" dur="2" intm="s"/>
+                            <note pname="f" oct="4" dur="4" intm="d"/>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+            <p>The use of the The Parsons Code is helpful to find songs and musical works, so in an
+                analytical way, the use of the <att>intm</att> could be beneficial to analyze the
+                relation between successive notes and may help to identify motifs. </p>
+        </div>
+        <div type="div3">
+            <head>Pitch class</head>
+            <p>The <att>pclass</att> attribute is used to encode information about the pitch class.
+                The value must be an integer less than or equal to 11. It is only allowed on the
+                    <gi>note</gi> element. Background of this attribute is the "musical set theory"
+                elaborated first by Howard Hanson and Allen Forte as a new method for organizing
+                tones at the beginning of the 20th. It provides a concept for categorizing musical
+                objects (notes) and describing their relationships. It is a kind of grouping and
+                combining, mostly developed in connection with atonal music. But the concepts of set
+                theory are general and can be applied also to tonal music. A pitch class means the
+                summary of every pitch with specific characteristics that means a pitch class set is
+                an unordered collection of pitches, e.g. every pitches with the name c. A pitch
+                class may contain a large number of pitches, because the notation, as different
+                octaves and enharmonic quotation of pitch, makes no difference. The notes C, E, and
+                G would be 0, 4 and 7 in pitch classes for example. For further information find a
+                brief introduction to the Pitch-Class Set analysis on <ref
+                    target="http://www.mta.ca/faculty/arts-letters/music/pc-set_project/pc-set_new/pages/introduction/toc.html"
+                />. Otherwise please read the "Analyzing Atonal Music: Pitch Class Set Theory and
+                its contexts" by Michael Schuijler (2008).
+                <!-- Cohen, Allen Laurence (2004) Howard Hanson in Theory and Practice-->
+            </p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <note pname="d" oct="4" dur="4" pclass="2"/>
+                <note pname="d" oct="5" dur="2" pclass="2"/>
+                <note pname="c" accid="ss" dur="4" pclass="2"/>
+                <note pname="e" accid="ff" dur="1" pclass="2"/>
+            </egXML>
+            <p>The example illustrates four different notes, but all are part of the same pitch
+                class. A collection of examples can be found on <ref target="http://kern.ccarh.org/"
+                /></p>
+        </div>
+        <div type="div3">
+            <head>Solfa</head>
+            <p>Solmization is a system which associates a syllable with each note of a musical
+                scale. There are various forms of solmization used throughout the world, often with
+                long histories. In Europe and North America, solfège is the most common practice.
+                The seven syllables for a major scale are called do, re, mi, fa, so, la and ti. The
+                attribute is only allowed on <gi>note</gi> and <gi>uneume</gi> with an open value,
+                that ensures the opportunity to encode different values for several types of
+                solmization.</p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure>
+                    <staff n="1">
+                        <layer>
+                            <note pname="c" oct="4" dur="4" psolfa="do"/>
+                            <note pname="d" oct="4" dur="4" psolfa="re"/>
+                            <note pname="e" oct="4" dur="4" psolfa="mi"/>
+                            <note pname="f" oct="4" dur="4" psolfa="fa"/>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+        </div>
+    </div>
     <div type="div2" xml:id="analysisOverview">
-        <head>Overview of the analysis Module</head>
-        <p>The analysis module contains common analytical attributes but no further elements.</p>
+        <head>Overview of the analysis module</head>
         <p>The module described in this chapter makes available the following components:</p>
         <div type="div3" xml:id="analysisElements">
             <head>Elements</head>
-            <p>No elements are defined in this module.</p>
+            <p>The analysis module contains common analytical attributes but no additional
+                elements.</p>
         </div>
         <div type="div3" xml:id="analysisAttributeClasses">
-            <head>Attribute Classes</head>
-            <p>The following attribute classes are defined in this module.</p>
+            <head>Attribute classes</head>
+            <p>The following attribute classes are defined in this module:</p>
             <p>
                 <specList>
                     <specDesc key="att.common.anl"/>
@@ -44,439 +685,10 @@
                     <specDesc key="att.solfa"/>
                 </specList>
             </p>
-            <div type="div3">
-                <head>Describing relationships between elements</head>
-                <p>The relationships between elements make the structure of a musical work and the
-                    attributes ensure a closed network of these relations. The following paragraph
-                    describes the attributes, as part of the analysis module, which are particularly
-                    used for linking elements.</p>
-                <p>In MEI, the so called common analytical attributes provide the opportunity to
-                    encode certain issues in a generic fashion. The analysis module offers six
-                    optional attributes beside the basic parameters of the <ref target="#shared"
-                        >Shared Module</ref> in the att.common.anl class. These are the
-                        <att>copyof</att>, <att>sameas</att>, <att>next</att>, <att>corresp</att>
-                    <att>prev</att> and <att>synch</att>. These attributes work as a special tool to
-                    refer to several elements. All of them act with xml:id´s and URI´s to link to
-                    each other. In the context of a Formal analysis for instance, the attributes
-                    presented here, might be useful to get information about the structure of a
-                    musical work. As well, another method needing several data about coherence
-                    within a musical work might be the Transformational Theory, focussing the
-                    relationships between musical objects.</p>
-                <p>The <att>copyof</att> attribute points to an element of which the current element
-                    is a copy. It is used to repeat e.g. a note without encoding the whole
-                        <gi>note</gi> element again (reduplication). The <att>copyof</att> copies
-                    any other attributes, which belong to the note, like the <att>dur</att>,
-                        <att>oct</att> and so on. By definition, the value of the
-                    <att>copyof</att>-attribute must be an URI, which refers to a previous
-                        <gi>note</gi>. The following example demonstrates the <att>copyof</att>
-                    within a two-measure level.<egXML xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure n="1">
-                            <staff n="1">
-                                <layer>
-                                    <note pname="g" oct="4" dur="4" xml:id="note1"/>
-                                </layer>
-                            </staff>
-                        </measure>
-                        <measure n="2">
-                            <staff n="1">
-                                <layer>
-                                    <note copyOf="#note1"/>
-                                </layer>
-                            </staff>
-                        </measure>
-                    </egXML> In the small example the <gi>note</gi> of the second measure would have
-                    exactly the same characteristics as the <gi>note</gi> in the first
-                        <gi>measure</gi>. Certainly the <att>copyof</att> can also be used to copy a
-                    whole <gi>staff</gi> or <gi>measure</gi>. In some cases the use of the
-                        <att>copyof</att> facilitates the effort in a vastly way. The image and the
-                    following encoding of the beginning of Schuberts "Erlkönig" illustrates the
-                    benefit of using the <att>copyof</att> without loosing musical content. <figure>
-                        <head>First measure of Schuberts Erlkönig</head>
-                        <figDesc/>
-                        <graphic url=""/>
-                    </figure><egXML xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure>
-                            <staff n="1">
-                                <layer>
-                                    <mRest/>
-                                </layer>
-                            </staff>
-                            <staff n="2">
-                                <layer>
-                                    <tuplet xml:id="tuplet1" num="3" num.visible="true">
-                                        <chord dur="8">
-                                            <note pname="g" oct="3"/>
-                                            <note pname="g" oct="4"/>
-                                        </chord>
-                                    </tuplet>
-                                    <tuplet xml:id="tuplet2" copyof="#tuplet1">
-                                        <chord/>
-                                    </tuplet>
-                                    <tuplet xml:id="tuplet3" copyof="#tuplet1">
-                                        <chord/>
-                                    </tuplet>
-                                    <tuplet xml:id="tuplet4" copyof="#tuplet1">
-                                        <chord/>
-                                    </tuplet>
-                                </layer>
-                            </staff>
-                            <staff n="3">
-                                <layer>
-                                    <mRest/>
-                                </layer>
-                            </staff>
-                        </measure></egXML>
-                </p>
-                <p> Opposed to this the <att>sameas</att>is not a literal copy of an element, but
-                    the same as the current element. The element containing the <att>sameas</att>
-                    can have additional attributes and is commonly used for describing the same
-                    thing in two perspectives, e.g. the same event in two layers as the following
-                    example shows: <egXML xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure>
-                            <staff n="1">
-                                <layer n="1">
-                                    <note pname="a" oct="4" dur="2" stem.dir="up" xml:id="note1"/>
-                                    <layer n="2">
-                                        <note xml:id="456" sameas="#note1" stem.dir="down"/>
-                                    </layer>
-                                </layer>
-                            </staff>
-                        </measure>
-                    </egXML> The same event has different stem directions but they share the same
-                    headshape. The <att>sameas</att>is allowed on a huge number of elements and it
-                    is to be used like the <att>copyOf</att> with an URI, which refers to another
-                    element. The case shown in the example occurs often in chorales. The image
-                    illustrates the function of <att>sameas</att> by an extract of a Bach-Chorale,
-                    where the first and the second voice are sharing one notehead. <figure>
-                        <head>Bach Chorale</head>
-                        <figDesc/>
-                        <graphic url=""/>
-                    </figure> It is recommended to use the <att>sameas</att> to avoid duplication of
-                    an encoded note, chord or other element.</p>
-                <p>The <att>corresp</att>is used to point to other elements, which are defined
-                    elsewhere in the document. That might be be a large number of elements in a
-                    generic fashion. The <att>corresp</att> offers the opportunity to encode an
-                    element with its own characteristics but still corresponding to another element.
-                    The <att>corresp</att> is used to make a semantic relation beween elements, even
-                    if a graphic pictures something different. The use of <att>corresp</att> is
-                    allowed on many elements, working with ID´s/URI´s, as suggested in the following
-                        example.<egXML xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure n="1" right="end">
-                            <staff n="1">
-                                <layer n="1">
-                                    <note pname="c" oct="4" dur="4" xml:id="note1"/>
-                                    <note pname="d" oct="4" dur="4" xml:id="note2"/>
-                                    <note pname="e" oct="4" dur="2" xml:id="note3"/>
-                                </layer>
-                            </staff>
-                            <fermata place="above" tstamp="4.75" corresp="#note3"/>
-                        </measure>
-                    </egXML> The example demonstrates the relationship between note3 and the
-                    fermata, although the fermata is not placed directly above the note. It is also
-                    possible to indicate more than one URI separated by whitespace.</p>
-                <p>The <att>prev</att> and the <att>next</att> point to previous or respectively
-                    next events in a user-defined collection. The URI is used to mark the preceding
-                    or following event, which can be a note, chord, rest or several elements. It
-                    enables to link abreast to events directly and avoids confusion in the sequence
-                    of events. <egXML xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure n="1">
-                            <staff n="1">
-                                <layer>
-                                    <note pname="f" oct="4" dur="4" stem.dir="up" xml:id="m1s1e1"
-                                        next="m1s1e2"/>
-                                    <sb/>
-                                    <pb/>
-                                    <note pname="b" oct="3" dur="8" stem.dir="up" xml:id="m1s1e2"
-                                        prev="m1s1e1" next="m1s1e3"/>
-                                    <note pname="c" oct="4" dur="8" stem.dir="up" xml:id="m1s1e3"
-                                        prev="m1s1e2"/>
-                                </layer>
-                            </staff>
-                        </measure>
-                    </egXML> It is useful to encode notes with the <att>next</att> before a
-                        <gi>sb</gi> or <gi>pb</gi> for example. The <att>prev</att> enables to get
-                    an impression which events occured before.</p>
-                <p> The <att>synch</att> points to an element that is synchronous to the current
-                    element. This attribute can be used to describe, that at least two events happen
-                    at the same time. The <att>synch</att> marks the sound of a pitch in a first
-                    layer, while the second layer has a rest at the same time. It also can be used
-                    to link the notes of a score to the notes of a solo part, to facilitate the
-                    reading of content, that belongs together. The following encoded feature is a
-                    small example for using the <att>synch</att> within one measure, combining two
-                    notes and one rest, which occur on the same time and sound simultanously. <egXML
-                        xmlns="http://www.tei-c.org/ns/Examples">
-                        <measure>
-                            <staff n="1">
-                                <layer>
-                                    <note pname="d" oct="5" dur="2" xml:id="note1"/>
-                                </layer>
-                            </staff>
-                            <staff n="2">
-                                <layer>
-                                    <rest dur="2" synch="note1 note2" xml:id="rest1"/>
-                                </layer>
-                            </staff>
-                            <staff n="3">
-                                <layer>
-                                    <note pname="b" oct="4" dur="2" xml:id="note2"
-                                        synch="#rest1 #note1"/>
-                                </layer>
-                            </staff>
-                        </measure>
-                    </egXML>
-                </p>
-                <p>The described attributes have similar intentions, but with different results.
-                    Their intention is to provide the opportunity to refer to other events by the
-                    use of ID´s and URI´s. Using these attributes offer the possibility to create a
-                    relationship between different events in diverse levels and to facilitate
-                    encoding of several events which are related. The result depends on the
-                    attributes, which have to be used for the described tasks. The attributes allow
-                    a vast number of connecting elements within a file, which can enhance the
-                    structure of the encoding. For the analytical point of view, it can be quite
-                    beneficial to know which notes for example correspond to which chord, or which
-                    note follows on the current event perhaps for indicating it as a passing
-                    note.</p>
-                <div type="div3">
-                    <head>Harmonic function</head>
-                    <p>The current schema allows several attributes within certain elements. This
-                        paragraph is intended to make recommendations how to use the
-                            <att>hfunc</att> and the <att>mfunc</att>. For a future version of the
-                        MEI release, a reconfiguration of these attributes is planned.</p>
-                    <p>This part of the chapter addresses the explanation of the harmonical context
-                        of a note. Actually the <att>hfunc</att>is only permitted within the
-                            <gi>note</gi>, <gi>uneume</gi> and <gi>ineume</gi>. The various
-                        opportunities of using the <att>hfunc</att> depends on the musical context
-                        and the intention of the encoder. There are many techniques to analyze
-                        music. In the european tradition, the functional harmony is the most common
-                        practice for analyzing musical works. The term derives from Hugo Riemann
-                        with roots back to Jean-Philippe Rameau. Basic parameters are the labels of
-                        functions which any tone of a seven-tone scale can have. For example the
-                        tonic and the common abbreviation T. Functional harmony is a basic
-                        discipline in the western world, though different labels are used. In the US
-                        e.g. the <soCalled>Schenkerian analysis</soCalled> is a more common practice
-                        than in Europe. The basic component of this type of analysis is the harmonic
-                        scale degree ("Stufe") and is represented by roman numerals. For further
-                        information about methods and techniques in analysis please read the New
-                        Grove Online, article: analysis, §I: General. Moreover, Forte, A. (1959)
-                        "Schenker´s Conception of Musical Structure." Journal of Music Theory
-                        3(1):1-30 and "SchenkerGuide: A brief Handbook and a website for Schenkerian
-                        Analysis" - by Tom Pankhurst. In: Music analysis vol. 28 (2009), p. 145-151 </p>
-                    <p>For describing the harmonic function of a note the <att>hfunc</att> provides
-                        an open value, because it allows to describe harmonic function in any
-                        convenient typology. Using the <att>hfunc</att>offers several options for
-                        the encoder, depending on his intention, but it is recommended to use the
-                            <att>hfunc</att>in a consistent way within a file. The first example
-                        demonstrates the <att>hfunc</att> within a <gi>note</gi>. <egXML
-                            xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure>
-                                <staff n="1">
-                                    <layer n="1">
-                                        <note pname="a" oct="4" dur="8"/>
-                                    </layer>
-                                    <layer n="2">
-                                        <note pname="f" accid="s" oct="4" dur="8"/>
-                                    </layer>
-                                </staff>
-                                <staff n="2">
-                                    <layer n="2">
-                                        <note pname="d" oct="4" dur="8" hfunc="keynote"/>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML> The <gi>note</gi> element of the second staff contains some
-                        attributes describing the pitchname, note value and so on. In the context of
-                        the basic key of this chorale, which is described in the previous
-                            <gi>scoreDef</gi>, and the other notes occurring in the first staff, it
-                        is possible to determine the function of the bass note using the
-                            <att>hfunc</att>. </p>
-                    <p>Chord labels, like "Cm7", or indications of harmonic functionality like "ii7"
-                        belong in <gi>harm</gi>, so for describing harmonic function of chords, it
-                        is recommended to use the <gi>harm</gi>element.</p>
-                </div>
-                <div type="div3">
-                    <head>Interval harmonic</head>
-                    <p> The <att>inth</att> is used to encode the harmonic interval between the
-                        current note and other pitches occuring at the same time for example within
-                        a chord or within different staffs and layers on the same timestamp. It is
-                        determined to encode numbers for describing halfsteps above the root. <egXML
-                            xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure>
-                                <staff>
-                                    <layer n="1">
-                                        <note xml:id="e1" pname="c" oct="4" dur="4" inth="0"/>
-                                    </layer>
-                                    <layer n="2">
-                                        <note xml:id="e2" pname="e" oct="4" dur="4" inth="3"/>
-                                    </layer>
-                                </staff>
-                                <staff n="2">
-                                    <layer n="3">
-                                        <note xml:id="e3" pname="g" oct="4" dur="4" inth="5"/>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML> By using the <att>inth</att>the encoding gives detailed information
-                        about every note and its function in a relation to the other occuring notes
-                        and hence about the harmonic of the musical work. An interval is always the
-                        combination of two notes and can be described in a vertical or horizontal
-                        way. To describe the horizontal way of intervals between notes, it is
-                        recommended to use the <att>intm</att>, which is explained in the next
-                        paragraph.</p>
-                </div>
-                <div type="div3">
-                    <head>Interval description</head>
-                    <p> The<att>intm</att>is used to encode the melodic interval coming from the
-                        previous pitch using a decimal number or the Parson´s Code (d/u/s). The
-                        attribute is only permitted on the <gi>note</gi> and the <gi>uneueme</gi>.
-                        The decimal numbers allow the description of the interval in a very precise
-                        way, so that is also possible to encode minute intervals. At first an
-                        example which shows a simple melody with intervals represented by numbers
-                        (halfsteps). <egXML xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure>
-                                <staff>
-                                    <layer>
-                                        <note pname="c" oct="4" dur="4"/>
-                                        <note pname="d" oct="4" dur="4" intm="1"/>
-                                        <note pname="d" oct="5" dur="4" intm="8"/>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML> In a diatonic melodoy it is quite sufficient to use the Parsons
-                        Code. The shortcuts are intended to give the direction of the notes/ melody
-                        (up, down or the same). For more information about the Parsons Code please
-                        read the "The Directory of Tunes and MusicalThemes" by Denys Parsons (2002).
-                        The next example shows the encoded beginning of a melody including the
-                        Parsons Code.<egXML xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure n="1">
-                                <staff n="1">
-                                    <layer>
-                                        <note pname="c" oct="4" dur="4"/>
-                                        <note pname="d" oct="4" dur="4" intm="u"/>
-                                        <note pname="e" oct="4" dur="4" intm="u"/>
-                                        <note pname="f" oct="4" dur="4" intm="u"/>
-                                        <note pname="g" oct="4" dur="2" intm="u"/>
-                                        <note pname="g" oct="4" dur="2" intm="s"/>
-                                        <note pname="f" oct="4" dur="4" intm="d"/>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML> The use of the The Parsons Code is helpful to find songs and
-                        musical works, so in an analytical way, the use of the <att>intm</att> could
-                        be beneficial to analize the relation between successive notes and may help
-                        to identify motifs. </p>
-                </div>
-                <div type="div3">
-                    <head>Melodic function</head>
-                    <p>The <att>mfunc</att> describes melodic function in any convenient typology.
-                        The values of this attribute could be a name or a number. However, the
-                            <att>mfunc</att> should be used for describing passing notes or passing
-                        chords for a better distinction and assignment of notes. Currently the
-                            <att>mfunc</att> is allowed on notes and chords. The following example
-                        illustrates the <att>mfunc</att> on a chord and on a note, indicating the
-                        first chord as a tonic, the following note as a passing note and the second
-                        chord as a dominant. <egXML xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure n="2">
-                                <staff n="1">
-                                    <layer>
-                                        <chord dur="4" stem.dir="up" xml:id="chord1"
-                                            mfunc="start_as_I">
-                                            <note pname="f" oct="4" dur="4" xml:id="m2e1"/>
-                                            <note pname="a" oct="4" dur="4" xml:id="m2e2"/>
-                                            <note pname="c" oct="5" dur="4" xml:id="m2e3"/>
-                                        </chord>
-                                        <note pname="b" oct="4" dur="4" stem.dir="down"
-                                            xml:id="m2e4" accid="f" mfunc="passing-note"/>
-                                    </layer>
-                                </staff>
-                                <staff n="2">
-                                    <layer>
-                                        <chord dur="4" stem.dir="up" xml:id="chord2"
-                                            mfunc="leads_to_I">
-                                            <note pname="c" oct="4" dur="4" xml:id="m2e5"/>
-                                            <note pname="e" oct="4" dur="4" xml:id="m2e6"/>
-                                            <note pname="g" oct="4" dur="4" xml:id="m2e7"/>
-                                        </chord>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML> Even the description of motifs is possible, e.g. if some sequenced
-                        notes are part of a motif, all about in the combination with the
-                            <att>intm</att>. The attribute is still allowed on a chord so another
-                        example shows a part of an encoding including a chord, which might be
-                        identified as the "Tristan-chord". <egXML
-                            xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure n="5">
-                                <staff n="1">
-                                    <layer>
-                                        <chord n="1" mfunc="Tristan_chord">
-                                            <note pname="f" oct="4" dur="2" dots="1"/>
-                                            <note pname="b" oct="4" dur="2" dots="1"/>
-                                            <note pname="d" accid="s" oct="3" dur="2" dots="1"/>
-                                            <note pname="g" accid="s" dur="2" dots="1"/>
-                                        </chord>
-                                    </layer>
-                                </staff>
-                            </measure></egXML></p>
-                </div>
-                <div type="div3">
-                    <head>Pitch class</head>
-                    <p>The <att>pclass</att> attribute is used to encode information about the pitch
-                        class. The value must be an integer less than or equal to 11. It is only
-                        allowed on the <gi>note</gi> element. Background of this attribute is the
-                        "musical set theory" eloborated first by Howard Hanson and Allen Forte as a
-                        new method for organizing tones at the beginning of the 20th. It provides a
-                        concept for categorizing musical objects (notes) and describing their
-                        relationships. It is a kind of grouping and combining, mostly developed in
-                        connection with atonal music. But the concepts of set theory are general and
-                        can be applied also to tonal music. A pitch class means the summary of every
-                        pitch with specific characteristics that means a pitch class set is an
-                        unordered collection of pitches, e.g. every pitches with the name c. A pitch
-                        class may contain a large number of pitches, because the notation, as
-                        different octaves and enharmonical quotation of pitch, makes no difference.
-                        The notes C, E, and G would be 0, 4 and 7 in pitch classes for example. For
-                        further information find a brief introduction to the Pitch-Class Set
-                        analysis on <ref
-                            target="http://www.mta.ca/faculty/arts-letters/music/pc-set_project/pc-set_new/pages/introduction/toc.html"
-                        />. Otherwise please read the "Analyzing Atonal Music: Pitch Class Set
-                        Theory and its contexts" by Michael Schuijler (2008). <!-- Cohen, Allen Laurence (2004) Howard Hanson in Theory and Practice-->
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-                            <note pname="d" oct="4" dur="4" pclass="2"/>
-                            <note pname="d" oct="5" dur="2" pclass="2"/>
-                            <note pname="c" accid="ss" dur="4" pclass="2"/>
-                            <note pname="e" accid="ff" dur="1" pclass="2"/>
-                        </egXML> The example illustrates four different notes, but all are part of
-                        the same pitch class. A collection of examples can be found on <ref
-                            target="http://kern.ccarh.org/"/></p>
-                </div>
-                <div type="div3">
-                    <head>Solfa</head>
-                    <p>The solmization is a system to associate a syllable to each note of a musical
-                        scale. There are various forms of solmization all over the world and which
-                        developed over the years. In Europe and North America, the solfège is the
-                        most common practice. The seven syllables for a major scale are called do,
-                        re, mi, fa, so, la and ti. The attribute is only allowed on <gi>note</gi>
-                        and <gi>uneme</gi> with an open value, that ensures the opportunity to
-                        encode different values for several typs of solmization. <egXML
-                            xmlns="http://www.tei-c.org/ns/Examples">
-                            <measure>
-                                <staff n="1">
-                                    <layer>
-                                        <note pname="c" oct="4" dur="4" psolfa="do"/>
-                                        <note pname="d" oct="4" dur="4" psolfa="re"/>
-                                        <note pname="e" oct="4" dur="4" psolfa="mi"/>
-                                        <note pname="f" oct="4" dur="4" psolfa="fa"/>
-                                    </layer>
-                                </staff>
-                            </measure>
-                        </egXML>The <att>psolfa</att> might be particularly helpful for describing
-                        and analyzing musical works from the Middle Age.</p>
-                </div>
-            </div>
         </div>
         <div type="div3" xml:id="analysisModelClasses">
-            <head>Model Classes</head>
+            <head>Model classes</head>
             <p>No model classes are defined in this module.</p>
         </div>
     </div>
-
 </div>
