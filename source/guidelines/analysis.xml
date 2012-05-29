@@ -78,9 +78,8 @@
             illustrates the benefit of using the <att>copyof</att> attribute.</p>
         <figure>
             <head>First measure of Schubert's Erlkönig</head>
-            <figDesc/>
-            <!-- NEED IMAGE HERE -->
-            <graphic url=""/>
+            <figDesc>Opening figure</figDesc>
+            <graphic url="Images/modules/analysis/chor03_m1-2.png"/>
         </figure>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <measure>
@@ -516,41 +515,40 @@
         </div>
         <div type="div3">
             <head>Melodic function</head>
-            <p>The <att>mfunc</att> attribute describes melodic function in any convenient typology.
-                The values of this attribute could be a name or a number. However, <att>mfunc</att>
-                should be used for describing passing notes or passing chords for a better
-                distinction and assignment of notes. Currently, <att>mfunc</att> is allowed on notes
-                and chords. The following example illustrates the <att>mfunc</att> on a chord and on
-                a note, indicating the first chord as a tonic, the following note as a passing note
-                and the second chord as a dominant. </p>
+            <p>The <att>mfunc</att> attribute describes melodic function of a <gi>note</gi> or
+                    <gi>chord</gi> in any convenient typology. For example, the values of this
+                attribute could be a name or a number. <att>mfunc</att> is best used for describing
+                whether notes are harmonic or nonharmonic tones, such as a passing or neighboring
+                note. It may sometimes be used to describe a chord as a <soCalled>passing
+                    chord</soCalled>.</p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
                 <measure n="2">
                     <staff n="1">
                         <layer>
-                            <chord dur="4" stem.dir="up" xml:id="chord1" mfunc="start_as_I">
-                                <note pname="f" oct="4" dur="4" xml:id="m2e1"/>
-                                <note pname="a" oct="4" dur="4" xml:id="m2e2"/>
-                                <note pname="c" oct="5" dur="4" xml:id="m2e3"/>
+                            <chord dur="4" stem.dir="up" xml:id="chord1">
+                                <note pname="f" oct="4" dur="4" xml:id="m2e1" mfunc="ct"/>
+                                <note pname="a" oct="4" dur="4" xml:id="m2e2" mfunc="ct"/>
+                                <note pname="c" oct="5" dur="4" xml:id="m2e3" mfunc="ct"/>
                             </chord>
                             <note pname="b" oct="4" dur="4" stem.dir="down" xml:id="m2e4" accid="f"
-                                mfunc="passing-note"/>
+                                mfunc="nt"/>
                         </layer>
                     </staff>
-                    <staff n="2">
+                </measure>
+                <measure>
+                    <staff n="1">
                         <layer>
-                            <chord dur="4" stem.dir="up" xml:id="chord2" mfunc="leads_to_I">
-                                <note pname="c" oct="4" dur="4" xml:id="m2e5"/>
-                                <note pname="e" oct="4" dur="4" xml:id="m2e6"/>
-                                <note pname="g" oct="4" dur="4" xml:id="m2e7"/>
+                            <chord dur="4" stem.dir="up" xml:id="chord2">
+                                <note pname="c" oct="4" dur="5" xml:id="m2e5" mfunc="ct"/>
+                                <note pname="e" oct="4" dur="4" xml:id="m2e6" mfunc="ct"/>
+                                <note pname="g" oct="4" dur="4" xml:id="m2e7" mfunc="ct"/>
                             </chord>
                         </layer>
                     </staff>
                 </measure>
             </egXML>
-            <p>Even the description of motifs is possible, e.g. if some sequenced notes are part of
-                a motif, all about in the combination with the <att>intm</att>. The attribute is
-                still allowed on a chord so another example shows a part of an encoding including a
-                chord, which might be identified as the "Tristan-chord". </p>
+            <p>The attribute is also allowed on chords in order to describe those that do not have a
+                harmonic function in the traditional sense:</p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
                 <measure n="5">
                     <staff n="1">
@@ -568,12 +566,11 @@
         </div>
         <div type="div3">
             <head>Melodic intervals</head>
-            <p>The<att>intm</att>is used to encode the melodic interval coming from the previous
-                pitch using a decimal number or the Parson´s Code (d/u/s). The attribute is only
-                permitted on the <gi>note</gi> and the <gi>uneueme</gi>. The decimal numbers allow
-                the description of the interval in a very precise way, so that is also possible to
-                encode minute intervals. At first an example which shows a simple melody with
-                intervals represented by numbers (half steps).</p>
+            <p>The<att>intm</att> attribute is used to encode the melodic interval coming from the
+                previous pitch using a decimal number or the Parson's Code (d/u/s). The attribute is
+                only permitted on the <gi>note</gi> and the <gi>uneueme</gi>. Signed integers may be
+                used to record the difference in half steps between the previous pitch and the
+                current one:</p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
                 <measure>
                     <staff>
@@ -581,15 +578,31 @@
                             <note pname="c" oct="4" dur="4"/>
                             <note pname="d" oct="4" dur="4" intm="1"/>
                             <note pname="d" oct="5" dur="4" intm="8"/>
+                            <note pname="c" oct="5" dur="4" intm="-2"/>
                         </layer>
                     </staff>
                 </measure>
             </egXML>
-            <p>In a diatonic melody it is quite sufficient to use the Parsons Code. The shortcuts
-                are intended to give the direction of the notes/ melody (up, down or the same). For
-                more information about the Parsons Code please read the "The Directory of Tunes and
-                Musical Themes" by Denys Parsons (2002). The next example shows the encoded
-                beginning of a melody including the Parsons Code.</p>
+            <p>Decimal values allow the description of the interval in a more precise way, so that
+                is also possible to encode microtonal intervals:</p>
+            <egXML xmlns="http://www.tei-c.org/ns/Examples">
+                <measure>
+                    <staff>
+                        <layer>
+                            <note pname="c" oct="4" dur="4"/>
+                            <note pname="d" oct="4" dur="4" intm="1.1"/>
+                            <note pname="d" oct="5" dur="4" intm="7.9"/>
+                            <note pname="c" oct="5" dur="4" intm="-2.334"/>
+                        </layer>
+                    </staff>
+                </measure>
+            </egXML>
+            <p>While decimal values permit very a detailed description of melodic intervals, Parsons
+                Code allows for description of the contour of the melody in very general terms. The
+                shortcuts are intended to give the direction of the melody (up, down or the same).
+                For more information about the Parsons Code, please see the "The Directory of Tunes
+                and Musical Themes" by Denys Parsons (2002). The next example shows interval
+                relationships indicated by the Parsons Code.</p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
                 <measure n="1">
                     <staff n="1">
@@ -605,29 +618,30 @@
                     </staff>
                 </measure>
             </egXML>
-            <p>The use of the The Parsons Code is helpful to find songs and musical works, so in an
-                analytical way, the use of the <att>intm</att> could be beneficial to analyze the
-                relation between successive notes and may help to identify motifs. </p>
+            <p>Parsons Code is helpful for identifying musical works with clearly defined melodies
+                and analyzing the relationship between successive notes of monophonic tunes.</p>
         </div>
         <div type="div3">
             <head>Pitch class</head>
             <p>The <att>pclass</att> attribute is used to encode information about the pitch class.
-                The value must be an integer less than or equal to 11. It is only allowed on the
-                    <gi>note</gi> element. Background of this attribute is the "musical set theory"
-                elaborated first by Howard Hanson and Allen Forte as a new method for organizing
-                tones at the beginning of the 20th. It provides a concept for categorizing musical
-                objects (notes) and describing their relationships. It is a kind of grouping and
-                combining, mostly developed in connection with atonal music. But the concepts of set
-                theory are general and can be applied also to tonal music. A pitch class means the
-                summary of every pitch with specific characteristics that means a pitch class set is
-                an unordered collection of pitches, e.g. every pitches with the name c. A pitch
-                class may contain a large number of pitches, because the notation, as different
-                octaves and enharmonic quotation of pitch, makes no difference. The notes C, E, and
-                G would be 0, 4 and 7 in pitch classes for example. For further information find a
-                brief introduction to the Pitch-Class Set analysis on <ref
+                The attribute's value must be an integer less than or equal to 11. It is only
+                allowed on the <gi>note</gi> element. The <att>pclass</att> attribute comes from
+                "musical set theory" elaborated first by Howard Hanson and Allen Forte as a new
+                method for organizing tones. It provides a concept for categorizing musical objects
+                (notes) and describing their relationships. It is a kind of grouping and combining,
+                mostly developed in connection with atonal music. However, the concept of set theory
+                is general and can also be applied to tonal music. A pitch class means the summary
+                of every pitch with specific characteristics that means a pitch class set is an
+                unordered collection of pitches, e.g. every pitches with the name c. A pitch class
+                may contain a large number of pitches, because the notation, as different octaves
+                and enharmonic quotation of pitch, makes no difference. The notes C, E, and G would
+                be 0, 4 and 7 in pitch classes for example. For further information, a brief
+                introduction to Pitch-Class Set analysis may be found at <ref
                     target="http://www.mta.ca/faculty/arts-letters/music/pc-set_project/pc-set_new/pages/introduction/toc.html"
-                />. Otherwise please read the "Analyzing Atonal Music: Pitch Class Set Theory and
-                its contexts" by Michael Schuijler (2008).
+                    >http://www.mta.ca/faculty/arts-letters/music/pc-set_project/pc-set_new/pages/introduction/toc.html</ref>.
+                <!-- Is the following more detailed than the previous citation?  Or an alternative introduction? -->
+                Otherwise please read the "Analyzing Atonal Music: Pitch Class Set Theory and its
+                Contexts" by Michael Schuijler (2008).
                 <!-- Cohen, Allen Laurence (2004) Howard Hanson in Theory and Practice-->
             </p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -637,18 +651,20 @@
                 <note pname="e" accid="ff" dur="1" pclass="2"/>
             </egXML>
             <p>The example illustrates four different notes, but all are part of the same pitch
-                class. A collection of examples can be found on <ref target="http://kern.ccarh.org/"
-                /></p>
+                class. A collection of examples can be found at <ref target="http://kern.ccarh.org/"
+                    >http://kern.ccarh.org/</ref></p>
         </div>
         <div type="div3">
             <head>Solfa</head>
             <p>Solmization is a system which associates a syllable with each note of a musical
-                scale. There are various forms of solmization used throughout the world, often with
-                long histories. In Europe and North America, solfège is the most common practice.
-                The seven syllables for a major scale are called do, re, mi, fa, so, la and ti. The
-                attribute is only allowed on <gi>note</gi> and <gi>uneume</gi> with an open value,
-                that ensures the opportunity to encode different values for several types of
-                solmization.</p>
+                scale. There are various forms of solmization used throughout the world. In Europe
+                and North America, solfège is the most common practice. The seven syllables for a
+                major scale are called do, re, mi, fa, so, la and ti. In the
+                    <soCalled>fixed-do</soCalled> system, the syllable "do" is always associated
+                with the pitch "c", while in the <soCalled>movable-do</soCalled> system, "do" is
+                associated with the tonic note. The attribute is only allowed on <gi>note</gi> and
+                    <gi>uneume</gi> elements. Its value is unconstrained in order to accommodate
+                various solmization systems.</p>
             <egXML xmlns="http://www.tei-c.org/ns/Examples">
                 <measure>
                     <staff n="1">
