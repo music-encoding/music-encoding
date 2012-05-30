@@ -176,7 +176,43 @@
     </p>
     
   </div>
-  
+  <div type="div2" xml:id="critAppNesting">
+    <head>Nesting apparati</head>
+    <p>
+      In some situations, musical sources principally do agree on larger sections, but differ on some aspects of them. 
+      For these cases, <gi>app</gi> elements may be nested at any level. 
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <measure/>
+        <app>
+          <rdg source="#source1"/>
+          <rdg source="#source2 #source3">
+            <!-- whereas source1 misses it, source2 and source3 share an additional measure -->
+            <measure>
+              <staff>
+                <layer>
+                  <app>
+                    <!-- while source2 reads a measure rest, source3 reads a whole note -->
+                    <rdg source="#source2">
+                      <mRest/>
+                    </rdg>
+                    <rdg source="#source3">
+                      <note pname="g" oct="3" dur="1"/>
+                    </rdg>
+                  </app>
+                </layer>
+              </staff>
+            </measure>
+          </rdg>
+        </app>
+        <measure/>
+      </egXML>
+    </p>
+    <p>
+      When nesting <gi>app</gi> elements, it is important that the pointers in the child <gi>rdg</gi>'s 
+      <att>source</att> attribute must be a strict subset of the ancestor <gi>rdg</gi>'s <att>source</att>,
+      that is, no other source may be "reintroduced" in a <gi>rdg</gi>'s subtree by nesting another <gi>rdg</gi>.
+    </p>
+  </div>  
   <!--<div type="div2" xml:id="critAppOverview">
     <!-\- Overview -\->
     <head>Overview of the critApp Module</head>
