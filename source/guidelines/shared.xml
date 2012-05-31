@@ -20,17 +20,43 @@
         <specDesc key="att.common" atts="xml:id label n xml:base"/>
       </specList>
     </p>
-    <p>The <att>xml:id</att> attribute serves as a unique identifier (in the context of the current
-      document) for an element. Its value can be used in references to the element and its content.
-      Its uniqueness is enforcable by parsing software. The <att>label</att> and <att>n</att>
-      attributes both serve a labeling function; however, they differ in the values that are
-      permitted. The <att>n</att> attribute may only contain a single token, while <att>label</att>
-      may consist of a string value that includes spaces. When references to entities are not
-      complete URIs, the <att>xml:base</att> base holds a value against which they can be resolved
-      into complete, or absolute, locations.</p>
+    <p>The value of the <att>xml:id</att> attribute serves as an identifier for an element and its
+      content. Its value must be unique in the context of the current document and must conform to
+      the definition of an XML Name provided by the W3C Recommendation at <ref
+        target="http://www.w3.org/TR/xml/#NT-Name">http://www.w3.org/TR/xml/#NT-Name</ref>.
+      Suggestions for constructing an ID value can be found at <ref
+        target="http://www.w3.org/TR/xml/#sec-suggested-names"
+        >http://www.w3.org/TR/xml/#sec-suggested-names</ref>. Examples of xml:id values:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples">
-      <!-- NEED EXAMPLE HERE! -->
+      <!-- The following are valid IDs. -->
+      <note xml:id="n1"/>
+      <note xml:id="_n1"/>
+      <note xml:id="thisIsMyFavoriteNote"/>
+      <!-- The next one is not valid as IDs are not allowed to start with a number. -->
+      <note xml:id="1"/>
     </egXML>
+    <p>The <att>label</att> and <att>n</att> attributes both serve a labeling function; however,
+      they differ in the values that are permitted. The <att>n</att> attribute may only contain a
+      single token, while <att>label</att> may consist of a string value that includes spaces.</p>
+    <p>When a reference to an external entity is not a complete URI, the <att>xml:base</att>
+      attribute can record a value against which it can be resolved into a complete, or absolute,
+      location.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <graphic target="myImage.jpg" xml:base="http://www.mySite.org/images/"/>
+    </egXML>
+    <p>The value of <att>xml:base</att> can be inherited from an ancestor. In the following example,
+      the values of the graphic elements' <att>target</att> attribute can be completed by the
+      xml:base value specified for the <gi>facsimile</gi> element:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <facsimile xml:base="http://www.mySite.org/images/">
+        <surface>
+          <graphic target="myImage.jpg"/>
+          <graphic target="myImage.tif"/>
+        </surface>
+      </facsimile>
+    </egXML>
+    <p>See <ref target="http://www.w3.org/TR/xmlbase/">http://www.w3.org/TR/xmlbase/</ref> for more
+      details on xml:base.</p>
   </div>
   <div type="div2" xml:id="structuralElements">
     <!-- Structural Elements -->
@@ -62,8 +88,9 @@
       </list>
       <p>Further information regarding the organization and encoding of music corpora is given in
         chapter <ptr target="#corpus"/>. Stand-alone headers are more fully described in chapter
-          <ptr target="#independentHeader"/>. Additional information about embedding MEI in other
-        XML files is covered in chapter <!-- ?  -->.</p>
+          <ptr target="#independentHeader"/>.
+        <!-- Additional information about embedding MEI in other XML files is covered in chapter ? -->
+      </p>
     </div>
     <div type="div3" xml:id="musicElement">
       <head>Music Element</head>
@@ -94,7 +121,7 @@
         page, table of contents, an introductory essay, commentary, biographical sketch, index, etc.
         These textual items may appear in either the front or back elements. The front and back
         elements, available only when the MEI.text module is activated, are described more fully in
-        chapter <ptr target="#"/> "Text in MEI".</p>
+        chapter <ptr target="#text"/>.</p>
       <p>The overall structure of a single musical text is:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <mei>
@@ -152,7 +179,10 @@
       <div type="div4">
         <head>Grouped Texts</head>
         <p>The <gi>group</gi> element may be used to represent a collection of independent musical
-          texts which is to be regarded as a single unit for processing or other purposes.</p>
+          texts which is to be regarded as a single unit for processing or other purposes. It is
+          provided to simplify the encoding of collections, anthologies, and cyclic works. It can
+          also be used to record the potentially complex internal structure of corpora, covered more
+          fully in chapter <ptr target="#corpus"/>.</p>
         <p>
           <specList>
             <specDesc key="group"/>
@@ -383,11 +413,11 @@
           upon the notational style of the source material and the encoder's needs. For example,
           when the MEI.cmn module is used, the default organization is measure-by-measure, with
             <gi>staff</gi> and <gi>layer</gi> sub-elements within each <gi>measure</gi>. Further
-          discussion of CMN notation is continued in chapter <ptr target="#"/> "CMN notation".</p>
+          discussion of CMN notation is continued in chapter <ptr target="#cmn"/>.</p>
         <p>However, staff-by-staff organization is more appropriate for music without measures and
           is provided when either the MEI.mensural or MEI.neumes module is employed. Coverage of
-          mensural notation is provided in chapter <ptr target="#"/> "Mensural notation", while <ptr
-            target="#"/> "Neume notation" describes neumatic notation.</p>
+          mensural notation is provided in chapter <ptr target="#mensural"/>, while <ptr
+            target="#neumes"/> describes neumatic notation.</p>
         <p>It must be noted that, when both the MEI.cmn and MEI.mensural modules are available, it
           is possible to encode CMN notation without using <gi>measure</gi> elements; that is,
           staff-by-staff organization may be used and the ends of measures marked using
@@ -499,7 +529,7 @@
         </egXML>
         <p>The front matter concludes with another <gi>div</gi> element, shown in the next example,
           this time containing a table of contents, which contains a <gi>list</gi> element (as
-          described in chapter <ptr target="#"/><!-\- section 3.7 Lists -\->). Note the use of the
+          described in chapter <ptr target="#text"/><!-\- section 3.7 Lists -\->). Note the use of the
             <gi>ptr</gi> element to provide page-references: the implication here is that the target
           identifiers (song1, song2, etc.) will correspond with identifiers used for the
             <gi>mdiv</gi> elements containing the individual songs. (For a description of the
