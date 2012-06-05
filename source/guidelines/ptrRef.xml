@@ -8,11 +8,179 @@
 
 <div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="ptrRef" n="0">
   <head>Pointers and References</head>
-  <p>This chapter describes ...</p>
+  <p>This chapter describes the use of elements for linking and referencing.</p>
   <div type="div2" xml:id="ptrrefOverview">
-    <!-- Overview -->
     <head>Overview of the ptrref Module</head>
-    <p>The module described in this chapter makes available the following components:</p>
+    <p>An element is called a <gi>ptr</gi> element, when one element points to others if the
+      first has an attribute whose value is a reference to the others. A pointer groups
+      elements used for purposes of location and reference. The pointers discussed in this
+      chapter are the <gi>ptr</gi> and the <gi>ref</gi> element. These elements indicate an
+      association between one place in the document and one or more others. There are a few
+      attributes, which may be used to clarify whether the pointer is referencing an internal
+      or external link.</p>
+    <div type="div3">
+      <head>Internal and external linking</head>
+      <p>In an older version of the MEI schema (2011-05), it was a difference between internal
+        and external referencing. So there have been two different elements allowed for
+        describing locations within a document and an outside location. By changing the
+        values from IDrefs to anyURI while reforming the schema, it seemed to be superflous
+        to distinguish the elements anyway.</p>
+    </div>
+    <div type="div2">
+      <head>Difference between pointer and reference</head>
+      <p>Cross-references or links between one location in a document and one or more other
+        locations, either in the same or a different XML document, may be encoded using the
+        ptr and ref elements, as described in the following paragraphs.</p>
+      <p>The <gi>ptr</gi> element is an empty internal linking element that uses attributes to
+        provide for movement from one place to another. Unlike the <gi>ref</gi> element, it
+        cannot contain text or sub-elements to describe the referenced object. This element
+        is modelled on an element in EAD and TEI. Otherwise the <gi>ref</gi> element may
+        contain text and sub-elements to describe the destination.</p>
+      <p>The two elements <gi>ptr</gi> and <gi>ref</gi> may be used in the same way; the
+        difference between them is simply that while the <gi>ptr</gi> element is empty, the
+        <gi>ref</gi> element may contain text for more specifying or describing the
+        target. They share a set of commonn attributes derived from the att.pointing
+        class.</p>
+    </div>
+    <div type="div2" xml:id="ptr">
+      <head>Pointer</head>
+      <p>The primary function of the pointer is simply to point. He sets up a connection
+        between an element and one or more others, known as the <soCalled>target</soCalled>.
+        The pointer defines another location, using only attributes to describe the
+        destination. The following example from the sample collection shows a simple encoded
+        part of a header starting in the encodingDes. The <gi>ptr</gi> element is used to
+        refer to a site in the web where you can find some stylesheets. <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <encodingDesc>
+            <appInfo>
+              <application xml:id="xsl_mxl2mei_2.2.3" version="2.2.3">
+                <name>MusicXML2MEI</name>
+                <ptr target="http://music-encoding.org/stylesheets/blubb"/>
+              </application>
+              <application xml:id="xsl_ppq" version="1.0">
+                <name>PPQ</name>
+                <ptr target="http://music-encoding.org/stylesheets/blubb"/>
+                <!-- change the "blubb"! -->
+              </application>
+            </appInfo>
+          </encodingDesc>
+        </egXML> The <att>target</att> attribute specifies the destination of the pointer by
+        supplying one or more URI References. In this case the <att>target</att> attribute
+        allows the use of an undeclared URI to identify an other electronic objects, e.g.
+        within the guidelines. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <ptr target="#shared"/>
+        </egXML> The next example shows targets simply as page numbers, e.g. for referencing
+        within these guidelines. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <list><item><ptr target="#p123"/></item></list>
+        </egXML> The <att>targettype</att>attribute allows the target resource to be
+        characterized using any convenient classification scheme or typology. In the example
+        below the <att>targettype</att> is used to indicate the target as a collection of
+        xslt´s. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <encodingDesc>
+            <appInfo>
+              <application xml:id="xsl_mxl2mei_2.2.3" version="2.2.3">
+                <name>MusicXML2MEI</name>
+                <ptr target="http://music-encoding.org/stylesheets/blubb"
+                  targettype="collection of xslt"/>
+              </application>
+              <application xml:id="xsl_ppq" version="1.0">
+                <name>PPQ</name>
+                <ptr target="http://music-encoding.org/stylesheets/blubb"
+                  targettype="collection of xslt"/>
+                <!-- change the "blubb"-->
+              </application>
+            </appInfo>
+          </encodingDesc>
+        </egXML> The <att>mimetype</att> attribute (MIME) specifies the applicable MIME
+        (multimedia internet mail extension) type. The value should be a valid MIME media
+        type defined by the Internet Engineering Task Force in RFC 2046. This provides
+        attributes for specifying the type of a computer resource using a standard taxonomy.
+        and specifies the applicable multimedia internet mail extension (MIME) media type.
+        So the value should be a valid MIME media type as shown in the following example, in
+        this case marked up as an image. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <application>
+            <ptr mimetype="image"/></application>
+          <!-- extend the example? -->
+        </egXML> The <att>role</att>attribute indicates a property of the entire link. The
+        value of the role attribute must be a URI reference as defined in [IETF RFC 2396],
+        except that if the URI scheme used is allowed to have absolute and relative forms,
+        the URI portion must be absolute. The URI reference identifies some resource that
+        describes the intended property. When no value is supplied, no particular role value
+        is to be inferred. <egXML xmlns="http://www.tei-c.org/ns/Examples"/>
+        <!-- Needs example --> The <att>actuate</att> attribute defines whether a link
+        occurs automatically or must be requested by the user. It is used in conjunction
+        with the show attribute to determine link behavior. The <att>show</att> attribute
+        defines how a remote resource is rendered. The defined values whether the resource
+        that is the target of a link appears at the point of the link, replaces the existing
+        link, or appears in a new window. <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <ptr target="http://www.ietf.org/rfc/rfc2046.txt" mimeType="text"
+            actuate="onLoad" show="new"/>
+        </egXML> The example shows a pointer containing the RFC website as its target, text
+        as mediatype and loads the target resource immediately in a new window.
+        <!-- is the example correct? -->The <att>title</att> attribute contains a
+        human-readable description of the entire link. A value is optional; if a value is
+        supplied, it should contain a string that describes the resource. The use of this
+        information is highly dependent on the type of processing being done. It may be
+        used, for example, to make titles available to applications used by visually
+        impaired users, or to create a table of links, or to present help text that appears
+        when a user lets a mouse pointer hover over a starting resource. <egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <ptr target="http://www.music-encoding.org" title="hompage of the MEI-Project"/>
+        </egXML> Another opportunity is to use the pointer to link to the next section
+        within a chapter of a text: See further information of the <gi>ref</gi> element <ptr
+          target="#ref"/> below. </p>
+    </div>
+    <div type="div2" xml:id="ref">
+      <head>Reference</head>
+      <p>The <gi>ref</gi>element is a linking element that can include text and sub-elements
+        as a part of its reference to an electronic object that is internal or external to
+        the MEI document. So the element as well as the pointer indicates an association
+        between one place in the document and one or more others. In opposite to the
+        <gi>ptr</gi> element it is allowed to include some human readable text within
+        the <gi>ref</gi> element as shown in the next example. In this simple case, the ref
+        element need no identifier as its target in any other way.<egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <sourceDesc>
+            <source>
+              <physDesc>
+                <provenance>
+                  <ref><!--Some Text here.--></ref>
+                </provenance>
+              </physDesc>
+            </source>
+          </sourceDesc>
+        </egXML>But usually it is recommended to mark a target with the <att>target</att>
+        attribute of the reference to describe the designation. The next example illustrates
+        the <gi>ref</gi> element in combination with some attributes as used as described in
+        the pointer-paragraph before, including human readable text.<egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <ref target="http://www.ietf.org/rfc/rfc2046.txt" mimetype="text"
+            title="Multipurpose Internet Mail Extensions"> The document specifies an
+            Internet standard track protocol for the Internet community.</ref>
+        </egXML> The mimetype attribute here is used to specify the mime type of that
+        resource. Another difference to the <gi>ptr</gi> element is that the <gi>ref</gi>
+        element may contain a few sub-elements.<egXML
+          xmlns="http://www.tei-c.org/ns/Examples">
+          <repository>
+            <ref target="...">
+              <title>...</title>
+              <repository>...</repository>
+              <identifier type="...">...</identifier>
+            </ref>
+          </repository>
+        </egXML> The use of more elements within the reference allow a more specific
+        description and markup of the designation. The <att>targettype</att> attribute may
+        be used to categorize the reference according to any system of importance to the
+        encoder, for instance if bibliographic references require special processing. </p>
+      <p> Using the <gi>ref</gi>element for describing special reference works in Library and
+        Information Science please read the according paragraphs in the header chapter <ref
+          target="#header"/>.</p>
+      <p>As well, while reading the guidelines you will find many pointer and references
+        within the chapters as examples.</p>
+    </div>
+    <div>
+      <p>The module described in this chapter makes available the following components:</p>
+    </div>
     <div type="div3" xml:id="ptrrefElements">
       <head>Elements</head>
       <p>
