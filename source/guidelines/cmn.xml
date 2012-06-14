@@ -55,12 +55,12 @@
         </section>
       </egXML>
 
-      <p>A measure slices the flow of a score or part into chunks that normally comply with a
-        duration determined by the meter defined within a preceding <gi>scoreDef</gi> or
-          <gi>staffDef</gi> element. <!-- TODO: ptr to shared module --> Each staff in the source is
-        represented by a <gi>staff</gi> element, which may hold a number of <gi>layer</gi> elements
-        to reflect multiple <soCalled>voices</soCalled>. As the order of these elements in the file
-        does not have to reflect their original order in the document, they should always refer to a
+      <p>A <gi>measure</gi> slices the flow of a <gi>score</gi> or <gi>part</gi> into chunks that
+        normally comply with a duration determined by the meter defined within a preceding
+          <gi>scoreDef</gi> or <gi>staffDef</gi> element. Each staff in the source is represented by
+        a <gi>staff</gi> element, which may hold a number of <gi>layer</gi> elements to reflect
+        multiple <soCalled>voices</soCalled>. As the order of these elements in the file does not
+        have to reflect their original order in the document, they should always refer to a
           <gi>staffDef</gi> (or <gi>layerDef</gi>) element, using either an <att>n</att> or
           <att>def</att> attribute. Whereas the <att>def</att> attribute should refer to a
           <gi>staffDef</gi> or <gi>layerDef</gi> using the <term>xs:anyURI</term> datatype, the
@@ -88,28 +88,31 @@
             key.mode key.sig"/>
         </specList>
       </p>
-      <p>Other attributes allow the description of standard page and system margins as well as fonts
-        for text and music.</p>
       <p>The following example describes a score in common time with 3 flats:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="3f"/>
       </egXML>
 
-      <p>A <gi>scoreDef</gi> used in this way is the first child of <gi>score</gi> or <gi>part</gi>
-        element, since a performer's part is a kind of score. Subsequent <gi>scoreDef</gi>s may be
-        used to override the characteristics described in this first <gi>scoreDef</gi>. The scope of
-        this effect depends on the context: Every <gi>scoreDef</gi> affects only the content
-        following it within the same parent element. A <gi>scoreDef</gi> at the beginning of a
-          <gi>section</gi> affects this particular section, a scoreDef at the begin of a
-          <gi>measure</gi> only that measure. Please consider the possibility of nesting
-          <gi>section</gi> elements for changing meter, etc.</p>
+      <p>Other attributes allow the description of standard page and system margins as well as fonts
+        for text and music.</p>
+      <!-- TODO: Expand this! -->
+
+      <p>A <gi>scoreDef</gi> used in this way is the first child of <gi>score</gi> element (or
+          <gi>part</gi> element, since a performer's part is a kind of score). Subsequent
+          <gi>scoreDef</gi>s may be used to override the characteristics described in this first
+          <gi>scoreDef</gi>. The scope of this effect depends on the context: Every
+          <gi>scoreDef</gi> affects only the content following it within the same parent element. A
+          <gi>scoreDef</gi> at the beginning of a <gi>section</gi> affects this particular section,
+        a scoreDef at the begin of a <gi>measure</gi> only that measure.
+        <!--Please consider the possibility of nesting <gi>section</gi> elements for changing meter, etc.-->
+      </p>
       <p>A <gi>scoreDef</gi> element may contain a <gi>staffGrp</gi> element. This element is used
         to group individual <gi>staffDef</gi>s and other <gi>staffGrp</gi> elements and mark them as
-        a group of instruments. This is particularly useful for collecting instrument groups in a
-        large score, such as woodwinds, brasses, etc., but also for assigning a shared label for the
-        two staves of a grand staff using the <att>label</att> and <att>label.abbr</att> attributes.
-        Also, the <att>barthru</att> attribute on <gi>staffGrp</gi> allows one to specify whether
-        barlines are drawn across the space between staves of that group or only on the staves
+        a group. This is particularly useful for collecting instrumental or vocal groups in a large
+        score, such as woodwinds, brasses, etc., but also for assigning a shared label for the two
+        staves of a grand staff using the <att>label</att> and <att>label.abbr</att> attributes. The
+          <att>barthru</att> attribute on <gi>staffGrp</gi> allows one to specify whether barlines
+        are drawn across the space between staves of that group or only on the staves
         themselves.</p>
       <p>A <gi>staffDef</gi> element is used to describe an individual staff of a <gi>score</gi> or
           <gi>part</gi>. It bears all the attributes described above, including <att>label</att> and
@@ -371,7 +374,7 @@
           </specList>
         </p>
         <div type="div5" xml:id="cmnRestsMRest">
-          <head>mRest</head>
+          <head>Measure Rests</head>
           <p>The <gi>mRest</gi> (<expan>measure rest</expan>) element is used to indicate a complete
             measure rest, independent from the meter of the current <gi>measure</gi>. The
               <att>dur</att> attribute may be used to indicate the visual symbol that should be
@@ -382,7 +385,10 @@
             its actual duration. However, if <att>cutout</att> is set to <soCalled>cutout</soCalled>
             (the only value allowed), then the complete staff including the staff lines will not be
             rendered for this measure.</p>
-          <!-- TODO: Include image -->
+          <figure>
+            <figDesc>Measure rest</figDesc>
+            <graphic url="Images/ExampleImages/"/>
+          </figure>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff>
               <layer>
@@ -396,13 +402,17 @@
             used.</p>
         </div>
         <div type="div5" xml:id="cmnRestsMultiRest">
-          <head>multiRest</head>
+          <head>Multiple-Measure Rests</head>
           <p>The <gi>multiRest</gi> (<expan>multiple measure rest</expan>) element is used to encode
-            rests with a duration of multiple measures. It is commonly used in performer parts, but
-            due to the problem of synchronicity with other staves, it is never found scores. A
-            numeric value, stored in the <att>num</att> attribute, indicates the number of resting
-            measures.</p>
-          <!-- TODO: include image: multiple_rest.jpg -->
+            multiple measures of rest. It is commonly used in performer parts, but due to the
+            problem of synchronicity with other staves, it is never found scores. A numeric value,
+            stored in the <att>num</att> attribute, indicates the number of resting measures. The
+            various visual forms displayed below are not captured by <gi>multiRest</gi>, but may be
+            created by rendering software.</p>
+          <figure>
+            <figDesc>Forms of multiple measure rests</figDesc>
+            <graphic url="guidelines/Images/modules/cmn/multirest.png" width="500px"/>
+          </figure>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff>
               <layer>
@@ -412,13 +422,16 @@
           </egXML>
         </div>
         <div type="div5" xml:id="cmnRestsMSpace">
-          <head>mSpace</head>
+          <head>Empty Measures</head>
           <p>The <gi>mSpace</gi> (<expan>measure space</expan>) element is closely related to the
               <gi>space</gi> and <gi>mRest</gi> elements. By definition, the value of the
               <att>dur</att> attribute must match the duration of the measure, independent from its
             meter. Therefore, <gi>mSpace</gi> can be interpreted as a <soCalled>invisible
                 <gi>mRest</gi></soCalled>.</p>
-          <!-- TODO: include image: mspace.png-->
+          <figure>
+            <figDesc>Empty measure</figDesc>
+            <graphic url="guidelines/Images/modules/cmn/mspace.png" width="500px"/>
+          </figure>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff>
               <layer>
@@ -432,23 +445,21 @@
     </div>
     <div type="div3" xml:id="cmnTstamp">
       <head>Timestamps and Durations</head>
-      <!-- TODO: add information about note's @dur -->
-      <p>MEI offers multiple ways of defining on- and offsets of timed musical events such as notes
-        and slurs. The most common approach to this is through the use of a combination of the
+      <p>MEI offers multiple ways of defining onsets and offsets of timed musical events such as
+        notes and slurs. The most common approach to this is through the use of a combination of the
         attributes <att>tstamp</att> and <att>dur</att>, which are made available by the attribute
         classes <ident type="class">att.timestamp.musical</ident> (which is inherited by <ident
           type="class">att.controlevent</ident>) and <ident type="class"
           >att.duration.musical</ident>, both from the shared module.</p>
       <p>The <term>timestamp</term> (<att>tstamp</att>) of a musical event is calculated in relation
         to the meter of the current measure and resembles the so-called <soCalled>beat</soCalled>.
-        In a common time <!-- TODO: add reference --> measure with four quarter notes, the timestamp
-        of each quarter equals its beat position in the measure: The first quarter has a timestamp
-        of 1, the second one has a timestamp of 2, and so on. MEI defines the value of
-          <att>tstamp</att> as a real number; the second eighth note position in a measure would
-        thus be represented by the value of "1.5". The range of possible values is defined as
-        starting with zero and ending with the number of metrical units in a measure (the
-          <soCalled>numerator</soCalled> in a time signature)<!-- TODO: add reference --> + 1. This
-        allows the capture of all graphical positions starting from the left barline ('0') and
+        In a common time measure with four quarter notes, the timestamp of each quarter equals its
+        beat position in the measure: The first quarter has a timestamp of 1, the second one has a
+        timestamp of 2, and so on. MEI defines the value of <att>tstamp</att> as a real number; the
+        second eighth note position in a measure would thus be represented by the value of "1.5".
+        The range of possible values is defined as starting with zero and ending with the number of
+        metrical units in a measure (the <soCalled>numerator</soCalled> in a time signature) + 1.
+        This allows the capture of all graphical positions starting from the left barline ('0') and
         ending with the right barline of the measure ('5', in the case of 4/4 time).</p>
       <p>For expressing durations, MEI offers two separate attributes which permit distinctly
         different values, however both named <att>dur</att>. The first <att>dur</att> attribute
@@ -555,22 +566,23 @@
         </layer>
       </egXML>
 
-      <!-- TODO: Cross-staff beaming, add discussion of beam.with, and rewrite the para. below -->
+      <!-- TODO: Cross-staff beaming using @beam.with -->
+      <figure>
+        <figDesc>Cross-staff beam</figDesc>
+        <graphic url="Images/ExampleImages/beam-c-20100510.png"/>
+      </figure>
 
       <p>Due to the potential problem of creating overlapping hierarchies, the <gi>beam</gi> element
         only allows the encoding of beams that do not cross barlines. Situations like these require
         the use of the <gi>beamSpan</gi> element. This element is not used in a structural way like
           <gi>beam</gi>, which contains all beamed notes or chords as children. Instead, it
-        references the <att>xml:id</att>s of all affected notes in its <att>plist</att>
-        attribute.</p>
+        references the <att>xml:id</att>s of all affected notes in its <att>plist</att> attribute
+        and denotes the initial and terminal notes of the beam using <att>startid</att> and
+          <att>endid</att> attributes. <!-- as described in section ? --></p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <beamSpan plist="#note1 #note2 #note3 #note4"/>
+        <beamSpan startid="#note1" endid="#note4" plist="#note1 #note2 #note3 #note4"/>
       </egXML>
 
-      <p>When <gi>beamSpan</gi> is used, MEI requires one to specify a starting point for the beam
-        as well as an ending point. This can be achieved as described in
-        <!-- TODO: Add reference here (or, if there is no such section in shared, add one such -->
-      </p>
       <p>The following image demonstrates a typical example of such hierarchy-crossing beams.</p>
       <!-- TODO: Include figure and encoding -->
       <p>
@@ -601,21 +613,21 @@
         <note pname="f" oct="4" dur="2" tie="i"/>
         <note pname="f" oct="4" dur="4" dots="1" tie="t"/>
       </egXML>
-      <p>The attribute allows three values: <list type="gloss">
-          <label><hi rend="bold">i</hi> (initial)</label>
-          <item>Marks the start of a tie</item>
-          <label><hi rend="bold">m</hi> (medial)</label>
-          <item>Marks a participant in a tie other than the first or last</item>
-          <label><hi rend="bold">t</hi> (terminal)</label>
-          <item>Marks the end of a tie</item>
-        </list>
-      </p>
+      <p>This attribute allows three values:</p>
+      <list type="gloss">
+        <label><hi rend="bold">i</hi> (initial)</label>
+        <item>Marks the start of a tie</item>
+        <label><hi rend="bold">m</hi> (medial)</label>
+        <item>Marks a participant in a tie other than the first or last</item>
+        <label><hi rend="bold">t</hi> (terminal)</label>
+        <item>Marks the end of a tie</item>
+      </list>
 
-      <p>The scope of the <att>tie</att> attribute is the musical <gi>layer</gi>: A tie started in
-        one layer may only be ended by a subsequent musical event with a <att>tie</att> attribute
-        with an <hi rend="bold">m</hi> or <hi rend="bold">t</hi> value in the same layer. Document
-        order is not important in this situation, especially when the ending note or chord is in the
-        following measure.</p>
+      <p>The scope of the <att>tie</att> attribute is the musical <gi>layer</gi>; that is, a tie
+        started in one layer may only be ended by a subsequent musical event with a <att>tie</att>
+        attribute with an <hi rend="bold">m</hi> or <hi rend="bold">t</hi> value in the same layer.
+        Document order is not important in this situation, especially when the ending note or chord
+        is in the following measure.</p>
       <p>When <att>tie</att> is used on chords, it functions as a shorthand indication; that is, a
         separate tie is drawn for every pitch in the chord that remains unchanged in the succeeding
         chord.</p>
@@ -994,7 +1006,7 @@
     <div type="div3" xml:id="cmnArtic">
       <head>Articulation and Performance Instructions in CMN</head>
       <p>This section introduces elements and attributes which may hold CMN-specific performance
-        instructions. The functionality described herein is somewhat related to the <att>artic</att>
+        instructions. The functionality described herein is related to the <att>artic</att>
         attribute and <gi>artic</gi> element introduced in <ptr target="#shared"/>. The following
         elements are relevant in this context:</p>
       <p>
@@ -1010,32 +1022,38 @@
       </p>
       <div type="div4" xml:id="cmnArpegGliss">
         <head>Arpeggio and Glissando</head>
-        <p>In CMN, the notes of a chord are sometimes to be performed successively rather than
+        <p>In CMN, the notes of a chord are sometimes performed successively rather than
           simultaneously. This behavior, called <term>arpeggio</term>, is normally indicated using a
-          wavy line preceding the chord. MEI offers the <gi>arpeg</gi> elements to describe
-          arpeggios. It is a member of the<ident type="class">model.controleventLike</ident> class,
+          wavy line preceding the chord. MEI offers the <gi>arpeg</gi> element to describe
+          arpeggios. <!-- PR: We shouldn't encourage this.  In fact, I'd pref to provide a CMN
+          customization that prohibits this behavior and a mensural customization that allows it. -->
+          <!-- It is a member of the <ident type="class">model.controleventLike</ident> class,
           but as it effects only one chord element, it might be positioned in a <gi>layer</gi>
-          element, directly preceding the affected <gi>chord</gi>.</p>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          element, directly preceding the affected <gi>chord</gi>.-->
+          This element is a member of the <ident type="class">model.controleventLike</ident> class
+          and, like other members of this class, uses the <att>staff</att>, <att>layer</att> and
+            <att>tstamp</att> or the <att>startid</att> and <att>endid</att> attributes to connect
+          it to the affected chord.</p>
+        <!--<egXML xmlns="http://www.tei-c.org/ns/Examples">
           <layer>
-            <!-- preceding content -->
+            <!-\- preceding content -\->
             <arpeg/>
             <chord>
               <note/>
               <note/>
               <note/>
             </chord>
-            <!-- succeeding content -->
+            <!-\- succeeding content -\->
           </layer>
-        </egXML>
+        </egXML>-->
 
-        <p>It might equally well encoded as child of <gi>measure</gi>, in which case
-            <att>staff</att>, <att>layer</att> and <att>tstamp</att> may be used to connect it to a
-          certain chord in a given staff and layer.</p>
+        <!--<p>It might equally well encoded as child of <gi>measure</gi>, in which case
+            <att>staff</att>, <att>layer</att> and <att>tstamp</att> attributes should be used to connect it to a
+          certain chord in a given staff and layer.</p>-->
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <measure>
             <staff n="1">
-              <!-- content omitteed -->
+              <!-- content omitted -->
             </staff>
             <staff n="2">
               <layer>
@@ -1051,36 +1069,62 @@
           </measure>
         </egXML>
 
-        <p>The regular direction for this "breaking up" is from lowest to highest. When the notes
-          are to be performed from highest to lowest, an arrowhead is usually added to the lower end
-          of the line. This may be indicated by adding <att>arrow</att>="true" to the element. Even
-          though it is redundant, an arrowhead is sometimes added to the upper end of the line for
-          the sake of consistency or when the direction of successive arpeggios alternates. The
-          direction may be indicated by adding the <att>order</att> attribute with values of "down"
-          and "up".</p>
+        <p>The usual direction for the performance of an arpeggio is from lowest note to highest,
+          but this is not always the case. The customary signal of an downward arpeggio is an
+          arrowhead added to the bottom of the wavy line. The indication of the presence of an
+          arrowhead and the direction of the arpeggio are handled separately, however. The
+            <att>arrow</att> attribute indicates the presence of an arrowhead in the arpeggiation
+          sign, while the <att>order</att> attribute records the preferred sequence of notes.</p>
+        <p>The following example illustrates various ways in which the arrow and order attributes
+          may be employed. The default visual rendition and performance are assumed in the absence
+          of both attributes, while the typical downward arpeggio is indicated by the presence of
+          both attributes. The last two possibilities occur less frequently, but are sometimes
+          appropriate: The presence of the arrow attribute without the order attribute may be used
+          in those cases where the arrowhead is redundant but is added to the symbol for the sake of
+          consistency or when the direction of successive arpeggios changes frequently. The last
+          possibility, an order attribute without an arrow attribute, is ambiguous; however, it can
+          be used as an encoding shortcut as a downward arpeggio must have a visual indication of
+          its direction to distinguish it from the upward arpeggio; therefore, the presence of the
+          arrowhead can be implied.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <arpeg staff="2" tstamp="3" arrow="true" order="down"/>
-          <arpeg staff="2" tstamp="4" arrow="true" order="up"/>
+          <!-- default visualization and performance -->
+          <arpeg staff="2" tstamp="3"/>
+          <!-- downward arpeggio with arrow added to visual symbol -->
+          <arpeg staff="2" tstamp="3" order="down" arrow="true"/>
+          <!-- default rendition with (redundant) arrow added to the top of the visual symbol -->
+          <arpeg staff="2" tstamp="3" arrow="true"/>
+          <!-- downward arpeggio with no visual indication of order -->
+          <arpeg staff="2" tstamp="3" order="down"/>
         </egXML>
 
         <p>A third value for <att>order</att>, "nonarp", indicates that no arpeggio shall be
-          performed. It is normally rendered as bracket instead of a wavy line. For arpeggios that
-          involve chords spanning multiple staves as a continuous arpeggio (instead of two separate
-          arpeggios), the <att>plist</att> attribute may be used to point to all affected
-            <gi>chord</gi> elements' <att>xml:id</att>s.
+          performed. Normally rendered as a bracket instead of a wavy line, this form of arpeggio is
+          used to indicate a non-arpeggiated chord in a sequence of arpeggiated ones. This is common
+          in music for the harp, where arpeggiation is the usual method of performing chords.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <!-- NEED EXAMPLE HERE! -->
+        </egXML>
+
+        <p>For arpeggios that involve chords spanning multiple staves as a continuous arpeggio
+          (instead of two separate arpeggios), the <att>plist</att> attribute may be used to point
+          to all affected <gi>chord</gi> elements' <att>xml:id</att>s.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <!-- NEED EXAMPLE HERE! -->
           <!-- TODO: Example from Rachmaninoff c#min sonata -->
-        </p>
-        <p>Whereas an arpeggio just splits up the onset times of provided notes of a chord, a
-          so-called <term>glissando</term> denotes a situation where the pitch
+        </egXML>
+
+        <p>Whereas an arpeggio <soCalled>staggers</soCalled> the onset times of the notes of a
+          chord, a <term>glissando</term> denotes a situation where the pitch
             <soCalled>slides</soCalled> from one note to another. It makes no difference whether
           this slide produces distinct intermediate pitches (as on the piano) or not (as on the
           trombone), though the latter is sometimes referred to as <term>portamento</term>. The
           visual appearance of a glissando, which MEI encodes as <gi>gliss</gi>, is normally a line
           connecting the two most distant notes in the glissando.</p>
+
         <!-- TODO: Is gliss really eventLike, or should it rather be controleventLike??? -->
         <p>The <gi>gliss</gi> element is a member of the <ident type="class">model.eventLike</ident>
-          class, so it has to be placed inside a <gi>layer</gi>. By convention, it is placed between
-          the two notes that are to be connected as glissando.
+          class, so it may occur inside a <gi>layer</gi>. By convention, it is placed between the
+          two notes that are to be connected by the glissando.
           <!-- TODO: Why do we require a starting point, but no ending point? Why is there no @dur? Do we require affected notes
            to be encoded within the gliss? If so, why do we allow exactly note, rest and tuplet??? My impression is that gliss is
            somewhat buggy!!! -->
@@ -1115,12 +1159,12 @@
         -->
         <p>CMN has two slightly different concepts which are both called <term>tremolo</term>. The
           first is a rapid repetition of a single pitch or chord, whereas the second is a rapid
-          alternation between different notes and / or chords.</p>
+          alternation between two different notes or chords.</p>
         <p>For the first of these, MEI offers the <gi>bTrem</gi> (bowed tremolo) element, which
           should also be used for wind instrument double and triple tonguing and for flutter
-          tonguing when these are expressed as tremolandi. A <gi>bTrem</gi> is a member of the
-            <ident type="class">model.eventLike</ident> class, which means it is encoded following
-          the normal course of musical events within a <gi>layer</gi>. It holds exactly one
+          tonguing when these are expressed as tremolandi. <gi>bTrem</gi> is a member of the <ident
+            type="class">model.eventLike</ident> class, which means it is encoded following the
+          normal course of musical events within a <gi>layer</gi>. It holds exactly one
             <gi>note</gi> or <gi>chord</gi> element that is to be repeated as tremolo.</p>
         <!-- TODO: provide better example with image… -->
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -1151,11 +1195,11 @@
           </layer>
         </egXML>
 
-        <p>In case of alternating pitches, MEI offers the <gi>fTrem</gi> (fingered tremolo) element
-          instead. While it mostly behaves the same as <gi>bTrem</gi>, it requires exactly two child
-          elements, either being a <gi>note</gi> or <gi>chord</gi>. Again, the <att>slash</att>
-          attribute records the number of slashes required – 4ths or 8ths=1, 16ths=2, 32nds=3,
-          64ths=4, 128ths=5, 256ths=6.</p>
+        <p>In the case of alternating pitches, MEI offers the <gi>fTrem</gi> (fingered tremolo)
+          element. While it mostly behaves the same as <gi>bTrem</gi>, it requires exactly two child
+          elements, either being a <gi>note</gi> or <gi>chord</gi>. As with <gi>bTrem</gi>, the
+            <att>slash</att> attribute records the number of slashes required – 4ths or 8ths=1,
+          16ths=2, 32nds=3, 64ths=4, 128ths=5, 256ths=6.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <layer>
             <note/>
@@ -1197,23 +1241,30 @@
     <div type="div3" xml:id="cmnInstr">
       <head>Instrument-specific Symbols in CMN</head>
       <p>CMN contains a number of symbols which are closely related to a specific instrument. MEI
-        offers elements for three of these symbols, namely breath marks, diagram for tuning harps,
-        and indications for piano pedals.</p>
+        offers elements for three of these symbols, namely breath marks, harp pedal diagrams, and
+        indications for piano pedals.</p>
       <div type="div4" xml:id="cmnBreath">
         <head>Breath Marks</head>
         <p>A <term>breat mark</term> indicates a point at which the performer of a wind instrument
           or singer may breathe. It is sometimes also used to indicate a short pause or break for
-          instruments <hi rend="italic">not</hi> requiring breath, which makes it often serve as a
-          guide to phrasing. In MEI, breath marks are encoded using the <gi>breath</gi> element.
-          Although it is a member of <ident type="class">model.controleventLike</ident> and may
+          instruments <hi rend="italic">not</hi> requiring breath, which allows it to also serve as
+          a guide to phrasing. In MEI, breath marks are encoded using the <gi>breath</gi>
+          element.</p>
+
+        <!-- As before, this is technically possible only mei-all is enabled. We shouldn't encourage this behavior. -->
+        <!-- <p>Although it is a member of <ident type="class">model.controleventLike</ident> and may
           therefore be located as child of <gi>measure</gi>, it is often more convenient to use it
-          inline where it appears in the <gi>layer</gi>, like in the following example:</p>
+          inline where it appears in the <gi>layer</gi>, like in the following example:</p> -->
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <layer>
-            <note pname="g" oct="3" dur="2" syl="Wald,"/>
-            <breath/>
-            <note pname="c" oct="3" dur="4" syl="so"/>
-          </layer>
+          <measure>
+            <staff n="1">
+              <layer>
+                <note pname="g" oct="3" dur="2" syl="Wald,"/>
+                <note pname="c" oct="3" dur="4" syl="so"/>
+              </layer>
+            </staff>
+            <breath staff="1" tstamp="1.5"/>
+          </measure>
         </egXML>
 
         <p>The usual sign for the breath mark is a comma; however, other visual forms of the breath
@@ -1231,14 +1282,14 @@
         <p>Modern harps have seven pedals which allow to adjust their strings to different keys.
           Sometimes, however, it is necessary to change the tuning in the course of a musical
           performance, which is then indicated using a special <term>harp pedal diagram</term>.</p>
-        <p>In MEI, harp pedal diagram are encoded using the <gi>harpPedal</gi> element. It is a
+        <p>In MEI, harp pedal diagrams are encoded using the <gi>harpPedal</gi> element. It is a
           member of the <ident type="class">model.controleventLike</ident> class and is therefore
           placed within <gi>measure</gi>, following all <gi>staff</gi> children. The
             <att>staff</att> and <att>layer</att> attributes may be used to assign it to a certain
-            <gi>staff</gi> or <gi>layer</gi> by refering the corresponding <att>n</att> attribute.
-          Either a <att>tstamp</att> or <att>startid</att> attribute must be used to indicate the
-          placement within the measure (see <ptr target="#cmnTstamp"/> and <ptr target="#ptrRef"/>
-          for further details about those linking mechanisms).</p>
+            <gi>staff</gi> or <gi>layer</gi>. Either a <att>tstamp</att> or <att>startid</att>
+          attribute must be used to indicate the placement within the measure (see <ptr
+            target="#cmnTstamp"/> and <ptr target="#ptrRef"/> for further details about those
+          linking mechanisms).</p>
         <p>The musical intention of the element is described using the <att>c</att>, <att>d</att>,
             <att>e</att>, <att>f</att>, <att>g</att>, <att>a</att> and <att>b</att> attributes,
           which affect the corresponding strings of the harp. All of these attributes may take the
@@ -1246,9 +1297,10 @@
             rend="bold">n</hi>" (natural), where "n" is the default value, which is assumed when one
           of these attributes is not specified. A <gi>harpPedal</gi> indicating a keychange to E
           flat major would therefore look like so:</p>
+        <!-- Add image! -->
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <measure>
-            <!-- staffs omitted -->
+            <!-- staves omitted -->
             <harpPedal staff="2" tstamp="1" b="f" e="f" a="f"/>
           </measure>
         </egXML>
@@ -1256,7 +1308,7 @@
       </div>
       <div type="div4" xml:id="cmnPedal">
         <head>Piano Pedal</head>
-        <p>Classical music for pianos often includes hints on the pedalling. In MEI, these symbols
+        <p>Music for piano often includes indications of the use of pedals. In MEI, these symbols
           are encoded using the <gi>pedal</gi> element. As a member of the <ident type="class"
             >model.controleventLike</ident> class, it is located within <gi>measure</gi> and refers
           to a staff, layer and timestamp using the <att>staff</att>, <att>layer</att> and
@@ -1264,7 +1316,7 @@
           used to identify a <gi>note</gi> or <gi>chord</gi> to which the mark should be
           assigned.</p>
         <p>The meaning of the mark is captured using the <att>dir</att> attribute, which provides
-          the following values: <list type="simple">
+          the following values: <list type="gloss">
             <label>up</label>
             <item>depress the pedal</item>
             <label>down</label>
@@ -1273,7 +1325,8 @@
             <item>depress, then immediately release the pedal</item>
             <label>half</label>
             <item>half pedal</item>
-          </list></p>
+          </list>
+        </p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <measure>
             <!-- staffs omitted -->
@@ -1289,18 +1342,18 @@
       <head>Ossia</head>
       <p>The term <term>ossia</term>, italian for "or", denotes one of the most specific features of
         CMN. An ossia is an alternative for a certain passage which is provided by the composer
-          <emph>without any preference</emph>. Although an ossia usually describes a simpler, easier
-        to perform version of the original content, both possibilities are equally valid. Another
-        frequent use case for ossias is the provision of indications about the performance practice,
-        such as ornamentation written out. In all cases, it is up to the performer to choose between
-        the alternatives.</p>
-      <p>Often an ossia is rendered above the main staff on a reduced-size staff. Sometimes the
-        alternate material occurs on the same staff as the primary text, but in a separate layer. In
-        this case, the alternative material is often rendered in small-sized notation. For both
-        situations, MEI offers the <gi>ossia</gi> element, which may be nested either inside
-          <gi>measure</gi> to reflect an ossia on a separate staff, or inside <gi>staff</gi> to
-        reflect an inline ossia in a separate layer. The following example demonstrates an ossia on
-        a separate staff:</p>
+          <emph>without any preference</emph> of one alternative over another. An ossia usually
+        describes a simpler, easier to perform version of the original content. Another frequent use
+        case for ossia is the provision of indications about performance practice, such as an
+        alternative version with ornamentation written out in full. In all cases, it is up to the
+        performer to choose between the alternatives.</p>
+      <p>Most often an ossia is rendered above the main staff on a reduced-size staff. Sometimes,
+        however, the alternate material occurs on the same staff as the primary text, but in a
+        separate layer. In this case, the alternative material is usually rendered in small-sized
+        notation. For both situations, MEI offers the <gi>ossia</gi> element, which may be nested
+        either inside <gi>measure</gi> to reflect an ossia on a separate staff, or inside
+          <gi>staff</gi> to reflect an inline ossia in a separate layer. The following example
+        demonstrates an ossia on a separate staff:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure>
           <staff n="1">
@@ -1324,9 +1377,9 @@
         has an <att>n</att> attribute. This mechanism allows to distinguish between the "regular"
         and the alternative content: The one bearing the <att>n</att> attribute goes in line with
         the preceding measure's staff, the other one is printed in reduced size above. In this case,
-        the vertical order of staves follows document order: The topmost staff is encoded as first
-        child, the lowest comes last. In combination with the presence of the <att>n</att>
-        attribute, this allows to capture even multiple simultaneous ossia staves.</p>
+        the vertical order of staves follows document order: The top-most staff is encoded as the
+        first child, the lowest comes last. In combination with the presence of the <att>n</att>
+        attribute, this allows the capture of multiple simultaneous ossia staves.</p>
       <p>All staves within <gi>ossia</gi>, even the alternative ones without a direct reference,
         obey the definitions of the associated <gi>staffDef</gi>, which can be derived from the
         value of the <att>n</att> attribute. Alternatively, a separate <gi>staffDef</gi> may be
@@ -1360,12 +1413,15 @@
       <head>Directions and Rehearsal marks</head>
       <!-- should we reassign reh to one of the above sections? -->
       <p>In CMN scores, there are often very many verbal instructions and directives. Some of them
-        may concern the loudness of the performance, in which case MEI offers the the <gi>dynam</gi>
-        element (see <ptr target="#cmnDynam"/>). In other cases, however, they affect the tempo, or
-        other, more specific instructions for the performer. Instead of providing separate elements
-        for all possible types of such directions, MEI offers the somewhat generic <gi>dir</gi>
-        element. Although this element is not CMN specific (it is defined in <ptr target="#shared"
-        />), it is especially important in this repertoire.</p>
+        concern the loudness and the speed of the performance, in which case MEI offers the elements
+          <gi>dynam</gi> (described at <ptr target="#cmnDynam"/>) and <gi>tempo</gi>. In other
+        cases, however, they provide other instructions for the performer. Instead of providing
+        separate elements for all possible types of such directions, MEI offers the generic
+          <gi>dir</gi> element. Although this element is not CMN specific (it is defined in <ptr
+          target="#shared"/>), it is especially important in this repertoire.</p>
+
+      <!-- PR: Describe <tempo> here. Your movement label is a tempo marking :-) -->
+
       <p>Very often in CMN, a tempo or character indication is provided above the topmost staff of
         the first measure of a given movement. This indication is normally regarded as the label for
         that particular movement, such as "Allegro moderato" or "Andante maestoso". Though the
@@ -1386,14 +1442,17 @@
         </measure>
       </egXML>
 
-      <p>Another general direction is the presence of <term>rehearsal marks</term>. These marks,
-        which often use letters or numbers for a better distinction, are used in scores and
-        corresponding parts material to identify convenient points to restart rehearsal after breaks
-        or interruptions. For this reason, they are often visually more emphasized than measure
-        numbers. In MEI, they are encoded using the <gi>reh</gi> element, which holds the respective
-        content.</p>
-      <p>The following detail from an edition of Hector Berlioz' Symphonie Fantastique shows a
-        typical example for rehearsal marks:</p>
+      <!-- PR: Provide a better example of <dir> -->
+
+      <p><term>Rehearsal marks</term> are another kind of general direction. These marks, which
+        often use letters, numbers, or a combination of both, are used in scores and corresponding
+        performer parts to identify convenient points to restart rehearsal after breaks or
+        interruptions. For this reason, they are often visually emphasized by placing them within a
+        surrounding square or circle. In MEI, they are encoded using the <gi>reh</gi> element, which
+        holds and provides for the visual rendition of the textual content of the rehearsal
+        mark.</p>
+      <p>The following detail from an edition of Hector Berlioz' <title>Symphonie
+          Fantastique</title> shows a typical example:</p>
       <figure>
         <graphic url="guidelines/Images/modules/cmn/reh-berlioz.png" width="185px"/>
       </figure>
@@ -1413,54 +1472,148 @@
       </egXML>
 
       <p>Please note that when there are multiple rehearsal marks in different staves, each of them
-        has to be encoded separately.
+        has to be encoded separately.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <!-- NEED EXAMPLE HERE! -->
         <!-- TODO: Include example from Brahms op. 98 with manually added reh marks… -->
-      </p>
+      </egXML>
+
     </div>
 
     <div type="div3" xml:id="cmnRep">
       <head>Repetition in CMN</head>
       <p>One characteristic feature of music is repetition. Many musical forms rely on repetition
-        and modification of distinct sections of the music. Repetition in this sense is called
-        structural repetition. At the same time, scribers and engravers of music often use local
-        symbols for repeating smaller chunks of music instead of writing them twice or more.</p>
+        (sometimes with modification) of distinct sections of the music. Repetition in this sense
+        can be thought of as <soCalled>structural repetition</soCalled>. At the same time, composers
+        and engravers of music often use local symbols for repeating smaller portions of music
+        instead of writing them in full more than once.</p>
       <div type="div4" xml:id="cmnRepStruct">
         <head>Structural Repetition</head>
-        <p>Structural repetition is already handled in chapter <ptr target="#shared"/>. <!-- TODO: find better link -->
-          <!-- TODO: What needs to be handled here:
+        <p>Large-scale structural repetition, utilizing <gi>section</gi> and <gi>expansion</gi>
+          elements, is discussed in section <ptr target="#mdivContent"/>. This section will focus on
+          repetition within sections.
+          <!-- TODO: What needs to be handled here:            
+            section and ending details 
             measure/@right="rptstart" etc.
-            section
-            ending
-            expansion
           -->
         </p>
       </div>
       <div type="div4" xml:id="cmnRepSym">
-        <head>Repetition Symbols</head>
-        <p>Besides these rather large scale repetitions, CMN provides a number of different symbols
-          for locally bound repetitions. Many of these symbols are found in manuscripts and may be
-          regarded as personal convention of their respective authors. The most common symbol is a
-          simple or double slash, which may or may not have dots in the upper left and lower right
-          like a percentage sign. The actual meaning of this symbol depends on the current context,
-          so that no general rule can be provided. All elements described in the following allow to
-          capture the original symbol by using either the <att>facs</att> or <att>altsym</att>
-          attribute, however. See <ptr target="#facsimile"/> and <ptr target="#userSymbols"/> for
-          further details. On all these elements the <att>expand</att> attribute may be used to
-          indicate whether to render the repeat symbol ("false"), or the repeated content
-          ("true").</p>
-        <p>It is very common in manuscripts or narrow prints to indicate the repetition of the
-          previous beat by a slash.
-          <!-- TODO: Perry, could you write the explanation for @rend? It seems wrong to me, or maybe I don't get it… -->
+        <head>Measure-Level Repetition Symbols</head>
+        <p>In addition to repetition at the section level, CMN includes a number of different
+          symbols for measure-level repetitions. Many of these symbols are found in manuscripts and
+          may be regarded as personal conventions of their respective authors. Some signs, however,
+          have been widely adopted. For example, it is common to indicate the repetition of a single
+          beat or an entire measure with one or more diagonal lines, sometimes with dots at the
+          upper left and lower right, much like a percent sign. The illustration below contains the
+          most common signs:</p>
+        <figure>
+          <figDesc>Beat repeat signs</figDesc>
+          <graphic url="Images/ExampleImages/beatrpt-20100510.png" width="500px"/>
+        </figure>
+        <p>MEI places primary emphasis on the capture of the semantic meaning of these signs, not
+          their visual rendition. The focus of MEI is on the material being repeated, for example, a
+          beat, a measure, a 2-measure fragment, etc. The following elements are provided for this
+          purpose:</p>
+        <p>
+          <specList>
+            <specDesc key="beatRpt"/>
+            <!-- An indication that material on a preceding beat should be repeated. -->
+            <specDesc key="halfmRpt"/>
+            <specDesc key="mRpt"/>
+            <!-- An indication that the previous measure should be repeated. -->
+            <!-- The
+        automated numbering of consecutive measures of rest may be controlled via the multi.number
+        attribute on the scoreDef or staffDef elements.-->
+            <specDesc key="mRpt2"/>
+            <specDesc key="multiRpt"/>
+          </specList>
         </p>
+
+        <p>The <gi>beatRpt</gi> element is used to represent a single repeated beat. Its visual
+          rendition can be recorded using the <att>rend</att> attribute. This attribute indicates
+          the number of slashes required to render the appropriate beat repeat symbol, which, as
+          demonstrated in the preceding figure, depends on the rhythmic content of the beat being
+          repeated. When a beat that consists of a single note or chord is repeated, the repetition
+          sign is typically rendered as a single thick, slanting slash; therefore, the value '1'
+          should be used. The following values should be used when the beat is divided into even
+          notes: 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5. When the beat is comprised of
+          mixed duration values, the symbol is always rendered as 2 slashes and 2 dots.</p>
+        <p>In addition to its indication of a repeated beat, the beatRpt element is sometimes used
+          in popular music notation, especially in guitar or percussion parts, to indicate a
+          repeated rhythmic pattern. The <gi>beatRpt</gi> element can be used, but when these parts
+          require durations longer or shorter than a beat, note elements with appropriately-shaped
+          note heads should be employed instead.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <!-- NEED EXAMPLE HERE! -->
+        </egXML>
+
+        <p>The <gi>mRpt</gi> element is available for representation of repetition of an entire
+          measure. It must be the sole child of <gi>layer</gi>, no other events may be used. The
+            <att>n</att> attribute of <gi>mRpt</gi> should not be used to record the number
+          displayed above the measure in the figure below. Instead, the numbering of repetitions of
+          the written-out measure can be enabled using the <att>multi.number</att> attribute
+          available on the <gi>scoreDef</gi> and <gi>staffDef</gi> elements.</p>
+        <!-- TODO: Describe the multi.number attribute (and the others) in cmnDefs above and
+            link to the description from here. <ptr target="#cmnDefs"/> -->
+        <figure>
+          <figDesc>Measure repetition</figDesc>
+          <graphic url="Images/ExampleImages/mrpt-20100510.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <measure>
+            <staff>
+              <layer>
+                <beam>
+                  <note pname="f" oct="4" dur="8"/>
+                  <note pname="a" dur="16"/>
+                  <note pname="c" oct="5"/>
+                  <note pname="a" oct="4" dur="8"/>
+                </beam>
+                <beam>
+                  <note pname="c" oct="5" dur="8"/>
+                  <note pname="a" oct="4"/>
+                  <note pname="g"/>
+                </beam>
+              </layer>
+            </staff>
+          </measure>
+          <measure>
+            <staff>
+              <layer>
+                <mRpt/>
+              </layer>
+            </staff>
+          </measure>
+          <measure>
+            <staff>
+              <layer>
+                <mRpt/>
+              </layer>
+            </staff>
+          </measure>
+          <measure>
+            <staff>
+              <layer>
+                <mRpt/>
+              </layer>
+            </staff>
+          </measure>
+        </egXML>
+
         <!-- TODO: Re: the halfmRpt, I have a kind of bad feeling. It seems arbitrary to have that, instead of a generic
           rptSnippet or so. I know that you invented it for my Waldstein example (or was it one of the others?), but it seems
           wrong. I'd prefer to specify the snippet to be repeated by a tstamp and dur combination, maybe also with a reference 
           to a measure in there. That would definitely be much more helpful than halfmRpt. Should we put this on the table and
           offer to deprecate halfmRpt? I know we have to keep it for now, but…
         -->
-        <p>In some situations, a symbol is used to indicatete the repetition of a half measure. This
-          can be captured using the <gi>halfmRpt</gi> element. The following example from the
-          beginning of Beethoven's Waldstein sonata illustrates such usage:</p>
+
+        <p>The <gi>halfmRpt</gi> element represents the incorrect, but frequently found, use of the
+          measure repeat sign to indicate repetition of half of a measure. This practice mostly
+          occurs in hand-written notation and usually involves the repetition of the second half of
+          a measure in duple time. This element is necessary because the function of the symbol, not
+          the visual symbol itself, is of primary importance. The following example from the
+          beginning of Beethoven's <title>Waldstein</title> sonata illustrates such usage:</p>
         <figure>
           <graphic url="guidelines/Images/modules/cmn/halfmRpt_beethoven.png" width="418px"/>
         </figure>
@@ -1489,18 +1642,31 @@
           </measure>
         </egXML>
 
-        <p>As seen in the example above, it is possibel to continuously repeat half measures, even
+        <p>As seen in the example above, it is possible to continuously repeat half measures, even
           across barlines.</p>
-        <p>When the scope of the repetition is the full measure, the <gi>mRpt</gi> element is used
-          instead. It is used as sole child of <gi>layer</gi>, so no other markup is allowed besides
-          a <gi>mRpt</gi>. The <gi>mRpt2</gi> element indicates the repetition of the last two
-          measures, and the <gi>multiRpt</gi> element is used to capture symbols for repeating more
-          than the last two measures. In both cases, the automated numbering of consecutive measures
-          of rest may be controlled via the <att>multi.number</att> attribute on the
-            <gi>scoreDef</gi> or <gi>staffDef</gi> elements. For <gi>multiRpt</gi>, the
-            <att>num</att> attribute indicates the number of preceding measures to be repeated.
-          <!-- TODO: @num uses a wrong definition (it's the one from tuplets, should have a different desc! -->
-        </p>
+        <p>The <gi>mRpt2</gi> and <gi>multiRpt</gi> elements (as well as the <gi>multRest</gi>
+          element) never occur in scores, only in performer parts, where it is often necessary to
+          abbreviate the notation due to page size limitations.</p>
+        <figure>
+          <figDesc>Two-measure repetition</figDesc>
+          <graphic url="Images/ExampleImages/mrpt2-20100510.png"/>
+        </figure>
+        <figure>
+          <figDesc>Multi-measure repetition</figDesc>
+          <graphic url="Images/ExampleImages/multirpt-20100510.png"/>
+        </figure>
+
+        <p>The <gi>mRpt2</gi> element represents repetition of a 2-measure fragment, while
+            <gi>multiRpt</gi> is for repetition of fragments longer than two measures. In modern
+          publishing practice, repeats of more than two measures are written out using repeat signs.
+          This element is provided, however, for handling non-standard practices often found in
+          manuscripts. The <att>num</att> attribute on <gi>multiRpt</gi> records the number of
+          preceding measures to be repeated.</p>
+        <p>All elements described in the following allow for the capture of the original symbol by
+          using either the <att>facs</att> or <att>altsym</att> attribute, however. See <ptr
+            target="#facsimile"/> and <ptr target="#userSymbols"/> for further details. On all these
+          elements the <att>expand</att> attribute may be used to indicate whether to render the
+          repeat symbol ("false"), or the repeated content ("true").</p>
       </div>
     </div>
   </div>
