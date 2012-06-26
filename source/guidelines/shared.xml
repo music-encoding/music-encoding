@@ -13,7 +13,7 @@
     other modules.</p>
   <div type="div2" xml:id="commonAttributes">
     <head>Common Attributes</head>
-    <p>The following attributes are common to nearly all elements in an MEI encodiing. They provide
+    <p>The following attributes are common to nearly all elements in an MEI encoding. They provide
       the means to identify, label, and access elements in MEI-encoded files.</p>
     <p>
       <specList>
@@ -41,7 +41,20 @@
     </egXML>
     <p>The <att>label</att> and <att>n</att> attributes both serve a labeling function; however,
       they differ in the values that are permitted. The <att>n</att> attribute may only contain a
-      single token, while <att>label</att> may consist of a string value that includes spaces.</p>
+      single token, while <att>label</att> may consist of a string value that includes spaces. This
+      makes <att>label</att> useful to capture free-text labels, whereas the name or number specified
+      with <att>n</att> are easier to process. 
+    </p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-- Example for a @label containing whitespace: -->
+      <mdiv label="Allegro moderato">
+        …
+      </mdiv>
+      <!-- Example for a processable @n attribute: -->
+      <measure n="42">
+        …
+      </measure>
+    </egXML>
     <p>When a reference to an external entity is not a complete URI, the <att>xml:base</att>
       attribute can record a value against which it can be resolved into a complete, or absolute,
       location.</p>
@@ -93,7 +106,7 @@
       <p>Further information regarding the organization and encoding of music corpora is given in
         chapter <ptr target="#corpus"/>. Stand-alone headers are more fully described in chapter
           <ptr target="#independentHeader"/>.
-        <!-- Additional information about embedding MEI in other XML files is covered in chapter ? -->
+        <!-- TODO: Additional information about embedding MEI in other XML files is covered in chapter ? -->
       </p>
     </div>
     <div type="div3" xml:id="musicElement">
@@ -305,7 +318,9 @@
           elements are separated by pauses; however, <foreign>attacca</foreign>, <foreign>attacca
             subito</foreign>, <foreign>seque</foreign>, or similar terms are sometimes used at the
           end of an <gi>mdiv</gi> to indicate that the next <gi>mdiv</gi> should begin immediately
-          after the conclusion of the current one.</p>
+          after the conclusion of the current one. They are encoded using the <gi>dir</gi> element.
+        <!-- TODO: Do we need a processable way to encode this fact (not necessarily the wording)? -->
+        </p>
       </div>
       <div type="div4" xml:id="mdivContent">
         <head>Content of Musical Divisions</head>
@@ -346,14 +361,15 @@
             <specDesc key="part"/>
           </specList>
         </p>
-        <p>A <gi>part</gi> is effectively a miniature score, requiring all the encoding features of
+        <p>A <gi>part</gi> is effectively a miniature score, allowing all the encoding features of
           a full score, such as multiple staves, performance directives, and so on. <gi>part</gi>
           elements are useful for encoding performing parts when there is no score, such as in early
           music part books, or when the parts have non-aligning bar lines, or when different layout,
           such as page turns, are needed for the score and parts, or for accommodating software that
           requires part-by-part encoding. Please note that part elements in MEI are not an
           indication of voice leading. Voice leading can be encoded using the <att>next</att>
-          attribute available on all event-type elements.</p>
+          attribute available on all event-type elements. For a description of these elements, see
+          <ptr target="#"/><!-- TODO: reference to distinction of events and controlEvents -->.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <parts>
             <part>
@@ -434,7 +450,7 @@
         </egXML>-->
         <p>In certain circumstances, this approach may be preferable for reproduction of the visual
           layout of the music. However, the simultaneous use of the <gi>measure</gi> and
-            <gi>barLine</gi> elements must be avoided.</p>
+            <gi>barLine</gi> elements may lead to confusion and should be avoided.</p>
         <p>Typically, MEI follows the order of sections as they appear in the document being
           encoded. When performance requires a different order, for instance in the case of D.C. and
           D.S. directives, the following element may be used to define the performance order.</p>
@@ -486,6 +502,8 @@
             </section>
           </score>
         </egXML>
+        <!-- TODO: It is not clear how this is meant. No @source or the like… Maybe we can move the explanation 
+          below into the text above-->
         <p>The label and n attributes may be used to assign a name and number to an expansion, the
           source attribute provides for specifying the bibliographic source of the expansion, and
           the type and subtype attributes allow for its classification.</p>
@@ -528,6 +546,7 @@
           <specDesc key="instrGrp"/>
           <specDesc key="label"/>
         </specList>
+        <!-- aren't the instr* elements MIDI-focussed? Should we mention that they are not in frequent use? -->
       </p>
     </div>
     <div type="div3" xml:id="stavesAndLayers">
@@ -572,6 +591,8 @@
         </p>
       </div>
     </div>
+    <!-- TODO: add chapter about the distinction between events and controlevents here? Have I written stuff like this
+    in cmn? -->
     <div type="div3" xml:id="basicEvents">
       <head>Basic Music Events</head>
       <p>The basic features of music notation are represented by the following elements:</p>
@@ -682,69 +703,152 @@
       prose.</p>
     <div type="div3" xml:id="paragraphs">
       <head>Paragraphs</head>
-      <p>...</p>
+      <p>
+        A paragraph is a structural unit of a larger text. Usually it is 
+        typographically distinct: It usually begins on a new line and the first letter
+        of the content is often indented, enlarged, or both. This element has a similar meaning as
+        the corresponding elements in Encoded Archival Description (EAD), Text Encoding Initiative (TEI), and HTML.
+      </p>
       <p>
         <specList>
           <specDesc key="p"/>
         </specList>
       </p>
+      <p>
+        In MEI, a <gi>p</gi> is used in many different situations, including transcriptional use as on a 
+        <gi>titlePage</gi> or descriptive purposes as in a <gi>changeDesc</gi>.
+      </p>
     </div>
     <div type="div3" xml:id="textRendition">
       <head>Text Rendition</head>
-      <p>...</p>
+      <p>
+        Sometimes, the encoder wants to emphasize or highlight a chunk of text without assigning it a special
+        meaning beyond its typographical speciality. For this purpose, MEI offers the <gi>rend</gi> element,
+        which compares to TEI's <foreign>hi</foreign> element. Its <att>rend</att> attribute is used to 
+        specify typographic features like underlining or quotes, whereas <att>fontweight</att> and <att>fontstyle</att>
+        are used to capture a bold or italic rendering respectively. The <att>altrend</att> attribute may be used to 
+        capture arbitrary individual rendition styles.  
+      </p>
       <p><specList>
-          <specDesc key="rend"/>
+          <specDesc key="rend" atts="rend fontweight fontstyle altrend"/>
         </specList></p>
     </div>
     <div type="div3" xml:id="namesNumbersDates">
       <head>Names, Dates, Numbers, Abbreviations, and Addresses</head>
       <div type="div4" xml:id="names">
         <head>Names and Dates</head>
-        <p>...</p>
+        <p>The <gi>name</gi> and <gi>date</gi> elements may be used to mark up portions
+          of a text.</p>
         <p>
           <specList>
             <specDesc key="name"/>
             <specDesc key="date"/>
           </specList>
         </p>
+        <p>
+          The <gi>name</gi> element is as unspecific as possible and may be
+          used to identify any named entity, such as persons, items, applications, places
+          etc. The namesDates module documented in <ptr target="#namesDates"/> offers
+          the more specific elements <gi>persName</gi>, <gi>corpName</gi> and <gi>geogName</gi>.
+          This chapter of these Guidelines discusses the use of these elements as well as 
+          <gi>name</gi> and <gi>date</gi>, even when these two elements are made available in the
+          shared module.
+        </p>
       </div>
       <div type="div4" xml:id="numbers">
         <head>Numbers</head>
-        <p>...</p>
+        <p>The <gi>num</gi> element may be used to identify any numeric information in a text. 
+          The <att>unit</att> may be used to specify the unit of measurement.</p>
         <p>
           <specList>
-            <specDesc key="num"/>
+            <specDesc key="num" atts="unit"/>
           </specList>
+        </p>
+        <p>
+          This element is only necessary to use when the number shall be displayed in a special, maybe unified
+          way or shall be marked with a type attribute.
         </p>
       </div>
       <div type="div4" xml:id="abbreviations">
         <head>Abbreviations</head>
-        <p>...</p>
         <p>
-          <specList>
-            <specDesc key="abbr"/>
-            <specDesc key="expan"/>
-          </specList>
+          MEI offers to mark up abbreviations of any kind as such. This includes abbreviations in text, like in the 
+          following example:
         </p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          … the next passage shall be performed in <abbr>pno:</abbr> …
+        </egXML>
+        <p>
+          or it may be equally used to indicate abbreviations in the music itself, as in the follwing example:
+        </p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <abbr>
+            <note pname="c" oct="5" dur="4" stem.mod="2slash"/>
+          </abbr>
+        </egXML>
+        <!-- TODO: add btrem to this example and check for correctness -->
+        <p>
+          At the same time, the encoder might want to provide the expansion of an abbreviation. For this purpose,
+          MEI offers the <gi>expan</gi> element, which is not to be confused with the <gi>expansion</gi> element
+          described in <ptr target="#mdivContent"/>. If both elements are used, it might be helpful to wrap them 
+          in a <gi>choice</gi> element as described in <ptr target="#editTrans"/>.
+        </p>
+        <!-- TODO: should abbr and expan be moved to edittrans? -->
       </div>
       <div type="div4" xml:id="addresses">
         <head>Addresses</head>
-        <p>...</p>
+        <p>Addresses may be encoded using the <gi>address</gi> element, which itself may hold an arbitrary number
+        of <gi>addressLine</gi> elements.</p>
         <p>
           <specList>
             <specDesc key="address"/>
+            <specDesc key="addressLine"/>
           </specList>
         </p>
+        <p>
+          It is important to notice that the address element does not hold a reference to the person or organization
+          whose address is specified. This has to provided in a separate element, as in the following example:
+        </p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <corpName>
+            Universität Paderborn
+          </corpName>
+          <address>
+            <addrLine>Warburger Straße 100</addrLine>
+            <addrLine>33098 Paderborn</addrLine>
+            <addrLine>Germany</addrLine>
+          </address>
+        </egXML>
       </div>
     </div>
     <div type="div3" xml:id="annotations">
       <head>Annotations</head>
-      <p>...</p>
+      <p>Annotations are one of the most versatile features of MEI. They are provided using the
+        <gi>annot</gi> element.</p>
       <p>
         <specList>
           <specDesc key="annot"/>
         </specList>
       </p>
+      <p>
+        This element may be contained by a wide range of other elements, and itself may contain a large
+        number of other elements. It is up to the encoder to ensure that no unwanted nesting is constructed
+        using <gi>annot</gi>. In all cases, <gi>annot</gi> always provides a comment for something, but no transcription.
+      </p>
+      <p>
+        Depending on its context, an <gi>annot</gi> will deal with either its parent element, or, more usually, with the
+        element(s) specified in its <att>plist</att> attribute. This attribute uses URI references to specify one or more
+        other elements' <att>xml:id</att> attribute, like in the following example: 
+      </p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <note xml:id="shared.someInterestingNote"/>
+        
+        <!-- elsewhere in the document: -->
+        <annot plist="#shared.someInterestingNote">
+          <!-- additional information about this note -->
+        </annot>
+      </egXML>
+      <!-- TODO: further description required… -->
     </div>
     <!--<div type="div3" xml:id="referenceSystems">
       <head>Reference Systems</head>
@@ -764,13 +868,14 @@
           <specDesc key="title"/>
         </specList>
       </p>
+      <!-- TODO: these are covered by #namesDates module 
       <p>
         <specList>
           <specDesc key="corpName"/>
           <specDesc key="persName"/>
           <specDesc key="geogName"/>
         </specList>
-      </p>
+      </p>-->
     </div>
   </div>
   <!--<div type="div2" xml:id="sharedOverview">
