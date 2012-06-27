@@ -2567,6 +2567,40 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.mediabounds" module="MEI.shared" type="atts">
+      <desc>attributes that establish the boundaries of a media object</desc>
+      <attList>
+        <attDef ident="begin" usage="opt">
+          <desc>specifies a point where the relevant content begins.</desc>
+        </attDef>
+        <attDef ident="end" usage="opt">
+          <desc>specifies a point where the relevant content ends. If not specified, the end of the
+            content is assumed to be the end point.</desc>
+        </attDef>
+        <attDef ident="betype" usage="opt">
+          <desc>type of values used in the begin/end attributes. The begin and end attributes can
+            only be interpreted meaningfully in conjunction with this attribute.</desc>
+          <valList type="closed">
+            <!-- <valItem ident="byte"/>
+                <valItem ident="idref"/>
+                <valItem ident="smil"/>
+                <valItem ident="midi"/>
+                <valItem ident="smpte-25"/>
+                <valItem ident="smpte-24"/>
+                <valItem ident="smpte-df30"/>
+                <valItem ident="smpte-ndf30"/>
+                <valItem ident="smpte-df29.97"/>
+                <valItem ident="smpte-ndf29.97"/>
+                <valItem ident="tcf"/> -->
+            <valItem ident="time">
+              <desc>a modified ISO time format (HH:MM:SS.ss) where 'HH' should be interpreted as any
+                number of hours and '.ss' should be interpreted as any number of fractional parts of
+                a second.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.width" module="MEI.shared" type="atts">
       <desc>Attributes that describe horizontal dimensions</desc>
       <attList>
@@ -14444,8 +14478,8 @@
     </elementSpec>
 
     <elementSpec ident="performance" module="MEI.performance">
-      <desc>― Groups one or more recorded
-        performances.<!-- The decls attribute may be used
+      <desc>― Presentation of a musical work for which one or more digital recordings exist.
+        <!-- The decls attribute may be used
         to link the collection with a particular source described in the header. This element is
         analogous to the &lt;facsimile&gt; element in the facsimile module.--></desc>
       <classes>
@@ -14460,7 +14494,7 @@
       </content>
     </elementSpec>
     <elementSpec ident="recording" module="MEI.performance">
-      <desc>― Defines a performance in terms of a group of one or more digital audio or video
+      <desc>― Defines a performance in terms of one or more digital audio or video
         representations.
         <!-- The startid attribute may be used to hold a reference to the first feature occurring
           in this performance. This element is analogous to the &lt;surface&gt; element in the 
@@ -14468,6 +14502,7 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
+        <memberOf key="att.mediabounds"/>
         <memberOf key="att.startid"/>
       </classes>
       <content>
@@ -14478,42 +14513,15 @@
           <rng:ref name="clip"/>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="begin" usage="opt">
-          <desc>indication of the absolute start time.</desc>
-        </attDef>
-        <attDef ident="end" usage="opt">
-          <desc>indication of the absolute end time.</desc>
-        </attDef>
-        <attDef ident="betype" usage="opt">
-          <desc>type of values used in the begin/end attributes. The begin and end attributes can
-            only be interpreted meaningfully in conjunction with this attribute.</desc>
-          <valList type="closed">
-            <!-- <valItem ident="byte"/>
-                <valItem ident="idref"/>
-                <valItem ident="smil"/>
-                <valItem ident="midi"/>
-                <valItem ident="smpte-25"/>
-                <valItem ident="smpte-24"/>
-                <valItem ident="smpte-df30"/>
-                <valItem ident="smpte-ndf30"/>
-                <valItem ident="smpte-df29.97"/>
-                <valItem ident="smpte-ndf29.97"/>
-                <valItem ident="tcf"/> -->
-            <valItem ident="time">
-              <desc>ISO 24-hour time format: HH:MM:SS.ss</desc>
-            </valItem>
-          </valList>
-        </attDef>
-      </attList>
     </elementSpec>
-
     <elementSpec ident="clip" module="MEI.performance">
-      <desc>― Defines a time segment of interest within a digital audio or video recording.
+      <desc>― Defines a time segment of interest within a recording or within a digital audio or
+        video file.
         <!--This element is analogous to the &lt;zone&gt; element in the facsimile module.--></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
+        <memberOf key="att.mediabounds"/>
         <memberOf key="att.startid"/>
       </classes>
       <content>
@@ -14521,36 +14529,7 @@
           <rng:ref name="avFile"/>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="begin" usage="opt">
-          <desc>indication of the absolute start time.</desc>
-        </attDef>
-        <attDef ident="end" usage="opt">
-          <desc>indication of the absolute end time.</desc>
-        </attDef>
-        <attDef ident="betype" usage="opt">
-          <desc>type of values used in the begin/end attributes. The begin and end attributes can
-            only be interpreted meaningfully in conjunction with this attribute.</desc>
-          <valList type="closed">
-            <!-- <valItem ident="byte"/>
-                <valItem ident="idref"/>
-                <valItem ident="smil"/>
-                <valItem ident="midi"/>
-                <valItem ident="smpte-25"/>
-                <valItem ident="smpte-24"/>
-                <valItem ident="smpte-df30"/>
-                <valItem ident="smpte-ndf30"/>
-                <valItem ident="smpte-df29.97"/>
-                <valItem ident="smpte-ndf29.97"/>
-                <valItem ident="tcf"/> -->
-            <valItem ident="time">
-              <desc>ISO 24-hour time format: HH:MM:SS.ss</desc>
-            </valItem>
-          </valList>
-        </attDef>
-      </attList>
     </elementSpec>
-
     <elementSpec ident="avFile" module="MEI.performance">
       <desc>(audio/video file) ― References an external digital audio or video
         file.<!-- This element is analogous
