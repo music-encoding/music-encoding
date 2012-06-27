@@ -13622,7 +13622,9 @@
         <memberOf key="model.graphicLike"/>
       </classes>
       <content>
-        <rng:empty/>
+        <rng:zeroOrMore>
+          <rng:ref name="zone"/>
+        </rng:zeroOrMore>
       </content>
       <attList>
         <attDef ident="height" usage="opt">
@@ -13632,6 +13634,14 @@
           </datatype>
         </attDef>
       </attList>
+      <constraintSpec ident="graphic_child_of_zone" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:zone/mei:graphic">
+            <sch:assert test="count(mei:*) = 0">graphic child of zone cannot have
+              children</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="fig" module="MEI.figtable">
       <desc>(figure) ― groups elements representing or containing graphic information such as an
@@ -14570,8 +14580,18 @@
         <memberOf key="att.typed"/>
       </classes>
       <content>
-        <rng:empty/>
+        <rng:zeroOrMore>
+          <rng:ref name="clip"/>
+        </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="avFile_child_of_clip" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:clip/mei:avFile">
+            <sch:assert test="count(mei:*) = 0">avFile child of clip cannot have
+              children</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="ptr" module="MEI.ptrref">
       <desc>(pointer) ― Defines a pointer to another location, using only attributes to describe the
