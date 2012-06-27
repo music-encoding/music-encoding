@@ -516,6 +516,30 @@
         </rng:data>
       </content>
     </macroSpec>
+    <macroSpec ident="data.ORNAM.cmn" module="MEI.cmnOrnaments" type="dt">
+      <desc>CMN ornam attribute values: A = appogiatura (upper neighbor); a = acciaccatura (lower
+        neighbor); b = bebung; I = ascending slide; i = descending slide; k = delayed turn; K =
+        5-note turn; m = mordent (alternation with lower neighbor); M = inverted mordent
+        (alternation with upper neighbor); N = Nachschlag (upper neighbor); n = Nachschlag (lower
+        neighbor); S = turn; s = inverted turn; t = trill commencing on auxiliary note; T = trill
+        commencing on principal note; O = generic / unspecified ornament</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern"
+            >[A|a|b|I|i|K|k|M|m|N|n|S|s|T|t|O]|(A|a|S|s|K|k)?(T|t|M|m)(I|i|S|s)?</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.ORNAMS.cmn" module="MEI.cmnOrnaments" type="dt">
+      <desc>One or more values from the list given in the data.ORNAM.cmn datatype.</desc>
+      <content>
+        <rng:list>
+          <rng:oneOrMore>
+            <rng:ref name="data.ORNAM.cmn"/>
+          </rng:oneOrMore>
+        </rng:list>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.PAGE.PANELS" module="MEI" type="dt">
       <desc>The number of panels per page.</desc>
       <content>
@@ -2863,6 +2887,19 @@
           <desc>records the direction of octave displacement.</desc>
           <datatype>
             <rng:ref name="data.PLACE"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.ornam" module="MEI.cmnOrnaments" type="atts">
+      <desc>Attributes for marking the presence of an ornament.</desc>
+      <attList>
+        <attDef ident="ornam" usage="opt">
+          <desc>indicates that this element has an attached ornament. If visual information about
+            the ornament is needed, then one of the elements that represents an ornament (mordent,
+            trill, or turn) should be employed.</desc>
+          <datatype>
+            <rng:ref name="data.ORNAMS.cmn"/>
           </datatype>
         </attDef>
       </attList>
@@ -5239,6 +5276,7 @@
       <classes>
         <memberOf key="att.beamed"/>
         <memberOf key="att.lvpresent"/>
+        <memberOf key="att.ornam"/>
       </classes>
     </classSpec>
     <classSpec ident="att.chord.vis.cmn" module="MEI.cmn" type="atts">
@@ -5786,6 +5824,7 @@
       <classes>
         <memberOf key="att.beamed"/>
         <memberOf key="att.lvpresent"/>
+        <memberOf key="att.ornam"/>
       </classes>
     </classSpec>
     <classSpec ident="att.note.vis.cmn" module="MEI.cmn" type="atts">
