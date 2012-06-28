@@ -63,6 +63,79 @@
     <item>editorial additions, suppressions, and omissions.</item>
   </list>
 
+  <div type="div2" xml:id="abbreviations">
+    <head>Abbreviations</head>
+    <p>MEI offers methods for marking abbreviations. This includes abbreviations in text, as in the
+      following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples"> ... the next passage shall be performed in
+        <abbr>pno:</abbr> … </egXML>
+
+    <p>or abbreviations in the music itself, as in the following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <abbr>
+        <note pname="c" oct="5" dur="4" stem.mod="2slash"/>
+      </abbr>
+    </egXML>
+    <!-- TODO: add btrem to this example and check for correctness -->
+
+    <p>The type attribute may be used to classify the abbreviation according to a convenient
+      typology. Sample values include:</p>
+    <list type="gloss">
+      <label>suspension - </label>
+      <item>the abbreviation provides the first letter(s) of the word or phrase, omitting the
+        remainder;</item>
+      <label>contraction -</label>
+      <item>the abbreviation omits some letter(s) in the middle;</item>
+      <label>brevigraph - </label>
+      <item>the abbreviation comprises a special symbol or mark;</item>
+      <label>superscription - </label>
+      <item>the abbreviation includes writing above the line;</item>
+      <label>acronym - </label>
+      <item>the abbreviation comprises the initial letters of the words of a phrase;</item>
+      <label>title -</label>
+      <item>the abbreviation is for a title of address (Dr, Ms, Mr, ...);</item>
+      <label>organization - </label>
+      <item>the abbreviation is for the name of an organization;</item>
+      <label>geographic - </label>
+      <item>the abbreviation is for a geographic name.</item>
+    </list>
+
+    <p>This tag is the mirror image of the <gi>expan</gi> tag (not to be confused with the
+        <gi>expansion</gi> element described in <ptr target="#mdivContent"/>). Both <gi>abbr</gi>
+      and <gi>expan</gi>allow the encoder to transcribe an abbreviation and its expansion. In the
+      case of <gi>abbr</gi>, the original is transcribed as the content of the element and the
+      expansion as an attribute value, while <gi>expan</gi> reverses this. The choice between the
+      two is up to the user. For example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-- using abbr -->
+      <p>... the next passage shall be performed in <abbr expan="piano">pno:</abbr> ...</p>
+      <!-- using expan -->
+      <p>... the next passage shall be performed in <expan abbr="pno:">piano</expan> ...</p>
+    </egXML>
+
+    <p>The <gi>abbr</gi> tag is not required; if appropriate, the encoder may transcribe
+      abbreviations in the source text silently, without tagging them. If abbreviations are not
+      transcribed directly but expanded silently, then the MEI header should indicate this is the
+      case. The <att>cert</att> attribute signifies the degree of certainty ascribed to the
+      expansion of the abbreviation. The <att>expan</att> attribute gives an expansion of the
+      abbreviation. The <att>resp</att> attribute contains an ID reference to an element containing
+      the name of the editor or transcriber responsible for supplying the expansion of the
+      abbreviation.</p>
+    <p>When the content of the <att>abbr</att> or <att>expan</att> attributes requires additional
+      markup, an attribute cannot be used. In this case, the abbreviated and expanded forms must be
+      presented within elements. Furthermore, as alternatives to each other, the <gi>abbr</gi> and
+        <gi>expan</gi> elements must be wrapped by the <gi>choice</gi> element, as described above.
+      The previous example, where the 'o:' in 'pno:' is written as superscript, would be encoded
+      as:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <p>... the next passage shall be performed in <choice>
+          <abbr>pn<rend rend="sup">o:</rend></abbr>
+          <expan>piano</expan>
+        </choice>
+      </p>
+    </egXML>
+  </div>
+
   <div type="div2" xml:id="edittransErrors">
     <head>Apparent Errors</head>
     <p>When the source material to be encoded is manifestly faulty, an encoder or transcriber may
@@ -158,10 +231,10 @@
     </egXML>
 
     <p>Here the <att>resp</att> attribute has been used to indicate responsibility for the
-      correction. Its value (<val>#editTrans.JK</val>) is an example of the <term>pointer</term> values
-      discussed in section <ptr target="#ptrRef"/>. In this case, the <att>resp</att> attribute
-      points to a <gi>name</gi> element within the metadata header, but any element might be
-      indicated in this way, if the correction has been taken from some other source. The
+      correction. Its value (<val>#editTrans.JK</val>) is an example of the <term>pointer</term>
+      values discussed in section <ptr target="#ptrRef"/>. In this case, the <att>resp</att>
+      attribute points to a <gi>name</gi> element within the metadata header, but any element might
+      be indicated in this way, if the correction has been taken from some other source. The
         <att>resp</att> attribute is available for all elements which are members of the <ident
         type="class">att.responsibility</ident> class. The <ident type="class">att.edit</ident>
       class makes available a <att>cert</att> attribute,which may be used to indicate the degree of
@@ -192,6 +265,7 @@
         <gi>supplied</gi> element may be used. Where the <soCalled>correction</soCalled> is simply a
       matter of expanding abbreviated notation, the <gi>expan</gi> element may be used.</p>
   </div>
+
   <div type="div2" xml:id="edittransReg">
     <head>Regularization and Normalization</head>
     <p>When the musical source makes extensive use of unusual symbol shapes or non-standard notation
