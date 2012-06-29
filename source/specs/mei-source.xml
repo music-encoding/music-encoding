@@ -923,7 +923,7 @@
       </content>
     </macroSpec>
     <macroSpec ident="data.DURATION" module="MEI" type="dt">
-      <desc/>
+      <desc>Logical, that is, written, duration attribute values</desc>
       <content>
         <rng:choice>
           <rng:ref name="data.DURATION.cmn"/>
@@ -8368,6 +8368,7 @@
             <rng:ref name="role"/>
             <rng:ref name="roleDesc"/>
             <rng:ref name="actor"/>
+            <rng:ref name="instrVoice"/>
           </rng:choice>
         </rng:oneOrMore>
       </content>
@@ -10675,29 +10676,6 @@
         <rng:ref name="model.encodingPart_sequenceOptional"/>
       </content>
     </elementSpec>
-    <elementSpec ident="ensemble" module="MEI.header">
-      <desc>― Used when an ensemble, such as an orchestra, is included in the performing forces of a
-        composition.
-        <!-- It is recommended that name values (recorded in the reg attribute
-        or in the element's content) be taken from a standardized list, such as the International
-        Association of Music Libraries' Medium of performance Codes List or the MARC Instruments and
-        Voices Code List.--></desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.bibl"/>
-      </classes>
-      <content>
-        <rng:ref name="instrVoice"/>
-        <rng:optional>
-          <rng:ref name="role"/>
-        </rng:optional>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="performer"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-    </elementSpec>
     <elementSpec ident="exhibHist" module="MEI.header">
       <desc>(exhibition history) ― A record of public exhibitions, including dates, venues, etc.
         <!-- This
@@ -10942,40 +10920,6 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="instrVoice" module="MEI.header">
-      <desc>(instrument or voice) ― Name of an ensemble, an instrument on which a performer plays,
-        or a performer's voice range designation.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.authorized"/>
-        <memberOf key="att.regularized"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textphraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <attList>
-        <attDef ident="count" usage="opt">
-          <desc>indicates the number of parts or performers, e.g., in a composition for 2
-            flutes.</desc>
-          <datatype>
-            <rng:data type="positiveInteger"/>
-          </datatype>
-        </attDef>
-        <attDef ident="solo" usage="opt">
-          <desc>marks this instrument or vocal part as a soloist. Do not use this attribute for a
-            solo instrument which is not accompanied.</desc>
-          <datatype>
-            <rng:ref name="data.BOOLEAN"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </elementSpec>
     <elementSpec ident="interpretation" module="MEI.header">
       <desc>― Describes the scope of any analytic or interpretive information added to the
         transcription of the music.
@@ -11125,8 +11069,8 @@
     </elementSpec>
     <elementSpec ident="perfMedium" module="MEI.header">
       <desc>(performance medium) ― Indicates the number and character of the performing forces used
-        in a musical
-        composition.<!-- The function of instrumentalists or vocalists is represented by the
+        in a musical composition.
+        <!-- The function of instrumentalists or vocalists is represented by the
         choice of ensemble and performer child elements. Arrangements are coded for the medium of
         the work being described, not for the original medium.--></desc>
       <classes>
@@ -11136,36 +11080,114 @@
       </classes>
       <content>
         <rng:optional>
-          <rng:ref name="head"/>
+          <rng:ref name="model.headLike"/>
         </rng:optional>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="ensemble"/>
-            <rng:ref name="performer"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="castList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="instrumentation"/>
+        </rng:optional>
       </content>
     </elementSpec>
-    <elementSpec ident="performer" module="MEI.header">
-      <desc>― Specific instrumental or vocal performer within a resource's performing forces.
-        <!-- Used when performing forces includes specific instrumental or vocal performers. All
-        instruments and roles for a single performer can be included. However, in AACR2 the
-        following restrictions apply: if the performer plays more than one instrument in a
-        composition, the first named instrument is given. If a principal instrument can be
-        determined, the name or code for that instrument is given. For percussion music, whether for
-        a single performer or more than one, the number of performers is given, rather than the
-        number of instruments. For monologues, or works with narration, an indication of unspecified
-        voice is given for the speaker or narrator.--></desc>
+    <elementSpec ident="instrumentation" module="MEI.header">
+      <desc>― Instrumental and non-dramatic vocal resources.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.authorized"/>
+      </classes>
+      <content>
+        <rng:optional>
+          <rng:ref name="head"/>
+        </rng:optional>
+        <rng:choice>
+          <rng:optional>
+            <rng:ref name="ensemble"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="instrVoice"/>
+              <rng:ref name="instrVoiceGrp"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
+      </content>
+    </elementSpec>
+    <elementSpec ident="ensemble" module="MEI.header">
+      <desc>― The name of a standard instrumental or vocal grouping, such as 'orchestra' or 'marching band'.
+        <!-- It is recommended that name values (recorded in the code attribute
+    or in the element's content) be taken from a standardized list, such as the International
+    Association of Music Libraries' Medium of performance Codes List or the MARC Instruments and
+    Voices Code List.--></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
       </classes>
       <content>
-        <rng:oneOrMore>
-          <rng:ref name="instrVoice"/>
-        </rng:oneOrMore>
+        <rng:text/>
+      </content>
+      <attList>
+        <attDef ident="code" usage="opt">
+          <desc>captures one or more coded values for the textual content of this element</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </elementSpec>
+    <elementSpec ident="instrVoice" module="MEI.header">
+      <desc>(instrument or voice) ― Name of an instrument on which a performer plays or a
+        performer's voice range.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.authorized"/>
+      </classes>
+      <content>
         <rng:zeroOrMore>
-          <rng:ref name="role"/>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="instrVoice"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="code" usage="opt">
+          <desc>captures one or more coded values for the textual content of this element</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="count" usage="opt">
+          <desc>indicates the number of performers.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+        <attDef ident="solo" usage="opt">
+          <desc>marks this instrument or vocal part as a soloist. Do not use this attribute for a
+            solo instrument which is not accompanied.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </elementSpec>
+    <elementSpec ident="instrVoiceGrp" module="MEI.header">
+      <desc>― Several instrumental or vocal resources treated as a group.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.headLike"/>
+            <rng:ref name="instrVoice"/>
+            <rng:ref name="instrVoiceGrp"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
     </elementSpec>
@@ -11360,9 +11382,9 @@
         <rng:optional>
           <rng:ref name="classification"/>
         </rng:optional>
-        <rng:optional>
+        <!--<rng:optional>
           <rng:ref name="castList"/>
-        </rng:optional>
+        </rng:optional>-->
         <rng:optional>
           <rng:ref name="model.incipLike"/>
         </rng:optional>
@@ -11545,9 +11567,9 @@
         <rng:optional>
           <rng:ref name="classification"/>
         </rng:optional>
-        <rng:optional>
+        <!--<rng:optional>
           <rng:ref name="castList"/>
-        </rng:optional>
+        </rng:optional>-->
         <rng:optional>
           <rng:ref name="model.incipLike"/>
         </rng:optional>
@@ -11791,9 +11813,9 @@
         <rng:optional>
           <rng:ref name="classification"/>
         </rng:optional>
-        <rng:optional>
+        <!--<rng:optional>
           <rng:ref name="castList"/>
-        </rng:optional>
+        </rng:optional>-->
         <rng:optional>
           <rng:ref name="model.incipLike"/>
         </rng:optional>
