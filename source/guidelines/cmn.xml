@@ -27,9 +27,9 @@
       <p>Arguably, the most important element of the CMN module is the <gi>measure</gi> element. It
         is used as a structural unit inside <gi>section</gi>s and acts as a container for
           <soCalled>events</soCalled> from the <ident type="class">model.eventLike</ident> class,
-        such as <gi>note</gi>s, <gi>chord</gi>s and <gi>rest</gi>s as well as <soCalled>control
-          events</soCalled> from the <ident type="class">model.controleventLike</ident> class, such
-        as <gi>slur</gi>s and indications of <gi>dynam</gi>ics.</p>
+        such as notes, chords and rests as well as <soCalled>control events</soCalled> from the
+          <ident type="class">model.controleventLike</ident> class, such as slurs and indications of
+        dynamics.</p>
       <p>The following example demonstrates the use of the <gi>measure</gi> element:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <section>
@@ -63,6 +63,17 @@
           <gi>staffDef</gi> or <gi>layerDef</gi> using the <term>xs:anyURI</term> datatype, the
           <att>n</att> refers to the closest preceding <gi>staffDef</gi> or <gi>layerDef</gi> with
         the same value in its <att>n</att> attribute.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <staffDef xml:id="cmn_staffDef1" n="3"/>
+        <!-- later on in the file: -->
+        <staff def="#cmn_staffDef1">
+          <!-- staff content -->
+        </staff>
+        <!-- or: -->
+        <staff n="3">
+          <!-- staff content -->
+        </staff>
+      </egXML>
     </div>
 
     <div type="div4" xml:id="cmnDefs">
@@ -81,8 +92,10 @@
         and meter. The most important attributes for this purpose are:</p>
       <p>
         <specList>
-          <specDesc key="scoreDef" atts="meter.count meter.unit meter.sym key.pname key.accid
-            key.mode key.sig"/>
+          <specDesc key="scoreDef"
+            atts="meter.count meter.unit meter.sym key.pname key.accid
+            key.mode key.sig"
+          />
         </specList>
       </p>
       <p>The following example describes a score in common time with 3 flats:</p>
@@ -91,28 +104,31 @@
       </egXML>
 
       <p>Other attributes allow the description of standard page and system margins as well as fonts
-        for text and music.</p>
-      <!-- TODO: Expand this! -->
-
-      <p>A <gi>scoreDef</gi> used in this way is the first child of <gi>score</gi> element (or
-          <gi>part</gi> element, since a performer's part is a kind of score). Subsequent
-          <gi>scoreDef</gi>s may be used to override the characteristics described in this first
-          <gi>scoreDef</gi>. The scope of this effect depends on the context: Every
-          <gi>scoreDef</gi> affects only the content following it within the same parent element. A
-          <gi>scoreDef</gi> at the beginning of a <gi>section</gi> affects this particular section,
-        a scoreDef at the begin of a <gi>measure</gi> only that measure.
-        <!--Please consider the possibility of nesting <gi>section</gi> elements for changing meter, etc.-->
+        for text and music:</p>
+      <p>
+        <specList>
+          <specDesc key="scoreDef"
+            atts="page.width page.height page.leftmar page.topmar 
+            page.rightmar page.bottommar system.leftmar system.topmar system.rightmar
+            text.name text.fam text.size music.name music.size lyric.name lyric.fam
+            lyric.size"
+          />
+        </specList>
       </p>
+      <p>There are other attributes that allow the specification of many further details of a score.
+        These are available from the element definitions accessible at <gi>scoreDef</gi>,
+          <gi>staffDef</gi>, <gi>staffGrp</gi> and <gi>layerDef</gi>.</p>
+
       <p>The <gi>scoreDef</gi> element contains a <gi>staffGrp</gi> element. This element is used to
-        group <gi>staffDef</gi> and other <gi>staffGrp</gi> elements. This is particularly useful
-        for collecting instrumental or vocal groups in a large score, such as woodwinds, brasses,
-        etc., but also for assigning a shared label for the two staves of a grand staff using the
-          <att>label</att> and <att>label.abbr</att> attributes. The <att>barthru</att> attribute on
-          <gi>staffGrp</gi> allows one to specify whether barlines are drawn across the space
-        between staves of that group or only on the staves themselves.</p>
+        group staves and other staff groups. This is particularly useful for collecting instrumental
+        or vocal groups in a large score, such as woodwinds, brasses, etc., but also for assigning a
+        shared label for the two staves of a grand staff, using the <att>label</att> and
+          <att>label.abbr</att> attributes. The <att>barthru</att> attribute on <gi>staffGrp</gi>
+        allows one to specify whether barlines are drawn across the space between staves of that
+        group or only on the staves themselves.</p>
       <p>A <gi>staffDef</gi> element is used to describe an individual staff of a <gi>score</gi> or
-        performer <gi>part</gi>. It bears all the attributes described above, including
-          <att>label</att> and <att>label.abbr</att> for providing labels for the first and
+        performer <gi>part</gi>. It bears most of the attributes described above, including
+          <att>label</att> and <att>label.abbr</att> for providing staff labels for the first and
         subsequent pages.</p>
       <p>Every <gi>staffDef</gi> must have an <att>n</att> attribute with a natural number (integer)
         as its value. The first occurence of a <gi>staffDef</gi> with a given number must also
@@ -125,7 +141,7 @@
       <p>Every <gi>staffDef</gi> may contain a number of <gi>layerDef</gi> elements, which describe
         distinct layers or <soCalled>voices</soCalled> sharing one staff.</p>
       <p>Beside the parameters inherited from <gi>scoreDef</gi>, the following attributes are
-        important for <gi>staffDef</gi>s:</p>
+        important for <gi>staffDef</gi> elements:</p>
 
       <p>
         <specList>
@@ -146,6 +162,7 @@
         in the example below utilize these attributes:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <scoreDef meter.count="6" meter.unit="8">
+          <!-- Piccolo sounds 12 semitones higher than written (and encoded in MEI). -->
           <staffDef n="1" xml:id="cmn.P1" label="Piccolo" label.abbr="Picc." lines="5" clef.line="2"
             clef.shape="G" key.sig="4f" key.mode="major" trans.semi="12" trans.diat="0"/>
           <staffDef n="2" xml:id="cmn.P2" label="Flute" label.abbr="Fl." lines="5" clef.line="2"
@@ -154,6 +171,7 @@
             clef.shape="G" key.sig="4f" key.mode="major"/>
           <staffDef n="4" xml:id="cmn.P4" label="Bassoon" label.abbr="Bsn." lines="5" clef.line="4"
             clef.shape="F" key.sig="4f" key.mode="major"/>
+          <!-- Clarinet sounds a minor third (two diatonic steps or three semitones) higher than written.  -->
           <staffDef n="5" xml:id="cmn.P5" label="Clarinet in E♭" label.abbr="Eb Cl." lines="5"
             clef.line="2" clef.shape="G" key.sig="1f" key.mode="major" trans.semi="3" trans.diat="2"
           />
@@ -170,17 +188,18 @@
           <specDesc key="keySig"/>
           <specDesc key="keyAccid"/>
           <specDesc key="label"/>
-          <!-- TODO: We should really add meter to the allowed elements here! -->
+          <!-- TODO: We should really add meter to the allowed elements here! (ticket #79 added) -->
         </specList>
       </p>
 
-      <p>Except for <gi>label</gi>, these elements may be combined with the elements described in
-        chapters <ptr target="#critApp"/> and <ptr target="#editTrans"/> of these Guidelines. They
-        may also used as musical events, as they are members of <ident type="class"
-          >model.eventLike</ident>. In the latter case, they may occur in <gi>layer</gi> and affect
-        all following content, even in subsequent measures, until their information is again
-        overridden either by the same element bearing different information or a <gi>staffDef</gi>
-        or <gi>scoreDef</gi>.</p>
+      <p>Except for <gi>label</gi>, these elements may also occur within the flow of musical events
+        captured in a <gi>layer</gi>, since they are members of <ident type="class"
+          >model.eventLike</ident>. Here, they function as milestones and affect all content following 
+        in that particular layer (which includes subsequent measures) until their information is again overridden
+        either by the same element bearing different information or a <gi>staffDef</gi> or
+        <gi>scoreDef</gi>. In this context, it is also possible to combine them with the
+        elements described in chapters <ptr target="#critApp"/> and <ptr target="#editTrans"/> of
+        these Guidelines.</p>
       <p>This flexibility may require close inspection of an encoding to retrieve the correct
         definitions for a given staff. As a general rule, the closest preceding and most specific
         element provides this information: A <gi>keySig</gi> in the preceding measure is more
@@ -558,6 +577,8 @@
       </figure>
       <!-- TODO: Do we need to specify durations for the notes in the middle? They don't have exact values! -->
       <!-- PR: The propagation of attribute values should/will be covered somewhere. -->
+      <!-- JK: That's not an issue of propagation. Actually, propagation should be turned off here. The duration of these
+        notes is not defined in the notation itself, so we shouldn't define it by propagation!!! -->
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <layer>
           <!-- … -->
@@ -671,10 +692,12 @@
                 <note xml:id="cmn.d1e248" pname="f" oct="1"/>
               </chord>
               <beam>
-                <note xml:id="cmn.d1e266" pname="f" oct="2" dur="16" dur.ges="1" stem.dir="up" tie="i"/>
+                <note xml:id="cmn.d1e266" pname="f" oct="2" dur="16" dur.ges="1" stem.dir="up"
+                  tie="i"/>
                 <note xml:id="cmn.d1e288" pname="a" oct="2" dur="16" dur.ges="1" stem.dir="up"
                   accid.ges="f" tie="i"/>
-                <note xml:id="cmn.d1e313" pname="c" oct="3" dur="16" dur.ges="1" stem.dir="up" tie="i"/>
+                <note xml:id="cmn.d1e313" pname="c" oct="3" dur="16" dur.ges="1" stem.dir="up"
+                  tie="i"/>
               </beam>
               <chord xml:id="cmn.d25e1" dur="4" dur.ges="4" stem.dir="up">
                 <note xml:id="cmn.d1e334" pname="f" oct="3" tie="i"/>
@@ -699,7 +722,8 @@
                 <note xml:id="cmn.d1e687" pname="f" oct="2" dur="16" dur.ges="1" stem.dir="up"/>
                 <note xml:id="cmn.d1e709" pname="a" oct="2" dur="16" dur.ges="1" stem.dir="up"
                   accid.ges="f"/>
-                <note xml:id="cmn.d1e733" pname="c" oct="3" dur="16" dur.ges="1" tie="i" stem.dir="up"/>
+                <note xml:id="cmn.d1e733" pname="c" oct="3" dur="16" dur.ges="1" tie="i"
+                  stem.dir="up"/>
               </beam>
               <chord xml:id="cmn.d66e1" dur="4" dur.ges="4" stem.dir="up">
                 <note xml:id="cmn.d1e756" pname="f" oct="3" tie="i"/>
@@ -717,7 +741,8 @@
         separate tie is drawn for every pitch in the chord that remains unchanged in the succeeding
         chord.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <note /> <!-- placeholder example -->
+        <note/>
+        <!-- placeholder example -->
       </egXML>
 
       <p>A <term>slur</term> is a curved line that connects a <emph>range of notes</emph> and
@@ -958,7 +983,8 @@
       <p>All musical elements affected by the <gi>dynam</gi> may be explicitly specified using the
           <att>plist</att> attribute, which contains <att>xml:id</att> attribute values:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <dynam staff="2" place="above" startid="#note1" endid="#note4" plist="#note1 #note2 #note3
+        <dynam staff="2" place="above" startid="#note1" endid="#note4"
+          plist="#note1 #note2 #note3
           #note4">cresc. poco a poco</dynam>
       </egXML>
 
@@ -1050,7 +1076,7 @@
         (<att>bracket.visible</att>="true") and a single number (<att>num.format</att>="count" and
           <att>num.visible</att>="true").</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <example /><!-- NEED EXAMPLE HERE! -->
+        <example/><!-- NEED EXAMPLE HERE! -->
       </egXML>
 
       <p>Beside <gi>note</gi> elements, <gi>tuplet</gi> may contain other elements, such as
@@ -1065,7 +1091,7 @@
 
       <!--The tuplet element may also used for bowed tremolo (Read, p. 394) and double,
         triple, or flutter tonguing (Read, p. 348-349); that is, for repetition of the same pitch.
-        In the case of irrational durations, such as such as two quarter notes in the time of five
+        In the case of irrational durations, such as two quarter notes in the time of five
         8th notes in a measure of 5/8 time, decimal values may be used in the dur.ges attribute. For
         example, the dur.ges attribute would take the value "2.5" if the midi.div attribute's value
         was "1". The num and numbase attributes may be used for explicit labelling of a tuplet, such
@@ -1210,7 +1236,7 @@
           visual appearance of a glissando, which MEI encodes as <gi>gliss</gi>, is normally a line
           connecting the two most distant notes in the glissando.</p>
 
-        <!-- TODO: Is gliss really eventLike, or should it rather be controleventLike??? -->
+        <!-- TODO: Is gliss really eventLike, or should it rather be controleventLike??? (added ticket #80) -->
         <p>The <gi>gliss</gi> element is a member of the <ident type="class">model.eventLike</ident>
           class, so it may occur inside a <gi>layer</gi>. By convention, it is placed between the
           two notes that are to be connected by the glissando.
