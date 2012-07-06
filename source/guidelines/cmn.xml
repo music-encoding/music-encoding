@@ -194,12 +194,12 @@
 
       <p>Except for <gi>label</gi>, these elements may also occur within the flow of musical events
         captured in a <gi>layer</gi>, since they are members of <ident type="class"
-          >model.eventLike</ident>. Here, they function as milestones and affect all content following 
-        in that particular layer (which includes subsequent measures) until their information is again overridden
-        either by the same element bearing different information or a <gi>staffDef</gi> or
-        <gi>scoreDef</gi>. In this context, it is also possible to combine them with the
-        elements described in chapters <ptr target="#critApp"/> and <ptr target="#editTrans"/> of
-        these Guidelines.</p>
+          >model.eventLike</ident>. Here, they function as milestones and affect all content
+        following in that particular layer (which includes subsequent measures) until their
+        information is again overridden either by the same element bearing different information or
+        a <gi>staffDef</gi> or <gi>scoreDef</gi>. In this context, it is also possible to combine
+        them with the elements described in chapters <ptr target="#critApp"/> and <ptr
+          target="#editTrans"/> of these Guidelines.</p>
       <p>This flexibility may require close inspection of an encoding to retrieve the correct
         definitions for a given staff. As a general rule, the closest preceding and most specific
         element provides this information: A <gi>keySig</gi> in the preceding measure is more
@@ -211,14 +211,14 @@
     </div>
     <div type="div3" xml:id="cmnNotesChords">
       <head>Notes, Chords and Rests in CMN</head>
-      <p>
+      <!--<p>
         <specList>
           <specDesc key="note"/>
           <specDesc key="mRest"/>
           <specDesc key="multiRest"/>
           <specDesc key="mSpace"/>
         </specList>
-      </p>
+      </p>-->
       <div type="div4" xml:id="cmnNotes">
         <head>Notes</head>
         <p>Undoubtedly, the most important element for encoding music notation is the <gi>note</gi>
@@ -233,16 +233,18 @@
             <item>octave (using <att>oct</att>)</item>
             <item>duration (using <att>dur</att>)</item>
           </list>
-          <p>A typical note is therefore encoded like so:</p>
+          <p>A typical note, in this case a quarter note C4, is therefore encoded like so:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <note pname="c" oct="4" dur="4"/>
           </egXML>
+          <p> Because these attributes may not be required in all situations (such as <att>dur</att>
+            for the notes of a chord), processing software should anticipate retrieving the
+            information that would have been provided by missing attributes from a preceding note or
+              <gi>chord</gi> parent in the same <gi>layer</gi>. Only information from
+              <att>pname</att>, <att>oct</att> and <att>dur</att> attributes can be gathered in this
+            fashion. No other attributes can be treated this way.</p>
 
-          <!-- TODO: Cover attribute propagation here -->
-
-          <p>While this structure is the same as for other repertoires (see chapter <ptr
-              target="#mensural"/> for instance), the usual CMN-specific values for <att>dur</att>
-            are:</p>
+          <p>The usual CMN-specific values for <att>dur</att> are:</p>
           <list type="gloss">
             <label>1</label>
             <item>whole note</item>
@@ -257,17 +259,18 @@
             <label>…</label>
             <item>…</item>
             <label>2048</label>
-            <item>2048th note
-              <!-- TODO: as seen in http://www.informatics.indiana.edu/donbyrd/InterestingMusicNotation.html --></item>
+            <item>2048th note</item>
           </list>
-          <p>Additionally, the following two mensural notation values are allowed, as they sometimes
-            also appear in CMN:</p>
+          <p>Additionally, the following two values borrowed from mensural notation are allowed, as
+            they sometimes also appear in CMN:</p>
           <list type="gloss">
             <label>breve</label>
             <item>double whole</item>
             <label>longa</label>
             <item>quadruple whole</item>
           </list>
+          <p>Please note that their mensural counterparts bear different names in order to clearly
+            distinguish between repertoires.</p>
           <p>Dotted durational values are accommodated by the <att>dots</att> attribute, which
             records the number of written augmentation dots:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -276,9 +279,9 @@
         </div>
         <div type="div5" xml:id="cmnNotesGrace">
           <head>Grace Notes</head>
-          <p>The CMN module adds two optional attributes <att>grace</att> and <att>grace.time</att>
-            to <gi>note</gi> and <gi>chord</gi>. The presence of the <att>grace</att> attribute
-            indicates a grace note.</p>
+          <p>The CMN module adds two optional attributes, <att>grace</att> and
+            <att>grace.time</att>, to <gi>note</gi> and <gi>chord</gi>. The presence of the
+              <att>grace</att> attribute indicates a grace note.</p>
           <figure>
             <graphic url="../samples/snippets/mei2012-30shortexamples/beam-grace/grace-300.png"
               width="500px"/>
@@ -337,7 +340,7 @@
             <label>z</label>
             <item>Z placed on stem</item>
           </list>
-          <p>The <att>stem.mod</att> attibutes is normally used in the context of <ptr
+          <p>The <att>stem.mod</att> attibute is normally used in the context of <ptr
               target="#cmnTrem"/>.</p>
           <!-- TODO:
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -351,33 +354,52 @@
             <graphic url="../samples/snippets/mei2012-30shortexamples/layer-xchord/xchord-300.png"
               width="500px"/>
           </figure>
+          <p>The following code snippet demonstrates the encoding of the first chord in the last
+            measure in the image above.</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
-            <measure n="3" right="rptend">
-              <staff n="1">
-                <layer n="1">
-                  <chord dur="2" dur.ges="48" stem.dir="up">
-                    <note pname="d" oct="4"/>
-                    <note pname="b" oct="3" staff="2" accid="n"/>
-                    <note pname="f" oct="3" staff="2"/>
-                  </chord>
-                  <chord dur="8" dur.ges="12" stem.dir="up">
-                    <note pname="c" oct="4"/>
-                    <note pname="g" oct="3" staff="2"/>
-                    <note pname="e" oct="3" staff="2"/>
-                  </chord>
-                  <rest dur="16" dur.ges="12"/>
-                </layer>
-              </staff>
-              <!-- staff 2 omitted -->
-            </measure>
+            <staff n="1">
+              <layer n="1">
+                <note pname="d" oct="4" dur="2" stem.with="below"/>
+              </layer>
+            </staff>
+            <staff n="2">
+              <layer n="1">
+                <chord dur="2" stem.with="above">
+                  <note pname="b" oct="3" accid="n"/>
+                  <note pname="f" oct="3"/>
+                </chord>
+              </layer>
+            </staff>
           </egXML>
-
+          <p>Alternatively, the encoder might choose to treat the notes in the second staff as
+            belonging to the first one and to <soCalled>displace</soCalled> them using the
+              <att>staff</att> attribute. However, this requires to fill the time that they would
+            normally occupy in the lower staff using the <gi>space</gi> element described in section
+              <ptr target="#noteSpacing"/>. Using this mechanism, the example above could be encoded
+            like so:</p>
+          <egXML xmlns="http://www.tei-c.org/ns/Examples">
+            <staff n="1">
+              <layer n="1">
+                <chord dur="2">
+                  <note pname="d" oct="4"/>
+                  <note pname="b" oct="3" staff="2" accid="n"/>
+                  <note pname="f" oct="3" staff="2"/>
+                </chord>
+              </layer>
+            </staff>
+            <staff n="2">
+              <layer n="1">
+                <space dur="2"/>
+                <!-- following content -->
+              </layer>
+            </staff>
+          </egXML>
         </div>
       </div>
       <div type="div4" xml:id="cmnRests">
         <head>Rests</head>
         <p>The <att>dur</att> attribute on <gi>rest</gi> allows the same values as on <gi>note</gi>
-          and <gi>chord</gi>. However, the CMN module makes three more elements available for
+          and <gi>chord</gi>. Furthermore, the CMN module makes three more elements available for
           special forms of rest:</p>
         <p>
           <specList>
@@ -389,10 +411,7 @@
         <div type="div5" xml:id="cmnRestsMRest">
           <head>Measure Rests</head>
           <p>The <gi>mRest</gi> (<expan>measure rest</expan>) element is used to indicate a complete
-            measure rest, independent from the meter of the current <gi>measure</gi>. The
-              <att>dur</att> attribute may be used to indicate the visual symbol that should be
-            rendered if it differs from the symbol that should be drawn according to the current
-            meter.</p>
+            measure rest, independent from the meter of the current <gi>measure</gi>.</p>
           <p>The <att>cutout</att> attribute provides for the description of the rendition of the
               <gi>mRest</gi>. If <att>cutout</att> is set to <soCalled>cutout</soCalled> (the only
             value allowed), then the complete staff including the staff lines will not be rendered
