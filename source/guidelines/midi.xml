@@ -6,9 +6,135 @@
   You may obtain a copy of the License at http://creativecommons.org/licenses/by-nd/3.0/.
 -->
 
-<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="midi" n="0">
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="midiGuidelines" n="0">
   <head>MIDI</head>
-  <p>This chapter describes ...</p>
+  <p>This chapter describes the basic MIDI encoding functionality present in MEI.
+  The purpose of this module is to allow for integrating MIDI data into
+  MEI-encoded notation, to both aid software in translating MEI to MIDI, and to 
+  permit the capture of information in files that have been translated from MIDI
+  to MEI. The MIDI model in MEI is similar to that in Mup, and the user 
+  is directed to the <ref target="http://www.arkkra.com/doc/uguide.ps">Mup User Guide</ref> for further
+  reading.</p>
+  <p>The MIDI module defines certain
+    generally-accepted MIDI units that may be used outside of a MIDI context. 
+    For example, the <att>dur.ges</att> attribute accepts MIDI <abbr>ppq</abbr> 
+    (Pulses Per Quarter) as a valid measurement of duration. Similarly, the
+  <att>pnum</att> attribute allows MIDI note numbers for specifying a pitch value.</p>
+  <div type="div2" xml:id="midiExamples">
+    <head>MIDI Encoding Examples</head>
+    <div type="div3" xml:id="midi.scoreDefppq">
+      <head>PPQ in scoreDef and staffDef</head>
+    <p>
+      To define the MIDI resolution of a score, the <att>ppq</att> attribute may
+      be used on the <gi>scoreDef</gi> and <gi>staffDef</gi> elements. This may then
+      be used in conjunction with the <att>dur.ges</att> attribute on elements in the
+      <ident type="class">att.duration.performed</ident> class.</p>
+      <p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <scoredef meter.count="4" meter.unit="4" meter.sym="common"
+          key.sig="1f">
+          <staffgrp>
+            <staffdef n="1" xml:id="midi.P1" lines="5"
+              clef.line="2" clef.shape="G" ppq="48" key.sig="1f"/>
+            <staffdef n="2" xml:id="midi.P2" lines="5"
+              clef.line="4" clef.shape="F" ppq="48" key.sig="1f"/>
+            <staffdef n="3" xml:id="midi.P3" lines="5"
+              clef.line="4" clef.shape="F" ppq="48" key.sig="1f"/>
+          </staffgrp>
+        </scoredef>
+        <!-- snip -->
+            <note xml:id="midi.d1e40" pname="a" oct="5" dur="8" dur.ges="24" stem.dir="up"/>
+            <rest xml:id="midi.d1e58" dur="32" dur.ges="6" vo="4"/>
+        <!-- snip -->
+      </egXML>
+    </p>
+    </div>
+    <div type="div3" xml:id="midiInstruments">
+      <head>Recording General MIDI Instrumentation</head>
+      <p>
+        The <gi>instrDef</gi> element can be used to record General MIDI instrument
+        names using the <att>midi.instrnum</att> and <att>midi.instrname</att> attributes.
+        These must contain values that are valid MIDI: 0-127 for <att>midi.instrnum</att>, or an
+        instrument name from the list provided by the data.MIDINAMES data type.
+      </p>
+      <p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <scoredef meter.count="4" meter.unit="4" meter.sym="common"
+            key.sig="1f" ppq="48">
+            <staffgrp>
+              <staffdef n="1" xml:id="midi.P5" lines="5"
+                clef.line="2" clef.shape="G">
+                <instrDef midi.instrname="Violin" midi.instrnum="41" />
+              </staffdef>
+              <staffdef n="2" xml:id="midi.P6" lines="5"
+                clef.line="2" clef.shape="G">
+                <instrDef midi.instrname="Violin" midi.instrnum="41"/>
+              </staffdef>
+              <staffdef n="3" xml:id="midi.P7" lines="5"
+                clef.line="3" clef.shape="C">
+                <instrDef midi.instrname="Viola" midi.instrnum="42" />
+              </staffdef>
+              <staffdef n="3" xml:id="midi.P8" lines="5"
+                clef.line="4" clef.shape="F">
+                <instrDef midi.instrname="Cello" midi.instrnum="43" />
+              </staffdef>
+            </staffgrp>
+          </scoredef>
+        </egXML>
+      </p>
+    </div>
+    <div type="div3" xml:id="midiData">
+      <head>Recording MIDI event data</head>
+      <p>
+        In earlier versions of MEI, the <gi>noteOn</gi> and <gi>noteOff</gi> elements
+        were used to record MIDI note on/off events. The use of these elements 
+        is now discouraged in favour of using the <gi>note</gi> element directly. 
+        MIDI timing duration should be recorded using the <att>dur.ges</att> attribute,
+        and MIDI pitch information should be recorded using the <att>pnum</att> attribute.
+        <hi><!-- this is only true if Issue #90 is fixed -->Velocity information should 
+          be recorded using the <att>vel</att> attribute.</hi>
+      </p>
+      <p>
+        Most MIDI messages are encapsulated in the <gi>midi</gi> element, and is
+        typically used in contexts like <gi>layer</gi> and <gi>measure</gi>. MIDI
+        events like Control Changes (<gi>cc</gi>) are simply encoded using the <att>num</att>
+        and <att>val</att> attributes. Control change numbers are specified in the
+        General MIDI documentation. In the example below, the CC element encodes 
+        controller event 7 (Volume) with increasing values from 50 to 65 specifying
+        the MIDI volume value.
+      </p>
+      <p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <measure>
+            <staff>
+              <layer>
+                <midi>
+                  <cc num="7" val="50" />
+                </midi>
+                <note pnum="42" dur.ges="8"/>
+                <midi>
+                  <cc num="7" val="55" />
+                </midi>
+                <note pnum="43" dur.ges="8"/>
+                <midi>
+                  <cc num="7" val="60" />
+                </midi>
+                <note pnum="44" dur.ges="8"/>
+                <midi>
+                  <cc num="7" val="65" />
+                </midi>
+                <note pnum="45" dur.ges="8"/>
+              </layer>
+            </staff>
+          </measure>
+        </egXML>
+      </p>
+      <p>
+        Most other MIDI event messages follow this same pattern, using the <att>num</att> and
+        <att>val</att> attributes to record the raw MIDI data.
+      </p>
+    </div>
+  </div>
   <div type="div2" xml:id="midiOverview">
     <!-- Overview -->
     <head>Overview of the MIDI Module</head>
@@ -21,6 +147,8 @@
           <specDesc key="chan"/>
           <specDesc key="chanPr"/>
           <specDesc key="cue"/>
+          <specDesc key="instrGrp"/>
+          <specDesc key="instrDef"/>
           <specDesc key="hex"/>
           <specDesc key="marker"/>
           <specDesc key="metaText"/>
@@ -58,6 +186,17 @@
       <p>
         <specList>
           <specDesc key="model.midiLike"/>
+        </specList>
+      </p>
+    </div>
+    <div type="div3" xml:id="midiDataTypes">
+      <head>Data Types</head>
+      <p>
+        <specList>
+          <specDesc key="data.MIDINAMES"/>
+          <specDesc key="data.MIDITEMPO"/>
+          <specDesc key="data.MIDICHANNEL"/>
+          <specDesc key="data.MIDIVALUE" />
         </specList>
       </p>
     </div>
