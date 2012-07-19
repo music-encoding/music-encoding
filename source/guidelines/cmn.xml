@@ -92,10 +92,8 @@
         and meter. The most important attributes for this purpose are:</p>
       <p>
         <specList>
-          <specDesc key="scoreDef"
-            atts="meter.count meter.unit meter.sym key.pname key.accid
-            key.mode key.sig"
-          />
+          <specDesc key="scoreDef" atts="meter.count meter.unit meter.sym key.pname key.accid
+            key.mode key.sig"/>
         </specList>
       </p>
       <p>The following example describes a score in common time with 3 flats:</p>
@@ -107,12 +105,10 @@
         for text and music:</p>
       <p>
         <specList>
-          <specDesc key="scoreDef"
-            atts="page.width page.height page.leftmar page.topmar 
+          <specDesc key="scoreDef" atts="page.width page.height page.leftmar page.topmar
             page.rightmar page.bottommar system.leftmar system.topmar system.rightmar
             text.name text.fam text.size music.name music.size lyric.name lyric.fam
-            lyric.size"
-          />
+            lyric.size"/>
         </specList>
       </p>
       <p>There are other attributes that allow the specification of many further details of a score.
@@ -373,7 +369,7 @@
           </egXML>
           <p>Alternatively, the encoder might choose to treat the notes in the second staff as
             belonging to the first one and to <soCalled>displace</soCalled> them using the
-              <att>staff</att> attribute. However, this requires to fill the time that they would
+              <att>staff</att> attribute. However, this requires filling the time that they would
             normally occupy in the lower staff using the <gi>space</gi> element described in section
               <ptr target="#noteSpacing"/>. Using this mechanism, the example above could be encoded
             like so:</p>
@@ -596,16 +592,18 @@
       <!-- PR: The propagation of attribute values should/will be covered somewhere. -->
       <!-- JK: That's not an issue of propagation. Actually, propagation should be turned off here. The duration of these
         notes is not defined in the notation itself, so we shouldn't define it by propagation!!! -->
+      <!-- PR: @dur records *visual duration*. In effect, all of the notes are 32nds. The beam lines just happen to be  "squeezed
+        together" on one end of the beam. The performed duration is another matter. -->
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <layer>
           <!-- … -->
           <beam rend="acc">
-            <note dur="8"/>
-            <note dur="8"/>
-            <note/>
-            <note/>
-            <note/>
             <note dur="32"/>
+            <note/>
+            <note/>
+            <note/>
+            <note/>
+            <note/>
           </beam>
           <!-- … -->
         </layer>
@@ -618,21 +616,17 @@
       </figure>
 
       <p>Due to the potential problem of creating overlapping hierarchies, the <gi>beam</gi> element
-        only allows the encoding of beams that do not cross barlines. This situation requires the
-        use of the <gi>beamSpan</gi> element. The <gi>beamSpan</gi>element does not contain the
-        beamed notes as its children. Instead, it references the <att>xml:id</att>s of all affected
-        notes in its <att>plist</att> attribute and denotes the initial and terminal notes of the
-        beam using <att>startid</att> and <att>endid</att> attributes. This configuration allows
-        beams to cross measures as well as staves.</p>
+        only allows the encoding of beams that do not cross barlines. When beams cross barlines, the
+        use of the <gi>beamSpan</gi> element is required. Unlike <gi>beam</gi>, the
+          <gi>beamSpan</gi>element does not contain the beamed notes as its children. Instead, it
+        references the <att>xml:id</att> values of all affected notes in its <att>plist</att>
+        attribute and denotes the initial and terminal notes of the beam using <att>startid</att>
+        and <att>endid</att> attributes. This configuration allows beams to cross measures and even
+        staves. The following example demonstrates a typical example of such hierarchy-crossing
+        beams:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <beamSpan startid="#note1" endid="#note4" plist="#note1 #note2 #note3 #note4"/>
       </egXML>
-
-      <p>The following example demonstrates a typical example of such hierarchy-crossing beams:</p>
-      <!-- TODO:
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <!-\- NEED EXAMPLE HERE! -\->
-      </egXML>-->
 
       <p>In addition to the explicit encoding of beams accommodated by the <gi>beam</gi> and
           <gi>beamSpan</gi> elements, MEI allows for beaming at the time of rendering by providing
@@ -1000,8 +994,7 @@
       <p>All musical elements affected by the <gi>dynam</gi> may be explicitly specified using the
           <att>plist</att> attribute, which contains <att>xml:id</att> attribute values:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <dynam staff="2" place="above" startid="#note1" endid="#note4"
-          plist="#note1 #note2 #note3
+        <dynam staff="2" place="above" startid="#note1" endid="#note4" plist="#note1 #note2 #note3
           #note4">cresc. poco a poco</dynam>
       </egXML>
 
