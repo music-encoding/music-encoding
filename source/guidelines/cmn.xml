@@ -514,6 +514,11 @@
         would indicate an end on the second eighth note of the following measure. In 6/8 time, the
         value "2m+3" means that the feature ends two measures later on the third eighth note.</p>
     </div>
+    <div type="div3" xml:id="cmnIMT1to6datatype">
+      <head>Spanning Features in Single-pass Encodings</head>
+      <p><!-- TODO: Cover imt[1-6] datatype here in a generic fashion -->
+        <!-- This datatype must be restricted to a single staff. --></p>
+    </div>
   </div>
   <div type="div2" xml:id="additionalMeasureContent">
     <head>Advanced CMN Features</head>
@@ -523,8 +528,6 @@
 
     <div type="div3" xml:id="cmnBeams">
       <head>Beams</head>
-      <!-- TODO: What about @beam on notes? maybe deprecate? Do we need all of these [imt][1-6] datatypes?-->
-      <!-- PR: In order to provide the same (analytical) functionality for beams as for slurs, we continue to need these datatypes. -->
       <p>A very common feature of music from the CMN repertoire is the beaming of eighth or shorter
         notes. MEI provides two elements for the explicit encoding of features joined by beams.</p>
       <p>
@@ -592,33 +595,60 @@
         <item>The secondary beams start in their usual position and gradually converge until they
           meet with the primary beam on the last note (or, the first eighth note under the beam). </item>
         <label>rit</label>
-        <item>The beams gradually diverge until they reach their regular distance. </item>
+        <item>The secondary beams gradually diverge until they reach their regular distance. </item>
+        <label>mixed</label>
+        <item>The secondary beams diverge and converge arbitrarily.</item>
         <label>norm</label>
         <item>The beam is rendered as usual (default). </item>
       </list>
-      <figure>
-        <graphic url="guidelines/Images/modules/cmn/beamAcc-Rit.png" width="500px"/>
-      </figure>
-      <!-- TODO: Do we need to specify durations for the notes in the middle? They don't have exact values! -->
-      <!-- PR: The propagation of attribute values should/will be covered somewhere. -->
-      <!-- JK: That's not an issue of propagation. Actually, propagation should be turned off here. The duration of these
-        notes is not defined in the notation itself, so we shouldn't define it by propagation!!! -->
-      <!-- PR: @dur records *visual duration*. In effect, all of the notes are 32nds. The beam lines just happen to be  "squeezed
-        together" on one end of the beam. The performed duration is another matter. -->
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <layer>
           <!-- … -->
           <beam rend="acc">
+            <note dur="8"/>
+            <note/>
+            <note/>
+            <note/>
+            <note/>
             <note dur="32"/>
-            <note/>
-            <note/>
-            <note/>
-            <note/>
-            <note/>
           </beam>
           <!-- … -->
         </layer>
       </egXML>
+      <p>The duration of notes, rests, or chords under a beam which carries the <att>rend</att>
+        attribute with a value of 'acc', 'rit', or 'mixed' must be treated specially. The first and
+        last contained elements must specify a duration which matches the number of beams displayed
+        at the point of these events. In the case of a 'mixed' beam, each event at the point of
+        change in the number of secondary beams must carry a <att>dur</att> attribute. Beams like
+        this may be encoded thusly:</p>
+      <figure>
+        <graphic url="guidelines/Images/modules/cmn/beamAcc-Rit.png" width="500px"/>
+      </figure>
+      <p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <layer>
+            <!-- … -->
+            <beam rend="mixed">
+              <note dur="8"/>
+              <note dur="8"/>
+              <note/>
+              <note/>
+              <note/>
+              <note dur="32"/>
+            </beam>
+            <beam rend="mixed">
+              <note dur="32"/>
+              <note/>
+              <note/>
+              <note/>
+              <note/>
+              <note dur="8"/>
+              <note dur="8"/>
+            </beam>
+            <!-- … -->
+          </layer>
+        </egXML>
+      </p>
 
       <!-- TODO: Cross-staff beaming using @beam.with -->
       <figure>
@@ -639,9 +669,14 @@
         <beamSpan startid="#note1" endid="#note4" plist="#note1 #note2 #note3 #note4"/>
       </egXML>
 
+      <!-- TODO: flesh out the following paragraph. -->
+      <p>Beams may also be encoded using the <att>beam</att> attribute. This feature is useful when
+        a single-pass encoding style is desired.</p>
+
       <p>In addition to the explicit encoding of beams accommodated by the <gi>beam</gi> and
-          <gi>beamSpan</gi> elements, MEI allows for beaming at the time of rendering by providing
-        the following attributes:</p>
+          <gi>beamSpan</gi> elements and the <att>beam</att> attribute, MEI allows for specification
+        of default beaming behavior using the following attributes on <gi>scoreDef</gi>,
+          <gi>staffDef</gi>, and <gi>layerDef</gi>:</p>
       <list type="gloss">
         <label><att>beam.group</att></label>
         <item>Provides an example of how automated beaming (including secondary beams) is to be
@@ -658,14 +693,16 @@
         indicate sub-groupings of secondary beams. For example, '(4.,4.,4.)' in 9/8 meter indicates
         one primary beam per measure with secondary beams broken at each dotted quarter duration,
         while '(4,4),(4,4)' in 4/4 will result in a measure of 16th notes being rendered with a
-        primary beam covering all the notes and secondary beams for each group of four 16th notes.
-        This beaming "directive" can be overridden by using <gi>beam</gi> elements within a layer.
-        If neither &lt;beam&gt; elements or the beam.group attribute is used, then no beaming is
-        rendered. Beaming can be 'turned off' by setting beam.group to an empty string.</p>
-      <p><att>beam.group</att> is available on <gi>scoreDef</gi>, <gi>staffDef</gi>, and
-          <gi>layerDef</gi> elements, making it possible to set different beaming patterns for each
-        of these. The beaming pattern can be changed anywhere score parameters may be changed, for
-        example, at the start of sections.</p>
+        primary beam covering all the notes and secondary beams for each group of four 16th
+        notes.</p>
+      <p>The <att>beam.group</att> attribute is available on <gi>scoreDef</gi>, <gi>staffDef</gi>,
+        and <gi>layerDef</gi> elements, making it possible to set different beaming patterns for
+        each of these. The beaming pattern can be changed anywhere score parameters may be changed,
+        for example, at the start of sections. This beaming "directive" can be overridden by using
+          <gi>beam</gi>, <gi>beamSpan</gi>, or <att>beam</att> attributes as described above. If
+        none of these beaming specifications is used, then no beaming is implied. Default beaming
+        can be explicitly 'turned off' by setting <att>beam.group</att> to an empty string.</p>
+
     </div>
 
     <div type="div3" xml:id="cmnSlurTies">
@@ -709,23 +746,17 @@
           <!-- staff 1 omitted -->
           <staff n="2">
             <layer n="1">
-              <chord xml:id="cmn.d16e1" dur="16" dur.ges="1" stem.dir="up">
-                <note xml:id="cmn.d1e231" pname="f" oct="2"/>
-                <note xml:id="cmn.d1e248" pname="f" oct="1"/>
-              </chord>
+              <chord dur="16"/>
               <beam>
-                <note xml:id="cmn.d1e266" pname="f" oct="2" dur="16" dur.ges="1" stem.dir="up"
-                  tie="i"/>
-                <note xml:id="cmn.d1e288" pname="a" oct="2" dur="16" dur.ges="1" stem.dir="up"
-                  accid.ges="f" tie="i"/>
-                <note xml:id="cmn.d1e313" pname="c" oct="3" dur="16" dur.ges="1" stem.dir="up"
-                  tie="i"/>
+                <note pname="f" tie="i"/>
+                <note pname="a" tie="i"/>
+                <note pname="c" tie="i"/>
               </beam>
-              <chord xml:id="cmn.d25e1" dur="4" dur.ges="4" stem.dir="up">
-                <note xml:id="cmn.d1e334" pname="f" oct="3" tie="i"/>
-                <note xml:id="cmn.d1e353" pname="c" oct="3" tie="m"/>
-                <note xml:id="cmn.d1e374" pname="a" oct="2" accid.ges="f" tie="m"/>
-                <note xml:id="cmn.d1e397" pname="f" oct="2" tie="m"/>
+              <chord dur="4">
+                <note pname="f" tie="i"/>
+                <note pname="c" tie="m"/>
+                <note pname="a" tie="m"/>
+                <note pname="f" tie="m"/>
               </chord>
             </layer>
           </staff>
@@ -734,25 +765,13 @@
           <!-- staff 1 omitted -->
           <staff n="2">
             <layer n="1">
-              <chord xml:id="cmn.d55e1" dur="16" dur.ges="1" stem.dir="up">
-                <note xml:id="cmn.d1e605" pname="f" oct="3" tie="t"/>
-                <note xml:id="cmn.d1e625" pname="c" oct="3" tie="t"/>
-                <note xml:id="cmn.d1e645" pname="a" oct="2" accid.ges="f" tie="t"/>
-                <note xml:id="cmn.d1e667" pname="f" oct="2" tie="t"/>
+              <chord dur="16">
+                <note pname="f" tie="t"/>
+                <note pname="c" tie="t"/>
+                <note pname="a" tie="t"/>
+                <note pname="f" tie="t"/>
               </chord>
-              <beam>
-                <note xml:id="cmn.d1e687" pname="f" oct="2" dur="16" dur.ges="1" stem.dir="up"/>
-                <note xml:id="cmn.d1e709" pname="a" oct="2" dur="16" dur.ges="1" stem.dir="up"
-                  accid.ges="f"/>
-                <note xml:id="cmn.d1e733" pname="c" oct="3" dur="16" dur.ges="1" tie="i"
-                  stem.dir="up"/>
-              </beam>
-              <chord xml:id="cmn.d66e1" dur="4" dur.ges="4" stem.dir="up">
-                <note xml:id="cmn.d1e756" pname="f" oct="3" tie="i"/>
-                <note xml:id="cmn.d1e775" pname="c" oct="3" tie="m"/>
-                <note xml:id="cmn.d1e797" pname="a" oct="2" tie="m" accid.ges="f"/>
-                <note xml:id="cmn.d1e820" pname="f" oct="2" tie="m"/>
-              </chord>
+              <!-- ... -->
             </layer>
           </staff>
         </measure>
@@ -763,8 +782,15 @@
         separate tie is drawn for every pitch in the chord that remains unchanged in the succeeding
         chord.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <note/>
-        <!-- placeholder example -->
+        <layer>
+          <chord dur="4" tie="i">
+            <note pname="f"/>
+            <note pname="c"/>
+            <note pname="a"/>
+            <note pname="f"/>
+          </chord>
+          <chord dur="4" tie="t"/>
+        </layer>
       </egXML>
 
       <p>A <term>slur</term> is a curved line that connects a <emph>range of notes</emph> and
