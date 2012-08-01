@@ -3,7 +3,7 @@
          xmlns:xlink="http://www.w3.org/1999/xlink"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.music-encoding.org/ns/mei"><!--
-Schema generated from ODD source 2012-07-31T15:06:32Z. 
+Schema generated from ODD source 2012-08-01T17:51:37Z. 
 Edition: 2011
 Edition Location: http://www.tei-c.org/Vault/P5//
 
@@ -2108,7 +2108,11 @@ Edition Location: http://www.tei-c.org/Vault/P5//
       <optional>
          <attribute name="layer">
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies the layer to which a feature applies.</a:documentation>
-            <data type="positiveInteger"/>
+            <list>
+               <oneOrMore>
+                  <data type="positiveInteger"/>
+               </oneOrMore>
+            </list>
          </attribute>
       </optional>
    </define>
@@ -2704,7 +2708,7 @@ Suggested values include: 1] cm; 2] mm; 3] in; 4] px; 5] pt; 6] pc</a:documentat
    <define name="att.slashcount.attribute.slash">
       <optional>
          <attribute name="slash">
-            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">indicates the number of slashes to be rendered along with the feature.</a:documentation>
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">indicates the number of slashes present.</a:documentation>
             <ref name="data.SLASH"/>
          </attribute>
       </optional>
@@ -9817,6 +9821,17 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
          </attribute>
       </optional>
    </define>
+   <define name="att.tremmeasured.attributes">
+      <ref name="att.tremmeasured.attribute.measperf"/>
+   </define>
+   <define name="att.tremmeasured.attribute.measperf">
+      <optional>
+         <attribute name="measperf">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">the performed duration of an individual note in a measured tremolo.</a:documentation>
+            <ref name="data.DURATION.cmn"/>
+         </attribute>
+      </optional>
+   </define>
    <define name="att.arpeg.anl.attributes">
       <ref name="att.common.anl.attributes"/>
    </define>
@@ -9961,12 +9976,11 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
       <ref name="att.common.anl.attributes"/>
    </define>
    <define name="att.bTrem.ges.attributes">
-      <empty/>
+      <ref name="att.tremmeasured.attributes"/>
    </define>
    <define name="att.bTrem.log.attributes">
       <ref name="att.event.attributes"/>
       <ref name="att.numbered.attributes"/>
-      <ref name="att.slashcount.attributes"/>
       <ref name="att.bTrem.log.attribute.form"/>
    </define>
    <define name="att.bTrem.log.attribute.form">
@@ -10047,9 +10061,13 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
       <ref name="att.common.anl.attributes"/>
    </define>
    <define name="att.fTrem.ges.attributes">
-      <ref name="att.fTrem.ges.attribute.form"/>
+      <ref name="att.tremmeasured.attributes"/>
    </define>
-   <define name="att.fTrem.ges.attribute.form">
+   <define name="att.fTrem.log.attributes">
+      <ref name="att.event.attributes"/>
+      <ref name="att.fTrem.log.attribute.form"/>
+   </define>
+   <define name="att.fTrem.log.attribute.form">
       <optional>
          <attribute name="form">
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">describes the style of the tremolo.</a:documentation>
@@ -10061,9 +10079,6 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
             </choice>
          </attribute>
       </optional>
-   </define>
-   <define name="att.fTrem.log.attributes">
-      <ref name="att.event.attributes"/>
    </define>
    <define name="att.fTrem.vis.attributes">
       <ref name="att.slashcount.attributes"/>
@@ -11362,8 +11377,7 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
    </define>
    <define name="bTrem">
       <element name="bTrem">
-         <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(bowed tremolo) ― A rapid alternation on a single pitch or chord.
-        </a:documentation>
+         <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(bowed tremolo) ― A rapid alternation on a single pitch or chord.</a:documentation>
          <choice>
             <ref name="chord"/>
             <ref name="note"/>
@@ -11409,8 +11423,7 @@ Suggested values include: 1] plaineAndEasie; 2] humdrumKern</a:documentation>
    <define name="fTrem">
       <element name="fTrem">
          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(fingered tremolo) ― A rapid alternation between a pair of notes (or chords or perhaps
-        between a note and a chord) that are (usually) farther apart than a major second.
-        </a:documentation>
+        between a note and a chord) that are (usually) farther apart than a major second.</a:documentation>
          <choice>
             <group>
                <ref name="chord"/>
