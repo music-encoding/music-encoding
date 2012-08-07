@@ -20,9 +20,9 @@
 <div type="div1" xmlns="http://www.tei-c.org/ns/1.0" xml:id="harmony" n="0">
   <head>Harmony</head>
   <p>This chapter describes the encoding of indications of harmony ocurring within a music text,
-    e.g., chord names, tablature grids, figured bass, or signs for harmonic analysis. The module
-    provides ways of connecting these indications with definitions that can be referenced from
-    within the same document or in other documents.</p>
+    e.g., chord names, tablature grids, figured bass, or signs for harmonic analysis, and the
+    methods by which these indications can be connected with their interpretations.</p>
+
   <div type="div2" xml:id="harmonyOverview">
     <!-- Overview -->
     <head>Overview of the Harmony Module</head>
@@ -30,6 +30,7 @@
 
     <div type="div3" xml:id="harmonyElements">
       <head>Elements</head>
+      <p>The following elements are provided by the harmony module:</p>
       <p>
         <specList>
           <specDesc key="barre"/>
@@ -45,6 +46,7 @@
 
     <div type="div3" xml:id="harmonyAttributeClasses">
       <head>Attribute Classes</head>
+      <p>The harmony module contains the following attribute classes:</p>
       <p>
         <specList>
           <specDesc key="att.fretlocation"/>
@@ -58,6 +60,7 @@
 
     <div type="div3" xml:id="harmonyModelClasses">
       <head>Model Classes</head>
+      <p>The following model classes are enabled by the harmony module:</p>
       <p>
         <specList>
           <specDesc key="model.chordTableLike"/>
@@ -71,97 +74,409 @@
   </div>
 
   <div type="div2" xml:id="harmonyDetails">
-    <head>Detailed description</head>
-    <p>MEI provides multiple methods for encoding chords resp. harmonic information.</p>
-    <p>Basically chords in the music text can be encoded using the <gi>chord</gi> element defined in
-        <ptr target="#shared"/>: <specList>
+    <head>Indications of Harmony</head>
+    <p>On the most basic level, chords in the musical text can be encoded using the <gi>chord</gi>
+      element:</p>
+    <p>
+      <specList>
         <specDesc key="chord"/>
       </specList>
     </p>
-    <p>If this is what you are looking for, please refer to the rerspective chapter of these
-      guidelines (<ptr target="#shared"/>).</p>
-    <p>The <ref target="#harmony">Harmony Module</ref> described here however has a different focus.
-      Instead of defining actual notes in the music text elements and attributes of this module
-      allow for encoding proprietary indications of harmony in the score, such as chord symbols,
-      tablature grids, figured bass or symbols for harmonic analysis (the possibilities of which
-      come to their full scope in conjunction with <ptr target="#analysis"/>).</p>
-    <p>Basically elements defined in this module influence your encoding possibilities in
-        <gi>scoreDef</gi> (providing global score metadata) and for encoding indications of harmony
-      in the music text.</p>
+    <p>Additional information on the use of the <gi>chord</gi> element is available in <ptr
+        target="#basicEvents"/> and <ptr target="#cmnNotesChords"/>.</p>
+    <p>With only this kind of markup, harmonic information is implicit in the notes themselves. The
+      elements and attributes of this module, however, provide for the encoding of explicit
+      indications of harmony, such as chord symbols, tablature grids, figured bass signs, and the
+      symbols of harmonic analysis like Roman numerals and their interpretation.</p>
 
     <div type="div3" xml:id="harmonyMetadataInscoreDef">
-      <head>Providing Chord Metadata in <gi>scoreDef</gi></head>
-      <p>Basically elements defined in this module influence your encoding possibilities in
-          <gi>scoreDef</gi> (providing global score metadata) for defining chords and tablatures
-        that can be referenced when encoding indications of harmony in the music text, in order to
-        provide these indications with musical information.</p>
-      <p>The starting point in <gi>scoreDef</gi> is a new child element:</p>
+      <head>Interpreted Chord Data in scoreDef</head>
+      <p>An harmonic label, such as "7", may occur many times throughout an MEI instance. Where the
+        goal is diplomatic transcription, simply recording the uninterpreted label is sufficient.
+        Recording the precise meaning of such a label requires storing an interpretation. But,
+        including the interpretation at every point of occurrence of the label would swell the size
+        of the file and complicate the markup for those users who are not interested in the
+        interpretation. Therefore, MEI separates the encoding of harmonic labels from the encoding
+        of the interpretation of those labels.</p>
+      <p>The following elements enable the creation and re-use of interpreted chord data:</p>
       <p>
         <specList>
           <specDesc key="chordTable"/>
-        </specList>
-      </p>
-      <p>A chord then is defined in <gi>chordTable</gi>&#x2019;s child element:</p>
-      <p>
-        <specList>
-          <specDesc key="chordDef" atts="id pos"/>
-        </specList>
-      </p>
-      <p>An <att>id</att> attribute, while not required by the schema, is needed so that
-          <gi>harm</gi> elements can reference a particular chord definition. The <att>pos</att>
-        (position) attribute is provided in order to create displayable chord tablature grids.</p>
-      <p>Individual pitches of a chord are to be encoded using the child element:</p>
-      <p>
-        <specList>
+          <specDesc key="chordDef" atts="pos"/>
           <specDesc key="chordMember" atts="inth fing fret"/>
-        </specList>
-      </p>
-      <p>In order to spcify the individual pitches more precicesly following attributes should be
-        used.</p>
-      <p>The <att>inth</att> (harmonic interval) attribute may be used in order to indicate the
-        number of half steps above the bass note, when encoding the bass note the attributes value
-        should be set to <q>0</q>, of course.</p>
-      <p>When about to encode tablature grids, &#2013; be it in transcribing or just wanting to
-        supply additional rendition information &#2013; <att>fing</att> (finger) and <att>fret</att>
-        attributes are provided. The fret at which a finger should be placed is recorded in the
-          <att>fret</att> attribute, while <att>fing</att> indicates which finger, if any, should be
-        used to play an individual string. The values <q>x</q> and <q>o</q> are used to indicate
-        muffled and open strings, respectively. When intending to render proper grids
-          <att>fret</att> and <att>fing</att> form essential data.</p>
-      <p>Another child element of <gi>chordDef</gi> being essential for encoding tablature grids
-        is:</p>
-      <p>
-        <specList>
           <specDesc key="barre" atts="fret startid endid"/>
         </specList>
       </p>
-      <p><gi>barre</gi> sub-elements may be used when a single finger is used to stop multiple
-        strings and <att>fret</att> giving the fret position at which the barre should be
-        created.</p>
-      <p>The <att>startid</att> and <att>endid</att> attributes are used to indicate the
-          <gi>chordMember</gi> elements on which the barre starts and finishes respectively.</p>
+      <p>The <gi>chordTable</gi> element is a container for a set of chord definitions, while the
+          <gi>chordDef</gi> element defines a single chord. Chord definitions may be created
+          <foreign>a priori</foreign> or as the result of analysis of the pitch content of the music
+        at hand, for instance, by examination of the notes occurring on the downbeat of each
+        measure. In this way, the chord definitions serve as a record of the analysis.</p>
+      <p>Even though it is not required by the schema, an <att>xml:id</att> attribute on
+          <gi>chordDef</gi> is necessary to permit the creation of associations between harmonic
+        indications in the musical text with the chord defined here. The <att>xml:id</att> attribute
+        provides a unique identifier for the chord definition that can be referenced by the
+          <gi>harm</gi> element's <att>chordref</att> attribute.</p>
+      <p>Individual pitches of a chord are encoded using <gi>chordMember</gi>. The <att>inth</att>
+        attribute provides the means for indicating the number of half steps of the chord note above
+        the bass note.</p>
+      <p>These simple resources allow for the detailed specification and interpretation of harmonic
+        indications found in the musical text. For example, the harmonic label <q>A</q> can be
+        equated with a fully spelled-out indication of functional harmony that can be substituted
+        for the harmonic label, say, in an aural rendition:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <!-- Chord defined in scoreDef -->
+        <chordDef xml:id="harmonychordA">
+          <chordMember pname="a" oct="2"/>
+          <chordMember pname="e" oct="3"/>
+          <chordMember pname="c" accid.ges="s" oct="4"/>
+          <chordMember pname="e" oct="4"/>
+          <chordMember pname="a" oct="4"/>
+        </chordDef>
+        <!-- Later in musical text -->
+        <harm chordref="#harmonychordA" tstamp="1">A</harm>
+      </egXML>
+
+      <p>Alternatively, the non-bass chord tones may be indicated, not with pitch names, but with
+        their intervallic distance above the bass note. Therefore, the example above may also be
+        encoded:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <chordDef xml:id="harmonychordA2">
+          <chordMember pname="a" oct="2"/>
+          <chordMember inth="7"/>
+          <chordMember inth="16"/>
+          <chordMember inth="19"/>
+          <chordMember inth="24"/>
+        </chordDef>
+      </egXML>
+
+      <p>The preceding encoding possibilities provide the detailed information necessary to create
+        playable chord annotations. For more generic uses, however, the encoding can be taken one
+        step further; that is, it can be reduced to its minimum intervallic content by eliminating
+        octave duplications and expressing all chord members, including the bass note, using
+        intervals above the bass. Of course, the <att>inth</att> attribute for the bass note itself
+        should be set to <q>0</q>. For example:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <chordDef xml:id="harmonychordA3">
+          <chordMember inth="0"/>
+          <chordMember inth="4"/>
+          <chordMember inth="7"/>
+        </chordDef>
+      </egXML>
+    </div>
+
+    <div type="div3" xml:id="harmonyTablatureGrids">
+      <head>Chord Tablature Grids</head>
+      <p>The <att>pos</att> attribute on <gi>chordDef</gi>, the <att>fing</att> and <att>fret</att>
+        attributes on <gi>chordMember</gi>, and the <gi>barre</gi> element child of
+          <gi>chordDef</gi> are provided in order to create displayable and performable chord
+        tablature grids for guitar and other fretted string instruments. The fret at which a finger
+        should be placed is recorded in the <att>fret</att> attribute, while <att>fing</att>
+        indicates which finger, if any, should be used to play an individual string. The values
+          <q>x</q> and <q>o</q> are used to indicate muffled and open strings, respectively.</p>
+      <p>The <gi>chordDef</gi> element may contain <gi>barre</gi> sub-elements when a single finger
+        is used to stop multiple strings. Here the <att>fret</att> attribute gives the fret position
+        at which the barre should be created, while the <att>startid</att> and <att>endid</att>
+        attributes are used to indicate the <gi>chordMember</gi> elements on which the barre starts
+        and finishes.</p>
+
     </div>
 
     <div type="div3" xml:id="harmonyMusicText">
-      <head>Encoding Indications of Harmony in the Music Text</head>
-      <p>When encoding the music text one might stumble upon tablature grids, chord representations
-        above a staff or figured-bass. Moreover indications of harmonic analysis or &#x2013; be they
-        present in the music text or additional ones by the MEI editor &#x2013;</p>
-
+      <head>Indications of Harmony in the Music Text</head>
+      <p>With regard to indications of harmony, MEI attempts to strike a balance between very
+        precise (interpreted) and very loose (uninterpreted) markup needs. Therefore, various kinds
+        of harmonic labels are accommodated by the <gi>harm</gi> element. While some are more
+          <q>structured</q> than others, in the final analyis they all function as
+          <emph>labels</emph>. Therefore, MEI provides only a single element for the capture of
+        harmonic indications of all kinds:</p>
       <p>
         <specList>
-          <specDesc key="harm" atts="startid tstamp tstamp.ges tstamp.real"/>
+          <specDesc key="harm" atts="extender rendgrid"/>
         </specList>
       </p>
-      <p>Must have one of the attributes: <att>startid</att>, <att>tstamp</att>,
-          <att>tstamp.ges</att> or <att>tstamp.real</att></p>
+      <p>The <gi>harm</gi> element can be used to capture chord labels that consist entirely of
+        text:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <harm tstamp="1">Cmaj</harm>
+        <harm tstamp="2">ii6</harm>
+      </egXML>
+      <p>labels that are chord tablature grids:</p>
+      <figure>
+        <graphic url="Images/modules/harmony/A7_5th.gif"></graphic>
+      </figure>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <harm tstamp="1" chordref="#harmonychordA"/>
+      </egXML>
+      <p>and labels that mix these styles:</p>
+      <figure>
+        <graphic url="Images/modules/harmony/A7_1st.gif"/>
+      </figure>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <harm tstamp="1" chordref="#harmonychordA" rendgrid="gridtext">A7</harm>
+      </egXML>
 
+      <p>The <gi>harm</gi> element must define a point of attachment using one of the following
+        attributes: <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att> or
+          <att>tstamp.real</att>. The most commonly-used of these are <att>startid</att> and
+          <att>tstamp</att>.</p>
+      <p></p>
       <p>
         <specList>
-          <specDesc key="f"/>
+          <specDesc key="fb"/>
+          <specDesc key="f" atts="extender"/>
         </specList>
       </p>
     </div>
 
   </div>
 </div>
+<!--
+<harm> was created to accommodate (and group) various kinds of harmonic labels.  While some are more "structured" than others, in the end they're *labels*. 
+When it is necessary to have access to an *interpretation* of the label, other mechanisms can be used.  A simple example of this is the use of a simple label, say "7", 
+which may occur many, many times throughout an MEI instance, which may be linked to a more meaningful (and more verbose) interpretation stored elsewhere, say
+in <chorddef>.  Using the verbose form at every occurrence of the label swells the size of the file and complicates the markup for those users who are not interested
+in the interpretation.  I believe we have to strike a balance between very precise, interpretative and very loose, uninterpreted markup needs.
+  
+Also, when multiple layers of interpretation may exist, say in the case where the original figured bass was "7" and a later hand added a natural below, but that was 
+crossed out by a still later hand, and so on, it is important to treat the figured bass as element content; i.e., strings.  Therefore, I have some problem with your reliance
+on attributes in many cases.
+  
+So, I want to make some suggestions:
+  
+1. Let's make <fb> a child of <harm>.  This way <harm> continues to act in the role of gathering harmonic labels, be they figured bass or something else.  (We may 
+have proposals in the future for more specific handling of additional harmonic indications, such as Roman numeral analysis, etc.)  Putting all harmonic labels inside 
+<harm> allows one to mix and match, for example, to use Roman numeral analysis for one measure, Baroque figured bass for another, and letter notations, such 
+as "Cm7", for others.
+    
+This does not preclude putting figured bass in a separate module.  The elements defined by the module would simply be included in the content of <harm> rather 
+than <measure>.  In fact, doing so would be better because a) the content model of measure is complex enough already without complicating it even more and 
+b) it would permit model.transcriptionLike elements to be used as descendants of <harm> to capture the editorial processes described above, but within 
+<measure> to indicate the addition/deletion of harmonic labels over all.
+
+<fb> should not take the attributes of <harm>.  <fb> should only group figure components.  <harm> will continue to provide staff, duration, placement, etc. data.  
+This way, there's no confusion over when to use <fb> and when to use <harm>.
+
+2. Recognizing the need, which you've pointed out, to treat individual figure components as separate elements, <fb> should contain <f> elements.  Each figure 
+component then is a first-class object, with the possibility of participating in multiple attribute classes and content models.  For example, each <f> can be 
+associated with a user-defined symbol via @sym or be analytically linked to other elements via @corresp, @sameas, or @copyof.  The <f> element should 
+have an @extender attribute.
+
+With just these small changes, it's possible to address the examples given in your proposal -\-
+
+Example 1 presents no particular problems.  <harm> continues in its former role, <fb> gathers <f> elements, and <f> contains a single figure component.
+
+Ex. 1
+<harm staff="1" tstamp="1" place="above">
+<fb>
+<f>6</f>
+</fb>
+</harm>
+
+I believe it's important to allow those users who want to use <harm> in its current non-specific way to continue to do so.  A possible alternative to the markup 
+above is therefore:
+
+<harm staff="1" tstamp="1" place="above">6</harm>
+
+By the way, all the following examples can be encoded using the current content model of <harm>, but I won't provide the markup.  I leave it as an 
+"exercise to the reader" to do that. :)
+
+In example 2, the figured bass consists of a "7" with a natural sign below.  Each is treated as a figure, with the natural encoded using the Unicode 
+MUSIC NATURAL SIGN character.
+
+Ex. 2:
+<harm staff="1" tstamp="1" place="above">
+<fb>
+<f>7</f>
+<f>&#x266E;</f>
+</fb>
+</harm>
+
+There's no need for an accid.pos attribute in example 3 and 4 since the encoding order of the characters in <f> explicitly locates the accidentals after the 
+"7" and before the "3".  (By the way, while they often use the same signs, "accidentals" in figured bass aren't actual accidentals.  They are simply convenient 
+signs to indicate chromatic alteration.  A sharp doesn't necessary mean that there should be a sharp sign in front of the note forming the interval, but rather 
+than the note should be raised by a half step.  That's why <accid> isn't allowed/necessary within <f>.)
+
+Ex. 3:
+<harm place="below">
+<fb>
+<f>7&#x266D;</f>
+</fb>
+</harm>
+
+Ex. 4:
+<harm>
+<fb>
+<f>6</f>
+<f>4+</f>
+<f>&#x266E;3</f>
+</fb>
+</harm>
+
+By handling the slashed numbers with Unicode characters (&#x20e5; = COMBINING REVERSE SOLIDUS OVERLAY and &#x338; = COMBINING LONG 
+SOLIDUS OVERLAY), there's no need for the "within" value of @accid.pos.  The combining nature of these Unicode characters indicates very clearly that 
+they "overstrike" (or are "within") the preceding character.  Even so, there's also no reason why the usual convention for slashes can't be followed, e.g. 
+"6\" and "6/". At some point we could implement something like the <tei:g> element or allow <symbol> within <f>, but Unicode provides everything needed at this point.
+
+Ex. 5:
+<harm>
+<fb>
+<f>6&#x20E5;</f>
+<!-\- <f>6\</f> -\->
+</fb>
+</harm>
+
+Your proposal rightly draws attention to the fact that currently @extender can't be used on individual parts of the harmonic label.  Therefore, it's a good idea 
+to wrap each figure component in an <f> element so @extender can be used. Similarly, @sym can be used to point to a user-defined symbol that better 
+represents the figure component, for example, the combined "2" and "+" below.  Similar to the slash in the preceding example before, the small curve over 
+the "5" in example 6 can be represented by the Unicode COMBINING INVERTED BREVE.
+
+Ex. 6:
+<harm tstamp="1">
+<fb>
+<f extender="true">5&#x0311;</f>
+<f sym="combo2plus">2+</f>
+</fb>
+</harm>
+<harm tstamp="3">
+<fb>
+<f>3</f>
+</fb>
+</harm>
+
+For figures which consist entirely of a mark indicating repetition of the preceding figure, as in example 7, I would argue that these are not extenders and that 
+they should be represented by a dash or another appropriate character.  In some repertoires the repetition sign is a solidus, i.e. "/".  [My personal copy of the 
+Harvard Dictionary of Music (which the Library doesn't have so I can't cite it right now) has an example in which "/" is used instead of "-" to indicate repetition.]  
+If we hope to capture these varying signs, then treating them as characters is a better option.  Using "-" is also consistent with other figured bass encoding 
+schemes, such as MuseData.
+
+Ex. 7:
+<harm tstamp="1.5">
+<fb>
+<f>-</f>
+</fb>
+</harm>
+
+Since only <harm> is allowed to carry @tstamp, etc., there must be a <harm> element for each figured bass indication.  <add> and its editorial brothers are 
+not yet allowed within <fb> or <f> so they must be wrapped around <harm> to indicate the editorially supplied indication on the 2nd beat.  If <add> and such 
+are allowed in <fb> or <f>, they will have a different meaning; that is, they indicate changes to an already existing figured bass or figure, e.g., 
+
+<fb>
+<f>3<add>&#x266F;</add></f>
+<add><f>7</f></add>
+</fb>
+
+This indicates that the alteration to "3" and the "7" were added later.
+
+The editorially supplied extender in example 8 is somewhat problematic, but not distressingly so.  How it's handled depends on what the encoder wants to 
+emphasize about the notation and whether what's being encoded is an "edition" or a "source".  If the fact that the figure "3" is intended to sound throughout 
+the measure in this edition, then @dur on the <harm> element is appropriate.  What can't be captured by doing this is the supplied nature of the value for 
+@dur.  In order to capture this aspect of source encoding, we must use an element.  While we could add an <extender> element to each <f> and/or <harm>,
+I would simply treat the added line as just that -\- a line.  This approach can provide greater detail regarding the visual characteristics of the line than @extender 
+or @dur can; that it starts somewhat farther to the right than the usual extender, for instance.  The set of attributes used on the line element (and their exact 
+values) is rendering system dependent, but it's possible to relate the line in visual space and time to any other elements and use @type to distinguish this class 
+of line from other lines.  *Currently, <line> isn't allowed within <supplied>, but that's fixable. :)*
+
+Ex. 8:
+<harm tstamp="1" dur="0m+3.5">
+<fb>
+<f>7</f>
+<f>&#x266E;</f>
+</fb>
+<supplied resp="MH">
+<line type="extender" [other visual attributes]/>
+</supplied>
+</harm>
+<supplied resp="JK">
+<harm tstamp="2">
+<fb>
+<f>5&#x266F;</f>
+</fb>
+</harm>
+</supplied>
+<harm tstamp="3">
+<fb>
+<f>6</f>
+</fb>
+</harm>
+
+In example 9, as in example 7, the "-" above the "3" on beat 4 is not an extender, but a repetition sign. Likewise, for the "-" on beat 4.5.  When extenders are 
+really indicated, @extender may be used on any <f> element to indicate that an extender should be drawn.  Whenever @extender is used @dur (or probably 
+a better-named substitute) should also be used to indicate the endpoint of the extending line.
+
+Ex. 9:
+<harm tstamp="3.5">
+<fb>
+<f>&#x266D;3</f>
+<f extender="true">6</f>
+<f>5</f>
+</fb>
+</harm>
+<harm tstamp="4">
+<fb>
+<f>-</f>
+<f extender="true">&#x266F;3</f>
+</fb>
+</harm>
+<harm tstamp="4.5">
+<fb>
+<f>7</f>
+<f>-</f>
+</fb>
+</harm>
+
+I believe the primary goal in using <fb> is not to capture all the visual "weirdnesses" that can be found in printed and manuscript scores throughout the 
+centuries, but to provide a more-or-less standardized label.  Neither "6&#x266E;" or "6\" is intended to capture the exact look and placement of the slash, 
+only its presence. (When you think about it carefully, "4" doesn't capture the precise look of anything either!) The @sym attribute can be used to point to a
+user-defined symbol that can be substituted and/or @facs can be used to point to a region in an image where an example can be seen.  This is 
+consistent with the use of @sym and @facs elsewhere in MEI.
+
+Ex. 10a:
+<harm tstamp="3">
+<fb>
+<f>8</f>
+<f sym="weird6_1">6&#x266E;</f>
+<f>4+</f>
+<f>2</f>
+</fb>
+</harm>
+<harm tstamp="4">
+<fb>
+<f sym="weird6_2">6\</f>
+<f>4</f>
+<f>3</f>
+</fb>
+</harm>
+
+Ex. 10b:
+<harm tstamp="4.5">
+<fb>
+<f>6\</f>
+</fb>
+</harm>
+
+Ex. 10c:
+<harm tstamp="1">
+<fb>
+<f>5/</f>
+</fb>
+</harm>
+
+I do not agree with your statement that "@startid implies that there is an endid".  In fact, @startid is intended to "hold a reference to the first element in a 
+sequence of events to which the feature applies" even when the sequence contains only a single event. So, there's nothing wrong with using @startid to
+reference the bass note to which the figure (actually, the <harm> element in my counter proposal) is attached.  Care should be exercised, however, that 
+identifying the bass note is not the start of an attempt to use the contents of <harm> to derive a sounded or intervallically analyzable version.  That 
+capability already exists in <chorddef>.
+
+I agree with your suggestion regarding a move from IDREFs to URIs.  It's already on the feature request list.
+
+I believe my suggestions provide a compromise between the current method for representing harmonic labels and your proposal.  They facilitate more 
+detailed markup while still treating figured bass indications as labelling strings, providing optimum flexibility.
+
+Some additional "tweaking" may be necessary so I encourage more discussion.  For example, I'm not wedded to the names above for the new 
+elements.  Instead of <fb> and <f> we could use <figbass> and <fc> (figure component).
+
+Thanks again for the great proposal.  It's wonderful to work with such intelligent and committed people.
+
+-\-
+p.-->
