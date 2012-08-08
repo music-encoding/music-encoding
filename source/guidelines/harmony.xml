@@ -201,14 +201,14 @@
         <harm tstamp="1">Cmaj</harm>
         <harm tstamp="2">ii6</harm>
       </egXML>
-      <p>labels that are chord tablature grids:</p>
+      <p>or labels that are chord tablature grids:</p>
       <figure>
-        <graphic url="Images/modules/harmony/A7_5th.gif"></graphic>
+        <graphic url="Images/modules/harmony/A7_5th.gif"/>
       </figure>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <harm tstamp="1" chordref="#harmonychordA"/>
       </egXML>
-      <p>and labels that mix these styles:</p>
+      <p>or labels that mix these styles:</p>
       <figure>
         <graphic url="Images/modules/harmony/A7_1st.gif"/>
       </figure>
@@ -220,263 +220,243 @@
         attributes: <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att> or
           <att>tstamp.real</att>. The most commonly-used of these are <att>startid</att> and
           <att>tstamp</att>.</p>
-      <p></p>
-      <p>
-        <specList>
-          <specDesc key="fb"/>
-          <specDesc key="f" atts="extender"/>
-        </specList>
-      </p>
-    </div>
+      <p>The <att>dur</att> attribute encodes the logical and visual duration of the harmony. Please
+        note that the <att>dur</att> attribute here is not a true duration, but rather a time stamp
+        for the end point of the harmony.</p>
+      <p>Precise placement of the harmonic label can be controlled through the use of attributes in
+        the <ident type="class">att.harm.vis</ident> attribute class.</p>
 
+      <div type="div4" xml:id="harmonyFigbass">
+        <head>Figured Bass</head>
+        <p>Figured bass is a specialized form of harmonic indication. In order to support the
+          capture of the semantics of figured bass, and not just its visual representation, MEI
+          provides the following elements:</p>
+        <p>
+          <specList>
+            <specDesc key="fb"/>
+            <specDesc key="f" atts="extender"/>
+          </specList>
+        </p>
+
+        <p>Figured bass, consisting as it does of text, can always be represented purely visually.
+          This is probably how an OMR program or other naive encoder might deal with the markup of
+          figured bass:</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass01.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm staff="1" tstamp="1" place="above">6</harm>
+        </egXML>
+
+        <p>However, this kind of approach fails to recognize that a figured bass is being used and
+          not some other system of harmonic indications. To capture this knowledge, the preceding
+          example can also be marked more explicitly with:</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm staff="1" tstamp="1" place="above">
+            <fb>
+              <f>6</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>In order to provide greater control over the individual components of the figured bass,
+          each component can be treated as a figure. The natural symbol is encoded using the Unicode
+          MUSIC NATURAL SIGN character.</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass02.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm staff="1" tstamp="1" place="above">
+            <fb>
+              <f>7</f>
+              <f>&#x266E;</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Encoding order of the component <gi>f</gi> elements is significant as is the encoding
+          order of the characters within each component. In the preceding example, the entire
+          figured bass sign is encoded from top to bottom, in other words, just as the figure
+          appears on the page. In the following examples, the encoding order of the characters in
+            <gi>f</gi> explicitly locates the accidentals:</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass03.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm place="below">
+            <fb>
+              <f>7&#x266D;</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass04.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm>
+            <fb>
+              <f>6</f>
+              <f>4+</f>
+              <f>&#x266E;3</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Characters with combining slashes can be handled using the Unicode characters (&#x20e5; =
+          COMBINING REVERSE SOLIDUS OVERLAY and &#x338; = COMBINING LONG SOLIDUS OVERLAY. The
+          combining nature of these Unicode characters indicates very clearly that they "overstrike"
+          the preceding character. The usual convention for slashes; that is, <q>6\</q> and
+            <q>6/</q> for backslash and slash, respectively, may also be followed:</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass05.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm>
+            <fb>
+              <f>6&#x20E5;</f>
+              <!-- or -->
+              <f>6\</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Each component of the figured bass sign may use the <att>extender</att> attribute to
+          indicate that horizontal lines are used to mark the extent of the figure's harmonic
+          influence. The <att>altsym</att> attribute can be used to point to a user-defined symbol
+          that better represents the figure component, for example, the combined "2" and "+" below.
+          Similar to the slash in the preceding example before, the small curve over the "5" in
+          example 6 can be represented by the Unicode COMBINING INVERTED BREVE.</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass06.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm tstamp="1">
+            <fb>
+              <f>&#x0311;</f>
+              <f extender="true">5</f>
+              <f altsym="combo2plus">2+</f>
+            </fb>
+          </harm>
+          <harm tstamp="3">
+            <fb>
+              <f>3</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Because the repertoire of signs is so large, figures which consist entirely of a mark
+          indicating repetition of the preceding figure, should be represented by the character
+          appearing in the document. For example, in some notational styles, the repetition sign is
+          a dash (<q>-</q>), while in others it is a solidus (<q>/</q>). Using characters like this
+          is also consistent with other existing figured bass encoding schemes.</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass07.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm tstamp="1.5">
+            <fb>
+              <f>-</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Often, the distinction between extending lines and repetition signs is unclear. Treating
+          what at first appear to be extenders as repetition signs, however, can sometimes help to
+          simplify the required markup and to make the intent of the signs explicit. For example, in
+          the following example the dashes on beat 4 and 4.5 are treated as repetition signs:</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass09.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm tstamp="3.5">
+            <fb>
+              <f>&#x266D;3</f>
+              <f>6</f>
+              <f>5</f>
+            </fb>
+          </harm>
+          <harm tstamp="4">
+            <fb>
+              <f>-</f>
+              <f>&#x266F;3</f>
+            </fb>
+          </harm>
+          <harm tstamp="4.5">
+            <fb>
+              <f>7</f>
+              <f>-</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>Using <att>extender</att> attributes for this example may make it easier to render the
+          figured bass symbol, but it is less explicit with regard to the intended harmony. For
+          example, it is difficult to ascertain what harmony should be sounding on beat 4 and its
+          after-beat.</p>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <harm tstamp="3.5">
+            <fb>
+              <f>&#x266D;3</f>
+              <f extender="true">6</f>
+              <f>5</f>
+            </fb>
+          </harm>
+          <harm tstamp="4">
+            <fb>
+              <f extender="true">&#x266F;3</f>
+            </fb>
+          </harm>
+          <harm tstamp="4.5">
+            <fb>
+              <f>7</f>
+            </fb>
+          </harm>
+        </egXML>
+
+        <p>The primary goal of <gi>fb</gi> is not the capture all the visual idiosyncracies that can
+          be found in printed and manuscript scores throughout the centuries, but to provide a
+          more-or-less standardized label. The markup below, or any markup in fact, cannot capture
+          the exact look of the figured bass signs. The <att>altsym</att> attribute may be used to
+          provide access to a user-defined symbol for precise rendition. Similarly, the
+            <att>facs</att> attribute may be employed to point to the symbol as it occurs in the
+          encoding source material.</p>
+        <figure>
+          <graphic url="Images/modules/harmony/figuredBass10.png"/>
+        </figure>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <!-- Ex. a -->
+          <harm tstamp="3">
+            <fb>
+              <f>8</f>
+              <f altsym="#my6_1" facs="#source6_1">6&#x266E;</f>
+              <f>4+</f>
+              <f>2</f>
+            </fb>
+          </harm>
+          <harm tstamp="4">
+            <fb>
+              <f altsym="#my6_2" facs="#source6_2">6\</f>
+              <f>4</f>
+              <f>3</f>
+            </fb>
+          </harm>
+          <!-- Ex. b -->
+          <harm tstamp="4.5">
+            <fb>
+              <f>6\</f>
+            </fb>
+          </harm>
+          <!--  Ex. c -->
+          <harm tstamp="1">
+            <fb>
+              <f>5/</f>
+            </fb>
+          </harm>
+          <!--  Ex. d -->
+          <f altsym="#my5" facs="#source5">5+</f>
+        </egXML>
+      </div>
+    </div>
   </div>
 </div>
-<!--
-<harm> was created to accommodate (and group) various kinds of harmonic labels.  While some are more "structured" than others, in the end they're *labels*. 
-When it is necessary to have access to an *interpretation* of the label, other mechanisms can be used.  A simple example of this is the use of a simple label, say "7", 
-which may occur many, many times throughout an MEI instance, which may be linked to a more meaningful (and more verbose) interpretation stored elsewhere, say
-in <chorddef>.  Using the verbose form at every occurrence of the label swells the size of the file and complicates the markup for those users who are not interested
-in the interpretation.  I believe we have to strike a balance between very precise, interpretative and very loose, uninterpreted markup needs.
-  
-Also, when multiple layers of interpretation may exist, say in the case where the original figured bass was "7" and a later hand added a natural below, but that was 
-crossed out by a still later hand, and so on, it is important to treat the figured bass as element content; i.e., strings.  Therefore, I have some problem with your reliance
-on attributes in many cases.
-  
-So, I want to make some suggestions:
-  
-1. Let's make <fb> a child of <harm>.  This way <harm> continues to act in the role of gathering harmonic labels, be they figured bass or something else.  (We may 
-have proposals in the future for more specific handling of additional harmonic indications, such as Roman numeral analysis, etc.)  Putting all harmonic labels inside 
-<harm> allows one to mix and match, for example, to use Roman numeral analysis for one measure, Baroque figured bass for another, and letter notations, such 
-as "Cm7", for others.
-    
-This does not preclude putting figured bass in a separate module.  The elements defined by the module would simply be included in the content of <harm> rather 
-than <measure>.  In fact, doing so would be better because a) the content model of measure is complex enough already without complicating it even more and 
-b) it would permit model.transcriptionLike elements to be used as descendants of <harm> to capture the editorial processes described above, but within 
-<measure> to indicate the addition/deletion of harmonic labels over all.
-
-<fb> should not take the attributes of <harm>.  <fb> should only group figure components.  <harm> will continue to provide staff, duration, placement, etc. data.  
-This way, there's no confusion over when to use <fb> and when to use <harm>.
-
-2. Recognizing the need, which you've pointed out, to treat individual figure components as separate elements, <fb> should contain <f> elements.  Each figure 
-component then is a first-class object, with the possibility of participating in multiple attribute classes and content models.  For example, each <f> can be 
-associated with a user-defined symbol via @sym or be analytically linked to other elements via @corresp, @sameas, or @copyof.  The <f> element should 
-have an @extender attribute.
-
-With just these small changes, it's possible to address the examples given in your proposal -\-
-
-Example 1 presents no particular problems.  <harm> continues in its former role, <fb> gathers <f> elements, and <f> contains a single figure component.
-
-Ex. 1
-<harm staff="1" tstamp="1" place="above">
-<fb>
-<f>6</f>
-</fb>
-</harm>
-
-I believe it's important to allow those users who want to use <harm> in its current non-specific way to continue to do so.  A possible alternative to the markup 
-above is therefore:
-
-<harm staff="1" tstamp="1" place="above">6</harm>
-
-By the way, all the following examples can be encoded using the current content model of <harm>, but I won't provide the markup.  I leave it as an 
-"exercise to the reader" to do that. :)
-
-In example 2, the figured bass consists of a "7" with a natural sign below.  Each is treated as a figure, with the natural encoded using the Unicode 
-MUSIC NATURAL SIGN character.
-
-Ex. 2:
-<harm staff="1" tstamp="1" place="above">
-<fb>
-<f>7</f>
-<f>&#x266E;</f>
-</fb>
-</harm>
-
-There's no need for an accid.pos attribute in example 3 and 4 since the encoding order of the characters in <f> explicitly locates the accidentals after the 
-"7" and before the "3".  (By the way, while they often use the same signs, "accidentals" in figured bass aren't actual accidentals.  They are simply convenient 
-signs to indicate chromatic alteration.  A sharp doesn't necessary mean that there should be a sharp sign in front of the note forming the interval, but rather 
-than the note should be raised by a half step.  That's why <accid> isn't allowed/necessary within <f>.)
-
-Ex. 3:
-<harm place="below">
-<fb>
-<f>7&#x266D;</f>
-</fb>
-</harm>
-
-Ex. 4:
-<harm>
-<fb>
-<f>6</f>
-<f>4+</f>
-<f>&#x266E;3</f>
-</fb>
-</harm>
-
-By handling the slashed numbers with Unicode characters (&#x20e5; = COMBINING REVERSE SOLIDUS OVERLAY and &#x338; = COMBINING LONG 
-SOLIDUS OVERLAY), there's no need for the "within" value of @accid.pos.  The combining nature of these Unicode characters indicates very clearly that 
-they "overstrike" (or are "within") the preceding character.  Even so, there's also no reason why the usual convention for slashes can't be followed, e.g. 
-"6\" and "6/". At some point we could implement something like the <tei:g> element or allow <symbol> within <f>, but Unicode provides everything needed at this point.
-
-Ex. 5:
-<harm>
-<fb>
-<f>6&#x20E5;</f>
-<!-\- <f>6\</f> -\->
-</fb>
-</harm>
-
-Your proposal rightly draws attention to the fact that currently @extender can't be used on individual parts of the harmonic label.  Therefore, it's a good idea 
-to wrap each figure component in an <f> element so @extender can be used. Similarly, @sym can be used to point to a user-defined symbol that better 
-represents the figure component, for example, the combined "2" and "+" below.  Similar to the slash in the preceding example before, the small curve over 
-the "5" in example 6 can be represented by the Unicode COMBINING INVERTED BREVE.
-
-Ex. 6:
-<harm tstamp="1">
-<fb>
-<f extender="true">5&#x0311;</f>
-<f sym="combo2plus">2+</f>
-</fb>
-</harm>
-<harm tstamp="3">
-<fb>
-<f>3</f>
-</fb>
-</harm>
-
-For figures which consist entirely of a mark indicating repetition of the preceding figure, as in example 7, I would argue that these are not extenders and that 
-they should be represented by a dash or another appropriate character.  In some repertoires the repetition sign is a solidus, i.e. "/".  [My personal copy of the 
-Harvard Dictionary of Music (which the Library doesn't have so I can't cite it right now) has an example in which "/" is used instead of "-" to indicate repetition.]  
-If we hope to capture these varying signs, then treating them as characters is a better option.  Using "-" is also consistent with other figured bass encoding 
-schemes, such as MuseData.
-
-Ex. 7:
-<harm tstamp="1.5">
-<fb>
-<f>-</f>
-</fb>
-</harm>
-
-Since only <harm> is allowed to carry @tstamp, etc., there must be a <harm> element for each figured bass indication.  <add> and its editorial brothers are 
-not yet allowed within <fb> or <f> so they must be wrapped around <harm> to indicate the editorially supplied indication on the 2nd beat.  If <add> and such 
-are allowed in <fb> or <f>, they will have a different meaning; that is, they indicate changes to an already existing figured bass or figure, e.g., 
-
-<fb>
-<f>3<add>&#x266F;</add></f>
-<add><f>7</f></add>
-</fb>
-
-This indicates that the alteration to "3" and the "7" were added later.
-
-The editorially supplied extender in example 8 is somewhat problematic, but not distressingly so.  How it's handled depends on what the encoder wants to 
-emphasize about the notation and whether what's being encoded is an "edition" or a "source".  If the fact that the figure "3" is intended to sound throughout 
-the measure in this edition, then @dur on the <harm> element is appropriate.  What can't be captured by doing this is the supplied nature of the value for 
-@dur.  In order to capture this aspect of source encoding, we must use an element.  While we could add an <extender> element to each <f> and/or <harm>,
-I would simply treat the added line as just that -\- a line.  This approach can provide greater detail regarding the visual characteristics of the line than @extender 
-or @dur can; that it starts somewhat farther to the right than the usual extender, for instance.  The set of attributes used on the line element (and their exact 
-values) is rendering system dependent, but it's possible to relate the line in visual space and time to any other elements and use @type to distinguish this class 
-of line from other lines.  *Currently, <line> isn't allowed within <supplied>, but that's fixable. :)*
-
-Ex. 8:
-<harm tstamp="1" dur="0m+3.5">
-<fb>
-<f>7</f>
-<f>&#x266E;</f>
-</fb>
-<supplied resp="MH">
-<line type="extender" [other visual attributes]/>
-</supplied>
-</harm>
-<supplied resp="JK">
-<harm tstamp="2">
-<fb>
-<f>5&#x266F;</f>
-</fb>
-</harm>
-</supplied>
-<harm tstamp="3">
-<fb>
-<f>6</f>
-</fb>
-</harm>
-
-In example 9, as in example 7, the "-" above the "3" on beat 4 is not an extender, but a repetition sign. Likewise, for the "-" on beat 4.5.  When extenders are 
-really indicated, @extender may be used on any <f> element to indicate that an extender should be drawn.  Whenever @extender is used @dur (or probably 
-a better-named substitute) should also be used to indicate the endpoint of the extending line.
-
-Ex. 9:
-<harm tstamp="3.5">
-<fb>
-<f>&#x266D;3</f>
-<f extender="true">6</f>
-<f>5</f>
-</fb>
-</harm>
-<harm tstamp="4">
-<fb>
-<f>-</f>
-<f extender="true">&#x266F;3</f>
-</fb>
-</harm>
-<harm tstamp="4.5">
-<fb>
-<f>7</f>
-<f>-</f>
-</fb>
-</harm>
-
-I believe the primary goal in using <fb> is not to capture all the visual "weirdnesses" that can be found in printed and manuscript scores throughout the 
-centuries, but to provide a more-or-less standardized label.  Neither "6&#x266E;" or "6\" is intended to capture the exact look and placement of the slash, 
-only its presence. (When you think about it carefully, "4" doesn't capture the precise look of anything either!) The @sym attribute can be used to point to a
-user-defined symbol that can be substituted and/or @facs can be used to point to a region in an image where an example can be seen.  This is 
-consistent with the use of @sym and @facs elsewhere in MEI.
-
-Ex. 10a:
-<harm tstamp="3">
-<fb>
-<f>8</f>
-<f sym="weird6_1">6&#x266E;</f>
-<f>4+</f>
-<f>2</f>
-</fb>
-</harm>
-<harm tstamp="4">
-<fb>
-<f sym="weird6_2">6\</f>
-<f>4</f>
-<f>3</f>
-</fb>
-</harm>
-
-Ex. 10b:
-<harm tstamp="4.5">
-<fb>
-<f>6\</f>
-</fb>
-</harm>
-
-Ex. 10c:
-<harm tstamp="1">
-<fb>
-<f>5/</f>
-</fb>
-</harm>
-
-I do not agree with your statement that "@startid implies that there is an endid".  In fact, @startid is intended to "hold a reference to the first element in a 
-sequence of events to which the feature applies" even when the sequence contains only a single event. So, there's nothing wrong with using @startid to
-reference the bass note to which the figure (actually, the <harm> element in my counter proposal) is attached.  Care should be exercised, however, that 
-identifying the bass note is not the start of an attempt to use the contents of <harm> to derive a sounded or intervallically analyzable version.  That 
-capability already exists in <chorddef>.
-
-I agree with your suggestion regarding a move from IDREFs to URIs.  It's already on the feature request list.
-
-I believe my suggestions provide a compromise between the current method for representing harmonic labels and your proposal.  They facilitate more 
-detailed markup while still treating figured bass indications as labelling strings, providing optimum flexibility.
-
-Some additional "tweaking" may be necessary so I encourage more discussion.  For example, I'm not wedded to the names above for the new 
-elements.  Instead of <fb> and <f> we could use <figbass> and <fc> (figure component).
-
-Thanks again for the great proposal.  It's wonderful to work with such intelligent and committed people.
-
--\-
-p.-->

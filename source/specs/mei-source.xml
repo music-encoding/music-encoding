@@ -2068,7 +2068,7 @@
           </datatype>
         </attDef>
         <attDef ident="isodate" usage="opt">
-          <desc>provides the value of a date in standard ISO form.</desc>
+          <desc>provides the value of a textual date in standard ISO form.</desc>
           <datatype>
             <rng:ref name="data.ISODATE"/>
           </datatype>
@@ -2557,12 +2557,7 @@
           </datatype>
         </attDef>
         <attDef ident="title" ns="http://www.w3.org/1999/xlink" usage="opt">
-          <desc>contains a human-readable description of the entire link. A value is optional; if a
-            value is supplied, it should contain a string that describes the resource. The use of
-            this information is highly dependent on the type of processing being done. It may be
-            used, for example, to make titles available to applications used by visually impaired
-            users, or to create a table of links, or to present help text that appears when a user
-            lets a mouse pointer hover over a starting resource.</desc>
+          <desc>contains a human-readable description of the entire link.</desc>
         </attDef>
       </attList>
     </classSpec>
@@ -2639,11 +2634,13 @@
       <desc>attributes that establish the boundaries of a media object.</desc>
       <attList>
         <attDef ident="begin" usage="opt">
-          <desc>specifies a point where the relevant content begins.</desc>
+          <desc>specifies a point where the relevant content begins. A numerical value must be less
+            and a time value must be earlier than that in the end attribute.</desc>
         </attDef>
         <attDef ident="end" usage="opt">
           <desc>specifies a point where the relevant content ends. If not specified, the end of the
-            content is assumed to be the end point.</desc>
+            content is assumed to be the end point. A numerical value must be greater and a time
+            value must be later than that in the begin attribute.</desc>
         </attDef>
         <attDef ident="betype" usage="opt">
           <desc>type of values used in the begin/end attributes. The begin and end attributes can
@@ -5462,7 +5459,7 @@
       <desc>Gestural domain attributes.</desc>
       <classes>
         <memberOf key="att.tremmeasured"/>
-      </classes>      
+      </classes>
     </classSpec>
     <classSpec ident="att.fTrem.log" module="MEI.cmn" type="atts">
       <desc>Logical domain attributes.</desc>
@@ -7244,8 +7241,7 @@
       </attList>
     </classSpec>
     <classSpec ident="att.alignment" module="MEI.linkalign" type="atts">
-      <desc>Temporal alignment attributes. This class of attributes is unavailable unless the
-        meiLinkAlign module is included.</desc>
+      <desc>Temporal alignment attributes.</desc>
       <attList>
         <attDef ident="when" usage="opt">
           <desc>indicates the point of occurrence of this feature along a time line. Its value must
@@ -10160,14 +10156,14 @@
             <sch:assert test="count(mei:clef) + count(mei:clefGrp) &lt; 2">Only one clef or clefGrp
               is permitted.</sch:assert>
           </sch:rule>
-        </constraint>        
+        </constraint>
       </constraintSpec>
       <constraintSpec ident="Check_ancestor_staff" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:staffDef[ancestor::mei:staff]">
             <sch:let name="thisstaff" value="@n"/>
-            <sch:assert test="ancestor::mei:staff/@n eq $thisstaff">If a staffDef appears in a staff,
-              it must bear the same @n than this staff.</sch:assert>
+            <sch:assert test="ancestor::mei:staff/@n eq $thisstaff">If a staffDef appears in a
+              staff, it must bear the same @n than this staff.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -14098,7 +14094,8 @@
       </attList>
     </elementSpec>
     <elementSpec ident="fb" module="MEI.harmony">
-      <desc>(figured bass) ― Short-hand indication of harmony.</desc>
+      <desc>(figured bass) ― Symbols added to a bass line that indicate harmony. Used to improvise a
+        chordal accompaniment. Sometimes called Generalbass, thoroughbass, or basso continuo.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.common.anl"/>
@@ -14117,13 +14114,7 @@
     </elementSpec>
     <elementSpec ident="harm" module="MEI.harmony">
       <desc>(harmony) ― An indication of harmony, e.g., chord names, tablature grids, harmonic
-        analysis, figured bass.
-        <!-- The starting point of the harmony may be indicated by either a
-        tstamp, tstamp.ges, tstamp.real or startid attribute, while the ending point may be recorded
-        by either a dur, dur.ges or endid attribute. It is a semantic error not to specify a
-        starting point attribute. The dur attribute encodes the logical and visual duration of the
-        harmony. Please note that the dur attribute here is not a true duration, but rather a time
-        stamp for the end point of the harmony.--></desc>
+        analysis, figured bass.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
