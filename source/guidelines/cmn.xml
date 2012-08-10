@@ -70,16 +70,18 @@
         reflect their order in the original document, to eliminate confusion they should always
         refer to a <gi>staffDef</gi> element, using either an <att>n</att> or <att>def</att>
         attribute. Whereas the <att>def</att> attribute uses the <term>xs:anyURI</term> datatype,
-        the <att>n</att> refers to the closest preceding <gi>staffDef</gi> or <gi>layerDef</gi> with
-        the same value in its <att>n</att> attribute.</p>
+        the <att>n</att> value refers to the closest preceding <gi>staffDef</gi> or
+          <gi>layerDef</gi> with the same value in its <att>n</att> attribute.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <staffDef xml:id="cmn_staffDef1" n="3"/>
         <!-- later in the file: -->
-        <staff def="#cmn_staffDef1"><!-- @def refers to staffDef with this identifier -->
+        <staff def="#cmn_staffDef1">
+          <!-- @def refers to staffDef with this identifier -->
           <!-- staff content -->
         </staff>
         <!-- or: -->
-        <staff n="3"><!-- @n refers to staffDef with this label -->
+        <staff n="3">
+          <!-- @n refers to staffDef with this numeric label -->
           <!-- staff content -->
         </staff>
       </egXML>
@@ -134,8 +136,8 @@
         <scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="3f"/>
       </egXML>
 
-      <p>Other attributes allow the description of standard page and system margins as well as fonts
-        for text and music:</p>
+      <p>Other attributes allow the description of default page and system margins and fonts for
+        text and music:</p>
       <p>
         <specList>
           <specDesc key="scoreDef" atts="page.width page.height page.leftmar page.topmar
@@ -165,17 +167,10 @@
         of staff lines via the <att>lines</att> attribute.</p>
       <p>The order of <gi>staffDef</gi> elements within <gi>scoreDef</gi> follows the order of
         staves in the source document or planned rendering. The individual <gi>staff</gi> elements
-        within a <gi>measure</gi> refer back to these <gi>staffDef</gi> declarations using their own
+        within a <gi>measure</gi> refer to these <gi>staffDef</gi> declarations using their own
           <att>n</att> attribute values. Therefore, the encoding order of staves within a measure
         does not have to mimic the order of the <gi>staffDef</gi> elements with
         <gi>scoreDef</gi>.</p>
-      <p>Every <gi>staffDef</gi> may contain a number of <gi>layerDef</gi> elements, which describe
-        distinct layers sharing one staff. MEI does not use the <term>voice</term> to describe these
-          <soCalled>threads</soCalled> because that term implies continuity across measure
-        boundaries. That is, while it is often the case, what is labelled as layer 1 in a given
-        measure may not necessarily be labelled as layer 1 in the next measure. Therefore, MEI uses
-        the more neutral term <soCalled>layer</soCalled>.</p>
-      <!-- TODO: Address voice-leading here -->
       <p>In addition to the parameters inherited from <gi>scoreDef</gi>, the following attributes
         are important for <gi>staffDef</gi> elements:</p>
       <p>
@@ -243,6 +238,13 @@
         section-specific <gi>scoreDef</gi> that provides only information about the meter does not
         override the more specific information about key signature gathered from a <gi>staffDef</gi>
         for a transposing instrument.</p>
+      <p>Every <gi>staffDef</gi> may contain a number of <gi>layerDef</gi> elements, which may be
+        used to establish default values for the distinct layers sharing one staff. MEI does not use
+        the term <soCalled>voice</soCalled> to describe these <soCalled>musical threads</soCalled>
+        because that term implies continuity across measure boundaries. Given the sometimes
+        arbitrary relationships between these threads from measure to measure as well as across
+        staves, MEI uses the more neutral term <soCalled>layer</soCalled>.</p>
+      <!-- TODO: Address voice-leading here -->
     </div>
     <div type="div3" xml:id="cmnReDef">
       <!-- scoreDef and staffDef within score, section, etc. -->
@@ -250,23 +252,38 @@
       <p>Sometimes it is necessary to provide the parameters of a score or a staff with new values.
         For example. a score may change keys, gain or lose staves, use different layout settings at
         any point, etc. Likewise, a staff may change its clef, gain or lose layers, or become
-        invisible, and so on. To accommodate these changes, <gi>scoreDef</gi> and <gi>staffDef</gi>
-        are allowed to occur in the following places:</p>
+        invisible, and so on. To accommodate these circumstances, in CMN <gi>staffDef</gi> is
+        allowed to occur in the following locations:</p>
       <list type="bulleted">
-        <item/>
-        <item/>
-        <item/>
+        <item>within the description of staff groups; that is, in <gi>staffGrp</gi>,</item>
+        <item>within the content of a <gi>measure</gi>,</item>
+        <item>between measures; that is, directly within <gi>section</gi> and <gi>ending</gi>
+          elements, and</item>
+        <item>between sections and endings; that is, directly within a <gi>score</gi> or
+            <gi>part</gi> element.</item>
       </list>
+
+      <p>In addition, <gi>scoreDef</gi> is allowed to occur:</p>
+      <list type="bulleted">
+        <item>within sections and endings; that is, inside <gi>section</gi> and <gi>ending</gi>
+          elements; and </item>
+        <item>between sections and endings; that is, directly within a <gi>score</gi> or
+            <gi>part</gi>.</item>
+      </list>
+
+      <p>The possibility also exists to include <gi>scoreDef</gi> and <gi>staffDef</gi> in staves
+        and layers when the mei-all schema is in use; however, this practice is not recommended for
+        the CMN repertoire.</p>
 
     </div>
     <div type="div3" xml:id="cmnNotesChords">
       <head>Notes, Chords and Rests in CMN</head>
       <div type="div4" xml:id="cmnNotes">
         <head>Notes</head>
-        <p>Undoubtedly, the most important element for encoding music notation is the <gi>note</gi>
-          element, which is defined in section <ptr target="#basicEvents"/>. This section describes
-          the usage of <gi>note</gi> in the CMN repertoire as well as CMN-specific additions to the
-          definition in the shared module.</p>
+        <p>Undoubtedly, the most important element for any music notation representation is the
+            <gi>note</gi> element, which is defined in section <ptr target="#basicEvents"/>. This
+          section describes the usage of <gi>note</gi> in the CMN repertoire as well as CMN-specific
+          additions to the basic definition in the shared module.</p>
         <div type="div5" xml:id="cmnNotesBasic">
           <head>Basic Usage of Notes in CMN</head>
           <p>In CMN, notes are determined by three basic parameters:</p>
@@ -279,7 +296,7 @@
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <note pname="c" oct="4" dur="4"/>
           </egXML>
-          <p> Because these attributes may not be required in all situations (such as <att>dur</att>
+          <p>Because these attributes may not be required in all situations (such as <att>dur</att>
             for the notes of a chord), processing software should anticipate retrieving the
             information that would have been provided by missing attributes from a preceding note or
               <gi>chord</gi> parent in the same <gi>layer</gi>. Only information from
@@ -316,8 +333,7 @@
             <att>grace.time</att>, to <gi>note</gi> and <gi>chord</gi>. The presence of the
               <att>grace</att> attribute indicates a grace note.</p>
           <figure>
-            <graphic url="../../samples/snippets/mei2012-30shortexamples/beam-grace/grace-300.png"
-              width="500px"/>
+            <graphic url="Images/modules/cmn/grace-300.png" width="500px"/>
           </figure>
           <p>The encoding of the left-most example would look like this:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
@@ -331,14 +347,20 @@
             </beam>
           </egXML>
 
+          <p>Grace notes are not counted when determining the measure's conformance to the current
+            time signature. Therefore, the <att>dur</att> attribute records only the
+              <emph>written</emph> rhythmic value of the grace note. The time necessary for the
+            performance of grace notes can be unspecified, calculated based on taking time from
+            other non-grace notes, or specified precisely using the <att>dur.ges</att>
+            attribute.</p>
           <p>The values of <att>grace</att> indicate from which note time is
               <soCalled>borrowed</soCalled> to perform the grace note: The preceding note, in which
             case the value 'unacc' (unaccented) is used, or the following note, when the value 'acc'
-            (accented) is appropriate. Technically this value determines if the note following the
-            grace will keep its original onset timestamp or will be slightly delayed to allow the
-            grace note itself to be accented. Sometimes it is not clear how to perform a grace; in
-            these situations the value 'unknown' allows one to indicate a grace note without saying
-            anything about its performance.</p>
+            (accented) is appropriate. Technically, this value determines if the note following the
+            grace will keep its original onset time or will be slightly delayed to allow the grace
+            note itself to be accented. Sometimes it is not clear how to perform a grace; in these
+            situations the value 'unknown' allows one to indicate a grace note while unambiguously
+            stating that its performed duration remains unknown.</p>
           <p>The <att>grace.time</att> attribute is only to be used in combination with the
               <att>grace</att> attribute. It records the amount of time (as a percentage of the
             written duration) that the grace note should <soCalled>steal</soCalled> from the
@@ -349,12 +371,13 @@
         </div>
         <div type="div5" xml:id="cmnNotesStems">
           <head>Stem Modifications</head>
-          <p>The CMN module also makes the <ident type="class">att.stemmed.cmn</ident> attribute
-            class available, which adds the optional <att>stem.mod</att> and <att>stem.with</att>
+          <p>The CMN module makes the <ident type="class">att.stemmed.cmn</ident> attribute class
+            available, which adds the optional <att>stem.mod</att> and <att>stem.with</att>
             attributes to <gi>note</gi> and <gi>chord</gi>.</p>
-          <p>The <att>stem.mod</att> attribute accommodates various stem modifiers. These symbols
-            are placed on a note or chord's stem and generally indicate different types of tremolo
-            and Sprechstimme. The following values are allowed:</p>
+          <p>The <att>stem.mod</att> attribute accommodates various stem modifiers found in the CMN
+            repertoire. These symbols are placed on a note or chord's stem and generally indicate
+            different types of tremolo and <term>Sprechstimme</term>. The following values are
+            allowed:</p>
           <list type="simple">
             <item><label>1slash</label> 1 slash through stem</item>
             <item><label>2slash</label> 2 slashes through stem</item>
@@ -377,12 +400,11 @@
             on adjacent staves.</p>
           <figure>
             <head>Cross-staff chord</head>
-            <graphic
-              url="../../samples/snippets/mei2012-30shortexamples/layer-xchord/xchord-300.png"
-              width="500px"/>
+            <graphic url="Images/modules/cmn/xchord-300.png" width="500px"/>
           </figure>
           <p>The following code snippet demonstrates the encoding of the first chord in the last
-            measure in the image above.</p>
+            measure in the image above. The <att>stem.with</att> attribute must occur on all the
+            notes or chords attached to the cross-staff stem.</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff n="1">
               <layer n="1">
@@ -398,11 +420,11 @@
               </layer>
             </staff>
           </egXML>
-          <p>Alternatively, the encoder might choose to treat the notes in the second staff as
+          <p>Alternatively, the encoder may choose to treat the notes in the lower staff as
             belonging to the first one and to <soCalled>displace</soCalled> them using the
-              <att>staff</att> attribute. However, this requires filling the time that they would
-            normally occupy in the lower staff using the <gi>space</gi> element described in section
-              <ptr target="#noteSpacing"/>. Using this mechanism, the example above could be encoded
+              <att>staff</att> attribute. Doing this, however, requires filling the time that those
+            notes would normally occupy using the <gi>space</gi> element described in section <ptr
+              target="#noteSpacing"/>. Using this mechanism, the example above could also be encoded
             like so:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff n="1">
@@ -421,13 +443,16 @@
               </layer>
             </staff>
           </egXML>
+
+          <p>The choice between these two methods of representing material that crosses staves is
+            often software-dependent.</p>
         </div>
       </div>
       <div type="div4" xml:id="cmnRests">
         <head>Rests</head>
-        <p>The <att>dur</att> attribute on <gi>rest</gi> allows the same values as on <gi>note</gi>
-          and <gi>chord</gi>. Furthermore, the CMN module makes three more elements available for
-          special forms of rest:</p>
+        <p>The <att>dur</att> attribute on <gi>rest</gi> captures the written duration of the rest
+          and allows the same values as on <gi>note</gi> and <gi>chord</gi>. The CMN module also
+          makes three more elements available for special forms of rest:</p>
         <p>
           <specList>
             <specDesc key="mRest"/>
@@ -450,7 +475,7 @@
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff>
               <layer>
-                <mRest xml:id="cmn.d1e437" cutout="cutout"/>
+                <mRest cutout="cutout"/>
               </layer>
             </staff>
           </egXML>
@@ -470,7 +495,7 @@
             be created by rendering software.</p>
           <figure>
             <head>Forms of multiple measure rests</head>
-            <graphic url="Images/modules/cmn/multirest.png" width="500px"/>
+            <graphic url="Images/ExampleImages/multirest.png" width="500px"/>
           </figure>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff>
@@ -485,16 +510,18 @@
           <p>The <gi>mSpace</gi> (<expan>measure space</expan>) element is closely related to the
               <gi>space</gi> and <gi>mRest</gi> elements. It is used to explicitly indicate that a
             layer has no content and that no information is missing from the encoding.</p>
-          <!--<figure>
+          <figure>
             <head>Empty measure</head>
-            <graphic url="Images/modules/cmn/mspace.png" width="500px"/>
-          </figure>-->
+            <graphic url="Images/ExampleImages/mspace-300-20100514.png" width="500px"/>
+          </figure>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
-            <staff>
-              <layer>
-                <mSpace/>
-              </layer>
-            </staff>
+            <measure n="2">
+              <staff>
+                <layer>
+                  <mSpace/>
+                </layer>
+              </staff>
+            </measure>
           </egXML>
 
         </div>
@@ -525,22 +552,22 @@
         This attribute is described in section <ptr target="#cmnNotesBasic"/>. For
           <soCalled>spanning</soCalled> elements like slurs, which are members of the <ident
           type="class">model.controleventLike</ident> class, different <att>dur</att> values are
-        provided. Its datatype is constrained to values following the formula "<hi rend="bold"><hi
-            rend="italic">x</hi>m+<hi rend="italic">y</hi></hi>", where <hi rend="italic">x</hi> is
-        the number of full measures that this particular feature lasts (or the number of bar lines
-        crossed) and <hi rend="italic">y</hi> is the timestamp in the target measure where the
-        feature ends. The timestamp is expressed using the same logic as described above. For
-        example, a value of "0m+3" in 4/4 time indicates that the element bearing this attribute, a
-        slur for example, ends on beat 3 of the same measure where it started. A value of "1m+1.5"
-        would indicate an end on the second eighth note of the following measure. In 6/8 time, the
-        value "2m+3" means that the feature ends two measures later on the third eighth note.</p>
+        provided. Its datatype is constrained to values following the formula "<hi rend="italic"
+          >x</hi>m+<hi rend="italic">y</hi>", where <hi rend="italic">x</hi> is the number of full
+        measures that this particular feature lasts (or the number of bar lines crossed) and <hi
+          rend="italic">y</hi> is the timestamp in the target measure where the feature ends. The
+        timestamp is expressed using the same logic as described above. For example, a value of
+        "0m+3" in 4/4 time indicates that the element bearing this attribute, a slur for example,
+        ends on beat 3 of the same measure where it started. A value of "1m+1.5" would indicate an
+        end on the second eighth note of the following measure. In 6/8 time, the value "2m+3" means
+        that the feature ends two measures later on the third eighth note.</p>
     </div>
-    <div type="div3" xml:id="cmnIMT1to6datatype">
+    <!--<div type="div3" xml:id="cmnIMT1to6datatype">
       <head>Spanning Features in Single-pass Encodings</head>
-      <p><!-- TODO: Cover imt[1-6] datatype here in a generic fashion -->
-        <!-- This datatype must be restricted to a single staff. -->
+      <p><!-\- TODO: Cover imt[1-6] datatype here in a generic fashion -\->
+        <!-\- This datatype must be restricted to a single staff. -\->
       </p>
-    </div>
+    </div>-->
   </div>
   <div type="div2" xml:id="additionalMeasureContent">
     <head>Advanced CMN Features</head>
@@ -572,39 +599,43 @@
 
       <p>Whereas in music notation every note value shorter than an eighth adds another beam
         (sometimes referred to as <soCalled>secondary beams</soCalled>), in MEI only one beam
-        element is used, no matter what the durations of the contained notes are:</p>
+        element is used, no matter the durations of the contained notes. The visual rendition of a
+        set of beamed notes is presumed to be handled by rendering processes.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer> … <beam>
+        <layer> ... <beam>
             <note dur="16"/>
             <note dur="32"/>
             <note dur="32"/>
             <note dur="16" dots="1"/>
             <note dur="32"/>
-          </beam> … </layer>
+          </beam> ... </layer>
       </egXML>
 
       <p>From the 19th century onwards, it became quite common to break secondary beams to increase
-        readability of longer beamed passages. It is possible to encode situations like this in MEI
-        without nesting beam elements. Instead, the optional <att>breaksec</att> attribute on
+        readability of longer beamed passages. The optional <att>breaksec</att> attribute on
           <gi>note</gi>s and <gi>chord</gi>s under the beam may be used to encode the breaking of
         secondary beams <emph>after</emph> the note or chord bearing the attribute. The value of
           <att>breaksec</att> indicates the number of continuous beams. For example:</p>
-      <!-- TODO: Include image -->
+      <figure>
+        <head>Primary and secondary beams</head>
+        <graphic url="Images/ExampleImages/beam-a-20100510"/>
+      </figure>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer> … <beam>
+        <layer>
+          <beam>
+            <note dur="8" dots="1"/>
             <note dur="16"/>
-            <note dur="16"/>
-            <note dur="16"/>
+          </beam>
+          <beam>
+            <note dur="32"/>
+            <note dur="32"/>
             <note dur="16" breaksec="1"/>
             <note dur="32"/>
             <note dur="32"/>
             <note dur="32"/>
-            <note dur="32" breaksec="2"/>
             <note dur="32"/>
-            <note dur="32"/>
-            <note dur="32"/>
-            <note dur="32"/>
-          </beam> … </layer>
+          </beam>
+        </layer>
       </egXML>
 
       <p>In the music of the second half of the 20th century, it is quite common to indicate
@@ -690,8 +721,8 @@
       </egXML>
 
       <!-- TODO: flesh out the following paragraph. -->
-      <p>Beams may also be encoded using the <att>beam</att> attribute. This feature is useful when
-        a single-pass encoding style is desired.</p>
+      <p>Beams may also be encoded using the <att>beam</att> and <att>beam.with</att> attributes.
+        These features are useful when a single-pass encoding style is desired.</p>
 
       <p>In addition to the explicit encoding of beams accommodated by the <gi>beam</gi> and
           <gi>beamSpan</gi> elements and the <att>beam</att> attribute, MEI allows for specification
@@ -728,11 +759,10 @@
       <p>One of the most specific features of CMN is the use of <soCalled>curved lines</soCalled>
         which connect notes. These lines are used to indicate various musical features, depending on
         their context.</p>
-      <p>A <term>tie</term> is a curved line connecting <emph>two</emph> notes of the <hi
-          rend="bold">same pitch</hi>. The intention of a tie is to combine the duration of both
-        notes, so that the first note sounds for the combined duration, while the second note isn't
-        played separately from the first note. In other words, there is only one onset for both
-        notes.</p>
+      <p>A <term>tie</term> is a curved line connecting <hi rend="bold">two</hi> notes of the <hi
+          rend="bold">same pitch</hi>. The purpose of a tie is to join the durations of both notes,
+        so that the first note sounds for the combined duration. In other words, there is only one
+        onset for both notes.</p>
       <p>In MEI, ties can be encoded in different ways, depending on the level of detail that the
         encoder wants to preserve. The simplest solution is to use the <att>tie</att> attribute
         found on <gi>note</gi> and <gi>chord</gi>.</p>
@@ -755,7 +785,7 @@
         tie-terminating event may lie in the following measure.</p>
       <figure>
         <head>Ties across barlines</head>
-        <graphic url="../../samples/snippets/mei2012-30shortexamples/tie-finger.png"/>
+        <graphic url="Images/modules/cmn/finger-300.png"/>
       </figure>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure n="1">
@@ -794,29 +824,53 @@
         <!-- measures 3 and 4 omitted -->
       </egXML>
 
-      <p>When <att>tie</att> is used on chords, it functions as a shorthand indication; that is, a
-        separate tie is drawn for every pitch in the chord that remains unchanged in the succeeding
-        chord.</p>
+      <p>When <att>tie</att> is used on chords, it functions as a shorthand indication for multiple
+        tie markings; that is, a separate tie is drawn for every pitch in the chord that remains
+        unchanged in the succeeding chord.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <layer>
           <chord dur="4" tie="i">
             <note pname="f"/>
             <note pname="c"/>
             <note pname="a"/>
-            <note pname="f"/>
           </chord>
-          <chord dur="4" tie="t"/>
+          <chord dur="4" tie="t">
+            <note pname="f"/>
+            <note pname="c"/>
+            <note pname="a"/>
+          </chord>
         </layer>
       </egXML>
 
-      <p>A <term>slur</term> is a curved line that connects a <emph>range of notes</emph> and
-        normally denotes that the affected notes are to be played <term>legato</term>. In MEI, slurs
-        may be encoded in a very similar way to ties: <gi>note</gi> and <gi>chord</gi> bear a
-          <att>slur</att> attribute that allows the commencement or ending of a slur at this
-        element.</p>
-      <p>The allowed values, however, are slightly different: The <emph>i</emph>, <hi rend="bold"
-          >m</hi> or <emph>t</emph> are followed by a single digit in the range <emph>1 to 6</emph>,
-        as in the following example:</p>
+      <p>This is equivalent to the following, more verbose version:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <layer>
+          <chord dur="4">
+            <note pname="f" tie="i"/>
+            <note pname="c" tie="i"/>
+            <note pname="a" tie="i"/>
+          </chord>
+          <chord dur="4">
+            <note pname="f" tie="t"/>
+            <note pname="c" tie="t"/>
+            <note pname="a" tie="t"/>
+          </chord>
+        </layer>
+      </egXML>
+
+      <p>A <term>slur</term> is a curved line that connects a <hi rend="bold">group of notes</hi> of
+        different pitch. It normally denotes that the affected notes are to be played
+          <term>legato</term>.</p>
+      <figure>
+        <head>Slurs</head>
+        <graphic url="Images/ExampleImages/slur-300-20100514.png" height="100px"/>
+      </figure>
+
+      <p>In MEI, slurs may be encoded in a very similar way to ties: <gi>note</gi> and
+          <gi>chord</gi> bear a <att>slur</att> attribute that allows the commencement or ending of
+        a slur at this element. The allowed values, however, are slightly different: The
+          <emph>i</emph>, <hi rend="bold">m</hi> or <emph>t</emph> are followed by a single digit in
+        the range <emph>1 to 6</emph>, as in the following example:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <note pname="f" oct="4" dur="4" accid="s" slur="i1"/>
         <note pname="g" oct="4" dur="4" slur="m1"/>
@@ -827,7 +881,9 @@
         slur may start while the first slur is still ongoing. The digit indicates the level of
         nesting of slurs on the note; '1' indicates no nesting, while '2' indicates the existence of
         2 slurs in which this note participates, and so on. In the example below, the second and
-        third quarter notes lie under 2 slurs:</p>
+        third quarter notes lie under 2 slurs. The second note is covered by the slur that begins on
+        the preceding note and by the one that it starts. The third note is affected by the slur
+        that begins on note one and by the one that starts on note two.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <layer>
           <note pname="g" oct="4" dur="2" slur="i1"/>
@@ -841,9 +897,9 @@
         </layer>
       </egXML>
 
-      <p>While ties are not allowed to cross layers or staves in standard notation, slurs may. The
-        following example demonstrates how cross-staff slurs may be encoded using the
-          <att>slur</att> attribute:</p>
+      <p>While ties are not normally allowed to cross layers or staves, slurs may. The following
+        example demonstrates how cross-staff slurs may be encoded using the <att>slur</att>
+        attribute:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <staff>
           <layer>
@@ -877,22 +933,22 @@
         </layer>
       </egXML>
 
-      <p>Slurs and ties that cross system or page breaks are split into two separate symbols. One
-        slur or tie ends at the last barline, another one starts at the begin of the new system. MEI
-        expects this to be the default rendering behaviour, so that in situations like these, the
-        regular <att>tie</att> or <att>slur</att> attributes are sufficient to describe both curved
-        lines resulting from the split.</p>
+      <p>Slurs and ties that cross system or page breaks are often split into two separate symbols
+        for rendering. One slur or tie ends at the last barline, another one starts at the begin of
+        the new system. MEI expects this to be the default rendering behaviour, so that in
+        situations like these, the regular <att>tie</att> or <att>slur</att> attributes are
+        sufficient to describe both curved lines resulting from the split.</p>
       <p>Sometimes, however, one of these two symbols is missing in the document, or the encoder
         wants to provide additional information about the slur or tie. In these cases, using an
-        attribute is not an adequate solution. Therefore, MEI offers dedicated elements:
-          <gi>tie</gi> and <gi>slur</gi>. A third element, <gi>phrase</gi> is used to identify a
-        unified melodic idea (in German: <foreign>Phrasierungsbogen</foreign>), whereas the
-          <gi>slur</gi> element is used as a generic element for all curved lines (in German:
+        attribute is not an adequate solution. Therefore, MEI offers dedicated <gi>tie</gi> and
+          <gi>slur</gi> elements. A third element, <gi>phrase</gi>, is used to identify a unified
+        melodic idea (in German: <foreign>Phrasierungsbogen</foreign>), whereas the <gi>slur</gi>
+        element is used as a generic element for all curved lines (in German:
           <foreign>Bogensetzung</foreign>) except ties. All three elements have nearly identical
         models.</p>
       <p>Although these elements are allowed within a <gi>layer</gi> to accommodate unmeasured
-        notation, by convention they are normally placed inside <gi>measure</gi>, after the encoding
-        of staves, grouped with other so-called <soCalled>control events</soCalled>.</p>
+        notation, by convention in CMN they are normally placed inside <gi>measure</gi>, after the
+        encoding of staves, alongside other so-called <soCalled>control events</soCalled>.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure>
           <staff n="1">
@@ -1273,24 +1329,20 @@
           or chords. It is a semantic error not to specify a starting point attribute. The visual
           appearance of the indicating line may be recorded in the <att>rend</att> attribute. Any
           text accompanying the line, such as "gliss.", may be provided in the <att>text</att>
-          attribute. </p>
+          attribute.</p>
 
       </div>
-
-      <!-- TODO: PR will editi this! -->
-      <!-- <div type="div4" xml:id="cmnBend">
+      <div type="div4" xml:id="cmnBend">
         <head>Bend</head>
-        <p>
-          <gi>bend</gi>: A variation in pitch (often microtonal) upwards or downwards during the course of a note. 
-          Typically, the performer attacks the note at "true" pitch, bends the intonation, then returns to true pitch. 
-          The bend element can also be used for scoop, plop, falloff, and doit performance effects. It should *not* be 
-          used for l.v. (laissez vibrer) indications. Precise performance data that differs from the logical events in 
-          a measure may be recorded within the bend element. The starting point of the bend may be indicated by either 
-          a tstamp, tstamp.ges, tstamp.real or startid attribute. It is a semantic error not to specify a starting 
-          attribute. ENDING POINT DEFINTION
-       </p>
-      </div>-->
-
+        <p>A bend is a variation in pitch (often microtonal) upwards or downwards during the course
+          of a note. Typically, the performer attacks the note at <soCalled>true</soCalled> pitch,
+          changes the intonation, then returns to true pitch. The <gi>bend</gi> element can also be
+          used for so-called scoop, plop, falloff, and doit performance effects. It should <hi
+            rend="bold">not</hi> be used for laissez vibrer (l.v.) indications. As with other
+          control events, the starting point of the bend may be indicated by either a tstamp,
+          tstamp.ges, tstamp.real or startid attribute. It is a semantic error not to specify a
+          starting attribute.</p>
+      </div>
       <!-- TODO: PR will editi this! -->
       <div type="div4" xml:id="cmnTrem">
         <head>Tremolandi</head>
@@ -1311,15 +1363,14 @@
           class, meaning it is encoded following the normal course of musical events within a
             <gi>layer</gi>. It holds exactly one <gi>note</gi> or <gi>chord</gi> element that is to
           be repeated.</p>
-        <!-- TODO: provide better example with image… -->
+        <figure>
+          <head>Bowed tremolandi</head>
+          <graphic url="Images/ExampleImages/btrem-a-20100510" width="500px"/>
+        </figure>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <layer>
-            <note/>
-            <bTrem>
-              <note pname="g" oct="4" dur="4"/>
-            </bTrem>
-            <note/>
-          </layer>
+          <bTrem>
+            <note pname="b" oct="4" dur="1"/>
+          </bTrem>
         </egXML>
 
         <p>As seen in the example above, the <gi>bTrem</gi> element itself does not have a duration.
@@ -1365,7 +1416,6 @@
         </egXML>
 
       </div>
-
       <div type="div4" xml:id="cmnFermata">
         <head>Fermata</head>
         <p>A very common feature of music notation from the CMN period is the so-called
@@ -1391,25 +1441,30 @@
         </egXML>
         <p>The <att>shape</att> attribute may be used to indicate whether the fermata is rendered as
           a semicircle ("curved") or semisquare ("square"). If the fermata is rendered with a
-          completely different symbol, this may be specified using the <att>altsym</att> attribute. </p>
+          completely different symbol, this may be specified using the <att>altsym</att>
+          attribute.</p>
 
       </div>
-
-      <!-- TODO: PR will editi this! -->
-      <!-- <div type="div4" xml:id="cmnOctave">
-        <head>Octave shift</head>
-        <p>
-          <gi>octave</gi>: An indication that a passage should be performed one or more octaves above or below its written 
-          pitch. The dis and dis.place attributes record the amount and direction of displacement, respectively. The rend 
-          attribute captures the appearance of the continuation line associated with the octave displacement. The starting 
-          point of the octave displacement may be indicated by either a tstamp, tstamp.ges, tstamp.real or startid attribute, 
-          while the ending point may be recorded by either a dur, dur.ges or endid attribute. It is a semantic error not to 
-          specify one starting and one ending type of attribute. Please note that the dur attribute here is not a true duration, 
-          but rather a time stamp for the end point of the octave displacement. Also, note that the dur attribute is not 
-          required because the octave displacement can be visually instantaneous. 
-       </p>
-      </div>-->
-
+      <div type="div4" xml:id="cmnOctave">
+        <head>Octave Shift</head>
+        <p>An indication that a passage should be performed one or more octaves above or below its
+          written pitch is represented by the <gi>octave</gi> element.</p>
+        <figure>
+          <head>Octave displacement</head>
+          <graphic url="Images/ExampleImages/octave-a-20100510" width="500px"/>
+        </figure>
+        <p>Its <att>dis</att> and <att>dis.place</att> attributes record the amount and direction of
+          displacement, respectively. The <att>rend</att> attribute captures the appearance of the
+          continuation line associated with the octave displacement. The starting point of the
+          octave displacement may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
+            <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
+          recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. It
+          is a semantic error not to specify one starting and one ending type of attribute. Please
+          note that the <att>dur</att> attribute here is not a true duration, but rather a time
+          stamp for the end point of the octave displacement. Also, note that the <att>dur</att>
+          attribute is not required because the octave displacement can be visually instantaneous.
+        </p>
+      </div>
     </div>
 
     <div type="div3" xml:id="cmnInstr">
@@ -1773,7 +1828,7 @@
         -->
 
         <p>The <gi>halfmRpt</gi> element represents the incorrect, but frequently found, use of the
-          measure repeat sign (or similar sign) to indicate repetition of half of a measure. This
+          measure repeat (or similar) sign to indicate repetition of half of a measure. This
           practice mostly occurs in hand-written notation and usually involves the repetition of the
           second half of a measure in duple time. This element is necessary because the function of
           the symbol, not the visual symbol itself, is of primary importance. The following example
