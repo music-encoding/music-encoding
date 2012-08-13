@@ -84,18 +84,18 @@
 
     <div xml:id="cmnOrnamentsOverride" type="div3">
       <head>Overriding Default Resolutions</head>
-      <p>The symbols and resolutions suggested for each ornament in this chapter are to be
+      <p>The symbols and sounded resolutions suggested for each ornament in this chapter are to be
         considered defaults. Nevertheless, because of the great historical and geographical variance
         in the notation of ornaments, the encoder is given methods to override the default
         resolutions.</p>
-      <p>It is possible, for example, to specify in the <gi>meiHeader</gi> a new default resolution
-        for an ornament. As discussed in the section <ptr target="#encodingDescription"/>, the
-        element <gi>encodingDesc</gi> holds a description (optional, but recommended) of the methods
-        and editorial principles which governed the transcription or encoding of the source
-        material. Let us take a trill as an example. The section about <ref
+      <p>It is possible, for example, to specify in the <gi>meiHeader</gi> a new default sounded
+        resolution for an ornament. As discussed in the section <ptr target="#encodingDescription"
+        />, the element <gi>encodingDesc</gi> holds a description (optional, but recommended) of the
+        methods and editorial principles which govern the transcription or encoding of the source
+        material. Let us take a trill as an example. The section regarding <ref
           target="#cmnOrnamentsTrills">trills</ref> does not set a specific number of alternations
-        between the principal and the above; the encoder, however, may specify an exact number in
-        the encoding description.</p>
+        between the principal and secondary notes; the encoder, however, may specify an exact number
+        in the encoding description.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <encodingDesc>
           <editorialDecl>
@@ -105,7 +105,7 @@
       </egXML>
 
       <p>Alternatively, resolutions can be defined on a case-by-case basis by encoding a specific
-        resolution within the ornament's element. See the section <ptr
+        resolution using the <gi>choice</gi> element. See the section <ptr
           target="#cmnOrnamentsTrillsParticular"/> below for an example of a specific resolution of
         a trill.</p>
     </div>
@@ -304,9 +304,8 @@
         <trill staff="1" place="above" tstamp="1" dur="2.5" vo="6.5" ho="+1"/>
       </measure>
     </egXML>
-    
-    <!-- TODO: The following section needs to be re-written. -->
-    <!-- <div xml:id="cmnOrnamentsTrillsParticular" type="div3">
+
+    <div xml:id="cmnOrnamentsTrillsParticular" type="div3">
       <head>Particular cases</head>
 
       <p>Symbols and abbreviations for trills have changed and evolved considerably throughout
@@ -315,13 +314,31 @@
         the encoder in making educated choices in the encoding of non-standard trills, this section
         shows two examples diverging from modern standard use.</p>
 
-      <p>The abbreviation "tr" followed by a wavy line spanning multiple notes can be used to
-        indicate multiple trills (see <bibl>Read 1979, p. 233</bibl>). Each trill should be
-        explicitly encoded, as the following example demonstrates:</p>
+      <p>The abbreviation "tr" followed by a wavy line spanning multiple notes is sometimes used to
+        indicate multiple trills:</p>
       <figure>
         <head>Example of multiple trills.</head>
         <graphic url="Images/modules/cmnOrnaments/ex_tr_multi.png"/>
       </figure>
+      <p>The encoding of this kind of trill may vary depending on the purpose of the encoding. For
+        representation of the source, a single trill is sufficient:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <measure n="1">
+          <staff n="1">
+            <layer n="1">
+              <note dur="4" oct="4" pname="f" stem.dir="up"/>
+              <note dur="4" oct="4" pname="a" stem.dir="up"/>
+              <rest dur="8"/>
+              <note dur="8" oct="5" pname="c" stem.dir="down"/>
+              <note dur="4" oct="5" pname="e" stem.dir="down"/>
+            </layer>
+          </staff>
+          <trill staff="1" place="above" tstamp="1" dur="0m+4"/>
+        </measure>
+      </egXML>
+
+      <p>To support analytical and aural rendering applications, however, each trill may be
+        explicitly encoded, as the following example demonstrates:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure n="1">
           <staff n="1">
@@ -340,12 +357,33 @@
         </measure>
       </egXML>
 
-      <p>The symbols for trills and mordents have been often used interchangeably in the past. The
-        following example is taken from <title>Klavierbüchlein für Wilhelm Friedemann Bach</title>
-        (1720) and shows a trill (<q>Trillo</q>) being identified by the symbol associated with a
-        mordent in modern practice. Nonetheless, given the ornament's resolution, it should be
-        encoded with the <gi>trill</gi> element. J.S. Bach's suggested resolution can be recorded
-        within the element itself:</p>
+      <p>However, when it is necessary to support multiple outputs, use of the <gi>choice</gi>
+        element and appropriate sub-elements is recommended. In this case, the <gi>orig</gi> and
+          <gi>reg</gi> elements can be used to represent the original source and a regularization
+        provided by the editor, respectively:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <choice>
+          <orig>
+            <trill staff="1" place="above" tstamp="1" dur="0m+4"/>
+          </orig>
+          <reg>
+            <trill staff="1" place="above" tstamp="1"/>
+            <trill staff="1" place="above" tstamp="2" accidupper="f"/>
+            <trill staff="1" place="above" tstamp="3.5"/>
+            <trill staff="1" place="above" tstamp="4" accidupper="s"/>
+          </reg>
+        </choice>
+      </egXML>
+
+      <p>Another situation that requires disambiguation of an ornament's name and its potential
+        rendition is due to the fact that the symbols for trills and mordents have been often used
+        interchangeably in the past. The following example, taken from <title>Klavierbüchlein für
+          Wilhelm Friedemann Bach</title> (1720), shows a trill (<q>Trillo</q>) identified by the
+        symbol associated with a mordent in modern practice. Nonetheless, J.S. Bach's suggested
+        resolution should be encoded with a variant of the procedure presented above. In the example
+        below, the child elements of <gi>choice</gi>; that is, <gi>orig</gi> and <gi>reg</gi>,
+        represent non-exclusive options; that is, both may be processed by applications that aim to
+        support both visual and aural renditions.</p>
       <figure>
         <figDesc>Example of trill transcribed from J.S. Bach's <title>Klavierbüchlein für Wilhelm
             Friedemann Bach</title> (1720)</figDesc>
@@ -358,17 +396,22 @@
               <note dur="4" oct="5" pname="c" stem.dir="down"/>
             </layer>
           </staff>
-          <trill staff="1" place="above" tstamp="1">
-            <note dur="32" oct="5" pname="d"/>
-            <note dur="32" oct="5" pname="c"/>
-            <note dur="32" oct="5" pname="d"/>
-            <note dur="32" oct="5" pname="c"/>
-            <note dur="32" oct="5" pname="d"/>
-            <note dur="8" oct="5" pname="c" dots="1"/>
-          </trill>
+          <choice>
+            <orig>
+              <trill staff="1" place="above" tstamp="1"/>
+            </orig>
+            <reg>
+              <note dur="32" oct="5" pname="d"/>
+              <note dur="32" oct="5" pname="c"/>
+              <note dur="32" oct="5" pname="d"/>
+              <note dur="32" oct="5" pname="c"/>
+              <note dur="32" oct="5" pname="d"/>
+              <note dur="8" oct="5" pname="c" dots="1"/>
+            </reg>
+          </choice>
         </measure>
       </egXML>
-    </div>-->
+    </div>
 
   </div>
 
