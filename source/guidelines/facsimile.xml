@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  © 2012 by the Music Encoding Initiative (MEI) Council.
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://www.osedu.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="facsimile" n="0">
+  <head>Facsimiles</head>
+  <p>Most often, MEI is used for the preparation of a digital musical text based on an existing
+    music document, or with the intention of rendering the encoded notation into a document or audio
+    rendition. MEI can, however, be used to provide a different kind of digital reproduction of a
+    source document, which relies on the description and provision of digital imagery. Both
+    approaches may be combined, so that the encoding of the musical content and digital facsimiles
+    may add different facets to the same MEI document.</p>
+  <div type="div2" xml:id="facsimileElements">
+    <head>Elements of the Facsimile Module</head>
+    <p>This module makes available the following elements for encoding facsimiles:</p>
+    <p>
+      <specList>
+        <specDesc key="facsimile"/>
+        <specDesc key="surface"/>
+        <specDesc key="zone"/>
+      </specList>
+    </p>
+    <p>These element are used to add a separate subtree to MEI, starting with the <gi>facsimile</gi>
+      element inside <gi>music</gi>, as seen in the following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <mei>
+        <meiHead>
+          <!-- metadata header -->
+        </meiHead>
+        <music>
+          <facsimile>
+            <!-- The facsimile subtree starts here. -->
+          </facsimile>
+          <body>
+            <!-- The encoding of the musical content goes here. -->
+          </body>
+        </music>
+      </mei>
+    </egXML>
+
+    <p>It is possible to have more than one <gi>facsimile</gi> element in this location. This is
+      especially useful when multiple sources are encoded in the same file using the mechanisms
+      described in chapter <ptr target="#editTrans"/> of these Guidelines. In this case, the
+        <att>decls</att> (declarations) attribute of <gi>facsimile</gi> may be used to refer to a
+      source defined in the document's header, as seen in the following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <meiHead>
+        <source xml:id="facsimile.source1">
+          <!-- description of source -->
+        </source>
+      </meiHead>
+      <music>
+        <facsimile decls="#facsimile.source1">
+          <!-- facsimile content -->
+        </facsimile>
+      </music>
+    </egXML>
+
+    <p>Within a <gi>facsimile</gi> element, each page of the source is represented by a
+        <gi>surface</gi> element. Each surface may be assigned an identifying string utilizing the
+        <att>label</att> attribute. In addition, it may encapsulate more detailed metadata about
+      itself in a <gi>figDesc</gi> element. The coordinate space of the surface may be recorded in
+      abstract terms in the <att>ulx</att>, <att>uly</att>, <att>lrx</att>, and <att>lry</att>
+      attributes. For navigation purposes, <gi>surface</gi> has a <att>startid</att> attribute that
+      accommodates pointing to the first object appearing on this particular writing surface.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <facsimile>
+        <surface ulx="0" uly="0" lrx="2000" lry="3000" label="page 1" startid="#measure1"/>
+      </facsimile>
+    </egXML>
+    
+    <p>Within <gi>surface</gi> elements, one may nest one or more <gi>zone</gi> elements </p>
+
+    <p>Within <gi>surface</gi> elements, one may nest one or more <gi>graphic</gi> elements, each
+      providing a reference to an image file that represents the writing surface. Multiple
+        <gi>graphic</gi> elements are permitted in order to accommodate alternative versions
+      (different resolutions or formats, for instance) of the surface image. In spite of changes in
+      resolution or format, all images must contain the same content, i.e., the entire writing
+      surface.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <facsimile>
+        <surface>
+          <graphic target="image1.jpg" width="3000" height="2000" unit="px"/>
+          <graphic target="image1smaller.jpg" width="1500" height="1000" unit="px"/>
+          <graphic target="image1smallest.png" width="300" height="200" unit="px"/>
+        </surface>
+      </facsimile>
+    </egXML>
+
+    <p>The preceding markup will provide the basis for most page-turning applications. Often,
+      however, it is desirable to focus attention on particular areas of the writing surface. The
+        <gi>zone</gi> element fulfills this purpose:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <surface ulx="0" uly="0" lrx="3000" lry="2000">
+        <graphic target="image1.jpg" width="3000" height="2000" unit="px">
+          <zone ulx="300" uly="200" lrx="370" lry="410"/>
+          <zone ulx="367" uly="200" lrx="439" lry="410"/>
+          <zone ulx="436" uly="200" lrx="512" lry="410"/>
+        </graphic>
+        <zone ulx="300" uly="200" lrx="370" lry="410"/>
+        <zone ulx="367" uly="200" lrx="439" lry="410"/>
+        <zone ulx="436" uly="200" lrx="512" lry="410"/>
+      </surface>
+    </egXML>
+
+    
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <surface>
+        <graphic target="image1.jpg" width="3000" height="2000" unit="px"/>
+        <zone ulx="300" uly="200" lrx="370" lry="410"/>
+        <zone ulx="367" uly="200" lrx="439" lry="410"/>
+        <zone ulx="436" uly="200" lrx="512" lry="410"/>
+      </surface>
+    </egXML>
+    
+    <p>In the following example, the surface is defined as rectange that is 3000 units wide and 2000
+      units tall. The graphic that represents the surface, however, is only 2995 units wide and 1995
+      units tall; that is, the graphic has been <soCalled>cropped</soCalled> with respect to the
+      writing surface.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <surface ulx="0" uly="0" lrx="3000" lry="2000">
+        <graphic target="image1.jpg" width="2995" height="1995" unit="px"/>
+      </surface>
+    </egXML>
+
+    <p>The coordinates of each zone <emph>define a space relative to the coordinate space of its
+        parent surface</emph>. Note that this is not necessarily the same coordinate space defined
+      by the width and height attributes of the graphic that represents the surface.</p>
+
+    <p>The earlier point bears repeating ― the zone coordinates in the preceding example do not
+      represent regions within the graphic, but rather regions of the writing surface. When
+      agreement between the coordinate systems of a surface and a graphic is desired,</p>
+
+    <p>Because the coordinate space of a zone is defined relative to that of a surface, it is
+      possible to provide multiple graphic elements <emph>and</emph> multiple zone elements within a
+      single surface. In the following example, the </p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <surface ulx="0" uly="0" lrx="3000" lry="2000">
+        <graphic target="image1.jpg" width="3000" height="2000" unit="px"/>
+        <graphic target="image1cropped.jpg" width="2995" height="1995" unit="px"/>
+        <zone ulx="300" uly="200" lrx="370" lry="410"/>
+      </surface>
+    </egXML>
+
+    <p>A <gi>zone</gi> element may contain <gi>figDesc</gi> or <gi>graphic</gi> elements that
+      provide detailed descriptive information about the zone and additional images, e.g., at a
+      different/higher resolution, of the rectangle defined by the zone. The data objects contained
+      within the zone may also be specified through the use of the <att>data</att> attribute, which
+      contains ID references to one more elements in the content tree of the MEI file, such as a
+        <gi>note</gi>, <gi>measure</gi>, etc.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-- In the facsimile subtree: -->
+      <zone xml:id="facsimile.zone1" data="#facsimile.measure1"/>
+      <!-- somewhere in the content: -->
+      <measure xml:id="facsimile.measure1">
+        <!-- measure content -->
+      </measure>
+    </egXML>
+
+    <p>Conversely, an element in the content may refer to the <gi>facsimile</gi> subtree using its
+        <att>facs</att> attribute, which is made available by the <ident type="class"
+        >att.facsimile</ident> attribute class. The last example could therefore be encoded with
+      pointers in the other direction:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-- In the facsimile subtree: -->
+      <zone xml:id="facsimile.zone2"/>
+      <!-- somewhere in the content: -->
+      <measure xml:id="facsimile.measure2" facs="#facsimile.zone2">
+        <!-- measure content -->
+      </measure>
+    </egXML>
+
+    <p>The <gi>pb</gi> element defined in the <ref target="#shared">shared module</ref> makes
+      special use of the <att>facs</att> attribute, in that it does not point to a <gi>zone</gi>,
+      but a <gi>surface</gi> element instead. A <gi>pb</gi> marks the beginning of a page, so it can
+      be concluded that all elements in the content tree which are encoded between any two
+        <gi>pb</gi>s encode musical symbols written on the page (<gi>surface</gi>) referenced by the
+      first of these two <gi>pb</gi>s <att>facs</att> attribute.</p>
+
+  </div>
+</div>

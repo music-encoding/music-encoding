@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  © 2012 by the Music Encoding Initiative (MEI) Council.
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://www.osedu.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="critApp" n="0">
+  <head>Critical Apparatus</head>
+  <p>This chapter describes how to encode differences between different exemplars of the same
+    musical work (often referred to in MEI as <soCalled>sources</soCalled>). The mechanisms and
+    elements described in this chapter are closely related to their counterparts in the TEI
+    guidelines. It is also important to refer to chapter <ptr target="#editTrans"/> of these
+    guidelines, especially the <gi>choice</gi> element described therein.</p>
+  <div type="div2" xml:id="critAppElements">
+    <head>General Usage</head>
+    <p>The following elements are defined in the critApp Module:</p>
+    <p>
+      <specList>
+        <specDesc key="app"/>
+        <specDesc key="lem"/>
+        <specDesc key="rdg"/>
+      </specList>
+    </p>
+    <p>An <gi>app</gi> element always encapsulates the differences between varying sources.
+      Therefore, it must contain at least two child elements.
+      <!-- PR: Need schematron rule for this! --> Possible child elements are <gi>lem</gi> and
+        <gi>rdg</gi>, which use the same model, but have a different meaning: Whereas <gi>lem</gi>
+      is used for prioritizing one alternative, a <gi>rdg</gi> has no such additional meaning and
+      simply indicates a reading as found in one or more sources. Accordingly, <gi>lem</gi> is
+      allowed only once in <gi>app</gi>, whereas <gi>rdg</gi> may appear as often as necessary.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <app>
+        <lem>
+          <!-- preferred reading -->
+        </lem>
+        <rdg>
+          <!-- alternative reading -->
+        </rdg>
+        <rdg>
+          <!-- alternative reading -->
+        </rdg>
+      </app>
+    </egXML>
+
+    <p>The <gi>rdg</gi> (and <gi>lem</gi>) elements use the <att>source</att> attribute to point to
+      one or more descriptions of the bibliographic sources containing the material they mark:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-- In the document content: -->
+      <app>
+        <rdg source="#critApp.source1">
+          <!-- reading of source 1 -->
+        </rdg>
+        <rdg source="#critApp.source2 #critApp.source3">
+          <!-- reading of sources 2 *and* 3 -->
+        </rdg>
+      </app>
+      <!-- Earlier in the document header: -->
+      <sourceDesc>
+        <source xml:id="critApp.source1">
+          <!-- bibliographic description of source 1 -->
+        </source>
+        <source xml:id="critApp.source2">
+          <!-- bibliographic description of source 2 -->
+        </source>
+        <source xml:id="critApp.source3">
+          <!-- bibliographic description of source 3 -->
+        </source>
+      </sourceDesc>
+    </egXML>
+
+    <p>The <att>seq</att> attribute may be used on <gi>lem</gi> or <gi>rdg</gi> to record the
+      sequence of a series of readings. In the following example, the material in source B is marked
+      as sequential to (and perhaps derived from) the reading in source A:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <app>
+        <rdg source="#critApp.sourceA" seq="1">
+          <!-- material in source 1 -->
+        </rdg>
+        <rdg source="#critApp.sourceB" seq="2">
+          <!-- material in source 2 -->
+        </rdg>
+      </app>
+    </egXML>
+
+    <p>If a source has additional content that is not found in other sources, an empty <gi>rdg</gi>
+      element may be used to indicate the lack of material in the other sources. In the following
+      example, source 1 includes material that is not found in sources 2 and 3:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <app>
+        <rdg source="#critApp.source1">
+          <!-- additional content of source 1 -->
+        </rdg>
+        <rdg source="#critApp.source2 #critApp.source3"/>
+      </app>
+    </egXML>
+
+    <p>When working with a large number of sources, it might seem tedious to provide references for
+      all sources. However, it is not recommended to use a <gi>rdg</gi> element without
+        <att>source</att> as a "fallback" for all sources otherwise unassigned, as such an encoding
+      is not explicit and is difficult to process.</p>
+  </div>
+  <div type="div2" xml:id="critappInContent">
+    <head>Variants in Musical Content</head>
+    <p>The <gi>app</gi> element may be used to accommodate textual variation at nearly any point in
+      a musical text. For example, it may be used to indicate minor differences like stem
+      directions:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <layer>
+        <!-- preceding notes -->
+        <app>
+          <rdg source="#critApp.source1">
+            <note pname="b" oct="4" dur="2" stem.dir="down"/>
+          </rdg>
+          <rdg source="#critApp.source2">
+            <note pname="b" oct="4" dur="2" stem.dir="up"/>
+          </rdg>
+        </app>
+        <!-- following notes -->
+      </layer>
+    </egXML>
+
+    <p>or to indicate more significant differences, such as the insertion of extra measures:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <section>
+        <measure/>
+        <measure/>
+        <app>
+          <rdg source="#critApp.source1"/>
+          <rdg source="#critApp.source2">
+            <!-- source 2 has 2 measures not found in source 1 -->
+            <measure/>
+            <measure/>
+          </rdg>
+        </app>
+        <measure/>
+      </section>
+    </egXML>
+
+    <!-- Here we might add several other examples -->
+
+    <p>However, the flexibility in the location of <gi>app</gi> places a burden on the encoder to
+      ensure that the <gi>app</gi>, <gi>rdg</gi>, and <gi>lem</gi> elements are used correctly; that
+      is, the content of every <gi>rdg</gi> and <gi>lem</gi> has to be a valid replacement for its
+      parent <gi>app</gi>.</p>
+    <!-- TODO:
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-\- NEED EXAMPLE HERE! -\->
+      <!-\- Provide a whacked-out example of the abuse of app -\->
+    </egXML>-->
+
+  </div>
+  <div type="div2" xml:id="critappInDefs">
+    <head>Variants in Score Definitions</head>
+    <p>In addition to its use for differentiation of the musical content of multiple sources,
+        <gi>app</gi> may also be utilized to describe the layout of different scores, even when the
+      musical content itself remains the same. An example of this is two sources that have the same
+      content, but different order of staves. By definition, the order of staves is derived from the
+      order of <gi>staffDef</gi> elements in <gi>scoreDef</gi>, not from the order of <gi>staff</gi>
+      elements within a <gi>measure</gi>. The <gi>staff</gi> element in a measure points to its
+      corresponding <gi>staffDef</gi> using either 1) the same value for <att>n</att> on both
+      elements, or 2) a value in <att>def</att> which is an explicit reference to a particular
+        <gi>staffDef</gi> in its <att>xml:id</att> value.</p>
+
+    <!-- PR: Even though it's technically possble, the following makes me uncomfortable. I think
+      this is good reason to put some effort into the layout module. -->
+    <p>When using the first of these two approaches, it is possible to point dynamically to the
+      correct staff definition for a given source. The following example demonstrates how this can
+      be accomplished for two sources, both presenting a two-staff score, but with differing staff
+      order:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <score>
+        <app>
+          <rdg source="#critApp.source1">
+            <scoreDef>
+              <staffGrp>
+                <staffDef n="1"/>
+                <staffDef n="2"/>
+              </staffGrp>
+            </scoreDef>
+          </rdg>
+          <rdg source="#critApp.source2">
+            <scoreDef>
+              <staffGrp>
+                <!-- The order of <staffDef> elements defines score order, not its @n attribute! -->
+                <staffDef n="2"/>
+                <staffDef n="1"/>
+              </staffGrp>
+            </scoreDef>
+          </rdg>
+        </app>
+        <section>
+          <measure>
+            <staff n="1"/>
+            <staff n="2"/>
+          </measure>
+        </section>
+      </score>
+    </egXML>
+
+    <p>In the example above, no further <gi>app</gi> element is necessary within the
+        <gi>measure</gi> to describe the alternative score order of the sources.</p>
+
+    <!-- The following paragraph needs more explanation and an example. -->
+    <p>This mechanism may also be used to describe not only differing page orientations, formats and
+      margins, but also clefs and keys.</p>
+    <!-- TODO:
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-\- NEED EXAMPLE HERE! -\->
+    </egXML>-->
+
+    <p>Using unique values for <att>n</att> on <gi>layerDef</gi> and <gi>layer</gi>, it is also
+      possible to reallocate layers.</p>
+    <!-- TODO:
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-\- NEED EXAMPLE HERE! -\->
+    </egXML>-->
+
+  </div>
+  <div type="div2" xml:id="critAppNesting">
+    <head>Nesting Apparati</head>
+    <p>In some situations, musical sources will agree at one level while differing at a lower level.
+      For these cases, <gi>app</gi> elements may be nested to any level necessary. In the following
+      example, there are three sources, two of which agree on the addition of a measure, but differ
+      in the content of the added measure:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <measure/>
+      <app>
+        <rdg source="#critApp.source1"/>
+        <rdg source="#source2 #source3">
+          <!-- whereas source1 omits it, source2 and source3 have an additional measure -->
+          <measure>
+            <staff>
+              <layer>
+                <app>
+                  <!-- while source2 provides a measure rest, source3 has a whole note -->
+                  <rdg source="#critApp.source2">
+                    <mRest/>
+                  </rdg>
+                  <rdg source="#critApp.source3">
+                    <note pname="g" oct="3" dur="1"/>
+                  </rdg>
+                </app>
+              </layer>
+            </staff>
+          </measure>
+        </rdg>
+      </app>
+      <measure/>
+    </egXML>
+
+    <p>When nesting <gi>app</gi> elements, it is important that the pointers in the child
+        <gi>rdg</gi> element's <att>source</att> attribute must be a strict subset of the ancestor
+        <gi>rdg</gi> element's <att>source</att> value.</p>
+    <!-- TODO:
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <!-\- NEED EXAMPLE HERE! -\->
+      <!-\- Show how *NOT* to do it, then an example of good practice -\->
+    </egXML>-->
+
+  </div>
+  <!--<div type="div2" xml:id="critAppOverview">
+    <!-\- Overview -\->
+    <head>Overview of the critApp Module</head>
+    <p>The module described in this chapter makes available the following components:</p>
+    <div type="div3" xml:id="critAppElements">
+      <head>Elements</head>
+      <p>
+        <specList>
+          <specDesc key="app"/>
+          <specDesc key="lem"/>
+          <specDesc key="rdg"/>
+        </specList>
+   </p>
+    </div>
+    <div type="div3" xml:id="critAppAttributeClasses">
+      <head>Attribute Classes</head>
+      <p>
+        <specList>
+          <specDesc key="att.crit"/>
+          <specDesc key="att.rdg.anl"/>
+          <specDesc key="att.rdg.ges"/>
+          <specDesc key="att.rdg.log"/>
+          <specDesc key="att.rdg.vis"/>
+          <specDesc key="att.source"/>
+        </specList>
+   </p>
+    </div>
+    <div type="div3" xml:id="critAppModelClasses">
+      <head>Model Classes</head>
+      <p>
+        <specList>
+          <specDesc key="model.appLike"/>
+          <specDesc key="model.rdgPart.critapp"/>
+        </specList>
+   </p>
+    </div>
+  </div>-->
+
+</div>
