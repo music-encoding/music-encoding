@@ -2057,6 +2057,17 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.coded" module="MEI.shared" type="atts">
+      <desc>Attributes that capture coded values.</desc>
+      <attList>
+        <attDef ident="code" usage="opt">
+          <desc>captures one or more coded values for the textual content of this element.</desc>
+          <datatype>
+            <rng:data type="NMTOKENS"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.color" module="MEI.shared" type="atts">
       <desc>Visual color attributes.</desc>
       <attList>
@@ -11470,17 +11481,13 @@
         <rng:optional>
           <rng:ref name="head"/>
         </rng:optional>
-        <rng:choice>
-          <rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
             <rng:ref name="ensemble"/>
-          </rng:optional>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="instrVoice"/>
-              <rng:ref name="instrVoiceGrp"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:choice>
+            <rng:ref name="instrVoice"/>
+            <rng:ref name="instrVoiceGrp"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="ensemble" module="MEI.header">
@@ -11491,28 +11498,23 @@
     Association of Music Libraries' Medium of performance Codes List or the MARC Instruments and
     Voices Code List.--></desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.common"/>        
+        <memberOf key="att.authorized"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.coded"/>
       </classes>
       <content>
         <rng:text/>
       </content>
-      <attList>
-        <attDef ident="code" usage="opt">
-          <desc>captures one or more coded values for the textual content of this element.</desc>
-          <datatype>
-            <rng:data type="NMTOKEN"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="instrVoice" module="MEI.header">
       <desc>(instrument or voice) &#8211; Name of an instrument on which a performer plays or a
         performer's voice range.</desc>
       <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>        
         <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.coded"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -11523,12 +11525,6 @@
         </rng:zeroOrMore>
       </content>
       <attList>
-        <attDef ident="code" usage="opt">
-          <desc>captures one or more coded values for the textual content of this element.</desc>
-          <datatype>
-            <rng:data type="NMTOKEN"/>
-          </datatype>
-        </attDef>
         <attDef ident="count" usage="opt">
           <desc>indicates the number of performers.</desc>
           <datatype>
@@ -11547,8 +11543,10 @@
     <elementSpec ident="instrVoiceGrp" module="MEI.header">
       <desc>&#8211; Several instrumental or vocal resources treated as a group.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.common"/>        
+        <memberOf key="att.authorized"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.coded"/>
       </classes>
       <content>
         <rng:zeroOrMore>
