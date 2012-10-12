@@ -6949,6 +6949,14 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="When_copyof_element_empy" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@copyof]">
+                <sch:assert test="count(child::node()) = 0">An element with a copyof attribute
+                  cannot have content.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="corresp" usage="opt">
           <desc>used to point to other elements that correspond to this one in a generic
@@ -12301,6 +12309,16 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="When_not_copyof_beam_content" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:beam[not(@copyof)]">
+            <sch:assert
+              test="count(descendant::*[local-name()='note' or local-name()='rest' or local-name()='chord']) &gt; 1"
+              >A beam without a copyof attribute must have at least 2 note, rest, or chord
+              descendants.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="beamSpan" module="MEI.cmn">
       <desc>(beam span) &#8211; Alternative element for explicitly encoding beams, particularly
@@ -12979,6 +12997,16 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="When_not_copyof_tuplet_content" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:tuplet[not(@copyof)]">
+            <sch:assert
+              test="count(descendant::*[local-name()='note' or local-name()='rest' or local-name()='chord']) &gt; 1"
+              >A tuplet without a copyof attribute must have at least 2 note, rest, or chord
+              descendants.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="tupletSpan" module="MEI.cmn">
       <desc>(tuplet span) &#8211; Alternative element for encoding tuplets, especially useful for
