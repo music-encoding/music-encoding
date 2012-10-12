@@ -1078,6 +1078,14 @@
         </rng:choice>
       </content>
     </macroSpec>
+    <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
+      <desc>Performed duration attribute values.</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">[0-9]+((\.)*r|p|(\.[0-9]+)?(b|s))</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.DURATION.cmn" module="MEI.cmn" type="dt">
       <desc>Logical, that is, written, duration attribute values for the CMN repertoire.</desc>
       <content>
@@ -2108,7 +2116,7 @@
           <desc>provides a name or number designation for an element. While the value need not be
             unique, it is required to be a single token.</desc>
           <datatype>
-            <rng:data xmlns:rng="http://relaxng.org/ns/structure/1.0" type="NMTOKEN"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
         <!--<attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">-->
@@ -2116,7 +2124,7 @@
           <desc>provides a base URI reference with which applications can resolve relative URI
             references into absolute URI references.</desc>
           <datatype>
-            <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="data.URI"/>
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -2312,9 +2320,12 @@
         duration.</desc>
       <attList>
         <attDef ident="dur.ges" usage="opt">
-          <desc>records performed duration information that differs from written duration. Its value
-            may be expressed in any convenient form, such as measures[s]+ beat[s].beatpart, ppq
-            (MIDI clicks), Humdrum **recip values, or MusicXML 'divisions', etc.</desc>
+          <desc>records performed duration information that differs from the written duration. Its
+            value may be expressed in several forms; that is, ppq (MIDI clicks and MusicXML
+            'divisions'), Humdrum **recip values, beats or seconds.</desc>
+          <datatype>
+            <rng:ref name="data.DURATION.gestural"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -9506,8 +9517,8 @@
         <memberOf key="att.id"/>
       </classes>
       <content>
-        <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="meiHead"/>
-        <rng:ref xmlns:rng="http://relaxng.org/ns/structure/1.0" name="music"/>
+        <rng:ref name="meiHead"/>
+        <rng:ref name="music"/>
       </content>
       <constraintSpec ident="set_ns" scheme="isoschematron">
         <constraint>
@@ -10409,8 +10420,8 @@
             <sch:rule context="mei:staffDef[@ppq][ancestor::mei:scoreDef[@ppq]]">
               <sch:let name="staffPPQ" value="@ppq"/>
               <sch:let name="scorePPQ" value="ancestor::mei:scoreDef[@ppq][1]/@ppq"/>
-              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be
-                a factor of the value of ppq on an ancestor scoreDef.</sch:assert>
+              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be a factor of
+                the value of ppq on an ancestor scoreDef.</sch:assert>
             </sch:rule>
           </sch:pattern>
         </constraint>
@@ -10421,8 +10432,8 @@
             <sch:rule context="mei:staffDef[@ppq][preceding::mei:scoreDef[@ppq]]">
               <sch:let name="staffPPQ" value="@ppq"/>
               <sch:let name="scorePPQ" value="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
-              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be
-                a factor of the value of ppq on a preceding scoreDef.</sch:assert>
+              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be a factor of
+                the value of ppq on a preceding scoreDef.</sch:assert>
             </sch:rule>
           </sch:pattern>
         </constraint>
