@@ -8651,13 +8651,10 @@
         <constraint>
           <sch:rule context="mei:barLine[@taktplace]">
             <sch:let name="staff" value="ancestor::mei:staff/@n"/>
-            <sch:let name="staffpos"
-              value="count(ancestor::mei:staff/preceding-sibling::mei:staff)
+            <sch:let name="staffpos" value="count(ancestor::mei:staff/preceding-sibling::mei:staff)
               +                 1"/>
-            <sch:assert
-              test="number(@taktplace) &lt;= number(2 *
-              preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"
-            />
+            <sch:assert test="number(@taktplace) &lt;= number(2 *
+              preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"/>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -8827,8 +8824,7 @@
         <constraint>
           <sch:rule context="mei:clef[ancestor::mei:staffDef[@lines]]">
             <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
-            <sch:assert
-              test="number(@line) &lt;=
+            <sch:assert test="number(@line) &lt;=
               number(ancestor::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
               >The clef position must be less than or equal to the number of lines on the
               staff.</sch:assert>
@@ -8839,8 +8835,7 @@
         <constraint>
           <sch:rule context="mei:clef[ancestor::mei:staffDef[not(@lines)]]">
             <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
-            <sch:assert
-              test="number(@line) &lt;=
+            <sch:assert test="number(@line) &lt;=
               number(preceding::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
               >The clef position must be less than or equal to the number of lines on the
               staff.</sch:assert>
@@ -9523,11 +9518,9 @@
       <constraintSpec ident="Check_staff" scheme="isoschematron">
         <constraint>
           <sch:rule xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@staff]">
-            <sch:assert
-              test="every $i in tokenize(@staff, '\s+') satisfies
-              $i=//mei:staffDef/@n"
-              >The values in @staff must correspond to @n attribute of a staffDef
-              element.</sch:assert>
+            <sch:assert test="every $i in tokenize(@staff, '\s+') satisfies
+              $i=//mei:staffDef/@n">The values in @staff must correspond to @n attribute of a
+              staffDef element.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -10031,8 +10024,7 @@
         <constraint>
           <sch:rule context="mei:rest[@line]">
             <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
-            <sch:assert
-              test="number(@line) &lt;=
+            <sch:assert test="number(@line) &lt;=
               number(preceding::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
               >The value of @line must be less than or equal to the number of lines on the
               staff.</sch:assert>
@@ -10334,10 +10326,8 @@
           <sch:rule context="mei:staffDef">
             <sch:let name="thisstaff" value="@n"/>
             <sch:assert test="@n">A staffDef must have an n attribute.</sch:assert>
-            <sch:assert
-              test="@lines or preceding::mei:staffDef[@n=$thisstaff                 and
-              @lines]"
-              >The first occurrence of a staff must declare the number of staff lines.</sch:assert>
+            <sch:assert test="@lines or preceding::mei:staffDef[@n=$thisstaff and @lines]">The first
+              occurrence of a staff must declare the number of staff lines.</sch:assert>
             <sch:assert test="count(mei:clef) + count(mei:clefGrp) &lt; 2">Only one clef or clefGrp
               is permitted.</sch:assert>
           </sch:rule>
@@ -10364,8 +10354,7 @@
         <constraint>
           <sch:rule context="mei:staffDef[@clef.line and not(@lines)]">
             <sch:let name="thisstaff" value="@n"/>
-            <sch:let name="stafflines"
-              value="preceding::mei:staffDef[@n=$thisstaff and
+            <sch:let name="stafflines" value="preceding::mei:staffDef[@n=$thisstaff and
               @lines][1]/@lines"/>
             <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The clef position must
               be less than or equal to the number of lines on the staff.</sch:assert>
@@ -10386,11 +10375,9 @@
           <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
             <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
             <sch:let name="thisStaff" value="@n"/>
-            <sch:assert
-              test="$countTokens = 1 or $countTokens =
-              preceding::mei:staffDef[@n=$thisStaff and                 @lines][1]/@lines"
-              >The tab.strings attribute must have the same number of values as there are staff
-              lines.</sch:assert>
+            <sch:assert test="$countTokens = 1 or $countTokens =
+              preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines">The tab.strings attribute
+              must have the same number of values as there are staff lines.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -10398,23 +10385,44 @@
         <constraint>
           <sch:pattern>
             <sch:rule context="mei:staffDef[@lines.color and @lines]">
-              <sch:let name="countTokens"
-                value="count(tokenize(normalize-space(@lines.color),
+              <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color),
                 '\s'))"/>
               <sch:assert test="$countTokens = 1 or $countTokens = @lines">The lines.color attribute
                 must have either 1) a single value or 2) the same number of values as there are
                 staff lines.</sch:assert>
             </sch:rule>
             <sch:rule context="mei:staffDef[@lines.color and not(@lines)]">
-              <sch:let name="countTokens"
-                value="count(tokenize(normalize-space(@lines.color),
+              <sch:let name="countTokens" value="count(tokenize(normalize-space(@lines.color),
                 '\s'))"/>
               <sch:let name="thisStaff" value="@n"/>
-              <sch:assert
-                test="$countTokens = 1 or $countTokens =
-                preceding::mei:staffDef[@n=$thisStaff and                     @lines][1]/@lines"
-                >The lines.color attribute must have either 1) a single value or 2) the same number
-                of values as there are staff lines.</sch:assert>
+              <sch:assert test="$countTokens = 1 or $countTokens =
+                preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines">The lines.color
+                attribute must have either 1) a single value or 2) the same number of values as
+                there are staff lines.</sch:assert>
+            </sch:rule>
+          </sch:pattern>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="Check_staff_ppq_ancestor" scheme="isoschematron">
+        <constraint>
+          <sch:pattern>
+            <sch:rule context="mei:staffDef[@ppq][ancestor::mei:scoreDef[@ppq]]">
+              <sch:let name="staffPPQ" value="@ppq"/>
+              <sch:let name="scorePPQ" value="ancestor::mei:scoreDef[@ppq][1]/@ppq"/>
+              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be
+                a factor of the value of ppq on an ancestor scoreDef.</sch:assert>
+            </sch:rule>
+          </sch:pattern>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="Check_staff_ppq_preceding" scheme="isoschematron">
+        <constraint>
+          <sch:pattern>
+            <sch:rule context="mei:staffDef[@ppq][preceding::mei:scoreDef[@ppq]]">
+              <sch:let name="staffPPQ" value="@ppq"/>
+              <sch:let name="scorePPQ" value="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
+              <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be
+                a factor of the value of ppq on a preceding scoreDef.</sch:assert>
             </sch:rule>
           </sch:pattern>
         </constraint>
@@ -10519,11 +10527,9 @@
       <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:tempo[ancestor::mei:meiHead]">
-            <sch:assert
-              test="not(@*[name() != 'label' and name() != 'n' and name() != 'xml:base'
-              and name() != 'xml:id' and name() != 'xml:lang'])"
-              >Only label, n, xml:base, xml:id, and xml:lang attributes allowed when this element
-              occurs in the header.</sch:assert>
+            <sch:assert test="not(@*[name() != 'label' and name() != 'n' and name() != 'xml:base'
+              and name() != 'xml:id' and name() != 'xml:lang'])">Only label, n, xml:base, xml:id,
+              and xml:lang attributes allowed when this element occurs in the header.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -12312,10 +12318,9 @@
       <constraintSpec ident="When_not_copyof_beam_content" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:beam[not(@copyof)]">
-            <sch:assert
-              test="count(descendant::*[local-name()='note' or local-name()='rest' or local-name()='chord']) &gt; 1"
-              >A beam without a copyof attribute must have at least 2 note, rest, or chord
-              descendants.</sch:assert>
+            <sch:assert test="count(descendant::*[local-name()='note' or local-name()='rest' or
+              local-name()='chord']) &gt; 1">A beam without a copyof attribute must have at least 2
+              note, rest, or chord descendants.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -13000,10 +13005,9 @@
       <constraintSpec ident="When_not_copyof_tuplet_content" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:tuplet[not(@copyof)]">
-            <sch:assert
-              test="count(descendant::*[local-name()='note' or local-name()='rest' or local-name()='chord']) &gt; 1"
-              >A tuplet without a copyof attribute must have at least 2 note, rest, or chord
-              descendants.</sch:assert>
+            <sch:assert test="count(descendant::*[local-name()='note' or local-name()='rest' or
+              local-name()='chord']) &gt; 1">A tuplet without a copyof attribute must have at least
+              2 note, rest, or chord descendants.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
