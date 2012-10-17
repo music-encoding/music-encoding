@@ -1895,7 +1895,7 @@
       </attList>
     </classSpec>
     <classSpec ident="att.authorized" module="MEI.shared" type="atts">
-      <desc>Attributes that describe the source of an controlled value.</desc>
+      <desc>Attributes that describe the source of a controlled value.</desc>
       <attList>
         <attDef ident="authority" usage="opt">
           <desc>a name or label associated with the controlled vocabulary from which the value is
@@ -1911,7 +1911,7 @@
       </attList>
     </classSpec>
     <classSpec ident="att.regularized" module="MEI.shared" type="atts">
-      <desc>Attributes that describe the source of an controlled value.</desc>
+      <desc>Attributes that hold a controlled value.</desc>
       <attList>
         <attDef ident="reg" usage="opt">
           <desc>provides a regularized, authorized value.</desc>
@@ -2462,7 +2462,7 @@
             and other resources. Each id attribute within a document must have a unique
             value.</desc>
           <datatype>
-            <rng:data xmlns:rng="http://relaxng.org/ns/structure/1.0" type="ID"/>
+            <rng:data type="ID"/>
           </datatype>
         </attDef>
       </attList>
@@ -3878,19 +3878,19 @@
         <memberOf key="att.color"/>
       </classes>
     </classSpec>
-    <classSpec type="atts" module="MEI.shared" ident="att.clefGrp.anl">
+    <classSpec ident="att.clefGrp.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
       </classes>
     </classSpec>
-    <classSpec type="atts" module="MEI.shared" ident="att.clefGrp.ges">
+    <classSpec ident="att.clefGrp.ges" module="MEI.shared" type="atts">
       <desc>Gestural domain attributes.</desc>
     </classSpec>
-    <classSpec type="atts" module="MEI.shared" ident="att.clefGrp.log">
+    <classSpec ident="att.clefGrp.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
     </classSpec>
-    <classSpec type="atts" module="MEI.shared" ident="att.clefGrp.vis">
+    <classSpec ident="att.clefGrp.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
     </classSpec>
     <classSpec ident="att.custos.anl" module="MEI.shared" type="atts">
@@ -8664,7 +8664,7 @@
           <sch:rule context="mei:barLine[@taktplace]">
             <sch:let name="staff" value="ancestor::mei:staff/@n"/>
             <sch:let name="staffpos" value="count(ancestor::mei:staff/preceding-sibling::mei:staff)
-              +                 1"/>
+              + 1"/>
             <sch:assert test="number(@taktplace) &lt;= number(2 *
               preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"/>
           </sch:rule>
@@ -8672,7 +8672,8 @@
       </constraintSpec>
     </elementSpec>
     <elementSpec ident="bibl" module="MEI.shared">
-      <desc>(bibliographic reference) &#8211; Provides a citation for a published work.
+      <desc>(bibliographic reference) &#8211; Provides a loosely-structured bibliographic citation
+        in which the sub-components may or may not be explicitly marked.
         <!-- &lt;bibref&gt; may
         contain a mix of text and more specific elements such as &lt;title&gt;, &lt;edition&gt;,
         &lt;persName&gt;, and &lt;corpName&gt;. This element may also function as a hypertext
@@ -8837,9 +8838,8 @@
           <sch:rule context="mei:clef[ancestor::mei:staffDef[@lines]]">
             <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
             <sch:assert test="number(@line) &lt;=
-              number(ancestor::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
-              >The clef position must be less than or equal to the number of lines on the
-              staff.</sch:assert>
+              number(ancestor::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)">The clef position
+              must be less than or equal to the number of lines on the staff.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -8848,9 +8848,8 @@
           <sch:rule context="mei:clef[ancestor::mei:staffDef[not(@lines)]]">
             <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
             <sch:assert test="number(@line) &lt;=
-              number(preceding::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
-              >The clef position must be less than or equal to the number of lines on the
-              staff.</sch:assert>
+              number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)">The clef position
+              must be less than or equal to the number of lines on the staff.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -9529,7 +9528,7 @@
       </constraintSpec>
       <constraintSpec ident="Check_staff" scheme="isoschematron">
         <constraint>
-          <sch:rule xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@staff]">
+          <sch:rule context="mei:*[@staff]">
             <sch:assert test="every $i in tokenize(@staff, '\s+') satisfies
               $i=//mei:staffDef/@n">The values in @staff must correspond to @n attribute of a
               staffDef element.</sch:assert>
@@ -10037,9 +10036,8 @@
           <sch:rule context="mei:rest[@line]">
             <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
             <sch:assert test="number(@line) &lt;=
-              number(preceding::mei:staffDef[@n=$thisstaff and                 @lines][1]/@lines)"
-              >The value of @line must be less than or equal to the number of lines on the
-              staff.</sch:assert>
+              number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)">The value of
+              @line must be less than or equal to the number of lines on the staff.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -10376,7 +10374,8 @@
       <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:staffDef[@tab.strings and @lines]">
-            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings),
+              '\s'))"/>
             <sch:assert test="$countTokens = 1 or $countTokens = @lines">The tab.strings attribute
               must have the same number of values as there are staff lines.</sch:assert>
           </sch:rule>
@@ -10385,7 +10384,8 @@
       <constraintSpec ident="Check_tab_strings" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
-            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
+            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings),
+              '\s'))"/>
             <sch:let name="thisStaff" value="@n"/>
             <sch:assert test="$countTokens = 1 or $countTokens =
               preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines">The tab.strings attribute
@@ -10539,9 +10539,10 @@
       <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:tempo[ancestor::mei:meiHead]">
-            <sch:assert test="not(@*[name() != 'label' and name() != 'n' and name() != 'xml:base'
-              and name() != 'xml:id' and name() != 'xml:lang'])">Only label, n, xml:base, xml:id,
-              and xml:lang attributes allowed when this element occurs in the header.</sch:assert>
+            <sch:assert test="not(@*[name() != 'label' and name() != 'n' and name() !=
+              'xml:base' and name() != 'xml:id' and name() != 'xml:lang'])">Only label, n, xml:base,
+              xml:id, and xml:lang attributes allowed when this element occurs in the
+              header.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -11793,26 +11794,38 @@
       <attList>
         <attDef ident="rel" usage="req">
           <desc>describes the relationship between the &lt;relatedItem&gt; and the resource
-            described in the parent element, i.e. &lt;source&gt; or &lt;relatedItem&gt;. "preceding"
-            indicates a predecessor to the resource; "succeeding" applies to a successor to the
-            resource; "original" indicates the original form of the resource; "host" provides info
-            concerning an intellectual or physical constituent unit of the resource; "otherVersion"
-            indicates a change in the intellectual content of the resource not significant enough to
-            be a different work; "otherFormat" indicates a change in physical format of the
-            resource; "isReferencedBy" applies to a citation or reference to published bibliographic
-            descriptions, reviews, abstracts, or indexes of the content of the resource;
-            "references" applies to a resource cited or referred to in the resource. These values
-            are based on MODS version 3.4.</desc>
+            described in the parent element, i.e., &lt;bibl&gt;, &lt;source&gt; or
+            &lt;relatedItem&gt;. Its values are based on MODS version 3.4.</desc>
           <valList type="closed">
-            <valItem ident="preceding"/>
-            <valItem ident="succeeding"/>
-            <valItem ident="original"/>
-            <valItem ident="host"/>
-            <valItem ident="constituent"/>
-            <valItem ident="otherVersion"/>
-            <valItem ident="otherFormat"/>
-            <valItem ident="isReferencedBy"/>
-            <valItem ident="references"/>
+            <valItem ident="preceding">
+              <desc>predecessor of the resource</desc>
+            </valItem>
+            <valItem ident="succeeding">
+              <desc>successor to the resource</desc>
+            </valItem>
+            <valItem ident="original">
+              <desc>original form of the resource</desc>
+            </valItem>
+            <valItem ident="host">
+              <desc>parent containing the resource</desc>
+            </valItem>
+            <valItem ident="constituent">
+              <desc>intellectual or physical component of the resource</desc>
+            </valItem>
+            <valItem ident="otherVersion">
+              <desc>version of the resource's intellectual content not changed enough to be a
+                different work</desc>
+            </valItem>
+            <valItem ident="otherFormat">
+              <desc>version of the resource in a different physical format</desc>
+            </valItem>
+            <valItem ident="isReferencedBy">
+              <desc>published bibliographic description, review, abstract, or index of the
+                resource's content</desc>
+            </valItem>
+            <valItem ident="references">
+              <desc>cited or referred to in the resource</desc>
+            </valItem>
           </valList>
         </attDef>
       </attList>
