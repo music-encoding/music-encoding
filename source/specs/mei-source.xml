@@ -10913,10 +10913,24 @@
         <memberOf key="att.responsibility"/>
       </classes>
       <content>
-        <rng:ref name="respStmt"/>
+        <rng:optional>
+          <rng:ref name="respStmt"/>
+        </rng:optional>
         <rng:ref name="changeDesc"/>
-        <rng:ref name="model.dateLike"/>
+        <rng:optional>
+          <rng:ref name="model.dateLike"/>
+        </rng:optional>
       </content>
+      <constraintSpec ident="change_requirements" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:change">
+            <sch:assert test="@isodate or mei:date">The date of the change must be recorded in an
+              isodate attribute or date element.</sch:assert>
+            <sch:assert test="@resp or mei:respStmt">The person responsible for the change must be
+              recorded in a resp attribute or respStmt element.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="changeDesc" module="MEI.header">
       <desc>(change description) &#8211; Description of a revision of the MEI file.</desc>
