@@ -4355,6 +4355,21 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.meterSigGrp.anl" module="MEI.cmn" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.meterSigGrp.ges" module="MEI.cmn" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.meterSigGrp.log" module="MEI.cmn" type="atts">
+      <desc>Logical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.meterSigGrp.vis" module="MEI.cmn" type="atts">
+      <desc>Visual domain attributes.</desc>
+    </classSpec>
     <classSpec ident="att.note.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -11486,21 +11501,6 @@
         <rng:text/>
       </content>
     </elementSpec>
-    <elementSpec ident="meterSig" module="MEI.cmn">
-      <desc>(meter signature) &#8211; Written meter signature.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-        <memberOf key="att.meterSig.anl"/>
-        <memberOf key="att.meterSig.ges"/>
-        <memberOf key="att.meterSig.log"/>
-        <memberOf key="att.meterSig.vis"/>
-        <memberOf key="model.meterSigLike"/>
-      </classes>
-      <content>
-        <rng:empty/>
-      </content>
-    </elementSpec>
     <elementSpec ident="termList" module="MEI.header">
       <desc>&#8211; Collection of text phrases which describe a resource.</desc>
       <classes>
@@ -12793,6 +12793,58 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+    </elementSpec>
+    <elementSpec ident="meterSig" module="MEI.cmn">
+      <desc>(meter signature) &#8211; Written meter signature.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.meterSig.anl"/>
+        <memberOf key="att.meterSig.ges"/>
+        <memberOf key="att.meterSig.log"/>
+        <memberOf key="att.meterSig.vis"/>
+        <memberOf key="model.meterSigLike"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="meterSigGrp" module="MEI.cmn">
+      <desc>(meter signature group) &#8211; Used to capture alternating, interchanging, and mixed
+        meter signatures.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.meterSigGrp.anl"/>
+        <memberOf key="att.meterSigGrp.ges"/>
+        <memberOf key="att.meterSigGrp.log"/>
+        <memberOf key="att.meterSigGrp.vis"/>
+        <memberOf key="model.meterSigLike"/>
+      </classes>
+      <content>
+        <rng:ref name="meterSig"/>
+        <rng:oneOrMore>
+          <rng:ref name="meterSig"/>
+        </rng:oneOrMore>
+      </content>
+      <attList>
+        <attDef ident="func" usage="req">
+          <desc>Function of the meter signature group.</desc>
+          <valList type="closed">
+            <valItem ident="alternating">
+              <desc>Meter signatures appear in alternating measures.</desc>
+            </valItem>
+            <valItem ident="interchanging">
+              <desc>Meter signatures are interchangable, e.g. 3/4 and 6/8.</desc>
+            </valItem>
+            <valItem ident="mixed">
+              <desc>Meter signatures with different unit values are used to express a complex
+                metrical pattern that is not expressable using traditional means, such as
+                2/4+1/8.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
     </elementSpec>
     <elementSpec ident="mRest" module="MEI.cmn">
       <desc>(measure rest) &#8211; Complete measure rest in any meter.
