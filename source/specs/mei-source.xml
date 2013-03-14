@@ -293,6 +293,16 @@
         </rng:data>
       </content>
     </macroSpec>
+    <macroSpec ident="data.MEASUREMENT" module="MEI" type="dt">
+      <desc>Measurement expressed in real-world (e.g., centimeters, millimeters, inches, points, or
+        picas) or virtual units (vu). 'vu' is the default value.</desc>
+      <content>
+        <rng:data type="token">
+          <!-- px is *not* allowed here -->
+          <rng:param name="pattern">(\+|-)?\d+(\.\d+)?(cm|mm|in|pt|pc|vu)?</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.MELODICFUNCTION" module="MEI" type="dt">
       <desc>Indication of melodic function, i.e., anticipation, lower neighbor, escape tone,
         etc.</desc>
@@ -1605,26 +1615,10 @@
       </content>
     </macroSpec>
     <macroSpec ident="data.PGSCALE" module="MEI" type="dt">
-      <desc>Page scale factor. Page.scale may be expressed as a percentage of a
-        programmatically-determined "usual" size or as a ratio of virtual units to real-world
-        units.</desc>
+      <desc>Page scale factor; a percentage of the values in page.height and page.width.</desc>
       <content>
         <rng:choice>
           <rng:ref name="data.PERCENT"/>
-          <rng:ref name="data.RATIO"/>
-        </rng:choice>
-      </content>
-    </macroSpec>
-    <macroSpec ident="data.PGUNITS" module="MEI" type="dt">
-      <desc>Values for real-world unit attributes.</desc>
-      <content>
-        <rng:choice>
-          <rng:value>in</rng:value>
-          <a:documentation>inches</a:documentation>
-          <rng:value>cm</rng:value>
-          <a:documentation>centimeters</a:documentation>
-          <rng:value>mm</rng:value>
-          <a:documentation>millimeters</a:documentation>
         </rng:choice>
       </content>
     </macroSpec>
@@ -2041,13 +2035,6 @@
         </rng:choice>
       </content>
     </macroSpec>
-    <macroSpec ident="data.INTERLINE" module="MEI" type="dt">
-      <desc>Distance expressed in terms of staff interline distance; that is, units of 1/2 the
-        distance between adjacent staff lines.</desc>
-      <content>
-        <rng:data type="decimal"/>
-      </content>
-    </macroSpec>
 
     <!-- Attribute class definitions -->
     <classSpec ident="att.accidental" module="MEI.shared" type="atts">
@@ -2170,8 +2157,8 @@
       </attList>
     </classSpec>
     <classSpec ident="att.beaming.vis" module="MEI.shared" type="atts">
-      <desc>Used by layerDef, staffDef, and scoreDef to provide default values for attributes in
-        the visual domain related to beaming.</desc>
+      <desc>Used by layerDef, staffDef, and scoreDef to provide default values for attributes in the
+        visual domain related to beaming.</desc>
       <attList>
         <attDef ident="beam.color">
           <desc>Color of beams, including those associated with tuplets.</desc>
@@ -2508,20 +2495,20 @@
           <desc>records the distance from the staff for dynamic marks in 1/2 inter-line
             units.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="harm.dist" usage="opt">
           <desc>records the default distance from the staff of harmonic indications, such as guitar
             chord grids or functional labels.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="text.dist" usage="opt">
           <desc>determines how far from the staff to render text elements.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -3012,6 +2999,12 @@
             <valItem ident="in">
               <desc>inch.</desc>
             </valItem>
+            <valItem ident="issue">
+              <desc>serial issue.</desc>
+            </valItem>
+            <valItem ident="page">
+              <desc>page.</desc>
+            </valItem>
             <valItem ident="px">
               <desc>pixel.</desc>
             </valItem>
@@ -3020,6 +3013,12 @@
             </valItem>
             <valItem ident="pc">
               <desc>pica.</desc>
+            </valItem>
+            <valItem ident="vu">
+              <desc>MEI virtual unit.</desc>
+            </valItem>
+            <valItem ident="vol">
+              <desc>serial volume.</desc>
             </valItem>
           </valList>
         </attDef>
@@ -3086,13 +3085,12 @@
       <desc>Attributes that describe horizontal dimensions.</desc>
       <attList>
         <attDef ident="width" usage="opt">
-          <desc>measurement of the horizontal dimension of an entity. This value can only be
-            interpreted meaningfully in combination with the units attribute. The width attribute
-            may be used to capture measure width data for interchange with music printing systems
-            that utilize this information for printing. On &lt;barLine&gt; the width attribute
-            captures the width of the preceding measure.</desc>
+          <desc>measurement of the horizontal dimension of an entity. The width attribute may be
+            used to capture measure width data for interchange with music printing systems that
+            utilize this information for printing. On &lt;barLine&gt; the width attribute captures
+            the width of the preceding measure.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -3759,7 +3757,7 @@
             in terms of staff interline distance; that is, in units of 1/2 the distance between
             adjacent staff lines.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -3784,7 +3782,7 @@
             in terms of staff interline distance; that is, in units of 1/2 the distance between
             adjacent staff lines.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -3807,14 +3805,14 @@
           <desc>records the horizontal adjustment of a feature's programmatically-determined start
             point.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="endho" usage="opt">
           <desc>records the horizontal adjustment of a feature's programmatically-determined end
             point.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -3846,14 +3844,14 @@
           <desc>records a vertical adjustment of a feature's programmatically-determined start
             point.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="endvo" usage="opt">
           <desc>records a vertical adjustment of a feature's programmatically-determined end
             point.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -4925,7 +4923,7 @@
         <attDef ident="music.size" usage="opt">
           <desc>sets the default music font size.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="FONTSIZE"/>
           </datatype>
         </attDef>
         <attDef ident="optimize" usage="opt">
@@ -4936,47 +4934,41 @@
           </datatype>
         </attDef>
         <attDef ident="page.height" usage="opt">
-          <desc>describes the physical height of the rendered output page.</desc>
+          <desc>specifies the height of the page; may be expressed in real-world units or staff
+            steps.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.width" usage="opt">
-          <desc>describes the physical width of the rendered output page.</desc>
+          <desc>describes the width of the page; may be expressed in real-world units or staff
+            steps.</desc>
           <datatype>
-            <rng:data type="decimal"/>
-          </datatype>
-        </attDef>
-        <attDef ident="page.units" usage="opt">
-          <desc>contains the real-world measurement units (inches, centimeters, millimeters) used to
-            describe the rendered page height, width, and margins.</desc>
-          <datatype>
-            <rng:ref name="data.PGUNITS"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.topmar" usage="opt">
-          <desc>indicates the amount of whitespace at the top of a rendered score page.</desc>
+          <desc>indicates the amount of whitespace at the top of a page.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.botmar" usage="opt">
-          <desc>indicates the amount of whitespace at the bottom of a rendered score page.</desc>
+          <desc>indicates the amount of whitespace at the bottom of a page.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.leftmar" usage="opt">
-          <desc>indicates the amount of whitespace at the left side of a rendered score page.</desc>
+          <desc>indicates the amount of whitespace at the left side of a page.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.rightmar" usage="opt">
-          <desc>indicates the amount of whitespace at the right side of a rendered score
-            page.</desc>
+          <desc>indicates the amount of whitespace at the right side of a page.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="page.panels" usage="opt">
@@ -5005,34 +4997,54 @@
           </datatype>
         </attDef>
         <attDef ident="spacing.staff" usage="opt">
-          <desc>sets the minimum amount of space between staves in the same system.</desc>
+          <desc>specifies the minimum amount of space between adjacent staves in the same system;
+            measured from the bottom line of the staff above to the top line of the staff
+            below.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="spacing.system" usage="opt">
-          <desc>contains a space-separated pair of numbers describing the minimum and maximum amount
-            of space between systems.</desc>
+          <desc>describes the space between adjacent systems; a pair of space-separated values
+            (minimum and maximum, respectively) provides a range between which a rendering
+            system-supplied value may fall, while a single value indicates a fixed amount of space;
+            that is, the minimum and maximum values are equal.</desc>
+          <datatype>
+            <rng:list>
+              <rng:ref name="data.MEASUREMENT"/>
+            </rng:list>
+          </datatype>
         </attDef>
         <attDef ident="system.leftmar" usage="opt">
           <desc>describes the amount of whitespace at the left system margin relative to
             page.leftmar.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="system.rightmar" usage="opt">
           <desc>describes the amount of whitespace at the right system margin relative to
             page.rightmar.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="system.topmar" usage="opt">
           <desc>describes the distance from page's top edge to the first system; used for first page
             only.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
+          </datatype>
+        </attDef>
+        <attDef ident="vu.height" usage="opt">
+          <desc>defines the height of a "virtual unit" (vu) in terms of real-world units. A single
+            vu is half the distance between the vertical center point of a staff line and that of an
+            adjacent staff line.</desc>
+          <datatype>
+            <rng:data type="token">
+              <!-- px and vu are *not* allowed here -->
+              <rng:param name="pattern">\d+(\.\d+)?(cm|mm|in|pt|pc)</rng:param>
+            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -5205,7 +5217,7 @@
             This value is meaningless for the first staff in a system since the spacing.system
             attribute indicates the spacing between systems.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -6042,7 +6054,7 @@
           <desc>specifies the distance between the points of the open end of a hairpin dynamic
             mark.</desc>
           <datatype>
-            <rng:ref name="data.INTERLINE"/>
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
       </attList>
@@ -6778,7 +6790,7 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.tuplet.vis" module="MEI.cmn" type="atts" mode="replace">
+    <classSpec ident="att.tuplet.vis" module="MEI.cmn" type="atts">
       <desc>Visual domain attributes.</desc>
       <classes>
         <memberOf key="att.color"/>
