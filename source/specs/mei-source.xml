@@ -2945,6 +2945,27 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.whitespace" module="MEI.shared" type="atts">
+      <desc>Attributes the address whitespacing processing.</desc>
+      <!--<attDef ident="space" ns="http://www.w3.org/XML/1998/namespace" usage="opt">-->
+      <attList>
+        <attDef ident="xml:space" usage="opt">
+          <desc>allows one to signal to an application whether an element's white space is
+            "significant". The behavior of xml:space cascades to all descendant elements, but it can
+            be turned off locally by setting the xml:space attribute to the value "default".</desc>
+          <valList type="closed">
+            <valItem ident="default">
+              <desc>allows the application to handle white space as necessary. Not including an
+                xml:space attribute produces the same result as using the default value.</desc>
+            </valItem>
+            <valItem ident="preserve">
+              <desc>instructs the application to maintain white space "as-is", suggesting that it
+                might have meaning.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.width" module="MEI.shared" type="atts">
       <desc>Attributes that describe horizontal dimensions.</desc>
       <attList>
@@ -10096,16 +10117,17 @@
       </constraintSpec>
     </elementSpec>
     <elementSpec ident="rend" module="MEI.shared">
-      <desc>(render) &#8211; A formatting element indicating special visual rendering, e.g., bold or
-        italicized, of a text word or phrase.
+      <desc>(render) &#8211; A formatting element indicating special visual rendering, e.g.,
+        bold or italicized, of a text word or phrase.
         <!-- When an entire element should be rendered in a special
         way, a style sheet function should be used instead of the &lt;rend&gt; element.--></desc>
       <classes>
         <memberOf key="att.color"/>
         <memberOf key="att.common"/>
+        <memberOf key="att.horizontalalign"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typography"/>
-        <memberOf key="att.horizontalalign"/>
+        <memberOf key="att.whitespace"/>
         <memberOf key="model.rendLike"/>
       </classes>
       <content>
@@ -10123,30 +10145,36 @@
           <desc>used to extend the values of the rend attribute.</desc>
         </attDef>
         <attDef ident="rend" usage="opt">
-          <desc>captures the appearance of the element's contents.</desc>
+          <desc>captures the appearance of the element's contents using MEI-defined
+            descriptors.</desc>
+          <!--<desc>captures the appearance of the element's contents using a formal style
+                definition language; that is, either CSS (Cascading Style Sheets) expressions or
+                MEI-defined descriptors.</desc>-->
           <datatype>
-            <rng:ref name="data.TEXTRENDITION"/>
+              <rng:ref name="data.TEXTRENDITION"/>
           </datatype>
         </attDef>
         <attDef ident="rotation" usage="opt">
-          <desc>A positive value for rotation rotates the text in a counter-clockwise fashion, while
-            negative values produce clockwise rotation.</desc>
+          <desc>A positive value for rotation rotates the text in a counter-clockwise fashion,
+            while negative values produce clockwise rotation.</desc>
           <datatype>
             <rng:ref name="data.DEGREES"/>
           </datatype>
         </attDef>
         <attDef ident="valign" usage="opt">
-          <desc>specifies the vertical position of the element content relative to the surrounding
-            text.</desc>
+          <desc>specifies the vertical position of the element content relative to the
+            surrounding text.</desc>
           <valList type="closed">
             <valItem ident="top">
               <desc>aligns the top of the content with the top of the surrounding text.</desc>
             </valItem>
             <valItem ident="middle">
-              <desc>aligns the middle of the content with the middle of the surrounding text.</desc>
+              <desc>aligns the middle of the content with the middle of the surrounding
+                text.</desc>
             </valItem>
             <valItem ident="bottom">
-              <desc>aligns the bottom of the content with the bottom of the surrounding text.</desc>
+              <desc>aligns the bottom of the content with the bottom of the surrounding
+                text.</desc>
             </valItem>
             <valItem ident="baseline">
               <desc>aligns the baseline of the content with the baseline of the surrounding
@@ -11425,6 +11453,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.internetmedia"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.whitespace"/>
       </classes>
       <content>
         <rng:text/>
@@ -11438,31 +11467,15 @@
         </constraint>
       </constraintSpec>
       <attList>
-        <!--<attDef ident="space" ns="http://www.w3.org/XML/1998/namespace" usage="opt">-->
-        <attDef ident="xml:space" usage="opt">
-          <desc>allows one to signal whether an element's white space is "significant". The behavior
-            of xml:space cascades to all descendant elements, but it can be turned off locally by
-            setting the xml:space attribute to the value "default".</desc>
-          <valList type="closed">
-            <valItem ident="default">
-              <desc>allows the application to handle white space as necessary. Not including an
-                xml:space attribute produces the same result as using the default value.</desc>
-            </valItem>
-            <valItem ident="preserve">
-              <desc>instructs the application to maintain white space as is, suggesting that it
-                might have meaning.</desc>
-            </valItem>
-          </valList>
-        </attDef>
         <attDef ident="form" usage="opt">
-          <desc>describes the notational form of the coded text.</desc>
+          <desc>form of the encoded incipit.</desc>
           <valList type="semi">
             <valItem ident="plaineAndEasie">
               <desc>Plaine &amp; Easie Code.</desc>
             </valItem>
             <valItem ident="humdrumKern">
               <desc>Humdrum Kern format.</desc>
-            </valItem>
+            </valItem>            
           </valList>
         </attDef>
       </attList>
