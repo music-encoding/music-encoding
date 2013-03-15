@@ -3415,6 +3415,54 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.rel" type="atts" module="MEI.frbr">
+      <desc>Attributes specific to bibliographic entity relationships.</desc>
+      <attList>
+        <attDef ident="rel" usage="req">
+          <desc>Describes the relationship between the element's parent (subject) and the object
+            pointed at. The values follow FRBR (see
+            http://www.ifla.org/files/cataloguing/frbr/frbr_2008.pdf).</desc>
+          <valList type="closed">
+            <valItem ident="hasSuccessor"/>
+            <valItem ident="isSuccessorOf"/>
+            <valItem ident="hasSupplement"/>
+            <valItem ident="isSupplementOf"/>
+            <valItem ident="hasComplement"/>
+            <valItem ident="isComplementOf"/>
+            <valItem ident="hasSummarization"/>
+            <valItem ident="isSummarizationOf"/>
+            <valItem ident="hasAdaptation"/>
+            <valItem ident="isAdaptationOf"/>
+            <valItem ident="hasTransformation"/>
+            <valItem ident="isTransformationOf"/>
+            <valItem ident="hasImitation"/>
+            <valItem ident="isImitationOf"/>
+            <valItem ident="hasPart"/>
+            <valItem ident="isPartOf"/>
+            <valItem ident="hasReproduction"/>
+            <valItem ident="isReproductionOf"/>
+            <valItem ident="hasAbridgement"/>
+            <valItem ident="isAbridgementOf"/>
+            <valItem ident="hasRevision"/>
+            <valItem ident="isRevisionOf"/>
+            <valItem ident="hasTranslation"/>
+            <valItem ident="isTranslationOf"/>
+            <valItem ident="hasArrangement"/>
+            <valItem ident="isArrangementOf"/>
+            <valItem ident="hasAlternate"/>
+            <valItem ident="isAlternateOf"/>
+            <valItem ident="hasReconfiguration"/>
+            <valItem ident="isReconfigurationOf"/>
+            <valItem ident="hasRealization"/>
+            <valItem ident="isRealizationOf"/>
+            <valItem ident="hasEmbodiment"/>
+            <valItem ident="isEmbodimentOf"/>
+            <valItem ident="hasExemplar"/>
+            <valItem ident="isExemplarOf"/>
+          </valList>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.relativesize" module="MEI.shared" type="atts">
       <desc>Attributes that record relative size.</desc>
       <attList>
@@ -6416,8 +6464,8 @@
       </classes>
       <attList>
         <attDef ident="block" usage="opt">
-          <desc>When the block attribute is used, combinations of the 1, 2, and 4 measure rest
-            forms (Read, p. 104) should be rendered instead of the modern form or an alternative
+          <desc>When the block attribute is used, combinations of the 1, 2, and 4 measure rest forms
+            (Read, p. 104) should be rendered instead of the modern form or an alternative
             symbol.</desc>
           <datatype>
             <rng:ref name="data.BOOLEAN"/>
@@ -8081,32 +8129,6 @@
         </rng:optional>
       </content>
     </macroSpec>
-    <macroSpec ident="macro.workPart" module="MEI.header">
-      <desc>groups elements that may appear as part of the work element.</desc>
-      <content>
-        <rng:optional>
-          <rng:ref name="history"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="langUsage"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="key"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="tempo"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="meter"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="mensuration"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="perfMedium"/>
-        </rng:optional>
-      </content>
-    </macroSpec>
     <macroSpec ident="macro.XSLT" module="MEI.shared">
       <desc>permits any element from the XSLT namespace. Allowing XSLT in &lt;incipit&gt; makes it
         possible to generate the incipit from the notational content of the MEI file. Does this
@@ -8141,6 +8163,9 @@
         <rng:optional>
           <rng:ref name="physDesc"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="physLoc"/>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="seriesStmt"/>
         </rng:optional>
@@ -8160,6 +8185,7 @@
         <memberOf key="model.textphraseLike"/>
         <memberOf key="model.textphraseLike.limited"/>
         <memberOf key="model.pubStmtPart"/>
+        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.annotLike" module="MEI.shared" type="model">
@@ -8198,6 +8224,7 @@
         <memberOf key="model.textphraseLike"/>
         <memberOf key="model.textphraseLike.limited"/>
         <memberOf key="model.pubStmtPart"/>
+        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.editionLike" module="MEI.shared" type="model">
@@ -8229,6 +8256,12 @@
         <memberOf key="model.rdgPart.critapp"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.eventPart" type="model" module="MEI.header">
+      <desc>Groups elements that may be used to provide structured description of an event.</desc>
+    </classSpec>
+    <classSpec ident="model.expressionLike" type="model" module="MEI.frbr">
+      <desc>Collects expressionlike elements.</desc>
+    </classSpec>
     <classSpec ident="model.identifierLike" module="MEI.shared" type="model">
       <desc>groups identifier-like elements.</desc>
       <classes>
@@ -8237,11 +8270,20 @@
         <memberOf key="model.pubStmtPart"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.imprintPart" module="MEI.shared" type="model">
+      <desc>Groups elements that may appear as part of a bibliographic imprint.</desc>
+    </classSpec>
     <classSpec ident="model.incipLike" module="MEI.shared" type="model">
       <desc>groups elements used to represent a textual or musical incipit.</desc>
+      <classes>
+        <memberOf key="model.workIdent"/>
+      </classes>
     </classSpec>
     <classSpec ident="model.instrDefLike" module="MEI.shared" type="model">
       <desc>groups elements used to declare a MIDI instrument.</desc>
+    </classSpec>
+    <classSpec ident="model.itemLike" type="model" module="MEI.frbr">
+      <desc>Collects itemLike elements.</desc>
     </classSpec>
     <classSpec ident="model.keyAccidLike" module="MEI.shared" type="model">
       <desc>groups elements that represent accidentals in a key signature.</desc>
@@ -8275,6 +8317,9 @@
     </classSpec>
     <classSpec ident="model.layerPart" module="MEI.shared" type="model">
       <desc>groups notated events that may appear at the layer level in all repertoires.</desc>
+    </classSpec>
+    <classSpec ident="model.manifestationLike" type="model" module="MEI.frbr">
+      <desc>Collects manifestationLike elements.</desc>
     </classSpec>
     <classSpec ident="model.mdivLike" module="MEI.shared" type="model">
       <desc>groups elements used to represent generic structural divisions of music notation.</desc>
@@ -8311,6 +8356,7 @@
       <classes>
         <memberOf key="model.textphraseLike"/>
         <memberOf key="model.textphraseLike.limited"/>
+        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.noteModifierLike" module="MEI.shared" type="model">
@@ -8350,6 +8396,15 @@
         <memberOf key="model.milestoneLike.text"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.relationLike" type="model" module="MEI.frbr">
+      <desc>Collects relationLike elements.</desc>
+    </classSpec>
+    <classSpec ident="model.workIdent" module="MEI.header" type="model">
+      <desc>groups elements that assist in the identification of a work.</desc>
+    </classSpec>
+    <classSpec ident="model.workLike" type="model" module="MEI.header">
+      <desc>Collects worklike elements.</desc>
+    </classSpec>
     <classSpec ident="model.rendLike" module="MEI.shared" type="model">
       <desc>groups elements that mark typographical features.</desc>
       <classes>
@@ -8358,14 +8413,20 @@
       </classes>
     </classSpec>
     <classSpec ident="model.repositoryLike" module="MEI.shared" type="model">
-      <desc>groups elements that denote a corporate entity that holds a bibliographic item.</desc>
+      <desc>Groups elements that denote a corporate entity that holds a bibliographic item.</desc>
       <classes>
-        <memberOf key="model.physDescPart"/>
         <memberOf key="model.nameLike.place"/>
       </classes>
     </classSpec>
     <classSpec ident="model.resourceLike" module="MEI.shared" type="model">
       <desc>groups non-text components that represent the same content as the musical text.</desc>
+    </classSpec>
+    <classSpec ident="model.respLike" module="MEI.shared" type="model">
+      <desc>Groups elements that are used to indicate intellectual or other significant
+        responsibility, for example within a bibliographic citation.</desc>
+      <classes>
+        <memberOf key="model.biblPart"/>
+      </classes>
     </classSpec>
     <classSpec ident="model.scoreDefLike" module="MEI.shared" type="model">
       <desc>groups elements that provide score meta-information.</desc>
@@ -8742,13 +8803,14 @@
       <classes>
         <memberOf key="model.textphraseLike"/>
         <memberOf key="model.textphraseLike.limited"/>
+        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.nameLike.geogName" module="MEI.namesdates" type="model">
-      <desc>groups geographic name elements.</desc>
+      <desc>Groups geographic name elements.</desc>
       <classes>
-        <memberOf key="model.pubStmtPart"/>
         <memberOf key="model.nameLike.place"/>
+        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.nameLike.place" module="MEI.namesdates" type="model">
@@ -9055,10 +9117,26 @@
           <rng:choice>
             <rng:text/>
             <rng:ref name="model.biblPart"/>
+            <rng:ref name="model.imprintPart"/>
             <rng:ref name="model.textphraseLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <!-- To produce a more strict bibliographic citation, the following content model may be used: -->
+      <!-- <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.titleLike"/>
+                <rng:ref name="model.identifierLike"/>
+                <rng:ref name="model.annotLike"/>
+                <rng:ref name="model.biblPart"/>
+                <rng:ref name="imprint"/>
+                <rng:ref name="creation"/>
+                <rng:ref name="genre"/>
+                <rng:ref name="relatedItem"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+           </content> -->
     </elementSpec>
     <elementSpec ident="body" module="MEI.shared">
       <desc>&#8211; Contains the whole of a single musical text, excluding any front or back matter.
@@ -9102,6 +9180,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
+        <memberOf key="model.listLike"/>
       </classes>
       <content>
         <rng:optional>
@@ -9186,6 +9265,7 @@
         clef.--></desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.event"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.clef.anl"/>
         <memberOf key="att.clef.ges"/>
@@ -9688,6 +9768,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.keySig.log"/>
+        <memberOf key="model.workIdent"/>
       </classes>
       <content>
         <rng:text/>
@@ -10363,7 +10444,7 @@
       </attList>
     </elementSpec>
     <elementSpec ident="repository" module="MEI.shared">
-      <desc>&#8211; Institution or agency which holds a bibliographic item.
+      <desc>&#8211; Institution, agency, or individual which holds a bibliographic item.
         <!-- Sub-units of the
         institution may be marked with &lt;repository&gt; sub-elements. The name of the list from
         which a controlled value is taken may be recorded using the authority attribute. This
@@ -10895,6 +10976,7 @@
         <memberOf key="att.tempo.ges"/>
         <memberOf key="att.tempo.anl"/>
         <memberOf key="model.controleventLike"/>
+        <memberOf key="model.workIdent"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -10933,9 +11015,11 @@
         element in the Text Encoding Initiative (TEI).--></desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.canonical"/>
+        <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.name"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.titleLike"/>
       </classes>
@@ -11377,7 +11461,7 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="creation" module="MEI.header">
+    <elementSpec ident="creation" module="MEI.shared">
       <desc>&#8211; Non-bibliographic details of the creation of an intellectual entity, in
         narrative form, such as the date, place, and circumstances of its composition.
         <!-- This element is
@@ -11385,7 +11469,9 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
+        <memberOf key="model.biblPart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -11501,7 +11587,7 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="extent" module="MEI.header">
+    <elementSpec ident="extent" module="MEI.shared">
       <desc>&#8211; Used to express size in terms other than physical dimensions, such as number of
         pages, number of records in file, number of bytes, performance duration for music, audio
         recordings and visual projections, etc.
@@ -11511,7 +11597,9 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="att.measurement"/>
+        <memberOf key="model.biblPart"/>
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
@@ -11723,6 +11811,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.mensur.log"/>
+        <memberOf key="model.workIdent"/>
       </classes>
       <content>
         <rng:text/>
@@ -11737,6 +11826,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.meterSig.log"/>
+        <memberOf key="model.workIdent"/>
       </classes>
       <content>
         <rng:text/>
@@ -11948,7 +12038,7 @@
       </content>
     </elementSpec>
     <elementSpec ident="physDesc" module="MEI.header">
-      <desc>(physical description) &#8211; Container for information about the location, appearance,
+      <desc>(physical description) &#8211; Container for information about the appearance,
         construction, or handling of physical materials, such as their dimension, quantity, color,
         style, and technique of creation.
         <!-- Dedicatory text and title page features may also be
@@ -11960,27 +12050,29 @@
         <memberOf key="att.bibl"/>
       </classes>
       <content>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
           <rng:ref name="model.physDescPart"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="physLoc" module="MEI.header">
-      <desc>(physical location) &#8211; Location of the source within a repository, e.g., shelf mark
-        or other locational information.
-        <!-- This element is modelled on an element in Encoded Archival
-        Description (EAD).--></desc>
+    <elementSpec ident="physLoc" module="MEI.shared">
+      <desc>(physical location) &#8211; Groups information about the physical location of a
+        bibliographic item, such as the repository in which it is located and its shelf mark.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="model.physDescPart"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.biblPart"/>
       </classes>
       <content>
+        <rng:optional>
+          <rng:ref name="model.repositoryLike"/>
+        </rng:optional>
         <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textphraseLike.limited"/>
-          </rng:choice>
+          <rng:ref name="model.identifierLike"/>
         </rng:zeroOrMore>
       </content>
     </elementSpec>
@@ -12110,49 +12202,35 @@
         </rng:choice>
       </content>
     </elementSpec>
-    <elementSpec ident="relatedItem" module="MEI.header">
-      <desc>(related item) &#8211; contains or references another bibliographic item which is
+    <elementSpec ident="relatedItem" module="MEI.shared">
+      <desc>(related item) &#8211; Contains or references another bibliographic item which is
         related to the present one in some specified manner, for example as a constituent or
-        alternative version of it.
-        <!-- A URI for the related item should be placed in the &lt;identifier&gt; sub-element. This
+        alternative version.
+        <!-- Any Uniform Resource Identifiers for the related item should be placed in &lt;identifier&gt; sub-elements. This
         element is modelled on the relatedItem element in the Text Encoding Initiative (TEI) and
         MODS schemas.--></desc>
       <classes>
         <memberOf key="att.datapointing"/>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="model.biblPart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.identifierLike"/>
-        </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="titleStmt"/>
-        </rng:optional>
-        <rng:ref name="macro.bibldescPart"/>
-        <rng:optional>
-          <rng:ref name="notesStmt"/>
-        </rng:optional>
-        <rng:ref name="macro.workPart"/>
-        <rng:optional>
-          <rng:ref name="classification"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="model.incipLike"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="contents"/>
-        </rng:optional>
-        <rng:zeroOrMore>
-          <rng:ref name="relatedItem"/>
+          <rng:choice>
+            <rng:ref name="model.biblLike"/>
+            <!-- ptr/ref aren't necessary as relatedItem is a member of att.pointing. -->
+            <!--<rng:ref name="model.locrefLike"/>-->
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
       <attList>
         <attDef ident="rel" usage="req">
           <desc>describes the relationship between the &lt;relatedItem&gt; and the resource
             described in the parent element, i.e., &lt;bibl&gt;, &lt;source&gt; or
-            &lt;relatedItem&gt;. Its values are based on MODS version 3.4.</desc>
+            &lt;relatedItem&gt;. The values are based on MODS version 3.4.</desc>
           <valList type="closed">
             <valItem ident="preceding">
               <desc>predecessor of the resource</desc>
@@ -12187,29 +12265,34 @@
         </attDef>
       </attList>
     </elementSpec>
-    <elementSpec ident="resp" module="MEI.header">
-      <desc>(responsibility) &#8211; A phrase describing the nature of a person's intellectual
-        responsibility.
+    <elementSpec ident="resp" module="MEI.shared">
+      <desc>(responsibility) &#8211; A phrase describing the nature of intellectual responsibility.
         <!-- The name of the list from which a controlled value is taken may be recorded
         using the authority attribute. This element is modelled on an element in the Text Encoding
         Initiative (TEI).--></desc>
       <classes>
+        <memberOf key="att.common"/>
         <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.coded"/>
+        <memberOf key="att.facsimile"/>
       </classes>
       <content>
         <rng:text/>
       </content>
     </elementSpec>
-    <elementSpec ident="respStmt" module="MEI.header">
+    <elementSpec ident="respStmt" module="MEI.shared">
       <desc>(responsibility statement) &#8211; Names one or more individuals, groups, or in rare
         cases, mechanical processes, responsible for creation or realization of the intellectual or
         artistic content.
         <!-- This element is modelled on an element in the Text Encoding Initiative
         (TEI).--></desc>
       <classes>
-        <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="model.pubStmtPart"/>
+        <memberOf key="model.respLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -12291,32 +12374,28 @@
           <rng:ref name="model.titleLike"/>
         </rng:oneOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="respStmt"/>
+          <rng:choice>
+            <rng:ref name="editor"/>
+            <rng:ref name="respStmt"/>
+          </rng:choice>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="model.identifierLike"/>
-        </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="contents"/>
-        </rng:optional>
-        <rng:zeroOrMore>
-          <rng:ref name="seriesStmt"/>
+          <rng:choice>
+            <rng:ref name="model.identifierLike"/>
+            <rng:ref name="biblScope"/>
+            <rng:ref name="contents"/>
+            <rng:ref name="seriesStmt"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="source" module="MEI.header">
-      <desc>&#8211; A bibliographic description of a source used in the creation of the electronic
-        file.
-        <!-- Multiple physDesc sub-elements may be used to describe the physically separate parts
-        of a single source. The data attribute may be used to reference one or more features that
-        occur in this particular source. A URI referencing a description of the related item may be
-        placed in the target attribute. This element is modelled on the sourceDesc element in the
-        Text Encoding Initiative (TEI).--></desc>
       <classes>
-        <memberOf key="att.datapointing"/>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.datapointing"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="model.manifestationLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -12327,21 +12406,26 @@
         </rng:optional>
         <rng:ref name="macro.bibldescPart"/>
         <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
           <rng:ref name="notesStmt"/>
         </rng:optional>
-        <rng:ref name="macro.workPart"/>
         <rng:optional>
           <rng:ref name="classification"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="model.incipLike"/>
+          <rng:ref name="itemList"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="contents"/>
+          <rng:ref name="componentGrp"/>
         </rng:optional>
-        <rng:zeroOrMore>
-          <rng:ref name="relatedItem"/>
-        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
       </content>
     </elementSpec>
     <elementSpec ident="sourceDesc" module="MEI.header">
@@ -12426,9 +12510,7 @@
       </attList>
     </elementSpec>
     <elementSpec ident="titleStmt" module="MEI.header">
-      <desc>(title statement) &#8211; Container for title and responsibility meta-data.
-        <!-- This element is
-        modelled on an element in the Text Encoding Initiative (TEI).--></desc>
+      <desc>(title statement) &#8211; Container for title and responsibility meta-data.</desc>
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
@@ -12438,7 +12520,9 @@
           <rng:ref name="model.titleLike"/>
         </rng:oneOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="respStmt"/>
+          <rng:choice>
+            <rng:ref name="model.respLike"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
     </elementSpec>
@@ -12554,13 +12638,13 @@
       </content>
     </elementSpec>
     <elementSpec ident="work" module="MEI.header">
-      <desc>&#8211; Provides a detailed description of the non-bibliographic aspects of a text,
-        specifically its history, language use, and high-level musical attributes: key, tempo,
-        meter, and medium of performance.</desc>
+      <desc>&#8211; Provides a detailed description of a work, specifically its history, language
+        use, and high-level musical attributes: key, tempo, meter, and medium of performance.</desc>
       <classes>
         <memberOf key="att.datapointing"/>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="model.workLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -12569,7 +12653,33 @@
         <rng:optional>
           <rng:ref name="titleStmt"/>
         </rng:optional>
-        <rng:ref name="macro.workPart"/>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="otherChar"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfMedium"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="audience"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="context"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="notesStmt"/>
         </rng:optional>
@@ -12577,14 +12687,14 @@
           <rng:ref name="classification"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="model.incipLike"/>
+          <rng:ref name="expressionList"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="contents"/>
+          <rng:ref name="componentGrp"/>
         </rng:optional>
-        <rng:zeroOrMore>
-          <rng:ref name="relatedItem"/>
-        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
       </content>
     </elementSpec>
     <elementSpec ident="eventList" module="MEI.header">
@@ -12609,15 +12719,17 @@
         <rng:oneOrMore>
           <rng:ref name="event"/>
         </rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="event" module="MEI.header">
       <desc>&#8211; Contains a description of an event, including the dates and locations of its
-        occurrence and prominent participants.
-        <!-- When a single date can be associated with the event,
-        the attributes in the att.datable class may provide a more machine-processable alternative
-        than date elements within the content of &lt;event&gt;. &lt;table&gt; and &lt;list&gt;
-        elements are allowed within &lt;event&gt; in order to accommodate structured content.--></desc>
+        occurrence and prominent participants.</desc>
+      <!-- This model allows for both semi-structured (using only model.eventPart members) and
+            "free" descriptions (using p, table, list, and castList) as well as a mixture of
+            the two approaches. -->
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.calendared"/>
@@ -12627,21 +12739,63 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:choice>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:text/>
-              <rng:ref name="model.textphraseLike.limited"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="model.tableLike"/>
-              <rng:ref name="model.listLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:choice>
+        <rng:optional>
+          <rng:ref name="model.headLike"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.eventPart"/>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.tableLike"/>
+            <rng:ref name="list"/>
+            <rng:ref name="castList"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
       </content>
+      <!-- <content>
+            <rng:choice>
+              <!-\- A semi-structured description using name, date, and place elements -\->
+              <rng:group>
+                <rng:optional>
+                  <!-\- A descriptive label, such as "First performance in Denmark" -\->
+                  <rng:ref name="model.headLike"/>
+                </rng:optional>
+                <rng:oneOrMore>
+                  <rng:ref name="model.eventPart"/>
+                </rng:oneOrMore>
+                <!-\- A single paragraph is allowed here in order to "grandfather in" MerMEId.  This paragraph
+                will be deprecated following MEI2013!  The <head> element should be used instead. Once this
+                paragraph is eliminated, the preceding model.eventPart reference above and the choice below
+                can be made optional. Until then, at least one element from model.eventPart must be required
+                in order to avoid an ambiguous content model when converting to XSD. -\->
+                <rng:optional>
+                  <rng:ref name="model.pLike"/>
+                </rng:optional>
+              </rng:group>
+              <!-\- A more free-form description using elements from the textcomponentLike class -\->
+              <rng:group>
+                <rng:oneOrMore>
+                  <rng:choice>
+                    <rng:ref name="model.pLike"/>
+                    <rng:ref name="model.tableLike"/>
+                    <!-\- The list and castList elements from model.listLike are invoked here
+                      individually so that biblList can be shared by both the structured and 
+                      unstructured models. -\->
+                    <rng:ref name="list"/>
+                    <rng:ref name="castList"/>
+                  </rng:choice>
+                </rng:oneOrMore>
+              </rng:group>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="biblList"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content> -->
     </elementSpec>
     <elementSpec ident="arpeg" module="MEI.cmn">
       <desc>(arpeggiation) &#8211; Indicates that the notes of a chord are to be performed
@@ -15594,26 +15748,6 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="item" module="MEI.text">
-      <desc>&#8211; Single item in a &lt;list&gt;.
-        <!-- This element is modelled on elements in Encoded
-        Archival Description (EAD), Text Encoding Initiative (TEI), and HTML.--></desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textcomponentLike"/>
-            <rng:ref name="model.textphraseLike"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-    </elementSpec>
     <elementSpec ident="l" module="MEI.text">
       <desc>(line of text) &#8211; Contains a single line of text within a line group.
         <!-- The n attribute
@@ -15670,8 +15804,9 @@
     <elementSpec ident="list" module="MEI.text">
       <desc>&#8211; A formatting element that contains a series of items separated from one another
         and arranged in a linear, often vertical, sequence.
-        <!--This element is modelled on elements in
-        Encoded Archival Description (EAD), Text Encoding Initiative (TEI), and HTML.--></desc>
+        <!--This element is modelled on
+            elements in Encoded Archival Description (EAD), Text Encoding Initiative (TEI), and
+            HTML.--></desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
@@ -15684,7 +15819,7 @@
           <rng:ref name="model.headLike"/>
         </rng:optional>
         <rng:oneOrMore>
-          <rng:ref name="item"/>
+          <rng:ref name="li"/>
         </rng:oneOrMore>
       </content>
       <attList>
@@ -15697,13 +15832,13 @@
             the mark or numeration system for each &lt;item&gt;.</desc>
           <valList type="closed">
             <valItem ident="simple">
-              <desc>items are not numbered or bulleted.</desc>
+              <desc>items are not numbered or bulleted</desc>
             </valItem>
             <valItem ident="marked">
-              <desc>bullet, box, dash, or other character is displayed before each item.</desc>
+              <desc>bullet, box, dash, or other character is displayed before each item</desc>
             </valItem>
             <valItem ident="ordered">
-              <desc>each item is numbered or lettered.</desc>
+              <desc>each item is numbered or lettered</desc>
             </valItem>
           </valList>
         </attDef>
@@ -15872,6 +16007,781 @@
           <rng:ref name="symbolDef"/>
         </rng:oneOrMore>
       </content>
+    </elementSpec>
+    <elementSpec ident="arranger" module="MEI.shared">
+      <desc>&#8211; A person or organization who transcribes a musical composition, usually for a
+        different medium from that of the original; in an arrangement the musical substance remains
+        essentially unchanged.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="audience" module="MEI.header">
+      <desc>&#8211; Defines the class of user for which the work is intended, as defined by age
+        group (e.g., children, young adults, adults, etc.), educational level (e.g., primary,
+        secondary, etc.), or other categorization.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="author" module="MEI.shared">
+      <desc>&#8211; The name of the creator of the intellectual content of a non-musical, literary
+        work.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="biblList" module="MEI.shared">
+      <desc>&#8211; List of bibliographic references.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.listLike"/>
+      </classes>
+      <content>
+        <rng:optional>
+          <rng:ref name="head"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.biblLike"/>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="biblScope" module="MEI.shared">
+      <desc>(scope of citation) &#8211; Defines the scope of a bibliographic reference, for example
+        as a list of page numbers, or a named subdivision of a larger work.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.measurement"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="captureMode" module="MEI.header">
+      <desc>(capture mode) &#8211; The means used to record notation, sound, or images in the
+        production of a source/manifestation (e.g., analogue, acoustic, electric, digital, optical
+        etc.).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="carrierForm" module="MEI.header">
+      <desc>(carrier form) &#8211; The specific class of material to which the physical carrier of
+        the source/manifestation belongs (e.g., sound cassette, videodisc, microfilm cartridge,
+        transparency, etc.). The carrier for a manifestation comprising multiple physical components
+        may include more than one form (e.g., a filmstrip with an accompanying booklet, a separate
+        sound disc carrying the sound track for a film, etc.).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="componentGrp" module="MEI.frbr">
+      <desc>(component group) &#8211; The child elements of this element are treated as parts of the
+        elements header. Although this is an implicit way of expressing FRBR's hasPart / isPartOf
+        -relationships, it avoids this terminology in order to prevent confusion with musical
+        terminology. All children of a component must be the same type as its parent: works within
+        work, items in item, etc.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+      </classes>
+      <content>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="model.workLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.expressionLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.manifestationLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.itemLike"/>
+          </rng:zeroOrMore>
+        </rng:choice>
+      </content>
+      <constraintSpec ident="checkComponentGrp" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:componentGrp">
+            <sch:assert test="every $i in ./child::mei:* satisfies $i/local-name() eq
+              ./parent::mei:*/local-name()"> Only child elements of the same name as the parent of
+              the componentGrp-element are allowed. </sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+    </elementSpec>
+    <elementSpec ident="composer" module="MEI.shared">
+      <desc>&#8211; The name of the creator of the intellectual content of a musical work.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="context" module="MEI.header">
+      <desc>&#8211; The historical, social, intellectual, artistic, or other context within which
+        the work was originally conceived (e.g., the 17th century restoration of the monarchy in
+        England, the aesthetic movement of the late 19th century, etc.) or the historical, social,
+        intellectual, artistic, or other context within which the expression was realized.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="distributor" module="MEI.shared">
+      <desc>&#8211; Name of a person or other agency responsible for the distribution of a
+        bibliographic item.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.imprintPart"/>
+        <memberOf key="model.pubStmtPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="editor" module="MEI.shared">
+      <desc>&#8211; The name of the individual(s), institution(s) or organization(s) acting in an
+        editorial capacity.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="expression" module="MEI.frbr">
+      <desc>&#8211; Intellectual or artistic realization of a work.</desc>
+      <classes>
+        <memberOf key="att.datapointing"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.expressionLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.identifierLike"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="titleStmt"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="otherChar"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfMedium"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="extent"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="scoreFormat"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="context"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classification"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="componentGrp"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
+      </content>
+    </elementSpec>
+    <elementSpec ident="expressionList" module="MEI.frbr">
+      <desc>&#8211; Gathers bibliographic expression entities.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.expressionLike"/>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="fileChar" module="MEI.header">
+      <desc>(file characteristics) &#8211; Standards or schemes used to encode the file (e.g.,
+        ASCII, SGML, etc.), physical characteristics of the file (e.g., recording density, parity,
+        blocking, etc.), and other characteristics that have a bearing on how the file can be
+        processed.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:text/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="fingerprint" module="MEI.header">
+      <desc>&#8211; Contains a string that uniquely identifies an item, such as those constructed by
+        combining groups of characters transcribed from specified pages of a printed item or a
+        file's checksum.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:text/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="funder" module="MEI.shared">
+      <desc>&#8211; Names of individuals, institutions, or organizations responsible for funding.
+        Funders provide financial support for a project; they are distinct from sponsors, who
+        provide intellectual support and authority.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="genre" module="MEI.shared">
+      <desc>&#8211; Term or terms that designate a category characterizing a particular style, form,
+        or content.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="imprint" module="MEI.shared">
+      <desc>&#8211; Information relating to the publication or distribution of a bibliographic
+        item.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:oneOrMore>
+          <rng:choice>
+            <rng:ref name="model.imprintPart"/>
+            <rng:ref name="model.dateLike"/>
+          </rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="respStmt"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.annotLike"/>
+          </rng:zeroOrMore>
+        </rng:oneOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="item" module="MEI.frbr">
+      <!-- Should item be in the MEI.header module?  That would allow use of source and item in "out-of-the-box" MEI. -->
+      <altIdent>item</altIdent>
+      <desc>&#8211; Single instance or exemplar of a source/manifestation.</desc>
+      <classes>
+        <memberOf key="att.datapointing"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.pointing"/>
+        <memberOf key="model.itemLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.identifierLike"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="macro.availabilityPart"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="physDesc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="physLoc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classification"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="componentGrp"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
+      </content>
+    </elementSpec>
+    <elementSpec ident="itemList" module="MEI.frbr">
+      <desc>&#8211; Gathers bibliographic item entities.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.itemLike"/>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="li" module="MEI.text">
+      <desc>(list item) &#8211; Single item in a &lt;list&gt;.
+        <!--This element is modelled on elements in
+            Encoded Archival Description (EAD), Text Encoding Initiative (TEI), and HTML.--></desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textcomponentLike"/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="librettist" module="MEI.shared">
+      <desc>&#8211; Person or organization who is a writer of the text of an opera, oratorio,
+        etc.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="lyricist" module="MEI.shared">
+      <desc>&#8211; Person or organization who is a writer of the text of a song.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="otherChar" module="MEI.header">
+      <desc>(other distinguishing characteristic) &#8211; Any characteristic that serves to
+        differentiate a work or expression from another.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="publisher" module="MEI.shared">
+      <desc>&#8211; Name of the organization responsible for the publication of a bibliographic
+        item.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.imprintPart"/>
+        <memberOf key="model.pubStmtPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="playingSpeed" module="MEI.header">
+      <desc>Playing speed for a sound recording is the speed at which the carrier must be operated
+        to produce the sound intended (e.g., 33 1/3 rpm, 19 cm/s, etc.)</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="pubPlace" module="MEI.shared">
+      <desc>(publication place) &#8211; Name of the place where a bibliographic item was
+        published.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.imprintPart"/>
+        <memberOf key="model.pubStmtPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="recipient" module="MEI.shared">
+      <desc>&#8211; The name of the individual(s), institution(s) or organization(s) receiving
+        correspondence.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="relation" module="MEI.frbr">
+      <desc>&#8211; A relation element describes the relationship between its parent and the object
+        referenced by the relation element's target attribute.
+        <!--The rel attribute describes the the nature
+            of the relationship. In this triple, the parent element serves as subject, the
+            referenced object as object. This element is used to implement FRBR-like structures in
+            MEI.--></desc>
+      <classes>
+        <memberOf key="att.pointing"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.rel"/>
+        <memberOf key="att.common"/>
+        <memberOf key="model.relationLike"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="relationList" module="MEI.frbr">
+      <desc>&#8211; Gathers bibliographic relation elements.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.relationLike"/>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="scoreFormat" module="MEI.header">
+      <desc>&#8211; Describes the type of score used to represent a musical composition (e.g., short
+        score, full score, condensed score, close score, etc.).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+      </classes>
+      <content>
+        <rng:text/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="series" module="MEI.shared">
+      <desc>&#8211; Contains information about the serial publication in which a bibliographic item
+        has appeared.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.titleLike"/>
+            <rng:ref name="model.locrefLike"/>
+            <rng:ref name="editor"/>
+            <rng:ref name="respStmt"/>
+            <rng:ref name="extent"/>
+            <rng:ref name="model.identifierLike"/>
+            <rng:ref name="model.pLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="soundChan" module="MEI.header">
+      <desc>(sound channels) &#8211; Reflects the number of sound channels used to make a recording
+        (monaural, stereophonic, quadraphonic, etc.).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="specRepro" module="MEI.header">
+      <desc>(special reproduction characteristic) &#8211; The equalization system, noise reduction
+        system, etc. used in making the recording (e.g., NAB, DBX, Dolby, etc.).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="sponsor" module="MEI.shared">
+      <desc>&#8211; Names of sponsoring individuals, organizations or institutions. Sponsors give
+        their intellectual authority to a project; they are to be distinguished from funders, who
+        provide the funding but do not necessarily take intellectual responsibility.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.respLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="tapeConfig" module="MEI.header">
+      <desc>(tape configuration) &#8211; Number of tracks on a sound tape (e.g., eight track, twelve
+        track).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
+    <elementSpec ident="textLang" module="MEI.shared">
+      <desc>(text language) &#8211; Identifies the languages and writing systems within the work
+        described by a bibliographic description, not the language of the description.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="model.biblPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="mainLang">
+          <desc>(main language) supplies a code which identifies the chief language used in the
+            bibliographic work.</desc>
+          <datatype>
+            <rng:data type="language"/>
+          </datatype>
+        </attDef>
+        <attDef ident="otherLangs">
+          <desc>(other languages) one or more codes identifying any other languages used in the
+            bibliographic work.</desc>
+          <datatype>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="language"/>
+              </rng:oneOrMore>
+            </rng:list>
+          </datatype>
+        </attDef>
+      </attList>
     </elementSpec>
   </schemaSpec>
 </div>
