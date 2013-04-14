@@ -140,12 +140,10 @@
         text and music:</p>
       <p>
         <specList>
-          <specDesc key="scoreDef"
-            atts="page.width page.height page.leftmar page.topmar
+          <specDesc key="scoreDef" atts="page.width page.height page.leftmar page.topmar
             page.rightmar page.bottommar system.leftmar system.topmar system.rightmar
             text.name text.fam text.size music.name music.size lyric.name lyric.fam
-            lyric.size"
-          />
+            lyric.size"/>
         </specList>
       </p>
       <p>There are other attributes that allow the specification of many further details of a score.
@@ -194,19 +192,22 @@
         in the example below utilize these attributes:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <scoreDef meter.count="6" meter.unit="8">
-          <!-- Piccolo sounds 12 semitones higher than written (and encoded in MEI). -->
-          <staffDef n="1" xml:id="cmn.P1" label="Piccolo" label.abbr="Picc." lines="5" clef.line="2"
-            clef.shape="G" key.sig="4f" key.mode="major" trans.semi="12" trans.diat="0"/>
-          <staffDef n="2" xml:id="cmn.P2" label="Flute" label.abbr="Fl." lines="5" clef.line="2"
-            clef.shape="G" key.sig="4f" key.mode="major"/>
-          <staffDef n="3" xml:id="cmn.P3" label="Oboe" label.abbr="Ob." lines="5" clef.line="2"
-            clef.shape="G" key.sig="4f" key.mode="major"/>
-          <staffDef n="4" xml:id="cmn.P4" label="Bassoon" label.abbr="Bsn." lines="5" clef.line="4"
-            clef.shape="F" key.sig="4f" key.mode="major"/>
-          <!-- Clarinet sounds a minor third (two diatonic steps or three semitones) higher than written.  -->
-          <staffDef n="5" xml:id="cmn.P5" label="Clarinet in E♭" label.abbr="E♭ Cl." lines="5"
-            clef.line="2" clef.shape="G" key.sig="1f" key.mode="major" trans.semi="3" trans.diat="2"
-          />
+          <staffGrp>
+            <!-- Piccolo sounds 12 semitones higher than written (and encoded in MEI). -->
+            <staffDef n="1" xml:id="cmn.P1" label="Piccolo" label.abbr="Picc." lines="5"
+              clef.line="2" clef.shape="G" key.sig="4f" key.mode="major" trans.semi="12"
+              trans.diat="0"/>
+            <staffDef n="2" xml:id="cmn.P2" label="Flute" label.abbr="Fl." lines="5" clef.line="2"
+              clef.shape="G" key.sig="4f" key.mode="major"/>
+            <staffDef n="3" xml:id="cmn.P3" label="Oboe" label.abbr="Ob." lines="5" clef.line="2"
+              clef.shape="G" key.sig="4f" key.mode="major"/>
+            <staffDef n="4" xml:id="cmn.P4" label="Bassoon" label.abbr="Bsn." lines="5"
+              clef.line="4" clef.shape="F" key.sig="4f" key.mode="major"/>
+            <!-- Clarinet sounds a minor third (two diatonic steps or three semitones) higher than written.  -->
+            <staffDef n="5" xml:id="cmn.P5" label="Clarinet in E♭" label.abbr="E♭ Cl." lines="5"
+              clef.line="2" clef.shape="G" key.sig="1f" key.mode="major" trans.semi="3"
+              trans.diat="2"/>
+          </staffGrp>
         </scoreDef>
       </egXML>
 
@@ -319,7 +320,7 @@
             they sometimes also appear in CMN:</p>
           <list type="simple">
             <item><label>breve</label> double whole</item>
-            <item><label>longa</label> quadruple whole</item>
+            <item><label>long</label> quadruple whole</item>
           </list>
           <p>Please note that their mensural counterparts bear different names in order to clearly
             distinguish between repertoires.</p>
@@ -405,9 +406,9 @@
             <head>Cross-staff chord</head>
             <graphic url="Images/modules/cmn/xchord-300.png" width="500px"/>
           </figure>
-          <p>The following code snippet demonstrates the encoding of the first chord in the last
-            measure in the image above. The <att>stem.with</att> attribute must occur on all the
-            notes or chords attached to the cross-staff stem.</p>
+          <p>The following code snippet demonstrates one method of encoding the first chord in the
+            last measure in the image above. The <att>stem.with</att> attribute must occur on all
+            the notes or chords attached to the cross-staff stem.</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff n="1">
               <layer n="1">
@@ -424,11 +425,11 @@
             </staff>
           </egXML>
           <p>Alternatively, the encoder may choose to treat the notes in the lower staff as
-            belonging to the first one and to <soCalled>displace</soCalled> them using the
-              <att>staff</att> attribute. Doing this, however, requires filling the time that those
-            notes would normally occupy using the <gi>space</gi> element described in section <ptr
-              target="#noteSpacing"/>. Using this mechanism, the example above could also be encoded
-            like so:</p>
+            logically belonging to the top staff and to <soCalled>displace</soCalled> them using the
+              <att>staff</att> attribute on <gi>note</gi>. Doing this, however, may require filling
+            the time that those notes would normally occupy using the <gi>space</gi> element
+            described in section <ptr target="#noteSpacing"/>. Using this mechanism, the example
+            above could also be encoded like so:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples">
             <staff n="1">
               <layer n="1">
@@ -441,6 +442,7 @@
             </staff>
             <staff n="2">
               <layer n="1">
+                <!-- the time used by the notes on staff 2 filled with non-sounding "space" -->
                 <space dur="2"/>
                 <!-- following content -->
               </layer>
@@ -605,13 +607,17 @@
         element is used, no matter the durations of the contained notes. The visual rendition of a
         set of beamed notes is presumed to be handled by rendering processes.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer> ... <beam>
+        <layer>
+          <!--...-->
+          <beam>
             <note dur="16"/>
             <note dur="32"/>
             <note dur="32"/>
             <note dur="16" dots="1"/>
             <note dur="32"/>
-          </beam> ... </layer>
+          </beam>
+          <!-- ...-->
+        </layer>
       </egXML>
 
       <p>From the 19th century onwards, it became quite common to break secondary beams to increase
@@ -832,34 +838,38 @@
         tie markings; that is, a separate tie is drawn for every pitch in the chord that remains
         unchanged in the succeeding chord.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer>
-          <chord dur="4" tie="i">
-            <note pname="f"/>
-            <note pname="c"/>
-            <note pname="a"/>
-          </chord>
-          <chord dur="4" tie="t">
-            <note pname="f"/>
-            <note pname="c"/>
-            <note pname="a"/>
-          </chord>
-        </layer>
+        <staff>
+          <layer>
+            <chord dur="4" tie="i">
+              <note pname="f"/>
+              <note pname="c"/>
+              <note pname="a"/>
+            </chord>
+            <chord dur="4" tie="t">
+              <note pname="f"/>
+              <note pname="c"/>
+              <note pname="a"/>
+            </chord>
+          </layer>
+        </staff>
       </egXML>
 
       <p>This is equivalent to the following, more verbose version:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer>
-          <chord dur="4">
-            <note pname="f" tie="i"/>
-            <note pname="c" tie="i"/>
-            <note pname="a" tie="i"/>
-          </chord>
-          <chord dur="4">
-            <note pname="f" tie="t"/>
-            <note pname="c" tie="t"/>
-            <note pname="a" tie="t"/>
-          </chord>
-        </layer>
+        <staff>
+          <layer>
+            <chord dur="4">
+              <note pname="f" tie="i"/>
+              <note pname="c" tie="i"/>
+              <note pname="a" tie="i"/>
+            </chord>
+            <chord dur="4">
+              <note pname="f" tie="t"/>
+              <note pname="c" tie="t"/>
+              <note pname="a" tie="t"/>
+            </chord>
+          </layer>
+        </staff>
       </egXML>
 
       <p>A <term>slur</term> is a curved line that connects a <hi rend="bold">group of notes</hi> of
@@ -876,9 +886,11 @@
           <emph>i</emph>, <hi rend="bold">m</hi> or <emph>t</emph> are followed by a single digit in
         the range <emph>1 to 6</emph>, as in the following example:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <note pname="f" oct="4" dur="4" accid="s" slur="i1"/>
-        <note pname="g" oct="4" dur="4" slur="m1"/>
-        <note pname="a" oct="4" dur="4" slur="t1"/>
+        <layer>
+          <note pname="f" oct="4" dur="4" accid="s" slur="i1"/>
+          <note pname="g" oct="4" dur="4" slur="m1"/>
+          <note pname="a" oct="4" dur="4" slur="t1"/>
+        </layer>
       </egXML>
 
       <p>The reason for this difference is that slurs, unlike ties, may overlap, so that a second
@@ -889,52 +901,58 @@
         the preceding note and by the one that it starts. The third note is affected by the slur
         that begins on note one and by the one that starts on note two.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer>
-          <note pname="g" oct="4" dur="2" slur="i1"/>
-          <note pname="a" oct="4" dur="8" slur="i2"/>
-          <note pname="g" oct="4" dur="8" slur="t2"/>
-          <note pname="f" oct="4" dur="4" accid="s" slur="t1"/>
-        </layer>
-        <layer>
-          <note pname="b" oct="3" dur="2" dots="1" slur="i1"/>
-          <note pname="d" oct="4" dur="4" slur="t1"/>
-        </layer>
+        <staff>
+          <layer>
+            <note pname="g" oct="4" dur="2" slur="i1"/>
+            <note pname="a" oct="4" dur="8" slur="i2"/>
+            <note pname="g" oct="4" dur="8" slur="t2"/>
+            <note pname="f" oct="4" dur="4" accid="s" slur="t1"/>
+          </layer>
+          <layer>
+            <note pname="b" oct="3" dur="2" dots="1" slur="i1"/>
+            <note pname="d" oct="4" dur="4" slur="t1"/>
+          </layer>
+        </staff>
       </egXML>
 
       <p>While ties are not normally allowed to cross layers or staves, slurs may. The following
         example demonstrates how cross-staff slurs may be encoded using the <att>slur</att>
         attribute:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <staff>
-          <layer>
-            <note pname="g" oct="4" dur="2" slur="i1"/>
-            <note pname="a" oct="4" dur="8" slur="m1"/>
-            <note pname="g" oct="4" dur="8" slur="m1"/>
-            <note pname="f" oct="4" dur="4" accid="s" slur="m1"/>
-          </layer>
-        </staff>
-        <staff>
-          <layer>
-            <note pname="b" oct="3" dur="2" dots="1" slur="t1"/>
-            <note pname="d" oct="4" dur="4"/>
-          </layer>
-        </staff>
+        <measure>
+          <staff>
+            <layer>
+              <note pname="g" oct="4" dur="2" slur="i1"/>
+              <note pname="a" oct="4" dur="8" slur="m1"/>
+              <note pname="g" oct="4" dur="8" slur="m1"/>
+              <note pname="f" oct="4" dur="4" accid="s" slur="m1"/>
+            </layer>
+          </staff>
+          <staff>
+            <layer>
+              <note pname="b" oct="3" dur="2" dots="1" slur="t1"/>
+              <note pname="d" oct="4" dur="4"/>
+            </layer>
+          </staff>
+        </measure>
       </egXML>
 
       <!--  Perhaps this should only be permitted when the analysis module is enabled. Hmmm ... -->
       <p>To support analytical operations, <att>slur</att> may take on more than one value. For
         example, the example above may be more explicitly encoded as:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <layer>
-          <note pname="g" oct="4" dur="2" slur="i1"/>
-          <note pname="a" oct="4" dur="8" slur="m1 i2"/>
-          <note pname="g" oct="4" dur="8" slur="m1 t2"/>
-          <note pname="f" oct="4" dur="4" accid="s" slur="t1"/>
-        </layer>
-        <layer>
-          <note pname="b" oct="3" dur="2" dots="1" slur="i1"/>
-          <note pname="d" oct="4" dur="4" slur="t1"/>
-        </layer>
+        <staff>
+          <layer>
+            <note pname="g" oct="4" dur="2" slur="i1"/>
+            <note pname="a" oct="4" dur="8" slur="m1 i2"/>
+            <note pname="g" oct="4" dur="8" slur="m1 t2"/>
+            <note pname="f" oct="4" dur="4" accid="s" slur="t1"/>
+          </layer>
+          <layer>
+            <note pname="b" oct="3" dur="2" dots="1" slur="i1"/>
+            <note pname="d" oct="4" dur="4" slur="t1"/>
+          </layer>
+        </staff>
       </egXML>
 
       <p>Slurs and ties that cross system or page breaks are often split into two separate symbols
@@ -964,21 +982,24 @@
             </layer>
           </staff>
           <slur/>
+          <tempo/>
+          <dynam/>
         </measure>
       </egXML>
 
-      <p>Obviously, the slur in the above example needs to be <soCalled>attached</soCalled> to the
-        notes somehow. The <soCalled>vertical assignment</soCalled> can be indicated for the example
-        above using the <att>staff</att> and <att>layer</att> attributes like so:</p>
+      <p>Obviously, to be complete the slur in the above example needs to be
+          <soCalled>attached</soCalled> to the notes somehow. The <soCalled>vertical
+          assignment</soCalled> can be indicated for the example above using the <att>staff</att>
+        and <att>layer</att> attributes like so:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <slur staff="1" layer="1"/>
       </egXML>
 
       <p>For the <soCalled>horizontal assignment</soCalled>, the encoder may choose between two
-        different mechanisms. The first uses timestamp and duration as described in section <ptr
+        different mechanisms. The first uses two timestamp attributes as described in section <ptr
           target="#cmnTstamp"/>. The start and end points of the slur may be indicated thusly:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <slur staff="1" layer="1" tstamp="1" dur="0m+4"/>
+        <slur staff="1" layer="1" tstamp="1" tstamp2="0m+4"/>
       </egXML>
 
       <p>By using <att>tstamp</att> and <att>dur</att>, the encoder denotes a rather loose
@@ -1032,13 +1053,14 @@
         the <ident type="class">model.controleventLike</ident> class, are encoded at the end of the
           <gi>measure</gi> to which they belong. This requires <gi>dynam</gi> to be assigned to a
         certain <gi>staff</gi> using the <att>staff</att> attribute, which refers to the target
-        element's <att>n</att> attribute.</p>
+        element's <att>n</att> attribute. Layers within the staff are assumed to have the same
+        dynamic marking.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <dynam staff="1">p</dynam>
       </egXML>
 
       <p>When the layers of a staff have different dynamic indications, the <att>layer</att>
-        attribute may be used to associate the dynamic marking with a particular layer:</p>
+        attribute may be used to associate a dynamic marking with a particular layer:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <dynam staff="1" layer="1">p</dynam>
         <dynam staff="1" layer="2">mf</dynam>
@@ -1081,37 +1103,37 @@
         the <term>crescendo</term> in the example above may be marked:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <!-- using the dur attribute -->
-        <dynam staff="2" place="above" tstamp="2.5" dur="1m+1">cresc. poco a poco</dynam>
+        <dynam staff="2" place="above" tstamp="2.5" tstamp2="1m+1">cresc. poco a poco</dynam>
         <!-- using the endid attribute -->
-        <dynam staff="2" place="above" tstamp="2.5" endid="ID of ending note">cresc. poco a
+        <dynam staff="2" place="above" tstamp="2.5" endid="ID_of_ending_note">cresc. poco a
           poco</dynam>
       </egXML>
 
-      <p>Any combination of <att>tstamp</att>, <att>startid</att>, <att>dur</att>, and
+      <p>Any combination of <att>tstamp</att>, <att>startid</att>, <att>tstamp2</att>, and
           <att>endid</att> attributes may be used to define the scope of a dynamic, although the
-          <att>tstamp</att> and <att>dur</att> or the <att>startid</att> and <att>endid</att>
-        combinations are the most common combinations. For example, the following alternatives are
+          <att>tstamp</att> and <att>tstamp2</att> or the <att>startid</att> and <att>endid</att>
+        combinations are the most likely combinations. For example, the following alternatives are
         all possibilities for marking up a <term>crescendo</term>. The exact choice of attributes is
-        often processor dependent.</p>
+        often task or processor dependent.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <!-- tstamp attribute indicates starting point, dur attribute marks the end -->
-        <dynam staff="2" place="above" tstamp="2.5" dur="1m+1">cresc. poco a poco</dynam>
+        <dynam staff="2" place="above" tstamp="2.5" tstamp2="1m+1">cresc. poco a poco</dynam>
         <!-- tstamp attribute indicates starting point, endid attribute marks the end -->
         <dynam staff="2" place="above" tstamp="2.5" endid="ID of last note">cresc. poco a
           poco</dynam>
         <!-- startid attribute indicates starting point, dur attribute marks the end -->
-        <dynam staff="2" place="above" startid="ID of starting note" dur="1m+1">cresc. poco a
+        <dynam staff="2" place="above" startid="ID_of_starting_note" tstamp2="1m+1">cresc. poco a
           poco</dynam>
         <!-- startid attribute indicates starting point, endid attribute marks the end -->
-        <dynam staff="2" place="above" startid="ID of starting note" endid="ID of ending note"
+        <dynam staff="2" place="above" startid="ID_of_starting_note" endid="ID_of_ending_note"
           >cresc. poco a poco</dynam>
       </egXML>
 
       <p>All musical elements affected by the <gi>dynam</gi> may be explicitly specified using the
-          <att>plist</att> attribute, which contains <att>xml:id</att> attribute values:</p>
+          <att>plist</att> attribute, which contains <att>xml:id</att> attribute value
+        references:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <dynam staff="2" place="above" startid="#note1" endid="#note4"
-          plist="#note1 #note2 #note3
+        <dynam staff="2" place="above" startid="#note1" endid="#note4" plist="#note1 #note2 #note3
           #note4">cresc. poco a poco</dynam>
       </egXML>
 
@@ -1136,7 +1158,7 @@
       <p>Positioning of hairpins is possible using the same attributes as for <gi>dynam</gi>, so the
         example above could be encoded as:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <hairpin form="cres" staff="2" layer="1" place="above" tstamp="2.5" dur="1m+1"/>
+        <hairpin form="cres" staff="2" layer="1" place="above" tstamp="2.5" tstamp2="1m+1"/>
       </egXML>
 
       <!-- TODO: discuss the other visual attributes of hairpin:
@@ -1381,15 +1403,15 @@
         <p>As seen in the example above, the <gi>bTrem</gi> element itself does not have a duration.
           Instead, this duration is derived from that of the child element. The <att>measperf</att>
           attribute value indicates the exact note values in an aural rendition of a measured
-          tremolo, i.e., 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4, 128ths=5, 256ths=6. The stem
-          modifier must also be explicity set on the child <gi>note</gi> or <gi>chord</gi> element
-          for a complete visual representation. The number of slashes present on the note may
-          disagree with the number of slashes that should be present according to the
-            <att>measperf</att> attribute, especially in music manuscripts.</p>
+          tremolo, i.e., quarters, 8ths, and so on. The stem modifier must also be explicity set on
+          the child <gi>note</gi> or <gi>chord</gi> element for a complete visual representation.
+          The number of slashes present on the note may disagree with the number of slashes that
+          should be present according to the <att>measperf</att> attribute, especially in music
+          manuscripts.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <layer>
             <note/>
-            <bTrem measperf="3">
+            <bTrem measperf="32">
               <note pname="g" oct="4" dur="4" stem.mod="3slash"/>
             </bTrem>
             <note/>
@@ -1409,15 +1431,15 @@
           element. While it mostly behaves the same as <gi>bTrem</gi>, a fingered tremolo requires
           exactly two child elements, either being a <gi>note</gi> or <gi>chord</gi>. The
             <att>measperf</att> attribute value indicates the exact note values in an aural
-          rendition of a measured tremolo, i.e., 4ths or 8ths=1, 16ths=2, 32nds=3, 64ths=4,
-          128ths=5, 256ths=6. The number of slashes present in the source is captured by the
-            <att>slash</att> attribute. The number of slashes present may disagree with the number
-          indicated by the <att>measperf</att> attribute, especially in manuscript sources.</p>
+          rendition of a measured tremolo, i.e., 4ths, 8ths, 16ths, etc. The number of slashes
+          present in the source is captured by the <att>slash</att> attribute. The number of slashes
+          present may disagree with the rhythmic value indicated by the <att>measperf</att>
+          attribute, especially in manuscript sources.</p>
         <!-- Naive encoder captures as beam! -->
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
           <layer>
             <note/>
-            <fTrem measperf="3">
+            <fTrem measperf="32">
               <note pname="g" oct="4" dur="4"/>
               <note pname="c" oct="4" dur="4"/>
             </fTrem>
@@ -1444,10 +1466,10 @@
           the encoding, MEI offers the <gi>fermata</gi> element. This element, which is a member of
           the <ident type="class">model.controleventLike</ident> class and therefore requires the
           use of such attributes as <att>staff</att>, <att>layer</att>, <att>tstamp</att> or
-            <att>startid</att>, allows to specify the direction of the fermata using the
+            <att>startid</att>, allows to specify the orientation of the fermata using the
             <att>form</att> attribute.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <fermata staff="2" tstamp="4" form="upright" place="above"/>
+          <fermata staff="2" tstamp="4" form="norm" place="above"/>
         </egXML>
         <p>The <att>shape</att> attribute may be used to indicate whether the fermata is rendered as
           a semicircle ("curved") or semisquare ("square"). If the fermata is rendered with a
@@ -1708,8 +1730,7 @@
       <egXML xmlns="http://www.tei-c.org/ns/Examples">
         <measure>
           <reh staff="1" place="above" tstamp="1">A</reh>
-          <reh staff="7 11" place="within" tstamp="1">A</reh>
-          <reh staff="16" place="below" tstamp="1">A</reh>
+          <reh staff="7 11" place="below" tstamp="1">A</reh>
         </measure>
       </egXML>
 
@@ -1896,9 +1917,9 @@
           preceding measures to be repeated.</p>
         <p>All elements described in the following allow for the capture of the original symbol by
           using either the <att>facs</att> or <att>altsym</att> attribute, however. See <ptr
-            target="#facsimiles"/> and <ptr target="#userSymbols"/> for further details. On all these
-          elements the <att>expand</att> attribute may be used to indicate whether to render the
-          repeat symbol ("false"), or the repeated content ("true").</p>
+            target="#facsimiles"/> and <ptr target="#userSymbols"/> for further details. On all
+          these elements the <att>expand</att> attribute may be used to indicate whether to render
+          the repeat symbol ("false"), or the repeated content ("true").</p>
       </div>
     </div>
   </div>
