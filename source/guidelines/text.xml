@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  © 2012 by the Music Encoding Initiative (MEI) Council.
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://www.osedu.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="text" n="0">
+  <head>Text in MEI</head>
+  <p>This chapter describes methods for encoding textual content with MEI. Textual information on
+    scores has several different uses, although some text is closer to music notation than other
+    kinds. For example, tempo marks, directives and lyrics are directly related to the functionality
+    of the notated music and are, therefore, described in other chapters (see for example <ptr
+      target="#lyricsDesc"/> and <ptr target="#textDirectives"/>). This chapter, on the other hand,
+    focuses on the text that accompanies the score, i.e., paratext (prefatory material, title pages,
+    back matter, appendices, etc.), titles, prose, poetry, etc.</p>
+  <p>Most of the elements described here take inspiration from encoding formats that deal primarily
+    with text, such as HTML and the Text Encoding Initiative (TEI). These elements are provided to
+    encode relatively basic textual information. For deeper encoding of text, these Guidelines
+    recommend consideration of other text-specific encoding formats with embedded MEI markup.</p>
+
+  <div type="div2" xml:id="textDivisions">
+    <head>Organizing Text into Divisions</head>
+    <p>Text can be organized in different parts, for example in chapters or sections. The
+        <gi scheme="MEI">div</gi> element is used to encode such structural divisions.</p>
+    <p>
+      <specList>
+        <specDesc key="div" atts="type subtype"/>
+      </specList>
+    </p>
+    <p>For example, printed scores, before the actual notation, can have text that can be organized
+      in multiple sections (e.g. a preface, a critical report, performance instructions, etc. for
+      which see the following sections); each of these sections should be identified by a different
+        <gi scheme="MEI">div</gi> element. Text might also occur in between music sections (see <ptr
+        target="#mdivContent"/>), for example in a collection of romantic piano works, a few pieces
+      might be preceded or followed by poetry. Such text should be encoded with the <gi scheme="MEI">div</gi>
+      element, as demonstrated in the following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <mdiv>
+        <score>
+          <section>
+            <!-- Score of Franz Liszt's "Sonetto 104 del Petrarca -->
+          </section>
+          <div>
+            <!-- Text of Francesco Petrarca's Sonett n. 104. -->
+            <lg>
+              <l>L'aspectata vertù, che 'n voi fioriva</l>
+              <l>quando Amor cominciò darvi bataglia,</l>
+              <!-- ... -->
+            </lg>
+          </div>
+        </score>
+      </mdiv>
+    </egXML>
+
+    <p>Textual divisions may have titles or other forms of headers, which are encoded with the
+        <gi scheme="MEI">head</gi> element.</p>
+
+    <p>
+      <specList>
+        <specDesc key="head"/>
+      </specList>
+    </p>
+
+    <p>The following example shows the encoding of a preface translated into three different
+      languages, each with a different title:</p>
+
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <div xml:lang="en">
+        <head>Preface</head>
+        <!-- text -->
+      </div>
+      <div xml:lang="de">
+        <head>Vorwort</head>
+        <!-- text -->
+      </div>
+      <div xml:lang="it">
+        <head>Prefazione</head>
+        <!-- text -->
+      </div>
+    </egXML>
+    <p>Having said that <gi scheme="MEI">div</gi> identifies any structural organization of text, it is often
+      helpful to distinguish the typology of division. The attributes <att>type</att> and
+        <att>subtype</att> can be used for this purpose. It is required that <att>type</att> be
+      present when <att>subtype</att> is used, though their values can be freely set by the
+      encoder.</p>
+
+    <p>The following example shows the use of <att>type</att> to indicate three prefaces in English,
+      German and Italian are columns on the same page.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <div xml:lang="en" type="column" n="1">
+        <head>Preface</head>
+        <!-- text -->
+      </div>
+      <div xml:lang="de" type="column" n="2">
+        <head>Vorwort</head>
+        <!-- text -->
+      </div>
+      <div xml:lang="it" type="column" n="3">
+        <head>Prefazione</head>
+        <!-- text -->
+      </div>
+      <pb/>
+    </egXML>
+  </div>
+
+  <div type="div2" xml:id="textProse">
+    <head>Paragraphs</head>
+    <p>Paragraphs are fundamental to prose text and typically group one or more sentences that form
+      a logical passage. A paragraph is usually typographically distinct: The text begins on a new
+      line and the first letter of the content is often indented, enlarged, or both.</p>
+    <p>A paragraph is encoded with the <gi scheme="MEI">p</gi> element:</p>
+    <p>
+      <specList>
+        <specDesc key="p"/>
+      </specList>
+    </p>
+    <p>Prose text is used for several different purposes within a MEI document, therefore <gi scheme="MEI">p</gi>
+      can occur in many situations. For example, it may be used within metadata elements (see <ptr
+        target="#header"/>):</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <samplingDecl>
+        <p>The encoding contains only the first 5 measures.</p>
+      </samplingDecl>
+    </egXML>
+    <p>Alternatively, paragraphs may be part of the document contents (and therefore encoded within
+        <gi scheme="MEI">music</gi>), either as <ref target="#textFrontBack">paratextual material</ref> or within
+      the music notation. In these cases, a paragraph will likely be contained by a <gi scheme="MEI">div</gi> or
+      other elements containing prose (e.g. <gi scheme="MEI">annot</gi>, <gi scheme="MEI">figDesc</gi>, etc.).</p>
+    <p>The following example shows a paragraph in a preface section:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <front>
+        <div>
+          <head>The Preludes<lb/>Symphonic Poem No.3 by F. Liszt.</head>
+          <p>What else is our life but a series of preludes to that unknown Hymn, the first and
+            solemn note of which is intoned by Death?</p>
+        </div>
+      </front>
+    </egXML>
+  </div>
+  <div type="div2" xml:id="textLists">
+    <head>Lists</head>
+    <p>When a text contains lists, they can be encoded with the following elements:</p>
+    <p>
+      <specList>
+        <specDesc key="list" atts="type subtype"/>
+        <specDesc key="head"/>
+        <specDesc key="item"/>
+      </specList>
+    </p>
+    <p>The <gi scheme="MEI">list</gi> element can identify any kind of list; the <att>form</att> attribute can be
+      used to specify whether the list is ordered, unordered etc. Each item in the list is encoded
+      with the <gi scheme="MEI">item</gi> element. The <att>n</att> can be used to record a label for a list
+      item, as in the following example:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <p>The modulation follows the following steps: <list form="ordered">
+          <li n="1">C major</li>
+          <li n="2">A minor</li>
+          <li n="3">D major seventh</li>
+          <li n="4">G major</li>
+        </list>
+      </p>
+    </egXML>
+    <p>Occasionally, lists have headers or titles, which can be encoded with <gi scheme="MEI">head</gi>:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <list>
+        <head>Ornaments in different languages</head>
+        <li xml:lang="en" n="English">Turn</li>
+        <li xml:lang="it" n="Italian">Gruppetto</li>
+        <li xml:lang="fr" n="French">Gruppetto</li>
+        <li xml:lang="de" n="German">Doppelschlag</li>
+      </list>
+    </egXML>
+  </div>
+  <div type="div2" xml:id="textQuote">
+    <head>Quotation</head>
+    <p>It is common, in many types of texts, to find quotations. A quotation is typically attributed
+      to another text other than the one being encoded. Often, the quoted material is
+      typographically distinct from the surrounding text; i.e., surrounded by so-called
+        <soCalled>quote marks</soCalled> or rendered as a separate block of text. The <gi scheme="MEI">quote</gi>
+      element is used to mark this function:</p>
+    <p>
+      <specList>
+        <specDesc key="quote"/>
+      </specList>
+    </p>
+    <p>The following examples show the use of <gi scheme="MEI">quote</gi>.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <p>Hugh MacDonald has argued that Liszt's Symphonic Poems were meant to <quote>display the
+          traditional logic of symphonic thought</quote>.</p>
+    </egXML>
+    <!--<egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <front>
+        <div>
+          <head>Les Préludes<lb/>Poème symphonique No.3 de F. Liszt.</head>
+          <p>
+            <!-\- Other text -\-> Cependant l'homme ne se résigne guère à goûter longtemps la
+            bienfaisante tiédeur qui l'a d'abord charmé au sein de la nature, et lorsque <quote>la
+              trompette a jeté le signal des alarmes</quote>, il court au poste périlleux quelle que
+            soit la guerre qui l'appelle à ses rangs, afin de retrouver dans le combat la pleine
+            conscience de lui-même et l'entière possession de ses forces.</p>
+        </div>
+      </front>
+    </egXML>-->
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <p>The majority of the works represented in this catalogue were purchased in Paris and London
+        between 1928 and 1934. After graduating from Harvard in 1924, Mackay-Smith spent several
+        years in Europe: <quote>
+          <p>I bought my first early music from Harold Reeves in London in the summer of 1928 when I
+            was able to acquire virtually all the 18th century editions, particularly of trio music,
+            which he then had in stock, going back not only through his current but also through
+            earlier catalogues, picking out numbers which remained unsold. It is almost a shame
+            today to think of the prices at which such things were then available, one or two pounds
+            apiece.</p>
+        </quote>
+      </p>
+    </egXML>
+  </div>
+  <div type="div2" xml:id="textPoetry">
+    <head>Poetry</head>
+    <p>This <gi scheme="MEI">lg</gi> (line group) element is used generically to encode any section of text that
+      is organized as a group of lines. Following the recommendations of the Text Encoding
+      Initiative, it is recommended to use it, along with the following elements, for marking up
+      poetry:</p>
+    <p>
+      <specList>
+        <specDesc key="lg"/>
+        <specDesc key="head"/>
+        <specDesc key="l"/>
+      </specList>
+    </p>
+    <p>Because <gi scheme="MEI">lg</gi> groups verses, it can be used to encode additional stanzas not integrated
+      into the music notation. In addition, it is common for a poem to include a title or a header,
+      as is demonstrated by the following example:</p>
+
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <mdiv>
+        <score>
+          <section>
+            <!-- Score of Franz Liszt's "Sonetto 104 del Petrarca" -->
+          </section>
+          <div>
+            <!-- Text of Francesco Petrarca's Sonett n. 104. -->
+            <lg>
+              <head>Sonetto 104</head>
+              <l>L'aspectata vertù, che 'n voi fioriva</l>
+              <l>quando Amor cominciò darvi bataglia,</l>
+              <l>produce or frutto, che quel fiore aguaglia,</l>
+              <l>et che mia speme fa venire a riva.</l>
+              <!-- ... -->
+            </lg>
+          </div>
+        </score>
+      </mdiv>
+    </egXML>
+
+  </div>
+
+  <div type="div2" xml:id="textFrontBack">
+    <head>Paratext</head>
+    <p>This section introduces paratextual material, such as title pages, prefaces, indexes and
+      other text that precedes or follows the actual score.</p>
+
+    <div type="div3" xml:id="textFront">
+      <head>Front Matter</head>
+      <p>By <soCalled>front matter</soCalled> these Guidelines mean distinct sections of a text
+        (usually, but not necessarily, a printed one), prefixed to it by way of introduction or
+        identification as a part of its production. Features such as title pages or prefaces are
+        clear examples; a less definite case might be the prologue attached to a dramatic work. The
+        front matter of an encoded text should not be confused with the MEI header described in
+        chapter <ptr target="#header"/>, which provides metadata for the entire file.</p>
+      <p>An encoder may choose simply to ignore the front matter in a text, if the original
+        presentation of the work is of no interest. No specific tags are provided for the various
+        kinds of subdivision which may appear within front matter: instead, generic <gi scheme="MEI">div</gi>
+        (“division”) elements may be used, which should not be confused with <gi scheme="MEI">mdiv</gi> (“musical
+        division”) elements. The following suggested values for the <att>type</att> attribute may be
+        used to distinguish various kinds of division characteristic of front matter:</p>
+      <list type="simple">
+        <item><label>'preface' – </label> A foreword or preface addressed to the reader in which the
+          author or publisher explains the content, purpose, or origin of the text. </item>
+        <item><label>'ack' – </label> A formal declaration of acknowledgement by the author in which
+          persons and institutions are thanked for their part in the creation of a text.</item>
+        <item><label>'dedication' – </label> A formal offering or dedication of a text to one or
+          more persons or institutions by the author.</item>
+        <item><label>'abstract' – </label> A summary of the content of a text as continuous
+          prose.</item>
+        <item><label>'contents' – </label> A table of contents, specifying the structure of a work
+          and listing its constituents. The list element should be used to mark its
+          structure.</item>
+        <item><label>'frontispiece' – </label> A pictorial frontispiece, possibly including some
+          text.</item>
+      </list>
+      <p>The following extended example demonstrates how various parts of the front matter of a text
+        may be encoded. The front part begins with a title page, which is presented in section <ptr
+          target="#textTitlePages"/>, below. This is followed by a dedication and a preface, each of
+        which is encoded as a distinct div:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <front xmlns="http://www.music-encoding.org/ns/mei">
+          <titlePage><!-- transcription of title page --></titlePage>
+          <div type="dedication">
+            <p><!-- Dedicatory text --></p>
+          </div>
+          <div type="preface">
+            <head>Preface</head>
+            <p><!-- paragraph 1 --></p>
+            <p><!-- paragraph 2 --></p>
+            <!-- additional material -->
+          </div>
+        </front>
+      </egXML>
+      <p>The front matter concludes with another <gi scheme="MEI">div</gi> element, shown in the next example,
+        this time containing a table of contents, which contains a <gi scheme="MEI">list</gi> element (as
+        described in chapter <ptr target="#textLists"/>). Note the use of the <gi scheme="MEI">ptr</gi> element
+        to provide page-references: the implication here is that the target identifiers (song1,
+        song2, etc.) will correspond with identifiers used for the <gi scheme="MEI">mdiv</gi> elements containing
+        the individual songs. (For a description of the <gi scheme="MEI">ptr</gi> element, see chapter <ptr
+          target="#ptrRef"/>.)</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <div type="contents">
+          <head>Contents</head>
+          <list form="ordered">
+            <li>On Wenlock Edge <ptr target="#song1"/></li>
+            <li>From Far, From Eve and Morning <ptr target="#song2"/></li>
+            <li>Is My Team Ploughing? <ptr target="#song3"/></li>
+            <li>Oh, When I Was In Love With You <ptr target="#song4"/></li>
+            <li>Bredon Hill <ptr target="#song5"/></li>
+            <li>Clun <ptr target="#song6"/></li>
+          </list>
+        </div>
+      </egXML>
+      <p>Alternatively, the pointers in the table of contents might link to the page breaks at which
+        a song begins, assuming that these have been included in the markup:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <list form="ordered">
+          <li>On Wenlock Edge <ref target="#song1-p1">1</ref></li>
+          <li>From Far, From Eve and Morning <ref target="#song2-p15">15</ref></li>
+          <!-- .... -->
+        </list>
+        <!-- Later in the document -->
+        <mdiv type="song">
+          <pb xml:id="song1-p1"/>
+          <!-- .... -->
+        </mdiv>
+        <mdiv type="song">
+          <pb xml:id="song2-p15"/>
+          <!-- .... -->
+        </mdiv>
+        <!-- .... -->
+      </egXML>
+    </div>
+
+    <div type="div3" xml:id="textTitlePages">
+      <head>Title Pages</head>
+      <p>Detailed analysis of the title page and other preliminaries of older printed books and
+        manuscripts is of major importance in descriptive bibliography and the cataloging of printed
+        books; such analysis, however, requires a more detailed approach than the general one
+        described here. The following elements are suggested as a means of encoding the major
+        features of most title pages for faithful rendition:</p>
+      <p>
+        <specList>
+          <specDesc key="titlePage"/>
+          <specDesc key="p"/>
+          <specDesc key="table"/>
+          <specDesc key="list"/>
+          <specDesc key="quote"/>
+          <specDesc key="lg"/>
+        </specList>
+      </p>
+      <p>The following example shows the encoding of the title page of Vaughan Williams' <title>On
+          Wenlock Edge</title>. Note the use of the <gi scheme="MEI">lb</gi> element to mark the line breaks
+        present in the original.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples">
+        <titlePage>
+          <p>ON WENLOCK EDGE</p>
+          <p>A CYCLE OF SIX SONGS<lb/> FOR TENOR VOICE ___ WITH ACCOMPANIMENT OF<lb/> Pianoforte and
+            String Quartet (ad lib)<lb/> THE WORDS BY A. E. HOUSMAN<lb/> (FROM "A SHROPSHIRE
+            LAD")</p>
+          <p>
+            <fig/>
+          </p>
+          <p>MUSIC BY<lb/> R. VAUGHAN<lb/> WILLIAMS</p>
+          <list>
+            <li>PRICE $3.75</li>
+            <li>(COMPLETE WITH SET OF STRING PARTS $5.00</li>
+            <li>STRING PARTS SEPARATELY $1.00</li>
+          </list>
+          <p>Boosey &amp; Hawkes, Inc.</p>
+          <p>New York, U.S.A.</p>
+          <p>London &#xb7; Toronto &#xb7; Sydney &#xb7; Capetown</p>
+        </titlePage>
+      </egXML>
+      <p>The physical rendition of title page information is often of considerable importance. One
+        approach to this requirement would be to use the <gi scheme="MEI">rend</gi> element, described in chapter
+          <ptr target="#textRendition"/> to specify the rendition of each of the components of the
+        title page. Another would be to employ a CSS stylesheet. Finally, a module customized for
+        the description of typographic entities such as pages, lines, rules, etc., bearing
+        special-purpose attributes to describe line-height, leading, degree of kerning, font, etc.
+        could be employed.</p>
+      <!--Further discussion of these issues is provided in chapter <ptr target="#"/> -->
+      <!--TODO: Add reference to “Representation of Primary Sources”-->
+    </div>
+
+  </div>
+
+
+
+  <div type="div2" xml:id="textBack">
+    <head>Back Matter</head>
+    <p>Conventions vary as to which elements are grouped as back matter and which as front. For
+      example, some books place the table of contents at the front, and others at the back. For this
+      reason, the content models of the <gi scheme="MEI">front</gi> and <gi scheme="MEI">back</gi> elements are identical.</p>
+    <p>The following suggested values may be used for the <att>type</att> attribute on all division
+      elements, in order to distinguish various kinds of divisions characteristic of back
+      matter:</p>
+    <list type="simple">
+      <item><label>'appendix' – </label> An ancillary self-contained section of a work, often
+        providing additional but in some sense extra-canonical text.</item>
+      <item><label>'glossary' – </label> A list of terms associated with definition texts
+        (‘glosses’).</item>
+      <item><label>'notes' – </label> A section in which textual notes are gathered together.</item>
+      <item><label>'bibliography' – </label> A list of bibliographic citations.</item>
+      <item><label>'index' – </label> Any form of index to the work.</item>
+      <item><label>'colophon' – </label> A statement appearing at the end of a book describing the
+        conditions of its physical production.</item>
+    </list>
+    <p>No additional elements are proposed for the encoding of back matter at present. Some
+      characteristic examples follow; first, an index (for the case in which a printed index is of
+      sufficient interest to merit transcription):</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <back>
+        <div type="index">
+          <head>Index</head>
+          <list type="index">
+            <li>a2, a3, etc., <ref>175-176</ref></li>
+            <li>Abbreviations, <ref>3</ref>
+              <list type="indexentry">
+                <li>Percussion, <ref>205-213</ref></li>
+                <li>Strings, <ref>307</ref></li>
+              </list>
+            </li>
+            <li>Afterbeats, <ref>77</ref></li>
+          </list>
+        </div>
+      </back>
+    </egXML>
+    <p>Note that if the page breaks in the original source have also been explicitly encoded, and
+      given identifiers, the references to them in the above index can more usefully be recorded as
+      links. For example, assuming that the encoding of page 77 of the original source starts like
+      this:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <pb xml:id="text.P77"/>
+    </egXML>
+    <p>then the last item above might be encoded more usefully in the following form:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples">
+      <li>Afterbeats, <ref target="#text.P77">77</ref></li>
+    </egXML>
+  </div>
+
+</div>
