@@ -21,10 +21,10 @@
   <head>Harmony</head>
   <p>This chapter describes the encoding of indications of harmony ocurring within a music text,
     e.g., chord names, tablature grids, figured bass, or signs for harmonic analysis, and the
-    methods by which these indications can be connected with their interpretations.</p>
+    methods by which these indications can be connected with their interpretations. For
+    encoder-supplied analysis of intervallic content, please see chapter <ptr target="#analysis"/>. </p>
 
   <div type="div2" xml:id="harmonyOverview">
-    <!-- Overview -->
     <head>Overview of the Harmony Module</head>
     <p>The module makes available the following components:</p>
 
@@ -75,15 +75,15 @@
 
   <div type="div2" xml:id="harmonyDetails">
     <head>Indications of Harmony</head>
-    <p>On the most basic level, chords in the musical text can be encoded using the <gi>chord</gi>
-      element:</p>
+    <p>On the most basic level, chords in the musical text can be encoded using the <gi scheme="MEI"
+        >chord</gi> element:</p>
     <p>
       <specList>
         <specDesc key="chord"/>
       </specList>
     </p>
-    <p>Additional information on the use of the <gi>chord</gi> element is available in <ptr
-        target="#basicEvents"/> and <ptr target="#cmnNotesChords"/>.</p>
+    <p>Additional information on the use of the <gi scheme="MEI">chord</gi> element is available in
+        <ptr target="#basicEvents"/> and <ptr target="#cmnNotesChords"/>.</p>
     <p>With only this kind of markup, harmonic information is implicit in the notes themselves. The
       elements and attributes of this module, however, provide for the encoding of explicit
       indications of harmony, such as chord symbols, tablature grids, figured bass signs, and the
@@ -107,47 +107,47 @@
           <specDesc key="barre" atts="fret"/>
         </specList>
       </p>
-      <p>The <gi>chordTable</gi> element is a container for a set of chord definitions, while the
-          <gi>chordDef</gi> element defines a single chord. Chord definitions may be created
-          <foreign>a priori</foreign> or as the result of analysis of the pitch content of the music
-        at hand, for instance, by examination of the notes occurring on the downbeat of each
-        measure. In this way, the chord definitions serve as a record of the analysis.</p>
-      <p>Even though it is not required by the schema, an <att>xml:id</att> attribute on
-          <gi>chordDef</gi> is necessary to permit the creation of associations between harmonic
-        indications in the musical text with the chord defined here. The <att>xml:id</att> attribute
-        provides a unique identifier for the chord definition that can be referenced by the
-          <gi>harm</gi> element's <att>chordref</att> attribute.</p>
-      <p>Individual pitches of a chord are encoded using <gi>chordMember</gi>. The <att>inth</att>
-        attribute provides the means for indicating the number of half steps of the chord note above
-        the bass note.</p>
+      <p>The <gi scheme="MEI">chordTable</gi> element is a container for a set of chord definitions,
+        while the <gi scheme="MEI">chordDef</gi> element defines a single chord. Chord definitions
+        may be created <foreign>a priori</foreign> or as the result of analysis of the pitch content
+        of the music at hand, for instance, by examination of the notes occurring on the downbeat of
+        each measure. In this way, the chord definitions serve as a record of the analysis.</p>
+      <p>Even though it is not required by the schema, an <att>xml:id</att> attribute on <gi
+          scheme="MEI">chordDef</gi> is necessary to permit the creation of associations between
+        harmonic indications in the musical text with the chord defined here. The <att>xml:id</att>
+        attribute provides a unique identifier for the chord definition that can be referenced by
+        the <gi scheme="MEI">harm</gi> element's <att>chordref</att> attribute.</p>
+      <p>Individual pitches of a chord are encoded using <gi scheme="MEI">chordMember</gi>. The
+          <att>inth</att> attribute provides the means for indicating the number of half steps of
+        the chord note above the bass note.</p>
       <p>These simple resources allow for the detailed specification and interpretation of harmonic
         indications found in the musical text. For example, the harmonic label <q>A</q> can be
         equated with a fully spelled-out indication of functional harmony that can be substituted
         for the harmonic label, say, in an aural rendition:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <!-- Chord defined in scoreDef -->
-        <chordDef xml:id="harmonychordA">
-          <chordMember pname="a" oct="2"/>
-          <chordMember pname="e" oct="3"/>
-          <chordMember pname="c" accid.ges="s" oct="4"/>
-          <chordMember pname="e" oct="4"/>
-          <chordMember pname="a" oct="4"/>
-        </chordDef>
-        <!-- Later in musical text -->
-        <harm chordref="#harmonychordA" tstamp="1">A</harm>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<!-- Chord defined in scoreDef -->
+<chordDef xml:id="harmonychordA">
+  <chordMember pname="a" oct="2"/>
+  <chordMember pname="e" oct="3"/>
+  <chordMember pname="c" accid.ges="s" oct="4"/>
+  <chordMember pname="e" oct="4"/>
+  <chordMember pname="a" oct="4"/>
+</chordDef>
+<!-- Later in musical text -->
+<harm chordref="#harmonychordA" tstamp="1">A</harm>
       </egXML>
 
       <p>Alternatively, the non-bass chord tones may be indicated, not with pitch names, but with
         their intervallic distance above the bass note. Therefore, the example above may also be
         encoded:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <chordDef xml:id="harmonychordA2">
-          <chordMember pname="a" oct="2"/>
-          <chordMember inth="7"/>
-          <chordMember inth="16"/>
-          <chordMember inth="19"/>
-          <chordMember inth="24"/>
-        </chordDef>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<chordDef xml:id="harmonychordA2">
+  <chordMember pname="a" oct="2"/>
+  <chordMember inth="7"/>
+  <chordMember inth="16"/>
+  <chordMember inth="19"/>
+  <chordMember inth="24"/>
+</chordDef>
       </egXML>
 
       <p>The preceding encoding possibilities provide the detailed information necessary to create
@@ -156,29 +156,30 @@
         octave duplications and expressing all chord members, including the bass note, using
         intervals above the bass. Of course, the <att>inth</att> attribute for the bass note itself
         should be set to <q>0</q>. For example:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <chordDef xml:id="harmonychordA3">
-          <chordMember inth="0"/>
-          <chordMember inth="4"/>
-          <chordMember inth="7"/>
-        </chordDef>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<chordDef xml:id="harmonychordA3">
+  <chordMember inth="0"/>
+  <chordMember inth="4"/>
+  <chordMember inth="7"/>
+</chordDef>
       </egXML>
     </div>
 
     <div type="div3" xml:id="harmonyTablatureGrids">
       <head>Chord Tablature Grids</head>
-      <p>The <att>pos</att> attribute on <gi>chordDef</gi>, the <att>fing</att> and <att>fret</att>
-        attributes on <gi>chordMember</gi>, and the <gi>barre</gi> element child of
-          <gi>chordDef</gi> are provided in order to create displayable and performable chord
-        tablature grids for guitar and other fretted string instruments. The fret at which a finger
-        should be placed is recorded in the <att>fret</att> attribute, while <att>fing</att>
-        indicates which finger, if any, should be used to play an individual string. The values
-          <q>x</q> and <q>o</q> are used to indicate muffled and open strings, respectively.</p>
-      <p>The <gi>chordDef</gi> element may contain <gi>barre</gi> sub-elements when a single finger
-        is used to stop multiple strings. Here the <att>fret</att> attribute gives the fret position
-        at which the barre should be created, while the <att>startid</att> and <att>endid</att>
-        attributes are used to indicate the <gi>chordMember</gi> elements on which the barre starts
-        and finishes.</p>
+      <p>The <att>pos</att> attribute on <gi scheme="MEI">chordDef</gi>, the <att>fing</att> and
+          <att>fret</att> attributes on <gi scheme="MEI">chordMember</gi>, and the <gi scheme="MEI"
+          >barre</gi> element child of <gi scheme="MEI">chordDef</gi> are provided in order to
+        create displayable and performable chord tablature grids for guitar and other fretted string
+        instruments. The fret at which a finger should be placed is recorded in the <att>fret</att>
+        attribute, while <att>fing</att> indicates which finger, if any, should be used to play an
+        individual string. The values <q>x</q> and <q>o</q> are used to indicate muffled and open
+        strings, respectively.</p>
+      <p>The <gi scheme="MEI">chordDef</gi> element may contain <gi scheme="MEI">barre</gi>
+        sub-elements when a single finger is used to stop multiple strings. Here the <att>fret</att>
+        attribute gives the fret position at which the barre should be created, while the
+          <att>startid</att> and <att>endid</att> attributes are used to indicate the <gi
+          scheme="MEI">chordMember</gi> elements on which the barre starts and finishes.</p>
 
     </div>
 
@@ -186,8 +187,8 @@
       <head>Indications of Harmony in the Music Text</head>
       <p>With regard to indications of harmony, MEI attempts to strike a balance between very
         precise (interpreted) and very loose (uninterpreted) markup needs. Therefore, various kinds
-        of harmonic labels are accommodated by the <gi>harm</gi> element. While some are more
-          <q>structured</q> than others, in the final analyis they all function as
+        of harmonic labels are accommodated by the <gi scheme="MEI">harm</gi> element. While some
+        are more <q>structured</q> than others, in the final analyis they all function as
           <emph>labels</emph>. Therefore, MEI provides only a single element for the capture of
         harmonic indications of all kinds:</p>
       <p>
@@ -195,31 +196,31 @@
           <specDesc key="harm" atts="extender rendgrid"/>
         </specList>
       </p>
-      <p>The <gi>harm</gi> element can be used to capture chord labels that consist entirely of
-        text:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <harm tstamp="1">Cmaj</harm>
-        <harm tstamp="2">ii6</harm>
+      <p>The <gi scheme="MEI">harm</gi> element can be used to capture chord labels that consist
+        entirely of text:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<harm tstamp="1">Cmaj</harm>
+<harm tstamp="2">ii6</harm>
       </egXML>
       <p>or labels that are chord tablature grids:</p>
       <figure>
         <head>Chord grid without label</head>
         <graphic url="Images/modules/harmony/A7_5th.gif" width="124px"/>
       </figure>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <harm tstamp="1" chordref="#harmonychordA"/>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm tstamp="1" chordref="#harmonychordA"/>
       </egXML>
       <p>or labels that mix these styles:</p>
       <figure>
         <head>Chord grid with label</head>
         <graphic url="Images/modules/harmony/A7_1st.gif" width="124px"/>
       </figure>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples">
-        <harm tstamp="1" chordref="#harmonychordA" rendgrid="gridtext">A7</harm>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm tstamp="1" chordref="#harmonychordA" rendgrid="gridtext">A7</harm>
       </egXML>
 
-      <p>The <gi>harm</gi> element must define a point of attachment using one of the following
-        attributes: <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att> or
+      <p>The <gi scheme="MEI">harm</gi> element must define a point of attachment using one of the
+        following attributes: <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att> or
           <att>tstamp.real</att>. The most commonly-used of these are <att>startid</att> and
           <att>tstamp</att>.</p>
       <p>The <att>dur</att> attribute encodes the logical and visual duration of the harmony. Please
@@ -247,19 +248,19 @@
           <head>Figured bass</head>
           <graphic url="Images/modules/harmony/figuredBass01.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm staff="1" tstamp="1" place="above">6</harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm staff="1" tstamp="1" place="above">6</harm>
         </egXML>
 
         <p>However, this kind of approach fails to recognize that a figured bass is being used and
           not some other system of harmonic indications. To capture this knowledge, the preceding
           example can also be marked more explicitly with:</p>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm staff="1" tstamp="1" place="above">
-            <fb>
-              <f>6</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm staff="1" tstamp="1" place="above">
+  <fb>
+    <f>6</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>In order to provide greater control over the individual components of the figured bass,
@@ -269,44 +270,44 @@
           <head>Figured bass with accidental</head>
           <graphic url="Images/modules/harmony/figuredBass02.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm staff="1" tstamp="1" place="above">
-            <fb>
-              <f>7</f>
-              <f>&#x266E;</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm staff="1" tstamp="1" place="above">
+  <fb>
+    <f>7</f>
+    <f>&#x266E;</f>
+  </fb>
+</harm>
         </egXML>
 
-        <p>Encoding order of the component <gi>f</gi> elements is significant as is the encoding
-          order of the characters within each component. In the preceding example, the entire
-          figured bass sign is encoded from top to bottom, in other words, just as the figure
+        <p>Encoding order of the component <gi scheme="MEI">f</gi> elements is significant as is the
+          encoding order of the characters within each component. In the preceding example, the
+          entire figured bass sign is encoded from top to bottom, in other words, just as the figure
           appears on the page. In the following examples, the encoding order of the characters in
-            <gi>f</gi> explicitly locates the accidentals:</p>
+            <gi scheme="MEI">f</gi> explicitly locates the accidentals:</p>
         <figure>
           <head>Figured bass with chromatically altered figure</head>
           <graphic url="Images/modules/harmony/figuredBass03.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm place="below">
-            <fb>
-              <f>7&#x266D;</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm place="below">
+  <fb>
+    <f>7&#x266D;</f>
+  </fb>
+</harm>
         </egXML>
 
         <figure>
           <head>Figured bass with chromatically altered figures</head>
           <graphic url="Images/modules/harmony/figuredBass04.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm>
-            <fb>
-              <f>6</f>
-              <f>4+</f>
-              <f>&#x266E;3</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm>
+  <fb>
+    <f>6</f>
+    <f>4+</f>
+    <f>&#x266E;3</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>Characters with combining slashes can be handled using the Unicode characters COMBINING
@@ -318,14 +319,14 @@
           <head>Figured bass with chromatically altered figure</head>
           <graphic url="Images/modules/harmony/figuredBass05.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm>
-            <fb>
-              <f>6&#x20E5;</f>
-              <!-- or -->
-              <f>6\</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm>
+  <fb>
+    <f>6&#x20E5;</f>
+    <!-- or -->
+    <f>6\</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>Each component of the figured bass sign may use the <att>extender</att> attribute to
@@ -338,19 +339,19 @@
           <head>Figured bass with alternative sign</head>
           <graphic url="Images/modules/harmony/figuredBass06.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm tstamp="1">
-            <fb>
-              <f>&#x0311;</f>
-              <f extender="true">5</f>
-              <f altsym="combo2plus">2+</f>
-            </fb>
-          </harm>
-          <harm tstamp="3">
-            <fb>
-              <f>3</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<harm tstamp="1">
+  <fb>
+    <f>&#x0311;</f>
+    <f extender="true">5</f>
+    <f altsym="combo2plus">2+</f>
+  </fb>
+</harm>
+<harm tstamp="3">
+  <fb>
+    <f>3</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>Because the repertoire of signs is so large, figures which consist entirely of a mark
@@ -362,12 +363,12 @@
           <head>Figured bass repetition </head>
           <graphic url="Images/modules/harmony/figuredBass07.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm tstamp="1.5">
-            <fb>
-              <f>-</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<harm tstamp="1.5">
+  <fb>
+    <f>-</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>Often, the distinction between extending lines and repetition signs is unclear. Treating
@@ -378,98 +379,98 @@
           <head>Extenders and repetition</head>
           <graphic url="Images/modules/harmony/figuredBass09.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm tstamp="3.5">
-            <fb>
-              <f>&#x266D;3</f>
-              <f>6</f>
-              <f>5</f>
-            </fb>
-          </harm>
-          <harm tstamp="4">
-            <fb>
-              <f>-</f>
-              <f>&#x266F;3</f>
-            </fb>
-          </harm>
-          <harm tstamp="4.5">
-            <fb>
-              <f>7</f>
-              <f>-</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<harm tstamp="3.5">
+  <fb>
+    <f>&#x266D;3</f>
+    <f>6</f>
+    <f>5</f>
+  </fb>
+</harm>
+<harm tstamp="4">
+  <fb>
+    <f>-</f>
+    <f>&#x266F;3</f>
+  </fb>
+</harm>
+<harm tstamp="4.5">
+  <fb>
+    <f>7</f>
+    <f>-</f>
+  </fb>
+</harm>
         </egXML>
 
         <p>Using <att>extender</att> attributes for this example may make it easier to render the
           figured bass symbol, but it is less explicit with regard to the intended harmony. For
           example, it is difficult to ascertain what harmony should be sounding on beat 4 and its
           after-beat.</p>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <harm tstamp="3.5">
-            <fb>
-              <f>&#x266D;3</f>
-              <f extender="true">6</f>
-              <f>5</f>
-            </fb>
-          </harm>
-          <harm tstamp="4">
-            <fb>
-              <f extender="true">&#x266F;3</f>
-            </fb>
-          </harm>
-          <harm tstamp="4.5">
-            <fb>
-              <f>7</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<harm tstamp="3.5">
+  <fb>
+    <f>&#x266D;3</f>
+    <f extender="true">6</f>
+    <f>5</f>
+  </fb>
+</harm>
+<harm tstamp="4">
+  <fb>
+    <f extender="true">&#x266F;3</f>
+  </fb>
+</harm>
+<harm tstamp="4.5">
+  <fb>
+    <f>7</f>
+  </fb>
+</harm>
         </egXML>
 
-        <p>The primary goal of <gi>fb</gi> is not the capture all the visual idiosyncracies that can
-          be found in printed and manuscript scores throughout the centuries, but to provide a
-          more-or-less standardized label. The markup below, or any markup in fact, cannot capture
-          the exact look of the figured bass signs. The <att>altsym</att> attribute may be used to
-          provide access to a user-defined symbol for precise rendition. Similarly, the
-            <att>facs</att> attribute may be employed to point to the symbol as it occurs in the
-          encoding source material.</p>
+        <p>The primary goal of <gi scheme="MEI">fb</gi> is not the capture all the visual
+          idiosyncracies that can be found in printed and manuscript scores throughout the
+          centuries, but to provide a more-or-less standardized label. The markup below, or any
+          markup in fact, cannot capture the exact look of the figured bass signs. The
+            <att>altsym</att> attribute may be used to provide access to a user-defined symbol for
+          precise rendition. Similarly, the <att>facs</att> attribute may be employed to point to
+          the symbol as it occurs in the encoding source material.</p>
         <figure>
-          <head>Figured bass with alternative sign </head>
+          <head>Figured bass with alternative sign</head>
           <graphic url="Images/modules/harmony/figuredBass10.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <!-- Ex. a -->
-          <harm tstamp="3">
-            <fb>
-              <f>8</f>
-              <f altsym="#my6_1" facs="#source6_1">6&#x266E;</f>
-              <f>4+</f>
-              <f>2</f>
-            </fb>
-          </harm>
-          <harm tstamp="4">
-            <fb>
-              <f altsym="#my6_2" facs="#source6_2">6\</f>
-              <f>4</f>
-              <f>3</f>
-            </fb>
-          </harm>
-          <!-- Ex. b -->
-          <harm tstamp="4.5">
-            <fb>
-              <f>6\</f>
-            </fb>
-          </harm>
-          <!--  Ex. c -->
-          <harm tstamp="1">
-            <fb>
-              <f>5/</f>
-            </fb>
-          </harm>
-          <!--  Ex. d -->
-          <harm>
-            <fb>
-              <f altsym="#my5" facs="#source5">5+</f>
-            </fb>
-          </harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<!-- Ex. a -->
+<harm tstamp="3">
+  <fb>
+    <f>8</f>
+    <f altsym="#my6_1" facs="#source6_1">6&#x266E;</f>
+    <f>4+</f>
+    <f>2</f>
+  </fb>
+</harm>
+<harm tstamp="4">
+  <fb>
+    <f altsym="#my6_2" facs="#source6_2">6\</f>
+    <f>4</f>
+    <f>3</f>
+  </fb>
+</harm>
+<!-- Ex. b -->
+<harm tstamp="4.5">
+  <fb>
+    <f>6\</f>
+  </fb>
+</harm>
+<!--  Ex. c -->
+<harm tstamp="1">
+  <fb>
+    <f>5/</f>
+  </fb>
+</harm>
+<!--  Ex. d -->
+<harm>
+  <fb>
+    <f altsym="#my5" facs="#source5">5+</f>
+  </fb>
+</harm>
         </egXML>
       </div>
     </div>
