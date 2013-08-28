@@ -290,7 +290,7 @@
               <xsl:text>above</xsl:text>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:text>below</xsl:text>
+              <xsl:value-of select="@place"/>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:attribute>
@@ -311,6 +311,43 @@
           <xsl:value-of select="@dur"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:apply-templates mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:*[@dur.ges]" mode="copy">
+    <!-- @dur.ges assumed to be in ppq -->
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(local-name()='dur.ges')]"/>
+      <xsl:variable name="measureNum">
+        <xsl:value-of select="ancestor::mei:measure/@n"/>
+      </xsl:variable>
+      <xsl:variable name="thisID">
+        <xsl:choose>
+          <xsl:when test="@xml:id">
+            <xsl:value-of select="concat('#', @xml:id)"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="concat('[#', generate-id(), ']')"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:choose>
+        <xsl:when test="number(@dur.ges)">
+          <xsl:attribute name="dur.ges">
+            <xsl:value-of select="concat(@dur.ges, 'p')"/>
+          </xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:variable name="warning">
+            <xsl:text>@dur.ges attribute with non-numeric value removed</xsl:text>
+          </xsl:variable>
+          <xsl:message>
+            <xsl:value-of select="normalize-space(concat($warning, ' (m. ', $measureNum,
+              ', ', $thisID, ').'))"/>
+          </xsl:message>
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
