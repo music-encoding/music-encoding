@@ -23,7 +23,7 @@
     <!-- Add @meiversion attribute -->
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='meiversion')]"/>
-      <xsl:if test="@meiversion">
+      <xsl:if test="local-name()='mei' and @meiversion">
         <xsl:attribute name="meiversion">
           <xsl:text>2013</xsl:text>
         </xsl:attribute>
@@ -187,7 +187,7 @@
       <xsl:choose>
         <xsl:when test="contains(@page.scale,':')">
           <xsl:attribute name="vu.height">
-            <xsl:value-of select="number(substring-after(@page.scale, ':')) div 8"/>
+            <xsl:value-of select="concat(number(substring-after(@page.scale, ':')) div 8, 'mm')"/>
           </xsl:attribute>
         </xsl:when>
         <xsl:when test="contains(@page.scale, '%')">
