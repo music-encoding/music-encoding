@@ -144,6 +144,53 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:pgHead/mei:table[mei:tr[@y or @x]] | mei:pgHead2/mei:table[mei:tr[@y or
+    @x]] | mei:pgFoot/mei:table[mei:tr[@y or @x]] | mei:pgFoot2/mei:table[mei:tr[@y or @x]]"
+    mode="copy">
+    <!-- Convert table cells with page coordinates to anchoredText elements -->
+    <xsl:for-each select="//mei:td">
+      <anchoredText xmlns:mei="http://www.music-encoding.org/ns/mei"
+        xsl:exclude-result-prefixes="mei">
+        <xsl:if test="@x or ancestor::mei:tr[@x]">
+          <xsl:attribute name="x">
+            <xsl:choose>
+              <xsl:when test="@x">
+                <xsl:value-of select="@x"/>
+              </xsl:when>
+              <xsl:when test="ancestor::mei:tr[@x]">
+                <xsl:value-of select="ancestor::mei:tr[@x]/@x"/>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:if test="@x or ancestor::mei:tr[@x]">
+          <xsl:attribute name="y">
+            <xsl:choose>
+              <xsl:when test="@y">
+                <xsl:value-of select="@y"/>
+              </xsl:when>
+              <xsl:when test="ancestor::mei:tr[@y]">
+                <xsl:value-of select="ancestor::mei:tr[@y]/@y"/>
+              </xsl:when>
+            </xsl:choose>
+          </xsl:attribute>
+        </xsl:if>
+        <xsl:apply-templates mode="copy"/>
+      </anchoredText>
+    </xsl:for-each>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+            $thisID, '&#32;: Replaced anchoredText elements')"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="mei:physDesc" mode="copy">
     <!-- physLoc is pulled out and presented after physDesc. -->
     <xsl:copy>
@@ -158,8 +205,8 @@
         </xsl:variable>
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
-            <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Reordered
-              content')"/>
+            <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+              $thisID, '&#32;: Reordered content')"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -179,8 +226,8 @@
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Reordered content')"
-          />
+          <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+            $thisID, '&#32;: Reordered content')"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -218,8 +265,8 @@
             </xsl:variable>
             <xsl:call-template name="warning">
               <xsl:with-param name="warningText">
-                <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Copied content
-                  only')"/>
+                <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                  '&#32;', $thisID, '&#32;: Copied content only')"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
@@ -251,11 +298,14 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID)"/>
               <xsl:if test="not(normalize-space($thisMeasure)='')">
-                <xsl:value-of select="concat('/m.', $thisMeasure)"/>
+                <xsl:if test="ancestor::mei:incip">
+                  <xsl:text>incip/</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
               </xsl:if>
-              <xsl:text>&#32;: Modified @fontstyle</xsl:text>
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                '&#32;', $thisID, '&#32;: Modified @fontstyle')"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -273,8 +323,8 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
-                '&#32;: Modified @rend value')"/>
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                '&#32;', $thisID, '&#32;: Modified @rend value')"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -300,7 +350,10 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
+              <xsl:if test="ancestor::mei:incip">
+                <xsl:text>incip/</xsl:text>
+              </xsl:if>
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;', $thisID,
                 '&#32;: Converted @line to @loc')"/>
             </xsl:with-param>
           </xsl:call-template>
@@ -335,8 +388,8 @@
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Added change
-            element')"/>
+          <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+            $thisID, '&#32;: Added change element')"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -358,8 +411,9 @@
             </xsl:variable>
             <xsl:call-template name="warning">
               <xsl:with-param name="warningText">
-                <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Removed
-                  @page.scale; added @vu.height')"/>
+                <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                  '&#32;', $thisID, '&#32;: Removed @page.scale; added
+                  @vu.height')"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
@@ -396,8 +450,8 @@
         </xsl:variable>
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
-            <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Reordered
-              content')"/>
+            <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+              $thisID, '&#32;: Reordered content')"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -419,8 +473,8 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Removed
-                relatedItem; added relationList')"/>
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                '&#32;', $thisID, '&#32;: Removed relatedItem; added relationList')"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -452,8 +506,8 @@
         </xsl:variable>
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
-            <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Reordered
-              content')"/>
+            <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+              $thisID, '&#32;: Reordered content')"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -478,8 +532,8 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Removed
-                relatedItem; added biblList')"/>
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                '&#32;', $thisID, '&#32;: Removed relatedItem; added biblList')"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -509,7 +563,10 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
+              <xsl:if test="ancestor::mei:incip">
+                <xsl:text>incip/</xsl:text>
+              </xsl:if>
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;', $thisID,
                 '&#32;: Removed @dur; added @tstamp2')"/>
             </xsl:with-param>
           </xsl:call-template>
@@ -529,8 +586,11 @@
                 </xsl:variable>
                 <xsl:call-template name="warning">
                   <xsl:with-param name="warningText">
-                    <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.',
-                      $thisMeasure, '&#32;: Modified @place')"/>
+                    <xsl:if test="ancestor::mei:incip">
+                      <xsl:text>incip/</xsl:text>
+                    </xsl:if>
+                    <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
+                      $thisID, '&#32;: Modified @place')"/>
                   </xsl:with-param>
                 </xsl:call-template>
               </xsl:if>
@@ -565,7 +625,10 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
+              <xsl:if test="ancestor::mei:incip">
+                <xsl:text>incip/</xsl:text>
+              </xsl:if>
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;', $thisID,
                 '&#32;: Removed @dur; added @tstamp2')"/>
             </xsl:with-param>
           </xsl:call-template>
@@ -606,8 +669,11 @@
             </xsl:variable>
             <xsl:call-template name="warning">
               <xsl:with-param name="warningText">
-                <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
-                  '&#32;: Assumed @dur.ges value to be ppq')"/>
+                <xsl:if test="ancestor::mei:incip">
+                  <xsl:text>incip/</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
+                  $thisID, '&#32;: Assumed @dur.ges value to be ppq')"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
@@ -621,7 +687,10 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
+              <xsl:if test="ancestor::mei:incip">
+                <xsl:text>incip/</xsl:text>
+              </xsl:if>
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;', $thisID,
                 '&#32;: Removed @dur.ges with non-numeric value')"/>
             </xsl:with-param>
           </xsl:call-template>
@@ -649,7 +718,11 @@
               </xsl:variable>
               <xsl:call-template name="warning">
                 <xsl:with-param name="warningText">
-                  <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '/m.', $thisMeasure,
+                  <xsl:if test="ancestor::mei:incip">
+                    <xsl:text>incip/</xsl:text>
+                  </xsl:if>
+                  <xsl:value-of select="concat('m. ', $thisMeasure, '/',
+                    local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;', $thisID,
                     '&#32;: Modified @fontstyle value')"/>
                 </xsl:with-param>
               </xsl:call-template>
@@ -682,7 +755,7 @@
       </xsl:when>
       <xsl:when test="ancestor::mei:measure">
         <xsl:for-each select="ancestor::mei:measure">
-          <xsl:value-of select="count(preceding::mei:measure)"/>
+          <xsl:value-of select="count(preceding::mei:measure) + 1"/>
         </xsl:for-each>
       </xsl:when>
     </xsl:choose>
