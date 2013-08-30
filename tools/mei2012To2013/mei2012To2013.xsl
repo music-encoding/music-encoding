@@ -65,7 +65,7 @@
     mei:harpPedal|mei:octave|mei:pedal|mei:reh|mei:slur|mei:tie|mei:tupletSpan|
     mei:bend|mei:dir|mei:dynam|mei:gliss|mei:phrase|mei:tempo|mei:mordent|
     mei:trill|mei:turn|mei:harm" mode="copy">
-    <!-- @dur on control events renamed to @tstamp2 -->
+    <!-- Rename @dur on control events to @tstamp2 -->
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='dur')]"/>
       <xsl:if test="@dur">
@@ -97,6 +97,7 @@
   <xsl:template match="mei:condition|mei:exhibHist|mei:inscription|
     mei:physMedium|mei:plateNum|mei:provenance|mei:titlePage|mei:treatHist|
     mei:treatSched|mei:watermark" mode="asBibl">
+    <!-- Output as annotation -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
       <xsl:copy-of select="@*"/>
@@ -110,6 +111,7 @@
   </xsl:template>
 
   <xsl:template match="mei:contents" mode="asBibl">
+    <!-- Output as annotation containing a table, list, or p as appropriate -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
       <xsl:copy-of select="@*[not(local-name()='target' or local-name()='targettype' or
@@ -192,6 +194,7 @@
   </xsl:template>
 
   <xsl:template match="mei:dimensions" mode="asBibl">
+    <!-- Output as annotation; drop @unit, adding its value to content if not already present -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
       <xsl:copy-of select="@*[not(local-name()='unit')]"/>
@@ -210,6 +213,11 @@
         </xsl:if>
       </xsl:if>
     </annot>
+  </xsl:template>
+
+  <xsl:template match="mei:editionStmt|mei:physDesc|mei:titleStmt" mode="asBibl">
+    <!-- Drop physDesc but process children -->
+    <xsl:apply-templates mode="asBibl"/>
   </xsl:template>
 
   <xsl:template match="mei:event" mode="copy">
@@ -317,6 +325,7 @@
   </xsl:template>
 
   <xsl:template match="mei:incipCode" mode="copy">
+    <!-- Add @form -->
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:if test="not(@form)">
@@ -336,6 +345,7 @@
   </xsl:template>
 
   <xsl:template match="mei:list/mei:item" mode="copy">
+    <!-- Rename to <li> -->
     <li xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei xlink">
       <xsl:apply-templates mode="copy"/>
     </li>
@@ -398,10 +408,6 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="mei:physDesc" mode="asBibl">
-    <xsl:apply-templates mode="asBibl"/>
-  </xsl:template>
-
   <xsl:template match="mei:physDesc" mode="copy">
     <!-- physLoc is pulled out and presented after physDesc. -->
     <xsl:copy>
@@ -457,6 +463,7 @@
   </xsl:template>
 
   <xsl:template match="mei:pubStmt" mode="asBibl">
+    <!-- Copy respStmt and collect address, date, and geogName elements within imprint -->
     <xsl:copy-of select="mei:respStmt"/>
     <xsl:if test="mei:date|mei:address|mei:geogName">
       <imprint xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
@@ -464,14 +471,44 @@
         <xsl:apply-templates select="mei:date" mode="asBibl"/>
         <xsl:if test="mei:address|mei:geogName">
           <pubPlace>
-            <xsl:copy-of select="mei:address|mei:geogName"/>
+            <xsl:apply-templates select="mei:address|mei:geogName" mode="asBibl"/>
           </pubPlace>
         </xsl:if>
       </imprint>
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:pubStmt/mei:geogName" mode="asBibl">
+    <xsl:variable name="attributeValues">
+      <xsl:value-of select="@*"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="not($attributeValues='')">
+        <geogName xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
+          xlink">
+          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates mode="copy"/>
+        </geogName>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates mode="copy"/>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
+                '&#32;', $thisID, '&#32;: Copied content only')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="mei:pubStmt/mei:geogName" mode="copy">
+    <!-- Use only the content of geogName if it has no attributes -->
     <pubPlace xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
       <xsl:variable name="attributeValues">
@@ -504,6 +541,7 @@
   </xsl:template>
 
   <xsl:template match="mei:relatedItem" mode="asBibl">
+    <!-- Rename relatedItem to bibl -->
     <bibl xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei xlink">
       <xsl:attribute name="xml:id">
         <xsl:choose>
@@ -515,13 +553,13 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <!-- mei-CMN.rng doesn't allow <relatedItem>
-                within <bibl>! -->
+      <!-- mei-CMN.rng doesn't allow <relatedItem> within <bibl>! -->
       <xsl:apply-templates mode="asBibl"/>
     </bibl>
   </xsl:template>
 
   <xsl:template match="mei:rend" mode="copy">
+    <!-- Modify @rend and @fontstyle on <rend> -->
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='rend') and not(local-name()='fontstyle')]"/>
       <xsl:if test="@fontstyle">
@@ -595,7 +633,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:rest" mode="copy" priority="1">
+  <xsl:template match="mei:rest" mode="copy">
     <!-- Translate @line values to @loc (which includes spaces) -->
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='line' or local-name()='dur.ges')]"/>
@@ -621,42 +659,12 @@
           </xsl:call-template>
         </xsl:if>
       </xsl:if>
-      <xsl:if test="@dur.ges">
-        <xsl:choose>
-          <xsl:when test="number(@dur.ges)">
-            <xsl:attribute name="dur.ges">
-              <xsl:value-of select="concat(@dur.ges, 'p')"/>
-            </xsl:attribute>
-            <xsl:if test="$verbose">
-              <xsl:call-template name="warning">
-                <xsl:with-param name="warningText">
-                  <xsl:if test="ancestor::mei:incip">
-                    <xsl:text>incip/</xsl:text>
-                  </xsl:if>
-                  <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
-                    $thisID, '&#32;: Assumed @dur.ges value to be ppq')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:call-template name="warning">
-              <xsl:with-param name="warningText">
-                <xsl:if test="ancestor::mei:incip">
-                  <xsl:text>incip/</xsl:text>
-                </xsl:if>
-                <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
-                  $thisID, '&#32;: Removed @dur.ges with non-numeric value')"/>
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:if>
+      <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
 
   <xsl:template match="mei:revisionDesc" mode="copy">
-    <!-- Add a record of the conversion to revisionDesc -->
+    <!-- Add a record of the conversion to 2013 to revisionDesc -->
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <xsl:apply-templates mode="copy"/>
@@ -721,6 +729,7 @@
   </xsl:template>
 
   <xsl:template match="mei:seriesStmt" mode="asBibl">
+    <!-- Rename seriesStmt to series -->
     <series xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei xlink">
       <xsl:apply-templates mode="asBibl"/>
     </series>
@@ -748,7 +757,8 @@
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
             <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
-              $thisID, '&#32;: Reordered content')"/>
+              $thisID, '&#32;: Reordered content; removed history, key, tempo, meter, perfMedium,
+              and incip')"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -809,8 +819,7 @@
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
               <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
-                '&#32;', $thisID, '&#32;: Moved relatedItem elements to work/biblList; created
-                relationList')"/>
+                '&#32;', $thisID, '&#32;: Created relationList here; biblList in work')"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -819,14 +828,11 @@
   </xsl:template>
 
   <xsl:template match="mei:tempo[ancestor::mei:work]" mode="copy">
+    <!-- Drop attributes not allowed by schematron rule for tempo in meiHead -->
     <xsl:copy>
       <xsl:copy-of select="@*[local-name()='label' or local-name()='n' or matches(name(), '^xml')]"/>
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="mei:titleStmt|mei:editionStmt" mode="asBibl">
-    <xsl:apply-templates mode="asBibl"/>
   </xsl:template>
 
   <xsl:template match="mei:work" mode="copy">
