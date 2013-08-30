@@ -316,6 +316,25 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="mei:incipCode" mode="copy">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:if test="not(@form)">
+        <xsl:attribute name="form">
+          <xsl:choose>
+            <xsl:when test="matches(normalize-space(.),'^\*')">
+              <xsl:text>parsons</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>unknown</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="mei:list/mei:item" mode="copy">
     <li xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei xlink">
       <xsl:apply-templates mode="copy"/>
@@ -576,21 +595,21 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:rest" mode="copy">
+  <xsl:template match="mei:rest" mode="copy" priority="1">
     <!-- Translate @line values to @loc (which includes spaces) -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='line')]"/>
+      <xsl:copy-of select="@*[not(local-name()='line' or local-name()='dur.ges')]"/>
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:variable name="thisMeasure">
+        <xsl:call-template name="thisMeasure"/>
+      </xsl:variable>
       <xsl:if test="@line">
         <xsl:attribute name="loc">
           <xsl:value-of select="translate(@line, '12345', '13579')"/>
         </xsl:attribute>
         <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:variable name="thisMeasure">
-            <xsl:call-template name="thisMeasure"/>
-          </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
               <xsl:if test="ancestor::mei:incip">
@@ -601,6 +620,37 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
+      </xsl:if>
+      <xsl:if test="@dur.ges">
+        <xsl:choose>
+          <xsl:when test="number(@dur.ges)">
+            <xsl:attribute name="dur.ges">
+              <xsl:value-of select="concat(@dur.ges, 'p')"/>
+            </xsl:attribute>
+            <xsl:if test="$verbose">
+              <xsl:call-template name="warning">
+                <xsl:with-param name="warningText">
+                  <xsl:if test="ancestor::mei:incip">
+                    <xsl:text>incip/</xsl:text>
+                  </xsl:if>
+                  <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
+                    $thisID, '&#32;: Assumed @dur.ges value to be ppq')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:if>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:if test="ancestor::mei:incip">
+                  <xsl:text>incip/</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
+                  $thisID, '&#32;: Removed @dur.ges with non-numeric value')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:if>
     </xsl:copy>
   </xsl:template>
@@ -765,6 +815,13 @@
           </xsl:call-template>
         </xsl:if>
       </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:tempo[ancestor::mei:work]" mode="copy">
+    <xsl:copy>
+      <xsl:copy-of select="@*[local-name()='label' or local-name()='n' or matches(name(), '^xml')]"/>
+      <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
 
