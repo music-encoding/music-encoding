@@ -55,8 +55,10 @@
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score/mei:scoreDef"
         mode="credits"/>
       <xsl:value-of select="$nl"/>
-      <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score/mei:scoreDef/mei:staffGrp"
-        mode="partList"/>
+      <part-list>
+        <xsl:apply-templates
+          select="mei:music/mei:body/mei:mdiv/mei:score/mei:scoreDef/mei:staffGrp" mode="partList"/>
+      </part-list>
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score//mei:measure" mode="stage1"
       />
     </score-timewise>
@@ -257,7 +259,7 @@
                 </xsl:when>
                 <!-- for events directly in layer, calculate @dur.ges -->
                 <xsl:when test="local-name() = 'note' or local-name() = 'chord' or local-name()
-                  = 'rest' or local-name() = 'space' or local-name() = 'mRest'                   or
+                  = 'rest' or local-name() = 'space' or local-name() = 'mRest' or
                   local-name() = 'mSpace'">
                   <xsl:attribute name="dur.ges">
                     <xsl:choose>
@@ -274,15 +276,13 @@
                               <xsl:when test="preceding-sibling::mei:*[(local-name()='note' or
                                 local-name()='chord' or local-name()='rest') and @dur]">
                                 <xsl:value-of select="preceding-sibling::mei:*[(local-name()='note'
-                                  or                                       local-name()='chord' or
-                                  local-name()='rest') and
+                                  or local-name()='chord' or local-name()='rest') and
                                   @dur][1]/@dur"/>
                               </xsl:when>
                               <xsl:when test="following-sibling::mei:*[(local-name()='note' or
                                 local-name()='chord' or local-name()='rest') and @dur]">
                                 <xsl:value-of select="following-sibling::mei:*[(local-name()='note'
-                                  or                                       local-name()='chord' or
-                                  local-name()='rest') and
+                                  or local-name()='chord' or local-name()='rest') and
                                   @dur][1]/@dur"/>
                               </xsl:when>
                               <xsl:otherwise>
@@ -602,7 +602,7 @@
             <xsl:if test="$sb/*">
               <xsl:copy-of select="$sb"/>
             </xsl:if>
-            
+
             <xsl:if test="$localScoreDef/*">
               <xsl:copy-of select="$localScoreDef"/>
             </xsl:if>
@@ -882,7 +882,7 @@
   </xsl:template>
 
   <xsl:template match="mei:identifier" mode="workTitle">
-    <!-- Do nothing!  Exclude identifier from title Content -->
+    <!-- Do nothing! Exclude identifier from title Content -->
   </xsl:template>
 
   <xsl:template match="mei:scoreDef" mode="credits">
@@ -943,7 +943,7 @@
 
   <xsl:template match="mei:scoreDef" mode="defaults">
     <xsl:if test="@vu.height | @page.height | @page.width | @page.leftmar | @page.rightmar |
-      @page.topmar | @page.botmar  | @system.leftmar | @system.rightmar | @system.topmar |
+      @page.topmar | @page.botmar | @system.leftmar | @system.rightmar | @system.topmar |
       @spacing.system | @spacing.staff | @music.name | @text.name | @lyric.name">
       <defaults>
         <xsl:if test="@vu.height">
@@ -955,7 +955,7 @@
           </scaling>
         </xsl:if>
         <xsl:if test="@page.height | @page.width | @page.leftmar | @page.rightmar | @page.topmar |
-          @page.botmar ">
+          @page.botmar">
           <page-layout>
             <page-height>
               <xsl:value-of select="format-number(number(replace(@page.height, '[a-z]+$', '')) * 5,
@@ -1024,43 +1024,52 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:staffDef" mode="partList">
+    <score-part>
+      <xsl:attribute name="id">
+        <xsl:choose>
+          <xsl:when test="@xml:id">
+            <xsl:value-of select="@xml:id"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>P_</xsl:text>
+            <xsl:value-of select="generate-id()"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+      <part-name>
+        <xsl:choose>
+          <xsl:when test="@label">
+            <xsl:value-of select="@label"/>
+          </xsl:when>
+          <xsl:when test="ancestor::mei:staffGrp[@label]">
+            <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+          </xsl:when>
+        </xsl:choose>
+      </part-name>
+      <xsl:apply-templates select="mei:instrDef" mode="partList"/>
+    </score-part>
+  </xsl:template>
+
   <xsl:template match="mei:staffGrp" mode="partList">
-    <part-list>
-      <xsl:choose>
-        <xsl:when test="mei:instrDef">
-          <score-part>
-            <xsl:attribute name="id">
-              <xsl:value-of select="@xml:id"/>
-            </xsl:attribute>
-            <part-name>
-              <xsl:value-of select="@label"/>
-            </part-name>
-            <xsl:apply-templates select="mei:instrDef" mode="partList"/>
-          </score-part>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:for-each select="mei:staffDef | mei:staffGrp">
-            <score-part>
-              <xsl:attribute name="id">
-                <xsl:choose>
-                  <xsl:when test="@xml:id">
-                    <xsl:value-of select="@xml:id"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:text>P_</xsl:text>
-                    <xsl:value-of select="generate-id()"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-              <part-name>
-                <xsl:value-of select="@label"/>
-              </part-name>
-              <xsl:apply-templates select="mei:instrDef" mode="partList"/>
-            </score-part>
-          </xsl:for-each>
-        </xsl:otherwise>
-      </xsl:choose>
-    </part-list>
+    <xsl:choose>
+      <!-- The entire staff group constitutes a single part -->
+      <xsl:when test="mei:instrDef or (@label and not(mei:staffDef/@label))">
+        <score-part>
+          <xsl:attribute name="id">
+            <xsl:value-of select="@xml:id"/>
+          </xsl:attribute>
+          <part-name>
+            <xsl:value-of select="@label"/>
+          </part-name>
+          <xsl:apply-templates select="mei:instrDef" mode="partList"/>
+        </score-part>
+      </xsl:when>
+      <!-- Each staffGrp or staffDef is a separate part -->
+      <xsl:otherwise>
+        <xsl:apply-templates select="mei:staffDef | mei:staffGrp" mode="partList"/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="mei:instrDef" mode="partList">
@@ -1366,7 +1375,7 @@
 
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="@*"/>-->
-      
+
       <xsl:if test="local-name()='space' or local-name()='mSpace'">
         <xsl:attribute name="print-object">
           <xsl:text>no</xsl:text>
@@ -1462,9 +1471,7 @@
               </xsl:when>
             </xsl:choose>
           </xsl:when>
-        <xsl:when test="@dur.ges">
-          
-        </xsl:when>
+          <xsl:when test="@dur.ges"> </xsl:when>
         </xsl:choose>
       </type>
       <xsl:choose>
@@ -1788,7 +1795,7 @@
 
       <!-- Articulations -->
       <xsl:variable name="articulations">
-        <xsl:for-each select="mei:artic">
+        <xsl:for-each select="mei:artic[@artic]">
           <xsl:variable name="articPlace">
             <xsl:value-of select="@place"/>
           </xsl:variable>
@@ -2094,7 +2101,7 @@
       <!-- Technical/performance indications -->
       <xsl:variable name="technical">
         <!-- Some indications are MEI articulations. -->
-        <xsl:for-each select="mei:artic">
+        <xsl:for-each select="mei:artic[@artic]">
           <xsl:variable name="techPlace">
             <xsl:value-of select="@place"/>
           </xsl:variable>
@@ -2373,7 +2380,7 @@
       <xsl:apply-templates select="part" mode="stage2"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="part" mode="stage2">
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='right')]"/>
@@ -2388,7 +2395,8 @@
           </xsl:when>
         </xsl:choose>
       </xsl:if>
-      <xsl:apply-templates select="*[local-name() != 'controlevents' and local-name() != 'sb' and local-name() != 'scoreDef']" mode="stage2"/>
+      <xsl:apply-templates select="*[local-name() != 'controlevents' and local-name() != 'sb' and
+        local-name() != 'scoreDef']" mode="stage2"/>
       <xsl:if test="ancestor::measure/@right">
         <xsl:choose>
           <xsl:when test="ancestor::measure/@right='dbl'">
@@ -2408,16 +2416,16 @@
             </barline>
           </xsl:when>
         </xsl:choose>
-      </xsl:if>    
+      </xsl:if>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="note" mode="stage2">
     <xsl:copy>
       <xsl:apply-templates mode="stage2"/>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template match="@*|node()" mode="stage2">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
