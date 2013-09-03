@@ -233,10 +233,22 @@
                     </xsl:otherwise>
                   </xsl:choose>
                 </xsl:variable>
-                <xsl:for-each
-                  select="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
-                  <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
-                </xsl:for-each>
+                <xsl:choose>
+                  <xsl:when test="preceding::mei:staffGrp[@xml:id and
+                    mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                    <xsl:for-each select="preceding::mei:staffGrp[@xml:id and
+                      mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                      <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                    </xsl:for-each>
+                  </xsl:when>
+                  <xsl:when
+                    test="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                    <xsl:value-of select="1"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="$thisStaff"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:attribute>
               <!-- At this point, voice = layer assigned in MEI -->
               <xsl:attribute name="voice">
@@ -334,10 +346,20 @@
                             </xsl:otherwise>
                           </xsl:choose>
                         </xsl:variable>
-                        <xsl:for-each
-                          select="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
-                          <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
-                        </xsl:for-each>
+                        <xsl:choose>
+                          <xsl:when test="preceding::mei:staffGrp[@xml:id and
+                            mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                            <xsl:for-each select="preceding::mei:staffGrp[@xml:id and
+                              mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                              <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                            </xsl:for-each>
+                          </xsl:when>
+                          <xsl:when
+                            test="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]"> </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:value-of select="$thisStaff"/>
+                          </xsl:otherwise>
+                        </xsl:choose>
                       </xsl:attribute>
                       <xsl:attribute name="dur.ges">
                         <xsl:choose>
@@ -464,10 +486,32 @@
                   </xsl:attribute>
                   <!-- staff assignment in MusicXML; that is, where the numbering of staves starts over with each part -->
                   <xsl:attribute name="partStaff">
-                    <xsl:for-each
-                      select="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
-                      <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
-                    </xsl:for-each>
+                    <xsl:variable name="thisStaff">
+                      <xsl:choose>
+                        <xsl:when test="not(@staff)">
+                          <xsl:value-of select="$thisStaff"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <xsl:value-of select="@staff"/>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <xsl:choose>
+                      <xsl:when test="preceding::mei:staffGrp[@xml:id and
+                        mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                        <xsl:for-each select="preceding::mei:staffGrp[@xml:id and
+                          mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                          <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                        </xsl:for-each>
+                      </xsl:when>
+                      <xsl:when
+                        test="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                        <xsl:value-of select="1"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="$thisStaff"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:attribute>
                   <xsl:copy-of select="node()"/>
                 </xsl:copy>
@@ -1451,62 +1495,66 @@
           </xsl:when>
         </xsl:choose>
       </voice>
-      <type>
-        <xsl:choose>
-          <xsl:when test="@dur">
-            <xsl:choose>
-              <xsl:when test="@dur='breve' or @dur='long' or @dur='maxima'">
-                <xsl:value-of select="@dur"/>
-              </xsl:when>
-              <xsl:when test="@dur='1'">
-                <xsl:text>whole</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='2'">
-                <xsl:text>half</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='4'">
-                <xsl:text>quarter</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='8'">
-                <xsl:text>eighth</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='16' or @dur='32' or @dur='64' or @dur='128' or @dur='256' or
-                @dur='512' or @dur='1024'">
-                <xsl:value-of select="@dur"/>
-                <xsl:text>th</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="ancestor::mei:*[@dur]">
-            <xsl:choose>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='breve' or
-                ancestor::mei:*[@dur][1]/@dur='long' or ancestor::mei:*[@dur][1]/@dur='maxima'">
-                <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='1'">
-                <xsl:text>whole</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='2'">
-                <xsl:text>half</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='4'">
-                <xsl:text>quarter</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='8'">
-                <xsl:text>eighth</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='16' or
-                ancestor::mei:*[@dur][1]/@dur='32' or ancestor::mei:*[@dur][1]/@dur='64' or
-                ancestor::mei:*[@dur][1]/@dur='128' or ancestor::mei:*[@dur][1]/@dur='256' or
-                ancestor::mei:*[@dur][1]/@dur='512' or ancestor::mei:*[@dur][1]/@dur='1024'">
-                <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
-                <xsl:text>th</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="@dur.ges"> </xsl:when>
-        </xsl:choose>
-      </type>
+      <xsl:if test="@dur or ancestor::mei:*[@dur]">
+        <type>
+          <xsl:choose>
+            <xsl:when test="@dur">
+              <xsl:choose>
+                <xsl:when test="@dur='breve' or @dur='long' or @dur='maxima'">
+                  <xsl:value-of select="@dur"/>
+                </xsl:when>
+                <xsl:when test="@dur='1'">
+                  <xsl:text>whole</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='2'">
+                  <xsl:text>half</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='4'">
+                  <xsl:text>quarter</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='8'">
+                  <xsl:text>eighth</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='16' or @dur='32' or @dur='64' or @dur='128' or @dur='256' or
+                  @dur='512' or @dur='1024'">
+                  <xsl:value-of select="@dur"/>
+                  <xsl:text>th</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="ancestor::mei:*[@dur]">
+              <xsl:choose>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='breve' or
+                  ancestor::mei:*[@dur][1]/@dur='long' or ancestor::mei:*[@dur][1]/@dur='maxima'">
+                  <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='1'">
+                  <xsl:text>whole</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='2'">
+                  <xsl:text>half</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='4'">
+                  <xsl:text>quarter</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='8'">
+                  <xsl:text>eighth</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='16' or
+                  ancestor::mei:*[@dur][1]/@dur='32' or ancestor::mei:*[@dur][1]/@dur='64' or
+                  ancestor::mei:*[@dur][1]/@dur='128' or ancestor::mei:*[@dur][1]/@dur='256' or
+                  ancestor::mei:*[@dur][1]/@dur='512' or ancestor::mei:*[@dur][1]/@dur='1024'">
+                  <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
+                  <xsl:text>th</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="@dur.ges">
+              <!-- Map @dur.ges to written value? -->
+            </xsl:when>
+          </xsl:choose>
+        </type>
+      </xsl:if>
       <xsl:choose>
         <xsl:when test="@dots">
           <xsl:for-each select="1 to @dots">
@@ -1611,61 +1659,66 @@
           </xsl:when>
         </xsl:choose>
       </voice>
-      <type>
-        <xsl:choose>
-          <xsl:when test="@dur">
-            <xsl:choose>
-              <xsl:when test="@dur='breve' or @dur='long' or @dur='maxima'">
-                <xsl:value-of select="@dur"/>
-              </xsl:when>
-              <xsl:when test="@dur='1'">
-                <xsl:text>whole</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='2'">
-                <xsl:text>half</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='4'">
-                <xsl:text>quarter</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='8'">
-                <xsl:text>eighth</xsl:text>
-              </xsl:when>
-              <xsl:when test="@dur='16' or @dur='32' or @dur='64' or @dur='128' or @dur='256' or
-                @dur='512' or @dur='1024'">
-                <xsl:value-of select="@dur"/>
-                <xsl:text>th</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-          <xsl:when test="ancestor::mei:*[@dur]">
-            <xsl:choose>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='breve' or
-                ancestor::mei:*[@dur][1]/@dur='long' or ancestor::mei:*[@dur][1]/@dur='maxima'">
-                <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='1'">
-                <xsl:text>whole</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='2'">
-                <xsl:text>half</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='4'">
-                <xsl:text>quarter</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='8'">
-                <xsl:text>eighth</xsl:text>
-              </xsl:when>
-              <xsl:when test="ancestor::mei:*[@dur][1]/@dur='16' or
-                ancestor::mei:*[@dur][1]/@dur='32' or ancestor::mei:*[@dur][1]/@dur='64' or
-                ancestor::mei:*[@dur][1]/@dur='128' or ancestor::mei:*[@dur][1]/@dur='256' or
-                ancestor::mei:*[@dur][1]/@dur='512' or ancestor::mei:*[@dur][1]/@dur='1024'">
-                <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
-                <xsl:text>th</xsl:text>
-              </xsl:when>
-            </xsl:choose>
-          </xsl:when>
-        </xsl:choose>
-      </type>
+      <xsl:if test="@dur or ancestor::mei:*[@dur]">
+        <type>
+          <xsl:choose>
+            <xsl:when test="@dur">
+              <xsl:choose>
+                <xsl:when test="@dur='breve' or @dur='long' or @dur='maxima'">
+                  <xsl:value-of select="@dur"/>
+                </xsl:when>
+                <xsl:when test="@dur='1'">
+                  <xsl:text>whole</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='2'">
+                  <xsl:text>half</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='4'">
+                  <xsl:text>quarter</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='8'">
+                  <xsl:text>eighth</xsl:text>
+                </xsl:when>
+                <xsl:when test="@dur='16' or @dur='32' or @dur='64' or @dur='128' or @dur='256' or
+                  @dur='512' or @dur='1024'">
+                  <xsl:value-of select="@dur"/>
+                  <xsl:text>th</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="ancestor::mei:*[@dur]">
+              <xsl:choose>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='breve' or
+                  ancestor::mei:*[@dur][1]/@dur='long' or ancestor::mei:*[@dur][1]/@dur='maxima'">
+                  <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='1'">
+                  <xsl:text>whole</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='2'">
+                  <xsl:text>half</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='4'">
+                  <xsl:text>quarter</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='8'">
+                  <xsl:text>eighth</xsl:text>
+                </xsl:when>
+                <xsl:when test="ancestor::mei:*[@dur][1]/@dur='16' or
+                  ancestor::mei:*[@dur][1]/@dur='32' or ancestor::mei:*[@dur][1]/@dur='64' or
+                  ancestor::mei:*[@dur][1]/@dur='128' or ancestor::mei:*[@dur][1]/@dur='256' or
+                  ancestor::mei:*[@dur][1]/@dur='512' or ancestor::mei:*[@dur][1]/@dur='1024'">
+                  <xsl:value-of select="ancestor::mei:*[@dur][1]/@dur"/>
+                  <xsl:text>th</xsl:text>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:when test="@dur.ges">
+              <!-- Map @dur.ges to written value? -->
+            </xsl:when>
+          </xsl:choose>
+        </type>
+      </xsl:if>
       <xsl:choose>
         <xsl:when test="@dots">
           <xsl:for-each select="1 to @dots">
