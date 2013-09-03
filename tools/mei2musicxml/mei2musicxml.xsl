@@ -196,6 +196,12 @@
                       select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"
                     />
                   </xsl:when>
+                  <xsl:when
+                    test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                    <xsl:value-of
+                      select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
+                    />
+                  </xsl:when>
                   <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
                     <!-- use staffDef/xml:id -->
                     <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
@@ -204,19 +210,7 @@
                   <xsl:otherwise>
                     <!-- construct part ID -->
                     <xsl:text>P_</xsl:text>
-                    <xsl:choose>
-                      <xsl:when
-                        test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                        <xsl:value-of
-                          select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                        />
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of
-                          select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"
-                        />
-                      </xsl:otherwise>
-                    </xsl:choose>
+                    <xsl:value-of select="generate-id(preceding::mei:staffDef[@n=$thisStaff][1])"/>
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:variable>
@@ -1045,6 +1039,9 @@
           <xsl:when test="ancestor::mei:staffGrp[@label]">
             <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
           </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>MusicXML Part</xsl:text>
+          </xsl:otherwise>
         </xsl:choose>
       </part-name>
       <xsl:apply-templates select="mei:instrDef" mode="partList"/>
@@ -1052,15 +1049,51 @@
   </xsl:template>
 
   <xsl:template match="mei:staffGrp" mode="partList">
+    <!-- The assignment of staffGrp and staffDef elements to MusicXML parts
+      depends on the use of @xml:id. If a staffGrp has an xml:id attribute,
+      then it becomes a part. The default is to treat each staff definition 
+      as a part. -->
     <xsl:choose>
-      <!-- The entire staff group constitutes a single part -->
-      <xsl:when test="mei:instrDef or (@label and not(mei:staffDef/@label))">
+      <xsl:when test="mei:instrDef">
+        <!-- The staff group constitutes a single part -->
         <score-part>
           <xsl:attribute name="id">
             <xsl:value-of select="@xml:id"/>
           </xsl:attribute>
           <part-name>
-            <xsl:value-of select="@label"/>
+            <xsl:choose>
+              <xsl:when test="@label">
+                <xsl:value-of select="@label"/>
+              </xsl:when>
+              <xsl:when test="ancestor::mei:staffGrp[@label]">
+                <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text>MusicXML Part</xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
+          </part-name>
+          <xsl:apply-templates select="mei:instrDef" mode="partList"/>
+        </score-part>
+      </xsl:when>
+      <xsl:when test="@xml:id">
+        <!-- The staff group constitutes a single part -->
+        <score-part>
+          <xsl:attribute name="id">
+            <xsl:value-of select="@xml:id"/>
+          </xsl:attribute>
+          <part-name>
+            <xsl:choose>
+              <xsl:when test="@label">
+                <xsl:value-of select="@label"/>
+              </xsl:when>
+              <xsl:when test="ancestor::mei:staffGrp[@label]">
+                <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text>MusicXML Part</xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
           </part-name>
           <xsl:apply-templates select="mei:instrDef" mode="partList"/>
         </score-part>
