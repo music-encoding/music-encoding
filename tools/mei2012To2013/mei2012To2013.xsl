@@ -361,11 +361,10 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="mei:pgHead/mei:table[mei:tr[@y or @x]] | mei:pgHead2/mei:table[mei:tr[@y or
-    @x]] | mei:pgFoot/mei:table[mei:tr[@y or @x]] | mei:pgFoot2/mei:table[mei:tr[@y or @x]]"
-    mode="copy">
-    <!-- Convert table cells with page coordinates to anchoredText elements -->
-    <xsl:for-each select="//mei:td">
+  <xsl:template match="mei:pgHead/mei:table | mei:pgHead2/mei:table | mei:pgFoot/mei:table |
+    mei:pgFoot2/mei:table" mode="copy">
+    <!-- Convert table cells to anchoredText elements -->
+    <xsl:for-each select="descendant::mei:td">
       <anchoredText xmlns:mei="http://www.music-encoding.org/ns/mei"
         xsl:exclude-result-prefixes="mei xlink">
         <xsl:if test="@x or ancestor::mei:tr[@x]">
