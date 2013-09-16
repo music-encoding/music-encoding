@@ -91,24 +91,18 @@
           <xsl:value-of select="replace(@n, '_', '&#32;')"/>
         </credit-type>
       </xsl:if>
-      <xsl:variable name="default-x">
-        <xsl:value-of select="@x"/>
-      </xsl:variable>
-      <xsl:variable name="default-y">
-        <xsl:value-of select="@y"/>
-      </xsl:variable>
       <xsl:for-each-group select="mei:*" group-ending-with="mei:lb">
         <credit-words>
           <xsl:if test="position() = 1">
             <xsl:if test="ancestor::mei:anchoredText/@x">
               <xsl:attribute name="default-x">
-                <xsl:value-of select="format-number(ancestor::mei:anchoredText/@x div 5,
+                <xsl:value-of select="format-number(ancestor::mei:anchoredText/@x * 5,
                   '###0.####')"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:if test="ancestor::mei:anchoredText/@y">
               <xsl:attribute name="default-y">
-                <xsl:value-of select="format-number(ancestor::mei:anchoredText/@y div 5,
+                <xsl:value-of select="format-number(ancestor::mei:anchoredText/@y * 5,
                   '###0.####')"/>
               </xsl:attribute>
             </xsl:if>
@@ -721,7 +715,7 @@
       <!--<xsl:copy-of select="@n"/>
       <xsl:if test="@width">
         <xsl:attribute name="width">
-          <xsl:value-of select="format-number(@width div 5, '###0.####')"/>
+          <xsl:value-of select="format-number(@width * 5, '###0.####')"/>
         </xsl:attribute>
       </xsl:if>
       <xsl:if test="@metcon">
@@ -1290,28 +1284,28 @@
           @page.botmar">
           <page-layout>
             <page-height>
-              <xsl:value-of select="format-number(number(replace(@page.height, '[a-z]+$', '')) div
+              <xsl:value-of select="format-number(number(replace(@page.height, '[a-z]+$', '')) *
                 5, '###0.####')"/>
             </page-height>
             <page-width>
-              <xsl:value-of select="format-number(number(replace(@page.width, '[a-z]+$', '')) div 5,
+              <xsl:value-of select="format-number(number(replace(@page.width, '[a-z]+$', '')) * 5,
                 '###0.####')"/>
             </page-width>
             <page-margins type="both">
               <left-margin>
                 <xsl:value-of select="format-number(number(replace(@page.leftmar, '[a-z]+$', ''))
-                  div 5, '###0.####')"/>
+                  * 5, '###0.####')"/>
               </left-margin>
               <right-margin>
                 <xsl:value-of select="format-number(number(replace(@page.rightmar, '[a-z]+$', ''))
-                  div 5, '###0.####')"/>
+                  * 5, '###0.####')"/>
               </right-margin>
               <top-margin>
-                <xsl:value-of select="format-number(number(replace(@page.topmar, '[a-z]+$', '')) div
+                <xsl:value-of select="format-number(number(replace(@page.topmar, '[a-z]+$', '')) *
                   5, '###0.####')"/>
               </top-margin>
               <bottom-margin>
-                <xsl:value-of select="format-number(number(replace(@page.botmar, '[a-z]+$', '')) div
+                <xsl:value-of select="format-number(number(replace(@page.botmar, '[a-z]+$', '')) *
                   5, '###0.####')"/>
               </bottom-margin>
             </page-margins>
@@ -1322,19 +1316,19 @@
             <system-margins>
               <left-margin>
                 <xsl:value-of select="format-number(number(replace(@system.leftmar, '[a-z]+$', ''))
-                  div 5, '###0.####')"/>
+                  * 5, '###0.####')"/>
               </left-margin>
               <right-margin>
                 <xsl:value-of select="format-number(number(replace(@system.rightmar, '[a-z]+$', ''))
-                  div 5, '###0.####')"/>
+                  * 5, '###0.####')"/>
               </right-margin>
             </system-margins>
             <system-distance>
               <xsl:value-of select="format-number(number(replace(@spacing.system, '[a-z]+$', ''))
-                div 5, '###0.####')"/>
+                * 5, '###0.####')"/>
             </system-distance>
             <top-system-distance>
-              <xsl:value-of select="format-number(number(replace(@system.topmar, '[a-z]+$', '')) div
+              <xsl:value-of select="format-number(number(replace(@system.topmar, '[a-z]+$', '')) *
                 5, '###0.####')"/>
             </top-system-distance>
           </system-layout>
@@ -1342,7 +1336,7 @@
         <xsl:if test="@spacing.staff">
           <staff-layout>
             <staff-distance>
-              <xsl:value-of select="format-number(number(replace(@spacing.staff, '[a-z]+$', '')) div
+              <xsl:value-of select="format-number(number(replace(@spacing.staff, '[a-z]+$', '')) *
                 5, '###0.####')"/>
             </staff-distance>
           </staff-layout>
@@ -1939,7 +1933,7 @@
       <xsl:copy-of select="@number"/>
       <xsl:if test="@width">
         <xsl:attribute name="width">
-          <xsl:value-of select="format-number(@width div 5, '###0.####')"/>
+          <xsl:value-of select="format-number(@width * 5, '###0.####')"/>
         </xsl:attribute>
       </xsl:if>
       <xsl:apply-templates select="part" mode="stage2"/>
