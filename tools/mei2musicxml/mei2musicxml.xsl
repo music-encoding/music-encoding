@@ -3,7 +3,7 @@
   xmlns:mei="http://www.music-encoding.org/ns/mei" exclude-result-prefixes="mei"
   xmlns:saxon="http://saxon.sf.net/" extension-element-prefixes="saxon">
   <xsl:output doctype-system="http://www.musicxml.org/dtds/timewise.dtd"
-    doctype-public="-//Recordare//DTD MusicXML 2.0 Timewise//EN" method="xml" indent="yes"
+    doctype-public="-//Recordare//DTD MusicXML 2.0 Partwise//EN" method="xml" indent="yes"
     encoding="UTF-8" omit-xml-declaration="no" standalone="no"/>
   <xsl:strip-space elements="*"/>
 
@@ -58,7 +58,7 @@
   </xsl:template>
 
   <xsl:template match="mei:mei">
-    <score-timewise>
+    <score-partwise>
       <xsl:apply-templates select="mei:meiHead"/>
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score/mei:scoreDef"
         mode="defaults"/>
@@ -71,7 +71,7 @@
       </part-list>
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score//mei:measure" mode="stage1"
       />
-    </score-timewise>
+    </score-partwise>
   </xsl:template>
 
   <xsl:template match="mei:anchoredText">
@@ -678,13 +678,17 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <midi-channel>
-        <xsl:value-of select="@midi.channel"/>
-      </midi-channel>
-      <midi-program>
-        <!-- MusicXML uses 1-based program numbers -->
-        <xsl:value-of select="@midi.instrnum + 1"/>
-      </midi-program>
+      <xsl:if test="@midi.channel">
+        <midi-channel>
+          <xsl:value-of select="@midi.channel"/>
+        </midi-channel>
+      </xsl:if>
+      <xsl:if test="@midi.instrnum">
+        <midi-program>
+          <!-- MusicXML uses 1-based program numbers -->
+          <xsl:value-of select="@midi.instrnum + 1"/>
+        </midi-program>
+      </xsl:if>
       <volume>
         <!-- MusicXML uses scaling factor instead of actual MIDI value -->
         <xsl:value-of select="round((@midi.volume * 100) div 127)"/>
@@ -754,40 +758,43 @@
 
       <xsl:variable name="localScoreDef">
         <xsl:choose>
-          <!-- if the first measure doesn't have a preceding sibling score definition -->
-          <xsl:when test="count(preceding::mei:measure)=0 and not(preceding-sibling::mei:scoreDef)">
-            <scoreDef xmlns="http://www.music-encoding.org/ns/mei">
-              <!-- copy attributes from the preceding score definition except @ppq -->
-              <xsl:copy-of select="preceding::mei:scoreDef[1]/@*[not(local-name()='ppq')]"/>
-              <!-- determine @ppq value -->
-              <xsl:call-template name="makeScoreDefPPQ"/>
-              <xsl:copy-of select="preceding::mei:scoreDef[1]/*"/>
+          <!-- first measure -->
+          <xsl:when test="count(preceding::mei:measure[not(ancestor::mei:incip)])=0">
+            <!-- copy score-level score definition (minus page header/footer info) to first measure -->
+            <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+              xmlns:xlink="http://www.w3.org/1999/xlink">
+              <xsl:attribute name="defaultScoreDef">defaultScoreDef</xsl:attribute>
+              <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
+              <xsl:copy-of
+                select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
+                'pg'))]"/>
             </scoreDef>
+            <!-- if there's a score definition preceding this measure, copy it too -->
+            <xsl:choose>
+              <!-- copy preceding sibling (local) score definition -->
+              <xsl:when
+                test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+                <xsl:copy-of
+                  select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]"
+                />
+              </xsl:when>
+              <xsl:when test="local-name(preceding-sibling::mei:*[1]) = 'scoreDef'">
+                <xsl:copy-of select="preceding-sibling::mei:scoreDef[1]"/>
+              </xsl:when>
+            </xsl:choose>
           </xsl:when>
-          <!-- score definition between this measure and the previous one -->
+          <!-- in measures other than the first, look for score definition between this measure and the previous one -->
           <xsl:when
             test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-            <scoreDef xmlns="http://www.music-encoding.org/ns/mei">
-              <xsl:copy-of
-                select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/@*[not(local-name()='ppq')]"/>
-              <xsl:call-template name="makeScoreDefPPQ"/>
-              <xsl:copy-of
-                select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/mei:*"/>
-              <xsl:copy-of
-                select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/following-sibling::mei:staffDef[following-sibling::mei:measure[@xml:id=$thisMeasure]]"
-              />
-            </scoreDef>
+            <xsl:copy-of
+              select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]"
+            />
           </xsl:when>
           <!-- score definition between this measure and the previous one -->
           <xsl:when test="local-name(preceding-sibling::mei:*[1]) = 'scoreDef'">
-            <scoreDef xmlns="http://www.music-encoding.org/ns/mei">
-              <xsl:copy-of select="preceding-sibling::mei:scoreDef[1]/@*[not(local-name()='ppq')]"/>
-              <xsl:call-template name="makeScoreDefPPQ"/>
-              <xsl:copy-of select="preceding-sibling::mei:scoreDef[1]/mei:*"/>
-              <xsl:copy-of
-                select="preceding-sibling::mei:scoreDef[1]/following-sibling::mei:staffDef[following-sibling::mei:measure[@xml:id=$thisMeasure]]"
-              />
-            </scoreDef>
+            <xsl:copy-of
+              select="preceding-sibling::mei:scoreDef[1]/following-sibling::mei:staffDef[following-sibling::mei:measure[@xml:id=$thisMeasure]]"
+            />
           </xsl:when>
         </xsl:choose>
       </xsl:variable>
@@ -932,6 +939,9 @@
             </xsl:if>
 
             <xsl:if test="$localScoreDef/*">
+              <!-- if it's not empty, $localScoreDef will contain the default 
+              definition and any local modifications for the first measure, but
+              only local modifications in subsequent measures -->
               <xsl:copy-of select="$localScoreDef"/>
             </xsl:if>
 
@@ -1263,6 +1273,11 @@
     <xsl:apply-templates mode="stage1"/>
   </xsl:template>
 
+  <xsl:template match="mei:*[ancestor::*[starts-with(local-name(), 'pg')]]/*[not(local-name()='lb'
+    or local-name()='rend')]" mode="stage1">
+    <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+
   <xsl:template match="mei:scoreDef" mode="credits">
     <xsl:apply-templates select="mei:pgHead | mei:pgFoot | mei:pgHead2 | mei:pgFoot2"/>
   </xsl:template>
@@ -1293,20 +1308,48 @@
             </page-width>
             <page-margins type="both">
               <left-margin>
-                <xsl:value-of select="format-number(number(replace(@page.leftmar, '[a-z]+$', ''))
-                  * 5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@page.leftmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@page.leftmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@page.leftmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@page.leftmar, '[a-z]+$',
+                      '')) * 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </left-margin>
               <right-margin>
-                <xsl:value-of select="format-number(number(replace(@page.rightmar, '[a-z]+$', ''))
-                  * 5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@page.rightmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@page.rightmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@page.rightmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@page.rightmar, '[a-z]+$',
+                      '')) * 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </right-margin>
               <top-margin>
-                <xsl:value-of select="format-number(number(replace(@page.topmar, '[a-z]+$', '')) *
-                  5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@page.topmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@page.topmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@page.topmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@page.topmar, '[a-z]+$', ''))
+                      * 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </top-margin>
               <bottom-margin>
-                <xsl:value-of select="format-number(number(replace(@page.botmar, '[a-z]+$', '')) *
-                  5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@page.botmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@page.botmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@page.botmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@page.botmar, '[a-z]+$', ''))
+                      * 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </bottom-margin>
             </page-margins>
           </page-layout>
@@ -1315,29 +1358,64 @@
           <system-layout>
             <system-margins>
               <left-margin>
-                <xsl:value-of select="format-number(number(replace(@system.leftmar, '[a-z]+$', ''))
-                  * 5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@system.leftmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@system.leftmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@system.leftmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@system.leftmar, '[a-z]+$',
+                      ''))* 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </left-margin>
               <right-margin>
-                <xsl:value-of select="format-number(number(replace(@system.rightmar, '[a-z]+$', ''))
-                  * 5, '###0.####')"/>
+                <xsl:choose>
+                  <xsl:when test="replace(@system.rightmar, '[a-z]+$', '') = '0'">
+                    <xsl:value-of select="@system.rightmar"/>
+                  </xsl:when>
+                  <xsl:when test="number(replace(@system.rightmar, '[a-z]+$', ''))">
+                    <xsl:value-of select="format-number(number(replace(@system.rightmar, '[a-z]+$',
+                      '')) * 5, '###0.####')"/>
+                  </xsl:when>
+                </xsl:choose>
               </right-margin>
             </system-margins>
             <system-distance>
-              <xsl:value-of select="format-number(number(replace(@spacing.system, '[a-z]+$', ''))
-                * 5, '###0.####')"/>
+              <xsl:choose>
+                <xsl:when test="replace(@spacing.system, '[a-z]+$', '') = '0'">
+                  <xsl:value-of select="@spacing.system"/>
+                </xsl:when>
+                <xsl:when test="number(replace(@spacing.system, '[a-z]+$', ''))">
+                  <xsl:value-of select="format-number(number(replace(@spacing.system, '[a-z]+$',
+                    '')) * 5, '###0.####')"/>
+                </xsl:when>
+              </xsl:choose>
             </system-distance>
             <top-system-distance>
-              <xsl:value-of select="format-number(number(replace(@system.topmar, '[a-z]+$', '')) *
-                5, '###0.####')"/>
+              <xsl:choose>
+                <xsl:when test="replace(@system.topmar, '[a-z]+$', '') = '0'">
+                  <xsl:value-of select="@system.topmar"/>
+                </xsl:when>
+                <xsl:when test="number(replace(@system.topmar, '[a-z]+$', ''))">
+                  <xsl:value-of select="format-number(number(replace(@system.topmar, '[a-z]+$', ''))
+                    * 5, '###0.####')"/>
+                </xsl:when>
+              </xsl:choose>
             </top-system-distance>
           </system-layout>
         </xsl:if>
         <xsl:if test="@spacing.staff">
           <staff-layout>
             <staff-distance>
-              <xsl:value-of select="format-number(number(replace(@spacing.staff, '[a-z]+$', '')) *
-                5, '###0.####')"/>
+              <xsl:choose>
+                <xsl:when test="replace(@spacing.staff, '[a-z]+$', '') = '0'">
+                  <xsl:value-of select="@spacing.staff"/>
+                </xsl:when>
+                <xsl:when test="number(replace(@spacing.staff, '[a-z]+$', ''))">
+                  <xsl:value-of select="format-number(number(replace(@spacing.staff, '[a-z]+$', ''))
+                    *                     5, '###0.####')"/>
+                </xsl:when>
+              </xsl:choose>
             </staff-distance>
           </staff-layout>
         </xsl:if>
@@ -1455,7 +1533,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <part-name>
+      <part-name-display>
         <xsl:choose>
           <xsl:when test="@label">
             <xsl:value-of select="@label"/>
@@ -1467,7 +1545,14 @@
             <xsl:text>MusicXML Part</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
-      </part-name>
+      </part-name-display>
+      <xsl:if test="@label.abbr">
+        <part-abbreviation-display>
+          <display-text>
+            <xsl:value-of select="@label.abbr"/>
+          </display-text>
+        </part-abbreviation-display>
+      </xsl:if>
       <xsl:apply-templates select="mei:instrDef" mode="partList"/>
     </score-part>
   </xsl:template>
@@ -1484,7 +1569,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@xml:id"/>
           </xsl:attribute>
-          <part-name>
+          <part-name-display>
             <xsl:choose>
               <xsl:when test="@label">
                 <xsl:value-of select="@label"/>
@@ -1496,7 +1581,14 @@
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
-          </part-name>
+          </part-name-display>
+          <xsl:if test="@label.abbr">
+            <part-abbreviation-display>
+              <display-text>
+                <xsl:value-of select="@label.abbr"/>
+              </display-text>
+            </part-abbreviation-display>
+          </xsl:if>
           <xsl:apply-templates select="mei:instrDef" mode="partList"/>
         </score-part>
       </xsl:when>
@@ -1507,7 +1599,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@xml:id"/>
           </xsl:attribute>
-          <part-name>
+          <part-name-display>
             <xsl:choose>
               <xsl:when test="@label">
                 <xsl:value-of select="@label"/>
@@ -1519,7 +1611,14 @@
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
-          </part-name>
+          </part-name-display>
+          <xsl:if test="@label.abbr">
+            <part-abbreviation-display>
+              <display-text>
+                <xsl:value-of select="@label.abbr"/>
+              </display-text>
+            </part-abbreviation-display>
+          </xsl:if>
           <xsl:apply-templates select="mei:instrDef" mode="partList"/>
         </score-part>
       </xsl:when>
@@ -1759,29 +1858,6 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template name="makeScoreDefPPQ">
-    <xsl:attribute name="ppq">
-      <xsl:choose>
-        <!-- set @ppq to value specified by ppqDefault parameter -->
-        <xsl:when test="$reQuantize='true'">
-          <xsl:attribute name="ppq">
-            <xsl:value-of select="$ppqDefault"/>
-          </xsl:attribute>
-        </xsl:when>
-        <!-- keep the ppq value given in the file -->
-        <xsl:when test="preceding::mei:scoreDef[1]/@ppq">
-          <xsl:copy-of select="preceding::mei:scoreDef[1]/@ppq"/>
-        </xsl:when>
-        <!-- since there's no ppq value given in the file, set @ppq to ppqDefault value -->
-        <xsl:otherwise>
-          <xsl:attribute name="ppq">
-            <xsl:value-of select="$ppqDefault"/>
-          </xsl:attribute>
-        </xsl:otherwise>
-      </xsl:choose>
-    </xsl:attribute>
-  </xsl:template>
-
   <xsl:template name="measureDuration">
     <!-- calculates duration of a measure in ppq units -->
     <xsl:param name="meterCount"/>
@@ -1921,57 +1997,88 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- The following templates were labelled mode="partContent"; now they will 
-  be used in stage 2 of the conversion; that is, for the actual jump from
-  MusicXML-like MEI markup to actual MusicXML markup. -->
-  <!--<xsl:template match="backup" mode="stage2">
-    <xsl:copy-of select="."/>
-  </xsl:template>-->
-
-  <!--<xsl:template match="measure" mode="stage2">
+  <!-- 'Default' template -->
+  <xsl:template match="@* | node() | comment()" mode="stage1">
     <xsl:copy>
-      <xsl:copy-of select="@number"/>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="stage1"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- 'Default' template -->
+  <xsl:template match="@* | node() | comment()" mode="stage2">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="stage2"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="measure" mode="stage2">
+    <xsl:copy>
+      <xsl:if test="@n">
+        <xsl:attribute name="number">
+          <xsl:value-of select="@n"/>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:if test="@width">
         <xsl:attribute name="width">
           <xsl:value-of select="format-number(@width * 5, '###0.####')"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates select="part" mode="stage2"/>
-    </xsl:copy>
-  </xsl:template>-->
-
-  <!--<xsl:template match="note" mode="stage2">
-    <xsl:copy>
       <xsl:apply-templates mode="stage2"/>
     </xsl:copy>
-  </xsl:template>-->
+  </xsl:template>
 
-  <!--<xsl:template match="part" mode="stage2">
+  <xsl:template match="part" mode="stage2">
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='right')]"/>
-      <xsl:apply-templates select="*[local-name() = 'sb' or local-name()= 'scoreDef']" mode="stage2"/>
+      <xsl:copy-of select="@*"/>
+      <!-- left barline -->
       <xsl:if test="ancestor::measure/@left">
         <xsl:choose>
-          <xsl:when test="ancestor::measure/@left='rptstart'">
-            <barline location="left">
-              <bar-style>heavy-light</bar-style>
-              <repeat direction="forward"/>
+          <xsl:when test="ancestor::measure/@left='dashed'">
+            <barline location="right">
+              <bar-style>dashed</bar-style>
             </barline>
           </xsl:when>
-        </xsl:choose>
-      </xsl:if>
-      <xsl:apply-templates select="*[local-name() != 'controlevents' and local-name() != 'sb' and
-        local-name() != 'scoreDef']" mode="stage2"/>
-      <xsl:if test="ancestor::measure/@right">
-        <xsl:choose>
-          <xsl:when test="ancestor::measure/@right='dbl'">
+          <xsl:when test="ancestor::measure/@left='dotted'">
+            <barline location="right">
+              <bar-style>dotted</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@left='dbl'">
             <barline location="right">
               <bar-style>light-light</bar-style>
             </barline>
           </xsl:when>
-          <xsl:when test="ancestor::measure/@right='end'">
+          <xsl:when test="ancestor::measure/@left='dbldashed'">
+            <barline location="right">
+              <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@left='dbldotted'">
+            <barline location="right">
+              <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@left='end'">
             <barline location="right">
               <bar-style>light-heavy</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@left='invis'">
+            <barline location="right">
+              <bar-style>none</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='rptstart'">
+            <barline location="right">
+              <bar-style>heavy-light</bar-style>
+              <repeat direction="forward"/>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='rptboth'">
+            <barline location="right">
+              <bar-style>light-light</bar-style>
             </barline>
           </xsl:when>
           <xsl:when test="ancestor::measure/@right='rptend'">
@@ -1980,9 +2087,84 @@
               <repeat direction="backward"/>
             </barline>
           </xsl:when>
+          <xsl:when test="ancestor::measure/@right='single'">
+            <barline location="right">
+              <bar-style>regular</bar-style>
+            </barline>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:if>
+
+      <!--<xsl:apply-templates select="*[local-name() != 'controlevents' and local-name() != 'sb' and
+        local-name() != 'scoreDef']" mode="stage2"/>-->
+
+      <!-- right barline -->
+      <xsl:if test="ancestor::measure/@right">
+        <xsl:choose>
+          <xsl:when test="ancestor::measure/@right='dashed'">
+            <barline location="right">
+              <bar-style>dashed</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='dotted'">
+            <barline location="right">
+              <bar-style>dotted</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='dbl'">
+            <barline location="right">
+              <bar-style>light-light</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='dbldashed'">
+            <barline location="right">
+              <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='dbldotted'">
+            <barline location="right">
+              <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='end'">
+            <barline location="right">
+              <bar-style>light-heavy</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='invis'">
+            <barline location="right">
+              <bar-style>none</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='rptstart'">
+            <!-- Do nothing here; use as left barline of next measure -->
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='rptboth'">
+            <barline location="right">
+              <bar-style>light-light</bar-style>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='rptend'">
+            <barline location="right">
+              <bar-style>light-heavy</bar-style>
+              <repeat direction="backward"/>
+            </barline>
+          </xsl:when>
+          <xsl:when test="ancestor::measure/@right='single'">
+            <barline location="right">
+              <bar-style>regular</bar-style>
+            </barline>
+          </xsl:when>
         </xsl:choose>
       </xsl:if>
     </xsl:copy>
+  </xsl:template>
+
+  <!-- The following templates were labelled mode="partContent"; now they will 
+  be used in stage 2 of the conversion; that is, for the actual jump from
+  MusicXML-like MEI markup to actual MusicXML markup. -->
+  <!--<xsl:template match="backup" mode="stage2">
+    <xsl:copy-of select="."/>
   </xsl:template>-->
 
   <!--<xsl:template match="mei:beam | mei:chord | mei:tuplet" mode="stage2">
@@ -3008,13 +3190,5 @@
       </xsl:for-each>
     </note>
   </xsl:template>-->
-
-  <!-- 'Default' template -->
-  <xsl:template match="@* | node() | comment()" mode="stage1">
-    <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="stage1"/>
-    </xsl:copy>
-  </xsl:template>
 
 </xsl:stylesheet>
