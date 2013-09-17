@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE xsl:stylesheet [
-<!ENTITY beamstart    "&#xE501;">
-<!ENTITY beamend      "&#xE502;">
-<!ENTITY tupletstart  "&#xE503;">
-<!ENTITY tupletend    "&#xE504;">
+<!ENTITY beamstart   "&#xE501;">
+<!ENTITY beamend     "&#xE502;">
+<!ENTITY tupletstart "&#xE503;">
+<!ENTITY tupletend   "&#xE504;">
 ]>
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
@@ -21,7 +21,6 @@
       'preserve': All layout information available in the MusicXML file will be converted to MEI
       'strip': All layout information, including page formatting etc., will be stripped
       'pageLayout': Only information about the general formatting setup will be kept
-    
   -->
   <xsl:param name="layout" select="'strip'"/>
 
@@ -29,7 +28,6 @@
       This parameter decides if credit-words, page heads etc. will be preserved or not. Values are:
       'preserve': All pageHeads etc. will be included
       'strip': All credits in the music branch will be stripped
-      
   -->
   <xsl:param name="formeWork" select="'strip'"/>
 
@@ -440,7 +438,7 @@
       matches(normalize-space(.), '^natural-flat$') or matches(normalize-space(.),
       '^flat-down$') or matches(normalize-space(.), '^flat-up$') or
       matches(normalize-space(.), '^natural-down$') or matches(normalize-space(.),
-      '^natural-up$') or  matches(normalize-space(.), '^sharp-down$') or
+      '^natural-up$') or matches(normalize-space(.), '^sharp-down$') or
       matches(normalize-space(.), '^sharp-up$') or matches(normalize-space(.),
       '^triple-sharp$') or matches(normalize-space(.), '^triple-flat$') or
       matches(normalize-space(.), '^quarter-flat$') or matches(normalize-space(.),
@@ -522,7 +520,7 @@
       matches(normalize-space(.), '^natural-flat$') or matches(normalize-space(.),
       '^flat-down$') or matches(normalize-space(.), '^flat-up$') or
       matches(normalize-space(.), '^natural-down$') or matches(normalize-space(.),
-      '^natural-up$') or  matches(normalize-space(.), '^sharp-down$') or
+      '^natural-up$') or matches(normalize-space(.), '^sharp-down$') or
       matches(normalize-space(.), '^sharp-up$') or matches(normalize-space(.),
       '^triple-sharp$') or matches(normalize-space(.), '^triple-flat$') or
       matches(normalize-space(.), '^quarter-flat$') or matches(normalize-space(.),
@@ -722,7 +720,7 @@
   </xsl:template>
 
   <xsl:template match="backup" mode="stage1">
-    <!-- This is a no-op!  Backup elements don't require any action in MEI. -->
+    <!-- This is a no-op! Backup elements don't require any action in MEI. -->
   </xsl:template>
 
   <xsl:template match="credit-words[@default-y]">
@@ -1022,7 +1020,7 @@
         <xsl:choose>
           <xsl:when test="$dirType = 'dynam' and sound[@dynamics &gt; 0]">
             <xsl:attribute name="val">
-              <xsl:value-of select="round((sound/@dynamics  * .01) * 90)"/>
+              <xsl:value-of select="round((sound/@dynamics * .01) * 90)"/>
             </xsl:attribute>
           </xsl:when>
           <xsl:when test="$dirType = 'tempo'">
@@ -1083,7 +1081,7 @@
                   <xsl:value-of select="direction-type/octave-shift/@size"/>
                 </xsl:when>
                 <xsl:otherwise>
-                  <!-- Bad value for @size; choose closest logical value  -->
+                  <!-- Bad value for @size; choose closest logical value -->
                   <xsl:variable name="newDispValue">
                     <xsl:choose>
                       <xsl:when test="(abs(direction-type/octave-shift/@size - 8) &lt;
@@ -1479,11 +1477,28 @@
               <xsl:value-of select="normalize-space(concat($warning, '.'))"/>
             </xsl:comment>
           </xsl:if>
-          <xsl:apply-templates select="direction-type/*" mode="stage1">
-            <xsl:with-param name="dirType">
-              <xsl:value-of select="$dirType"/>
-            </xsl:with-param>
-          </xsl:apply-templates>
+          <xsl:if test="$dirType = 'dir'">
+            <xsl:attribute name="label">
+              <xsl:variable name="dirTypes">
+                <xsl:for-each select="direction-type/*">
+                  <xsl:sort select="local-name()"/>
+                  <xsl:copy-of select="."/>
+                </xsl:for-each>
+              </xsl:variable>
+              <xsl:variable name="dirLabel">
+                <xsl:for-each select="$dirTypes/*">
+                  <xsl:if test="local-name() != local-name(preceding-sibling::*[1])">
+                    <xsl:value-of select="local-name()"/>
+                    <xsl:if test="position() != last()">
+                      <xsl:text>&#32;</xsl:text>
+                    </xsl:if>
+                  </xsl:if>
+                </xsl:for-each>
+              </xsl:variable>
+              <xsl:value-of select="$dirLabel"/>
+            </xsl:attribute>
+          </xsl:if>
+          <xsl:apply-templates select="direction-type/*" mode="stage1"/>
         </xsl:if>
       </xsl:element>
     </xsl:if>
@@ -1492,12 +1507,6 @@
   <xsl:template match="direction-type/coda | direction-type/dynamics | direction-type/metronome
     | direction-type/principal-voice | direction-type/rehearsal | direction-type/segno |
     direction-type/words" mode="stage1">
-    <xsl:param name="dirType"/>
-    <xsl:if test="$dirType = 'dir'">
-      <xsl:attribute name="label">
-        <xsl:value-of select="local-name()"/>
-      </xsl:attribute>
-    </xsl:if>
     <xsl:variable name="content">
       <xsl:choose>
         <xsl:when test="local-name() = 'coda'">
@@ -2042,7 +2051,7 @@
                 (transpose)]/key[not(@number)]][1]/attributes[not(preceding-sibling::note) and
                 not(preceding-sibling::forward) and not (transpose)]/key[not(@number)][1]/fifths"/>
             </xsl:variable>
-            <!-- Key  mode -->
+            <!-- Key mode -->
             <xsl:variable name="scoreMode">
               <xsl:value-of select="attributes[not(transpose) and key][1]/key[1]/mode"/>
             </xsl:variable>
@@ -2471,7 +2480,7 @@
           </xsl:when>
           <xsl:when test="local-name($defaultLayout//*[@xml:id=$partID]) = 'staffGrp'">
             <!-- Part has multiple staves -->
-            <!--  Gather staff qualities -->
+            <!-- Gather staff qualities -->
             <xsl:variable name="staffAttrib">
               <xsl:copy-of select="print/staff-layout"/>
               <xsl:copy-of select="attributes/clef"/>
@@ -2781,7 +2790,7 @@
             </xsl:choose>
           </xsl:when>
           <!-- Set this measure's right attribute when the *following measure* doesn't have a left
-            barline specified,  -->
+            barline specified -->
           <xsl:when test="part/barline[@location='right']/bar-style">
             <xsl:variable name="barStyle">
               <xsl:value-of select="part[1]/barline/bar-style"/>
@@ -2952,6 +2961,7 @@
           <!-- Control events -->
           <xsl:variable name="controlevents">
             <xsl:apply-templates select="direction" mode="stage1"/>
+            <xsl:apply-templates select="sound[@tempo]" mode="stage1"/>
             <xsl:apply-templates select="figured-bass | harmony" mode="stage1"/>
             <xsl:apply-templates select="note[not(chord) and (notations/arpeggiate or
               notations/non-arpeggiate)]" mode="stage1.arpeg"/>
@@ -4062,7 +4072,7 @@
                       <xsl:when test="$size='15'">2</xsl:when>
                       <xsl:when test="$size='22'">3</xsl:when>
                       <xsl:otherwise>
-                        <!-- Bad value for @size; choose closest logical value  -->
+                        <!-- Bad value for @size; choose closest logical value -->
                         <xsl:choose>
                           <xsl:when test="(abs($size - 8) &lt; abs($size
                             - 15)) and (abs($size - 8) &lt; abs($size -
@@ -6557,6 +6567,57 @@
     </xsl:choose>
   </xsl:template> -->
 
+  <xsl:template match="part/sound[@tempo]" mode="stage1">
+    <tempo xmlns="http://www.music-encoding.org/ns/mei">
+      <xsl:attribute name="midi.tempo">
+        <xsl:value-of select="round(@tempo)"/>
+        <xsl:if test="contains(@tempo, '.')">
+          <xsl:variable name="measureNum">
+            <xsl:value-of select="ancestor::measure/@number"/>
+          </xsl:variable>
+          <xsl:variable name="warning">
+            <xsl:text>Tempo value rounded to integer value</xsl:text>
+          </xsl:variable>
+          <xsl:message>
+            <xsl:value-of select="normalize-space(concat($warning, ' (m. ', $measureNum,
+              ').'))"/>
+          </xsl:message>
+        </xsl:if>
+      </xsl:attribute>
+      <xsl:attribute name="tstamp">
+        <xsl:call-template name="tstamp.ges2beat">
+          <xsl:with-param name="tstamp.ges">
+            <xsl:call-template name="getTimestamp.ges"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+      <xsl:attribute name="tstamp.ges">
+        <xsl:call-template name="getTimestamp.ges"/>
+      </xsl:attribute>
+      <xsl:variable name="partID">
+        <xsl:value-of select="ancestor::part[1]/@id"/>
+      </xsl:variable>
+      <xsl:variable name="partStaff">
+        <xsl:choose>
+          <xsl:when test="@number">
+            <xsl:value-of select="@number"/>
+          </xsl:when>
+          <xsl:otherwise>1</xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:attribute name="staff">
+        <xsl:call-template name="getStaffNum">
+          <xsl:with-param name="partID">
+            <xsl:value-of select="$partID"/>
+          </xsl:with-param>
+          <xsl:with-param name="partStaff">
+            <xsl:value-of select="$partStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+    </tempo>
+  </xsl:template>
+
   <xsl:template match="part-group[@type='start']" mode="grpSym">
     <!-- Create stand-off staff grouping symbols -->
     <grpSym level="{@number}">
@@ -6724,7 +6785,7 @@
         <xsl:variable name="outerStaffGrp">
           <staffGrp xmlns="http://www.music-encoding.org/ns/mei">
             <xsl:variable name="tempTree">
-              <!-- Create staffDef elements, copy part-group elements  -->
+              <!-- Create staffDef elements, copy part-group elements -->
               <xsl:apply-templates select="score-part|part-group" mode="layout"/>
             </xsl:variable>
             <xsl:variable name="tempTree2">
@@ -6769,7 +6830,7 @@
         <xsl:variable name="outerStaffGrp">
           <staffGrp xmlns="http://www.music-encoding.org/ns/mei">
             <xsl:variable name="tempTree">
-              <!-- Create staffDef elements, copy part-group elements  -->
+              <!-- Create staffDef elements, copy part-group elements -->
               <xsl:apply-templates select="score-part" mode="layout"/>
             </xsl:variable>
             <xsl:variable name="tempTree2">
@@ -6783,86 +6844,7 @@
         <xsl:copy-of select="$outerStaffGrp"/>
       </xsl:otherwise>
     </xsl:choose>
-
-    <!--<!-\- outerStaffGrp holds basic layout info -\->
-    <xsl:variable name="outerStaffGrp">
-      <staffGrp xmlns="http://www.music-encoding.org/ns/mei">
-        <xsl:variable name="tempTree">
-          <!-\- Create staffDef elements, copy part-group elements  -\->
-          <xsl:apply-templates select="score-part|part-group" mode="layout"/>
-        </xsl:variable>
-        <xsl:variable name="tempTree2">
-          <!-\- Number staves -\->
-          <xsl:apply-templates select="$tempTree" mode="numberStaves"/>
-        </xsl:variable>
-        <!-\- Emit staffGrp and staffDef elements already created -\->
-        <xsl:copy-of select="$tempTree2/mei:staffGrp|$tempTree2/mei:staffDef"/>
-        <!-\- Create stand-off staff grouping symbols -\->
-        <xsl:apply-templates select="$tempTree2/part-group[@type='start' and group-symbol]"
-          mode="grpSym"/>
-      </staffGrp>
-    </xsl:variable>
-    
-    <xsl:choose>
-      <xsl:when test="$outerStaffGrp//grpSym">
-        <!-\- If there are stand-off grouping symbols, resolve them -\->
-        <xsl:call-template name="resolveGrpSym">
-          <xsl:with-param name="in">
-            <xsl:copy-of select="$outerStaffGrp"/>
-          </xsl:with-param>
-          <xsl:with-param name="maxLevel">
-            <xsl:value-of select="number(max($outerStaffGrp//grpSym/@level))"/>
-          </xsl:with-param>
-          <xsl:with-param name="pass" select="number(1)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-\- If there are no stand-off grouping symbols, processing of layout info is complete -\->
-        <xsl:copy-of select="$outerStaffGrp"/>
-      </xsl:otherwise>
-    </xsl:choose>-->
-
   </xsl:template>
-
-  <!--<xsl:template match="part-list" mode="layout">
-    <!-\- outerStaffGrp holds basic layout info -\->
-    <xsl:variable name="outerStaffGrp">
-      <staffGrp xmlns="http://www.music-encoding.org/ns/mei">
-        <xsl:variable name="tempTree">
-          <!-\- Create staffDef elements, copy part-group elements  -\->
-          <xsl:apply-templates select="score-part|part-group" mode="layout"/>
-        </xsl:variable>
-        <xsl:variable name="tempTree2">
-          <!-\- Number staves -\->
-          <xsl:apply-templates select="$tempTree" mode="numberStaves"/>
-        </xsl:variable>
-        <!-\- Emit staffGrp and staffDef elements already created -\->
-        <xsl:copy-of select="$tempTree2/mei:staffGrp|$tempTree2/mei:staffDef"/>
-        <!-\- Create stand-off staff grouping symbols -\->
-        <xsl:apply-templates select="$tempTree2/part-group[@type='start' and group-symbol]"
-          mode="grpSym"/>
-      </staffGrp>
-    </xsl:variable>
-
-    <xsl:choose>
-      <xsl:when test="$outerStaffGrp//grpSym">
-        <!-\- If there are stand-off grouping symbols, resolve them -\->
-        <xsl:call-template name="resolveGrpSym">
-          <xsl:with-param name="in">
-            <xsl:copy-of select="$outerStaffGrp"/>
-          </xsl:with-param>
-          <xsl:with-param name="maxLevel">
-            <xsl:value-of select="number(max($outerStaffGrp//grpSym/@level))"/>
-          </xsl:with-param>
-          <xsl:with-param name="pass" select="number(1)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise>
-        <!-\- If there are no stand-off grouping symbols, processing of layout info is complete -\->
-        <xsl:copy-of select="$outerStaffGrp"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template> -->
 
   <xsl:template match="score-part" mode="layout">
     <!-- Create staffDef elements -->
@@ -7006,43 +6988,48 @@
                   <xsl:attribute name="xml:id">
                     <xsl:value-of select="@id"/>
                   </xsl:attribute>
-                  <xsl:attribute name="midi.channel">
-                    <xsl:value-of select="midi-channel"/>
-                  </xsl:attribute>
-                  <!-- It appears that MusicXML is using 1-based program numbers. Convert to 0-based. -->
-                  <xsl:variable name="midiProgram">
-                    <xsl:value-of select="number(midi-program)"/>
-                  </xsl:variable>
-                  <xsl:attribute name="midi.instrnum">
-                    <xsl:value-of select="$midiProgram - 1"/>
-                  </xsl:attribute>
-                  <xsl:choose>
-                    <xsl:when test="midi-channel != 10">
-                      <xsl:if test="$midiNamesPitched/instrName[position()=$midiProgram] != ''">
-                        <!-- Get MIDI instrument name from $midiNamesPitched -->
-                        <xsl:attribute name="midi.instrname">
+                  <xsl:if test="midi-channel">
+                    <xsl:attribute name="midi.channel">
+                      <xsl:value-of select="midi-channel"/>
+                    </xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="midi-program">
+                    <!-- MusicXML uses 1-based program numbers. Convert to 0-based. -->
+                    <xsl:variable name="midiProgram">
+                      <xsl:value-of select="number(midi-program)"/>
+                    </xsl:variable>
+                    <xsl:attribute name="midi.instrnum">
+                      <xsl:value-of select="$midiProgram - 1"/>
+                    </xsl:attribute>
+                    <xsl:choose>
+                      <xsl:when test="midi-channel != 10">
+                        <xsl:if test="$midiNamesPitched/instrName[position()=$midiProgram] != ''">
+                          <!-- Get MIDI instrument name from $midiNamesPitched -->
+                          <xsl:attribute name="midi.instrname">
+                            <xsl:value-of
+                              select="$midiNamesPitched/instrName[position()=$midiProgram]"/>
+                          </xsl:attribute>
+                        </xsl:if>
+                      </xsl:when>
+                      <xsl:when test="midi-channel = 10">
+                        <xsl:attribute name="label">
                           <xsl:value-of
-                            select="$midiNamesPitched/instrName[position()=$midiProgram]"/>
+                            select="preceding::score-instrument[@id=$thisID]/instrument-name"/>
                         </xsl:attribute>
-                      </xsl:if>
-                    </xsl:when>
-                    <xsl:when test="midi-channel = 10">
-                      <xsl:attribute name="label">
-                        <xsl:value-of
-                          select="preceding::score-instrument[@id=$thisID]/instrument-name"/>
-                      </xsl:attribute>
-                      <!-- Get MIDI instrument name from $midiNamesUnpitched -->
-                      <xsl:variable name="midiUnpitched">
-                        <xsl:value-of select="number(midi-unpitched) - 35"/>
-                      </xsl:variable>
-                      <xsl:if test="$midiNamesUnpitched/instrName[position()=$midiUnpitched] != ''">
-                        <xsl:attribute name="midi.instrname">
-                          <xsl:value-of
-                            select="$midiNamesUnpitched/instrName[position()=$midiUnpitched]"/>
-                        </xsl:attribute>
-                      </xsl:if>
-                    </xsl:when>
-                  </xsl:choose>
+                        <!-- Get MIDI instrument name from $midiNamesUnpitched -->
+                        <xsl:variable name="midiUnpitched">
+                          <xsl:value-of select="number(midi-unpitched) - 35"/>
+                        </xsl:variable>
+                        <xsl:if test="$midiNamesUnpitched/instrName[position()=$midiUnpitched] !=
+                          ''">
+                          <xsl:attribute name="midi.instrname">
+                            <xsl:value-of
+                              select="$midiNamesUnpitched/instrName[position()=$midiUnpitched]"/>
+                          </xsl:attribute>
+                        </xsl:if>
+                      </xsl:when>
+                    </xsl:choose>
+                  </xsl:if>
                   <xsl:if test="volume">
                     <xsl:attribute name="midi.volume">
                       <!-- Map MusicXML volume values to MIDI -->
@@ -7192,42 +7179,47 @@
               <xsl:attribute name="xml:id">
                 <xsl:value-of select="@id"/>
               </xsl:attribute>
-              <xsl:attribute name="midi.channel">
-                <xsl:value-of select="midi-channel"/>
-              </xsl:attribute>
-              <!-- It appears that MusicXML is using 1-based program numbers. Convert to 0-based. -->
-              <xsl:variable name="midiProgram">
-                <xsl:value-of select="number(midi-program)"/>
-              </xsl:variable>
-              <xsl:attribute name="midi.instrnum">
-                <xsl:value-of select="$midiProgram - 1"/>
-              </xsl:attribute>
-              <xsl:choose>
-                <xsl:when test="midi-channel != 10">
-                  <xsl:if test="$midiNamesPitched/instrName[position()=$midiProgram] != ''">
-                    <!-- Get MIDI instrument name from $midiNamesPitched -->
-                    <xsl:attribute name="midi.instrname">
-                      <xsl:value-of select="$midiNamesPitched/instrName[position()=$midiProgram]"/>
-                    </xsl:attribute>
-                  </xsl:if>
-                </xsl:when>
-                <xsl:when test="midi-channel = 10">
-                  <xsl:attribute name="label">
-                    <xsl:value-of select="preceding::score-instrument[@id=$thisID]/instrument-name"
-                    />
-                  </xsl:attribute>
-                  <!-- Get MIDI instrument name from $midiNamesUnpitched -->
-                  <xsl:variable name="midiUnpitched">
-                    <xsl:value-of select="number(midi-unpitched) - 35"/>
-                  </xsl:variable>
-                  <xsl:if test="$midiNamesUnpitched/instrName[position()=$midiUnpitched] != ''">
-                    <xsl:attribute name="midi.instrname">
+              <xsl:if test="midi-channel">
+                <xsl:attribute name="midi.channel">
+                  <xsl:value-of select="midi-channel"/>
+                </xsl:attribute>
+              </xsl:if>
+              <xsl:if test="midi-program">
+                <!-- It appears that MusicXML is using 1-based program numbers. Convert to 0-based. -->
+                <xsl:variable name="midiProgram">
+                  <xsl:value-of select="number(midi-program)"/>
+                </xsl:variable>
+                <xsl:attribute name="midi.instrnum">
+                  <xsl:value-of select="$midiProgram - 1"/>
+                </xsl:attribute>
+                <xsl:choose>
+                  <xsl:when test="midi-channel != 10">
+                    <xsl:if test="$midiNamesPitched/instrName[position()=$midiProgram] != ''">
+                      <!-- Get MIDI instrument name from $midiNamesPitched -->
+                      <xsl:attribute name="midi.instrname">
+                        <xsl:value-of select="$midiNamesPitched/instrName[position()=$midiProgram]"
+                        />
+                      </xsl:attribute>
+                    </xsl:if>
+                  </xsl:when>
+                  <xsl:when test="midi-channel = 10">
+                    <xsl:attribute name="label">
                       <xsl:value-of
-                        select="$midiNamesUnpitched/instrName[position()=$midiUnpitched]"/>
+                        select="preceding::score-instrument[@id=$thisID]/instrument-name"/>
                     </xsl:attribute>
-                  </xsl:if>
-                </xsl:when>
-              </xsl:choose>
+                    <!-- Get MIDI instrument name from $midiNamesUnpitched -->
+                    <xsl:variable name="midiUnpitched">
+                      <xsl:value-of select="number(midi-unpitched) - 35"/>
+                    </xsl:variable>
+                    <xsl:if test="$midiNamesUnpitched/instrName[position()=$midiUnpitched] != ''">
+                      <xsl:attribute name="midi.instrname">
+                        <xsl:value-of
+                          select="$midiNamesUnpitched/instrName[position()=$midiUnpitched]"/>
+                      </xsl:attribute>
+                    </xsl:if>
+                  </xsl:when>
+                </xsl:choose>
+              </xsl:if>
               <xsl:if test="volume">
                 <xsl:attribute name="midi.volume">
                   <!-- Map MusicXML volume values to MIDI -->
@@ -7741,10 +7733,9 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
     <xsl:param name="aarrggbb" as="xs:string"/>
     <xsl:value-of select="('rgba(', for $startByte in (4,6,8) (: Red, green and blue start at
       byte 4, 6 and 8 :) return concat( (: In each iteration, :)
-      f:hex2integer(substring($aarrggbb,$startByte,2)), (: ... return the decimal value :)  ','
-      (: ... and a trailing comma :)  ), format-number(f:hex2integer(substring($aarrggbb,2,2)) div
-      255, '0.00'), (:       alpha value is between 0 and 1 => divide by 255 :) ')' )" separator=""
-    />
+      f:hex2integer(substring($aarrggbb,$startByte,2)), (: ... return the decimal value :) ','
+      (: ... and a trailing comma :) ), format-number(f:hex2integer(substring($aarrggbb,2,2)) div
+      255, '0.00'), (: alpha value is between 0 and 1 => divide by 255 :) ')' )" separator=""/>
   </xsl:template>
 
   <xsl:template name="accidentals">
@@ -7824,7 +7815,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
   </xsl:template>
 
   <xsl:template name="artics">
-    <!-- Populates the artic attribute on note.  Use the articulations
+    <!-- Populates the artic attribute on note. Use the articulations
     template for artic sub-elements. -->
     <xsl:variable name="articlist">
       <xsl:for-each select="notations/articulations/*[not(local-name()='breath-mark' or
