@@ -9824,6 +9824,9 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
     <titleStmt xmlns="http://www.music-encoding.org/ns/mei">
       <title>
         <xsl:if test="normalize-space(work/work-title) != ''">
+          <xsl:attribute name="label">
+            <xsl:text>work</xsl:text>
+          </xsl:attribute>
           <xsl:value-of select="normalize-space(replace(work/work-title, '^\[[^\]]*\](.+)$', '$1'))"
           />
         </xsl:if>
@@ -9832,11 +9835,17 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
             <xsl:when test="normalize-space(work/work-title) != ''">
               <xsl:text>, </xsl:text>
               <title>
+                <xsl:attribute name="label">
+                  <xsl:text>movement</xsl:text>
+                </xsl:attribute>
                 <xsl:value-of select="normalize-space(replace(movement-title, '^\[[^\]]*\](.+)$',
                   '$1'))"/>
               </title>
             </xsl:when>
             <xsl:otherwise>
+              <xsl:attribute name="label">
+                <xsl:text>movement</xsl:text>
+              </xsl:attribute>
               <xsl:value-of select="normalize-space(replace(movement-title, '^\[[^\]]*\](.+)$',
                 '$1'))"/>
             </xsl:otherwise>
