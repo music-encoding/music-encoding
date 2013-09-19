@@ -10845,7 +10845,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="node() | @*" mode="postProcess">
+  <xsl:template match="node() | @* | processing-instruction()" mode="postProcess">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*" mode="#current"/>
     </xsl:copy>
@@ -10984,7 +10984,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
 
   <xsl:template match="mei:scoreDef[not(exists(@* | child::node()))]" mode="cleanUp"/>
 
-  <xsl:template match="node() | @*" mode="cleanUp">
+  <xsl:template match="node() | @* |processing-instruction()" mode="cleanUp">
     <xsl:copy>
       <xsl:apply-templates select="node() | @*" mode="#current"/>
     </xsl:copy>
