@@ -724,26 +724,6 @@
       <!-- DEBUG: -->
       <xsl:copy-of select="@*"/>
 
-      <!--<xsl:copy-of select="@n"/>
-      <xsl:if test="@width">
-        <xsl:attribute name="width">
-          <xsl:value-of select="format-number(@width * 5, '###0.####')"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@metcon">
-        <xsl:attribute name="implicit">
-          <xsl:choose>
-            <xsl:when test="@metcon='true'">
-              <xsl:text>no</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:text>yes</xsl:text>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:copy-of select="@right | @left"/>-->
-
       <xsl:variable name="thisMeasure">
         <xsl:value-of select="@xml:id"/>
       </xsl:variable>
@@ -773,6 +753,11 @@
               xmlns:xlink="http://www.w3.org/1999/xlink">
               <xsl:attribute name="defaultScoreDef">defaultScoreDef</xsl:attribute>
               <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
+              <xsl:if test="not(//mei:music//mei:score/mei:scoreDef/@ppq) or $reQuantize='true'">
+                <xsl:attribute name="ppq">
+                  <xsl:value-of select="$ppqDefault"/>
+                </xsl:attribute>
+              </xsl:if>
               <xsl:copy-of
                 select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
                 'pg'))]"/>
@@ -2060,6 +2045,18 @@
           <xsl:value-of select="format-number(@width * 5, '###0.####')"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:if test="@metcon">
+        <xsl:attribute name="implicit">
+          <xsl:choose>
+            <xsl:when test="@metcon='true'">
+              <xsl:text>no</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>yes</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
       <xsl:apply-templates mode="stage2"/>
     </xsl:copy>
   </xsl:template>
@@ -2068,130 +2065,113 @@
     <xsl:copy>
       <xsl:copy-of select="@*"/>
       <!-- left barline -->
-      <xsl:if test="ancestor::measure/@left">
-        <xsl:choose>
-          <xsl:when test="ancestor::measure/@left='dashed'">
-            <barline location="right">
-              <bar-style>dashed</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='dotted'">
-            <barline location="right">
-              <bar-style>dotted</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='dbl'">
-            <barline location="right">
-              <bar-style>light-light</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='dbldashed'">
-            <barline location="right">
-              <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='dbldotted'">
-            <barline location="right">
-              <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='end'">
-            <barline location="right">
-              <bar-style>light-heavy</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@left='invis'">
-            <barline location="right">
-              <bar-style>none</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptstart'">
-            <barline location="right">
-              <bar-style>heavy-light</bar-style>
-              <repeat direction="forward"/>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptboth'">
-            <barline location="right">
-              <bar-style>light-light</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptend'">
-            <barline location="right">
-              <bar-style>light-heavy</bar-style>
-              <repeat direction="backward"/>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='single'">
-            <barline location="right">
-              <bar-style>regular</bar-style>
-            </barline>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="ancestor::measure/@left">
+          <barline location="left">
+            <xsl:choose>
+              <xsl:when test="ancestor::measure/@left='dashed'">
+                <bar-style>dashed</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='dotted'">
+                <bar-style>dotted</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='dbl'">
+                <bar-style>light-light</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='dbldashed'">
+                <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='dbldotted'">
+                <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='end'">
+                <bar-style>light-heavy</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@left='invis'">
+                <bar-style>none</bar-style>
+              </xsl:when>
+            </xsl:choose>
+          </barline>
+        </xsl:when>
+        <xsl:when test="ancestor::measure/preceding::measure[1][@right='rptstart' or
+          @right='rptboth']">
+          <barline location="left">
+            <xsl:choose>
+              <xsl:when test="ancestor::measure/preceding::measure[1]/@right='rptstart'">
+                <bar-style>heavy-light</bar-style>
+                <repeat direction="forward"/>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/preceding::measure[1]/@right='rptboth'">
+                <bar-style>light-light</bar-style>
+                <repeat direction="forward"/>
+              </xsl:when>
+            </xsl:choose>
+          </barline>
+        </xsl:when>
+      </xsl:choose>
+
+      <xsl:apply-templates select="events/*" mode="stage2"/>
 
       <!--<xsl:apply-templates select="*[local-name() != 'controlevents' and local-name() != 'sb' and
         local-name() != 'scoreDef']" mode="stage2"/>-->
 
       <!-- right barline -->
-      <xsl:if test="ancestor::measure/@right">
-        <xsl:choose>
-          <xsl:when test="ancestor::measure/@right='dashed'">
-            <barline location="right">
-              <bar-style>dashed</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='dotted'">
-            <barline location="right">
-              <bar-style>dotted</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='dbl'">
-            <barline location="right">
-              <bar-style>light-light</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='dbldashed'">
-            <barline location="right">
-              <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='dbldotted'">
-            <barline location="right">
-              <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='end'">
-            <barline location="right">
-              <bar-style>light-heavy</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='invis'">
-            <barline location="right">
-              <bar-style>none</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptstart'">
-            <!-- Do nothing here; use as left barline of next measure -->
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptboth'">
-            <barline location="right">
-              <bar-style>light-light</bar-style>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='rptend'">
-            <barline location="right">
-              <bar-style>light-heavy</bar-style>
+      <xsl:choose>
+        <xsl:when test="ancestor::measure/@right">
+          <barline location="right">
+            <xsl:choose>
+              <xsl:when test="ancestor::measure/@right='dashed'">
+                <bar-style>dashed</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='dotted'">
+                <bar-style>dotted</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='dbl'">
+                <bar-style>light-light</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='dbldashed'">
+                <xsl:comment>MusicXML doesn't support double dashed barlines</xsl:comment>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='dbldotted'">
+                <xsl:comment>MusicXML doesn't support double dotted barlines</xsl:comment>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='end'">
+                <bar-style>light-heavy</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='invis'">
+                <bar-style>none</bar-style>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='rptstart'">
+                <bar-style>heavy-light</bar-style>
+                <repeat direction="forward"/>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='rptboth'">
+                <bar-style>light-heavy</bar-style>
+                <repeat direction="backward"/>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='rptend'">
+                <bar-style>light-heavy</bar-style>
+                <repeat direction="backward"/>
+              </xsl:when>
+              <xsl:when test="ancestor::measure/@right='single'">
+                <bar-style>regular</bar-style>
+              </xsl:when>
+            </xsl:choose>
+          </barline>
+        </xsl:when>
+        <xsl:when test="ancestor::measure/following::measure[1][@left='rptend' or @left='rptboth']">
+          <xsl:choose>
+            <xsl:when test="ancestor::measure/following::measure[1]/@left='rptend'">
+              <bar-style>heavy-light</bar-style>
               <repeat direction="backward"/>
-            </barline>
-          </xsl:when>
-          <xsl:when test="ancestor::measure/@right='single'">
-            <barline location="right">
-              <bar-style>regular</bar-style>
-            </barline>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:if>
+            </xsl:when>
+            <xsl:when test="ancestor::measure/following::measure[1]/@left='rptboth'">
+              <bar-style>light-light</bar-style>
+              <repeat direction="backward"/>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:when>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
 
