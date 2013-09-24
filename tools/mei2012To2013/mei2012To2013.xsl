@@ -894,19 +894,6 @@
     <!-- @dur.ges assumed to be in ppq -->
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='dur.ges')]"/>
-      <xsl:variable name="measureNum">
-        <xsl:value-of select="ancestor::mei:measure/@n"/>
-      </xsl:variable>
-      <xsl:variable name="thisID">
-        <xsl:choose>
-          <xsl:when test="@xml:id">
-            <xsl:value-of select="concat('#', @xml:id)"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="concat('[#', generate-id(), ']')"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:variable>
       <xsl:choose>
         <xsl:when test="number(@dur.ges)">
           <xsl:attribute name="dur.ges">
@@ -992,7 +979,7 @@
   <xsl:template name="thisID">
     <xsl:choose>
       <xsl:when test="@xml:id">
-        <xsl:value-of select="concat('(#', @xml:id, ')')"/>
+        <xsl:value-of select="concat('[#', @xml:id, ']')"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="concat('[#', generate-id(), ']')"/>
