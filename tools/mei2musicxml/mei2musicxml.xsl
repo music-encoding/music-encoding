@@ -681,6 +681,17 @@
     </xsl:for-each>
   </xsl:template>
 
+  <xsl:template match="mei:meiHead">
+    <xsl:choose>
+      <xsl:when test="mei:workDesc/mei:work">
+        <xsl:apply-templates select="mei:workDesc/mei:work"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="mei:fileDesc/mei:sourceDesc/mei:source[1]"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <xsl:template match="mei:identifier" mode="workTitle">
     <!-- Do nothing! Exclude identifier from title content -->
   </xsl:template>
@@ -973,13 +984,16 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent3"/>-->
 
-      <!-- Replace voice elements with <backup> delimiter -->
+      <!-- Add tstamp.ges to voice chldren; replace voice elements with <backup> delimiter -->
       <xsl:variable name="measureContent4">
         <xsl:for-each select="$measureContent3/part">
           <part>
             <xsl:copy-of select="@*"/>
-            <xsl:for-each select="voice">
-              <xsl:copy-of select="*"/>
+            <xsl:for-each select="voice">            
+              <xsl:variable name="voiceContent">
+                <xsl:copy-of select="*"/>
+              </xsl:variable>
+              <xsl:apply-templates select="$voiceContent/*" mode="addTstamp.ges"/>
               <xsl:if test="position() != last()">
                 <backup>
                   <duration>
@@ -1065,15 +1079,18 @@
     </measure>
   </xsl:template>
 
-  <xsl:template match="mei:meiHead">
-    <xsl:choose>
-      <xsl:when test="mei:workDesc/mei:work">
-        <xsl:apply-templates select="mei:workDesc/mei:work"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="mei:fileDesc/mei:sourceDesc/mei:source[1]"/>
-      </xsl:otherwise>
-    </xsl:choose>
+  <xsl:template match="mei:note | mei:rest | mei:chord | mei:space | mei:mRest | mei:mSpace"
+    mode="addTstamp.ges">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <!-- if not already present, add @tstamp.ges -->
+      <xsl:if test="not(@tstamp.ges) and local-name(..) != 'chord'">
+        <xsl:attribute name="tstamp.ges">
+          <xsl:value-of select="sum(preceding::mei:*[@dur.ges]/@dur.ges)"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates mode="addTstamp.ges"/>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="mei:note | mei:rest | mei:space | mei:mRest | mei:mSpace" mode="stage1">
@@ -1390,11 +1407,6 @@
 
   <xsl:template match="mei:rend" mode="stage1">
     <xsl:apply-templates mode="stage1"/>
-  </xsl:template>
-
-  <xsl:template match="mei:*[ancestor::*[starts-with(local-name(), 'pg')]]/*[not(local-name()='lb'
-    or local-name()='rend')]" mode="stage1">
-    <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
 
   <xsl:template match="mei:scoreDef" mode="credits">
@@ -1889,7 +1901,7 @@
     </identification>
   </xsl:template>
 
-  <!-- Named templates -->
+  <!-- Named templates -->  
   <xsl:template name="gesturalDurationFromWrittenDuration">
     <!-- Calculate quantized value (in ppq units) -->
     <xsl:param name="ppq"/>
@@ -2153,6 +2165,19 @@
         </xsl:non-matching-substring>
       </xsl:analyze-string>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:*[ancestor::*[starts-with(local-name(), 'pg')]]/*[not(local-name()='lb'
+    or local-name()='rend')]" mode="stage1">
+    <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+
+  <!-- Default template for addTstamp.ges -->
+  <xsl:template match="@* | node() | comment()" mode="addTstamp.ges">
+    <xsl:copy>
+      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates mode="addTstamp.ges"/>
+    </xsl:copy>
   </xsl:template>
 
   <!-- Default template for dropPPQ mode -->
