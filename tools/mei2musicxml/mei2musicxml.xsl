@@ -23,7 +23,7 @@
       'true()' ignores any @dur.ges values in the file and calculates new values based 
       on the value of the ppqDefault parameter.
   -->
-  <xsl:param name="reQuantize" select="'false'"/>
+  <xsl:param name="reQuantize" select="false()"/>
 
   <!-- global variables -->
   <xsl:variable name="nl">
@@ -156,15 +156,21 @@
       </xsl:variable>
       <xsl:variable name="partID">
         <xsl:choose>
-          <!-- use staffGrp/xml:id -->
-          <xsl:when test="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff] and
-            @xml:id]">
-            <xsl:value-of select="preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]
-              and @xml:id][1]/@xml:id"/>
+          <!-- use the xml:id of preceding staffGrp that has staff definition child for the current staff -->
+          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
+            <xsl:value-of
+              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
           </xsl:when>
-          <!-- use staffDef/xml:id -->
+          <!-- use the xml:id of preceding staffGrp that has staff definition descendant for the current staff -->
+          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+            <xsl:value-of
+              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
+            />
+          </xsl:when>
+          <!-- use the xml:id of preceding staffDef for the current staff -->
           <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff][1]/@xml:id"/>
+            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
+              @xml:id][1]/@xml:id"/>
           </xsl:when>
           <xsl:otherwise>
             <!-- construct a part ID -->
@@ -229,22 +235,22 @@
     <xsl:variable name="ppq">
       <xsl:choose>
         <!-- preceding staff definition for this staff has ppq value -->
-        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and @ppq][1]/@ppq"/>
         </xsl:when>
         <!-- preceding score definition has ppq value -->
-        <xsl:when test="preceding::mei:scoreDef[@ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:scoreDef[@ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
         </xsl:when>
         <!-- preceding event on this staff has an undotted quarter note duration and gestural duration -->
         <xsl:when test="preceding::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          not(@dots) and @dur.ges] and $reQuantize='false'">
+          not(@dots) and @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(preceding::mei:*[ancestor::mei:staff[@n=$thisStaff] and
             @dur='4' and not(@dots) and @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
         <!-- following event on this staff has an undotted quarter note duration and gestural duration -->
         <xsl:when test="following::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          not(@dots) and @dur.ges] and $reQuantize='false'">
+          not(@dots) and @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(following::mei:*[ancestor::mei:staff[@n=$thisStaff] and
             @dur='4' and not(@dots) and @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
@@ -321,8 +327,20 @@
           </xsl:when>
           <!-- construct a part ID -->
           <xsl:otherwise>
+            <!-- construct a part ID -->
             <xsl:text>P_</xsl:text>
-            <xsl:value-of select="generate-id(preceding::mei:staffDef[@n=$thisStaff][1])"/>
+            <xsl:choose>
+              <xsl:when
+                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
+                />
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -373,7 +391,7 @@
         <xsl:attribute name="dur.ges">
           <xsl:choose>
             <!-- if chord has a gestural duration and requantization isn't called for, use @dur.ges value -->
-            <xsl:when test="@dur.ges and $reQuantize='false'">
+            <xsl:when test="@dur.ges and not($reQuantize)">
               <xsl:value-of select="replace(@dur.ges, '[^\d]+', '')"/>
             </xsl:when>
             <!-- event is a grace note/chord; gestural duration = 0 -->
@@ -440,19 +458,19 @@
     </xsl:variable>
     <xsl:variable name="ppq">
       <xsl:choose>
-        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and @ppq][1]/@ppq"/>
         </xsl:when>
-        <xsl:when test="preceding::mei:scoreDef[@ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:scoreDef[@ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
         </xsl:when>
         <xsl:when test="preceding::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          not(@dots) and @dur.ges] and $reQuantize='false'">
+          not(@dots) and @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(preceding::mei:*[@dur='4' and not(@dots) and
             @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
         <xsl:when test="following::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          not(@dots) and @dur.ges] and $reQuantize='false'">
+          not(@dots) and @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(following::mei:*[ancestor::mei:staff[@n=$thisStaff] and
             @dur='4' and not(@dots) and @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
@@ -508,8 +526,20 @@
               @xml:id][1]/@xml:id"/>
           </xsl:when>
           <xsl:otherwise>
+            <!-- construct a part ID -->
             <xsl:text>P_</xsl:text>
-            <xsl:value-of select="generate-id(preceding::mei:staffDef[@n=$thisStaff][1])"/>
+            <xsl:choose>
+              <xsl:when
+                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
+                />
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -752,43 +782,129 @@
             <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
               xmlns:xlink="http://www.w3.org/1999/xlink">
               <xsl:attribute name="defaultScoreDef">defaultScoreDef</xsl:attribute>
-              <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
-              <xsl:if test="not(//mei:music//mei:score/mei:scoreDef/@ppq) or $reQuantize='true'">
-                <xsl:attribute name="ppq">
-                  <xsl:value-of select="$ppqDefault"/>
-                </xsl:attribute>
-              </xsl:if>
-              <xsl:copy-of
-                select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
-                'pg'))]"/>
+              <xsl:choose>
+                <!-- reQuantize -->
+                <xsl:when test="$reQuantize">
+                  <!-- copy all attributes but @ppq, add new @ppq on scoreDef -->
+                  <xsl:copy-of
+                    select="//mei:music//mei:score/mei:scoreDef/@*[not(local-name()='ppq')]"/>
+                  <xsl:attribute name="ppq">
+                    <xsl:value-of select="$ppqDefault"/>
+                  </xsl:attribute>
+                  <!-- remove @ppq on descendants -->
+                  <xsl:apply-templates
+                    select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
+                    'pg'))]" mode="dropPPQ"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <!-- copy attributes and descendants unchanged -->
+                  <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
+                  <xsl:copy-of
+                    select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
+                    'pg'))]"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </scoreDef>
-            <!-- if there's a score definition preceding this measure, copy it too -->
-            <xsl:choose>
-              <!-- copy preceding sibling (local) score definition -->
-              <xsl:when
-                test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-                <xsl:copy-of
-                  select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]"
-                />
-              </xsl:when>
-              <xsl:when test="local-name(preceding-sibling::mei:*[1]) = 'scoreDef'">
-                <xsl:copy-of select="preceding-sibling::mei:scoreDef[1]"/>
-              </xsl:when>
-            </xsl:choose>
+            <!-- process any scoreDef or staffDef elements that precede the first measure -->
+            <!-- look for preceding score definition -->
+            <xsl:if test="preceding-sibling::mei:scoreDef">
+              <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                <xsl:choose>
+                  <!-- reQuantize -->
+                  <xsl:when test="$reQuantize">
+                    <!-- copy all attributes but @ppq -->
+                    <xsl:copy-of
+                      select="preceding-sibling::mei:scoreDef/@*[not(local-name()='ppq')]"/>
+                    <!-- remove @ppq on descendants -->
+                    <xsl:apply-templates
+                      select="preceding-sibling::mei:scoreDef/mei:*[not(starts-with(local-name(),
+                      'pg'))]" mode="dropPPQ"/>
+                  </xsl:when>
+                  <!-- copy attributes and descendants unchanged -->
+                  <xsl:otherwise>
+                    <xsl:copy-of select="preceding-sibling::mei:scoreDef/@*"/>
+                    <xsl:copy-of
+                      select="preceding-sibling::mei:scoreDef/mei:*[not(starts-with(local-name(),
+                      'pg'))]"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </scoreDef>
+            </xsl:if>
+            <!-- look for preceding staff definitions -->
+            <xsl:if test="preceding-sibling::mei:staffDef">
+              <xsl:for-each select="preceding-sibling::mei:staffDef">
+                <staffDef xmlns="http://www.music-encoding.org/ns/mei"
+                  xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <xsl:choose>
+                    <!-- reQuantize -->
+                    <xsl:when test="$reQuantize">
+                      <!-- copy all attributes but @ppq -->
+                      <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                      <xsl:attribute name="ppq">
+                        <xsl:value-of select="$ppqDefault"/>
+                      </xsl:attribute>
+                    </xsl:when>
+                    <!-- copy attributes and descendants unchanged -->
+                    <xsl:otherwise>
+                      <xsl:copy-of select="@*"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </staffDef>
+              </xsl:for-each>
+            </xsl:if>
           </xsl:when>
-          <!-- in measures other than the first, look for score definition between this measure and the previous one -->
-          <xsl:when
-            test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-            <xsl:copy-of
-              select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]"
-            />
-          </xsl:when>
-          <!-- score definition between this measure and the previous one -->
-          <xsl:when test="local-name(preceding-sibling::mei:*[1]) = 'scoreDef'">
-            <xsl:copy-of
-              select="preceding-sibling::mei:scoreDef[1]/following-sibling::mei:staffDef[following-sibling::mei:measure[@xml:id=$thisMeasure]]"
-            />
-          </xsl:when>
+          <xsl:otherwise>
+            <!-- measures other than the first -->
+            <!-- look for score definition between this measure and the previous one -->
+            <xsl:if
+              test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+              <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+                xmlns:xlink="http://www.w3.org/1999/xlink">
+                <xsl:choose>
+                  <!-- reQuantize -->
+                  <xsl:when test="$reQuantize">
+                    <!-- copy all attributes but @ppq -->
+                    <xsl:copy-of
+                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/@*[not(local-name()='ppq')]"/>
+                    <!-- remove @ppq on descendants -->
+                    <xsl:apply-templates
+                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]/mei:*[not(starts-with(local-name(),
+                      'pg'))]" mode="dropPPQ"/>
+                  </xsl:when>
+                  <!-- copy attributes and descendants unchanged -->
+                  <xsl:otherwise>
+                    <xsl:copy-of
+                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/@*"/>
+                    <xsl:copy-of
+                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]/mei:*[not(starts-with(local-name(),
+                      'pg'))]"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </scoreDef>
+            </xsl:if>
+            <!-- look for staff definition(s) between this measure and the previous one -->
+            <xsl:if
+              test="preceding-sibling::mei:staffDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+              <xsl:for-each
+                select="preceding-sibling::mei:staffDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+                <staffDef xmlns="http://www.music-encoding.org/ns/mei"
+                  xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <xsl:choose>
+                    <!-- reQuantize -->
+                    <xsl:when test="$reQuantize">
+                      <!-- copy all attributes but @ppq -->
+                      <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                    </xsl:when>
+                    <!-- copy attributes and descendants unchanged -->
+                    <xsl:otherwise>
+                      <xsl:copy-of select="@*"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </staffDef>
+              </xsl:for-each>
+            </xsl:if>
+          </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
 
@@ -806,7 +922,7 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent"/>-->
 
-      <!-- Group events by partID; create part elements -->
+      <!-- Group events by part and voice -->
       <xsl:variable name="measureContent2">
         <xsl:for-each-group select="$measureContent/events/*" group-by="@partID">
           <part id="{@partID}">
@@ -826,7 +942,7 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent2"/>-->
 
-      <!-- Group events within part by MEI staff and voice; create temporary voice elements -->
+      <!-- Number voices -->
       <xsl:variable name="measureContent3">
         <xsl:for-each select="$measureContent2/part">
           <part>
@@ -857,7 +973,7 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent3"/>-->
 
-      <!-- Replace temporary voice elements with <backup> delimiter between voices -->
+      <!-- Replace voice elements with <backup> delimiter -->
       <xsl:variable name="measureContent4">
         <xsl:for-each select="$measureContent3/part">
           <part>
@@ -872,6 +988,7 @@
                     </xsl:variable>
                     <xsl:choose>
                       <xsl:when test="$backupDuration &gt; 0">
+                        <!-- backup value = the sum of the preceding events in this voice -->
                         <xsl:value-of select="$backupDuration"/>
                       </xsl:when>
                       <xsl:otherwise>
@@ -892,7 +1009,7 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent4"/>-->
 
-      <!-- Copy control events into appropriate part -->
+      <!-- re-wrap sorted events in <events>; copy control events into appropriate part -->
       <xsl:variable name="measureContent5">
         <xsl:for-each select="$measureContent4/part">
           <part>
@@ -903,16 +1020,10 @@
             <xsl:variable name="partID">
               <xsl:value-of select="@id"/>
             </xsl:variable>
-            <!-- drop empty controlevents container -->
-            <xsl:if test="$measureContent4/controlevents/node()">
-              <xsl:variable name="controlEventsContent">
-                <xsl:copy-of select="$measureContent4/controlevents/*[@partID=$partID] |
-                  $measureContent4/controlevents/comment()"/>
-              </xsl:variable>
-              <controlevents>
-                <xsl:copy-of select="$controlEventsContent"/>
-              </controlevents>
-            </xsl:if>
+            <controlevents>
+              <xsl:copy-of select="$measureContent4/controlevents/*[@partID=$partID] |
+                $measureContent4/controlevents/comment()"/>
+            </controlevents>
           </part>
         </xsl:for-each>
       </xsl:variable>
@@ -939,7 +1050,10 @@
             </xsl:if>
 
             <xsl:copy-of select="events"/>
-            <xsl:copy-of select="controlevents"/>
+            <!-- drop empty controlevents container -->
+            <xsl:if test="controlevents/node()">
+              <xsl:copy-of select="controlevents"/>
+            </xsl:if>
 
           </part>
         </xsl:for-each>
@@ -968,19 +1082,19 @@
     </xsl:variable>
     <xsl:variable name="ppq">
       <xsl:choose>
-        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and @ppq][1]/@ppq"/>
         </xsl:when>
-        <xsl:when test="preceding::mei:scoreDef[@ppq] and $reQuantize='false'">
+        <xsl:when test="preceding::mei:scoreDef[@ppq] and not($reQuantize)">
           <xsl:value-of select="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
         </xsl:when>
         <xsl:when test="preceding::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          not(@dots) and @dur.ges] and $reQuantize='false'">
+          not(@dots) and @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(preceding::mei:*[ancestor::mei:staff[@n=$thisStaff] and
             @dur='4' and not(@dots) and @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
         <xsl:when test="following::mei:*[ancestor::mei:staff[@n=$thisStaff] and @dur='4' and
-          @dur.ges] and $reQuantize='false'">
+          @dur.ges] and not($reQuantize)">
           <xsl:value-of select="replace(following::mei:*[ancestor::mei:staff[@n=$thisStaff] and
             @dur='4' and not(@dots) and @dur.ges][1]/@dur.ges, '[^\d]+', '')"/>
         </xsl:when>
@@ -1046,8 +1160,20 @@
               @xml:id][1]/@xml:id"/>
           </xsl:when>
           <xsl:otherwise>
+            <!-- construct a part ID -->
             <xsl:text>P_</xsl:text>
-            <xsl:value-of select="generate-id(preceding::mei:staffDef[@n=$thisStaff][1])"/>
+            <xsl:choose>
+              <xsl:when
+                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
+                />
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -1095,7 +1221,7 @@
       <xsl:if test="local-name(..) != 'chord'">
         <xsl:attribute name="dur.ges">
           <xsl:choose>
-            <xsl:when test="@dur.ges and $reQuantize='false'">
+            <xsl:when test="@dur.ges and not($reQuantize)">
               <xsl:value-of select="replace(@dur.ges, '[^\d]+', '')"/>
             </xsl:when>
             <!-- event is a grace note/chord; gestural duration = 0 -->
@@ -1466,8 +1592,20 @@
               @xml:id][1]/@xml:id"/>
           </xsl:when>
           <xsl:otherwise>
+            <!-- construct a part ID -->
             <xsl:text>P_</xsl:text>
-            <xsl:value-of select="generate-id(preceding::mei:staffDef[@n=$thisStaff][1])"/>
+            <xsl:choose>
+              <xsl:when
+                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
+                />
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of
+                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -2017,7 +2155,15 @@
     </xsl:if>
   </xsl:template>
 
-  <!-- 'Default' template -->
+  <!-- Default template for dropPPQ mode -->
+  <xsl:template match="@* | node() | comment()" mode="dropPPQ">
+    <xsl:copy>
+      <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+      <xsl:apply-templates mode="dropPPQ"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Default template for stage 1 -->
   <xsl:template match="@* | node() | comment()" mode="stage1">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
@@ -2025,7 +2171,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <!-- 'Default' template -->
+  <!-- Default template for stage2 -->
   <xsl:template match="@* | node() | comment()" mode="stage2">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
