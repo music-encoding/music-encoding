@@ -977,6 +977,9 @@
     <xsl:if test="$dirType != 'NULL'">
       <xsl:element name="{$dirType}" namespace="http://www.music-encoding.org/ns/mei">
         <xsl:call-template name="tstampAttrs"/>
+        <xsl:attribute name="startid">
+          <xsl:value-of select="generate-id(following::note[1])"/>
+        </xsl:attribute>
         <xsl:for-each select="direction-type/*[@relative-x or @relative-y][1]">
           <xsl:call-template name="positionRelative"/>
         </xsl:for-each>
@@ -1018,10 +1021,12 @@
         </xsl:attribute>
         <!-- direction-specific attributes -->
         <xsl:choose>
-          <xsl:when test="$dirType = 'dynam' and sound[@dynamics &gt; 0]">
-            <xsl:attribute name="val">
-              <xsl:value-of select="round((sound/@dynamics * .01) * 90)"/>
-            </xsl:attribute>
+          <xsl:when test="$dirType = 'dynam'">
+            <xsl:if test="sound[@dynamics &gt; 0]">
+              <xsl:attribute name="val">
+                <xsl:value-of select="round((sound/@dynamics * .01) * 90)"/>
+              </xsl:attribute>
+            </xsl:if>
           </xsl:when>
           <xsl:when test="$dirType = 'tempo'">
             <xsl:if test="direction-type/metronome/per-minute">
@@ -1216,6 +1221,9 @@
                     <xsl:text>m+</xsl:text>
                     <xsl:value-of select="$endBeat"/>
                   </xsl:attribute>
+                  <xsl:attribute name="endid">
+                    <xsl:value-of select="generate-id(preceding::note[1])"/>
+                  </xsl:attribute>
                 </xsl:for-each>
               </xsl:when>
               <xsl:otherwise>
@@ -1270,6 +1278,9 @@
                         <xsl:text>m+</xsl:text>
                         <xsl:value-of select="$endBeat"/>
                       </xsl:attribute>
+                      <xsl:attribute name="endid">
+                        <xsl:value-of select="generate-id(preceding::note[1])"/>
+                      </xsl:attribute>
                       <xsl:variable name="measureNum">
                         <xsl:value-of select="ancestor::measure/@number"/>
                       </xsl:variable>
@@ -1284,7 +1295,6 @@
                         <xsl:value-of select="normalize-space(concat($warning, '.'))"/>
                       </xsl:comment>
                     </xsl:for-each>
-
                   </xsl:when>
                   <!-- End of octave-shift precedes start -->
                   <xsl:otherwise>
@@ -1334,6 +1344,9 @@
                         <xsl:value-of select="$endMeasurePos - $startMeasurePos"/>
                         <xsl:text>m+</xsl:text>
                         <xsl:value-of select="$endBeat"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="endid">
+                        <xsl:value-of select="generate-id(preceding::note[1])"/>
                       </xsl:attribute>
                       <xsl:variable name="measureNum">
                         <xsl:value-of select="ancestor::measure/@number"/>
@@ -1399,6 +1412,9 @@
                     <xsl:text>m+</xsl:text>
                     <xsl:value-of select="$endBeat"/>
                   </xsl:attribute>
+                  <xsl:attribute name="endid">
+                    <xsl:value-of select="generate-id(preceding::note[1])"/>
+                  </xsl:attribute>
                   <xsl:if test="direction-type/wedge/@spread and $hairpinForm = 'crescendo'">
                     <xsl:attribute name="opening">
                       <xsl:value-of select="format-number(direction-type/wedge/@spread div 5,
@@ -1454,6 +1470,9 @@
                     <xsl:text>m+</xsl:text>
                     <xsl:value-of select="$endBeat"/>
                   </xsl:attribute>
+                  <xsl:attribute name="endid">
+                    <xsl:value-of select="generate-id(preceding::note[1])"/>
+                  </xsl:attribute>
                   <xsl:if test="direction-type/wedge/@spread and $hairpinForm = 'crescendo'">
                     <xsl:attribute name="opening">
                       <xsl:value-of select="format-number(direction-type/wedge/@spread div 5,
@@ -1468,7 +1487,7 @@
         <!-- directives with content -->
         <xsl:if test="$dirType = 'dynam' or $dirType = 'dir' or $dirType = 'reh' or $dirType =
           'tempo'">
-          <!-- Remove this comment once midi.tempo allows decimal values! -->
+          <!-- Remove this warning once midi.tempo allows decimal values! -->
           <xsl:if test="$dirType = 'tempo' and contains(sound/@tempo, '.')">
             <xsl:variable name="warning">
               <xsl:text>midi.tempo value rounded to integer value</xsl:text>
