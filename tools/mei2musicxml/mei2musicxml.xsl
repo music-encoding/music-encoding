@@ -127,13 +127,24 @@
     mei:bend | mei:dir | mei:dynam | mei:harm | mei:gliss | mei:phrase| mei:tempo | mei:mordent |
     mei:trill | mei:turn" mode="stage1">
     <xsl:copy>
-      <!-- Copy all attributes but @staff. -->
+      <!-- copy all attributes but @staff. -->
       <xsl:copy-of select="@*[not(local-name() = 'staff')]"/>
+      <!-- add @staff back if it has multiple values -->
+      <xsl:if test="contains(@staff, '&#32;')">
+        <xsl:copy-of select="@staff"/>
+      </xsl:if>
       <xsl:variable name="thisStaff">
         <xsl:choose>
           <!-- use @staff when provided -->
           <xsl:when test="@staff">
-            <xsl:value-of select="@staff"/>
+            <xsl:choose>
+              <xsl:when test="contains(@staff, '&#32;')">
+                <xsl:value-of select="substring-before(@staff, '&#32;')"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="@staff"/>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <!-- use staff assignment of starting event -->
           <xsl:when test="@startid">
@@ -216,7 +227,8 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:apply-templates mode="stage1"/>
+      <!-- copy contents -->
+      <xsl:copy-of select="node() | text()"/>
     </xsl:copy>
   </xsl:template>
 
@@ -989,7 +1001,7 @@
         <xsl:for-each select="$measureContent3/part">
           <part>
             <xsl:copy-of select="@*"/>
-            <xsl:for-each select="voice">            
+            <xsl:for-each select="voice">
               <xsl:variable name="voiceContent">
                 <xsl:copy-of select="*"/>
               </xsl:variable>
@@ -1901,7 +1913,7 @@
     </identification>
   </xsl:template>
 
-  <!-- Named templates -->  
+  <!-- Named templates -->
   <xsl:template name="gesturalDurationFromWrittenDuration">
     <!-- Calculate quantized value (in ppq units) -->
     <xsl:param name="ppq"/>
