@@ -16,17 +16,7 @@
   <xsl:template match="/">
     <xsl:choose>
       <xsl:when test="mei:mei|mei:meiHead|mei:music">
-        <!-- Add oXygen processing instructions; -->
-        <xsl:processing-instruction name="xml-model">
-          <xsl:text>href="../../../schemata/mei-CMN.rng" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
-        </xsl:processing-instruction>
-        <xsl:text>&#xA;</xsl:text>
-        <xsl:processing-instruction name="xml-model">
-          <xsl:text>href="../../../schemata/mei-CMN.rng" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
-        </xsl:processing-instruction>
-        <xsl:text>&#xA;</xsl:text>
-        <xsl:apply-templates select="comment()" mode="copy"/>
-        <xsl:apply-templates select="mei:*" mode="copy"/>
+        <xsl:apply-templates select="mei:* | comment()" mode="copy"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:variable name="warning">The source file is not an MEI file!</xsl:variable>
@@ -67,7 +57,7 @@
     mei:trill|mei:turn|mei:harm" mode="copy">
     <!-- Rename @dur on control events to @tstamp2 -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='dur')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='dur')]" mode="copy"/>
       <xsl:if test="@dur">
         <xsl:attribute name="tstamp2">
           <xsl:value-of select="@dur"/>
@@ -557,81 +547,6 @@
     </bibl>
   </xsl:template>
 
-  <xsl:template match="mei:rend" mode="copy">
-    <!-- Modify @rend and @fontstyle on <rend> -->
-    <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='rend') and not(local-name()='fontstyle')]"/>
-      <xsl:if test="@fontstyle">
-        <xsl:attribute name="fontstyle">
-          <xsl:choose>
-            <xsl:when test="@fontstyle = 'ital'">
-              <xsl:text>italic</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="@fontstyle"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>
-        <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:variable name="thisMeasure">
-            <xsl:call-template name="thisMeasure"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:choose>
-                <xsl:when test="not(normalize-space($thisMeasure)='')">
-                  <xsl:if test="ancestor::mei:incip">
-                    <xsl:text>incip/</xsl:text>
-                  </xsl:if>
-                  <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:value-of select="concat(local-name(ancestor::mei:*[2]), '/')"/>
-                </xsl:otherwise>
-              </xsl:choose>
-              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
-                '&#32;', $thisID, '&#32;: Modified @fontstyle')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:if>
-      <xsl:if test="@rend">
-        <xsl:attribute name="rend">
-          <xsl:value-of select="replace(@rend, 'dblunderline', 'underline(2)')"/>
-        </xsl:attribute>
-        <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:variable name="thisMeasure">
-            <xsl:call-template name="thisMeasure"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:choose>
-                <xsl:when test="not(normalize-space($thisMeasure)='')">
-                  <xsl:if test="ancestor::mei:incip">
-                    <xsl:text>incip/</xsl:text>
-                  </xsl:if>
-                  <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:value-of select="concat(local-name(ancestor::mei:*[2]), '/')"/>
-                </xsl:otherwise>
-              </xsl:choose>
-              <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(),
-                '&#32;', $thisID, '&#32;: Modified @rend value')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-      </xsl:if>
-      <xsl:apply-templates mode="copy"/>
-    </xsl:copy>
-  </xsl:template>
-
   <xsl:template match="mei:rest" mode="copy">
     <!-- Translate @line values to @loc (which includes spaces) -->
     <xsl:copy>
@@ -890,92 +805,6 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:*[@dur.ges]" mode="copy">
-    <!-- @dur.ges assumed to be in ppq -->
-    <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='dur.ges')]"/>
-      <xsl:choose>
-        <xsl:when test="number(@dur.ges)">
-          <xsl:attribute name="dur.ges">
-            <xsl:value-of select="concat(@dur.ges, 'p')"/>
-          </xsl:attribute>
-          <xsl:if test="$verbose">
-            <xsl:variable name="thisID">
-              <xsl:call-template name="thisID"/>
-            </xsl:variable>
-            <xsl:variable name="thisMeasure">
-              <xsl:call-template name="thisMeasure"/>
-            </xsl:variable>
-            <xsl:call-template name="warning">
-              <xsl:with-param name="warningText">
-                <xsl:if test="ancestor::mei:incip">
-                  <xsl:text>incip/</xsl:text>
-                </xsl:if>
-                <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;',
-                  $thisID, '&#32;: Assumed @dur.ges value to be ppq')"/>
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:variable name="thisMeasure">
-            <xsl:call-template name="thisMeasure"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:if test="ancestor::mei:incip">
-                <xsl:text>incip/</xsl:text>
-              </xsl:if>
-              <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(), '&#32;', $thisID,
-                '&#32;: Removed @dur.ges with non-numeric value')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:apply-templates mode="copy"/>
-    </xsl:copy>
-  </xsl:template>
-
-  <xsl:template match="mei:*[not(local-name()='rend') and @fontstyle]" mode="copy">
-    <!-- 'ital' value for @fontstyle changed to 'italic'; this template applies to 
-      elements other than rend. -->
-    <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='fontstyle')]"/>
-      <xsl:attribute name="fontstyle">
-        <xsl:choose>
-          <xsl:when test="@fontstyle = 'ital'">
-            <xsl:text>italic</xsl:text>
-            <xsl:if test="$verbose">
-              <xsl:variable name="thisID">
-                <xsl:call-template name="thisID"/>
-              </xsl:variable>
-              <xsl:variable name="thisMeasure">
-                <xsl:call-template name="thisMeasure"/>
-              </xsl:variable>
-              <xsl:call-template name="warning">
-                <xsl:with-param name="warningText">
-                  <xsl:if test="ancestor::mei:incip">
-                    <xsl:text>incip/</xsl:text>
-                  </xsl:if>
-                  <xsl:value-of select="concat('m. ', $thisMeasure, '/',
-                    local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;', $thisID,
-                    '&#32;: Modified @fontstyle value')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="@fontstyle"/>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
-      <xsl:apply-templates mode="copy"/>
-    </xsl:copy>
-  </xsl:template>
-
   <xsl:template name="thisID">
     <xsl:choose>
       <xsl:when test="@xml:id">
@@ -1007,19 +836,158 @@
     </xsl:message>
   </xsl:template>
 
+  <xsl:template match="@dur.ges" mode="copy">
+    <xsl:attribute name="dur.ges">
+      <xsl:choose>
+        <xsl:when test="number(.)">
+          <xsl:value-of select="concat(., 'p')"/>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:for-each select="..">
+                <xsl:call-template name="thisID"/>
+              </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="thisMeasure">
+              <xsl:call-template name="thisMeasure"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:if test="ancestor::mei:incip">
+                  <xsl:text>incip/</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="concat('m. ', $thisMeasure, '/', local-name(..), '&#32;',
+                  $thisID, '&#32;: Assumed numeric @dur.ges value to be ppq')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@fontstyle" mode="copy">
+    <xsl:attribute name="fontstyle">
+      <xsl:choose>
+        <xsl:when test="matches(., 'ital')">
+          <xsl:text>italic</xsl:text>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:for-each select="..">
+                <xsl:call-template name="thisID"/>
+              </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="thisMeasure">
+              <xsl:call-template name="thisMeasure"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:choose>
+                  <xsl:when test="not(normalize-space($thisMeasure)='')">
+                    <xsl:if test="ancestor::mei:incip">
+                      <xsl:text>incip/</xsl:text>
+                    </xsl:if>
+                    <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="concat(local-name(ancestor::mei:*[2]), '/')"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+                <xsl:value-of select="concat(local-name(ancestor::mei:*[1]),
+                  '&#32;', $thisID, '&#32;: Modified @fontstyle value')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@rend" mode="copy">
+    <xsl:attribute name="rend">
+      <xsl:value-of select="replace(., 'dblunderline', 'underline(2)')"/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:for-each select="..">
+          <xsl:call-template name="thisID"/>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="thisMeasure">
+        <xsl:call-template name="thisMeasure"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:choose>
+            <xsl:when test="not(normalize-space($thisMeasure)='')">
+              <xsl:if test="ancestor::mei:incip">
+                <xsl:text>incip/</xsl:text>
+              </xsl:if>
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="concat(local-name(ancestor::mei:*[2]), '/')"/>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID,
+            '&#32;: Modified @rend value')"/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@startid|@endid" mode="copy">
+    <xsl:variable name="thisAttr">
+      <xsl:value-of select="local-name()"/>
+    </xsl:variable>
+    <xsl:attribute name="{$thisAttr}">
+      <xsl:choose>
+        <xsl:when test="matches(., '^#')">
+          <xsl:value-of select="."/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="concat('#', .)"/>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:for-each select="..">
+                <xsl:call-template name="thisID"/>
+              </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="thisMeasure">
+              <xsl:call-template name="thisMeasure"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:if test="ancestor::mei:incip">
+                  <xsl:text>incip/</xsl:text>
+                </xsl:if>
+                <xsl:value-of select="concat('m. ', $thisMeasure, '/',
+                  local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Added
+                  &quot;#&quot; to ', $thisAttr)"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
   <xsl:template match="@*|node()" mode="asBibl">
     <!-- Default behavior is to copy the node. -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="copy"/>
+      <xsl:apply-templates select="@* | node()" mode="asBibl"/>
     </xsl:copy>
   </xsl:template>
 
   <xsl:template match="@*|node()" mode="copy">
     <!-- Default behavior is to copy the node. -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="copy"/>
+      <xsl:apply-templates select="@* | node()" mode="copy"/>
     </xsl:copy>
   </xsl:template>
 
