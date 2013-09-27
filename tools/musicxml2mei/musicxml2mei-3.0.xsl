@@ -73,6 +73,14 @@
   -->
   <xsl:param name="labelStyle" select="'attr'"/>
 
+  <!-- PARAM:keepRights
+      This parameter defines how to treat the rights statement for the MEI file. If set to 'false()', then the rights
+      statement given in the source MusicXML file is discarded. Otherwise, if the value of this parameter is
+      'true()', the rights statement in the MusicXML file is used as the value of the fileDesc/availability/useRestrict
+      element.
+  -->
+  <xsl:param name="keepRights" select="true()"/>
+
   <xsl:character-map name="delimiters">
     <xsl:output-character character="&beamstart;" string="&lt;beam&gt;"/>
     <xsl:output-character character="&beamend;" string="&lt;/beam&gt;"/>
@@ -7278,7 +7286,24 @@
     <meiHead xmlns="http://www.music-encoding.org/ns/mei">
       <fileDesc>
         <xsl:call-template name="titleStmt"/>
-        <pubStmt/>
+        <pubStmt>
+          <xsl:choose>
+            <xsl:when test="$keepRights">
+              <availability>
+                <useRestrict>
+                  <xsl:choose>
+                    <xsl:when test="identification/rights">
+                      <xsl:value-of select="identification/rights"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:text>No rights specified in MusicXML source file</xsl:text>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </useRestrict>
+              </availability>
+            </xsl:when>
+          </xsl:choose>
+        </pubStmt>
         <sourceDesc>
           <source>
             <xsl:call-template name="titleStmt"/>
@@ -7382,14 +7407,16 @@
             <p>Calculation of @tstamp and @tstamp2 values on control events, such as dir, dynam,
               hairpin, etc., includes MusicXML offset values.</p>
             <p>The parameters for musicxml2mei.xsl were set as follows: <list>
-                <li>layout: "<xsl:value-of select="$layout"/>", </li>
-                <li>formeWork: "<xsl:value-of select="$formeWork"/>", </li>
-                <li>keepAttributes: "<xsl:value-of select="$keepAttributes"/>", </li>
-                <li>generateMIDI: "<xsl:value-of select="$generateMIDI"/>", </li>
-                <li>articStyle: "<xsl:value-of select="$articStyle"/>", </li>
                 <li>accidStyle: "<xsl:value-of select="$accidStyle"/>", </li>
-                <li>tieStyle: "<xsl:value-of select="$tieStyle"/>", </li>
-                <li>labelStyle: "<xsl:value-of select="$labelStyle"/>"</li></list></p>
+                <li>articStyle: "<xsl:value-of select="$articStyle"/>", </li>
+                <li>formeWork: "<xsl:value-of select="$formeWork"/>", </li>
+                <li>generateMIDI: "<xsl:value-of select="$generateMIDI"/>", </li>
+                <li>keepAttributes: "<xsl:value-of select="$keepAttributes"/>", </li>
+                <li>keepRights: "<xsl:value-of select="$keepRights"/>", </li>
+                <li>labelStyle: "<xsl:value-of select="$labelStyle"/>", </li>
+                <li>layout: "<xsl:value-of select="$layout"/>", </li>
+                <li>tieStyle: "<xsl:value-of select="$tieStyle"/>"</li>
+              </list></p>
           </normalization>
         </editorialDecl>
         <!--<projectDesc>
