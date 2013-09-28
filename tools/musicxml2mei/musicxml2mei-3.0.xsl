@@ -15,7 +15,6 @@
 
   <!-- parameters -->
 
-
   <!-- PARAM:layout
       This parameter defines the degree of layout information transformed into MEI. Possible values are:
       'preserve': All layout information available in the MusicXML file will be converted to MEI
@@ -9897,24 +9896,25 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
             </xsl:otherwise>
           </xsl:choose>
         </xsl:if>
-        <xsl:variable name="identifier">
-          <xsl:if test="normalize-space(work/work-number) != ''">
-            <xsl:value-of select="normalize-space(work/work-number)"/>
-          </xsl:if>
-          <xsl:if test="normalize-space(movement-number) != ''">
+        <xsl:if test="normalize-space(work/work-number) != ''">
+          <xsl:if test="normalize-space(work/work-title) != '' or
+            normalize-space(movement-title) != ''">
             <xsl:text>, </xsl:text>
+          </xsl:if>
+          <identifier type="workNum">
+            <xsl:value-of select="normalize-space(work/work-number)"/>
+          </identifier>
+        </xsl:if>
+        <xsl:if test="normalize-space(movement-number) != ''">
+          <xsl:if test="normalize-space(work/work-title) != '' or normalize-space(work/work-number)
+            != '' or normalize-space(movement-title) != ''">
+            <xsl:text>, </xsl:text>
+          </xsl:if>
+          <identifier type="mvtNum">
             <xsl:if test="number(normalize-space(movement-number))">
               <xsl:text>no. </xsl:text>
             </xsl:if>
             <xsl:value-of select="normalize-space(movement-number)"/>
-          </xsl:if>
-        </xsl:variable>
-        <xsl:if test="normalize-space($identifier) != ''">
-          <xsl:if test="normalize-space(work/work-title) != ''">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-          <identifier>
-            <xsl:value-of select="$identifier"/>
           </identifier>
         </xsl:if>
       </title>
