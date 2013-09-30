@@ -6648,7 +6648,18 @@
     <!-- Create stand-off staff grouping symbols -->
     <grpSym level="{@number}">
       <xsl:attribute name="symbol">
-        <xsl:value-of select="group-symbol"/>
+        <xsl:variable name="groupSym">
+          <xsl:value-of select="normalize-space(group-symbol)"/>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="$groupSym = 'brace' or $groupSym = 'bracket' or $groupSym = 'line' or
+            $groupSym = 'none'">
+            <xsl:value-of select="group-symbol"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- Do nothing! Other values don't map to MEI. -->
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:attribute>
       <xsl:attribute name="start">
         <xsl:value-of select="following-sibling::mei:staffDef[1]/@n"/>
