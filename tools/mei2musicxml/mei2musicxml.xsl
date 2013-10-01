@@ -3,7 +3,7 @@
   xmlns:mei="http://www.music-encoding.org/ns/mei" exclude-result-prefixes="mei"
   xmlns:saxon="http://saxon.sf.net/" extension-element-prefixes="saxon">
   <xsl:output doctype-system="http://www.musicxml.org/dtds/timewise.dtd"
-    doctype-public="-//Recordare//DTD MusicXML 2.0 Partwise//EN" method="xml" indent="yes"
+    doctype-public="-//Recordare//DTD MusicXML 2.0 Timewise//EN" method="xml" indent="yes"
     encoding="UTF-8" omit-xml-declaration="no" standalone="no"/>
   <xsl:strip-space elements="*"/>
 
@@ -58,7 +58,7 @@
   </xsl:template>
 
   <xsl:template match="mei:mei">
-    <score-partwise>
+    <score-timewise>
       <xsl:apply-templates select="mei:meiHead"/>
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score/mei:scoreDef"
         mode="defaults"/>
@@ -71,7 +71,7 @@
       </part-list>
       <xsl:apply-templates select="mei:music/mei:body/mei:mdiv/mei:score//mei:measure" mode="stage1"
       />
-    </score-partwise>
+    </score-timewise>
   </xsl:template>
 
   <xsl:template match="mei:anchoredText">
@@ -1643,7 +1643,8 @@
   </xsl:template>
 
   <xsl:template match="mei:scoreDef" mode="credits">
-    <xsl:apply-templates select="mei:pgHead | mei:pgFoot | mei:pgHead2 | mei:pgFoot2"/>
+    <xsl:apply-templates select="mei:pgHead | mei:pgFoot "/>
+    <xsl:apply-templates select="mei:pgHead2 | mei:pgFoot2"/>
   </xsl:template>
 
   <xsl:template match="mei:scoreDef" mode="defaults">
@@ -1784,7 +1785,10 @@
           </staff-layout>
         </xsl:if>
         <xsl:if test="@music.name | @text.name | @lyric.name">
-          <music-font font-family="{@music.name}">
+          <music-font>
+            <xsl:attribute name="font-family">
+              <xsl:value-of select="normalize-space(@music.name)"/>
+            </xsl:attribute>
             <xsl:if test="@music.size">
               <xsl:attribute name="font-size">
                 <xsl:value-of select="@music.size"/>
@@ -1793,7 +1797,10 @@
           </music-font>
         </xsl:if>
         <xsl:if test="@text.name">
-          <word-font font-family="{@text.name}">
+          <word-font>
+            <xsl:attribute name="font-family">
+              <xsl:value-of select="normalize-space(@text.name)"/>
+            </xsl:attribute>
             <xsl:if test="@text.size">
               <xsl:attribute name="font-size">
                 <xsl:value-of select="@text.size"/>
@@ -1802,7 +1809,10 @@
           </word-font>
         </xsl:if>
         <xsl:if test="@lyric.name">
-          <lyric-font font-family="{@lyric.name}">
+          <lyric-font>
+            <xsl:attribute name="font-family">
+              <xsl:value-of select="normalize-space(@lyric.name)"/>
+            </xsl:attribute>
             <xsl:if test="@lyric.size">
               <xsl:attribute name="font-size">
                 <xsl:value-of select="@lyric.size"/>
@@ -1909,7 +1919,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <part-name-display>
+      <part-name>
         <xsl:choose>
           <xsl:when test="@label">
             <xsl:value-of select="@label"/>
@@ -1921,7 +1931,7 @@
             <xsl:text>MusicXML Part</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
-      </part-name-display>
+      </part-name>
       <xsl:if test="@label.abbr">
         <part-abbreviation-display>
           <display-text>
@@ -1938,6 +1948,40 @@
       depends on the occurrence of instrDef or the use of @xml:id. When a staffGrp
       has a single instrument definition or has an xml:id attribute, then it becomes 
       a part. Otherwise, each staff definition is a part. -->
+    <xsl:if test="ancestor::mei:staffGrp">
+      <part-group type="start">
+        <!-- Nesting-level value for @number DOESN'T WORK! -->
+        <!--<xsl:attribute name="number">
+          <xsl:choose>
+            <xsl:when test="descendant::mei:staffGrp[not(mei:staffGrp)]">
+              <xsl:for-each select="descendant::mei:staffGrp[not(mei:staffGrp)][1]">
+                <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+              </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="1"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>-->
+        <xsl:if test="@symbol">
+          <group-symbol>
+            <xsl:value-of select="@symbol"/>
+          </group-symbol>
+        </xsl:if>
+        <xsl:if test="@barthru">
+          <group-barline>
+            <xsl:choose>
+              <xsl:when test="@barthru='true'">
+                <xsl:text>yes</xsl:text>
+              </xsl:when>
+              <xsl:when test="@barthru='false'">
+                <xsl:text>no</xsl:text>
+              </xsl:when>
+            </xsl:choose>
+          </group-barline>
+        </xsl:if>
+      </part-group>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="count(mei:instrDef) = 1">
         <!-- The staff group constitutes a single part -->
@@ -1945,7 +1989,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@xml:id"/>
           </xsl:attribute>
-          <part-name-display>
+          <part-name>
             <xsl:choose>
               <xsl:when test="@label">
                 <xsl:value-of select="@label"/>
@@ -1957,7 +2001,7 @@
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
-          </part-name-display>
+          </part-name>
           <xsl:if test="@label.abbr">
             <part-abbreviation-display>
               <display-text>
@@ -1975,7 +2019,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@xml:id"/>
           </xsl:attribute>
-          <part-name-display>
+          <part-name>
             <xsl:choose>
               <xsl:when test="@label">
                 <xsl:value-of select="@label"/>
@@ -1987,7 +2031,7 @@
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
-          </part-name-display>
+          </part-name>
           <xsl:if test="@label.abbr">
             <part-abbreviation-display>
               <display-text>
@@ -2003,6 +2047,23 @@
         <xsl:apply-templates select="mei:staffDef | mei:staffGrp" mode="partList"/>
       </xsl:otherwise>
     </xsl:choose>
+    <xsl:if test="ancestor::mei:staffGrp">
+      <part-group type="stop">
+        <!-- Nesting-level value for @number DOESN'T WORK! -->
+        <!--<xsl:attribute name="number">
+          <xsl:choose>
+            <xsl:when test="descendant::mei:staffGrp[not(mei:staffGrp)]">
+              <xsl:for-each select="descendant::mei:staffGrp[not(mei:staffGrp)][1]">
+                <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+              </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="1"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:attribute>-->
+      </part-group>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="mei:work | mei:source">
