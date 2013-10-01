@@ -6647,20 +6647,20 @@
   <xsl:template match="part-group[@type='start']" mode="grpSym">
     <!-- Create stand-off staff grouping symbols -->
     <grpSym level="{@number}">
-      <xsl:attribute name="symbol">
-        <xsl:variable name="groupSym">
-          <xsl:value-of select="normalize-space(group-symbol)"/>
-        </xsl:variable>
-        <xsl:choose>
-          <xsl:when test="$groupSym = 'brace' or $groupSym = 'bracket' or $groupSym = 'line' or
-            $groupSym = 'none'">
-            <xsl:value-of select="group-symbol"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- Do nothing! Other values don't map to MEI. -->
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
+      <xsl:variable name="groupSym">
+        <xsl:value-of select="normalize-space(group-symbol)"/>
+      </xsl:variable>
+      <xsl:choose>
+        <xsl:when test="$groupSym = 'brace' or $groupSym = 'bracket' or $groupSym = 'line' or
+          $groupSym = 'none'">
+          <xsl:attribute name="symbol">
+            <xsl:value-of select="normalize-space(group-symbol)"/>
+          </xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- Do nothing! Other values don't map to MEI. -->
+        </xsl:otherwise>
+      </xsl:choose>
       <xsl:attribute name="start">
         <xsl:value-of select="following-sibling::mei:staffDef[1]/@n"/>
       </xsl:attribute>
@@ -11037,6 +11037,11 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
         <xsl:apply-templates select="node() | @*" mode="#current"/>
       </xsl:copy>
     </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:staffGrp[ancestor::mei:staffGrp and count(mei:staffGrp) = 1 and
+    count(mei:*) = 1]" mode="cleanUp">
+    <xsl:apply-templates select="*" mode="#current"/>
   </xsl:template>
 
   <xsl:template match="mei:scoreDef[not(exists(@* | child::node()))]" mode="cleanUp"/>
