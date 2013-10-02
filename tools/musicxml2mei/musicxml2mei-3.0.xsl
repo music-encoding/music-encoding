@@ -6657,8 +6657,14 @@
             <xsl:value-of select="normalize-space(group-symbol)"/>
           </xsl:attribute>
         </xsl:when>
+        <!-- "square" mapped to "bracket" -->
+        <xsl:when test="$groupSym='square'">
+          <xsl:attribute name="symbol">
+            <xsl:text>bracket</xsl:text>
+          </xsl:attribute>
+        </xsl:when>
         <xsl:otherwise>
-          <!-- Do nothing! Other values don't map to MEI. -->
+          <!-- Do nothing! Other values ignored. -->
         </xsl:otherwise>
       </xsl:choose>
       <xsl:attribute name="start">
@@ -9886,9 +9892,32 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <xsl:value-of select="normalize-space(replace(work/work-title, '^\[[^\]]*\](.+)$', '$1'))"
           />
         </xsl:if>
+        <xsl:if test="normalize-space(work/work-number) != ''">
+          <xsl:if test="normalize-space(work/work-title) != '' or
+            normalize-space(movement-title) != ''">
+            <xsl:text>, </xsl:text>
+          </xsl:if>
+          <identifier type="workNum">
+            <xsl:value-of select="normalize-space(work/work-number)"/>
+          </identifier>
+        </xsl:if>
+        <xsl:if test="normalize-space(movement-number) != ''">
+          <xsl:if test="normalize-space(work/work-title) != '' or normalize-space(work/work-number)
+            != ''">
+            <xsl:text>, </xsl:text>
+          </xsl:if>
+          <identifier type="mvtNum">
+            <xsl:if test="number(normalize-space(movement-number))">
+              <xsl:text>no. </xsl:text>
+            </xsl:if>
+            <xsl:value-of select="normalize-space(movement-number)"/>
+          </identifier>
+        </xsl:if>
         <xsl:if test="normalize-space(movement-title) != ''">
           <xsl:choose>
-            <xsl:when test="normalize-space(work/work-title) != ''">
+            <xsl:when test="normalize-space(work/work-title) != '' or
+              normalize-space(work/work-number) != '' or
+              normalize-space(movement-number) != ''">
               <xsl:text>, </xsl:text>
               <title>
                 <xsl:attribute name="label">
@@ -9906,27 +9935,6 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                 '$1'))"/>
             </xsl:otherwise>
           </xsl:choose>
-        </xsl:if>
-        <xsl:if test="normalize-space(work/work-number) != ''">
-          <xsl:if test="normalize-space(work/work-title) != '' or
-            normalize-space(movement-title) != ''">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-          <identifier type="workNum">
-            <xsl:value-of select="normalize-space(work/work-number)"/>
-          </identifier>
-        </xsl:if>
-        <xsl:if test="normalize-space(movement-number) != ''">
-          <xsl:if test="normalize-space(work/work-title) != '' or normalize-space(work/work-number)
-            != '' or normalize-space(movement-title) != ''">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-          <identifier type="mvtNum">
-            <xsl:if test="number(normalize-space(movement-number))">
-              <xsl:text>no. </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="normalize-space(movement-number)"/>
-          </identifier>
         </xsl:if>
       </title>
       <xsl:if test="identification/creator">
