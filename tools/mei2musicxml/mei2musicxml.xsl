@@ -116,7 +116,7 @@
               </xsl:if>
             </xsl:for-each>
           </xsl:variable>
-          <xsl:value-of select="$creditText"/>
+          <xsl:value-of select="replace($creditText, '&#32;&#32;+', '')"/>
         </credit-words>
       </xsl:for-each-group>
     </credit>
@@ -818,19 +818,46 @@
   <xsl:template match="mei:fileDesc" mode="source">
     <xsl:for-each select="mei:titleStmt">
       <xsl:variable name="creators">
-        <xsl:for-each select="mei:respStmt/*[@role='creator' or @role='composer' or
-          @role='librettist' or @role='lyricist' or @role='arranger']">
+        <xsl:variable name="creatorString">
+          <xsl:value-of select="mei:respStmt/*[@role='creator' or @role='composer' or
+            @role='librettist' or @role='lyricist' or @role='arranger']"/>
+        </xsl:variable>
+        <xsl:variable name="separator">
+          <xsl:choose>
+            <xsl:when test="contains($creatorString, ',')">
+              <xsl:text>;&#32;</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>,&#32;</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
+        <xsl:for-each select="distinct-values(mei:respStmt/*[@role='creator' or @role='composer' or
+          @role='librettist' or @role='lyricist' or @role='arranger'])">
           <xsl:value-of select="replace(., '\.+', '.')"/>
           <xsl:if test="position() != last()">
-            <xsl:text>,&#32;</xsl:text>
+            <xsl:value-of select="$separator"/>
           </xsl:if>
         </xsl:for-each>
       </xsl:variable>
       <xsl:variable name="encoders">
+        <xsl:variable name="encoderString">
+          <xsl:value-of select="mei:respStmt/*[@role='encoder']"/>
+        </xsl:variable>
+        <xsl:variable name="separator">
+          <xsl:choose>
+            <xsl:when test="contains($encoderString, ',')">
+              <xsl:text>;&#32;</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>,&#32;</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <xsl:for-each select="mei:respStmt/*[@role='encoder']">
           <xsl:value-of select="replace(., '\.+', '.')"/>
           <xsl:if test="position() != last()">
-            <xsl:text>,&#32;</xsl:text>
+            <xsl:value-of select="$separator"/>
           </xsl:if>
         </xsl:for-each>
       </xsl:variable>
@@ -1950,19 +1977,9 @@
       a part. Otherwise, each staff definition is a part. -->
     <xsl:if test="ancestor::mei:staffGrp">
       <part-group type="start">
-        <!-- Nesting-level value for @number DOESN'T WORK! -->
-        <!--<xsl:attribute name="number">
-          <xsl:choose>
-            <xsl:when test="descendant::mei:staffGrp[not(mei:staffGrp)]">
-              <xsl:for-each select="descendant::mei:staffGrp[not(mei:staffGrp)][1]">
-                <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
-              </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="1"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>-->
+        <xsl:attribute name="number">
+          <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+        </xsl:attribute>
         <xsl:if test="@symbol">
           <group-symbol>
             <xsl:value-of select="@symbol"/>
@@ -2049,71 +2066,92 @@
     </xsl:choose>
     <xsl:if test="ancestor::mei:staffGrp">
       <part-group type="stop">
-        <!-- Nesting-level value for @number DOESN'T WORK! -->
-        <!--<xsl:attribute name="number">
-          <xsl:choose>
-            <xsl:when test="descendant::mei:staffGrp[not(mei:staffGrp)]">
-              <xsl:for-each select="descendant::mei:staffGrp[not(mei:staffGrp)][1]">
-                <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
-              </xsl:for-each>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:value-of select="1"/>
-            </xsl:otherwise>
-          </xsl:choose>
-        </xsl:attribute>-->
+        <xsl:attribute name="number">
+          <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+        </xsl:attribute>
       </part-group>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="mei:work | mei:source">
     <!-- Both work and source descriptions result in MusicXML work description -->
-    <work>
-      <xsl:for-each select="mei:titleStmt/descendant::mei:identifier[1]">
-        <work-number>
-          <xsl:value-of select="."/>
-        </work-number>
-      </xsl:for-each>
-      <xsl:choose>
-        <xsl:when test="mei:titleStmt/mei:title[@type='uniform']">
-          <xsl:for-each select="mei:titleStmt/mei:title[@type='uniform'][1]">
+    <xsl:variable name="workContent">
+      <work>
+        <xsl:choose>
+          <xsl:when test="mei:titleStmt//mei:identifier[@type='workNum']">
+            <xsl:for-each select="mei:titleStmt//mei:identifier[@type='workNum'][1]">
+              <work-number>
+                <xsl:value-of select="."/>
+              </work-number>
+            </xsl:for-each>
+          </xsl:when>
+          <xsl:when test="mei:titleStmt//mei:identifier[not(@type='mvtNum')]">
+            <work-number>
+              <xsl:for-each select="mei:titleStmt//mei:identifier[not(@type='mvtNum')]">
+                <xsl:value-of select="."/>
+                <xsl:if test="position() != last()">
+                  <xsl:text>,&#32;</xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+            </work-number>
+          </xsl:when>
+        </xsl:choose>
+        <xsl:choose>
+          <xsl:when test="mei:titleStmt/mei:title[@type='uniform']">
+            <xsl:for-each select="mei:titleStmt/mei:title[@type='uniform'][1]">
+              <xsl:variable name="workTitle">
+                <xsl:apply-templates select="." mode="workTitle"/>
+              </xsl:variable>
+              <xsl:if test="normalize-space($workTitle) != ''">
+                <work-title>
+                  <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"
+                  />
+                </work-title>
+              </xsl:if>
+            </xsl:for-each>
+          </xsl:when>
+          <xsl:when test="mei:titleStmt/mei:title[@label='work']">
             <xsl:variable name="workTitle">
-              <xsl:apply-templates select="." mode="workTitle"/>
+              <xsl:for-each select="mei:titleStmt/mei:title[@label='work']">
+                <xsl:apply-templates select="mei:*[not(local-name()='title' and @label='movement')]
+                  | text()" mode="workTitle"/>
+                <xsl:if test="position() != last()">
+                  <xsl:text> ; </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
             </xsl:variable>
-            <work-title>
-              <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"/>
-            </work-title>
-          </xsl:for-each>
-        </xsl:when>
-        <xsl:when test="mei:titleStmt/mei:title[@label='work']">
-          <xsl:variable name="workTitle">
-            <xsl:for-each select="mei:titleStmt/mei:title[@label='work']">
-              <xsl:apply-templates select="mei:*[not(local-name()='title' and @label='movement')] |
-                text()" mode="workTitle"/>
-              <xsl:if test="position() != last()">
-                <xsl:text> ; </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:variable>
-          <work-title>
-            <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"/>
-          </work-title>
-        </xsl:when>
-        <xsl:when test="mei:titleStmt/mei:title[not(@label='movement')]">
-          <xsl:variable name="workTitle">
-            <xsl:for-each select="mei:titleStmt/mei:title[not(@label='movement')]">
-              <xsl:apply-templates select="." mode="workTitle"/>
-              <xsl:if test="position() != last()">
-                <xsl:text> ; </xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:variable>
-          <work-title>
-            <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"/>
-          </work-title>
-        </xsl:when>
-      </xsl:choose>
-    </work>
+            <xsl:if test="normalize-space($workTitle) != ''">
+              <work-title>
+                <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"/>
+              </work-title>
+            </xsl:if>
+          </xsl:when>
+          <xsl:when test="mei:titleStmt/mei:title[not(@label='movement')]">
+            <xsl:variable name="workTitle">
+              <xsl:for-each select="mei:titleStmt/mei:title[not(@label='movement')]">
+                <xsl:apply-templates select="." mode="workTitle"/>
+                <xsl:if test="position() != last()">
+                  <xsl:text> ; </xsl:text>
+                </xsl:if>
+              </xsl:for-each>
+            </xsl:variable>
+            <xsl:if test="normalize-space($workTitle) != ''">
+              <work-title>
+                <xsl:value-of select="replace(normalize-space($workTitle), '(,|;|:|\.|\s)+$', '')"/>
+              </work-title>
+            </xsl:if>
+          </xsl:when>
+        </xsl:choose>
+      </work>
+    </xsl:variable>
+    <xsl:if test="$workContent/work/*">
+      <xsl:copy-of select="$workContent"/>
+    </xsl:if>
+    <xsl:for-each select="mei:titleStmt//mei:identifier[@type='mvtNum'][1]">
+      <movement-number>
+        <xsl:value-of select="."/>
+      </movement-number>
+    </xsl:for-each>
     <xsl:if test="mei:titleStmt//mei:title[@label='movement']">
       <xsl:variable name="movementTitle">
         <xsl:for-each select="mei:titleStmt//mei:title[@label='movement']">
