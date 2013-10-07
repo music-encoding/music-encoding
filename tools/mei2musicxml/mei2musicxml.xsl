@@ -108,15 +108,23 @@
             </xsl:if>
           </xsl:if>
           <xsl:call-template name="rendition"/>
-          <xsl:variable name="creditText">
-            <xsl:for-each select="current-group()">
+          <xsl:choose>
+            <xsl:when test="processing-instruction()">
               <xsl:apply-templates select="." mode="stage1"/>
-              <xsl:if test="position() != last()">
-                <xsl:text>&#32;</xsl:text>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:variable>
-          <xsl:value-of select="replace($creditText, '&#32;&#32;+', '')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:variable name="creditText">
+                <xsl:for-each select="current-group()">
+                  <xsl:apply-templates select="." mode="stage1"/>
+                  <xsl:if test="position() != last()">
+                    <xsl:text>&#32;</xsl:text>
+                  </xsl:if>
+                </xsl:for-each>
+              </xsl:variable>
+              <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                '&#xA;&#32;', '&#xA;')"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </credit-words>
       </xsl:for-each-group>
     </credit>
@@ -1616,7 +1624,11 @@
               <xsl:for-each select="mei:rend">
                 <credit-words>
                   <xsl:call-template name="rendition"/>
-                  <xsl:apply-templates mode="stage1"/>
+                  <xsl:variable name="creditText">
+                    <xsl:apply-templates mode="stage1"/>
+                  </xsl:variable>
+                  <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                    '&#xA;&#32;', '&#xA;')"/>
                 </credit-words>
               </xsl:for-each>
             </xsl:when>
@@ -1625,14 +1637,22 @@
               <xsl:for-each select="descendant::mei:td">
                 <credit-words>
                   <xsl:copy-of select="mei:rend[1]/@*"/>
-                  <xsl:apply-templates mode="stage1"/>
+                  <xsl:variable name="creditText">
+                    <xsl:apply-templates mode="stage1"/>
+                  </xsl:variable>
+                  <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                    '&#xA;&#32;', '&#xA;')"/>
                 </credit-words>
               </xsl:for-each>
             </xsl:when>
             <!-- pgHead, etc. has mixed content -->
             <xsl:when test="text()">
               <credit-words>
-                <xsl:apply-templates mode="stage1"/>
+                <xsl:variable name="creditText">
+                  <xsl:apply-templates mode="stage1"/>
+                </xsl:variable>
+                <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                  '&#xA;&#32;', '&#xA;')"/>
               </credit-words>
             </xsl:when>
             <!-- pgHead, etc. contains MEI elements other than rend, lb, or table -->
@@ -1645,7 +1665,11 @@
                     <xsl:for-each select="mei:rend">
                       <credit-words>
                         <xsl:call-template name="rendition"/>
-                        <xsl:apply-templates mode="stage1"/>
+                        <xsl:variable name="creditText">
+                          <xsl:apply-templates mode="stage1"/>
+                        </xsl:variable>
+                        <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                          '&#xA;&#32;', '&#xA;')"/>
                       </credit-words>
                     </xsl:for-each>
                   </xsl:when>
@@ -1653,7 +1677,11 @@
                   <xsl:otherwise>
                     <credit-words>
                       <xsl:call-template name="rendition"/>
-                      <xsl:apply-templates mode="stage1"/>
+                      <xsl:variable name="creditText">
+                        <xsl:apply-templates mode="stage1"/>
+                      </xsl:variable>
+                      <xsl:value-of select="replace(replace($creditText, '&#32;&#32;+', '&#32;'),
+                        '&#xA;&#32;', '&#xA;')"/>
                     </credit-words>
                   </xsl:otherwise>
                 </xsl:choose>
@@ -1949,21 +1977,30 @@
       <part-name>
         <xsl:choose>
           <xsl:when test="@label">
-            <xsl:value-of select="@label"/>
+            <xsl:value-of select="replace(replace(@label, '&#x266d;', 'b'), '&#x266f;', '#')"/>
           </xsl:when>
           <xsl:when test="ancestor::mei:staffGrp[@label]">
-            <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+            <xsl:value-of select="replace(replace(ancestor::mei:staffGrp[@label][1]/@label,
+              '&#x266d;', 'b'), '&#x266f;', '#')"/>
           </xsl:when>
           <xsl:otherwise>
             <xsl:text>MusicXML Part</xsl:text>
           </xsl:otherwise>
         </xsl:choose>
       </part-name>
+      <xsl:if test="matches(@label, '(&#x266d;|&#x266f;)')">
+        <part-name-display>
+          <xsl:apply-templates select="@label" mode="partName"/>
+        </part-name-display>
+      </xsl:if>
       <xsl:if test="@label.abbr">
+        <part-abbreviation>
+          <xsl:value-of select="replace(replace(@label.abbr, '&#x266d;', 'b'), '&#x266f;', '#')"/>
+        </part-abbreviation>
+      </xsl:if>
+      <xsl:if test="matches(@label.abbr, '(&#x266d;|&#x266f;)')">
         <part-abbreviation-display>
-          <display-text>
-            <xsl:value-of select="@label.abbr"/>
-          </display-text>
+          <xsl:apply-templates select="@label.abbr" mode="partName"/>
         </part-abbreviation-display>
       </xsl:if>
       <xsl:apply-templates select="mei:instrDef" mode="partList"/>
@@ -1975,11 +2012,31 @@
       depends on the occurrence of instrDef or the use of @xml:id. When a staffGrp
       has a single instrument definition or has an xml:id attribute, then it becomes 
       a part. Otherwise, each staff definition is a part. -->
-    <xsl:if test="ancestor::mei:staffGrp">
+    <xsl:if test="exists(@*)">
       <part-group type="start">
         <xsl:attribute name="number">
-          <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+          <xsl:value-of select="count(ancestor::mei:staffGrp[exists(@*)])+1"/>
         </xsl:attribute>
+        <xsl:if test="@label">
+          <group-name>
+            <xsl:value-of select="replace(replace(@label, '&#x266d;', 'b'), '&#x266f;', '#')"/>
+          </group-name>
+        </xsl:if>
+        <xsl:if test="matches(@label, '(&#x266d;|&#x266f;)')">
+          <group-name-display>
+            <xsl:apply-templates select="@label" mode="partName"/>
+          </group-name-display>
+        </xsl:if>
+        <xsl:if test="@label.abbr">
+          <group-abbreviation>
+            <xsl:value-of select="replace(replace(@label.abbr, '&#x266d;', 'b'), '&#x266f;', '#')"/>
+          </group-abbreviation>
+        </xsl:if>
+        <xsl:if test="matches(@label.abbr, '(&#x266d;|&#x266f;)')">
+          <group-abbreviation-display>
+            <xsl:apply-templates select="@label.abbr" mode="partName"/>
+          </group-abbreviation-display>
+        </xsl:if>
         <xsl:if test="@symbol">
           <group-symbol>
             <xsl:value-of select="@symbol"/>
@@ -2009,21 +2066,31 @@
           <part-name>
             <xsl:choose>
               <xsl:when test="@label">
-                <xsl:value-of select="@label"/>
+                <xsl:value-of select="replace(replace(@label, '&#x266d;', 'b'), '&#x266f;', '#')"/>
               </xsl:when>
               <xsl:when test="ancestor::mei:staffGrp[@label]">
-                <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+                <xsl:value-of select="replace(replace(ancestor::mei:staffGrp[@label][1]/@label,
+                  '&#x266d;', 'b'), '&#x266f;', '#')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
           </part-name>
+          <xsl:if test="matches(@label, '(&#x266d;|&#x266f;)')">
+            <part-name-display>
+              <xsl:apply-templates select="@label" mode="partName"/>
+            </part-name-display>
+          </xsl:if>
           <xsl:if test="@label.abbr">
+            <part-abbreviation>
+              <xsl:value-of select="replace(replace(@label.abbr, '&#x266d;', 'b'), '&#x266f;', '#')"
+              />
+            </part-abbreviation>
+          </xsl:if>
+          <xsl:if test="matches(@label.abbr, '(&#x266d;|&#x266f;)')">
             <part-abbreviation-display>
-              <display-text>
-                <xsl:value-of select="@label.abbr"/>
-              </display-text>
+              <xsl:apply-templates select="@label.abbr" mode="partName"/>
             </part-abbreviation-display>
           </xsl:if>
           <xsl:apply-templates select="mei:instrDef" mode="partList"/>
@@ -2039,21 +2106,31 @@
           <part-name>
             <xsl:choose>
               <xsl:when test="@label">
-                <xsl:value-of select="@label"/>
+                <xsl:value-of select="replace(replace(@label, '&#x266d;', 'b'), '&#x266f;', '#')"/>
               </xsl:when>
               <xsl:when test="ancestor::mei:staffGrp[@label]">
-                <xsl:value-of select="ancestor::mei:staffGrp[@label][1]/@label"/>
+                <xsl:value-of select="replace(replace(ancestor::mei:staffGrp[@label][1]/@label,
+                  '&#x266d;', 'b'), '&#x266f;', '#')"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:text>MusicXML Part</xsl:text>
               </xsl:otherwise>
             </xsl:choose>
           </part-name>
+          <xsl:if test="matches(@label, '(&#x266d;|&#x266f;)')">
+            <part-name-display>
+              <xsl:apply-templates select="@label" mode="partName"/>
+            </part-name-display>
+          </xsl:if>
           <xsl:if test="@label.abbr">
+            <part-abbreviation>
+              <xsl:value-of select="replace(replace(@label.abbr, '&#x266d;', 'b'), '&#x266f;', '#')"
+              />
+            </part-abbreviation>
+          </xsl:if>
+          <xsl:if test="matches(@label.abbr, '(&#x266d;|&#x266f;)')">
             <part-abbreviation-display>
-              <display-text>
-                <xsl:value-of select="@label.abbr"/>
-              </display-text>
+              <xsl:apply-templates select="@label.abbr" mode="partName"/>
             </part-abbreviation-display>
           </xsl:if>
           <xsl:apply-templates select="mei:instrDef" mode="partList"/>
@@ -2064,10 +2141,10 @@
         <xsl:apply-templates select="mei:staffDef | mei:staffGrp" mode="partList"/>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:if test="ancestor::mei:staffGrp">
+    <xsl:if test="exists(@*)">
       <part-group type="stop">
         <xsl:attribute name="number">
-          <xsl:value-of select="count(ancestor::mei:staffGrp)"/>
+          <xsl:value-of select="count(ancestor::mei:staffGrp[exists(@*)])+1"/>
         </xsl:attribute>
       </part-group>
     </xsl:if>
@@ -2502,6 +2579,21 @@
   <xsl:template match="mei:*[ancestor::*[starts-with(local-name(), 'pg')]]/*[not(local-name()='lb'
     or local-name()='rend')]" mode="stage1">
     <xsl:value-of select="normalize-space(.)"/>
+  </xsl:template>
+
+  <xsl:template match="@label | @label.abbr" mode="partName">
+    <xsl:analyze-string select="." regex="(&#x266d;|&#x266f;)">
+      <xsl:matching-substring>
+        <accidental-text>
+          <xsl:value-of select="replace(replace(., '&#x266d;', 'flat'), '&#x266f;', 'sharp')"/>
+        </accidental-text>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <display-text>
+          <xsl:value-of select="."/>
+        </display-text>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
   </xsl:template>
 
   <!-- Default template for addTstamp.ges -->
