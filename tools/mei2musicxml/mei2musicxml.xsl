@@ -1033,6 +1033,10 @@
         <xsl:value-of select="@xml:id"/>
       </xsl:variable>
 
+      <xsl:variable name="measureNum">
+        <xsl:value-of select="@n"/>
+      </xsl:variable>
+
       <xsl:variable name="sb">
         <xsl:choose>
           <!-- system break between this measure and the previous one -->
@@ -1042,143 +1046,162 @@
               select="preceding-sibling::mei:sb[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]"
             />
           </xsl:when>
-          <!-- system break between this measure and the previous one -->
-          <xsl:when test="local-name(preceding-sibling::*[1]) = 'sb'">
+          <!-- system break preceding first measure -->
+          <!--<xsl:when test="preceding-sibling::mei:sb">
             <xsl:copy-of select="preceding-sibling::mei:sb[1]"/>
+          </xsl:when>-->
+        </xsl:choose>
+      </xsl:variable>
+
+      <xsl:variable name="pb">
+        <xsl:choose>
+          <!-- page breaks between this measure and the previous one -->
+          <xsl:when
+            test="preceding-sibling::mei:pb[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+            <xsl:copy-of
+              select="preceding-sibling::mei:pb[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]"
+            />
+          </xsl:when>
+          <!-- page breaks preceding first measure -->
+          <xsl:when test="not(preceding-sibling::mei:measure) and preceding-sibling::mei:pb">
+            <xsl:copy-of select="preceding-sibling::mei:pb"/>
           </xsl:when>
         </xsl:choose>
       </xsl:variable>
 
+      <!-- defaultScoreDef contains the top-level score definition with new ppq values 
+      (if requested). It will be used to resolve staves to parts when local modifications
+      are encountered in measures other than the first. -->
+      <xsl:variable name="defaultScoreDef">
+        <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+          xmlns:xlink="http://www.w3.org/1999/xlink">
+          <xsl:attribute name="defaultScoreDef">
+            <xsl:value-of select="true()"/>
+          </xsl:attribute>
+          <xsl:choose>
+            <!-- reQuantize -->
+            <xsl:when test="$reQuantize">
+              <!-- copy all attributes but @ppq, add new @ppq on scoreDef -->
+              <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*[not(local-name()='ppq')]"/>
+              <xsl:attribute name="ppq">
+                <xsl:value-of select="$ppqDefault"/>
+              </xsl:attribute>
+              <!-- remove @ppq on descendants -->
+              <xsl:apply-templates
+                select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
+                'pg'))]" mode="dropPPQ"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <!-- copy attributes and descendants unchanged -->
+              <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
+              <xsl:copy-of
+                select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
+                'pg'))]"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </scoreDef>
+      </xsl:variable>
+
       <xsl:variable name="localScoreDef">
         <xsl:choose>
-          <!-- first measure -->
+          <!-- initial measure -->
           <xsl:when test="count(preceding::mei:measure[not(ancestor::mei:incip)])=0">
-            <!-- copy score-level score definition (minus page header/footer info) to first measure -->
-            <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
-              xmlns:xlink="http://www.w3.org/1999/xlink">
-              <xsl:attribute name="defaultScoreDef">defaultScoreDef</xsl:attribute>
+            <!-- initial measure gets a signal to create initial "attributes" -->
+            <mei:initialAttributes/>
+
+            <!-- copy any scoreDef or staffDef elements that precede the initial measure
+             (with changes in ppq, if requested) -->
+            <xsl:for-each select="preceding-sibling::mei:scoreDef | preceding-sibling::mei:staffDef">
               <xsl:choose>
-                <!-- reQuantize -->
-                <xsl:when test="$reQuantize">
-                  <!-- copy all attributes but @ppq, add new @ppq on scoreDef -->
-                  <xsl:copy-of
-                    select="//mei:music//mei:score/mei:scoreDef/@*[not(local-name()='ppq')]"/>
-                  <xsl:attribute name="ppq">
-                    <xsl:value-of select="$ppqDefault"/>
-                  </xsl:attribute>
-                  <!-- remove @ppq on descendants -->
-                  <xsl:apply-templates
-                    select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
-                    'pg'))]" mode="dropPPQ"/>
+                <xsl:when test="local-name()='scoreDef'">
+                  <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <xsl:choose>
+                      <!-- reQuantize -->
+                      <xsl:when test="$reQuantize">
+                        <!-- copy all attributes but @ppq -->
+                        <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                        <!-- remove @ppq on descendants -->
+                        <xsl:apply-templates select="mei:*[not(starts-with(local-name(), 'pg'))]"
+                          mode="dropPPQ"/>
+                      </xsl:when>
+                      <!-- copy attributes and descendants unchanged -->
+                      <xsl:otherwise>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:copy-of select="mei:*[not(starts-with(local-name(), 'pg'))]"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </scoreDef>
                 </xsl:when>
-                <xsl:otherwise>
-                  <!-- copy attributes and descendants unchanged -->
-                  <xsl:copy-of select="//mei:music//mei:score/mei:scoreDef/@*"/>
-                  <xsl:copy-of
-                    select="//mei:music//mei:score/mei:scoreDef/mei:*[not(starts-with(local-name(),
-                    'pg'))]"/>
-                </xsl:otherwise>
+                <xsl:when test="local-name()='staffDef'">
+                  <staffDef xmlns="http://www.music-encoding.org/ns/mei"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <xsl:choose>
+                      <!-- reQuantize -->
+                      <xsl:when test="$reQuantize">
+                        <!-- copy all attributes but @ppq -->
+                        <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                        <xsl:attribute name="ppq">
+                          <xsl:value-of select="$ppqDefault"/>
+                        </xsl:attribute>
+                      </xsl:when>
+                      <!-- copy attributes and descendants unchanged -->
+                      <xsl:otherwise>
+                        <xsl:copy-of select="@*"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </staffDef>
+                </xsl:when>
               </xsl:choose>
-            </scoreDef>
-            <!-- process any scoreDef or staffDef elements that precede the first measure -->
-            <!-- look for preceding score definition -->
-            <xsl:if test="preceding-sibling::mei:scoreDef">
-              <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
-                xmlns:xlink="http://www.w3.org/1999/xlink">
-                <xsl:choose>
-                  <!-- reQuantize -->
-                  <xsl:when test="$reQuantize">
-                    <!-- copy all attributes but @ppq -->
-                    <xsl:copy-of
-                      select="preceding-sibling::mei:scoreDef/@*[not(local-name()='ppq')]"/>
-                    <!-- remove @ppq on descendants -->
-                    <xsl:apply-templates
-                      select="preceding-sibling::mei:scoreDef/mei:*[not(starts-with(local-name(),
-                      'pg'))]" mode="dropPPQ"/>
-                  </xsl:when>
-                  <!-- copy attributes and descendants unchanged -->
-                  <xsl:otherwise>
-                    <xsl:copy-of select="preceding-sibling::mei:scoreDef/@*"/>
-                    <xsl:copy-of
-                      select="preceding-sibling::mei:scoreDef/mei:*[not(starts-with(local-name(),
-                      'pg'))]"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </scoreDef>
-            </xsl:if>
-            <!-- look for preceding staff definitions -->
-            <xsl:if test="preceding-sibling::mei:staffDef">
-              <xsl:for-each select="preceding-sibling::mei:staffDef">
-                <staffDef xmlns="http://www.music-encoding.org/ns/mei"
-                  xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <xsl:choose>
-                    <!-- reQuantize -->
-                    <xsl:when test="$reQuantize">
-                      <!-- copy all attributes but @ppq -->
-                      <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
-                      <xsl:attribute name="ppq">
-                        <xsl:value-of select="$ppqDefault"/>
-                      </xsl:attribute>
-                    </xsl:when>
-                    <!-- copy attributes and descendants unchanged -->
-                    <xsl:otherwise>
-                      <xsl:copy-of select="@*"/>
-                    </xsl:otherwise>
-                  </xsl:choose>
-                </staffDef>
-              </xsl:for-each>
-            </xsl:if>
+            </xsl:for-each>
           </xsl:when>
           <xsl:otherwise>
             <!-- measures other than the first -->
-            <!-- look for score definition between this measure and the previous one -->
-            <xsl:if
-              test="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-              <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
-                xmlns:xlink="http://www.w3.org/1999/xlink">
-                <xsl:choose>
-                  <!-- reQuantize -->
-                  <xsl:when test="$reQuantize">
-                    <!-- copy all attributes but @ppq -->
-                    <xsl:copy-of
-                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/@*[not(local-name()='ppq')]"/>
-                    <!-- remove @ppq on descendants -->
-                    <xsl:apply-templates
-                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]/mei:*[not(starts-with(local-name(),
-                      'pg'))]" mode="dropPPQ"/>
-                  </xsl:when>
-                  <!-- copy attributes and descendants unchanged -->
-                  <xsl:otherwise>
-                    <xsl:copy-of
-                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[@xml:id=$thisMeasure]]][1]/@*"/>
-                    <xsl:copy-of
-                      select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]/mei:*[not(starts-with(local-name(),
-                      'pg'))]"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </scoreDef>
-            </xsl:if>
-            <!-- look for staff definition(s) between this measure and the previous one -->
-            <xsl:if
-              test="preceding-sibling::mei:staffDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-              <xsl:for-each
-                select="preceding-sibling::mei:staffDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
-                <staffDef xmlns="http://www.music-encoding.org/ns/mei"
-                  xmlns:xlink="http://www.w3.org/1999/xlink">
-                  <xsl:choose>
-                    <!-- reQuantize -->
-                    <xsl:when test="$reQuantize">
-                      <!-- copy all attributes but @ppq -->
-                      <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
-                    </xsl:when>
-                    <!-- copy attributes and descendants unchanged -->
-                    <xsl:otherwise>
-                      <xsl:copy-of select="@*"/>
-                    </xsl:otherwise>
-                  </xsl:choose>
-                </staffDef>
-              </xsl:for-each>
-            </xsl:if>
+            <!-- copy any scoreDef or staffDef elements between this measure and the 
+              previous one (with changes in ppq, if requested) -->
+            <xsl:for-each
+              select="preceding-sibling::mei:scoreDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]
+              |
+              preceding-sibling::mei:staffDef[preceding-sibling::mei:measure[following-sibling::mei:measure[1][@xml:id=$thisMeasure]]]">
+              <xsl:choose>
+                <xsl:when test="local-name()='scoreDef'">
+                  <scoreDef xmlns="http://www.music-encoding.org/ns/mei"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <xsl:choose>
+                      <!-- reQuantize -->
+                      <xsl:when test="$reQuantize">
+                        <!-- copy all attributes but @ppq -->
+                        <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                        <!-- remove @ppq on descendants -->
+                        <xsl:apply-templates select="mei:*[not(starts-with(local-name(), 'pg'))]"
+                          mode="dropPPQ"/>
+                      </xsl:when>
+                      <!-- copy attributes and descendants unchanged -->
+                      <xsl:otherwise>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:copy-of select="mei:*[not(starts-with(local-name(), 'pg'))]"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </scoreDef>
+                </xsl:when>
+                <xsl:when test="local-name()='staffDef'">
+                  <staffDef xmlns="http://www.music-encoding.org/ns/mei"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <xsl:choose>
+                      <!-- reQuantize -->
+                      <xsl:when test="$reQuantize">
+                        <!-- copy all attributes but @ppq -->
+                        <xsl:copy-of select="@*[not(local-name()='ppq')]"/>
+                      </xsl:when>
+                      <!-- copy attributes and descendants unchanged -->
+                      <xsl:otherwise>
+                        <xsl:copy-of select="@*"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
+                  </staffDef>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:for-each>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:variable>
@@ -1309,26 +1332,794 @@
       <!-- DEBUG: -->
       <!--<xsl:copy-of select="$measureContent5"/>-->
 
-      <!-- if there are any system breaks or score definitions between this measure 
-        and the previous one, copy them into each part -->
+      <!-- if there are any page or system breaks or score definitions between this measure 
+        and the previous one, copy/resolve them into appropriate part -->
       <xsl:variable name="measureContent6">
         <xsl:for-each select="$measureContent5/part">
+          <xsl:variable name="thisPart">
+            <xsl:value-of select="@id"/>
+          </xsl:variable>
           <part>
             <xsl:copy-of select="@*"/>
-
-            <xsl:if test="$sb/*">
-              <xsl:copy-of select="$sb"/>
+            <!-- if it's not empty, $localScoreDef will contain any local modifications and an initial
+              measure flag for the initial measure, but only local modifications in subsequent measures -->
+            <xsl:if test="$localScoreDef/mei:scoreDef or $localScoreDef/mei:staffDef | $sb/* |
+              $pb/*">
+              <print>
+                <xsl:if test="$sb/*">
+                  <xsl:attribute name="new-system">
+                    <xsl:text>yes</xsl:text>
+                  </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="$pb/*">
+                  <xsl:attribute name="new-page">
+                    <xsl:text>yes</xsl:text>
+                  </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="$pb/mei:pb[last()]/@n">
+                  <xsl:attribute name="page-number">
+                    <xsl:value-of select="$pb/mei:pb[last()]/@n"/>
+                  </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="$pb/mei:pb[following-sibling::mei:*[1][local-name()='pb']]">
+                  <xsl:attribute name="blank-page">
+                    <xsl:value-of
+                      select="count($pb/mei:pb[following-sibling::mei:*[1][local-name()='pb']])"/>
+                  </xsl:attribute>
+                </xsl:if>
+                <xsl:if test="$localScoreDef/mei:scoreDef/@*[starts-with(local-name(),
+                  'page')]">
+                  <page-layout>
+                    <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.height][last()]">
+                      <page-height>
+                        <xsl:value-of select="format-number(number(replace(@page.height, '[a-z]+$',
+                          '')) * 5, '###0.####')"/>
+                      </page-height>
+                    </xsl:for-each>
+                    <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.width][last()]">
+                      <page-width>
+                        <xsl:value-of select="format-number(number(replace(@page.width, '[a-z]+$',
+                          '')) * 5, '###0.####')"/>
+                      </page-width>
+                    </xsl:for-each>
+                    <xsl:if test="$localScoreDef/mei:scoreDef/@*[matches(local-name(),
+                      'page\.(left|right|top|bot)mar')]">
+                      <page-margins type="both">
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.leftmar][last()]">
+                          <left-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@page.leftmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@page.leftmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@page.leftmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@page.leftmar,
+                                  '[a-z]+$', '')) * 5, '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </left-margin>
+                        </xsl:for-each>
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.rightmar][last()]">
+                          <right-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@page.rightmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@page.rightmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@page.rightmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@page.rightmar,
+                                  '[a-z]+$', '')) * 5, '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </right-margin>
+                        </xsl:for-each>
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.topmar][last()]">
+                          <top-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@page.topmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@page.topmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@page.topmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@page.topmar,
+                                  '[a-z]+$', '')) * 5, '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </top-margin>
+                        </xsl:for-each>
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@page.botmar][last()]">
+                          <bottom-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@page.botmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@page.botmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@page.botmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@page.botmar,
+                                  '[a-z]+$', '')) * 5, '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </bottom-margin>
+                        </xsl:for-each>
+                      </page-margins>
+                    </xsl:if>
+                  </page-layout>
+                </xsl:if>
+                <xsl:if test="$localScoreDef/mei:scoreDef/@*[starts-with(local-name(),
+                  'system') or starts-with(local-name(), 'spacing.system')]">
+                  <system-layout>
+                    <xsl:if test="$localScoreDef/mei:scoreDef/@*[matches(local-name(),
+                      'system\.(left|right)mar')]">
+                      <system-margins>
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@system.leftmar][last()]">
+                          <left-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@system.leftmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@system.leftmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@system.leftmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@system.leftmar,
+                                  '[a-z]+$', ''))* 5,
+                                  '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </left-margin>
+                        </xsl:for-each>
+                        <xsl:for-each select="$localScoreDef/mei:scoreDef[@system.rightmar][last()]">
+                          <right-margin>
+                            <xsl:choose>
+                              <xsl:when test="replace(@system.rightmar, '[a-z]+$', '') = '0'">
+                                <xsl:value-of select="@system.rightmar"/>
+                              </xsl:when>
+                              <xsl:when test="number(replace(@system.rightmar, '[a-z]+$', ''))">
+                                <xsl:value-of select="format-number(number(replace(@system.rightmar,
+                                  '[a-z]+$', '')) * 5, '###0.####')"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </right-margin>
+                        </xsl:for-each>
+                      </system-margins>
+                    </xsl:if>
+                    <xsl:for-each select="$localScoreDef/mei:scoreDef[@spacing.system][last()]">
+                      <system-distance>
+                        <xsl:choose>
+                          <xsl:when test="replace(@spacing.system, '[a-z]+$', '') = '0'">
+                            <xsl:value-of select="@spacing.system"/>
+                          </xsl:when>
+                          <xsl:when test="number(replace(@spacing.system, '[a-z]+$', ''))">
+                            <xsl:value-of select="format-number(number(replace(@spacing.system,
+                              '[a-z]+$', '')) * 5, '###0.####')"/>
+                          </xsl:when>
+                        </xsl:choose>
+                      </system-distance>
+                    </xsl:for-each>
+                    <xsl:for-each select="$localScoreDef/mei:scoreDef[@system.topmar][last()]">
+                      <top-system-distance>
+                        <xsl:choose>
+                          <xsl:when test="replace(@system.topmar, '[a-z]+$', '') = '0'">
+                            <xsl:value-of select="@system.topmar"/>
+                          </xsl:when>
+                          <xsl:when test="number(replace(@system.topmar, '[a-z]+$', ''))">
+                            <xsl:value-of select="format-number(number(replace(@system.topmar,
+                              '[a-z]+$', '')) * 5, '###0.####')"/>
+                          </xsl:when>
+                        </xsl:choose>
+                      </top-system-distance>
+                    </xsl:for-each>
+                  </system-layout>
+                </xsl:if>
+                <xsl:variable name="staffLayout">
+                  <xsl:for-each select="$localScoreDef//mei:staffDef[@spacing]">
+                    <!-- if the staff belongs to the current part, output its layout info -->
+                    <xsl:variable name="thisStaff">
+                      <xsl:value-of select="@n"/>
+                    </xsl:variable>
+                    <xsl:variable name="staffPart">
+                      <xsl:choose>
+                        <xsl:when
+                          test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                          <xsl:value-of
+                            select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                          />
+                        </xsl:when>
+                        <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                          @n=$thisStaff]">
+                          <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                            @n=$thisStaff]/@xml:id"/>
+                        </xsl:when>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <xsl:if test="$staffPart=$thisPart">
+                      <staff-layout>
+                        <xsl:attribute name="number">
+                          <xsl:choose>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                              <xsl:for-each
+                                select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                              <xsl:value-of select="1"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:attribute>
+                        <staff-distance>
+                          <xsl:choose>
+                            <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                              <xsl:value-of select="@spacing"/>
+                            </xsl:when>
+                            <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                              <xsl:value-of select="format-number(number(replace(@spacing,
+                                '[a-z]+$', '')) * 5, '###0.####')"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </staff-distance>
+                      </staff-layout>
+                    </xsl:if>
+                  </xsl:for-each>
+                </xsl:variable>
+                <!-- if defined multiple times, keep only the last staff-distance -->
+                <xsl:for-each-group select="$staffLayout/staff-layout" group-by="@number">
+                  <xsl:sort select="current-grouping-key()"/>
+                  <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:for-each select="current-group()/staff-distance">
+                      <xsl:if test="position()=last()">
+                        <xsl:copy-of select="."/>
+                      </xsl:if>
+                    </xsl:for-each>
+                  </xsl:copy>
+                </xsl:for-each-group>
+              </print>
             </xsl:if>
 
-            <xsl:if test="$localScoreDef/*">
-              <!-- if it's not empty, $localScoreDef will contain the default 
-              definition and any local modifications for the first measure, but
-              only local modifications in subsequent measures -->
-              <xsl:copy-of select="$localScoreDef"/>
+            <!-- generate MusicXML "attributes" -->
+            <xsl:variable name="divisions">
+              <xsl:choose>
+                <!-- local definitions present; look for ppq there -->
+                <xsl:when test="$localScoreDef//mei:staffDef[@ppq]">
+                  <xsl:for-each select="$localScoreDef//mei:staffDef[@ppq]">
+                    <xsl:variable name="thisStaff">
+                      <xsl:value-of select="@n"/>
+                    </xsl:variable>
+                    <xsl:variable name="staffPart">
+                      <xsl:choose>
+                        <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                          @n=$thisStaff]">
+                          <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                            @n=$thisStaff]/@xml:id"/>
+                        </xsl:when>
+                        <xsl:when
+                          test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                          <xsl:value-of
+                            select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                          />
+                        </xsl:when>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <!-- if this staff belongs to the current part -->
+                    <xsl:if test="$staffPart=$thisPart">
+                      <value>
+                        <xsl:value-of select="@ppq"/>
+                      </value>
+                    </xsl:if>
+                  </xsl:for-each>
+                </xsl:when>
+                <!-- score-level ppq -->
+                <xsl:when test="$localScoreDef/mei:scoreDef[@ppq]">
+                  <value>
+                    <xsl:value-of select="$localScoreDef/mei:scoreDef[@ppq]/@ppq"/>
+                  </value>
+                </xsl:when>
+                <!-- no local definitions available; look for ppq in default scoreDef -->
+                <xsl:when test="$localScoreDef/mei:initialAttributes">
+                  <xsl:choose>
+                    <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and @ppq]">
+                      <value>
+                        <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart
+                          and @ppq][1]/@ppq"/>
+                      </value>
+                    </xsl:when>
+                    <xsl:when
+                      test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef[@ppq]">
+                      <value>
+                        <xsl:value-of
+                          select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef[@ppq][1]/@ppq"
+                        />
+                      </value>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <value>
+                        <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@ppq"/>
+                      </value>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:when>
+                <!-- if neither of the conditions above is met, this is not the initial 
+                    measure and divisions isn't necessary. -->
+              </xsl:choose>
+            </xsl:variable>
+
+            <xsl:variable name="keySig">
+              <xsl:choose>
+                <!-- local definitions present; look for key info there -->
+                <xsl:when test="$localScoreDef//mei:staffDef[@key.sig or @key.mode]">
+                  <xsl:for-each select="$localScoreDef//mei:staffDef[@key.sig or @key.mode]">
+                    <xsl:variable name="thisStaff">
+                      <xsl:value-of select="@n"/>
+                    </xsl:variable>
+                    <!-- the part this staff belongs to -->
+                    <xsl:variable name="staffPart">
+                      <xsl:choose>
+                        <xsl:when
+                          test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                          <xsl:value-of
+                            select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                          />
+                        </xsl:when>
+                        <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id and @n=$thisStaff]">
+                          <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id and
+                            @n=$thisStaff]/@xml:id"/>
+                        </xsl:when>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <!-- if this staff belongs to the current part -->
+                    <xsl:if test="$staffPart=$thisPart">
+                      <key>
+                        <xsl:attribute name="number">
+                          <xsl:choose>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                              <xsl:for-each
+                                select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                              <xsl:value-of select="1"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:attribute>
+                        <fifths>
+                          <xsl:choose>
+                            <xsl:when test="@key.sig">
+                              <xsl:choose>
+                                <xsl:when test="matches(@key.sig, '0')">
+                                  <xsl:value-of select="0"/>
+                                </xsl:when>
+                                <xsl:when test="matches(@key.sig, 'f$')">
+                                  <xsl:text>-</xsl:text>
+                                  <xsl:value-of select="replace(@key.sig, 'f', '')"/>
+                                </xsl:when>
+                                <xsl:when test="matches(@key.sig, 's$')">
+                                  <xsl:value-of select="replace(@key.sig, 's', '')"/>
+                                </xsl:when>
+                              </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.sig"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </fifths>
+                        <mode>
+                          <xsl:choose>
+                            <xsl:when test="@key.mode">
+                              <xsl:value-of select="@key.mode"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.mode"/>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </mode>
+                      </key>
+                    </xsl:if>
+                  </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$localScoreDef/mei:initialAttributes">
+                  <!-- no local definitions available; get clef declarations from $defaultScoreDef -->
+                  <xsl:choose>
+                    <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and (@key.sig
+                      or @key.mode)] or
+                      $defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef[@key.sig or
+                      @key.mode]">
+                      <xsl:for-each select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                        (@key.sig or @key.mode)]">
+                        <key>
+                          <fifths>
+                            <xsl:choose>
+                              <xsl:when test="@key.sig">
+                                <xsl:choose>
+                                  <xsl:when test="matches(@key.sig, '0')">
+                                    <xsl:value-of select="0"/>
+                                  </xsl:when>
+                                  <xsl:when test="matches(@key.sig, 'f$')">
+                                    <xsl:text>-</xsl:text>
+                                    <xsl:value-of select="replace(@key.sig, 'f', '')"/>
+                                  </xsl:when>
+                                  <xsl:when test="matches(@key.sig, 's$')">
+                                    <xsl:value-of select="replace(@key.sig, 's', '')"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.sig"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </fifths>
+                          <mode>
+                            <xsl:choose>
+                              <xsl:when test="@key.mode">
+                                <xsl:value-of select="@key.mode"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.mode"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </mode>
+                        </key>
+                      </xsl:for-each>
+                      <xsl:for-each
+                        select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef[@key.sig
+                        or @key.mode]">
+                        <key>
+                          <xsl:attribute name="number">
+                            <xsl:value-of select="position()"/>
+                          </xsl:attribute>
+                          <fifths>
+                            <xsl:choose>
+                              <xsl:when test="@key.sig">
+                                <xsl:choose>
+                                  <xsl:when test="matches(@key.sig, '0')">
+                                    <xsl:value-of select="0"/>
+                                  </xsl:when>
+                                  <xsl:when test="matches(@key.sig, 'f$')">
+                                    <xsl:text>-</xsl:text>
+                                    <xsl:value-of select="replace(@key.sig, 'f', '')"/>
+                                  </xsl:when>
+                                  <xsl:when test="matches(@key.sig, 's$')">
+                                    <xsl:value-of select="replace(@key.sig, 's', '')"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.sig"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </fifths>
+                          <mode>
+                            <xsl:choose>
+                              <xsl:when test="@key.mode">
+                                <xsl:value-of select="@key.mode"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@key.mode"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </mode>
+                        </key>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <!-- part-specific declarations not available; use score-level default values -->
+                    <xsl:when test="$defaultScoreDef/mei:scoreDef[@key.sig or @key.mode]">
+                      <key>
+                        <fifths>
+                          <xsl:choose>
+                            <xsl:when test="matches($defaultScoreDef//mei:scoreDef/@key.sig, '0')">
+                              <xsl:value-of select="0"/>
+                            </xsl:when>
+                            <xsl:when test="matches($defaultScoreDef//mei:scoreDef/@key.sig, 'f$')">
+                              <xsl:text>-</xsl:text>
+                              <xsl:value-of select="replace($defaultScoreDef//mei:scoreDef/@key.sig,
+                                'f', '')"/>
+                            </xsl:when>
+                            <xsl:when test="matches($defaultScoreDef//mei:scoreDef/@key.sig, 's$')">
+                              <xsl:value-of select="replace($defaultScoreDef//mei:scoreDef/@key.sig,
+                                's', '')"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </fifths>
+                        <mode>
+                          <xsl:value-of select="$defaultScoreDef//mei:scoreDef/@key.mode"/>
+                        </mode>
+                      </key>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+
+            <xsl:variable name="timeSig">
+              <xsl:choose>
+                <!-- local definitions present; look for time signature info there -->
+                <xsl:when test="$localScoreDef//mei:staffDef[@meter.count or @meter.unit]">
+                  <xsl:for-each select="$localScoreDef//mei:staffDef[@meter.count or @meter.unit]">
+                    <xsl:variable name="thisStaff">
+                      <xsl:value-of select="@n"/>
+                    </xsl:variable>
+                    <!-- the part this staff belongs to -->
+                    <xsl:variable name="staffPart">
+                      <xsl:choose>
+                        <xsl:when
+                          test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                          <xsl:value-of
+                            select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                          />
+                        </xsl:when>
+                        <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id and @n=$thisStaff]">
+                          <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id and
+                            @n=$thisStaff]/@xml:id"/>
+                        </xsl:when>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <!-- if this staff belongs to the current part -->
+                    <xsl:if test="$staffPart=$thisPart">
+                      <time>
+                        <xsl:attribute name="number">
+                          <xsl:choose>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                              <xsl:for-each
+                                select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                              <xsl:value-of select="1"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:attribute>
+                        <beats>
+                          <xsl:value-of select="@meter.count"/>
+                        </beats>
+                        <beat-type>
+                          <xsl:value-of select="@meter.unit"/>
+                        </beat-type>
+                      </time>
+                    </xsl:if>
+                  </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$localScoreDef/mei:initialAttributes">
+                  <!-- no local definitions available; get clef declarations from $defaultScoreDef -->
+                  <xsl:choose>
+                    <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                      (@meter.count or @meter.unit)] or
+                      $defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef[@meter.count
+                      or @meter.unit]">
+                      <xsl:for-each select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                        (@meter.count or @meter.unit)]">
+                        <time>
+                          <beats>
+                            <xsl:value-of select="@meter.count"/>
+                          </beats>
+                          <beat-type>
+                            <xsl:value-of select="@meter.unit"/>
+                          </beat-type>
+                        </time>
+                      </xsl:for-each>
+                      <xsl:for-each
+                        select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef">
+                        <time>
+                          <xsl:attribute name="number">
+                            <xsl:value-of select="position()"/>
+                          </xsl:attribute>
+                          <beats>
+                            <xsl:choose>
+                              <xsl:when test="@meter.count">
+                                <xsl:value-of select="@meter.count"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@meter.count"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </beats>
+                          <beat-type>
+                            <xsl:choose>
+                              <xsl:when test="@meter.count">
+                                <xsl:value-of select="@meter.unit"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@meter.unit"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </beat-type>
+                        </time>
+                      </xsl:for-each>
+                    </xsl:when>
+                    <!-- part-specific declarations not available; use score-level default values -->
+                    <xsl:when test="$defaultScoreDef/mei:scoreDef[@meter.count or @meter.unit]">
+                      <time>
+                        <beats>
+                          <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@meter.count"/>
+                        </beats>
+                        <beat-type>
+                          <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@meter.unit"/>
+                        </beat-type>
+                      </time>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+
+            <xsl:variable name="staves">
+              <xsl:choose>
+                <!-- single-staff part -->
+                <xsl:when test="$localScoreDef//mei:staffDef[@xml:id=$thisPart]">
+                  <staves>
+                    <xsl:value-of select="1"/>
+                  </staves>
+                </xsl:when>
+                <!-- multi-staff part; count staves -->
+                <xsl:when test="$localScoreDef//mei:staffGrp[@xml:id=$thisPart]">
+                  <staves>
+                    <xsl:value-of
+                      select="count($localScoreDef//mei:staffGrp[@xml:id=$thisPart]/mei:staffDef)"/>
+                  </staves>
+                </xsl:when>
+                <!-- initial measure; staff count mandatory -->
+                <xsl:when test="$localScoreDef/mei:initialAttributes">
+                  <xsl:choose>
+                    <!-- single-staff part -->
+                    <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart]">
+                      <staves>
+                        <xsl:value-of select="1"/>
+                      </staves>
+                    </xsl:when>
+                    <!-- multi-staff part; count staves -->
+                    <xsl:when test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]">
+                      <staves>
+                        <xsl:value-of
+                          select="count($defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]/mei:staffDef)"
+                        />
+                      </staves>
+                    </xsl:when>
+                  </xsl:choose>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+
+            <xsl:variable name="clefs">
+              <xsl:choose>
+                <!-- local definitions present; look for clef there -->
+                <xsl:when test="$localScoreDef//mei:staffDef[@clef.shape or @clef.line]">
+                  <xsl:for-each select="$localScoreDef//mei:staffDef[@clef.shape or @clef.line]">
+                    <xsl:variable name="thisStaff">
+                      <xsl:value-of select="@n"/>
+                    </xsl:variable>
+                    <!-- the part this staff belongs to -->
+                    <xsl:variable name="staffPart">
+                      <xsl:choose>
+                        <xsl:when
+                          test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                          <xsl:value-of
+                            select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                          />
+                        </xsl:when>
+                        <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id and @n=$thisStaff]">
+                          <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id and
+                            @n=$thisStaff]/@xml:id"/>
+                        </xsl:when>
+                      </xsl:choose>
+                    </xsl:variable>
+                    <!-- if this staff belongs to the current part -->
+                    <xsl:if test="$staffPart=$thisPart">
+                      <clef>
+                        <xsl:attribute name="number">
+                          <xsl:choose>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                              <xsl:for-each
+                                select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"/>
+                              </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                              <xsl:value-of select="1"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:attribute>
+                        <sign>
+                          <xsl:value-of select="@clef.shape"/>
+                        </sign>
+                        <line>
+                          <xsl:value-of select="@clef.line"/>
+                        </line>
+                      </clef>
+                    </xsl:if>
+                  </xsl:for-each>
+                </xsl:when>
+                <xsl:when test="$localScoreDef/mei:initialAttributes">
+                  <!-- no local definitions available; get clef declarations from $defaultScoreDef -->
+                  <xsl:for-each select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart]">
+                    <clef>
+                      <sign>
+                        <xsl:value-of select="@clef.shape"/>
+                      </sign>
+                      <line>
+                        <xsl:value-of select="@clef.line"/>
+                      </line>
+                    </clef>
+                  </xsl:for-each>
+                  <xsl:for-each
+                    select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef">
+                    <clef>
+                      <xsl:attribute name="number">
+                        <xsl:value-of select="position()"/>
+                      </xsl:attribute>
+                      <sign>
+                        <xsl:choose>
+                          <xsl:when test="@clef.shape">
+                            <xsl:value-of select="@clef.shape"/>
+                          </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@clef.shape"/>
+                          </xsl:otherwise>
+                        </xsl:choose>
+                      </sign>
+                      <line>
+                        <xsl:choose>
+                          <xsl:when test="@clef.line">
+                            <xsl:value-of select="@clef.line"/>
+                          </xsl:when>
+                          <xsl:otherwise>
+                            <xsl:value-of select="$defaultScoreDef/mei:scoreDef/@clef.line"/>
+                          </xsl:otherwise>
+                        </xsl:choose>
+                      </line>
+                    </clef>
+                  </xsl:for-each>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:variable>
+
+            <xsl:variable name="attributes">
+              <xsl:if test="$divisions != ''">
+                <xsl:choose>
+                  <xsl:when test="count($divisions/value) = 1">
+                    <divisions>
+                      <xsl:value-of select="$divisions"/>
+                    </divisions>
+                  </xsl:when>
+                  <xsl:when test="count($divisions/value) &gt; 1">
+                    <xsl:variable name="warning">
+                      <xsl:text>More than one @ppq value for the same part</xsl:text>
+                    </xsl:variable>
+                    <xsl:message terminate="yes">
+                      <xsl:value-of select="normalize-space(concat($warning, ' (m. ', $measureNum,
+                        ').'))"/>
+                    </xsl:message>
+                  </xsl:when>
+                </xsl:choose>
+              </xsl:if>
+              <xsl:if test="$keySig != ''">
+                <xsl:copy-of select="$keySig"/>
+              </xsl:if>
+              <xsl:if test="$timeSig != ''">
+                <xsl:copy-of select="$timeSig"/>
+              </xsl:if>
+              <xsl:if test="$staves != ''">
+                <xsl:copy-of select="$staves"/>
+              </xsl:if>
+              <xsl:if test="$clefs != ''">
+                <xsl:copy-of select="$clefs"/>
+              </xsl:if>
+            </xsl:variable>
+
+            <xsl:if test="$attributes != ''">
+              <attributes>
+                <xsl:copy-of select="$attributes"/>
+              </attributes>
             </xsl:if>
 
+            <!-- DEBUG: -->
+            <!--<xsl:copy-of select="$defaultScoreDef"/>-->
+            <!--<xsl:copy-of select="$localScoreDef"/>-->
+
+            <!-- copy events -->
             <xsl:copy-of select="events"/>
-            <!-- drop empty controlevents container -->
+            <!-- copy controlevents, dropping any empty controlevents containers -->
             <xsl:if test="controlevents/node()">
               <xsl:copy-of select="controlevents"/>
             </xsl:if>
@@ -1337,7 +2128,7 @@
         </xsl:for-each>
       </xsl:variable>
 
-      <!-- copy modified measure content into measure element -->
+      <!-- copy output to measure -->
       <xsl:copy-of select="$measureContent6"/>
 
     </measure>
