@@ -2277,8 +2277,8 @@
                   <xsl:copy-of select="$staffAttrib/clef[not(@number)][1]"/>
                   <xsl:copy-of select="$staffAttrib/divisions"/>
                   <xsl:copy-of select="$staffAttrib/key[not(@number)][1]"/>
-                  <xsl:copy-of select="$staffAttrib/staff-details[not(@number)][1]"/>
-                  <xsl:copy-of select="$staffAttrib/staff-layout[not(@number)][1]"/>
+                  <xsl:copy-of select="$staffAttrib/staff-details[1]"/>
+                  <xsl:copy-of select="$staffAttrib/staff-layout[1]"/>
                   <xsl:copy-of select="$staffAttrib/transpose[not(@number)][1]"/>
                   <xsl:copy-of select="$staffAttrib/part-name-display"/>
                   <xsl:copy-of select="$staffAttrib/part-abbreviation-display"/>
@@ -9672,6 +9672,13 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <xsl:if test="staff-details/@print-object='no'">
             <xsl:attribute name="visible">false</xsl:attribute>
           </xsl:if>
+          <!-- staff size -->
+          <xsl:if test="staff-details/staff-size">
+            <xsl:attribute name="scale">
+              <xsl:value-of select="staff-details/staff-size"/>
+              <xsl:text>%</xsl:text>
+            </xsl:attribute>
+          </xsl:if>
         </xsl:when>
         <xsl:otherwise>
           <!-- number of staff lines -->
@@ -9854,6 +9861,13 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <!-- staff visibility -->
           <xsl:if test="staff-details[@number=string($staffNum)]/@print-object='no'">
             <xsl:attribute name="visible">false</xsl:attribute>
+          </xsl:if>
+          <!-- staff size -->
+          <xsl:if test="staff-details[@number=string($staffNum)]/staff-size">
+            <xsl:attribute name="scale">
+              <xsl:value-of select="staff-details[@number=string($staffNum)]/staff-size"/>
+              <xsl:text>%</xsl:text>
+            </xsl:attribute>
           </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
@@ -10719,6 +10733,16 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:staffDef/@scale" mode="postProcess">
+    <xsl:if test="$layout eq 'preserve'">
+      <xsl:copy-of select="."/>
+    </xsl:if>
+  </xsl:template>
+  <xsl:template match="mei:staffDef/@visible" mode="postProcess">
+    <xsl:if test="$layout eq 'preserve'">
+      <xsl:copy-of select="."/>
+    </xsl:if>
+  </xsl:template>
   <xsl:template match="@ho" mode="postProcess">
     <xsl:if test="$layout eq 'preserve'">
       <xsl:copy-of select="."/>
