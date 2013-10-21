@@ -2314,7 +2314,14 @@
                 <!-- number of staff lines -->
                 <xsl:for-each select="staff-details/staff-lines">
                   <xsl:attribute name="lines">
-                    <xsl:value-of select="."/>
+                    <xsl:choose>
+                      <xsl:when test=". != ''">
+                        <xsl:value-of select="."/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="5"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:attribute>
                 </xsl:for-each>
                 <!-- clef -->
@@ -2562,7 +2569,14 @@
                 <!-- number of staff lines -->
                 <xsl:for-each select="staff-details/staff-lines">
                   <xsl:attribute name="lines">
-                    <xsl:value-of select="."/>
+                    <xsl:choose>
+                      <xsl:when test=". != ''">
+                        <xsl:value-of select="."/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="5"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:attribute>
                 </xsl:for-each>
                 <!-- clef -->
@@ -9516,9 +9530,18 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <xsl:attribute name="lines">
             <xsl:choose>
               <xsl:when test="staff-details/staff-lines">
-                <xsl:value-of select="staff-details[staff-lines][1]/staff-lines"/>
+                <xsl:choose>
+                  <xsl:when test="staff-details[staff-lines][1]/staff-lines != ''">
+                    <xsl:value-of select="staff-details[staff-lines][1]/staff-lines"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="5"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:when>
-              <xsl:otherwise>5</xsl:otherwise>
+              <xsl:otherwise>
+                <xsl:value-of select="5"/>
+              </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
           <!-- clef -->
@@ -9685,10 +9708,17 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <xsl:attribute name="lines">
             <xsl:choose>
               <xsl:when test="staff-details[@number=string($staffNum)]/staff-lines">
-                <xsl:value-of select="staff-details[@number=string($staffNum)]/staff-lines"/>
+                <xsl:choose>
+                  <xsl:when test="staff-details[@number=string($staffNum)]/staff-lines != ''">
+                    <xsl:value-of select="staff-details[@number=string($staffNum)]/staff-lines"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="5"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:when>
               <xsl:otherwise>
-                <xsl:text>5</xsl:text>
+                <xsl:value-of select="5"/>
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
