@@ -2474,7 +2474,7 @@
                   </xsl:attribute>
                 </xsl:for-each>
                 <!-- staff size -->
-                <xsl:for-each select="staff-details/staff-size">
+                <xsl:for-each select="staff-details[staff-size][1]/staff-size">
                   <xsl:attribute name="scale">
                     <xsl:value-of select="."/>
                     <xsl:text>%</xsl:text>
@@ -2729,7 +2729,7 @@
                   </xsl:attribute>
                 </xsl:for-each>
                 <!-- staff size -->
-                <xsl:for-each select="staff-details/staff-size">
+                <xsl:for-each select="staff-details[staff-size][1]/staff-size">
                   <xsl:attribute name="scale">
                     <xsl:value-of select="."/>
                     <xsl:text>%</xsl:text>
@@ -9698,7 +9698,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <!-- staff size -->
           <xsl:if test="staff-details/staff-size">
             <xsl:attribute name="scale">
-              <xsl:value-of select="staff-details/staff-size"/>
+              <xsl:value-of select="staff-details[staff-size][1]/staff-size"/>
               <xsl:text>%</xsl:text>
             </xsl:attribute>
           </xsl:if>
@@ -9895,7 +9895,8 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <!-- staff size -->
           <xsl:if test="staff-details[@number=string($staffNum)]/staff-size">
             <xsl:attribute name="scale">
-              <xsl:value-of select="staff-details[@number=string($staffNum)]/staff-size"/>
+              <xsl:value-of select="staff-details[@number=string($staffNum) and
+                staff-size][1]/staff-size"/>
               <xsl:text>%</xsl:text>
             </xsl:attribute>
           </xsl:if>
