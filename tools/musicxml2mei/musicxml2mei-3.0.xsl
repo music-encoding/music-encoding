@@ -983,6 +983,9 @@
     </xsl:variable>
     <xsl:if test="$dirType != 'NULL'">
       <xsl:element name="{$dirType}" namespace="http://www.music-encoding.org/ns/mei">
+        <xsl:if test="$dirType='dynam'">
+          <xsl:attribute name="label">direction</xsl:attribute>
+        </xsl:if>
         <xsl:call-template name="tstampAttrs"/>
         <xsl:attribute name="startid">
           <xsl:value-of select="generate-id(following::note[1])"/>
@@ -5131,6 +5134,7 @@
   <xsl:template match="note/notations/dynamics" mode="stage1">
     <!-- Dynamics -->
     <dynam xmlns="http://www.music-encoding.org/ns/mei">
+      <xsl:attribute name="label">notation</xsl:attribute>
       <!-- Attributes based on starting note -->
       <xsl:for-each select="ancestor::note">
         <xsl:call-template name="tstampAttrs"/>
