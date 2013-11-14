@@ -231,7 +231,8 @@
         </xsl:if>
       </xsl:if>
       <xsl:choose>
-        <xsl:when test="text() and mei:*">
+        <!-- potentially mixed content -->
+        <xsl:when test="text()">
           <p xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
             xlink">
             <xsl:apply-templates mode="copy"/>
@@ -248,6 +249,7 @@
             </xsl:call-template>
           </xsl:if>
         </xsl:when>
+        <!-- MEI elements -->
         <xsl:otherwise>
           <xsl:apply-templates mode="copy"/>
         </xsl:otherwise>
