@@ -35,12 +35,14 @@
   </xsl:variable>
 
   <!-- PARAMETERS -->
-  <xsl:param name="rng_model_path"/>
-  <xsl:param name="sch_model_path"/>
+  <xsl:param name="rng_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <xsl:param name="sch_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
   <!-- agency name -->
-  <xsl:param name="agency">Testing</xsl:param>
+  <xsl:param name="agency"/>
   <!-- agency code, could also be taken from 003 -->
-  <xsl:param name="agency_code">T1234</xsl:param>
+  <xsl:param name="agency_code"/>
   <!-- analog attributes -->
   <xsl:param name="analog">true</xsl:param>
 
@@ -393,7 +395,7 @@
           </xsl:if>
 
           <!-- classification -->
-          <xsl:variable name="classification" select="marc:datafield[@tag='648' or
+          <xsl:variable name="classification" select="marc:datafield[@tag='090' or @tag='648' or
             @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or
             @tag='656' or @tag='657' or @tag='658']"/>
           <!--<xsl:variable name="classification" select="marc:datafield[@tag='650' or @tag='651' or
@@ -404,6 +406,10 @@
               <xsl:variable name="classCodes">
 
                 <!-- common schemes -->
+                <xsl:if test="marc:datafield[@tag='090']">
+                  <classCode n="-1" xml:id="LCCN">Library of Congress Classification
+                    Number</classCode>
+                </xsl:if>
                 <xsl:if test="marc:datafield[@tag='648' or @tag='650' or
                   @tag='651' or @tag='653' or @tag='654' or @tag='655' or
                   @tag='656' or @tag='657' or @tag='658'][@ind2='0']">
@@ -1186,12 +1192,13 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- classification (648, 650, 651, 653, 654, 655, 656, 657, 658) -->
-  <xsl:template match="marc:datafield[ @tag='648' or @tag='650' or @tag='651' or @tag='653' or
-    @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']">
+  <!-- classification (090, 648, 650, 651, 653, 654, 655, 656, 657, 658) -->
+  <xsl:template match="marc:datafield[ @tag='090' or @tag='648' or @tag='650' or @tag='651' or
+    @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="label">
       <xsl:choose>
+        <xsl:when test="$tag = '090'">callNum</xsl:when>
         <xsl:when test="$tag = '650'">topic</xsl:when>
         <xsl:when test="$tag = '651'">geogName</xsl:when>
         <xsl:when test="$tag = '654'">facet</xsl:when>
@@ -1204,6 +1211,7 @@
     <xsl:variable name="ind2" select="@ind2"/>
     <xsl:variable name="classcode">
       <xsl:choose>
+        <xsl:when test="$tag='090'">LCCN</xsl:when>
         <xsl:when test="$ind2 = '0'">LCSH</xsl:when>
         <xsl:when test="$ind2 = '1'">LCCL</xsl:when>
         <xsl:when test="$ind2 = '2'">MeSH</xsl:when>
@@ -1232,7 +1240,16 @@
         </xsl:call-template>
       </xsl:if>
       <xsl:call-template name="subfieldSelect">
-        <xsl:with-param name="codes">a</xsl:with-param>
+        <xsl:with-param name="codes">
+          <xsl:choose>
+            <xsl:when test="$tag = '090'">
+              <xsl:text>ab</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>a</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:with-param>
       </xsl:call-template>
     </term>
   </xsl:template>
