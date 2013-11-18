@@ -178,7 +178,7 @@
               <xsl:for-each select="mei:addrLine">
                 <xsl:value-of select="."/>
                 <xsl:if test="position() != last()">
-                  <xsl:text>&#32;</xsl:text>
+                  <xsl:text>, &#32;</xsl:text>
                 </xsl:if>
               </xsl:for-each>
             </xsl:for-each>
@@ -255,12 +255,35 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:call-template name="indicators"/>
-      <xsl:call-template name="subfield">
-        <xsl:with-param name="code">a</xsl:with-param>
-        <xsl:with-param name="value">
-          <xsl:value-of select="."/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:choose>
+        <!-- Only text; subfield |a only  -->
+        <xsl:when test="count(mei:*) = 0">
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="."/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <!-- Mixed content; split into multiple subfields -->
+        <xsl:otherwise>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:variable name="name">
+                  <xsl:value-of select="text()"/>
+                </xsl:variable>
+                <xsl:value-of select="normalize-space($name)"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">d</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="mei:date"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
     </datafield>
   </xsl:template>
 
@@ -275,12 +298,32 @@
         </xsl:choose>
       </xsl:attribute>
       <xsl:call-template name="indicators"/>
-      <xsl:call-template name="subfield">
-        <xsl:with-param name="code">a</xsl:with-param>
-        <xsl:with-param name="value">
-          <xsl:value-of select="."/>
-        </xsl:with-param>
-      </xsl:call-template>
+      <xsl:choose>
+        <!-- Only text; subfield |a only  -->
+        <xsl:when test="count(mei:*) = 0">
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="."/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <!-- Mixed content; split into multiple subfields -->
+        <xsl:otherwise>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="text()"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">d</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="mei:date"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
     </datafield>
   </xsl:template>
 
