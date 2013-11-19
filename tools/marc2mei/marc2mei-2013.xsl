@@ -856,7 +856,6 @@
           <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')"/>
         </xsl:otherwise>
       </xsl:choose>
-
     </date>
   </xsl:template>
 
