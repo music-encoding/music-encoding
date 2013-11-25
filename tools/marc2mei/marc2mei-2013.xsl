@@ -49,6 +49,470 @@
   <xsl:param name="preserveMainEntry">true</xsl:param>
 
   <!-- ======================================================================= -->
+  <!-- GLOBAL VARIABLES                                                        -->
+  <!-- ======================================================================= -->
+  <xsl:variable name="marcMusPerfList">
+    <instr code="ba" class="Brass">Horn</instr>
+    <instr code="bb" class="Brass">Trumpet</instr>
+    <instr code="bc" class="Brass">Cornet</instr>
+    <instr code="bd" class="Brass">Trombone</instr>
+    <instr code="be" class="Brass">Tuba</instr>
+    <instr code="bf" class="Brass">Baritone</instr>
+    <instr code="bn" class="Brass">Unspecified brass</instr>
+    <instr code="bu" class="Brass">Unknown</instr>
+    <instr code="by" class="Brass">Ethnic</instr>
+    <instr code="bz" class="Brass">Other brass</instr>
+    <instr code="ca" class="Choruses">Mixed chorus</instr>
+    <instr code="cb" class="Choruses">Women's chorus</instr>
+    <instr code="cc" class="Choruses">Men's chorus</instr>
+    <instr code="cd" class="Choruses">Children's chorus</instr>
+    <instr code="cn" class="Choruses">Unspecified chorus</instr>
+    <instr code="cu" class="Choruses">Unknown chorus</instr>
+    <instr code="cy" class="Choruses">Ethnic chorus</instr>
+    <instr code="ea" class="Electronic">Synthesizer</instr>
+    <instr code="eb" class="Electronic">Tape</instr>
+    <instr code="ec" class="Electronic">Computer</instr>
+    <instr code="ed" class="Electronic">Ondes Martinot</instr>
+    <instr code="en" class="Electronic">Unspecified electronic</instr>
+    <instr code="eu" class="Electronic">Unknown electronic</instr>
+    <instr code="ez" class="Electronic">Other electronic</instr>
+    <instr code="ka" class="Keyboard">Piano</instr>
+    <instr code="kb" class="Keyboard">Organ</instr>
+    <instr code="kc" class="Keyboard">Harpsichord</instr>
+    <instr code="kd" class="Keyboard">Clavichord</instr>
+    <instr code="ke" class="Keyboard">Continuo</instr>
+    <instr code="kf" class="Keyboard">Celeste</instr>
+    <instr code="kn" class="Keyboard">Unspecified keyboard</instr>
+    <instr code="ku" class="Keyboard">Unknown keyboard</instr>
+    <instr code="ky" class="Keyboard">Ethnic keyboard</instr>
+    <instr code="kz" class="Keyboard">Other keyboard</instr>
+    <instr code="oa" class="Larger ensemble">Full orchestra</instr>
+    <instr code="ob" class="Larger ensemble">Chamber orchestra</instr>
+    <instr code="oc" class="Larger ensemble">String orchestra</instr>
+    <instr code="od" class="Larger ensemble">Band</instr>
+    <instr code="oe" class="Larger ensemble">Dance orchestra</instr>
+    <instr code="of" class="Larger ensemble">Brass band</instr>
+    <instr code="on" class="Larger ensemble">Unspecified esemble</instr>
+    <instr code="ou" class="Larger ensemble">Unknown ensemble</instr>
+    <instr code="oy" class="Larger ensemble">Ethnic ensemble</instr>
+    <instr code="oz" class="Larger ensemble">Other ensemble</instr>
+    <instr code="pa" class="Percussion">Timpani</instr>
+    <instr code="pb" class="Percussion">Xylophone</instr>
+    <instr code="pc" class="Percussion">Marimba</instr>
+    <instr code="pd" class="Percussion">Drum</instr>
+    <instr code="pn" class="Percussion">Unspecified percussion</instr>
+    <instr code="pu" class="Percussion">Unknown percussion</instr>
+    <instr code="py" class="Percussion">Ethnic percussion</instr>
+    <instr code="pz" class="Percussion">Other percussion</instr>
+    <instr code="sa" class="Strings, bowed">Violin</instr>
+    <instr code="sb" class="Strings, bowed">Viola</instr>
+    <instr code="sc" class="Strings, bowed">Violoncello</instr>
+    <instr code="sd" class="Strings, bowed">Double bass</instr>
+    <instr code="se" class="Strings, bowed">Viol</instr>
+    <instr code="sf" class="Strings, bowed">Viola d'amore</instr>
+    <instr code="sg" class="Strings, bowed">Viola da gamba</instr>
+    <instr code="sn" class="Strings, bowed">Unspecified bowed string</instr>
+    <instr code="su" class="Strings, bowed">Unknown bowed string</instr>
+    <instr code="sy" class="Strings, bowed">Ethnic bowed string</instr>
+    <instr code="sz" class="Strings, bowed">Other bowed string</instr>
+    <instr code="ta" class="Strings, plucked">Harp</instr>
+    <instr code="tb" class="Strings, plucked">Guitar</instr>
+    <instr code="tc" class="Strings, plucked">Lute</instr>
+    <instr code="td" class="Strings, plucked">Mandolin</instr>
+    <instr code="tn" class="Strings, plucked">Unspecified plucked string</instr>
+    <instr code="tu" class="Strings, plucked">Unknown plucked string</instr>
+    <instr code="ty" class="Strings, plucked">Ethnic plucked string</instr>
+    <instr code="tz" class="Strings, plucked">Other plucked string</instr>
+    <instr code="va" class="Voices">Soprano</instr>
+    <instr code="vb" class="Voices">Mezzo Soprano</instr>
+    <instr code="vc" class="Voices">Alto</instr>
+    <instr code="vd" class="Voices">Tenor</instr>
+    <instr code="ve" class="Voices">Baritone</instr>
+    <instr code="vf" class="Voices">Bass</instr>
+    <instr code="vg" class="Voices">Counter Tenor</instr>
+    <instr code="vh" class="Voices">High voice</instr>
+    <instr code="vi" class="Voices">Medium voice</instr>
+    <instr code="vj" class="Voices">Low voice</instr>
+    <instr code="vn" class="Voices">Unspecified voice</instr>
+    <instr code="vu" class="Voices">Unknown voice</instr>
+    <instr code="vy" class="Voices">Ethnic voice</instr>
+    <instr code="wa" class="Woodwinds">Flute</instr>
+    <instr code="wb" class="Woodwinds">Oboe</instr>
+    <instr code="wc" class="Woodwinds">Clarinet</instr>
+    <instr code="wd" class="Woodwinds">Bassoon</instr>
+    <instr code="we" class="Woodwinds">Piccolo</instr>
+    <instr code="wf" class="Woodwinds">English Horn</instr>
+    <instr code="wg" class="Woodwinds">Bass clarinet</instr>
+    <instr code="wh" class="Woodwinds">Recorder</instr>
+    <instr code="wi" class="Woodwinds">Saxophone</instr>
+    <instr code="wn" class="Woodwinds">Unspecified woodwind</instr>
+    <instr code="wu" class="Woodwinds">Unknown woodwind</instr>
+    <instr code="wy" class="Woodwinds">Ethnic woodwind</instr>
+    <instr code="wz" class="Woodwinds">Other woodwind</instr>
+    <instr code="zn">Unspecified instrument</instr>
+    <instr code="zu">Unknown instrument</instr>
+  </xsl:variable>
+  <xsl:variable name="iamlMusPerfList">
+    <instr code="bah" class="Brass">alphorn</instr>
+    <instr code="bbb" class="Brass">bombardino</instr>
+    <instr code="bbd" class="Brass">bombardon</instr>
+    <instr code="bbh" class="Brass">bersag horn</instr>
+    <instr code="bbu" class="Brass">bugle</instr>
+    <instr code="bca" class="Brass">carnyx</instr>
+    <instr code="bcb" class="Brass">cimbasso</instr>
+    <instr code="bch" class="Brass">cow horn</instr>
+    <instr code="bcl" class="Brass">clarion</instr>
+    <instr code="bco" class="Brass">cornet</instr>
+    <instr code="bct" class="Brass">cornett</instr>
+    <instr code="bcu" class="Brass">cornu</instr>
+    <instr code="bdx" class="Brass">duplex</instr>
+    <instr code="beu" class="Brass">euphonium</instr>
+    <instr code="bhh" class="Brass">hunting horn</instr>
+    <instr code="bho" class="Brass">horn</instr>
+    <instr code="bht" class="Brass">herald's trumpet</instr>
+    <instr code="bkb" class="Brass">keyed bugle</instr>
+    <instr code="blu" class="Brass">lur</instr>
+    <instr code="bol" class="Brass">oliphant</instr>
+    <instr code="bop" class="Brass">ophicleide</instr>
+    <instr code="bph" class="Brass">post horn</instr>
+    <instr code="brh" class="Brass">russian horn</instr>
+    <instr code="bse" class="Brass">serpent</instr>
+    <instr code="bsh" class="Brass">shofar</instr>
+    <instr code="bsx" class="Brass">salpinx</instr>
+    <instr code="bta" class="Brass">tuba - antique</instr>
+    <instr code="btb" class="Brass">trombone</instr>
+    <instr code="btr" class="Brass">trumpet</instr>
+    <instr code="btu" class="Brass">tuba</instr>
+    <instr code="bvb" class="Brass">valved bugle</instr>
+    <instr code="bwt" class="Brass">wagner tuba</instr>
+    <instr code="bzz" class="Brass">brass - other</instr>
+    <instr code="cch" class="Choruses">children's choir</instr>
+    <instr code="cme" class="Choruses">men's choir</instr>
+    <instr code="cmi" class="Choruses">mixed choir</instr>
+    <instr code="cre" class="Choruses">reciting choir</instr>
+    <instr code="cun" class="Choruses">choir - unspecified</instr>
+    <instr code="cve" class="Choruses">vocal ensemble</instr>
+    <instr code="cwo" class="Choruses">women's choir</instr>
+    <instr code="czz" class="Choruses">choir - other</instr>
+    <instr code="eco" class="Electronic">computer</instr>
+    <instr code="ecs" class="Electronic">computerized musical station</instr>
+    <instr code="ect" class="Electronic">computerized tape</instr>
+    <instr code="eds" class="Electronic">digital space device</instr>
+    <instr code="eea" class="Electronic">electro-acoustic device</instr>
+    <instr code="eli" class="Electronic">live electronic</instr>
+    <instr code="ely" class="Electronic">lyricon</instr>
+    <instr code="ema" class="Electronic">ondes Martenot</instr>
+    <instr code="eme" class="Electronic">meta-instrument</instr>
+    <instr code="emu" class="Electronic">multimedial device</instr>
+    <instr code="eos" class="Electronic">oscillator</instr>
+    <instr code="esp" class="Electronic">space device</instr>
+    <instr code="esy" class="Electronic">synthesizer</instr>
+    <instr code="eta" class="Electronic">tape</instr>
+    <instr code="eth" class="Electronic">theremin</instr>
+    <instr code="eun" class="Electronic">electronic - unspecified</instr>
+    <instr code="ezz" class="Electronic">electronic - other</instr>
+    <instr code="kab" class="Keyboard">archicembalo</instr>
+    <instr code="kac" class="Keyboard">accordion</instr>
+    <instr code="kba" class="Keyboard">bandoneon</instr>
+    <instr code="kca" class="Keyboard">carillon, with keyboard</instr>
+    <instr code="kch" class="Keyboard">chordette</instr>
+    <instr code="kcl" class="Keyboard">clavichord</instr>
+    <instr code="kco" class="Keyboard">claviorgan</instr>
+    <instr code="kcy" class="Keyboard">clavicytherium</instr>
+    <instr code="kfp" class="Keyboard">fortepiano</instr>
+    <instr code="kgl" class="Keyboard">glockenspiel, with keyboard</instr>
+    <instr code="khm" class="Keyboard">harmonium</instr>
+    <instr code="khp" class="Keyboard">harpsichord</instr>
+    <instr code="kmp" class="Keyboard">melopiano</instr>
+    <instr code="kor" class="Keyboard">organ</instr>
+    <instr code="kpf" class="Keyboard">piano</instr>
+    <instr code="kps" class="Keyboard">plucked string keyboard</instr>
+    <instr code="kre" class="Keyboard">regals</instr>
+    <instr code="ksi" class="Keyboard">sirenion</instr>
+    <instr code="ksp" class="Keyboard">sostenente piano</instr>
+    <instr code="kst" class="Keyboard">spinet</instr>
+    <instr code="kun" class="Keyboard">keyboard - unspecified</instr>
+    <instr code="kvg" class="Keyboard">virginal</instr>
+    <instr code="kzz" class="Keyboard">keyboard - other</instr>
+    <instr code="mah" class="Miscellaneous">aeolian harp</instr>
+    <instr code="mbo" class="Miscellaneous">barrel organ</instr>
+    <instr code="mbr" class="Miscellaneous">bullroarer</instr>
+    <instr code="mbs" class="Miscellaneous">bass instrument - unspecified</instr>
+    <instr code="mbw" class="Miscellaneous">musical bow</instr>
+    <instr code="mbx" class="Miscellaneous">musical box</instr>
+    <instr code="mcb" class="Miscellaneous">cristal Baschet</instr>
+    <instr code="mck" class="Miscellaneous">chekker</instr>
+    <instr code="mcl" class="Miscellaneous">musical clock</instr>
+    <instr code="mco" class="Miscellaneous">continuo</instr>
+    <instr code="mgh" class="Miscellaneous">glassharmonika</instr>
+    <instr code="mgt" class="Miscellaneous">glass trumpet</instr>
+    <instr code="mha" class="Miscellaneous">harmonica</instr>
+    <instr code="mhg" class="Miscellaneous">hurdy-gurdy</instr>
+    <instr code="mjh" class="Miscellaneous">jew's harp</instr>
+    <instr code="mla" class="Miscellaneous">lamellaphone</instr>
+    <instr code="mmc" class="Miscellaneous">monochord</instr>
+    <instr code="mme" class="Miscellaneous">melodica</instr>
+    <instr code="mmi" class="Miscellaneous">mirliton</instr>
+    <instr code="mml" class="Miscellaneous">melodic instrument</instr>
+    <instr code="mms" class="Miscellaneous">musical saw</instr>
+    <instr code="moc" class="Miscellaneous">ocarina</instr>
+    <instr code="mpo" class="Miscellaneous">polyphonic instrument</instr>
+    <instr code="mpp" class="Miscellaneous">player piano</instr>
+    <instr code="mra" class="Miscellaneous">rabab</instr>
+    <instr code="mss" class="Miscellaneous">sound sculpture</instr>
+    <instr code="msw" class="Miscellaneous">swanee whistle</instr>
+    <instr code="mtf" class="Miscellaneous">tuning-fork</instr>
+    <instr code="mui" class="Miscellaneous">instrument - unspecified</instr>
+    <instr code="mun" class="Miscellaneous">instrument or voice - unspecified</instr>
+    <instr code="mwd" class="Miscellaneous">wind instrument</instr>
+    <instr code="mwh" class="Miscellaneous">whistle</instr>
+    <instr code="mzz" class="Miscellaneous">other</instr>
+    <instr code="oba" class="Ensembles">band</instr>
+    <instr code="obi" class="Ensembles">big band</instr>
+    <instr code="obr" class="Ensembles">brass band</instr>
+    <instr code="ocb" class="Ensembles">cobla</instr>
+    <instr code="och" class="Ensembles">chamber orchestra</instr>
+    <instr code="oco" class="Ensembles">combo</instr>
+    <instr code="odo" class="Ensembles">dance orchestra</instr>
+    <instr code="ofu" class="Ensembles">full orchestra</instr>
+    <instr code="oga" class="Ensembles">gamelan</instr>
+    <instr code="oie" class="Ensembles">instrumental ensemble</instr>
+    <instr code="oiv" class="Ensembles">vocal and instrumental ensemble</instr>
+    <instr code="oja" class="Ensembles">jazz band</instr>
+    <instr code="ope" class="Ensembles">percussion orchestra</instr>
+    <instr code="orb" class="Ensembles">ragtime band</instr>
+    <instr code="osb" class="Ensembles">steel band</instr>
+    <instr code="ost" class="Ensembles">string orchestra</instr>
+    <instr code="oun" class="Ensembles">orchestra - unspecified</instr>
+    <instr code="owi" class="Ensembles">wind orchestra</instr>
+    <instr code="ozz" class="Ensembles">orchestra - other</instr>
+    <instr code="pab" class="Percussion">aeolian bells</instr>
+    <instr code="pad" class="Percussion">arabian drum</instr>
+    <instr code="pag" class="Percussion">agogo</instr>
+    <instr code="pan" class="Percussion">anvil</instr>
+    <instr code="pbb" class="Percussion">boobams</instr>
+    <instr code="pbd" class="Percussion">bass drum</instr>
+    <instr code="pbe" class="Percussion">tambourin de béarn</instr>
+    <instr code="pbl" class="Percussion">bells</instr>
+    <instr code="pbo" class="Percussion">bongos</instr>
+    <instr code="pbp" class="Percussion">metal bells plate</instr>
+    <instr code="pbr" class="Percussion">bronte</instr>
+    <instr code="pca" class="Percussion">castanets</instr>
+    <instr code="pcb" class="Percussion">cabaca</instr>
+    <instr code="pcc" class="Percussion">chinese cymbals</instr>
+    <instr code="pcg" class="Percussion">conga</instr>
+    <instr code="pch" class="Percussion">chains</instr>
+    <instr code="pci" class="Percussion">cimbalom</instr>
+    <instr code="pco" class="Percussion">chocalho</instr>
+    <instr code="pcr" class="Percussion">crash cymbal</instr>
+    <instr code="pct" class="Percussion">crotales</instr>
+    <instr code="pcu" class="Percussion">cuíca</instr>
+    <instr code="pcv" class="Percussion">claves</instr>
+    <instr code="pcw" class="Percussion">cowbell</instr>
+    <instr code="pcy" class="Percussion">cymbal</instr>
+    <instr code="pdr" class="Percussion">drum</instr>
+    <instr code="pds" class="Percussion">drums</instr>
+    <instr code="pfc" class="Percussion">finger cymbals</instr>
+    <instr code="pfd" class="Percussion">friction drum</instr>
+    <instr code="pfl" class="Percussion">flexatone</instr>
+    <instr code="pgl" class="Percussion">glockenspiel</instr>
+    <instr code="pgn" class="Percussion">gun</instr>
+    <instr code="pgo" class="Percussion">gong</instr>
+    <instr code="pgu" class="Percussion">güiro</instr>
+    <instr code="pha" class="Percussion">hammer</instr>
+    <instr code="phb" class="Percussion">handbell</instr>
+    <instr code="phh" class="Percussion">hi-hat</instr>
+    <instr code="pir" class="Percussion">intonarumori</instr>
+    <instr code="pje" class="Percussion">jembe</instr>
+    <instr code="pji" class="Percussion">jingles</instr>
+    <instr code="pli" class="Percussion">lithophone</instr>
+    <instr code="plj" class="Percussion">lujon</instr>
+    <instr code="pmb" class="Percussion">marimba</instr>
+    <instr code="pmc" class="Percussion">maracas</instr>
+    <instr code="pmd" class="Percussion">military drum</instr>
+    <instr code="pme" class="Percussion">metallophone</instr>
+    <instr code="pnv" class="Percussion">nail violin</instr>
+    <instr code="pra" class="Percussion">ratchett</instr>
+    <instr code="prs" class="Percussion">rain stick</instr>
+    <instr code="prt" class="Percussion">roto-toms</instr>
+    <instr code="psc" class="Percussion">sizzle cymbals</instr>
+    <instr code="pse" class="Percussion">sound-effect instrument</instr>
+    <instr code="psl" class="Percussion">slit-drum</instr>
+    <instr code="psm" class="Percussion">sistrum</instr>
+    <instr code="psn" class="Percussion">sirene</instr>
+    <instr code="psp" class="Percussion">sandpaper</instr>
+    <instr code="pst" class="Percussion">steel drum</instr>
+    <instr code="psw" class="Percussion">switch whip</instr>
+    <instr code="pta" class="Percussion">tablas</instr>
+    <instr code="ptb" class="Percussion">tabor</instr>
+    <instr code="ptc" class="Percussion">turkish crescent</instr>
+    <instr code="pte" class="Percussion">temple block</instr>
+    <instr code="ptg" class="Percussion">tuned gong</instr>
+    <instr code="pti" class="Percussion">timpani</instr>
+    <instr code="ptl" class="Percussion">triangle</instr>
+    <instr code="ptm" class="Percussion">thunder machine</instr>
+    <instr code="pto" class="Percussion">tarol</instr>
+    <instr code="ptr" class="Percussion">tambourine</instr>
+    <instr code="ptt" class="Percussion">tom-tom</instr>
+    <instr code="ptx" class="Percussion">txalaparta</instr>
+    <instr code="pun" class="Percussion">percussion - unspecified</instr>
+    <instr code="pvi" class="Percussion">vibraphone</instr>
+    <instr code="pvs" class="Percussion">vibra-slap</instr>
+    <instr code="pwh" class="Percussion">whip</instr>
+    <instr code="pwm" class="Percussion">wind machine</instr>
+    <instr code="pwo" class="Percussion">woodblocks</instr>
+    <instr code="pxr" class="Percussion">xylorimba</instr>
+    <instr code="pxy" class="Percussion">xylophone</instr>
+    <instr code="pza" class="Percussion">zarb</instr>
+    <instr code="pzz" class="Percussion">percussion - other</instr>
+    <instr code="qce" class="Conductors">live electronic conductor</instr>
+    <instr code="qch" class="Conductors">choir conductor, chorus master</instr>
+    <instr code="qco" class="Conductors">conductor</instr>
+    <instr code="qlc" class="Conductors">light conductor</instr>
+    <instr code="qzz" class="Conductors">conductor - other</instr>
+    <instr code="sar" class="Strings, bowed">arpeggione</instr>
+    <instr code="sba" class="Strings, bowed">baryton</instr>
+    <instr code="sbt" class="Strings, bowed">bassett</instr>
+    <instr code="sbu" class="Strings, bowed">bumbass</instr>
+    <instr code="scr" class="Strings, bowed">crwth</instr>
+    <instr code="sdb" class="Strings, bowed">double bass</instr>
+    <instr code="sdf" class="Strings, bowed">five-string double bass</instr>
+    <instr code="sfi" class="Strings, bowed">fiddle, viol (family)</instr>
+    <instr code="sgu" class="Strings, bowed">gusle</instr>
+    <instr code="sli" class="Strings, bowed">lira da braccio</instr>
+    <instr code="sln" class="Strings, bowed">lirone</instr>
+    <instr code="sny" class="Strings, bowed">keyed fiddle</instr>
+    <instr code="sob" class="Strings, bowed">octobass</instr>
+    <instr code="spo" class="Strings, bowed">kit</instr>
+    <instr code="spv" class="Strings, bowed">quinton</instr>
+    <instr code="sre" class="Strings, bowed">rebec</instr>
+    <instr code="stm" class="Strings, bowed">trumpet marine</instr>
+    <instr code="sun" class="Strings, bowed">strings, bowed - unspecified</instr>
+    <instr code="sva" class="Strings, bowed">viola</instr>
+    <instr code="svc" class="Strings, bowed">cello</instr>
+    <instr code="svd" class="Strings, bowed">viola d'amore</instr>
+    <instr code="sve" class="Strings, bowed">violone</instr>
+    <instr code="svg" class="Strings, bowed">viola da gamba</instr>
+    <instr code="svl" class="Strings, bowed">violin</instr>
+    <instr code="svp" class="Strings, bowed">viola pomposa</instr>
+    <instr code="szz" class="Strings, bowed">strings, bowed - other</instr>
+    <instr code="tal" class="Strings, plucked">archlute</instr>
+    <instr code="tat" class="Strings, plucked">harp-psaltery</instr>
+    <instr code="tbb" class="Strings, plucked">barbitos</instr>
+    <instr code="tbi" class="Strings, plucked">biwa</instr>
+    <instr code="tbj" class="Strings, plucked">banjo</instr>
+    <instr code="tbl" class="Strings, plucked">balalaika</instr>
+    <instr code="tbo" class="Strings, plucked">bouzouki</instr>
+    <instr code="tch" class="Strings, plucked">chitarrone</instr>
+    <instr code="tci" class="Strings, plucked">cittern</instr>
+    <instr code="tcs" class="Strings, plucked">colascione</instr>
+    <instr code="tct" class="Strings, plucked">citole</instr>
+    <instr code="tcz" class="Strings, plucked">cobza</instr>
+    <instr code="tgu" class="Strings, plucked">guitar</instr>
+    <instr code="tha" class="Strings, plucked">harp</instr>
+    <instr code="thg" class="Strings, plucked">hawaiian guitar</instr>
+    <instr code="tih" class="Strings, plucked">Irish harp</instr>
+    <instr code="tkh" class="Strings, plucked">kithara</instr>
+    <instr code="tko" class="Strings, plucked">kora</instr>
+    <instr code="tkt" class="Strings, plucked">koto</instr>
+    <instr code="tlf" class="Strings, plucked">lute (family)</instr>
+    <instr code="tlg" class="Strings, plucked">lyre-guitar</instr>
+    <instr code="tlu" class="Strings, plucked">lute</instr>
+    <instr code="tma" class="Strings, plucked">mandolin</instr>
+    <instr code="tmd" class="Strings, plucked">mandore</instr>
+    <instr code="tpi" class="Strings, plucked">pipa</instr>
+    <instr code="tps" class="Strings, plucked">psaltery, plucked</instr>
+    <instr code="tpx" class="Strings, plucked">phorminx</instr>
+    <instr code="tqa" class="Strings, plucked">qanun</instr>
+    <instr code="tsh" class="Strings, plucked">shamisen</instr>
+    <instr code="tsi" class="Strings, plucked">sitār</instr>
+    <instr code="tth" class="Strings, plucked">theorbo</instr>
+    <instr code="ttn" class="Strings, plucked">tanbur</instr>
+    <instr code="tud" class="Strings, plucked">'ud</instr>
+    <instr code="tuk" class="Strings, plucked">ukulele</instr>
+    <instr code="tun" class="Strings, plucked">strings, plucked - unspecified</instr>
+    <instr code="tvi" class="Strings, plucked">vihuela</instr>
+    <instr code="tzi" class="Strings, plucked">zither</instr>
+    <instr code="tzz" class="Strings, plucked">strings, plucked - other</instr>
+    <instr code="val" class="Voices">alto</instr>
+    <instr code="vbr" class="Voices">baritone</instr>
+    <instr code="vbs" class="Voices">bass</instr>
+    <instr code="vca" class="Voices">child alto</instr>
+    <instr code="vcl" class="Voices">contratenor altus</instr>
+    <instr code="vcs" class="Voices">child soprano</instr>
+    <instr code="vct" class="Voices">countertenor</instr>
+    <instr code="vcv" class="Voices">child voice</instr>
+    <instr code="vhc" class="Voices">haute-contre</instr>
+    <instr code="vma" class="Voices">man's voice</instr>
+    <instr code="vms" class="Voices">mezzosoprano</instr>
+    <instr code="vrc" class="Voices">reciting child's voice</instr>
+    <instr code="vre" class="Voices">reciting voice</instr>
+    <instr code="vrm" class="Voices">reciting man's voice</instr>
+    <instr code="vrw" class="Voices">reciting woman's voice</instr>
+    <instr code="vso" class="Voices">soprano</instr>
+    <instr code="vte" class="Voices">tenor</instr>
+    <instr code="vun" class="Voices">voice - unspecified</instr>
+    <instr code="vvg" class="Voices">vagans</instr>
+    <instr code="vwo" class="Voices">woman's voice</instr>
+    <instr code="vzz" class="Voices">voice - other</instr>
+    <instr code="wau" class="Woodwinds">aulos</instr>
+    <instr code="wba" class="Woodwinds">bassoon</instr>
+    <instr code="wbh" class="Woodwinds">basset-horn</instr>
+    <instr code="wbn" class="Woodwinds">bassanello</instr>
+    <instr code="wbp" class="Woodwinds">bagpipe</instr>
+    <instr code="wch" class="Woodwinds">chalumeau</instr>
+    <instr code="wcl" class="Woodwinds">clarinet</instr>
+    <instr code="wcm" class="Woodwinds">ciaramella</instr>
+    <instr code="wcr" class="Woodwinds">cromorne</instr>
+    <instr code="wdb" class="Woodwinds">double bassoon</instr>
+    <instr code="wdi" class="Woodwinds">didjeridu</instr>
+    <instr code="wdp" class="Woodwinds">doppione</instr>
+    <instr code="wdu" class="Woodwinds">dulcian</instr>
+    <instr code="wdv" class="Woodwinds">dvojnice</instr>
+    <instr code="weh" class="Woodwinds">english horn</instr>
+    <instr code="wfa" class="Woodwinds">flauto d'amore</instr>
+    <instr code="wfg" class="Woodwinds">flageolet</instr>
+    <instr code="wfi" class="Woodwinds">fife</instr>
+    <instr code="wfl" class="Woodwinds">flute</instr>
+    <instr code="wga" class="Woodwinds">tabor pipe</instr>
+    <instr code="wge" class="Woodwinds">gemshorn</instr>
+    <instr code="whp" class="Woodwinds">hornpipe</instr>
+    <instr code="wmo" class="Woodwinds">mouth organ</instr>
+    <instr code="wmu" class="Woodwinds">musette</instr>
+    <instr code="wna" class="Woodwinds">ney</instr>
+    <instr code="woa" class="Woodwinds">oboe d'amore</instr>
+    <instr code="wob" class="Woodwinds">oboe</instr>
+    <instr code="woh" class="Woodwinds">oboe da caccia</instr>
+    <instr code="wpi" class="Woodwinds">piccolo</instr>
+    <instr code="wpo" class="Woodwinds">pommer</instr>
+    <instr code="wpp" class="Woodwinds">panpipes</instr>
+    <instr code="wra" class="Woodwinds">racket</instr>
+    <instr code="wre" class="Woodwinds">recorder</instr>
+    <instr code="wro" class="Woodwinds">rothophone</instr>
+    <instr code="wsa" class="Woodwinds">saxophone</instr>
+    <instr code="wsh" class="Woodwinds">shakuhachi</instr>
+    <instr code="wsn" class="Woodwinds">surnāy</instr>
+    <instr code="wsr" class="Woodwinds">sarrusophone</instr>
+    <instr code="wsu" class="Woodwinds">sordun</instr>
+    <instr code="wun" class="Woodwinds">woodwind - unspecified</instr>
+    <instr code="wvu" class="Woodwinds">vox humana</instr>
+    <instr code="wzz" class="Woodwinds">woodwind - other</instr>
+    <instr code="zab" class="Other performers">acrobat</instr>
+    <instr code="zac" class="Other performers">child actor</instr>
+    <instr code="zas" class="Other performers">silent actor</instr>
+    <instr code="zat" class="Other performers">actor</instr>
+    <instr code="zaw" class="Other performers">actress</instr>
+    <instr code="zda" class="Other performers">dancer</instr>
+    <instr code="zel" class="Other performers">light engineer</instr>
+    <instr code="zes" class="Other performers">sound engineer</instr>
+    <instr code="zju" class="Other performers">juggler</instr>
+    <instr code="zmi" class="Other performers">mime</instr>
+    <instr code="zwp" class="Other performers">walk-on part</instr>
+    <instr code="zzz" class="Other performers">performer - other</instr>
+  </xsl:variable>
+
+
+  <!-- ======================================================================= -->
   <!-- UTILITIES                                                               -->
   <!-- ======================================================================= -->
 
@@ -281,8 +745,10 @@
             <!-- if no fields with $3, there's a single source -->
             <xsl:when test="count(//marc:subfield[@code='3'])=0">
               <source>
-                <!-- pubStmt and physDesc -->
-                <xsl:apply-templates select="marc:datafield[@tag='260' or @tag='300']"/>
+                <!-- pubStmt -->
+                <xsl:apply-templates select="marc:datafield[@tag='260']"/>
+                <!-- physDesc -->
+                <xsl:apply-templates select="marc:datafield[@tag='300']"/>
                 <!-- seriesStmt -->
                 <xsl:apply-templates select="marc:datafield[@tag='490']"/>
                 <!-- contentNote -->
@@ -373,7 +839,7 @@
           </titleStmt>
 
           <!-- creation -->
-          <xsl:variable name="creation_note" select="marc:datafield[@tag='508']"/>
+          <xsl:variable name="creation_note" select="marc:datafield[@tag='045' or @tag='508']"/>
 
           <!-- incipits -->
           <xsl:variable name="incipits" select="marc:datafield[@tag='031']"/>
@@ -400,6 +866,7 @@
                       <xsl:text>;&#32;</xsl:text>
                     </xsl:if>
                   </xsl:for-each>
+                  <xsl:apply-templates select="marc:datafield[@tag='045']"/>
                 </creation>
               </xsl:if>
               <xsl:if test="$events">
@@ -420,27 +887,35 @@
           </xsl:if>
 
           <!-- cast list -->
+          <xsl:variable name="instrumentation" select="marc:datafield[@tag='048']"/>
           <xsl:variable name="castNotes" select="marc:datafield[@tag='595']"/>
-          <xsl:if test="$castNotes">
+          <xsl:if test="$instrumentation or $castNotes">
             <perfMedium>
-              <castList>
-                <xsl:variable name="sortedCastList">
-                  <xsl:apply-templates select="$castNotes">
-                    <xsl:sort/>
-                  </xsl:apply-templates>
-                </xsl:variable>
-                <xsl:variable name="uniqueItems">
-                  <xsl:for-each select="$sortedCastList/mei:castItem">
-                    <xsl:if test="not(preceding-sibling::mei:castItem = .)">
-                      <xsl:copy-of select="."/>
-                    </xsl:if>
+              <xsl:if test="$castNotes">
+                <castList>
+                  <xsl:variable name="sortedCastList">
+                    <xsl:apply-templates select="$castNotes">
+                      <xsl:sort/>
+                    </xsl:apply-templates>
+                  </xsl:variable>
+                  <xsl:variable name="uniqueItems">
+                    <xsl:for-each select="$sortedCastList/mei:castItem">
+                      <xsl:if test="not(preceding-sibling::mei:castItem = .)">
+                        <xsl:copy-of select="."/>
+                      </xsl:if>
+                    </xsl:for-each>
+                  </xsl:variable>
+                  <xsl:for-each select="$uniqueItems/mei:castItem">
+                    <xsl:sort select="@analog"/>
+                    <xsl:copy-of select="."/>
                   </xsl:for-each>
-                </xsl:variable>
-                <xsl:for-each select="$uniqueItems/mei:castItem">
-                  <xsl:sort select="@analog"/>
-                  <xsl:copy-of select="."/>
-                </xsl:for-each>
-              </castList>
+                </castList>
+              </xsl:if>
+              <xsl:if test="$instrumentation">
+                <instrumentation>
+                  <xsl:apply-templates select="$instrumentation"/>
+                </instrumentation>
+              </xsl:if>
             </perfMedium>
           </xsl:if>
 
@@ -453,9 +928,9 @@
           </xsl:if>
 
           <!-- classification -->
-          <xsl:variable name="classification" select="marc:datafield[@tag='090' or @tag='648' or
-            @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or
-            @tag='656' or @tag='657' or @tag='658']"/>
+          <xsl:variable name="classification" select="marc:datafield[@tag='050' or @tag='082' or
+            @tag='090' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or @tag='654' or
+            @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
 
           <xsl:if test="$classification">
             <!-- classification codes -->
@@ -464,6 +939,12 @@
 
                 <!-- common schemes -->
                 <xsl:if test="marc:datafield[@tag='090']">
+                  <classCode n="-3" xml:id="LocalNum">Local Classification Number</classCode>
+                </xsl:if>
+                <xsl:if test="marc:datafield[@tag='082']">
+                  <classCode n="-2" xml:id="DDC">Dewey Decimal Classification Number</classCode>
+                </xsl:if>
+                <xsl:if test="marc:datafield[@tag='050']">
                   <classCode n="-1" xml:id="LCCN">Library of Congress Classification
                     Number</classCode>
                 </xsl:if>
@@ -475,8 +956,8 @@
                 <xsl:if test="marc:datafield[@tag='648' or @tag='650' or
                   @tag='651' or @tag='653' or @tag='654' or @tag='655' or
                   @tag='656' or @tag='657' or @tag='658'][@ind2='1']">
-                  <classCode n="1" xml:id="LCCL">LC subject headings for children's
-                    literature</classCode>
+                  <classCode n="1" xml:id="LCCL">Library of Congress Subject Headings for Children's
+                    Literature</classCode>
                 </xsl:if>
                 <xsl:if test="marc:datafield[@tag='648' or @tag='650' or
                   @tag='651' or @tag='653' or @tag='654' or @tag='655' or
@@ -486,7 +967,7 @@
                 <xsl:if test="marc:datafield[@tag='648' or @tag='650' or
                   @tag='651' or @tag='653' or @tag='654' or @tag='655' or
                   @tag='656' or @tag='657' or @tag='658'][@ind2='3']">
-                  <classCode n="3" xml:id="NALSA">National Agricultural Library subject authority
+                  <classCode n="3" xml:id="NALSA">National Agricultural Library Subject Authority
                     file</classCode>
                 </xsl:if>
                 <xsl:if test="marc:datafield[@tag='648' or @tag='650' or
@@ -530,7 +1011,7 @@
               will sink to the bottom but remain in the order of their
               coded value in MARC. -->
               <xsl:for-each select="$uniqueClassCodes/mei:classCode">
-                <xsl:sort select="@n"/>
+                <xsl:sort select="number(@n)"/>
                 <xsl:copy>
                   <xsl:copy-of select="@* except(@n)"/>
                   <xsl:value-of select="."/>
@@ -1327,30 +1808,106 @@
 
   <xsl:template match="marc:datafield[@tag='300']">
     <physDesc>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
+      <xsl:if test="marc:subfield[@code='a']">
+        <extent>
+          <xsl:choose>
+            <xsl:when test="matches(marc:subfield[@code='b'], 'digital')">
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="concat(@tag, 'ab')"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">ab</xsl:with-param>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="marc:subfield[@code='b'] and
+              not(substring(../marc:controlfield[@tag='007'], 1, 1) = 's')">
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="concat(@tag, 'ab')"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">ab</xsl:with-param>
+                <xsl:with-param name="delimiter">;&#32;</xsl:with-param>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="concat(@tag, 'a')"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:call-template name="subfieldSelect">
+                    <xsl:with-param name="codes">a</xsl:with-param>
+                  </xsl:call-template>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </extent>
       </xsl:if>
-      <xsl:call-template name="subfieldSelect">
-        <xsl:with-param name="codes">ab</xsl:with-param>
-        <xsl:with-param name="element">extent</xsl:with-param>
-      </xsl:call-template>
+      <xsl:if test="marc:subfield[@code='b'][not(matches(., 'digital'))]">
+        <xsl:choose>
+          <xsl:when test="substring(../marc:controlfield[@tag='007'], 1, 1) = 's'">
+            <playingSpeed>
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="concat(@tag, 'b')"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:call-template name="subfieldSelect">
+                    <xsl:with-param name="codes">b</xsl:with-param>
+                  </xsl:call-template>
+                </xsl:with-param>
+              </xsl:call-template>
+            </playingSpeed>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:if>
       <xsl:if test="marc:subfield[@code='c']">
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">c</xsl:with-param>
-          <xsl:with-param name="element">dimensions</xsl:with-param>
-        </xsl:call-template>
+        <dimensions>
+          <xsl:if test="$analog='true'">
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="concat(@tag, 'c')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">c</xsl:with-param>
+          </xsl:call-template>
+        </dimensions>
       </xsl:if>
       <xsl:if test="marc:subfield[@code='e']">
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">e</xsl:with-param>
-          <xsl:with-param name="element">carrierForm</xsl:with-param>
-        </xsl:call-template>
+        <carrierForm>
+          <xsl:if test="$analog='true'">
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="concat(@tag, 'e')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">e</xsl:with-param>
+          </xsl:call-template>
+        </carrierForm>
       </xsl:if>
       <xsl:apply-templates select="../marc:datafield[@tag='028'][@ind1='2']"/>
+      <xsl:apply-templates select="../marc:datafield[@tag='306']"/>
     </physDesc>
   </xsl:template>
 
@@ -1367,6 +1924,22 @@
     </annot>
   </xsl:template>
 
+  <xsl:template match="marc:datafield[@tag='306']">
+    <xsl:for-each select="marc:subfield[@code='a']">
+      <extent label="Playing time">
+        <xsl:if test="$analog='true'">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(../@tag, 'a')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+        <xsl:value-of select="concat(substring(., 1, 2), ':', substring(., 3, 2), ':', substring(.,
+          5, 2))"/>
+      </extent>
+    </xsl:for-each>
+  </xsl:template>
+
   <!-- ======================================================================= -->
   <!-- profileDesc (508, 511, 518, 650, 651, 653, 657)                         -->
   <!-- ======================================================================= -->
@@ -1379,12 +1952,15 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- classification (090, 648, 650, 651, 653, 654, 655, 656, 657, 658) -->
-  <xsl:template match="marc:datafield[ @tag='090' or @tag='648' or @tag='650' or @tag='651' or
-    @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']">
+  <!-- classification (050, 082, 090, 648, 650, 651, 653, 654, 655, 656, 657, 658) -->
+  <xsl:template match="marc:datafield[@tag='050' or @tag='082' or @tag='090' or @tag='648' or
+    @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or
+    @tag='657' or @tag='658']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="label">
       <xsl:choose>
+        <xsl:when test="$tag = '050'">callNum</xsl:when>
+        <xsl:when test="$tag = '082'">callNum</xsl:when>
         <xsl:when test="$tag = '090'">callNum</xsl:when>
         <xsl:when test="$tag = '650'">topic</xsl:when>
         <xsl:when test="$tag = '651'">geogName</xsl:when>
@@ -1398,7 +1974,9 @@
     <xsl:variable name="ind2" select="@ind2"/>
     <xsl:variable name="classcode">
       <xsl:choose>
-        <xsl:when test="$tag='090'">LCCN</xsl:when>
+        <xsl:when test="$tag = '050'">LCCN</xsl:when>
+        <xsl:when test="$tag = '082'">DDC</xsl:when>
+        <xsl:when test="$tag = '090'">LocalNum</xsl:when>
         <xsl:when test="$ind2 = '0'">LCSH</xsl:when>
         <xsl:when test="$ind2 = '1'">LCCL</xsl:when>
         <xsl:when test="$ind2 = '2'">MeSH</xsl:when>
@@ -1426,16 +2004,20 @@
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
-      <xsl:call-template name="subfieldSelect">
-        <xsl:with-param name="codes">
-          <xsl:choose>
-            <xsl:when test="$tag = '090'">
-              <xsl:text>ab</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:text>a</xsl:text>
-            </xsl:otherwise>
-          </xsl:choose>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">
+              <xsl:choose>
+                <xsl:when test="$tag = '050'">
+                  <xsl:text>ab</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:text>a</xsl:text>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:with-param>
+          </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
     </term>
@@ -1585,6 +2167,118 @@
         </incipText>
       </xsl:if>
     </incip>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='045']">
+    <!-- dates in 045 are assumed to be C.E. -->
+    <xsl:text>Date of composition:&#32;</xsl:text>
+    <xsl:choose>
+      <xsl:when test="@ind1 = '0' or @ind1 = '1'">
+        <xsl:for-each select="marc:subfield[@code='b']">
+          <date>
+            <xsl:if test="$analog='true'">
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="'045b'"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:if>
+            <xsl:value-of select="substring(., 2)"/>
+          </date>
+        </xsl:for-each>
+      </xsl:when>
+      <xsl:when test="@ind1 = '2'">
+        <xsl:variable name="sortedDates">
+          <xsl:for-each select="marc:subfield[@code='b']">
+            <xsl:sort/>
+            <xsl:copy-of select="."/>
+          </xsl:for-each>
+        </xsl:variable>
+        <date>
+          <xsl:attribute name="notbefore">
+            <xsl:value-of select="substring($sortedDates/marc:subfield[@code='b'][1], 2, 8)"/>
+          </xsl:attribute>
+          <xsl:attribute name="notafter">
+            <xsl:value-of
+              select="substring($sortedDates/marc:subfield[@code='b'][position()=last()], 2, 8)"/>
+          </xsl:attribute>
+          <xsl:for-each select="marc:subfield[@code='b']">
+            <date>
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="'045b'"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:value-of select="substring(., 2)"/>
+            </date>
+          </xsl:for-each>
+        </date>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='048']">
+    <instrVoiceGrp>
+      <xsl:if test="$analog='true'">
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="'045b'"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="@ind2='7' and matches(marc:subfield[@code='2'], 'iamlmp', 'i')">
+          <!-- Use IAML Medium of Performance codes -->
+          <xsl:attribute name="authority">iamlmp</xsl:attribute>
+          <xsl:attribute name="authURI"
+            >http://www.iaml.info/en/activities/cataloguing/unimarc/medium</xsl:attribute>
+          <xsl:for-each select="marc:subfield[@code='a' or @code='b']">
+            <instrVoice>
+              <xsl:if test="@code='b'">
+                <xsl:attribute name="solo">true</xsl:attribute>
+              </xsl:if>
+              <xsl:variable name="code048" select="substring(., 1, 3)"/>
+              <xsl:variable name="num048" select="substring(., 4, 2)"/>
+              <xsl:attribute name="code">
+                <xsl:value-of select="$code048"/>
+              </xsl:attribute>
+              <xsl:if test="number($num048)">
+                <xsl:attribute name="count">
+                  <xsl:value-of select="number($num048)"/>
+                </xsl:attribute>
+              </xsl:if>
+              <xsl:value-of select="$iamlMusPerfList//mei:instr[@code=$code048]"/>
+            </instrVoice>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- Use MARC Instruments and Voices Code List -->
+          <xsl:attribute name="authority">marcmusperf</xsl:attribute>
+          <xsl:attribute name="authURI"
+            >http://www.loc.gov/standards/valuelist/marcmusperf.html</xsl:attribute>
+          <xsl:for-each select="marc:subfield[@code='a' or @code='b']">
+            <instrVoice>
+              <xsl:if test="@code='b'">
+                <xsl:attribute name="solo">true</xsl:attribute>
+              </xsl:if>
+              <xsl:variable name="code048" select="substring(., 1, 2)"/>
+              <xsl:variable name="num048" select="substring(., 3, 2)"/>
+              <xsl:attribute name="code">
+                <xsl:value-of select="$code048"/>
+              </xsl:attribute>
+              <xsl:if test="number($num048)">
+                <xsl:attribute name="count">
+                  <xsl:value-of select="number($num048)"/>
+                </xsl:attribute>
+              </xsl:if>
+              <xsl:value-of select="$marcMusPerfList//mei:instr[@code=$code048]"/>
+            </instrVoice>
+          </xsl:for-each>
+        </xsl:otherwise>
+      </xsl:choose>
+    </instrVoiceGrp>
   </xsl:template>
 
   <xsl:template match="@*|node()">
