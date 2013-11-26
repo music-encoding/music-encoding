@@ -680,7 +680,14 @@
           <xsl:value-of select="marc:datafield[@tag='040']/marc:subfield[@code='b']"/>
         </xsl:attribute>
       </xsl:if>
-      <altId analog="marc:001">
+      <altId>
+        <xsl:if test="$analog='true'">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="@tag"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
         <xsl:apply-templates select="marc:controlfield[@tag='001']"/>
       </altId>
       <fileDesc>
@@ -1763,43 +1770,82 @@
 
   <xsl:template match="marc:datafield[@tag='260']">
     <pubStmt>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
       <pubPlace>
+        <xsl:if test="$analog='true'">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'a')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
         <xsl:call-template name="subfieldSelect">
           <xsl:with-param name="codes">a</xsl:with-param>
         </xsl:call-template>
       </pubPlace>
       <publisher>
+        <xsl:if test="$analog='true'">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'b')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
         <xsl:call-template name="subfieldSelect">
           <xsl:with-param name="codes">b</xsl:with-param>
         </xsl:call-template>
       </publisher>
-      <xsl:call-template name="subfieldSelect">
-        <xsl:with-param name="codes">c</xsl:with-param>
-        <xsl:with-param name="element">date</xsl:with-param>
-      </xsl:call-template>
+      <date>
+        <xsl:if test="$analog='true'">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'c')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">c</xsl:with-param>
+        </xsl:call-template>
+      </date>
       <xsl:if test="marc:subfield[@code='e' or @code='f' or @code='g']">
         <distributor>
           <xsl:if test="marc:subfield[@code='e']">
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">e</xsl:with-param>
-              <xsl:with-param name="element">geogName</xsl:with-param>
-            </xsl:call-template>
+            <geogName>
+              <xsl:if test="$analog='true'">
+                <xsl:call-template name="analog">
+                  <xsl:with-param name="tag">
+                    <xsl:value-of select="concat(@tag, 'e')"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:if>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">e</xsl:with-param>
+              </xsl:call-template>
+            </geogName>
           </xsl:if>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">f</xsl:with-param>
-            <xsl:with-param name="element">name</xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">g</xsl:with-param>
-            <xsl:with-param name="element">date</xsl:with-param>
-          </xsl:call-template>
+          <name>
+            <xsl:if test="$analog='true'">
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'f')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:if>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">f</xsl:with-param>
+            </xsl:call-template>
+          </name>
+          <date>
+            <xsl:if test="$analog='true'">
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'g')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:if>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">g</xsl:with-param>
+            </xsl:call-template>
+          </date>
         </distributor>
       </xsl:if>
       <xsl:apply-templates select="../marc:datafield[@tag='028'][not(@ind1='2')]"/>
@@ -1926,7 +1972,7 @@
 
   <xsl:template match="marc:datafield[@tag='306']">
     <xsl:for-each select="marc:subfield[@code='a']">
-      <extent label="Playing time">
+      <extent>
         <xsl:if test="$analog='true'">
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
