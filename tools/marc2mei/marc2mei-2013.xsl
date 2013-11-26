@@ -2224,7 +2224,7 @@
       <xsl:if test="$analog='true'">
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="'045b'"/>
+            <xsl:value-of select="'048'"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
