@@ -7,8 +7,6 @@
 	Perry Roland <pdr4h@virginia.edu>
 	Music Library
 	University of Virginia
-	Written: 2013-11-12
-	Last modified: 2013-11-12
 	
 	For info on MARC XML, see http://www.loc.gov/marc/marcxml.html
 	For info on the MEI header, see http://music-encoding.org
@@ -29,19 +27,19 @@
 
   <xsl:output method="xml" encoding="UTF-8" indent="yes" media-type="text/xml"/>
 
-  <!-- version -->
-  <xsl:variable name="version">
-    <xsl:text>1.0 beta</xsl:text>
-  </xsl:variable>
+  <!-- ======================================================================= -->
+  <!-- PARAMETERS                                                              -->
+  <!-- ======================================================================= -->
 
-  <!-- PARAMETERS -->
+  <!-- path to rng -->
   <xsl:param name="rng_model_path"
     >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <!-- path to schematron -->
   <xsl:param name="sch_model_path"
     >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
-  <!-- agency name -->
+  <!-- name of agency running the transform -->
   <xsl:param name="agency"/>
-  <!-- agency code, could also be taken from 003 -->
+  <!-- agency code -->
   <xsl:param name="agency_code"/>
   <!-- output analog attributes -->
   <xsl:param name="analog">true</xsl:param>
@@ -51,6 +49,18 @@
   <!-- ======================================================================= -->
   <!-- GLOBAL VARIABLES                                                        -->
   <!-- ======================================================================= -->
+
+  <!-- program name -->
+  <xsl:variable name="progname">
+    <xsl:text>marc2mei-2013.xsl</xsl:text>
+  </xsl:variable>
+
+  <!-- program version -->
+  <xsl:variable name="version">
+    <xsl:text>1.0 beta</xsl:text>
+  </xsl:variable>
+
+  <!-- MARC Instruments or Voices Codes -->
   <xsl:variable name="marcMusPerfList">
     <instr code="ba" class="Brass">Horn</instr>
     <instr code="bb" class="Brass">Trumpet</instr>
@@ -152,6 +162,8 @@
     <instr code="zn">Unspecified instrument</instr>
     <instr code="zu">Unknown instrument</instr>
   </xsl:variable>
+
+  <!-- IAML Medium of performance codes -->
   <xsl:variable name="iamlMusPerfList">
     <instr code="bah" class="Brass">alphorn</instr>
     <instr code="bbb" class="Brass">bombardino</instr>
@@ -511,6 +523,1217 @@
     <instr code="zzz" class="Other performers">performer - other</instr>
   </xsl:variable>
 
+  <!-- MARC Code List for Languages -->
+  <xsl:variable name="marcLangList">
+    <lang code="aar">Afar</lang>
+    <lang code="abk">Abkhaz</lang>
+    <lang code="ace">Achinese</lang>
+    <lang code="ach">Acoli</lang>
+    <lang code="ada">Adangme</lang>
+    <lang code="ady">Adygei</lang>
+    <lang code="afa">Afroasiatic (Other)</lang>
+    <lang code="afh">Afrihili (Artificial language)</lang>
+    <lang code="afr">Afrikaans</lang>
+    <lang code="ain">Ainu</lang>
+    <lang code="ajm" status="discontinued">Aljamía</lang>
+    <lang code="aka">Akan</lang>
+    <lang code="akk">Akkadian</lang>
+    <lang code="alb">Albanian</lang>
+    <lang code="ale">Aleut</lang>
+    <lang code="alg">Algonquian (Other)</lang>
+    <lang code="alt">Altai</lang>
+    <lang code="amh">Amharic</lang>
+    <lang code="ang">English, Old (ca. 450-1100)</lang>
+    <lang code="anp">Angika</lang>
+    <lang code="apa">Apache languages</lang>
+    <lang code="ara">Arabic</lang>
+    <lang code="arc">Aramaic</lang>
+    <lang code="arg">Aragonese</lang>
+    <lang code="arm">Armenian</lang>
+    <lang code="arn">Mapuche</lang>
+    <lang code="arp">Arapaho</lang>
+    <lang code="art">Artificial (Other)</lang>
+    <lang code="arw">Arawak</lang>
+    <lang code="asm">Assamese</lang>
+    <lang code="ast">Bable</lang>
+    <lang code="ath">Athapascan (Other)</lang>
+    <lang code="aus">Australian languages</lang>
+    <lang code="ava">Avaric</lang>
+    <lang code="ave">Avestan</lang>
+    <lang code="awa">Awadhi</lang>
+    <lang code="aym">Aymara</lang>
+    <lang code="aze">Azerbaijani</lang>
+    <lang code="bad">Banda languages</lang>
+    <lang code="bai">Bamileke languages</lang>
+    <lang code="bak">Bashkir</lang>
+    <lang code="bal">Baluchi</lang>
+    <lang code="bam">Bambara</lang>
+    <lang code="ban">Balinese</lang>
+    <lang code="baq">Basque</lang>
+    <lang code="bas">Basa</lang>
+    <lang code="bat">Baltic (Other)</lang>
+    <lang code="bej">Beja</lang>
+    <lang code="bel">Belarusian</lang>
+    <lang code="bem">Bemba</lang>
+    <lang code="ben">Bengali</lang>
+    <lang code="ber">Berber (Other)</lang>
+    <lang code="bho">Bhojpuri</lang>
+    <lang code="bih">Bihari (Other) </lang>
+    <lang code="bik">Bikol</lang>
+    <lang code="bin">Edo</lang>
+    <lang code="bis">Bislama</lang>
+    <lang code="bla">Siksika</lang>
+    <lang code="bnt">Bantu (Other)</lang>
+    <lang code="bos">Bosnian</lang>
+    <lang code="bra">Braj</lang>
+    <lang code="bre">Breton</lang>
+    <lang code="btk">Batak</lang>
+    <lang code="bua">Buriat</lang>
+    <lang code="bug">Bugis</lang>
+    <lang code="bul">Bulgarian</lang>
+    <lang code="bur">Burmese</lang>
+    <lang code="byn">Bilin</lang>
+    <lang code="cad">Caddo</lang>
+    <lang code="cai">Central American Indian (Other)</lang>
+    <lang code="cam" status="discontinued">Khmer</lang>
+    <lang code="car">Carib</lang>
+    <lang code="cat">Catalan</lang>
+    <lang code="cau">Caucasian (Other)</lang>
+    <lang code="ceb">Cebuano</lang>
+    <lang code="cel">Celtic (Other)</lang>
+    <lang code="cha">Chamorro</lang>
+    <lang code="chb">Chibcha</lang>
+    <lang code="che">Chechen</lang>
+    <lang code="chg">Chagatai</lang>
+    <lang code="chi">Chinese</lang>
+    <lang code="chk">Chuukese</lang>
+    <lang code="chm">Mari</lang>
+    <lang code="chn">Chinook jargon</lang>
+    <lang code="cho">Choctaw</lang>
+    <lang code="chp">Chipewyan</lang>
+    <lang code="chr">Cherokee</lang>
+    <lang code="chu">Church Slavic</lang>
+    <lang code="chv">Chuvash</lang>
+    <lang code="chy">Cheyenne</lang>
+    <lang code="cmc">Chamic languages</lang>
+    <lang code="cop">Coptic</lang>
+    <lang code="cor">Cornish</lang>
+    <lang code="cos">Corsican</lang>
+    <lang code="cpe">Creoles and Pidgins, English-based (Other)</lang>
+    <lang code="cpf">Creoles and Pidgins, French-based (Other)</lang>
+    <lang code="cpp">Creoles and Pidgins, Portuguese-based (Other)</lang>
+    <lang code="cre">Cree</lang>
+    <lang code="crh">Crimean Tatar</lang>
+    <lang code="crp">Creoles and Pidgins (Other)</lang>
+    <lang code="csb">Kashubian</lang>
+    <lang code="cus">Cushitic (Other)</lang>
+    <lang code="cze">Czech</lang>
+    <lang code="dak">Dakota</lang>
+    <lang code="dan">Danish</lang>
+    <lang code="dar">Dargwa</lang>
+    <lang code="day">Dayak</lang>
+    <lang code="del">Delaware</lang>
+    <lang code="den">Slavey</lang>
+    <lang code="dgr">Dogrib</lang>
+    <lang code="din">Dinka</lang>
+    <lang code="div">Divehi</lang>
+    <lang code="doi">Dogri</lang>
+    <lang code="dra">Dravidian (Other)</lang>
+    <lang code="dsb">Lower Sorbian</lang>
+    <lang code="dua">Duala</lang>
+    <lang code="dum">Dutch, Middle (ca. 1050-1350)</lang>
+    <lang code="dut">Dutch</lang>
+    <lang code="dyu">Dyula</lang>
+    <lang code="dzo">Dzongkha</lang>
+    <lang code="efi">Efik</lang>
+    <lang code="egy">Egyptian</lang>
+    <lang code="eka">Ekajuk</lang>
+    <lang code="elx">Elamite</lang>
+    <lang code="eng">English</lang>
+    <lang code="enm">English, Middle (1100-1500)</lang>
+    <lang code="epo">Esperanto</lang>
+    <lang code="esk" status="discontinued">Eskimo languages</lang>
+    <lang code="esp" status="discontinued">Esperanto</lang>
+    <lang code="est">Estonian</lang>
+    <lang code="eth" status="discontinued">Ethiopic</lang>
+    <lang code="ewe">Ewe</lang>
+    <lang code="ewo">Ewondo</lang>
+    <lang code="fan">Fang</lang>
+    <lang code="fao">Faroese</lang>
+    <lang code="far" status="discontinued">Faroese</lang>
+    <lang code="fat">Fanti</lang>
+    <lang code="fij">Fijian</lang>
+    <lang code="fil">Filipino</lang>
+    <lang code="fin">Finnish</lang>
+    <lang code="fiu">Finno-Ugrian (Other)</lang>
+    <lang code="fon">Fon</lang>
+    <lang code="fre">French</lang>
+    <lang code="fri" status="discontinued">Frisian</lang>
+    <lang code="frm">French, Middle (ca. 1300-1600)</lang>
+    <lang code="fro">French, Old (ca. 842-1300)</lang>
+    <lang code="frr">North Frisian</lang>
+    <lang code="frs">East Frisian</lang>
+    <lang code="fry">Frisian</lang>
+    <lang code="ful">Fula</lang>
+    <lang code="fur">Friulian</lang>
+    <lang code="gaa">Gã</lang>
+    <lang code="gae" status="discontinued">Scottish Gaelix</lang>
+    <lang code="gag" status="discontinued">Galician</lang>
+    <lang code="gal" status="discontinued">Oromo</lang>
+    <lang code="gay">Gayo</lang>
+    <lang code="gba">Gbaya</lang>
+    <lang code="gem">Germanic (Other)</lang>
+    <lang code="geo">Georgian</lang>
+    <lang code="ger">German</lang>
+    <lang code="gez">Ethiopic</lang>
+    <lang code="gil">Gilbertese</lang>
+    <lang code="gla">Scottish Gaelic</lang>
+    <lang code="gle">Irish</lang>
+    <lang code="glg">Galician</lang>
+    <lang code="glv">Manx</lang>
+    <lang code="gmh">German, Middle High (ca. 1050-1500)</lang>
+    <lang code="goh">German, Old High (ca. 750-1050)</lang>
+    <lang code="gon">Gondi</lang>
+    <lang code="gor">Gorontalo</lang>
+    <lang code="got">Gothic</lang>
+    <lang code="grb">Grebo</lang>
+    <lang code="grc">Greek, Ancient (to 1453)</lang>
+    <lang code="gre">Greek, Modern (1453-)</lang>
+    <lang code="grn">Guarani</lang>
+    <lang code="gsw">Swiss German</lang>
+    <lang code="gua" status="discontinued">Guarani</lang>
+    <lang code="guj">Gujarati</lang>
+    <lang code="gwi">Gwich'in</lang>
+    <lang code="hai">Haida</lang>
+    <lang code="hat">Haitian French Creole</lang>
+    <lang code="hau">Hausa</lang>
+    <lang code="haw">Hawaiian</lang>
+    <lang code="heb">Hebrew</lang>
+    <lang code="her">Herero</lang>
+    <lang code="hil">Hiligaynon</lang>
+    <lang code="him">Western Pahari languages</lang>
+    <lang code="hin">Hindi</lang>
+    <lang code="hit">Hittite</lang>
+    <lang code="hmn">Hmong</lang>
+    <lang code="hmo">Hiri Motu</lang>
+    <lang code="hrv">Croatian</lang>
+    <lang code="hsb">Upper Sorbian</lang>
+    <lang code="hun">Hungarian</lang>
+    <lang code="hup">Hupa</lang>
+    <lang code="iba">Iban</lang>
+    <lang code="ibo">Igbo</lang>
+    <lang code="ice">Icelandic</lang>
+    <lang code="ido">Ido</lang>
+    <lang code="iii">Sichuan Yi</lang>
+    <lang code="ijo">Ijo</lang>
+    <lang code="iku">Inuktitut</lang>
+    <lang code="ile">Interlingue</lang>
+    <lang code="ilo">Iloko</lang>
+    <lang code="ina">Interlingua (International Auxiliary Language Association)</lang>
+    <lang code="inc">Indic (Other)</lang>
+    <lang code="ind">Indonesian</lang>
+    <lang code="ine">Indo-European (Other)</lang>
+    <lang code="inh">Ingush</lang>
+    <lang code="int" status="discontinued">Interlingua (International Auxiliary Language
+      Association)</lang>
+    <lang code="ipk">Inupiaq</lang>
+    <lang code="ira">Iranian (Other)</lang>
+    <lang code="iri" status="discontinued">Irish</lang>
+    <lang code="iro">Iroquoian (Other)</lang>
+    <lang code="ita">Italian</lang>
+    <lang code="jav">Javanese</lang>
+    <lang code="jbo">Lojban (Artificial language)</lang>
+    <lang code="jpn">Japanese</lang>
+    <lang code="jpr">Judeo-Persian</lang>
+    <lang code="jrb">Judeo-Arabic</lang>
+    <lang code="kaa">Kara-Kalpak</lang>
+    <lang code="kab">Kabyle</lang>
+    <lang code="kac">Kachin</lang>
+    <lang code="kal">Kalâtdlisut</lang>
+    <lang code="kam">Kamba</lang>
+    <lang code="kan">Kannada</lang>
+    <lang code="kar">Karen languages</lang>
+    <lang code="kas">Kashmiri</lang>
+    <lang code="kau">Kanuri</lang>
+    <lang code="kaw">Kawi</lang>
+    <lang code="kaz">Kazakh</lang>
+    <lang code="kbd">Kabardian</lang>
+    <lang code="kha">Khasi</lang>
+    <lang code="khi">Khoisan (Other)</lang>
+    <lang code="khm">Khmer</lang>
+    <lang code="kho">Khotanese</lang>
+    <lang code="kik">Kikuyu</lang>
+    <lang code="kin">Kinyarwanda</lang>
+    <lang code="kir">Kyrgyz</lang>
+    <lang code="kmb">Kimbundu</lang>
+    <lang code="kok">Konkani</lang>
+    <lang code="kom">Komi</lang>
+    <lang code="kon">Kongo</lang>
+    <lang code="kor">Korean</lang>
+    <lang code="kos">Kosraean</lang>
+    <lang code="kpe">Kpelle</lang>
+    <lang code="krc">Karachay-Balkar</lang>
+    <lang code="krl">Karelian</lang>
+    <lang code="kro">Kru (Other)</lang>
+    <lang code="kru">Kurukh</lang>
+    <lang code="kua">Kuanyama</lang>
+    <lang code="kum">Kumyk</lang>
+    <lang code="kur">Kurdish</lang>
+    <lang code="kus" status="discontinued">Kusaie</lang>
+    <lang code="kut">Kootenai</lang>
+    <lang code="lad">Ladino</lang>
+    <lang code="lah">Lahndā</lang>
+    <lang code="lam">Lamba (Zambia and Congo)</lang>
+    <lang code="lan" status="discontinued">Occitan (post 1500)</lang>
+    <lang code="lao">Lao</lang>
+    <lang code="lap" status="discontinued">Sami</lang>
+    <lang code="lat">Latin</lang>
+    <lang code="lav">Latvian</lang>
+    <lang code="lez">Lezgian</lang>
+    <lang code="lim">Limburgish</lang>
+    <lang code="lin">Lingala</lang>
+    <lang code="lit">Lithuanian</lang>
+    <lang code="lol">Mongo-Nkundu</lang>
+    <lang code="loz">Lozi</lang>
+    <lang code="ltz">Luxembourgish</lang>
+    <lang code="lua">Luba-Lulua</lang>
+    <lang code="lub">Luba-Katanga</lang>
+    <lang code="lug">Ganda</lang>
+    <lang code="lui">Luiseño</lang>
+    <lang code="lun">Lunda</lang>
+    <lang code="luo">Luo (Kenya and Tanzania)</lang>
+    <lang code="lus">Lushai</lang>
+    <lang code="mac">Macedonian</lang>
+    <lang code="mad">Madurese</lang>
+    <lang code="mag">Magahi</lang>
+    <lang code="mah">Marshallese</lang>
+    <lang code="mai">Maithili</lang>
+    <lang code="mak">Makasar</lang>
+    <lang code="mal">Malayalam</lang>
+    <lang code="man">Mandingo</lang>
+    <lang code="mao">Maori</lang>
+    <lang code="map">Austronesian (Other)</lang>
+    <lang code="mar">Marathi</lang>
+    <lang code="mas">Maasai</lang>
+    <lang code="max" status="discontinued">Manx</lang>
+    <lang code="may">Malay</lang>
+    <lang code="mdf">Moksha</lang>
+    <lang code="mdr">Mandar</lang>
+    <lang code="men">Mende</lang>
+    <lang code="mga">Irish, Middle (ca. 1100-1550)</lang>
+    <lang code="mic">Micmac</lang>
+    <lang code="min">Minangkabau</lang>
+    <lang code="mis">Miscellaneous languages</lang>
+    <lang code="mkh">Mon-Khmer (Other)</lang>
+    <lang code="mla" status="discontinued">Malagasy</lang>
+    <lang code="mlg">Malagasy</lang>
+    <lang code="mlt">Maltese</lang>
+    <lang code="mnc">Manchu</lang>
+    <lang code="mni">Manipuri</lang>
+    <lang code="mno">Manobo languages</lang>
+    <lang code="moh">Mohawk</lang>
+    <lang code="mol" status="discontinued">Moldavian</lang>
+    <lang code="mon">Mongolian</lang>
+    <lang code="mos">Mooré</lang>
+    <lang code="mul">Multiple languages</lang>
+    <lang code="mun">Munda (Other)</lang>
+    <lang code="mus">Creek</lang>
+    <lang code="mwl">Mirandese</lang>
+    <lang code="mwr">Marwari</lang>
+    <lang code="myn">Mayan languages</lang>
+    <lang code="myv">Erzya</lang>
+    <lang code="nah">Nahuatl</lang>
+    <lang code="nai">North American Indian (Other)</lang>
+    <lang code="nap">Neapolitan Italian</lang>
+    <lang code="nau">Nauru</lang>
+    <lang code="nav">Navajo</lang>
+    <lang code="nbl">Ndebele (South Africa)</lang>
+    <lang code="nde">Ndebele (Zimbabwe)</lang>
+    <lang code="ndo">Ndonga</lang>
+    <lang code="nds">Low German</lang>
+    <lang code="nep">Nepali</lang>
+    <lang code="new">Newari</lang>
+    <lang code="nia">Nias</lang>
+    <lang code="nic">Niger-Kordofanian (Other)</lang>
+    <lang code="niu">Niuean</lang>
+    <lang code="nno">Norwegian (Nynorsk)</lang>
+    <lang code="nob">Norwegian (Bokmål)</lang>
+    <lang code="nog">Nogai</lang>
+    <lang code="non">Old Norse</lang>
+    <lang code="nor">Norwegian</lang>
+    <lang code="nqo">N'Ko</lang>
+    <lang code="nso">Northern Sotho</lang>
+    <lang code="nub">Nubian languages</lang>
+    <lang code="nwc">Newari, Old</lang>
+    <lang code="nya">Nyanja</lang>
+    <lang code="nym">Nyamwezi</lang>
+    <lang code="nyn">Nyankole</lang>
+    <lang code="nyo">Nyoro</lang>
+    <lang code="nzi">Nzima</lang>
+    <lang code="oci">Occitan (post-1500)</lang>
+    <lang code="oji">Ojibwa</lang>
+    <lang code="ori">Oriya</lang>
+    <lang code="orm">Oromo</lang>
+    <lang code="osa">Osage</lang>
+    <lang code="oss">Ossetic</lang>
+    <lang code="ota">Turkish, Ottoman</lang>
+    <lang code="oto">Otomian languages</lang>
+    <lang code="paa">Papuan (Other)</lang>
+    <lang code="pag">Pangasinan</lang>
+    <lang code="pal">Pahlavi</lang>
+    <lang code="pam">Pampanga</lang>
+    <lang code="pan">Panjabi</lang>
+    <lang code="pap">Papiamento</lang>
+    <lang code="pau">Palauan</lang>
+    <lang code="peo">Old Persian (ca. 600-400 B.C.)</lang>
+    <lang code="per">Persian</lang>
+    <lang code="phi">Philippine (Other)</lang>
+    <lang code="phn">Phoenician</lang>
+    <lang code="pli">Pali</lang>
+    <lang code="pol">Polish</lang>
+    <lang code="pon">Pohnpeian</lang>
+    <lang code="por">Portuguese</lang>
+    <lang code="pra">Prakrit languages</lang>
+    <lang code="pro">Provençal (to 1500)</lang>
+    <lang code="pus">Pushto</lang>
+    <lang code="que">Quechua</lang>
+    <lang code="raj">Rajasthani</lang>
+    <lang code="rap">Rapanui</lang>
+    <lang code="rar">Rarotongan</lang>
+    <lang code="roa">Romance (Other)</lang>
+    <lang code="roh">Raeto-Romance</lang>
+    <lang code="rom">Romani</lang>
+    <lang code="rum">Romanian</lang>
+    <lang code="run">Rundi</lang>
+    <lang code="rup">Aromanian</lang>
+    <lang code="rus">Russian</lang>
+    <lang code="sad">Sandawe</lang>
+    <lang code="sag">Sango (Ubangi Creole)</lang>
+    <lang code="sah">Yakut</lang>
+    <lang code="sai">South American Indian (Other)</lang>
+    <lang code="sal">Salishan languages</lang>
+    <lang code="sam">Samaritan Aramaic</lang>
+    <lang code="san">Sanskrit</lang>
+    <lang code="sao" status="discontinued">Samoan</lang>
+    <lang code="sas">Sasak</lang>
+    <lang code="sat">Santali</lang>
+    <lang code="scc" status="discontinued">Serbian</lang>
+    <lang code="scn">Sicilian Italian</lang>
+    <lang code="sco">Scots</lang>
+    <lang code="scr" status="discontinued">Croatian</lang>
+    <lang code="sel">Selkup</lang>
+    <lang code="sem">Semitic (Other)</lang>
+    <lang code="sga">Irish, Old (to 1100)</lang>
+    <lang code="sgn">Sign languages</lang>
+    <lang code="shn">Shan</lang>
+    <lang code="sho" status="discontinued">Shona</lang>
+    <lang code="sid">Sidamo</lang>
+    <lang code="sin">Sinhalese</lang>
+    <lang code="sio">Siouan (Other)</lang>
+    <lang code="sit">Sino-Tibetan (Other)</lang>
+    <lang code="sla">Slavic (Other)</lang>
+    <lang code="slo">Slovak</lang>
+    <lang code="slv">Slovenian</lang>
+    <lang code="sma">Southern Sami</lang>
+    <lang code="sme">Northern Sami</lang>
+    <lang code="smi">Sami</lang>
+    <lang code="smj">Lule Sami</lang>
+    <lang code="smn">Inari Sami</lang>
+    <lang code="smo">Samoan</lang>
+    <lang code="sms">Skolt Sami</lang>
+    <lang code="sna">Shona</lang>
+    <lang code="snd">Sindhi</lang>
+    <lang code="snh" status="discontinued">Sinhalese</lang>
+    <lang code="snk">Soninke</lang>
+    <lang code="sog">Sogdian</lang>
+    <lang code="som">Somali</lang>
+    <lang code="son">Songhai</lang>
+    <lang code="sot">Sotho</lang>
+    <lang code="spa">Spanish</lang>
+    <lang code="srd">Sardinian</lang>
+    <lang code="srn">Sranan</lang>
+    <lang code="srp">Serbian</lang>
+    <lang code="srr">Serer</lang>
+    <lang code="ssa">Nilo-Saharan (Other)</lang>
+    <lang code="sso" status="discontinued">Sotho</lang>
+    <lang code="ssw">Swazi</lang>
+    <lang code="suk">Sukuma</lang>
+    <lang code="sun">Sundanese</lang>
+    <lang code="sus">Susu</lang>
+    <lang code="sux">Sumerian</lang>
+    <lang code="swa">Swahili</lang>
+    <lang code="swe">Swedish</lang>
+    <lang code="swz" status="discontinued">Swazi</lang>
+    <lang code="syc">Syriac</lang>
+    <lang code="syr">Syriac, Modern</lang>
+    <lang code="tag" status="discontinued">Tagalog</lang>
+    <lang code="tah">Tahitian</lang>
+    <lang code="tai">Tai (Other)</lang>
+    <lang code="taj" status="discontinued">Tajik</lang>
+    <lang code="tam">Tamil</lang>
+    <lang code="tar" status="discontinued">Tatar</lang>
+    <lang code="tat">Tatar</lang>
+    <lang code="tel">Telugu</lang>
+    <lang code="tem">Temne</lang>
+    <lang code="ter">Terena</lang>
+    <lang code="tet">Tetum</lang>
+    <lang code="tgk">Tajik</lang>
+    <lang code="tgl">Tagalog</lang>
+    <lang code="tha">Thai</lang>
+    <lang code="tib">Tibetan</lang>
+    <lang code="tig">Tigré</lang>
+    <lang code="tir">Tigrinya</lang>
+    <lang code="tiv">Tiv</lang>
+    <lang code="tkl">Tokelauan</lang>
+    <lang code="tlh">Klingon (Artificial language)</lang>
+    <lang code="tli">Tlingit</lang>
+    <lang code="tmh">Tamashek</lang>
+    <lang code="tog">Tonga (Nyasa)</lang>
+    <lang code="ton">Tongan</lang>
+    <lang code="tpi">Tok Pisin</lang>
+    <lang code="tru" status="discontinued">Truk</lang>
+    <lang code="tsi">Tsimshian</lang>
+    <lang code="tsn">Tswana</lang>
+    <lang code="tso">Tsonga</lang>
+    <lang code="tsw" status="discontinued">Tswana</lang>
+    <lang code="tuk">Turkmen</lang>
+    <lang code="tum">Tumbuka</lang>
+    <lang code="tup">Tupi languages</lang>
+    <lang code="tur">Turkish</lang>
+    <lang code="tut">Altaic (Other)</lang>
+    <lang code="tvl">Tuvaluan</lang>
+    <lang code="twi">Twi</lang>
+    <lang code="tyv">Tuvinian</lang>
+    <lang code="udm">Udmurt</lang>
+    <lang code="uga">Ugaritic</lang>
+    <lang code="uig">Uighur</lang>
+    <lang code="ukr">Ukrainian</lang>
+    <lang code="umb">Umbundu</lang>
+    <lang code="und">Undetermined</lang>
+    <lang code="urd">Urdu</lang>
+    <lang code="uzb">Uzbek</lang>
+    <lang code="vai">Vai</lang>
+    <lang code="ven">Venda</lang>
+    <lang code="vie">Vietnamese</lang>
+    <lang code="vol">Volapük</lang>
+    <lang code="vot">Votic</lang>
+    <lang code="wak">Wakashan languages</lang>
+    <lang code="wal">Wolayta</lang>
+    <lang code="war">Waray</lang>
+    <lang code="was">Washoe</lang>
+    <lang code="wel">Welsh</lang>
+    <lang code="wen">Sorbian (Other)</lang>
+    <lang code="wln">Walloon</lang>
+    <lang code="wol">Wolof</lang>
+    <lang code="xal">Oirat</lang>
+    <lang code="xho">Xhosa</lang>
+    <lang code="yao">Yao (Africa)</lang>
+    <lang code="yap">Yapese</lang>
+    <lang code="yid">Yiddish</lang>
+    <lang code="yor">Yoruba</lang>
+    <lang code="ypk">Yupik languages</lang>
+    <lang code="zap">Zapotec</lang>
+    <lang code="zbl">Blissymbolics</lang>
+    <lang code="zen">Zenaga</lang>
+    <lang code="zha">Zhuang</lang>
+    <lang code="znd">Zande languages</lang>
+    <lang code="zul">Zulu</lang>
+    <lang code="zun">Zuni</lang>
+    <lang code="zxx">No linguistic content</lang>
+    <lang code="zza">Zaza</lang>
+  </xsl:variable>
+
+  <!-- MARC Musical Form codes -->
+  <xsl:variable name="marcFormList">
+    <form code="an">anthems</form>
+    <form code="bd">ballads</form>
+    <form code="bg">bluegrass music</form>
+    <form code="bl">blues</form>
+    <form code="bt">ballets</form>
+    <form code="ca">chaconnes</form>
+    <form code="cb">chants, Other religions</form>
+    <form code="cc">chant, Christian</form>
+    <form code="cg">concerti grossi</form>
+    <form code="ch">chorales</form>
+    <form code="cl">chorale preludes</form>
+    <form code="cn">canons and rounds</form>
+    <form code="co">concertos</form>
+    <form code="cp">chansons, polyphonic</form>
+    <form code="cr">carols</form>
+    <form code="cs">chance compositions</form>
+    <form code="ct">cantatas</form>
+    <form code="cy">country music</form>
+    <form code="cz">canzonas</form>
+    <form code="df">dance forms</form>
+    <form code="dv">divertimentos, serenades, cassations, divertissements, and notturni</form>
+    <form code="fg">fugues</form>
+    <form code="fl">flamenco</form>
+    <form code="fm">folk music</form>
+    <form code="ft">fantasias</form>
+    <form code="gm">gospel music</form>
+    <form code="hy">hymns</form>
+    <form code="jz">jazz</form>
+    <form code="mc">musical revues and comedies</form>
+    <form code="md">madrigals</form>
+    <form code="mi">minuets</form>
+    <form code="mo">motets</form>
+    <form code="mp">motion picture music</form>
+    <form code="mr">marches</form>
+    <form code="ms">masses</form>
+    <form code="mu">multiple forms</form>
+    <form code="mz">mazurkas</form>
+    <form code="nc">nocturnes</form>
+    <form code="nn">not applicable</form>
+    <form code="op">operas</form>
+    <form code="or">oratorios</form>
+    <form code="ov">overtures</form>
+    <form code="pg">program music</form>
+    <form code="pm">passion music</form>
+    <form code="po">polonaises</form>
+    <form code="pp">popular music</form>
+    <form code="pr">preludes</form>
+    <form code="ps">passacaglias</form>
+    <form code="pt">part-songs</form>
+    <form code="pv">pavans</form>
+    <form code="rc">rock music</form>
+    <form code="rd">rondos</form>
+    <form code="rg">ragtime music</form>
+    <form code="ri">ricercars</form>
+    <form code="rp">rhapsodies</form>
+    <form code="rq">requiems</form>
+    <form code="sd">square dance music</form>
+    <form code="sg">songs</form>
+    <form code="sn">sonatas</form>
+    <form code="sp">symphonic poems</form>
+    <form code="st">studies and exercises</form>
+    <form code="su">suites</form>
+    <form code="sy">symphonies</form>
+    <form code="tc">toccatas</form>
+    <form code="tl">teatro lirico</form>
+    <form code="ts">trio-sonatas</form>
+    <form code="uu">unknown</form>
+    <form code="vi">villancicos</form>
+    <form code="vr">variations</form>
+    <form code="wz">waltzes</form>
+    <form code="za">zarzuelas</form>
+    <form code="zz">other</form>
+  </xsl:variable>
+
+  <!-- IAML Musical Form codes -->
+  <xsl:variable name="iamlFormList">
+    <form code="abs">absolutio</form>
+    <form code="acc">accademia</form>
+    <form code="acl">acclamatio</form>
+    <form code="acm">actus musicus</form>
+    <form code="agn">agnus dei</form>
+    <form code="ai#">air, vocal</form>
+    <form code="ain">air, instrumental</form>
+    <form code="aka">akathistos hymnos</form>
+    <form code="ala">alba</form>
+    <form code="alb">albumleaf</form>
+    <form code="all">alleluia</form>
+    <form code="alm">allemande</form>
+    <form code="ame">amener</form>
+    <form code="an#">anthem</form>
+    <form code="ana">anagramma</form>
+    <form code="ane">ante evangelium</form>
+    <form code="ant">antiphon</form>
+    <form code="app">applauso</form>
+    <form code="ar#">aria</form>
+    <form code="ara">arabesque</form>
+    <form code="ari">ariette</form>
+    <form code="ark">aurresku</form>
+    <form code="arn">aria, instrumental</form>
+    <form code="ars">arioso</form>
+    <form code="aub">aubade</form>
+    <form code="azm">azione musicale</form>
+    <form code="azs">azione sacra</form>
+    <form code="azt">azione teatrale</form>
+    <form code="bac">baccanale</form>
+    <form code="bad">badinage</form>
+    <form code="bag">bagatelle</form>
+    <form code="bai">baião</form>
+    <form code="bal">ballo</form>
+    <form code="bar">barcarole</form>
+    <form code="bat">battaglia</form>
+    <form code="bbp">bebop</form>
+    <form code="bcs">berceuse</form>
+    <form code="bd#">ballad</form>
+    <form code="bde">ballade, vocal</form>
+    <form code="bdi">ballade, instrumental</form>
+    <form code="bea">beat</form>
+    <form code="beg">béguine</form>
+    <form code="ben">benedictus</form>
+    <form code="bfm">barform</form>
+    <form code="bg#">bluegrass</form>
+    <form code="bgk">bugaku</form>
+    <form code="bhn">bergreihen</form>
+    <form code="bic">bicinium</form>
+    <form code="bkb">black bottom</form>
+    <form code="bkg">bänkelgesang</form>
+    <form code="bkm">black music</form>
+    <form code="bl#">blues</form>
+    <form code="blc">cuban bolero</form>
+    <form code="bll">ballata</form>
+    <form code="blo">ballad opera</form>
+    <form code="blt">bluette</form>
+    <form code="bol">bolero</form>
+    <form code="bou">bourrée</form>
+    <form code="bra">branle</form>
+    <form code="brg">bergamasque dance</form>
+    <form code="brr">barriera</form>
+    <form code="brt">bergerette</form>
+    <form code="bru">brunette</form>
+    <form code="bsd">basse danse</form>
+    <form code="bst">boston</form>
+    <form code="bt#">ballet</form>
+    <form code="btd">boutade</form>
+    <form code="bto">balletto</form>
+    <form code="btq">batuque</form>
+    <form code="bur">burlesque</form>
+    <form code="bwg">boogie-woogie</form>
+    <form code="byc">byzantine canon</form>
+    <form code="cab">cabaletta</form>
+    <form code="cac">caccia</form>
+    <form code="cad">cadenza</form>
+    <form code="cal">calata</form>
+    <form code="can">can-can</form>
+    <form code="cav">cavatina</form>
+    <form code="cb#">chant, non christian</form>
+    <form code="cc#">chant, christian</form>
+    <form code="cch">catch</form>
+    <form code="ccl">canticle</form>
+    <form code="ccn">canción</form>
+    <form code="cdg">chanson de geste</form>
+    <form code="cdo">children opera</form>
+    <form code="cdt">chanson de toile</form>
+    <form code="cfr">confractorium</form>
+    <form code="cg#">concerto grosso</form>
+    <form code="cga">conga</form>
+    <form code="ch#">choral</form>
+    <form code="cha">cha-cha-cha</form>
+    <form code="chc">chaconne</form>
+    <form code="chh">cachucha</form>
+    <form code="chn">charleston</form>
+    <form code="cho">chamber opera</form>
+    <form code="chp">character piece</form>
+    <form code="chr">choir</form>
+    <form code="chs">children's song</form>
+    <form code="cht">chanson sentencieuse</form>
+    <form code="chz">chiarenzana</form>
+    <form code="ckw">cakewalk</form>
+    <form code="cl#">choral prelude</form>
+    <form code="cld">colinda</form>
+    <form code="cli">choral, instrumental</form>
+    <form code="cll">carosello</form>
+    <form code="clu">clausula</form>
+    <form code="cly">calypso</form>
+    <form code="cmg">carmagnole</form>
+    <form code="cmm">communion</form>
+    <form code="cmn">carmen</form>
+    <form code="cmp">completorium</form>
+    <form code="cn#">canon</form>
+    <form code="cnd">conductus</form>
+    <form code="cnl">cantilena</form>
+    <form code="cnr">canario</form>
+    <form code="cns">canso</form>
+    <form code="co#">concerto</form>
+    <form code="cob">comédie-ballet</form>
+    <form code="cop">concert piece</form>
+    <form code="cou">couplet</form>
+    <form code="cow">competition, examination work</form>
+    <form code="cp#">chanson, polyphonic</form>
+    <form code="cpl">copla</form>
+    <form code="cpm">commedia per musica</form>
+    <form code="cpr">caprice</form>
+    <form code="cr#">carol</form>
+    <form code="cra">carola</form>
+    <form code="cre">credo</form>
+    <form code="cri">carioca</form>
+    <form code="crr">corrido</form>
+    <form code="crt">corant</form>
+    <form code="cs#">chance composition / aleatoric music</form>
+    <form code="csa">csárdás</form>
+    <form code="cse">chasse</form>
+    <form code="csg">carnival song</form>
+    <form code="csn">chanson, monodic</form>
+    <form code="css">chanson spirituelle</form>
+    <form code="cst">cassation</form>
+    <form code="csy">chamber symphony</form>
+    <form code="ct#">cantata</form>
+    <form code="ctc">contacio</form>
+    <form code="ctd">contredance</form>
+    <form code="ctf">contrafactum</form>
+    <form code="ctg">cantiga</form>
+    <form code="cti">cantio</form>
+    <form code="ctl">cotillon</form>
+    <form code="cto">cento</form>
+    <form code="ctp">counterpoint</form>
+    <form code="cue">cueca</form>
+    <form code="cy#">country music</form>
+    <form code="cyd">country dance</form>
+    <form code="cz#">canzona</form>
+    <form code="czn">canzone</form>
+    <form code="czp">canzone, polyphonic</form>
+    <form code="czs">canzonetta spirituale</form>
+    <form code="czt">canzonetta</form>
+    <form code="dbl">double</form>
+    <form code="dec">decimino</form>
+    <form code="des">descort</form>
+    <form code="dev">devozione</form>
+    <form code="df#">dance form</form>
+    <form code="dia">dialogue</form>
+    <form code="dim">disco music</form>
+    <form code="din">dramatic introduction</form>
+    <form code="dix">dixieland</form>
+    <form code="dmk">dumka</form>
+    <form code="dod">dance of death</form>
+    <form code="dox">doxology</form>
+    <form code="drh">dreher</form>
+    <form code="drs">drinking song</form>
+    <form code="dsg">disguisings</form>
+    <form code="dtr">dithyramb</form>
+    <form code="dts">dramatic scherzo</form>
+    <form code="due">duet</form>
+    <form code="dui">duo</form>
+    <form code="dv#">divertimento</form>
+    <form code="eco">écossaise</form>
+    <form code="egl">eglogue</form>
+    <form code="ele">elevatio</form>
+    <form code="elm">electroacoustic music</form>
+    <form code="elx">electroacoustic mixed music</form>
+    <form code="ely">elegy</form>
+    <form code="ens">ensalada</form>
+    <form code="ent">entrée</form>
+    <form code="enw">english waltz</form>
+    <form code="epo">epos</form>
+    <form code="ept">epithalamium</form>
+    <form code="est">estampie</form>
+    <form code="ext">extravaganza</form>
+    <form code="fad">fado</form>
+    <form code="faf">fanfare</form>
+    <form code="far">farce</form>
+    <form code="fax">faux-bourdon</form>
+    <form code="fea">feast</form>
+    <form code="fg#">fugue</form>
+    <form code="fin">finale</form>
+    <form code="fla">flamenco</form>
+    <form code="fls">flagellant song</form>
+    <form code="fm#">folk music</form>
+    <form code="fmm">masonic music</form>
+    <form code="fnd">fandango</form>
+    <form code="fnk">funk</form>
+    <form code="fns">funeral song</form>
+    <form code="fol">folie</form>
+    <form code="for">forlana</form>
+    <form code="fox">foxtrot</form>
+    <form code="frd">farandole</form>
+    <form code="frj">free jazz</form>
+    <form code="fro">frottola</form>
+    <form code="frs">fricassée</form>
+    <form code="fso">folk song</form>
+    <form code="ft#">fantasia</form>
+    <form code="fum">funeral march</form>
+    <form code="fur">furiant</form>
+    <form code="fus">fusion</form>
+    <form code="fvm">favola per musica</form>
+    <form code="gai">gaillard</form>
+    <form code="gal">galop</form>
+    <form code="gas">gassenhauer</form>
+    <form code="gav">gavotte</form>
+    <form code="gch">genero chico</form>
+    <form code="gig">gigue</form>
+    <form code="gle">glee</form>
+    <form code="glo">gloria</form>
+    <form code="gm#">gospel music</form>
+    <form code="gop">gopak</form>
+    <form code="gos">goliard song</form>
+    <form code="gra">gradual</form>
+    <form code="gre">greghesca</form>
+    <form code="gro">grand opéra</form>
+    <form code="gym">gymel</form>
+    <form code="gyp">gypsy song</form>
+    <form code="hab">habanera</form>
+    <form code="had">hadutanc</form>
+    <form code="hal">halling</form>
+    <form code="hem">heavy metal</form>
+    <form code="hip">hip-hop</form>
+    <form code="hit">hit</form>
+    <form code="hoq">hoquetus</form>
+    <form code="hpp">hornpipe</form>
+    <form code="hrk">hard rock</form>
+    <form code="hum">humoresque</form>
+    <form code="hy#">hymn</form>
+    <form code="hym">hymenaios</form>
+    <form code="idy">idyll</form>
+    <form code="iex">instrumental excerpts of an operatic or choreographic work</form>
+    <form code="imp">imploratio</form>
+    <form code="imu">impromptu</form>
+    <form code="in#">intermezzo</form>
+    <form code="inc">invocatio</form>
+    <form code="ind">intrada</form>
+    <form code="ing">ingressa</form>
+    <form code="inm">incidental / theater music</form>
+    <form code="int">introduction</form>
+    <form code="inv">invention</form>
+    <form code="iph">iporchema</form>
+    <form code="ipp">improperia</form>
+    <form code="iru">interlude</form>
+    <form code="itd">intermedio</form>
+    <form code="itn">intonation</form>
+    <form code="itt">introit</form>
+    <form code="ivu">invitatorium</form>
+    <form code="jep">jeu parti</form>
+    <form code="jgg">jigg</form>
+    <form code="jig">jig</form>
+    <form code="jot">jota</form>
+    <form code="jub">jubilee</form>
+    <form code="jus">justiniane</form>
+    <form code="jz#">jazz</form>
+    <form code="kld">koleda</form>
+    <form code="kol">kolo</form>
+    <form code="kra">krakowiak</form>
+    <form code="kuj">kujawiak</form>
+    <form code="kyr">kyrie</form>
+    <form code="lai">lai</form>
+    <form code="lam">lament</form>
+    <form code="lau">lauda</form>
+    <form code="lby">lullaby / cradle song</form>
+    <form code="lds">liederspiel</form>
+    <form code="ldy">lindy</form>
+    <form code="lec">lectio</form>
+    <form code="les">leise</form>
+    <form code="lgu">langaus</form>
+    <form code="li#">lied</form>
+    <form code="lic">licenza</form>
+    <form code="lid">liturgical drama</form>
+    <form code="lir">lirica</form>
+    <form code="lit">liturgy</form>
+    <form code="lmz">lamentations</form>
+    <form code="lnd">ländler</form>
+    <form code="lod">lauds</form>
+    <form code="lou">loure</form>
+    <form code="lty">litany</form>
+    <form code="luc">lucernario</form>
+    <form code="lyh">liturgy of the hours</form>
+    <form code="mat">matins</form>
+    <form code="maz">mazur</form>
+    <form code="mbm">mambo</form>
+    <form code="mc#">musical revue and comedy</form>
+    <form code="mcc">macchietta</form>
+    <form code="md#">madrigal</form>
+    <form code="mda">melodrama</form>
+    <form code="mdc">madrigal comedy</form>
+    <form code="mds">morceau de salon</form>
+    <form code="mdy">melody</form>
+    <form code="mgg">maggiolata</form>
+    <form code="mgs">madrigale spirituale</form>
+    <form code="mi#">minuet</form>
+    <form code="mim">military march</form>
+    <form code="mld">mélodie</form>
+    <form code="mlg">malagueña</form>
+    <form code="mls">melos</form>
+    <form code="mmd">mimodramma</form>
+    <form code="mme">musique mesurée</form>
+    <form code="mmm">mumming</form>
+    <form code="mmo">multimedia opera</form>
+    <form code="mng">milonga</form>
+    <form code="mnh">modinha</form>
+    <form code="mo#">motet</form>
+    <form code="mod">morris dance</form>
+    <form code="mon">monferrina</form>
+    <form code="mor">morality</form>
+    <form code="mp#">moving picture music</form>
+    <form code="mph">metamorphosis</form>
+    <form code="mqu">masque</form>
+    <form code="mr#">march</form>
+    <form code="ms#">mass</form>
+    <form code="msc">moresca</form>
+    <form code="msq">masquerade</form>
+    <form code="mst">mystery play</form>
+    <form code="mtb">matachin</form>
+    <form code="mth">method</form>
+    <form code="mtp">moto perpetuo</form>
+    <form code="mtz">mutanza</form>
+    <form code="mu#">multiple forms</form>
+    <form code="mum">musical moment</form>
+    <form code="mun">muñeira</form>
+    <form code="mus">musette</form>
+    <form code="mut">musical theatre</form>
+    <form code="mxx">maxixe</form>
+    <form code="mym">military music</form>
+    <form code="mz#">mazurka</form>
+    <form code="nat">national anthem</form>
+    <form code="nau">nauba</form>
+    <form code="nc#">nocturne</form>
+    <form code="nen">nenia</form>
+    <form code="noe">noël</form>
+    <form code="nom">nomos</form>
+    <form code="non">nonet</form>
+    <form code="nov">novellette</form>
+    <form code="nry">nursery-rhyme</form>
+    <form code="ntz">nachtanz</form>
+    <form code="nwa">new age</form>
+    <form code="nww">new wave</form>
+    <form code="obk">oberek</form>
+    <form code="oct">octet</form>
+    <form code="ode">ode</form>
+    <form code="ofd">officium defunctorum</form>
+    <form code="off">offertorium</form>
+    <form code="ogm">organum</form>
+    <form code="ons">onestep</form>
+    <form code="op#">opera</form>
+    <form code="opb">opéra-ballet</form>
+    <form code="opc">opéra-comique</form>
+    <form code="opf">opéra bouffe</form>
+    <form code="opm">opera semiseria</form>
+    <form code="ops">opera seria</form>
+    <form code="opt">operetta</form>
+    <form code="opu">opera buffa</form>
+    <form code="or#">oratorio</form>
+    <form code="ora">oratio</form>
+    <form code="orm">organ mass</form>
+    <form code="ov#">overture</form>
+    <form code="pad">pastoral drama</form>
+    <form code="pae">paean</form>
+    <form code="pbr">pibroch</form>
+    <form code="pch">pastiche</form>
+    <form code="pco">postcommunio</form>
+    <form code="pdd">pas de deux</form>
+    <form code="pdv">padovana</form>
+    <form code="pdy">parody</form>
+    <form code="pev">post evangelium</form>
+    <form code="pf#">prelude and fugue</form>
+    <form code="pg#">programme music</form>
+    <form code="pgl">pavaniglia</form>
+    <form code="phy">patriotic hymn</form>
+    <form code="piv">piva</form>
+    <form code="plc">planctus</form>
+    <form code="ple">post lectionem</form>
+    <form code="plk">polka</form>
+    <form code="pll">penillon</form>
+    <form code="plo">palotas</form>
+    <form code="plr">plaisanterie</form>
+    <form code="pls">plantation song</form>
+    <form code="plt">plainte</form>
+    <form code="plu">postlude</form>
+    <form code="pm#">passion music</form>
+    <form code="pmk">polka mazurka</form>
+    <form code="pmm">pantomime</form>
+    <form code="pnk">punk</form>
+    <form code="po#">polonaise</form>
+    <form code="pol">polo</form>
+    <form code="pot">pot-pourri</form>
+    <form code="pp#">popular music</form>
+    <form code="pph">paraphrase</form>
+    <form code="ppo">puppet opera</form>
+    <form code="prd">prelude</form>
+    <form code="pre">preghiera</form>
+    <form code="prf">praefatio</form>
+    <form code="prg">périgourdine</form>
+    <form code="prl">prologue</form>
+    <form code="prm">processional march</form>
+    <form code="pro">proemium</form>
+    <form code="prt">partimento</form>
+    <form code="prz">profezia</form>
+    <form code="ps#">passacaglia</form>
+    <form code="psa">psalm</form>
+    <form code="psd">paso doble</form>
+    <form code="psl">pastourelle</form>
+    <form code="psp">passepied</form>
+    <form code="psr">pas redoublé</form>
+    <form code="pst">pastoral</form>
+    <form code="pt#">partsong</form>
+    <form code="ptn">pater noster</form>
+    <form code="ptt">partita</form>
+    <form code="pv#">pavan</form>
+    <form code="pzz">passamezzo</form>
+    <form code="qav">quartet, vocal</form>
+    <form code="qdl">quadrille</form>
+    <form code="qiv">quintet, vocal</form>
+    <form code="qua">quartet</form>
+    <form code="qui">quintet</form>
+    <form code="quo">quodlibet</form>
+    <form code="rad">rada</form>
+    <form code="ram">radio music</form>
+    <form code="rao">radio opera</form>
+    <form code="rap">rap</form>
+    <form code="rc#">rock music</form>
+    <form code="rct">récit</form>
+    <form code="rd#">rondo</form>
+    <form code="rde">rondeau</form>
+    <form code="rdv">ranz des vaches</form>
+    <form code="rdw">redowa</form>
+    <form code="rec">recitative</form>
+    <form code="ree">reel</form>
+    <form code="rej">réjouissance</form>
+    <form code="rem">réminiscence</form>
+    <form code="rer">rêverie</form>
+    <form code="res">responsorium</form>
+    <form code="rev">revue</form>
+    <form code="rg#">ragtime</form>
+    <form code="rgg">reggae</form>
+    <form code="rgl">reigenlied</form>
+    <form code="rgr">ruggiero</form>
+    <form code="rhb">rhythm and blues</form>
+    <form code="rhl">rheinländer</form>
+    <form code="ri#">ricercare</form>
+    <form code="rig">rigaudon</form>
+    <form code="ris">rispetto</form>
+    <form code="rit">ritornello</form>
+    <form code="rjk">rejdovak</form>
+    <form code="rmc">romance (instrumental)</form>
+    <form code="rmy">religious melody</form>
+    <form code="rmz">romanza</form>
+    <form code="rot">rota</form>
+    <form code="rp#">rhapsody</form>
+    <form code="rq#">requiem mass</form>
+    <form code="rsc">romanesca</form>
+    <form code="rsp">raspa</form>
+    <form code="rtg">rotruenge</form>
+    <form code="rtt">rotta</form>
+    <form code="rue">rueda</form>
+    <form code="rug">ruggero</form>
+    <form code="rum">rumba</form>
+    <form code="sad">sacred drama</form>
+    <form code="sae">saeta</form>
+    <form code="sai">sainete</form>
+    <form code="san">sanctus</form>
+    <form code="sar">sacra rappresentazione</form>
+    <form code="scc">sacred cantata</form>
+    <form code="scd">scholastic drama</form>
+    <form code="sce">scene</form>
+    <form code="sch">scherzo</form>
+    <form code="scp">schuhplattler</form>
+    <form code="scs">sacred song</form>
+    <form code="sct">scat</form>
+    <form code="sdh">schnadahüpfl</form>
+    <form code="sdr">scherzo drammatico</form>
+    <form code="sep">sepolcro</form>
+    <form code="seq">sequence</form>
+    <form code="sev">sevillana</form>
+    <form code="sex">sextet</form>
+    <form code="sft">sinfonietta</form>
+    <form code="sg#">song</form>
+    <form code="sgl">seguidilla</form>
+    <form code="sha">shanty</form>
+    <form code="shm">shimmy</form>
+    <form code="si#">sinfonia</form>
+    <form code="sic">siciliana</form>
+    <form code="ska">ska</form>
+    <form code="skt">sketch</form>
+    <form code="sll">sallenda</form>
+    <form code="slq">soliloquy</form>
+    <form code="sls">salsa</form>
+    <form code="slt">saltarello</form>
+    <form code="smb">samba</form>
+    <form code="sml">psalmellus</form>
+    <form code="sn#">sonata</form>
+    <form code="snd">serenade</form>
+    <form code="snt">serenata</form>
+    <form code="sol">solfeggio</form>
+    <form code="sou">soul</form>
+    <form code="sp#">symphonic poem</form>
+    <form code="spi">spiritual</form>
+    <form code="sps">social and political song</form>
+    <form code="spt">septet</form>
+    <form code="sq#">square dance</form>
+    <form code="srb">sarabande</form>
+    <form code="srd">sardana</form>
+    <form code="srm">sarum</form>
+    <form code="srv">sirventes</form>
+    <form code="ssp">singspiel</form>
+    <form code="sss">seises</form>
+    <form code="st#">study, exercise</form>
+    <form code="ste">schottische</form>
+    <form code="sth">schottish</form>
+    <form code="sto">stornello</form>
+    <form code="str">strambotto</form>
+    <form code="sts">strathspey</form>
+    <form code="stt">saltarello tedesco</form>
+    <form code="su#">suite</form>
+    <form code="swi">swing</form>
+    <form code="sww">song without words</form>
+    <form code="sy#">symphony</form>
+    <form code="syc">sinfonia concertante</form>
+    <form code="syd">symphonie dramatique</form>
+    <form code="sym">symbolum</form>
+    <form code="syo">syomyo</form>
+    <form code="tar">tarantella</form>
+    <form code="tc#">toccata</form>
+    <form code="tcn">trecanum</form>
+    <form code="tct">tricotet</form>
+    <form code="tdn">triodion</form>
+    <form code="tem">techno music</form>
+    <form code="ten">tenso</form>
+    <form code="ter">terzet</form>
+    <form code="tex">tex-mex</form>
+    <form code="tfm">tafelmusik</form>
+    <form code="thr">threnos</form>
+    <form code="ths">third stream</form>
+    <form code="tir">tirana</form>
+    <form code="tmb">tambourin</form>
+    <form code="tnc">trenchmore</form>
+    <form code="tng">tango</form>
+    <form code="tod">torch dance</form>
+    <form code="tom">tombeau</form>
+    <form code="ton">tonadilla</form>
+    <form code="tou">tourney</form>
+    <form code="tra">tract</form>
+    <form code="trd">tourdion</form>
+    <form code="trg">trishagion</form>
+    <form code="tri">trio</form>
+    <form code="trl">tragédie lyrique</form>
+    <form code="trm">tricinium</form>
+    <form code="tro">trope</form>
+    <form code="trq">traquenard</form>
+    <form code="trs">treatise</form>
+    <form code="trt">transitorium</form>
+    <form code="trz">trezza</form>
+    <form code="ts#">triosonata</form>
+    <form code="ttt">tattoo</form>
+    <form code="tum">tumba</form>
+    <form code="tvo">television opera</form>
+    <form code="two">two-step</form>
+    <form code="uuu">unknown form</form>
+    <form code="vau">vaudeville</form>
+    <form code="vil">villanelle</form>
+    <form code="vir">virelai</form>
+    <form code="vlc">villancico</form>
+    <form code="vln">villanella</form>
+    <form code="vlt">villotta</form>
+    <form code="vly">voluntary</form>
+    <form code="vnz">veneziana</form>
+    <form code="voc">vocalise</form>
+    <form code="vol">volta</form>
+    <form code="vr#">variation</form>
+    <form code="vra">verse, alleluia</form>
+    <form code="vrg">verse, gradual</form>
+    <form code="vri">verse, introit</form>
+    <form code="vrl">versicle</form>
+    <form code="vrr">verse, responsorium</form>
+    <form code="vrs">verse</form>
+    <form code="vsp">vespers</form>
+    <form code="vvn">varsovienne</form>
+    <form code="wem">wedding march</form>
+    <form code="wom">world music</form>
+    <form code="wsg">war song</form>
+    <form code="wz#">waltz</form>
+    <form code="yar">yaraví</form>
+    <form code="zam">zamacueca</form>
+    <form code="zap">zapateado</form>
+    <form code="zar">zarzuela</form>
+    <form code="zmb">zamba</form>
+    <form code="zop">zoppa</form>
+    <form code="zor">zortziko</form>
+    <form code="zwi">zwiefacher</form>
+    <form code="zz#">other form</form>
+  </xsl:variable>
+
+  <!-- New line -->
+  <xsl:variable name="nl">
+    <xsl:text>&#xa;</xsl:text>
+  </xsl:variable>
 
   <!-- ======================================================================= -->
   <!-- UTILITIES                                                               -->
@@ -518,32 +1741,153 @@
 
   <xsl:template name="analog">
     <xsl:param name="tag"/>
-    <xsl:attribute name="analog">
-      <xsl:value-of select="concat('marc:', $tag)"/>
-    </xsl:attribute>
+    <xsl:if test="$analog='true'">
+      <xsl:attribute name="analog">
+        <xsl:value-of select="concat('marc:', $tag)"/>
+      </xsl:attribute>
+    </xsl:if>
   </xsl:template>
 
-  <xsl:template name="datafield">
-    <xsl:param name="tag"/>
-    <xsl:param name="ind1">
-      <xsl:text> </xsl:text>
-    </xsl:param>
-    <xsl:param name="ind2">
-      <xsl:text> </xsl:text>
-    </xsl:param>
-    <xsl:param name="subfields"/>
-    <datafield>
-      <xsl:attribute name="tag">
-        <xsl:value-of select="$tag"/>
-      </xsl:attribute>
-      <xsl:attribute name="ind1">
-        <xsl:value-of select="$ind1"/>
-      </xsl:attribute>
-      <xsl:attribute name="ind2">
-        <xsl:value-of select="$ind2"/>
-      </xsl:attribute>
-      <xsl:copy-of select="$subfields"/>
-    </datafield>
+  <xsl:template name="chopPunctuation">
+    <xsl:param name="chopString"/>
+    <xsl:variable name="length" select="string-length($chopString)"/>
+    <xsl:choose>
+      <xsl:when test="$length=0"/>
+      <xsl:when test="contains('.:,;+/ ', substring($chopString,$length,1))">
+        <xsl:call-template name="chopPunctuation">
+          <xsl:with-param name="chopString" select="substring($chopString,1,$length - 1)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="not($chopString)"/>
+      <xsl:otherwise>
+        <xsl:value-of select="$chopString"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="classification">
+    <xsl:variable name="classification" select="marc:datafield[@tag='047' or @tag='050' or
+      @tag='082' or @tag='090' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or
+      @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
+
+    <xsl:if test="$classification">
+      <!-- classification codes -->
+      <classification>
+        <xsl:variable name="classCodes">
+
+          <!-- common schemes -->
+          <xsl:if test="marc:datafield[@tag='047' and marc:subfield[@code='2']='iamlmf']">
+            <classCode xml:id="IFMC">IAML Form of Musical Composition</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='047' and @ind2=' ']">
+            <classCode xml:id="MFMC">MARC Form of Musical Composition Code List</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='090']">
+            <classCode xml:id="LocalNum">Local Shelf Number</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='082']">
+            <classCode xml:id="DDC">Dewey Decimal Classification Number</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='050']">
+            <classCode xml:id="LCCN">Library of Congress Classification Number</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='0']">
+            <classCode xml:id="LCSH">Library of Congress Subject Headings</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='1']">
+            <classCode xml:id="LCCL">Library of Congress Subject Headings for Children's
+              Literature</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='2']">
+            <classCode xml:id="MeSH">Medical Subject Headings </classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='3']">
+            <classCode xml:id="NALSA">National Agricultural Library Subject Authority
+              file</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='5']">
+            <classCode xml:id="CSH">Canadian Subject Headings</classCode>
+          </xsl:if>
+          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
+            @tag='658'][@ind2='6']">
+            <classCode xml:id="RVM">Répertoire de vedettes-matière</classCode>
+          </xsl:if>
+
+          <!-- record-defined schemes -->
+          <xsl:for-each select="marc:datafield[(@tag='650' or @tag='651' or @tag='653'
+            or @tag='657') and marc:subfield[@code='2']]">
+            <xsl:variable name="classScheme">
+              <xsl:value-of select="marc:subfield[@code='2']"/>
+            </xsl:variable>
+            <classCode>
+              <xsl:attribute name="xml:id">
+                <xsl:value-of select="replace($classScheme, '&#32;', '_')"/>
+              </xsl:attribute>
+              <xsl:value-of select="$classScheme"/>
+            </classCode>
+          </xsl:for-each>
+        </xsl:variable>
+
+        <!-- unique schemes -->
+        <xsl:variable name="uniqueClassCodes">
+          <xsl:for-each select="$classCodes/mei:classCode">
+            <xsl:sort/>
+            <xsl:if test="not(preceding-sibling::mei:classCode = .)">
+              <xsl:copy-of select="."/>
+            </xsl:if>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:copy-of select="$uniqueClassCodes"/>
+
+        <termList>
+          <xsl:variable name="sortedTerms">
+            <xsl:apply-templates select="$classification"/>
+          </xsl:variable>
+          <xsl:variable name="uniqueTerms">
+            <xsl:for-each select="$sortedTerms/mei:term">
+              <xsl:if test="not(preceding-sibling::mei:term = .)">
+                <xsl:copy-of select="."/>
+              </xsl:if>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:for-each select="$uniqueTerms/mei:term">
+            <xsl:sort select="@analog"/>
+            <xsl:sort/>
+            <xsl:copy-of select="."/>
+          </xsl:for-each>
+        </termList>
+      </classification>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- publication statement -->
+  <xsl:template name="pubStmt">
+    <!-- use <publisher> element? -->
+    <respStmt>
+      <corpName>
+        <xsl:value-of select="$agency"/>
+        <xsl:if test="$agency_code != ''">
+          <xsl:text>&#32;</xsl:text>
+          <identifier authority="MARC Code List for Organizations">
+            <xsl:value-of select="$agency_code"/>
+          </identifier>
+        </xsl:if>
+      </corpName>
+    </respStmt>
+    <date>
+      <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')"/>
+    </date>
   </xsl:template>
 
   <xsl:template name="subfieldSelect">
@@ -580,52 +1924,34 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template name="buildSpaces">
-    <xsl:param name="spaces"/>
-    <xsl:param name="char">
-      <xsl:text> </xsl:text>
-    </xsl:param>
-    <xsl:if test="$spaces>0">
-      <xsl:value-of select="$char"/>
-      <xsl:call-template name="buildSpaces">
-        <xsl:with-param name="spaces" select="$spaces - 1"/>
-        <xsl:with-param name="char" select="$char"/>
-      </xsl:call-template>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template name="chopPunctuation">
-    <xsl:param name="chopString"/>
-    <xsl:variable name="length" select="string-length($chopString)"/>
-    <xsl:choose>
-      <xsl:when test="$length=0"/>
-      <xsl:when test="contains('.:,;+/ ', substring($chopString,$length,1))">
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString" select="substring($chopString,1,$length - 1)"/>
+  <xsl:template name="workLang">
+    <xsl:variable name="langCode">
+      <xsl:value-of select="substring(marc:controlfield[@tag='008'], 36, 3)"/>
+    </xsl:variable>
+    <langUsage>
+      <language xml:id="{$langCode}">
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="'008'"/>
+          </xsl:with-param>
         </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="not($chopString)"/>
-      <xsl:otherwise>
-        <xsl:value-of select="$chopString"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="chopPunctuationFront">
-    <xsl:param name="chopString"/>
-    <xsl:variable name="length" select="string-length($chopString)"/>
-    <xsl:choose>
-      <xsl:when test="$length=0"/>
-      <xsl:when test="contains('.:,;/[ ', substring($chopString,1,1))">
-        <xsl:call-template name="chopPunctuationFront">
-          <xsl:with-param name="chopString" select="substring($chopString,2,$length - 1)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="not($chopString)"/>
-      <xsl:otherwise>
-        <xsl:value-of select="$chopString"/>
-      </xsl:otherwise>
-    </xsl:choose>
+        <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+      </language>
+      <xsl:for-each select="marc:datafield[@tag='041']/marc:subfield[@code='h' or @code='n'][. !=
+        $langCode]">
+        <language>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat('041', @code)"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:variable name="langCode">
+            <xsl:value-of select="."/>
+          </xsl:variable>
+          <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+        </language>
+      </xsl:for-each>
+    </langUsage>
   </xsl:template>
 
   <!-- ======================================================================= -->
@@ -665,12 +1991,15 @@
         <xsl:value-of select="concat('&#32;href=&quot;', $rng_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
       </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
     </xsl:if>
+
     <xsl:if test="$sch_model_path != ''">
       <xsl:processing-instruction name="xml-model">
         <xsl:value-of select="concat('&#32;href=&quot;', $sch_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
       </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
     </xsl:if>
 
     <meiHead>
@@ -724,6 +2053,7 @@
         <!-- UNUSED -->
 
         <!-- notesStmt-->
+        <!-- if multiple sources, notes go here -->
         <xsl:if test="count(//marc:subfield[@code='3']) &gt; 0">
           <xsl:variable name="notes" select="marc:datafield[@tag='254' or @tag='500' or @tag='506'
             or @tag='510' or @tag='520' or @tag='525' or @tag='533' or @tag='541' or
@@ -756,10 +2086,11 @@
           </xsl:if>
 
           <xsl:choose>
-            <!-- if no fields with $3, there's a single source -->
+            <!-- single source if no fields with $3 -->
             <xsl:when test="count(//marc:subfield[@code='3']) = 0">
               <source>
                 <titleStmt>
+
                   <!-- source title(s) -->
                   <xsl:apply-templates select="marc:datafield[@tag='240' or @tag='245']"/>
 
@@ -782,14 +2113,19 @@
                     </xsl:if>
                   </xsl:for-each>
                 </titleStmt>
+
                 <!-- pubStmt -->
                 <xsl:apply-templates select="marc:datafield[@tag='260']"/>
+
                 <!-- physDesc -->
                 <xsl:apply-templates select="marc:datafield[@tag='300']"/>
+
                 <!-- seriesStmt -->
                 <xsl:apply-templates select="marc:datafield[@tag='490']"/>
+
                 <!-- contentNote -->
                 <xsl:apply-templates select="marc:datafield[@tag='505']"/>
+
                 <!-- language(s) of the source material -->
                 <xsl:variable name="langUsage" select="marc:datafield[@tag='041']"/>
                 <xsl:if test="$langUsage">
@@ -827,7 +2163,7 @@
               </source>
             </xsl:when>
             <xsl:otherwise>
-              <!-- group datafields that can have subfield 3 on the value of subfield 3 -->
+              <!-- multiple sources; group datafields that can have subfield 3 on the value of subfield 3 -->
               <xsl:for-each-group select="marc:datafield[@tag='260' or @tag='300' or @tag='490' or
                 @tag='500' or @tag='506' or @tag='510' or @tag='520' or @tag='521' or @tag='524' or
                 @tag='530' or @tag='533' or @tag='534' or @tag='535' or @tag='540' or @tag='541' or
@@ -863,7 +2199,9 @@
             <xsl:attribute name="version">
               <xsl:value-of select="$version"/>
             </xsl:attribute>
-            <name>marc2mei-2013.xsl</name>
+            <name>
+              <xsl:value-of select="$progname"/>
+            </name>
           </application>
         </appInfo>
       </encodingDesc>
@@ -910,13 +2248,11 @@
             <history>
               <xsl:if test="$creation_note">
                 <creation>
-                  <xsl:if test="$analog='true'">
-                    <xsl:call-template name="analog">
-                      <xsl:with-param name="tag">
-                        <xsl:value-of select="'508'"/>
-                      </xsl:with-param>
-                    </xsl:call-template>
-                  </xsl:if>
+                  <xsl:call-template name="analog">
+                    <xsl:with-param name="tag">
+                      <xsl:value-of select="'508'"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
                   <xsl:for-each select="marc:datafield[@tag='508']">
                     <xsl:apply-templates select="."/>
                     <xsl:if test="position() != last()">
@@ -935,12 +2271,8 @@
           </xsl:if>
 
           <!-- language of the work -->
-          <xsl:variable name="langUsage" select="marc:datafield[@tag='041'][marc:subfield[@code='a'
-            or @code='d' or @code='e']]"/>
-          <xsl:if test="$langUsage">
-            <langUsage>
-              <xsl:apply-templates select="$langUsage"/>
-            </langUsage>
+          <xsl:if test="not(substring(marc:controlfield[@tag='008'], 36, 3) = 'zxx')">
+            <xsl:call-template name="workLang"/>
           </xsl:if>
 
           <!-- cast list -->
@@ -984,7 +2316,7 @@
             </contents>
           </xsl:if>
 
-          <!-- if multiple sources, classification goes here in work -->
+          <!-- if multiple sources, classification goes here -->
           <xsl:if test="count(//marc:subfield[@code='3']) &gt; 0">
             <xsl:call-template name="classification"/>
           </xsl:if>
@@ -994,944 +2326,77 @@
     </meiHead>
   </xsl:template>
 
-  <xsl:template name="classification">
-    <xsl:variable name="classification" select="marc:datafield[@tag='050' or @tag='082' or
-      @tag='090' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or @tag='654' or
-      @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
-
-    <xsl:if test="$classification">
-      <!-- classification codes -->
-      <classification>
-        <xsl:variable name="classCodes">
-
-          <!-- common schemes -->
-          <xsl:if test="marc:datafield[@tag='090']">
-            <classCode n="-3" xml:id="LocalNum">Local Shelf Number</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='082']">
-            <classCode n="-2" xml:id="DDC">Dewey Decimal Classification Number</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='050']">
-            <classCode n="-1" xml:id="LCCN">Library of Congress Classification Number</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='0']">
-            <classCode n="0" xml:id="LCSH">Library of Congress Subject Headings</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='1']">
-            <classCode n="1" xml:id="LCCL">Library of Congress Subject Headings for Children's
-              Literature</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='2']">
-            <classCode n="2" xml:id="MeSH">Medical Subject Headings </classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='3']">
-            <classCode n="3" xml:id="NALSA">National Agricultural Library Subject Authority
-              file</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='5']">
-            <classCode n="5" xml:id="CSH">Canadian Subject Headings</classCode>
-          </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='6']">
-            <classCode n="6" xml:id="RVM">Répertoire de vedettes-matière</classCode>
-          </xsl:if>
-
-          <!-- record-defined schemes -->
-          <xsl:for-each select="marc:datafield[@tag='650' or @tag='651' or @tag='653' or
-            @tag='657'][marc:subfield[@code='2']]">
-            <xsl:variable name="classScheme">
-              <xsl:value-of select="marc:subfield[@code='2']"/>
-            </xsl:variable>
-            <classCode>
-              <xsl:attribute name="xml:id">
-                <xsl:value-of select="replace($classScheme, '&#32;', '_')"/>
-              </xsl:attribute>
-              <xsl:value-of select="$classScheme"/>
-            </classCode>
-          </xsl:for-each>
-        </xsl:variable>
-
-        <!-- unique schemes -->
-        <xsl:variable name="uniqueClassCodes">
-          <xsl:for-each select="$classCodes/mei:classCode">
-            <xsl:sort/>
-            <xsl:if test="not(preceding-sibling::mei:classCode = .)">
-              <xsl:copy-of select="."/>
-            </xsl:if>
-          </xsl:for-each>
-        </xsl:variable>
-
-        <!-- sort based on @n; record-defined schemes will bubble
-              to the top of the list, schemes provided in this stylesheet
-              will sink to the bottom but remain in the order of their
-              coded value in MARC. -->
-        <xsl:for-each select="$uniqueClassCodes/mei:classCode">
-          <xsl:sort select="number(@n)"/>
-          <xsl:copy>
-            <xsl:copy-of select="@* except(@n)"/>
-            <xsl:value-of select="."/>
-          </xsl:copy>
-        </xsl:for-each>
-
-        <termList>
-          <xsl:variable name="sortedTerms">
-            <xsl:apply-templates select="$classification">
-              <xsl:sort/>
-            </xsl:apply-templates>
-          </xsl:variable>
-          <xsl:variable name="uniqueTerms">
-            <xsl:for-each select="$sortedTerms/mei:term">
-              <xsl:if test="not(preceding-sibling::mei:term = .)">
-                <xsl:copy-of select="."/>
-              </xsl:if>
-            </xsl:for-each>
-          </xsl:variable>
-          <xsl:for-each select="$uniqueTerms/mei:term">
-            <xsl:sort select="@analog"/>
-            <xsl:copy-of select="."/>
-          </xsl:for-each>
-        </termList>
-      </classification>
-    </xsl:if>
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- title (130, 240, 245, 246, 730, 740)                                    -->
-  <!-- ======================================================================= -->
-
-  <!-- uniform title 130, 240, 730, 740 (subfields a, k, m, n, o, p, r) -->
-  <xsl:template match="marc:datafield[@tag='130' or @tag='240']">
-    <!-- main title: subfield a (non-repeatable) -->
-    <xsl:variable name="tag" select="@tag"/>
-    <title type="uniform">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:call-template name="chopPunctuation">
-        <xsl:with-param name="chopString">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">a</xsl:with-param>
-          </xsl:call-template>
+  <!-- ISBN -->
+  <xsl:template match="marc:datafield[@tag='020']">
+    <identifier type="isbn">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
         </xsl:with-param>
       </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">a</xsl:with-param>
+      </xsl:call-template>
+    </identifier>
+  </xsl:template>
 
-      <!-- test for certain other subfields to append to main value -->
-      <!-- some subfields are repeatable, so loop through all -->
-      <xsl:for-each select="marc:subfield[@code='k' or @code='m' or @code='n' or @code='o' or
-        @code='p' or @code='r']">
+  <!-- ISSN -->
+  <xsl:template match="marc:datafield[@tag='022']">
+    <identifier type="issn">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">a</xsl:with-param>
+      </xsl:call-template>
+    </identifier>
+  </xsl:template>
+
+  <!-- Other standard number -->
+  <xsl:template match="marc:datafield[@tag='024']">
+    <identifier>
+      <xsl:variable name="identifierType">
         <xsl:choose>
-          <xsl:when test="@code='r'">
-            <!-- subfield r = 'Key for music'; add 'in' -->
-            <xsl:text>, in </xsl:text>
-            <xsl:value-of select="."/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:text>, </xsl:text>
-            <xsl:value-of select="."/>
-          </xsl:otherwise>
+          <xsl:when test="@ind1='0'">isrc</xsl:when>
+          <xsl:when test="@ind1='1'">upc</xsl:when>
+          <xsl:when test="@ind1='2'">ismn</xsl:when>
+          <xsl:when test="@ind1='3'">ian</xsl:when>
+          <xsl:when test="@ind1='4'">sici</xsl:when>
+          <xsl:when test="@ind1='7'">other</xsl:when>
+          <xsl:when test="@ind1='8'">unspecified</xsl:when>
         </xsl:choose>
-      </xsl:for-each>
-    </title>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='730' or @tag='740']" mode="contents">
-    <xsl:variable name="tag" select="@tag"/>
-    <contentItem>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:call-template name="chopPunctuation">
-        <xsl:with-param name="chopString">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">a</xsl:with-param>
-          </xsl:call-template>
-        </xsl:with-param>
-      </xsl:call-template>
-    </contentItem>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='700' or @tag='730' or @tag='740'][@ind2='2']"
-    mode="analytics">
-    <xsl:variable name="tag" select="@tag"/>
-    <xsl:variable name="analogSubfield">
-      <xsl:choose>
-        <xsl:when test="$tag = '700'">t</xsl:when>
-        <xsl:otherwise>a</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <source>
-      <xsl:attribute name="n">
-        <xsl:value-of select="concat('c', position())"/>
+      </xsl:variable>
+      <xsl:variable name="identifierLabel">
+        <xsl:choose>
+          <xsl:when test="@ind1='0'">International Standard Recording Code</xsl:when>
+          <xsl:when test="@ind1='1'">Universal Product Code</xsl:when>
+          <xsl:when test="@ind1='2'">International Standard Music Number</xsl:when>
+          <xsl:when test="@ind1='3'">International Article Number</xsl:when>
+          <xsl:when test="@ind1='4'">Serial Item and Contribution Identifier</xsl:when>
+          <xsl:when test="@ind1='7'">
+            <xsl:value-of select="marc:subfield[@code='2']"/>
+          </xsl:when>
+          <xsl:when test="@ind1='8'">unspecified</xsl:when>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:attribute name="type">
+        <xsl:value-of select="$identifierType"/>
       </xsl:attribute>
-      <titleStmt>
-        <title level="a">
-          <xsl:if test="$analog='true'">
-            <xsl:call-template name="analog">
-              <xsl:with-param name="tag">
-                <xsl:value-of select="concat($tag, $analogSubfield)"/>
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">
-                  <xsl:value-of select="$analogSubfield"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:with-param>
-          </xsl:call-template>
-
-          <!-- test for certain other subfields to append to main value -->
-          <!-- some subfields are repeatable, so loop through all -->
-          <xsl:for-each select="marc:subfield[@code='k' or @code='m' or @code='n' or @code='o' or
-            @code='p' or @code='r']">
-            <xsl:choose>
-              <xsl:when test="@code='r'">
-                <!-- subfield r = 'Key for music'; add 'in' -->
-                <xsl:text>, in </xsl:text>
-                <xsl:value-of select="."/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:text>, </xsl:text>
-                <xsl:value-of select="."/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:for-each>
-        </title>
-      </titleStmt>
-    </source>
-  </xsl:template>
-
-  <!-- diplomatic title 245, 246 (subfields a, b) -->
-  <xsl:template match="marc:datafield[@tag='245']">
-    <!-- main title: subfield a (non-repeatable) -->
-    <title type="diplomatic">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:call-template name="chopPunctuation">
-        <xsl:with-param name="chopString">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">ab</xsl:with-param>
-          </xsl:call-template>
+      <!--<xsl:attribute name="label">
+        <xsl:value-of select="$identifierLabel"/>
+      </xsl:attribute>-->
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
         </xsl:with-param>
       </xsl:call-template>
-    </title>
-  </xsl:template>
-
-  <!-- series title -->
-  <xsl:template match="marc:datafield[@tag='490']">
-    <seriesStmt>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <title>
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString">
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">a</xsl:with-param>
-            </xsl:call-template>
-          </xsl:with-param>
-        </xsl:call-template>
-      </title>
-      <xsl:if test="marc:subfield[@code='v']">
-        <biblScope>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">v</xsl:with-param>
-          </xsl:call-template>
-        </biblScope>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code='x']">
-        <identifier>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">x</xsl:with-param>
-          </xsl:call-template>
-        </identifier>
-      </xsl:if>
-    </seriesStmt>
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- Main Entry (100, 110)                                                   -->
-  <!-- ======================================================================= -->
-
-  <xsl:template match="marc:datafield[@tag='100' or @tag='110']">
-    <xsl:variable name="tag">
-      <xsl:value-of select="@tag"/>
-    </xsl:variable>
-    <!-- each name is contained within a <respStmt> to account for possible <resp>
-      elements -->
-    <respStmt>
-      <xsl:choose>
-        <xsl:when test="$tag='110'">
-          <!-- corporate name; use subfield a (non-repeatable) -->
-          <corpName role="creator">
-            <xsl:if test="marc:subfield[@code='0']">
-              <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
-              </xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="$tag"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:call-template name="chopPunctuation">
-                  <xsl:with-param name="chopString">
-                    <xsl:value-of select="marc:subfield[@code='a']"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:otherwise>
-            </xsl:choose>
-          </corpName>
-        </xsl:when>
-        <xsl:otherwise>
-          <!-- personal name; use subfields a and d -->
-          <persName role="creator">
-            <xsl:if test="marc:subfield[@code='0']">
-              <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
-              </xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="$tag"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">aq</xsl:with-param>
-                </xsl:call-template>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">aq</xsl:with-param>
-                </xsl:call-template>
-              </xsl:otherwise>
-            </xsl:choose>
-          </persName>
-        </xsl:otherwise>
-      </xsl:choose>
-    </respStmt>
-    <xsl:if test="marc:subfield[@code='e']">
-      <resp>
-        <xsl:for-each select="marc:subfield[@code='e']">
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:value-of select="."/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:if test="position() != last()">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-        </xsl:for-each>
-      </resp>
-    </xsl:if>
-
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- respStmt (700, 710)                                                     -->
-  <!-- ======================================================================= -->
-
-  <xsl:template match="marc:datafield[@tag='700' or @tag='710']">
-    <xsl:variable name="tag">
-      <xsl:value-of select="@tag"/>
-    </xsl:variable>
-
-    <respStmt>
-      <xsl:choose>
-        <xsl:when test="$tag='710'">
-          <!-- corporate name; use subfield a (non-repeatable) -->
-          <corpName>
-            <xsl:if test="marc:subfield[@code='0']">
-              <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
-              </xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="$tag"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:call-template name="chopPunctuation">
-                  <xsl:with-param name="chopString">
-                    <xsl:value-of select="marc:subfield[@code='a']"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:otherwise>
-            </xsl:choose>
-            <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
-          </corpName>
-        </xsl:when>
-        <xsl:otherwise>
-          <!-- personal name -->
-          <persName>
-            <xsl:if test="marc:subfield[@code='0']">
-              <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
-              </xsl:attribute>
-            </xsl:if>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="$tag"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </persName>
-          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
-        </xsl:otherwise>
-      </xsl:choose>
-      <xsl:if test="marc:subfield[@code='e']">
-        <resp>
-          <xsl:for-each select="marc:subfield[@code='e']">
-            <xsl:call-template name="chopPunctuation">
-              <xsl:with-param name="chopString">
-                <xsl:value-of select="."/>
-              </xsl:with-param>
-            </xsl:call-template>
-            <xsl:if test="position() != last()">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-          </xsl:for-each>
-        </resp>
-      </xsl:if>
-    </respStmt>
-  </xsl:template>
-
-  <!-- relator codes for 700 and 710 -->
-  <xsl:template match="marc:subfield[@code='4']" mode="respStmt">
-    <resp>
-      <xsl:variable name="code">
-        <xsl:value-of select="."/>
-      </xsl:variable>
-      <xsl:choose>
-        <xsl:when test="$code = 'arr'">arranger</xsl:when>
-        <xsl:when test="$code = 'art'">artist</xsl:when>
-        <xsl:when test="$code = 'asn'">associated name</xsl:when>
-        <xsl:when test="$code = 'aut'">author</xsl:when>
-        <xsl:when test="$code = 'bnd'">binder</xsl:when>
-        <xsl:when test="$code = 'bsl'">bookseller</xsl:when>
-        <xsl:when test="$code = 'ccp'">conceptor</xsl:when>
-        <xsl:when test="$code = 'chr'">choreographer</xsl:when>
-        <xsl:when test="$code = 'clb'">collaborator</xsl:when>
-        <xsl:when test="$code = 'cmp'">composer</xsl:when>
-        <xsl:when test="$code = 'cnd'">conductor</xsl:when>
-        <xsl:when test="$code = 'cns'">censor</xsl:when>
-        <xsl:when test="$code = 'com'">compiler</xsl:when>
-        <xsl:when test="$code = 'cst'">costume designer</xsl:when>
-        <xsl:when test="$code = 'dnc'">dancer</xsl:when>
-        <xsl:when test="$code = 'dnr'">donor</xsl:when>
-        <xsl:when test="$code = 'dte'">dedicatee</xsl:when>
-        <xsl:when test="$code = 'dub'">dubious</xsl:when>
-        <xsl:when test="$code = 'edt'">editor</xsl:when>
-        <xsl:when test="$code = 'egr'">engraver</xsl:when>
-        <xsl:when test="$code = 'fmo'">former owner</xsl:when>
-        <xsl:when test="$code = 'ill'">illustrator</xsl:when>
-        <xsl:when test="$code = 'itr'">instrumentalist</xsl:when>
-        <xsl:when test="$code = 'lbt'">librettist</xsl:when>
-        <xsl:when test="$code = 'ltg'">lithograph</xsl:when>
-        <xsl:when test="$code = 'lyr'">lyricist</xsl:when>
-        <xsl:when test="$code = 'otm'">event organizer</xsl:when>
-        <xsl:when test="$code = 'pat'">patron</xsl:when>
-        <xsl:when test="$code = 'pbl'">publisher</xsl:when>
-        <xsl:when test="$code = 'ppm'">paper maker</xsl:when>
-        <xsl:when test="$code = 'prd'">production personnel</xsl:when>
-        <xsl:when test="$code = 'prf'">performer</xsl:when>
-        <xsl:when test="$code = 'prt'">printer</xsl:when>
-        <xsl:when test="$code = 'scr'">scribe</xsl:when>
-        <xsl:when test="$code = 'trl'">translator</xsl:when>
-        <xsl:when test="$code = 'voc'">vocalist</xsl:when>
-        <xsl:otherwise>[unknown]</xsl:otherwise>
-      </xsl:choose>
-    </resp>
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- pubStmt (001, 005)                                                      -->
-  <!-- ======================================================================= -->
-
-  <xsl:template name="pubStmt">
-    <!-- use <publisher> element? -->
-    <respStmt>
-      <corpName>
-        <xsl:value-of select="$agency"/>
-        <xsl:if test="$agency_code != ''">
-          <xsl:text>&#32;</xsl:text>
-          <identifier authority="MARC Code List for Organizations">
-            <xsl:value-of select="$agency_code"/>
-          </identifier>
-        </xsl:if>
-      </corpName>
-    </respStmt>
-    <date>
-      <xsl:value-of select="concat('[', format-date(current-date(), '[Y]'), ']')"/>
-    </date>
-  </xsl:template>
-
-
-  <!-- ======================================================================= -->
-  <!-- notesStmt (254, 5xx)                                               -->
-  <!-- ======================================================================= -->
-
-  <!-- music presentation (254) -->
-  <xsl:template match="marc:datafield[@tag='254']">
-    <xsl:variable name="tag" select="@tag"/>
-    <annot type="musical_presentation" n="{$tag}">
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
-    </annot>
+    </identifier>
   </xsl:template>
-
-  <!-- notes (5XX) -->
-  <xsl:template match="marc:datafield[@tag='500' or @tag='506' or @tag='510' or @tag='520' or
-    @tag='521' or @tag='524' or @tag='525' or @tag='530' or @tag='533' or @tag='534' or
-    @tag='535' or @tag='540' or @tag='541' or @tag='542' or @tag='545' or @tag='546' or @tag='555'
-    or @tag='561' or @tag='563' or @tag='580' or @tag='581' or @tag='585' or @tag='586']">
-    <xsl:variable name="tag" select="@tag"/>
-    <xsl:variable name="annottype">
-      <xsl:choose>
-        <xsl:when test="$tag = '500'">general</xsl:when>
-        <!-- 505 (content note) matched separately -->
-        <xsl:when test="$tag = '506'">access_restriction</xsl:when>
-        <xsl:when test="$tag = '510'">reference</xsl:when>
-        <!-- 511 (participant/performer) matched separately -->
-        <!-- 518 (event date/time) matched separately -->
-        <xsl:when test="$tag = '520'">summary</xsl:when>
-        <xsl:when test="$tag = '524'">citation</xsl:when>
-        <xsl:when test="$tag = '525'">supplementary_material</xsl:when>
-        <xsl:when test="$tag = '530'">additional_form</xsl:when>
-        <xsl:when test="$tag = '533'">reproduction</xsl:when>
-        <xsl:when test="$tag = '534'">original_version</xsl:when>
-        <xsl:when test="$tag = '535'">originals_location</xsl:when>
-        <xsl:when test="$tag = '540'">use_restriction</xsl:when>
-        <xsl:when test="$tag = '541'">acquisition</xsl:when>
-        <xsl:when test="$tag = '542'">copyright_status</xsl:when>
-        <xsl:when test="$tag = '544'">other_materials_location</xsl:when>
-        <xsl:when test="$tag = '545'">biography</xsl:when>
-        <xsl:when test="$tag = '546'">language</xsl:when>
-        <xsl:when test="$tag = '555'">aid</xsl:when>
-        <xsl:when test="$tag = '561'">provenance</xsl:when>
-        <xsl:when test="$tag = '563'">binding</xsl:when>
-        <xsl:when test="$tag = '580'">linking</xsl:when>
-        <xsl:when test="$tag = '581'">publications</xsl:when>
-        <xsl:when test="$tag = '585'">exhibitions</xsl:when>
-        <xsl:when test="$tag = '586'">awards</xsl:when>
-        <!-- Datafields 590-599 (local notes) matched separately -->
-        <xsl:otherwise>[unspecified]</xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <annot type="{$annottype}">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:choose>
-        <xsl:when test="$tag='506'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">af</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='510'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">abcu</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='530'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">abcd</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='533'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">ad</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='534'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">tabl</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='535'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">acg</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='541'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">acd</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='542'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">lgd</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='544'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">ac</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:when test="$tag='591'">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">a4</xsl:with-param>
-            <xsl:with-param name="delimiter">, </xsl:with-param>
-          </xsl:call-template>
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">a</xsl:with-param>
-          </xsl:call-template>
-        </xsl:otherwise>
-      </xsl:choose>
-    </annot>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='505']">
-    <contents>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:if test="not(@ind1='8')">
-        <xsl:attribute name="label">
-          <xsl:choose>
-            <xsl:when test="@ind1='0'">
-              <xsl:text>Contents</xsl:text>
-            </xsl:when>
-            <xsl:when test="@ind1='1'">
-              <xsl:text>Incomplete contents</xsl:text>
-            </xsl:when>
-            <xsl:when test="@ind1='2'">
-              <xsl:text>Partial contents</xsl:text>
-            </xsl:when>
-          </xsl:choose>
-        </xsl:attribute>
-      </xsl:if>
-      <p>
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString">
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">a</xsl:with-param>
-            </xsl:call-template>
-          </xsl:with-param>
-        </xsl:call-template>
-      </p>
-    </contents>
-  </xsl:template>
-
-  <!-- 590 (local note) -->
-  <xsl:template match="marc:datafield[@tag='590']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 591 (local note) -->
-  <xsl:template match="marc:datafield[@tag='591']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 592 (local note) -->
-  <xsl:template match="marc:datafield[@tag='592']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 593 (local note) -->
-  <xsl:template match="marc:datafield[@tag='593']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 594 (local note) -->
-  <!--<xsl:template match="marc:datafield[@tag='594']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>-->
-
-  <!-- 594 (RISM scoring note) -->
-  <xsl:template match="marc:datafield[@tag='594']">
-    <xsl:variable name="tag" select="@tag"/>
-    <annot type="scoring">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:variable name="delimiter">
-        <xsl:text>; </xsl:text>
-      </xsl:variable>
-      <!-- cat everything into the $str variable -->
-      <xsl:variable name="str">
-        <xsl:for-each select="marc:subfield">
-          <xsl:variable name="code">
-            <xsl:value-of select="@code"/>
-          </xsl:variable>
-          <xsl:variable name="scoring">
-            <xsl:choose>
-              <xsl:when test="$code = 'a'">Solo voice</xsl:when>
-              <xsl:when test="$code = 'b'">Additional solo voice</xsl:when>
-              <xsl:when test="$code = 'c'">Choir voice</xsl:when>
-              <xsl:when test="$code = 'd'">Additional choir voice</xsl:when>
-              <xsl:when test="$code = 'e'">Solo intrument</xsl:when>
-              <xsl:when test="$code = 'f'">Strings</xsl:when>
-              <xsl:when test="$code = 'g'">Woodwinds</xsl:when>
-              <xsl:when test="$code = 'h'">Brasses</xsl:when>
-              <xsl:when test="$code = 'i'">Plucked instruments</xsl:when>
-              <xsl:when test="$code = 'k'">Percussion</xsl:when>
-              <xsl:when test="$code = 'l'">Keyboards</xsl:when>
-              <xsl:when test="$code = 'm'">Other instruments</xsl:when>
-              <xsl:when test="$code = 'n'">Basso continuo</xsl:when>
-              <xsl:otherwise>[unspecified]</xsl:otherwise>
-            </xsl:choose>
-          </xsl:variable>
-          <!-- cat the values: -->
-          <xsl:value-of select="$scoring"/>
-          <xsl:text>: </xsl:text>
-          <xsl:value-of select="text()"/>
-          <xsl:value-of select="$delimiter"/>
-        </xsl:for-each>
-      </xsl:variable>
-      <!-- truncate the last delimiter -->
-      <xsl:value-of select="substring($str,1,string-length($str)-string-length($delimiter))"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 595 (local note) -->
-  <!--<xsl:template match="marc:datafield[@tag='595']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>-->
-
-  <!-- 595 (RISM cast note) -->
-  <xsl:template match="marc:datafield[@tag='595']">
-    <xsl:variable name="tag" select="@tag"/>
-    <castItem xmlns="http://www.music-encoding.org/ns/mei">
-      <xsl:if test="$analog='true'">
-        <!-- Unfortunately, castItem doesn't allow @analog, so we have to abuse @label -->
-        <xsl:attribute name="label">
-          <xsl:value-of select="concat('marc:', $tag)"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:call-template name="subfieldSelect">
-        <xsl:with-param name="codes">a</xsl:with-param>
-      </xsl:call-template>
-    </castItem>
-  </xsl:template>
-
-  <!-- 596 (local note) -->
-  <xsl:template match="marc:datafield[@tag='596']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 597 (local note) -->
-  <xsl:template match="marc:datafield[@tag='597']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 598 (local note) -->
-  <xsl:template match="marc:datafield[@tag='598']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-  <!-- 599 (local note) -->
-  <xsl:template match="marc:datafield[@tag='599']">
-    <annot type="local">
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:value-of select="normalize-space(.)"/>
-    </annot>
-  </xsl:template>
-
-
-  <!-- ======================================================================= -->
-  <!-- sourceDesc (028, 041, 260, 300, 590, 592, 593)                          -->
-  <!-- ======================================================================= -->
 
   <!-- plate number (028) -->
   <xsl:template match="marc:datafield[@tag='028']">
@@ -1957,13 +2422,11 @@
           <xsl:value-of select="concat($identifierType, 'Number')"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="@tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
@@ -1978,367 +2441,7 @@
     </xsl:element>
   </xsl:template>
 
-  <xsl:template match="marc:datafield[@tag='041']">
-    <xsl:for-each select="marc:subfield[matches(@code, '[a-z]')]">
-      <language>
-        <xsl:if test="$analog='true'">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(../@tag, @code)"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:attribute name="label">
-          <xsl:choose>
-            <xsl:when test="@code='a'">text/sound track</xsl:when>
-            <xsl:when test="@code='b'">summary/abstract</xsl:when>
-            <xsl:when test="@code='d'">sung/spoken text</xsl:when>
-            <xsl:when test="@code='e'">libretto</xsl:when>
-            <xsl:when test="@code='f'">table of contents</xsl:when>
-            <xsl:when test="@code='g'">accompanying material</xsl:when>
-            <xsl:when test="@code='h'">original</xsl:when>
-            <xsl:when test="@code='k'">intermediate translation</xsl:when>
-            <xsl:when test="@code='j'">subtitles/captions</xsl:when>
-            <xsl:when test="@code='m'">original accompanying material</xsl:when>
-            <xsl:when test="@code='n'">original libretto</xsl:when>
-          </xsl:choose>
-        </xsl:attribute>
-        <xsl:value-of select="."/>
-      </language>
-    </xsl:for-each>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='260']">
-    <pubStmt>
-      <pubPlace>
-        <xsl:if test="$analog='true'">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'a')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">a</xsl:with-param>
-        </xsl:call-template>
-      </pubPlace>
-      <publisher>
-        <xsl:if test="$analog='true'">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'b')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">b</xsl:with-param>
-        </xsl:call-template>
-      </publisher>
-      <date>
-        <xsl:if test="$analog='true'">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'c')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">c</xsl:with-param>
-        </xsl:call-template>
-      </date>
-      <xsl:if test="marc:subfield[@code='e' or @code='f' or @code='g']">
-        <distributor>
-          <xsl:if test="marc:subfield[@code='e']">
-            <geogName>
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="concat(@tag, 'e')"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">e</xsl:with-param>
-              </xsl:call-template>
-            </geogName>
-          </xsl:if>
-          <name>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'f')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">f</xsl:with-param>
-            </xsl:call-template>
-          </name>
-          <date>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'g')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">g</xsl:with-param>
-            </xsl:call-template>
-          </date>
-        </distributor>
-      </xsl:if>
-      <xsl:apply-templates select="../marc:datafield[@tag='028'][not(@ind1='2')]"/>
-    </pubStmt>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='300']">
-    <physDesc>
-      <xsl:if test="marc:subfield[@code='a']">
-        <extent>
-          <xsl:choose>
-            <xsl:when test="matches(marc:subfield[@code='b'], 'digital')">
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="concat(@tag, 'ab')"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">ab</xsl:with-param>
-              </xsl:call-template>
-            </xsl:when>
-            <xsl:when test="marc:subfield[@code='b'] and
-              not(substring(../marc:controlfield[@tag='007'], 1, 1) = 's')">
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="concat(@tag, 'ab')"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">ab</xsl:with-param>
-                <xsl:with-param name="delimiter">;&#32;</xsl:with-param>
-              </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="concat(@tag, 'a')"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:call-template name="subfieldSelect">
-                    <xsl:with-param name="codes">a</xsl:with-param>
-                  </xsl:call-template>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:otherwise>
-          </xsl:choose>
-        </extent>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code='b'][not(matches(., 'digital'))]">
-        <xsl:choose>
-          <xsl:when test="substring(../marc:controlfield[@tag='007'], 1, 1) = 's'">
-            <playingSpeed>
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="concat(@tag, 'b')"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:call-template name="subfieldSelect">
-                    <xsl:with-param name="codes">b</xsl:with-param>
-                  </xsl:call-template>
-                </xsl:with-param>
-              </xsl:call-template>
-            </playingSpeed>
-          </xsl:when>
-        </xsl:choose>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code='c']">
-        <dimensions>
-          <xsl:if test="$analog='true'">
-            <xsl:call-template name="analog">
-              <xsl:with-param name="tag">
-                <xsl:value-of select="concat(@tag, 'c')"/>
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">c</xsl:with-param>
-          </xsl:call-template>
-        </dimensions>
-      </xsl:if>
-      <xsl:if test="marc:subfield[@code='e']">
-        <carrierForm>
-          <xsl:if test="$analog='true'">
-            <xsl:call-template name="analog">
-              <xsl:with-param name="tag">
-                <xsl:value-of select="concat(@tag, 'e')"/>
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">e</xsl:with-param>
-          </xsl:call-template>
-        </carrierForm>
-      </xsl:if>
-      <xsl:apply-templates select="../marc:datafield[@tag='028'][@ind1='2']"/>
-      <xsl:apply-templates select="../marc:datafield[@tag='306']"/>
-    </physDesc>
-  </xsl:template>
-
-  <xsl:template match="marc:datafield[@tag='306']">
-    <xsl:for-each select="marc:subfield[@code='a']">
-      <extent>
-        <xsl:if test="$analog='true'">
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(../@tag, 'a')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
-        <xsl:value-of select="concat(substring(., 1, 2), ':', substring(., 3, 2), ':', substring(.,
-          5, 2))"/>
-      </extent>
-    </xsl:for-each>
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- profileDesc (508, 511, 518, 650, 651, 653, 657)                         -->
-  <!-- ======================================================================= -->
-
-  <!-- creation note (508) -->
-  <xsl:template match="marc:datafield[@tag='508']">
-    <xsl:variable name="tag" select="@tag"/>
-    <xsl:call-template name="subfieldSelect">
-      <xsl:with-param name="codes">a</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <!-- classification (050, 082, 090, 648, 650, 651, 653, 654, 655, 656, 657, 658) -->
-  <xsl:template match="marc:datafield[@tag='050' or @tag='082' or @tag='090' or @tag='648' or
-    @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or
-    @tag='657' or @tag='658']">
-    <xsl:variable name="tag" select="@tag"/>
-    <xsl:variable name="label">
-      <xsl:choose>
-        <xsl:when test="$tag = '050'">callNum</xsl:when>
-        <xsl:when test="$tag = '082'">callNum</xsl:when>
-        <xsl:when test="$tag = '090'">callNum</xsl:when>
-        <xsl:when test="$tag = '650'">topic</xsl:when>
-        <xsl:when test="$tag = '651'">geogName</xsl:when>
-        <xsl:when test="$tag = '654'">facet</xsl:when>
-        <xsl:when test="$tag = '655'">genreForm</xsl:when>
-        <xsl:when test="$tag = '656'">occupation</xsl:when>
-        <xsl:when test="$tag = '657'">function</xsl:when>
-        <xsl:when test="$tag = '658'">curriculum</xsl:when>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="ind2" select="@ind2"/>
-    <xsl:variable name="classcode">
-      <xsl:choose>
-        <xsl:when test="$tag = '050'">LCCN</xsl:when>
-        <xsl:when test="$tag = '082'">DDC</xsl:when>
-        <xsl:when test="$tag = '090'">LocalNum</xsl:when>
-        <xsl:when test="$ind2 = '0'">LCSH</xsl:when>
-        <xsl:when test="$ind2 = '1'">LCCL</xsl:when>
-        <xsl:when test="$ind2 = '2'">MeSH</xsl:when>
-        <xsl:when test="$ind2 = '3'">NALSA</xsl:when>
-        <xsl:when test="$ind2 = '5'">CSH</xsl:when>
-        <xsl:when test="$ind2 = '6'">RVM</xsl:when>
-        <xsl:when test="$ind2 = '7'">
-          <xsl:value-of select="replace(marc:subfield[@code='2'], '&#32;', '_')"/>
-        </xsl:when>
-      </xsl:choose>
-    </xsl:variable>
-    <term>
-      <xsl:if test="not($label = '')">
-        <xsl:attribute name="label">
-          <xsl:value-of select="$label"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="not($classcode = '')">
-        <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
-      </xsl:if>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <xsl:call-template name="chopPunctuation">
-        <xsl:with-param name="chopString">
-          <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">
-              <xsl:choose>
-                <xsl:when test="$tag='050' or $tag='082' or $tag='090'">
-                  <xsl:text>ab</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:text>a</xsl:text>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:with-param>
-      </xsl:call-template>
-    </term>
-  </xsl:template>
-
-  <!-- participants in event -->
-  <xsl:template match="marc:datafield[@tag='511']">
-    <xsl:variable name="tag" select="@tag"/>
-    <event>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <p>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">a</xsl:with-param>
-        </xsl:call-template>
-      </p>
-    </event>
-  </xsl:template>
-
-  <!-- notes (518) -->
-  <xsl:template match="marc:datafield[@tag='518']">
-    <xsl:variable name="tag" select="@tag"/>
-    <event>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
-      <p>
-        <xsl:call-template name="subfieldSelect">
-          <xsl:with-param name="codes">a</xsl:with-param>
-          <xsl:with-param name="delimiter">; </xsl:with-param>
-        </xsl:call-template>
-      </p>
-    </event>
-  </xsl:template>
-
-  <!-- ======================================================================= -->
-  <!-- incipit (031)                                                           -->
-  <!-- ======================================================================= -->
-
+  <!-- incipit -->
   <xsl:template match="marc:datafield[@tag='031']">
     <incip>
       <xsl:attribute name="n">
@@ -2357,13 +2460,12 @@
           </xsl:when>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:if test="$analog='true'">
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="'031'"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="'031'"/>
+        </xsl:with-param>
+      </xsl:call-template>
+
       <!-- Not currently allowed; customization required -->
       <!-- <label>
         <xsl:choose>
@@ -2442,6 +2544,39 @@
     </incip>
   </xsl:template>
 
+  <!-- language -->
+  <xsl:template match="marc:datafield[@tag='041']">
+    <xsl:for-each select="marc:subfield[matches(@code, '[a-gjkm]')]">
+      <language>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat(../@tag, @code)"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:attribute name="label">
+          <xsl:choose>
+            <xsl:when test="@code='a'">text/sound track</xsl:when>
+            <xsl:when test="@code='b'">summary/abstract</xsl:when>
+            <xsl:when test="@code='d'">sung/spoken text</xsl:when>
+            <xsl:when test="@code='e'">libretto</xsl:when>
+            <xsl:when test="@code='f'">table of contents</xsl:when>
+            <xsl:when test="@code='g'">accompanying material</xsl:when>
+            <xsl:when test="@code='h'">original</xsl:when>
+            <xsl:when test="@code='k'">intermediate translation</xsl:when>
+            <xsl:when test="@code='j'">subtitles/captions</xsl:when>
+            <xsl:when test="@code='m'">original accompanying material</xsl:when>
+            <xsl:when test="@code='n'">original libretto</xsl:when>
+          </xsl:choose>
+        </xsl:attribute>
+        <xsl:variable name="langCode">
+          <xsl:value-of select="."/>
+        </xsl:variable>
+        <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+      </language>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- date of composition -->
   <xsl:template match="marc:datafield[@tag='045']">
     <!-- dates in 045 are assumed to be C.E. -->
     <xsl:text>Date of composition:&#32;</xsl:text>
@@ -2449,13 +2584,11 @@
       <xsl:when test="@ind1 = '0' or @ind1 = '1'">
         <xsl:for-each select="marc:subfield[@code='b']">
           <date>
-            <xsl:if test="$analog='true'">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="'045b'"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:if>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="'045b'"/>
+              </xsl:with-param>
+            </xsl:call-template>
             <xsl:value-of select="substring(., 2)"/>
           </date>
         </xsl:for-each>
@@ -2477,13 +2610,11 @@
           </xsl:attribute>
           <xsl:for-each select="marc:subfield[@code='b']">
             <date>
-              <xsl:if test="$analog='true'">
-                <xsl:call-template name="analog">
-                  <xsl:with-param name="tag">
-                    <xsl:value-of select="'045b'"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:if>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="'045b'"/>
+                </xsl:with-param>
+              </xsl:call-template>
               <xsl:value-of select="substring(., 2)"/>
             </date>
           </xsl:for-each>
@@ -2492,15 +2623,55 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="marc:datafield[@tag='048']">
-    <instrVoiceGrp>
-      <xsl:if test="$analog='true'">
+  <!-- musical form -->
+  <xsl:template match="marc:datafield[@tag='047']">
+    <xsl:variable name="ind2" select="@ind2"/>
+    <xsl:variable name="classcode">
+      <xsl:choose>
+        <xsl:when test="$ind2 = ' '">
+          <xsl:text>MFMC</xsl:text>
+        </xsl:when>
+        <xsl:when test="$ind2 = '7' and marc:subfield[@code='2']='iamlmf'">
+          <xsl:text>IFMC</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="replace(marc:subfield[@code='2'], '&#32;', '_')"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:for-each select="marc:subfield[@code='a']">
+      <term label="musForm">
+        <xsl:if test="not($classcode = '')">
+          <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
+        </xsl:if>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="'048'"/>
+            <xsl:value-of select="'047'"/>
           </xsl:with-param>
         </xsl:call-template>
-      </xsl:if>
+        <xsl:variable name="form">
+          <xsl:value-of select="."/>
+        </xsl:variable>
+        <xsl:choose>
+          <xsl:when test="../@ind2='7' and ../marc:subfield[@code='2']='iamlmf'">
+            <xsl:value-of select="$iamlFormList/mei:form[@code=$form]"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="$marcFormList/mei:form[@code=$form]"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </term>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- scoring -->
+  <xsl:template match="marc:datafield[@tag='048']">
+    <instrVoiceGrp>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="'048'"/>
+        </xsl:with-param>
+      </xsl:call-template>
       <xsl:choose>
         <xsl:when test="@ind2='7' and matches(marc:subfield[@code='2'], 'iamlmp', 'i')">
           <!-- Use IAML Medium of Performance codes -->
@@ -2554,6 +2725,1063 @@
     </instrVoiceGrp>
   </xsl:template>
 
+  <!-- classification -->
+  <xsl:template match="marc:datafield[@tag='050' or @tag='082' or @tag='090' or @tag='648' or
+    @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or
+    @tag='657' or @tag='658']">
+    <xsl:variable name="tag" select="@tag"/>
+    <xsl:variable name="label">
+      <xsl:choose>
+        <xsl:when test="$tag = '050'">callNum</xsl:when>
+        <xsl:when test="$tag = '082'">callNum</xsl:when>
+        <xsl:when test="$tag = '090'">callNum</xsl:when>
+        <xsl:when test="$tag = '650'">topic</xsl:when>
+        <xsl:when test="$tag = '651'">geogName</xsl:when>
+        <xsl:when test="$tag = '654'">facet</xsl:when>
+        <xsl:when test="$tag = '655'">genreForm</xsl:when>
+        <xsl:when test="$tag = '656'">occupation</xsl:when>
+        <xsl:when test="$tag = '657'">function</xsl:when>
+        <xsl:when test="$tag = '658'">curriculum</xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="ind2" select="@ind2"/>
+    <xsl:variable name="classcode">
+      <xsl:choose>
+        <xsl:when test="$tag = '050'">LCCN</xsl:when>
+        <xsl:when test="$tag = '082'">DDC</xsl:when>
+        <xsl:when test="$tag = '090'">LocalNum</xsl:when>
+        <xsl:when test="$ind2 = '0'">LCSH</xsl:when>
+        <xsl:when test="$ind2 = '1'">LCCL</xsl:when>
+        <xsl:when test="$ind2 = '2'">MeSH</xsl:when>
+        <xsl:when test="$ind2 = '3'">NALSA</xsl:when>
+        <xsl:when test="$ind2 = '5'">CSH</xsl:when>
+        <xsl:when test="$ind2 = '6'">RVM</xsl:when>
+        <xsl:when test="$ind2 = '7'">
+          <xsl:value-of select="replace(marc:subfield[@code='2'], '&#32;', '_')"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+    <term>
+      <xsl:if test="not($label = '')">
+        <xsl:attribute name="label">
+          <xsl:value-of select="$label"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:if test="not($classcode = '')">
+        <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
+      </xsl:if>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">
+              <xsl:choose>
+                <xsl:when test="$tag='050' or $tag='082' or $tag='090'">
+                  <xsl:text>ab</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:text>abcdevxyz</xsl:text>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:with-param>
+            <xsl:with-param name="delimiter">
+              <xsl:choose>
+                <xsl:when test="$tag='050' or $tag='082' or $tag='090'">
+                  <xsl:text>&#32;</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:text>,&#32;</xsl:text>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </term>
+  </xsl:template>
+
+  <!-- main entry -->
+  <xsl:template match="marc:datafield[@tag='100' or @tag='110']">
+    <xsl:variable name="tag">
+      <xsl:value-of select="@tag"/>
+    </xsl:variable>
+    <!-- each name is contained within a <respStmt> to account for possible <resp>
+      elements -->
+    <respStmt>
+      <xsl:choose>
+        <xsl:when test="$tag='110'">
+          <!-- corporate name; use subfield a (non-repeatable) -->
+          <corpName role="creator">
+            <xsl:if test="marc:subfield[@code='0']">
+              <xsl:attribute name="dbkey">
+                <xsl:value-of select="marc:subfield[@code='0']"/>
+              </xsl:attribute>
+            </xsl:if>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="$tag"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code='d']">
+                <xsl:value-of select="marc:subfield[@code='a']"/>
+                <xsl:text>&#32;</xsl:text>
+                <date>
+                  <xsl:call-template name="chopPunctuation">
+                    <xsl:with-param name="chopString">
+                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </date>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="marc:subfield[@code='a']"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
+          </corpName>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- personal name; use subfields a and d -->
+          <persName role="creator">
+            <xsl:if test="marc:subfield[@code='0']">
+              <xsl:attribute name="dbkey">
+                <xsl:value-of select="marc:subfield[@code='0']"/>
+              </xsl:attribute>
+            </xsl:if>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="$tag"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code='d']">
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">aq</xsl:with-param>
+                </xsl:call-template>
+                <xsl:text>&#32;</xsl:text>
+                <date>
+                  <xsl:call-template name="chopPunctuation">
+                    <xsl:with-param name="chopString">
+                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </date>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">aq</xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
+          </persName>
+        </xsl:otherwise>
+      </xsl:choose>
+    </respStmt>
+    <xsl:if test="marc:subfield[@code='e']">
+      <resp>
+        <xsl:for-each select="marc:subfield[@code='e']">
+          <xsl:call-template name="chopPunctuation">
+            <xsl:with-param name="chopString">
+              <xsl:value-of select="."/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:if test="position() != last()">
+            <xsl:text>, </xsl:text>
+          </xsl:if>
+        </xsl:for-each>
+      </resp>
+    </xsl:if>
+
+  </xsl:template>
+
+  <!-- uniform title -->
+  <xsl:template match="marc:datafield[@tag='130' or @tag='240']">
+    <!-- main title: subfield a (non-repeatable) -->
+    <xsl:variable name="tag" select="@tag"/>
+    <title type="uniform">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a</xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+
+      <!-- test for certain other subfields to append to main value -->
+      <!-- some subfields are repeatable, so loop through all -->
+      <xsl:for-each select="marc:subfield[@code='k' or @code='m' or @code='n' or @code='o' or
+        @code='p' or @code='r']">
+        <xsl:choose>
+          <xsl:when test="@code='r'">
+            <!-- subfield r = 'Key for music'; add 'in' -->
+            <xsl:text>, in </xsl:text>
+            <xsl:value-of select="."/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:text>, </xsl:text>
+            <xsl:value-of select="."/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:for-each>
+    </title>
+  </xsl:template>
+
+  <!-- diplomatic title -->
+  <xsl:template match="marc:datafield[@tag='245']">
+    <!-- main title: subfield a (non-repeatable) -->
+    <title type="diplomatic">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">ab</xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </title>
+  </xsl:template>
+
+  <!-- music presentation -->
+  <xsl:template match="marc:datafield[@tag='254']">
+    <xsl:variable name="tag" select="@tag"/>
+    <annot type="musical_presentation" n="{$tag}">
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">a</xsl:with-param>
+      </xsl:call-template>
+    </annot>
+  </xsl:template>
+
+  <!-- publication statement -->
+  <xsl:template match="marc:datafield[@tag='260']">
+    <pubStmt>
+      <pubPlace>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat(@tag, 'a')"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">a</xsl:with-param>
+        </xsl:call-template>
+      </pubPlace>
+      <publisher>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat(@tag, 'b')"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">b</xsl:with-param>
+        </xsl:call-template>
+      </publisher>
+      <date>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat(@tag, 'c')"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">c</xsl:with-param>
+        </xsl:call-template>
+      </date>
+      <xsl:if test="marc:subfield[@code='e' or @code='f' or @code='g']">
+        <distributor>
+          <xsl:if test="marc:subfield[@code='e']">
+            <geogName>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'e')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">e</xsl:with-param>
+              </xsl:call-template>
+            </geogName>
+          </xsl:if>
+          <name>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="concat(@tag, 'f')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">f</xsl:with-param>
+            </xsl:call-template>
+          </name>
+          <date>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="concat(@tag, 'g')"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">g</xsl:with-param>
+            </xsl:call-template>
+          </date>
+        </distributor>
+      </xsl:if>
+      <xsl:apply-templates select="../marc:datafield[@tag='028'][not(@ind1='2')]"/>
+      <xsl:apply-templates select="../marc:datafield[@tag='020' or @tag='022' or @tag='024']"/>
+    </pubStmt>
+  </xsl:template>
+
+  <!-- physical description -->
+  <xsl:template match="marc:datafield[@tag='300']">
+    <physDesc>
+      <xsl:if test="marc:subfield[@code='a']">
+        <extent>
+          <xsl:choose>
+            <xsl:when test="matches(marc:subfield[@code='b'], 'digital')">
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'ab')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">ab</xsl:with-param>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:when test="marc:subfield[@code='b'] and
+              not(substring(../marc:controlfield[@tag='007'], 1, 1) = 's')">
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'ab')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">ab</xsl:with-param>
+                <xsl:with-param name="delimiter">;&#32;</xsl:with-param>
+              </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'a')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:call-template name="subfieldSelect">
+                    <xsl:with-param name="codes">a</xsl:with-param>
+                  </xsl:call-template>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:otherwise>
+          </xsl:choose>
+        </extent>
+      </xsl:if>
+      <xsl:if test="marc:subfield[@code='b'][not(matches(., 'digital'))]">
+        <xsl:choose>
+          <xsl:when test="substring(../marc:controlfield[@tag='007'], 1, 1) = 's'">
+            <playingSpeed>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(@tag, 'b')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:call-template name="subfieldSelect">
+                    <xsl:with-param name="codes">b</xsl:with-param>
+                  </xsl:call-template>
+                </xsl:with-param>
+              </xsl:call-template>
+            </playingSpeed>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:if>
+      <xsl:if test="marc:subfield[@code='c']">
+        <dimensions>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'c')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">c</xsl:with-param>
+          </xsl:call-template>
+        </dimensions>
+      </xsl:if>
+      <xsl:if test="marc:subfield[@code='e']">
+        <carrierForm>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'e')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">e</xsl:with-param>
+          </xsl:call-template>
+        </carrierForm>
+      </xsl:if>
+      <xsl:apply-templates select="../marc:datafield[@tag='028'][@ind1='2']"/>
+      <xsl:apply-templates select="../marc:datafield[@tag='306']"/>
+    </physDesc>
+  </xsl:template>
+
+  <!-- playing time -->
+  <xsl:template match="marc:datafield[@tag='306']">
+    <xsl:for-each select="marc:subfield[@code='a']">
+      <extent>
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="concat(../@tag, 'a')"/>
+          </xsl:with-param>
+        </xsl:call-template>
+        <xsl:value-of select="concat(substring(., 1, 2), ':', substring(., 3, 2), ':', substring(.,
+          5, 2))"/>
+      </extent>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- series title -->
+  <xsl:template match="marc:datafield[@tag='490']">
+    <seriesStmt>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <title>
+        <xsl:call-template name="chopPunctuation">
+          <xsl:with-param name="chopString">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">a</xsl:with-param>
+            </xsl:call-template>
+          </xsl:with-param>
+        </xsl:call-template>
+      </title>
+      <xsl:if test="marc:subfield[@code='v']">
+        <biblScope>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">v</xsl:with-param>
+          </xsl:call-template>
+        </biblScope>
+      </xsl:if>
+      <xsl:if test="marc:subfield[@code='x']">
+        <identifier>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">x</xsl:with-param>
+          </xsl:call-template>
+        </identifier>
+      </xsl:if>
+    </seriesStmt>
+  </xsl:template>
+
+  <!-- notes (5XX) -->
+  <xsl:template match="marc:datafield[@tag='500' or @tag='506' or @tag='510' or @tag='520' or
+    @tag='521' or @tag='524' or @tag='525' or @tag='530' or @tag='533' or @tag='534' or
+    @tag='535' or @tag='540' or @tag='541' or @tag='542' or @tag='545' or @tag='546' or @tag='555'
+    or @tag='561' or @tag='563' or @tag='580' or @tag='581' or @tag='585' or @tag='586']">
+    <xsl:variable name="tag" select="@tag"/>
+    <xsl:variable name="annottype">
+      <xsl:choose>
+        <xsl:when test="$tag = '500'">general</xsl:when>
+        <!-- 505 (content note) matched separately -->
+        <xsl:when test="$tag = '506'">access_restriction</xsl:when>
+        <xsl:when test="$tag = '510'">reference</xsl:when>
+        <!-- 511 (participant/performer) matched separately -->
+        <!-- 518 (event date/time) matched separately -->
+        <xsl:when test="$tag = '520'">summary</xsl:when>
+        <xsl:when test="$tag = '524'">citation</xsl:when>
+        <xsl:when test="$tag = '525'">supplementary_material</xsl:when>
+        <xsl:when test="$tag = '530'">additional_form</xsl:when>
+        <xsl:when test="$tag = '533'">reproduction</xsl:when>
+        <xsl:when test="$tag = '534'">original_version</xsl:when>
+        <xsl:when test="$tag = '535'">originals_location</xsl:when>
+        <xsl:when test="$tag = '540'">use_restriction</xsl:when>
+        <xsl:when test="$tag = '541'">acquisition</xsl:when>
+        <xsl:when test="$tag = '542'">copyright_status</xsl:when>
+        <xsl:when test="$tag = '544'">other_materials_location</xsl:when>
+        <xsl:when test="$tag = '545'">biography</xsl:when>
+        <xsl:when test="$tag = '546'">language</xsl:when>
+        <xsl:when test="$tag = '555'">aid</xsl:when>
+        <xsl:when test="$tag = '561'">provenance</xsl:when>
+        <xsl:when test="$tag = '563'">binding</xsl:when>
+        <xsl:when test="$tag = '580'">linking</xsl:when>
+        <xsl:when test="$tag = '581'">publications</xsl:when>
+        <xsl:when test="$tag = '585'">exhibitions</xsl:when>
+        <xsl:when test="$tag = '586'">awards</xsl:when>
+        <!-- Datafields 590-599 (local notes) matched separately -->
+        <xsl:otherwise>[unspecified]</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <annot type="{$annottype}">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:choose>
+        <xsl:when test="$tag='506'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">af</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='510'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">abcu</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='530'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">abcd</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='533'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">ad</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='534'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">tabl</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='535'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">acg</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='541'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">acd</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='542'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">lgd</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='544'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">ac</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:when test="$tag='591'">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a4</xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a</xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </annot>
+  </xsl:template>
+
+  <!-- contents note -->
+  <xsl:template match="marc:datafield[@tag='505']">
+    <contents>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:if test="not(@ind1='8')">
+        <xsl:attribute name="label">
+          <xsl:choose>
+            <xsl:when test="@ind1='0'">
+              <xsl:text>Contents</xsl:text>
+            </xsl:when>
+            <xsl:when test="@ind1='1'">
+              <xsl:text>Incomplete contents</xsl:text>
+            </xsl:when>
+            <xsl:when test="@ind1='2'">
+              <xsl:text>Partial contents</xsl:text>
+            </xsl:when>
+          </xsl:choose>
+        </xsl:attribute>
+      </xsl:if>
+      <p>
+        <xsl:call-template name="chopPunctuation">
+          <xsl:with-param name="chopString">
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">a</xsl:with-param>
+            </xsl:call-template>
+          </xsl:with-param>
+        </xsl:call-template>
+      </p>
+    </contents>
+  </xsl:template>
+
+  <!-- creation note -->
+  <xsl:template match="marc:datafield[@tag='508']">
+    <xsl:variable name="tag" select="@tag"/>
+    <xsl:call-template name="subfieldSelect">
+      <xsl:with-param name="codes">a</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- participants in event -->
+  <xsl:template match="marc:datafield[@tag='511']">
+    <xsl:variable name="tag" select="@tag"/>
+    <event>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <p>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">a</xsl:with-param>
+        </xsl:call-template>
+      </p>
+    </event>
+  </xsl:template>
+
+  <!-- event -->
+  <xsl:template match="marc:datafield[@tag='518']">
+    <xsl:variable name="tag" select="@tag"/>
+    <event>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <p>
+        <xsl:call-template name="subfieldSelect">
+          <xsl:with-param name="codes">a</xsl:with-param>
+          <xsl:with-param name="delimiter">; </xsl:with-param>
+        </xsl:call-template>
+      </p>
+    </event>
+  </xsl:template>
+
+  <!-- 590 (local note) -->
+  <xsl:template match="marc:datafield[@tag='590']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 591 (local note) -->
+  <xsl:template match="marc:datafield[@tag='591']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 592 (local note) -->
+  <xsl:template match="marc:datafield[@tag='592']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 593 (local note) -->
+  <xsl:template match="marc:datafield[@tag='593']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 594 (local note) -->
+  <!--<xsl:template match="marc:datafield[@tag='594']">
+    <annot type="local">
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="@tag"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>-->
+
+  <!-- 594 (RISM scoring note) -->
+  <xsl:template match="marc:datafield[@tag='594']">
+    <xsl:variable name="tag" select="@tag"/>
+    <annot type="scoring">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:variable name="delimiter">
+        <xsl:text>; </xsl:text>
+      </xsl:variable>
+      <!-- cat everything into the $str variable -->
+      <xsl:variable name="str">
+        <xsl:for-each select="marc:subfield">
+          <xsl:variable name="code">
+            <xsl:value-of select="@code"/>
+          </xsl:variable>
+          <xsl:variable name="scoring">
+            <xsl:choose>
+              <xsl:when test="$code = 'a'">Solo voice</xsl:when>
+              <xsl:when test="$code = 'b'">Additional solo voice</xsl:when>
+              <xsl:when test="$code = 'c'">Choir voice</xsl:when>
+              <xsl:when test="$code = 'd'">Additional choir voice</xsl:when>
+              <xsl:when test="$code = 'e'">Solo intrument</xsl:when>
+              <xsl:when test="$code = 'f'">Strings</xsl:when>
+              <xsl:when test="$code = 'g'">Woodwinds</xsl:when>
+              <xsl:when test="$code = 'h'">Brasses</xsl:when>
+              <xsl:when test="$code = 'i'">Plucked instruments</xsl:when>
+              <xsl:when test="$code = 'k'">Percussion</xsl:when>
+              <xsl:when test="$code = 'l'">Keyboards</xsl:when>
+              <xsl:when test="$code = 'm'">Other instruments</xsl:when>
+              <xsl:when test="$code = 'n'">Basso continuo</xsl:when>
+              <xsl:otherwise>[unspecified]</xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+          <!-- cat the values: -->
+          <xsl:value-of select="$scoring"/>
+          <xsl:text>: </xsl:text>
+          <xsl:value-of select="text()"/>
+          <xsl:value-of select="$delimiter"/>
+        </xsl:for-each>
+      </xsl:variable>
+      <!-- truncate the last delimiter -->
+      <xsl:value-of select="substring($str,1,string-length($str)-string-length($delimiter))"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 595 (local note) -->
+  <!--<xsl:template match="marc:datafield[@tag='595']">
+    <annot type="local">
+        <xsl:call-template name="analog">
+          <xsl:with-param name="tag">
+            <xsl:value-of select="@tag"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>-->
+
+  <!-- 595 (RISM cast note) -->
+  <xsl:template match="marc:datafield[@tag='595']">
+    <xsl:variable name="tag" select="@tag"/>
+    <castItem xmlns="http://www.music-encoding.org/ns/mei">
+      <xsl:if test="$analog='true'">
+        <!-- Unfortunately, castItem doesn't allow @analog, so we have to abuse @label -->
+        <xsl:attribute name="label">
+          <xsl:value-of select="concat('marc:', $tag)"/>
+        </xsl:attribute>
+      </xsl:if>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">a</xsl:with-param>
+      </xsl:call-template>
+    </castItem>
+  </xsl:template>
+
+  <!-- 596 (local note) -->
+  <xsl:template match="marc:datafield[@tag='596']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 597 (local note) -->
+  <xsl:template match="marc:datafield[@tag='597']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 598 (local note) -->
+  <xsl:template match="marc:datafield[@tag='598']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- 599 (local note) -->
+  <xsl:template match="marc:datafield[@tag='599']">
+    <annot type="local">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="@tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="normalize-space(.)"/>
+    </annot>
+  </xsl:template>
+
+  <!-- responsibility statement; added entry -->
+  <xsl:template match="marc:datafield[@tag='700' or @tag='710']">
+    <xsl:variable name="tag">
+      <xsl:value-of select="@tag"/>
+    </xsl:variable>
+    <respStmt>
+      <xsl:choose>
+        <xsl:when test="$tag='710'">
+          <!-- corporate name; use subfield a (non-repeatable) -->
+          <corpName>
+            <xsl:if test="marc:subfield[@code='0']">
+              <xsl:attribute name="dbkey">
+                <xsl:value-of select="marc:subfield[@code='0']"/>
+              </xsl:attribute>
+            </xsl:if>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="$tag"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code='d']">
+                <xsl:value-of select="marc:subfield[@code='a']"/>
+                <xsl:text>&#32;</xsl:text>
+                <date>
+                  <xsl:call-template name="chopPunctuation">
+                    <xsl:with-param name="chopString">
+                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </date>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="marc:subfield[@code='a']"/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
+            <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+          </corpName>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- personal name -->
+          <persName>
+            <xsl:if test="marc:subfield[@code='0']">
+              <xsl:attribute name="dbkey">
+                <xsl:value-of select="marc:subfield[@code='0']"/>
+              </xsl:attribute>
+            </xsl:if>
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="$tag"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:choose>
+              <xsl:when test="marc:subfield[@code='d']">
+                <xsl:value-of select="marc:subfield[@code='a']"/>
+                <xsl:text>&#32;</xsl:text>
+                <date>
+                  <xsl:call-template name="chopPunctuation">
+                    <xsl:with-param name="chopString">
+                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </date>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="marc:subfield[@code='a']"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </persName>
+          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:if test="marc:subfield[@code='e']">
+        <resp>
+          <xsl:for-each select="marc:subfield[@code='e']">
+            <xsl:call-template name="chopPunctuation">
+              <xsl:with-param name="chopString">
+                <xsl:value-of select="."/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:if test="position() != last()">
+              <xsl:text>, </xsl:text>
+            </xsl:if>
+          </xsl:for-each>
+        </resp>
+      </xsl:if>
+    </respStmt>
+  </xsl:template>
+
+  <!-- contents; i.e., components -->
+  <xsl:template match="marc:datafield[@tag='700' or @tag='730' or @tag='740'][@ind2='2']"
+    mode="analytics">
+    <xsl:variable name="tag" select="@tag"/>
+    <xsl:variable name="analogSubfield">
+      <xsl:choose>
+        <xsl:when test="$tag = '700'">t</xsl:when>
+        <xsl:otherwise>a</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <source>
+      <xsl:attribute name="n">
+        <xsl:value-of select="concat('c', position())"/>
+      </xsl:attribute>
+      <titleStmt>
+        <title level="a">
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="$tag"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="chopPunctuation">
+            <xsl:with-param name="chopString">
+              <xsl:call-template name="subfieldSelect">
+                <xsl:with-param name="codes">
+                  <xsl:value-of select="$analogSubfield"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:with-param>
+          </xsl:call-template>
+
+          <!-- test for certain other subfields to append to main value -->
+          <!-- some subfields are repeatable, so loop through all -->
+          <xsl:for-each select="marc:subfield[@code='k' or @code='m' or @code='n' or @code='o' or
+            @code='p' or @code='r']">
+            <xsl:choose>
+              <xsl:when test="@code='r'">
+                <!-- subfield r = 'Key for music'; add 'in' -->
+                <xsl:text>, in </xsl:text>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="."/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text>, </xsl:text>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="."/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </title>
+      </titleStmt>
+    </source>
+  </xsl:template>
+
+  <!-- contents -->
+  <xsl:template match="marc:datafield[@tag='730' or @tag='740']" mode="contents">
+    <xsl:variable name="tag" select="@tag"/>
+    <contentItem>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a</xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </contentItem>
+  </xsl:template>
+
+  <!-- relator codes for 700 and 710 -->
+  <xsl:template match="marc:subfield[@code='4']" mode="respStmt">
+    <resp>
+      <xsl:variable name="code">
+        <xsl:value-of select="."/>
+      </xsl:variable>
+      <xsl:choose>
+        <xsl:when test="$code = 'arr'">arranger</xsl:when>
+        <xsl:when test="$code = 'art'">artist</xsl:when>
+        <xsl:when test="$code = 'asn'">associated name</xsl:when>
+        <xsl:when test="$code = 'aut'">author</xsl:when>
+        <xsl:when test="$code = 'bnd'">binder</xsl:when>
+        <xsl:when test="$code = 'bsl'">bookseller</xsl:when>
+        <xsl:when test="$code = 'ccp'">conceptor</xsl:when>
+        <xsl:when test="$code = 'chr'">choreographer</xsl:when>
+        <xsl:when test="$code = 'clb'">collaborator</xsl:when>
+        <xsl:when test="$code = 'cmp'">composer</xsl:when>
+        <xsl:when test="$code = 'cnd'">conductor</xsl:when>
+        <xsl:when test="$code = 'cns'">censor</xsl:when>
+        <xsl:when test="$code = 'com'">compiler</xsl:when>
+        <xsl:when test="$code = 'cst'">costume designer</xsl:when>
+        <xsl:when test="$code = 'dnc'">dancer</xsl:when>
+        <xsl:when test="$code = 'dnr'">donor</xsl:when>
+        <xsl:when test="$code = 'dte'">dedicatee</xsl:when>
+        <xsl:when test="$code = 'dub'">dubious</xsl:when>
+        <xsl:when test="$code = 'edt'">editor</xsl:when>
+        <xsl:when test="$code = 'egr'">engraver</xsl:when>
+        <xsl:when test="$code = 'fmo'">former owner</xsl:when>
+        <xsl:when test="$code = 'ill'">illustrator</xsl:when>
+        <xsl:when test="$code = 'itr'">instrumentalist</xsl:when>
+        <xsl:when test="$code = 'lbt'">librettist</xsl:when>
+        <xsl:when test="$code = 'ltg'">lithograph</xsl:when>
+        <xsl:when test="$code = 'lyr'">lyricist</xsl:when>
+        <xsl:when test="$code = 'otm'">event organizer</xsl:when>
+        <xsl:when test="$code = 'pat'">patron</xsl:when>
+        <xsl:when test="$code = 'pbl'">publisher</xsl:when>
+        <xsl:when test="$code = 'ppm'">paper maker</xsl:when>
+        <xsl:when test="$code = 'prd'">production personnel</xsl:when>
+        <xsl:when test="$code = 'prf'">performer</xsl:when>
+        <xsl:when test="$code = 'prt'">printer</xsl:when>
+        <xsl:when test="$code = 'scr'">scribe</xsl:when>
+        <xsl:when test="$code = 'trl'">translator</xsl:when>
+        <xsl:when test="$code = 'voc'">vocalist</xsl:when>
+        <xsl:otherwise>[unknown]</xsl:otherwise>
+      </xsl:choose>
+    </resp>
+  </xsl:template>
+
+  <!-- default template -->
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
