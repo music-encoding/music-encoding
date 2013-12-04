@@ -8,8 +8,7 @@
   <!-- PARAM:mode
       This parameter determines which entity the generated MARC record is for:
         'file': the MEI file,
-        'source': the source(s) of the MEI file,
-        'work': the work the MEI file represents.
+        'source': the source(s) of the MEI file.
   -->
   <xsl:param name="mode">file</xsl:param>
   <xsl:param name="model_path"
@@ -81,11 +80,14 @@
 
     <!-- DATA FIELDS -->
     <!-- Call Number(s) -->
-    <xsl:apply-templates select="//mei:classification//mei:term[contains(@analog, 'marc:090')]"/>
+    <xsl:apply-templates select="//mei:classification//mei:term[contains(@analog, 'marc:090') or
+      contains(@analog, 'marc:050') or contains(@analog, 'marc:082')]"/>
 
     <!-- Main Entry -->
     <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:persName[contains(@analog,
-      'marc:100') or contains(@role, 'creator') or contains(@role, 'composer')]"/>
+      'marc:100') or contains(@role, 'creator') or contains(@role, 'composer')] |
+      mei:titleStmt/mei:respStmt/mei:corpName[contains(@analog, 'marc:110') or contains(@role,
+      'creator') or contains(@role, 'composer')]"/>
 
     <!-- Titles -->
     <!-- Uniform Title -->
@@ -106,12 +108,15 @@
 
     <!-- Title Proper -->
     <xsl:choose>
-      <xsl:when test="mei:titleStmt/mei:title[contains(@analog, 'marc:245')]">
-        <xsl:apply-templates select="mei:titleStmt/mei:title[contains(@analog, 'marc:245')]"/>
+      <xsl:when test="mei:titleStmt/mei:title[contains(@analog, 'marc:245') or contains(@type,
+        'proper')]">
+        <xsl:apply-templates select="mei:titleStmt/mei:title[contains(@analog, 'marc:245') or
+          contains(@type, 'proper')]"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:apply-templates select="mei:titleStmt/mei:title[not(contains(@type, 'subtitle')) and
-          not(contains(@type, 'uniform'))][1]"/>
+        <xsl:apply-templates select="mei:titleStmt/mei:title[not(contains(@type,
+          'subtitle')) and not(contains(@type, 'uniform')) and not(contains(@analog,
+          'marc:240'))][1]"/>
       </xsl:otherwise>
     </xsl:choose>
 
@@ -126,9 +131,12 @@
     <!-- Added Entries -->
     <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:persName[contains(@analog,
       'marc:700')]"/>
+    <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:corpName[contains(@analog,
+      'marc:710')]"/>
     <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:persName[not(@analog) and
-      not(contains(@role, 'creator') or contains(@role, 'composer'))] "/>
-    <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:corpName"/>
+      not(contains(@role, 'creator') or contains(@role, 'composer'))]"/>
+    <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:corpName[not(@analog) and
+      not(contains(@role, 'creator') or contains(@role, 'composer'))]"/>
   </xsl:template>
 
   <xsl:template match="mei:term">
@@ -144,13 +152,6 @@
         <xsl:with-param name="code">a</xsl:with-param>
         <xsl:with-param name="value">
           <xsl:value-of select="."/>
-        </xsl:with-param>
-        <xsl:with-param name="delimiter">
-          <xsl:choose>
-            <xsl:when test="not($tag = '090')">
-              <xsl:text>.</xsl:text>
-            </xsl:when>
-          </xsl:choose>
         </xsl:with-param>
       </xsl:call-template>
     </datafield>
@@ -426,16 +427,43 @@
     </datafield>
   </xsl:template>
 
-  <xsl:template match="mei:title">
+  <xsl:template match="mei:title[@type='uniform' or @analog='marc:240']">
     <xsl:variable name="tag">
-      <xsl:choose>
-        <xsl:when test="@analog">
-          <xsl:value-of select="substring-after(@analog, ':')"/>
-        </xsl:when>
-        <xsl:when test="@type='uniform'">240</xsl:when>
-        <xsl:otherwise>245</xsl:otherwise>
-      </xsl:choose>
+      <xsl:text>240</xsl:text>
     </xsl:variable>
+    <datafield>
+      <xsl:attribute name="tag" select="$tag"/>
+      <xsl:call-template name="indicators"/>
+      <xsl:choose>
+        <xsl:when test="mei:title[matches(@analog, 'marc:\d\d\d[a-z]')]">
+          <xsl:for-each select="mei:title[matches(@analog, 'marc:\d\d\d[a-z]')]">
+            <xsl:variable name="code">
+              <xsl:value-of select="substring(@analog, string-length(@analog), 1)"/>
+            </xsl:variable>
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">
+                <xsl:value-of select="$code"/>
+              </xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="."/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="."/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </datafield>
+  </xsl:template>
+
+  <xsl:template match="mei:title[@type='proper' or @analog='marc:245'] | mei:title">
+    <xsl:variable name="tag" select="'245'"/>
     <datafield>
       <xsl:attribute name="tag" select="$tag"/>
       <xsl:call-template name="indicators"/>
@@ -443,14 +471,16 @@
         <xsl:with-param name="code">a</xsl:with-param>
         <xsl:with-param name="value">
           <xsl:value-of select="."/>
-          <xsl:if test="$tag='245' and ../mei:title[contains(@type, 'subtitle')]">
-            <xsl:for-each select="../mei:title[contains(@type, 'subtitle')]">
-              <xsl:text> : </xsl:text>
-              <xsl:value-of select="."/>
-            </xsl:for-each>
-          </xsl:if>
         </xsl:with-param>
       </xsl:call-template>
+      <xsl:if test="$tag='245' and ../mei:title[contains(@type, 'subtitle')]">
+        <xsl:call-template name="subfield">
+          <xsl:with-param name="code">b</xsl:with-param>
+          <xsl:with-param name="value">
+            <xsl:value-of select="../mei:title[contains(@type, 'subtitle')]"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:if>
     </datafield>
   </xsl:template>
 
