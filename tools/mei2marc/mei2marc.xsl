@@ -1441,6 +1441,9 @@
 
     <!-- 300 (Physical description) -->
 
+    <!-- 505 (Contents note) -->
+    <xsl:apply-templates select="mei:sourceDesc/mei:source/mei:contents"/>
+
     <!-- 650 (Subject added entry) -->
     <xsl:apply-templates select="//mei:classification//mei:term[contains(@analog, 'marc:650')]"/>
 
@@ -1490,6 +1493,47 @@
         </xsl:with-param>
       </xsl:call-template>
     </datafield>
+  </xsl:template>
+
+  <xsl:template match="mei:contents">
+    <xsl:variable name="tag" select="'505'"/>
+    <datafield>
+      <xsl:attribute name="tag" select="$tag"/>
+      <xsl:call-template name="indicators">
+        <xsl:with-param name="ind1">0</xsl:with-param>
+        <xsl:with-param name="ind2">
+          <xsl:choose>
+            <xsl:when test="mei:contentItem">
+              <xsl:text>0</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:text>&#32;</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:choose>
+        <xsl:when test="mei:contentItem">
+          <xsl:for-each select="mei:contentItem">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">t</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="."/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="subfield">
+            <xsl:with-param name="code">a</xsl:with-param>
+            <xsl:with-param name="value">
+              <xsl:value-of select="mei:p"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+    </datafield>
+
   </xsl:template>
 
   <xsl:template match="mei:corpName">
