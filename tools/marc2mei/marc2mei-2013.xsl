@@ -2037,8 +2037,8 @@
 
   <xsl:template name="classification">
     <xsl:variable name="classification" select="marc:datafield[@tag='047' or @tag='050' or
-      @tag='082' or @tag='090' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or
-      @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
+      @tag='082' or @tag='090' or @tag='648' or @tag='600' or @tag='650' or @tag='651' or @tag='653'
+      or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
 
     <xsl:if test="$classification">
       <!-- classification codes -->
@@ -2061,41 +2061,41 @@
           <xsl:if test="marc:datafield[@tag='050']">
             <classCode xml:id="LCCN">Library of Congress Classification Number</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='0']">
             <classCode xml:id="LCSH">Library of Congress Subject Headings</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='1']">
             <classCode xml:id="LCCL">Library of Congress Subject Headings for Children's
               Literature</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='2']">
             <classCode xml:id="MeSH">Medical Subject Headings </classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='3']">
             <classCode xml:id="NALSA">National Agricultural Library Subject Authority
               file</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='5']">
             <classCode xml:id="CSH">Canadian Subject Headings</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='648' or @tag='650' or @tag='651' or
+          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
             @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
             @tag='658'][@ind2='6']">
             <classCode xml:id="RVM">Répertoire de vedettes-matière</classCode>
           </xsl:if>
 
           <!-- record-defined schemes -->
-          <xsl:for-each select="marc:datafield[(@tag='650' or @tag='651' or @tag='653'
+          <xsl:for-each select="marc:datafield[(@tag='600' or @tag='650' or @tag='651' or @tag='653'
             or @tag='657') and marc:subfield[@code='2']]">
             <xsl:variable name="classScheme">
               <xsl:value-of select="marc:subfield[@code='2']"/>
@@ -2163,7 +2163,10 @@
   <xsl:template name="subfieldSelect">
     <xsl:param name="codes"/>
     <xsl:param name="delimiter">
-      <xsl:text> </xsl:text>
+      <xsl:text>&#32;</xsl:text>
+    </xsl:param>
+    <xsl:param name="chop">
+      <xsl:text>no</xsl:text>
     </xsl:param>
     <xsl:param name="element"/>
     <xsl:choose>
@@ -2172,7 +2175,18 @@
           <xsl:variable name="str">
             <xsl:for-each select="marc:subfield">
               <xsl:if test="contains($codes, @code)">
-                <xsl:value-of select="text()"/>
+                <xsl:choose>
+                  <xsl:when test="$chop='no'">
+                    <xsl:value-of select="text()"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:call-template name="chopPunctuation">
+                      <xsl:with-param name="chopString">
+                        <xsl:value-of select="text()"/>
+                      </xsl:with-param>
+                    </xsl:call-template>
+                  </xsl:otherwise>
+                </xsl:choose>
                 <xsl:value-of select="$delimiter"/>
               </xsl:if>
             </xsl:for-each>
@@ -2184,7 +2198,18 @@
         <xsl:variable name="str">
           <xsl:for-each select="marc:subfield">
             <xsl:if test="contains($codes, @code)">
-              <xsl:value-of select="text()"/>
+              <xsl:choose>
+                <xsl:when test="$chop='no'">
+                  <xsl:value-of select="text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:call-template name="chopPunctuation">
+                    <xsl:with-param name="chopString">
+                      <xsl:value-of select="."/>
+                    </xsl:with-param>
+                  </xsl:call-template>
+                </xsl:otherwise>
+              </xsl:choose>
               <xsl:value-of select="$delimiter"/>
             </xsl:if>
           </xsl:for-each>
@@ -3021,14 +3046,15 @@
 
   <!-- classification -->
   <xsl:template match="marc:datafield[@tag='050' or @tag='082' or @tag='090' or @tag='648' or
-    @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or
-    @tag='657' or @tag='658']">
+    @tag='600' or @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656'
+    or @tag='657' or @tag='658']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="label">
       <xsl:choose>
         <xsl:when test="$tag = '050'">callNum</xsl:when>
         <xsl:when test="$tag = '082'">callNum</xsl:when>
         <xsl:when test="$tag = '090'">callNum</xsl:when>
+        <xsl:when test="$tag = '600'">persName</xsl:when>
         <xsl:when test="$tag = '650'">topic</xsl:when>
         <xsl:when test="$tag = '651'">geogName</xsl:when>
         <xsl:when test="$tag = '654'">facet</xsl:when>
@@ -3078,7 +3104,7 @@
                   <xsl:text>ab</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                  <xsl:text>abcdevxyz</xsl:text>
+                  <xsl:text>abcdetvxyz</xsl:text>
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:with-param>
@@ -3092,6 +3118,7 @@
                 </xsl:otherwise>
               </xsl:choose>
             </xsl:with-param>
+            <xsl:with-param name="chop">yes</xsl:with-param>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
