@@ -43,8 +43,10 @@
   <xsl:param name="agency_code"/>
   <!-- output analog attributes -->
   <xsl:param name="analog">true</xsl:param>
-  <!-- preserve main entry -->
-  <xsl:param name="preserveMainEntry">true</xsl:param>
+  <!-- preserve main entry in file description -->
+  <xsl:param name="fileMainEntryOnly">true</xsl:param>
+  <!-- preserve main entry in description of work -->
+  <xsl:param name="workMainEntryOnly">false</xsl:param>
 
   <!-- ======================================================================= -->
   <!-- GLOBAL VARIABLES                                                        -->
@@ -1730,6 +1732,274 @@
     <form code="zz#">other form</form>
   </xsl:variable>
 
+  <!-- MARC Relator codes -->
+  <xsl:variable name="marcRelList">
+    <relator code="abr">abridger</relator>
+    <relator code="acp">art copyist</relator>
+    <relator code="act">actor</relator>
+    <relator code="adi">art director</relator>
+    <relator code="adp">adapter</relator>
+    <relator code="aft">author of afterword, colophon, etc.</relator>
+    <relator code="anl">analyst</relator>
+    <relator code="anm">animator</relator>
+    <relator code="ann">annotator</relator>
+    <relator code="ant">bibliographic antecedent</relator>
+    <relator code="ape">appellee</relator>
+    <relator code="apl">appellant</relator>
+    <relator code="app">applicant</relator>
+    <relator code="aqt">author in quotations or text abstracts</relator>
+    <relator code="arc">architect</relator>
+    <relator code="ard">artistic director</relator>
+    <relator code="arr">arranger</relator>
+    <relator code="art">artist</relator>
+    <relator code="asg">assignee</relator>
+    <relator code="asn">associated name</relator>
+    <relator code="ato">autographer</relator>
+    <relator code="att">attributed name</relator>
+    <relator code="auc">auctioneer</relator>
+    <relator code="aud">author of dialog</relator>
+    <relator code="aui">author of introduction, etc.</relator>
+    <relator code="aus">screenwriter</relator>
+    <relator code="aut">author</relator>
+    <relator code="bdd">binding designer</relator>
+    <relator code="bjd">bookjacket designer</relator>
+    <relator code="bkd">book designer</relator>
+    <relator code="bkp">book producer</relator>
+    <relator code="blw">blurb writer</relator>
+    <relator code="bnd">binder</relator>
+    <relator code="bpd">bookplate designer</relator>
+    <relator code="brd">broadcaster</relator>
+    <relator code="brl">braille embosser</relator>
+    <relator code="bsl">bookseller</relator>
+    <relator code="cas">caster</relator>
+    <relator code="ccp">conceptor</relator>
+    <relator code="chr">choreographer</relator>
+    <relator code="clb" status="discontinued">collaborator</relator>
+    <relator code="cli">client</relator>
+    <relator code="cll">calligrapher</relator>
+    <relator code="clr">colorist</relator>
+    <relator code="clt">collotyper</relator>
+    <relator code="cmm">commentator</relator>
+    <relator code="cmp">composer</relator>
+    <relator code="cmt">compositor</relator>
+    <relator code="cnd">conductor</relator>
+    <relator code="cng">cinematographer</relator>
+    <relator code="cns">censor</relator>
+    <relator code="coe">contestant-appellee</relator>
+    <relator code="col">collector</relator>
+    <relator code="com">compiler</relator>
+    <relator code="con">conservator</relator>
+    <relator code="cor">collection registrar</relator>
+    <relator code="cos">contestant</relator>
+    <relator code="cot">contestant-appellant</relator>
+    <relator code="cou">court governed</relator>
+    <relator code="cov">cover designer</relator>
+    <relator code="cpc">copyright claimant</relator>
+    <relator code="cpe">complainant-appellee</relator>
+    <relator code="cph">copyright holder</relator>
+    <relator code="cpl">complainant</relator>
+    <relator code="cpt">complainant-appellant</relator>
+    <relator code="cre">creator</relator>
+    <relator code="crp">correspondent</relator>
+    <relator code="crr">corrector</relator>
+    <relator code="crt">court reporter</relator>
+    <relator code="csl">consultant</relator>
+    <relator code="csp">consultant to a project</relator>
+    <relator code="cst">costume designer</relator>
+    <relator code="ctb">contributor</relator>
+    <relator code="cte">contestee-appellee</relator>
+    <relator code="ctg">cartographer</relator>
+    <relator code="ctr">contractor</relator>
+    <relator code="cts">contestee</relator>
+    <relator code="ctt">contestee-appellant</relator>
+    <relator code="cur">curator</relator>
+    <relator code="cwt">commentator for written text</relator>
+    <relator code="dbp">distribution place</relator>
+    <relator code="dfd">defendant</relator>
+    <relator code="dfe">defendant-appellee</relator>
+    <relator code="dft">defendant-appellant</relator>
+    <relator code="dgg">degree granting institution</relator>
+    <relator code="dis">dissertant</relator>
+    <relator code="dln">delineator</relator>
+    <relator code="dnc">dancer</relator>
+    <relator code="dnr">donor</relator>
+    <relator code="dpc">depicted</relator>
+    <relator code="dpt">depositor</relator>
+    <relator code="drm">draftsman</relator>
+    <relator code="drt">director</relator>
+    <relator code="dsr">designer</relator>
+    <relator code="dst">distributor</relator>
+    <relator code="dtc">data contributor</relator>
+    <relator code="dte">dedicatee</relator>
+    <relator code="dtm">data manager</relator>
+    <relator code="dto">dedicator</relator>
+    <relator code="dub">dubious author</relator>
+    <relator code="edc">editor of compilation</relator>
+    <relator code="edm">editor of moving image work</relator>
+    <relator code="edt">editor</relator>
+    <relator code="egr">engraver</relator>
+    <relator code="elg">electrician</relator>
+    <relator code="elt">electrotyper</relator>
+    <relator code="eng">engineer</relator>
+    <relator code="enj">enacting jurisdiction</relator>
+    <relator code="etr">etcher</relator>
+    <relator code="evp">event place</relator>
+    <relator code="exp">expert</relator>
+    <relator code="fac">facsimilist</relator>
+    <relator code="fds">film distributor</relator>
+    <relator code="fld">field director</relator>
+    <relator code="flm">film editor</relator>
+    <relator code="fmd">film director</relator>
+    <relator code="fmk">filmmaker</relator>
+    <relator code="fmo">former owner</relator>
+    <relator code="fmp">film producer</relator>
+    <relator code="fnd">funder</relator>
+    <relator code="fpy">first party</relator>
+    <relator code="frg">forger</relator>
+    <relator code="gis">geographic information specialist</relator>
+    <relator code="grt" status="discontinued">graphic technician</relator>
+    <relator code="his">host institution</relator>
+    <relator code="hnr">honoree</relator>
+    <relator code="hst">host</relator>
+    <relator code="ill">illustrator</relator>
+    <relator code="ilu">illuminator</relator>
+    <relator code="ins">inscriber</relator>
+    <relator code="itr">instrumentalist</relator>
+    <relator code="ive">interviewee</relator>
+    <relator code="ivr">interviewer</relator>
+    <relator code="inv">inventor</relator>
+    <relator code="isb">issuing body</relator>
+    <relator code="jud">judge</relator>
+    <relator code="jug">jurisdiction governed</relator>
+    <relator code="lbr">laboratory</relator>
+    <relator code="lbt">librettist</relator>
+    <relator code="ldr">laboratory director</relator>
+    <relator code="led">lead</relator>
+    <relator code="lee">libelee-appellee</relator>
+    <relator code="lel">libelee</relator>
+    <relator code="len">lender</relator>
+    <relator code="let">libelee-appellant</relator>
+    <relator code="lgd">lighting designer</relator>
+    <relator code="lie">libelant-appellee</relator>
+    <relator code="lil">libelant</relator>
+    <relator code="lit">libelant-appellant</relator>
+    <relator code="lsa">landscape architect</relator>
+    <relator code="lse">licensee</relator>
+    <relator code="lso">licensor</relator>
+    <relator code="ltg">lithographer</relator>
+    <relator code="lyr">lyricist</relator>
+    <relator code="mcp">music copyist</relator>
+    <relator code="mdc">metadata contact</relator>
+    <relator code="mfp">manufacture place</relator>
+    <relator code="mfr">manufacturer</relator>
+    <relator code="mod">moderator</relator>
+    <relator code="mon">monitor</relator>
+    <relator code="mrb">marbler</relator>
+    <relator code="mrk">markup editor</relator>
+    <relator code="msd">musical director</relator>
+    <relator code="mte">metal-engraver</relator>
+    <relator code="mus">musician</relator>
+    <relator code="nrt">narrator</relator>
+    <relator code="opn">opponent</relator>
+    <relator code="org">originator</relator>
+    <relator code="orm">organizer of meeting</relator>
+    <relator code="osp">onscreen presenter</relator>
+    <relator code="oth">other</relator>
+    <relator code="own">owner</relator>
+    <relator code="pan">panelist</relator>
+    <relator code="pat">patron</relator>
+    <relator code="pbd">publishing director</relator>
+    <relator code="pbl">publisher</relator>
+    <relator code="pdr">project director</relator>
+    <relator code="pfr">proofreader</relator>
+    <relator code="pht">photographer</relator>
+    <relator code="plt">platemaker</relator>
+    <relator code="pma">permitting agency</relator>
+    <relator code="pmn">production manager</relator>
+    <relator code="pop">printer of plates</relator>
+    <relator code="ppm">papermaker</relator>
+    <relator code="ppt">puppeteer</relator>
+    <relator code="pra">praeses</relator>
+    <relator code="prc">process contact</relator>
+    <relator code="prd">production personnel</relator>
+    <relator code="pre">presenter</relator>
+    <relator code="prf">performer</relator>
+    <relator code="prg">programmer</relator>
+    <relator code="prm">printmaker</relator>
+    <relator code="prn">production company</relator>
+    <relator code="pro">producer</relator>
+    <relator code="prp">production place</relator>
+    <relator code="prs">production designer</relator>
+    <relator code="prt">printer</relator>
+    <relator code="prv">provider</relator>
+    <relator code="pta">patent applicant</relator>
+    <relator code="pte">plaintiff-appellee</relator>
+    <relator code="ptf">plaintiff</relator>
+    <relator code="pth">patent holder</relator>
+    <relator code="ptt">plaintiff-appellant</relator>
+    <relator code="pup">publication place</relator>
+    <relator code="rbr">rubricator</relator>
+    <relator code="rce">recording engineer</relator>
+    <relator code="rcd">recordist</relator>
+    <relator code="rcp">addressee</relator>
+    <relator code="rdd">radio director</relator>
+    <relator code="red">redaktor</relator>
+    <relator code="ren">renderer</relator>
+    <relator code="res">researcher</relator>
+    <relator code="rev">reviewer</relator>
+    <relator code="rpc">radio producer</relator>
+    <relator code="rps">repository</relator>
+    <relator code="rpt">reporter</relator>
+    <relator code="rpy">responsible party</relator>
+    <relator code="rse">respondent-appellee</relator>
+    <relator code="rsg">restager</relator>
+    <relator code="rsp">respondent</relator>
+    <relator code="rsr">restorationist</relator>
+    <relator code="rst">respondent-appellant</relator>
+    <relator code="rth">research team head</relator>
+    <relator code="rtm">research team member</relator>
+    <relator code="sad">scientific advisor</relator>
+    <relator code="sce">scenarist</relator>
+    <relator code="scl">sculptor</relator>
+    <relator code="scr">scribe</relator>
+    <relator code="sds">sound designer</relator>
+    <relator code="sec">secretary</relator>
+    <relator code="sgd">stage director</relator>
+    <relator code="sgn">signer</relator>
+    <relator code="sht">supporting host</relator>
+    <relator code="sll">seller</relator>
+    <relator code="sng">singer</relator>
+    <relator code="spk">speaker</relator>
+    <relator code="spn">sponsor</relator>
+    <relator code="spy">second party</relator>
+    <relator code="std">set designer</relator>
+    <relator code="stg">setting</relator>
+    <relator code="stl">storyteller</relator>
+    <relator code="stm">stage manager</relator>
+    <relator code="stn">standards body</relator>
+    <relator code="str">stereotyper</relator>
+    <relator code="srv">surveyor</relator>
+    <relator code="tcd">technical director</relator>
+    <relator code="tch">teacher</relator>
+    <relator code="ths">thesis advisor</relator>
+    <relator code="tld">television director</relator>
+    <relator code="tlp">television producer</relator>
+    <relator code="trc">transcriber</relator>
+    <relator code="trl">translator</relator>
+    <relator code="tyd">type designer</relator>
+    <relator code="tyg">typographer</relator>
+    <relator code="uvp">university place</relator>
+    <relator code="vdg">videographer</relator>
+    <relator code="voc" status="discontinued">vocalist</relator>
+    <relator code="wac">writer of added commentary</relator>
+    <relator code="wal">writer of added lyrics</relator>
+    <relator code="wam">writer of accompanying material</relator>
+    <relator code="wat">writer of added text</relator>
+    <relator code="wdc">woodcutter</relator>
+    <relator code="wde">wood engraver</relator>
+    <relator code="wit">witness</relator>
+  </xsl:variable>
+
   <!-- New line -->
   <xsl:variable name="nl">
     <xsl:text>&#xa;</xsl:text>
@@ -2020,13 +2290,21 @@
         <titleStmt>
           <!-- title for electronic text (240 and 245) -->
           <xsl:apply-templates select="marc:datafield[@tag='240' or @tag='245']" mode="basic"/>
-          <title type="subtitle">an electronic transcription</title>
+          <title type="subtitle">
+            <xsl:call-template name="analog">
+              <xsl:with-param name="tag">
+                <xsl:value-of select="'245b'"/>
+              </xsl:with-param>
+            </xsl:call-template>
+            <xsl:text>an electronic transcription</xsl:text>
+          </title>
 
           <!-- statements of responsibility -->
           <xsl:variable name="respStmts">
             <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
-            <xsl:if test="not($preserveMainEntry = 'true')">
-              <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']"/>
+            <xsl:if test="not($fileMainEntryOnly = 'true')">
+              <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']" mode="respStmt"
+              />
             </xsl:if>
           </xsl:variable>
           <xsl:variable name="sortedRespStmts">
@@ -2103,7 +2381,8 @@
                   <!-- statements of responsibility -->
                   <xsl:variable name="respStmts">
                     <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag='700' or
+                      @tag='710'][not(@ind2='2')]" mode="respStmt"/>
                   </xsl:variable>
                   <xsl:variable name="sortedRespStmts">
                     <xsl:for-each select="$respStmts/mei:respStmt">
@@ -2223,7 +2502,10 @@
             <!-- statements of responsibility -->
             <xsl:variable name="respStmts">
               <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
-              <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']"/>
+              <xsl:if test="not($workMainEntryOnly = 'true')">
+                <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']"
+                  mode="respStmt"/>
+              </xsl:if>
             </xsl:variable>
             <xsl:variable name="sortedRespStmts">
               <xsl:for-each select="$respStmts/mei:respStmt">
@@ -2243,10 +2525,9 @@
           <xsl:variable name="creation_note" select="marc:datafield[@tag='045' or @tag='508']"/>
 
           <!-- incipits -->
-          <xsl:variable name="incipits" select="marc:datafield[@tag='031']"/>
-          <xsl:if test="$incipits">
-            <xsl:apply-templates select="$incipits"/>
-          </xsl:if>
+          <xsl:apply-templates select="marc:datafield[@tag='031']"/>
+          <xsl:apply-templates select="marc:datafield[@tag='246' and
+            matches(marc:subfield[@code='i'], 'First\s+line\s+of\s+text', 'i')]"/>
 
           <!-- eventList -->
           <xsl:variable name="events" select="marc:datafield[@tag='511' or @tag='518']"/>
@@ -2254,11 +2535,13 @@
             <history>
               <xsl:if test="$creation_note">
                 <creation>
-                  <xsl:call-template name="analog">
-                    <xsl:with-param name="tag">
-                      <xsl:value-of select="'508'"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
+                  <xsl:if test="$creation_note/marc:datafield[@tag='508']">
+                    <xsl:call-template name="analog">
+                      <xsl:with-param name="tag">
+                        <xsl:value-of select="'508'"/>
+                      </xsl:with-param>
+                    </xsl:call-template>
+                  </xsl:if>
                   <xsl:for-each select="marc:datafield[@tag='508']">
                     <xsl:apply-templates select="."/>
                     <xsl:if test="position() != last()">
@@ -2466,11 +2749,6 @@
           </xsl:when>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:call-template name="analog">
-        <xsl:with-param name="tag">
-          <xsl:value-of select="'031'"/>
-        </xsl:with-param>
-      </xsl:call-template>
 
       <!-- Not currently allowed; customization required -->
       <!-- <label>
@@ -2537,11 +2815,21 @@
               </xsl:when>
             </xsl:choose>
           </xsl:attribute>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'p')"/>
+            </xsl:with-param>
+          </xsl:call-template>
           <xsl:value-of select="marc:subfield[@code='p']"/>
         </incipCode>
       </xsl:if>
       <xsl:if test="marc:subfield[@code='t']">
         <incipText>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 't')"/>
+            </xsl:with-param>
+          </xsl:call-template>
           <p>
             <xsl:value-of select="marc:subfield[@code='t']"/>
           </p>
@@ -2585,7 +2873,7 @@
   <!-- date of composition -->
   <xsl:template match="marc:datafield[@tag='045']">
     <!-- dates in 045 are assumed to be C.E. -->
-    <xsl:text>Date of composition:&#32;</xsl:text>
+    <!--<xsl:text>Date of composition:&#32;</xsl:text>-->
     <xsl:choose>
       <xsl:when test="@ind1 = '0' or @ind1 = '1'">
         <xsl:for-each select="marc:subfield[@code='b']">
@@ -2699,7 +2987,7 @@
                   <xsl:value-of select="number($num048)"/>
                 </xsl:attribute>
               </xsl:if>
-              <xsl:value-of select="$iamlMusPerfList//mei:instr[@code=$code048]"/>
+              <xsl:value-of select="$iamlMusPerfList/mei:instr[@code=$code048]"/>
             </instrVoice>
           </xsl:for-each>
         </xsl:when>
@@ -2723,7 +3011,7 @@
                   <xsl:value-of select="number($num048)"/>
                 </xsl:attribute>
               </xsl:if>
-              <xsl:value-of select="$marcMusPerfList//mei:instr[@code=$code048]"/>
+              <xsl:value-of select="$marcMusPerfList/mei:instr[@code=$code048]"/>
             </instrVoice>
           </xsl:for-each>
         </xsl:otherwise>
@@ -2829,29 +3117,12 @@
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="$tag"/>
+                <xsl:value-of select="concat($tag, 'a')"/>
               </xsl:with-param>
             </xsl:call-template>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:call-template name="chopPunctuation">
-                  <xsl:with-param name="chopString">
-                    <xsl:value-of select="marc:subfield[@code='a']"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:otherwise>
-            </xsl:choose>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">abcd</xsl:with-param>
+            </xsl:call-template>
           </corpName>
         </xsl:when>
         <xsl:otherwise>
@@ -2864,16 +3135,21 @@
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="$tag"/>
+                <xsl:value-of select="concat($tag, 'a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:choose>
               <xsl:when test="marc:subfield[@code='d']">
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">aq</xsl:with-param>
+                  <xsl:with-param name="codes">abcjq</xsl:with-param>
                 </xsl:call-template>
                 <xsl:text>&#32;</xsl:text>
                 <date>
+                  <xsl:call-template name="analog">
+                    <xsl:with-param name="tag">
+                      <xsl:value-of select="concat($tag, 'd')"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
                   <xsl:call-template name="chopPunctuation">
                     <xsl:with-param name="chopString">
                       <xsl:value-of select="marc:subfield[@code='d']"/>
@@ -2883,28 +3159,22 @@
               </xsl:when>
               <xsl:otherwise>
                 <xsl:call-template name="subfieldSelect">
-                  <xsl:with-param name="codes">aq</xsl:with-param>
+                  <xsl:with-param name="codes">abcjq</xsl:with-param>
                 </xsl:call-template>
               </xsl:otherwise>
             </xsl:choose>
           </persName>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:choose>
+        <xsl:when test="marc:subfield[@code='4']">
+          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+        </xsl:when>
+        <xsl:when test="marc:subfield[@code='e']">
+          <xsl:apply-templates select="marc:subfield[@code='e']" mode="respStmt"/>
+        </xsl:when>
+      </xsl:choose>
     </respStmt>
-    <xsl:if test="marc:subfield[@code='e']">
-      <resp>
-        <xsl:for-each select="marc:subfield[@code='e']">
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:value-of select="."/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:if test="position() != last()">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-        </xsl:for-each>
-      </resp>
-    </xsl:if>
   </xsl:template>
 
   <!-- uniform title -->
@@ -2932,19 +3202,33 @@
           <xsl:when test="@code='r'">
             <!-- subfield r = 'Key for music'; add 'in' -->
             <xsl:text>, in </xsl:text>
-            <xsl:call-template name="chopPunctuation">
-              <xsl:with-param name="chopString">
+            <xsl:choose>
+              <xsl:when test="position()=last()">
                 <xsl:value-of select="."/>
-              </xsl:with-param>
-            </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="."/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:when>
           <xsl:otherwise>
             <xsl:text>, </xsl:text>
-            <xsl:call-template name="chopPunctuation">
-              <xsl:with-param name="chopString">
+            <xsl:choose>
+              <xsl:when test="position()=last()">
                 <xsl:value-of select="."/>
-              </xsl:with-param>
-            </xsl:call-template>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:call-template name="chopPunctuation">
+                  <xsl:with-param name="chopString">
+                    <xsl:value-of select="."/>
+                  </xsl:with-param>
+                </xsl:call-template>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:otherwise>
         </xsl:choose>
       </xsl:for-each>
@@ -2953,14 +3237,30 @@
 
   <!-- basic title -->
   <xsl:template match="marc:datafield[@tag='245']" mode="basic">
-    <title>
+    <title type="proper">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="concat(@tag, 'a')"/>
+        </xsl:with-param>
+      </xsl:call-template>
       <xsl:call-template name="chopPunctuation">
         <xsl:with-param name="chopString">
           <xsl:call-template name="subfieldSelect">
-            <xsl:with-param name="codes">abnp</xsl:with-param>
+            <xsl:with-param name="codes">a</xsl:with-param>
           </xsl:call-template>
         </xsl:with-param>
       </xsl:call-template>
+
+      <!-- test for certain other subfields to append to main value -->
+      <!-- some subfields are repeatable, so loop through all -->
+      <xsl:for-each select="marc:subfield[@code='n' or @code='p']">
+        <xsl:text>, </xsl:text>
+        <xsl:call-template name="chopPunctuation">
+          <xsl:with-param name="chopString">
+            <xsl:value-of select="."/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:for-each>
     </title>
   </xsl:template>
 
@@ -2990,6 +3290,32 @@
     </title>
   </xsl:template>
 
+  <!-- 246 (text incipit) -->
+  <xsl:template match="marc:datafield[@tag='246' and matches(marc:subfield[@code='i'],
+    'First\s+line\s+of\s+text', 'i')]">
+    <incip>
+      <xsl:if test="marc:subfield[@code='a']">
+        <incipText>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'a')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:attribute name="label">
+            <xsl:call-template name="chopPunctuation">
+              <xsl:with-param name="chopString">
+                <xsl:value-of select="marc:subfield[@code='i']"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:attribute>
+          <p>
+            <xsl:value-of select="marc:subfield[@code='a']"/>
+          </p>
+        </incipText>
+      </xsl:if>
+    </incip>
+  </xsl:template>
+
   <!-- music presentation -->
   <xsl:template match="marc:datafield[@tag='254']">
     <xsl:variable name="tag" select="@tag"/>
@@ -3003,86 +3329,98 @@
   <!-- publication statement -->
   <xsl:template match="marc:datafield[@tag='260']">
     <pubStmt>
-      <xsl:for-each select="marc:subfield[@code='a']">
-        <pubPlace>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'a')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:value-of select="."/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </pubPlace>
-      </xsl:for-each>
-      <xsl:for-each select="marc:subfield[@code='b']">
-        <publisher>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'b')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:value-of select="."/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </publisher>
-      </xsl:for-each>
-      <xsl:for-each select="marc:subfield[@code='c']">
-        <date>
-          <xsl:call-template name="analog">
-            <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'c')"/>
-            </xsl:with-param>
-          </xsl:call-template>
-          <xsl:call-template name="chopPunctuation">
-            <xsl:with-param name="chopString">
-              <xsl:value-of select="."/>
-            </xsl:with-param>
-          </xsl:call-template>
-        </date>
-      </xsl:for-each>
-      <xsl:if test="marc:subfield[@code='e' or @code='f' or @code='g']">
-        <distributor>
-          <xsl:if test="marc:subfield[@code='e']">
-            <geogName>
+      <xsl:for-each select="marc:subfield">
+        <xsl:choose>
+          <xsl:when test="@code='a'">
+            <pubPlace>
               <xsl:call-template name="analog">
                 <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'e')"/>
+                  <xsl:value-of select="concat(../@tag, 'a')"/>
                 </xsl:with-param>
               </xsl:call-template>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">e</xsl:with-param>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:value-of select="."/>
+                </xsl:with-param>
               </xsl:call-template>
-            </geogName>
-          </xsl:if>
-          <name>
+            </pubPlace>
+          </xsl:when>
+          <xsl:when test="@code='b'">
+            <publisher>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(../@tag, 'b')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:value-of select="."/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </publisher>
+          </xsl:when>
+          <xsl:when test="@code='c'">
+            <date>
+              <xsl:call-template name="analog">
+                <xsl:with-param name="tag">
+                  <xsl:value-of select="concat(../@tag, 'c')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:value-of select="."/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </date>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:for-each>
+      <xsl:for-each select="marc:subfield[@code='e']">
+        <xsl:variable name="thisManufacturer">
+          <xsl:value-of select="generate-id(.)"/>
+        </xsl:variable>
+        <distributor>
+          <geogName>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(@tag, 'f')"/>
+                <xsl:value-of select="concat(../@tag, 'e')"/>
               </xsl:with-param>
             </xsl:call-template>
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">f</xsl:with-param>
-            </xsl:call-template>
-          </name>
-          <date>
-            <xsl:call-template name="analog">
-              <xsl:with-param name="tag">
-                <xsl:value-of select="concat(@tag, 'g')"/>
-              </xsl:with-param>
-            </xsl:call-template>
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">g</xsl:with-param>
-            </xsl:call-template>
-          </date>
+            <xsl:value-of select="$thisManufacturer"/>
+          </geogName>
+          <xsl:for-each select="../marc:subfield[@code='f' or @code='g']">
+            <xsl:if
+              test="generate-id(preceding-sibling::marc:subfield[@code='e'][1])=$thisManufacturer">
+              <xsl:choose>
+                <xsl:when test="@code='f'">
+                  <name>
+                    <xsl:call-template name="analog">
+                      <xsl:with-param name="tag">
+                        <xsl:value-of select="concat(../@tag, 'f')"/>
+                      </xsl:with-param>
+                    </xsl:call-template>
+                    <xsl:value-of select="."/>
+                  </name>
+                </xsl:when>
+                <xsl:when test="@code='g'">
+                  <date>
+                    <xsl:call-template name="analog">
+                      <xsl:with-param name="tag">
+                        <xsl:value-of select="concat(@tag, 'g')"/>
+                      </xsl:with-param>
+                    </xsl:call-template>
+                    <xsl:value-of select="."/>
+                  </date>
+                </xsl:when>
+              </xsl:choose>
+            </xsl:if>
+          </xsl:for-each>
         </distributor>
-      </xsl:if>
-      <xsl:apply-templates select="../marc:datafield[@tag='028'][not(@ind1='2')]"/>
-      <xsl:apply-templates select="../marc:datafield[@tag='020' or @tag='022' or @tag='024']"/>
+      </xsl:for-each>
+      <xsl:apply-templates
+        select="../marc:datafield[@tag='028'][marc:subfield[@code='a']][not(@ind1='2')]"/>
+      <xsl:apply-templates select="../marc:datafield[@tag='020' or @tag='022' or
+        @tag='024'][marc:subfield[@code='a']]"/>
     </pubStmt>
   </xsl:template>
 
@@ -3091,65 +3429,27 @@
     <physDesc>
       <xsl:if test="marc:subfield[@code='a']">
         <extent>
-          <xsl:choose>
-            <xsl:when test="matches(marc:subfield[@code='b'], 'digital')">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'ab')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">ab</xsl:with-param>
-              </xsl:call-template>
-            </xsl:when>
-            <xsl:when test="marc:subfield[@code='b'] and
-              not(substring(../marc:controlfield[@tag='007'], 1, 1) = 's')">
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'ab')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="subfieldSelect">
-                <xsl:with-param name="codes">ab</xsl:with-param>
-                <xsl:with-param name="delimiter">;&#32;</xsl:with-param>
-              </xsl:call-template>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'a')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:call-template name="subfieldSelect">
-                    <xsl:with-param name="codes">a</xsl:with-param>
-                  </xsl:call-template>
-                </xsl:with-param>
-              </xsl:call-template>
-            </xsl:otherwise>
-          </xsl:choose>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'a')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">a</xsl:with-param>
+          </xsl:call-template>
         </extent>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='b'][not(matches(., 'digital'))]">
-        <xsl:choose>
-          <xsl:when test="substring(../marc:controlfield[@tag='007'], 1, 1) = 's'">
-            <playingSpeed>
-              <xsl:call-template name="analog">
-                <xsl:with-param name="tag">
-                  <xsl:value-of select="concat(@tag, 'b')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:call-template name="subfieldSelect">
-                    <xsl:with-param name="codes">b</xsl:with-param>
-                  </xsl:call-template>
-                </xsl:with-param>
-              </xsl:call-template>
-            </playingSpeed>
-          </xsl:when>
-        </xsl:choose>
+      <xsl:if test="marc:subfield[@code='b']">
+        <physMedium>
+          <xsl:call-template name="analog">
+            <xsl:with-param name="tag">
+              <xsl:value-of select="concat(@tag, 'b')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">b</xsl:with-param>
+          </xsl:call-template>
+        </physMedium>
       </xsl:if>
       <xsl:if test="marc:subfield[@code='c']">
         <dimensions>
@@ -3366,15 +3666,30 @@
           </xsl:choose>
         </xsl:attribute>
       </xsl:if>
-      <p>
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString">
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">a</xsl:with-param>
+      <xsl:choose>
+        <xsl:when test="@ind2='0'">
+          <xsl:for-each select="marc:subfield[@code='t']">
+            <contentItem>
+              <xsl:call-template name="chopPunctuation">
+                <xsl:with-param name="chopString">
+                  <xsl:value-of select="replace(., '--$', '')"/>
+                </xsl:with-param>
+              </xsl:call-template>
+            </contentItem>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <p>
+            <xsl:call-template name="chopPunctuation">
+              <xsl:with-param name="chopString">
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">a</xsl:with-param>
+                </xsl:call-template>
+              </xsl:with-param>
             </xsl:call-template>
-          </xsl:with-param>
-        </xsl:call-template>
-      </p>
+          </p>
+        </xsl:otherwise>
+      </xsl:choose>
     </contents>
   </xsl:template>
 
@@ -3606,7 +3921,7 @@
   </xsl:template>
 
   <!-- responsibility statement; added entry -->
-  <xsl:template match="marc:datafield[@tag='700' or @tag='710']">
+  <xsl:template match="marc:datafield[@tag='700' or @tag='710']" mode="respStmt">
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
     </xsl:variable>
@@ -3622,30 +3937,13 @@
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="$tag"/>
+                <xsl:value-of select="concat($tag, 'a')"/>
               </xsl:with-param>
             </xsl:call-template>
-            <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
-                <xsl:text>&#32;</xsl:text>
-                <date>
-                  <xsl:call-template name="chopPunctuation">
-                    <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
-                    </xsl:with-param>
-                  </xsl:call-template>
-                </date>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:call-template name="chopPunctuation">
-                  <xsl:with-param name="chopString">
-                    <xsl:value-of select="marc:subfield[@code='a']"/>
-                  </xsl:with-param>
-                </xsl:call-template>
-              </xsl:otherwise>
-            </xsl:choose>
-            <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+            <xsl:call-template name="subfieldSelect">
+              <xsl:with-param name="codes">abcd</xsl:with-param>
+            </xsl:call-template>
+            <!--<xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>-->
           </corpName>
         </xsl:when>
         <xsl:otherwise>
@@ -3658,14 +3956,21 @@
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="$tag"/>
+                <xsl:value-of select="concat($tag, 'a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:choose>
               <xsl:when test="marc:subfield[@code='d']">
-                <xsl:value-of select="marc:subfield[@code='a']"/>
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                </xsl:call-template>
                 <xsl:text>&#32;</xsl:text>
                 <date>
+                  <xsl:call-template name="analog">
+                    <xsl:with-param name="tag">
+                      <xsl:value-of select="concat($tag, 'd')"/>
+                    </xsl:with-param>
+                  </xsl:call-template>
                   <xsl:call-template name="chopPunctuation">
                     <xsl:with-param name="chopString">
                       <xsl:value-of select="marc:subfield[@code='d']"/>
@@ -3674,27 +3979,22 @@
                 </date>
               </xsl:when>
               <xsl:otherwise>
-                <xsl:value-of select="marc:subfield[@code='a']"/>
+                <xsl:call-template name="subfieldSelect">
+                  <xsl:with-param name="codes">abcjq</xsl:with-param>
+                </xsl:call-template>
               </xsl:otherwise>
             </xsl:choose>
           </persName>
-          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:if test="marc:subfield[@code='e']">
-        <resp>
-          <xsl:for-each select="marc:subfield[@code='e']">
-            <xsl:call-template name="chopPunctuation">
-              <xsl:with-param name="chopString">
-                <xsl:value-of select="."/>
-              </xsl:with-param>
-            </xsl:call-template>
-            <xsl:if test="position() != last()">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-          </xsl:for-each>
-        </resp>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="marc:subfield[@code='4']">
+          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+        </xsl:when>
+        <xsl:when test="marc:subfield[@code='e']">
+          <xsl:apply-templates select="marc:subfield[@code='e']" mode="respStmt"/>
+        </xsl:when>
+      </xsl:choose>
     </respStmt>
   </xsl:template>
 
@@ -3716,7 +4016,7 @@
         <title level="a">
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="$tag"/>
+              <xsl:value-of select="concat($tag, $analogSubfield)"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:call-template name="chopPunctuation">
@@ -3754,6 +4054,7 @@
             </xsl:choose>
           </xsl:for-each>
         </title>
+        <xsl:apply-templates select="." mode="respStmt"/>
       </titleStmt>
     </source>
   </xsl:template>
@@ -3777,51 +4078,47 @@
     </contentItem>
   </xsl:template>
 
-  <!-- relator codes for 700 and 710 -->
+  <!-- relator codes -->
   <xsl:template match="marc:subfield[@code='4']" mode="respStmt">
-    <resp>
-      <xsl:variable name="code">
-        <xsl:value-of select="."/>
-      </xsl:variable>
+    <xsl:variable name="code">
+      <xsl:value-of select="."/>
+    </xsl:variable>
+    <resp code="{$code}">
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="concat(./@tag, '4')"/>
+        </xsl:with-param>
+      </xsl:call-template>
       <xsl:choose>
-        <xsl:when test="$code = 'arr'">arranger</xsl:when>
-        <xsl:when test="$code = 'art'">artist</xsl:when>
-        <xsl:when test="$code = 'asn'">associated name</xsl:when>
-        <xsl:when test="$code = 'aut'">author</xsl:when>
-        <xsl:when test="$code = 'bnd'">binder</xsl:when>
-        <xsl:when test="$code = 'bsl'">bookseller</xsl:when>
-        <xsl:when test="$code = 'ccp'">conceptor</xsl:when>
-        <xsl:when test="$code = 'chr'">choreographer</xsl:when>
-        <xsl:when test="$code = 'clb'">collaborator</xsl:when>
-        <xsl:when test="$code = 'cmp'">composer</xsl:when>
-        <xsl:when test="$code = 'cnd'">conductor</xsl:when>
-        <xsl:when test="$code = 'cns'">censor</xsl:when>
-        <xsl:when test="$code = 'com'">compiler</xsl:when>
-        <xsl:when test="$code = 'cst'">costume designer</xsl:when>
-        <xsl:when test="$code = 'dnc'">dancer</xsl:when>
-        <xsl:when test="$code = 'dnr'">donor</xsl:when>
-        <xsl:when test="$code = 'dte'">dedicatee</xsl:when>
-        <xsl:when test="$code = 'dub'">dubious</xsl:when>
-        <xsl:when test="$code = 'edt'">editor</xsl:when>
-        <xsl:when test="$code = 'egr'">engraver</xsl:when>
-        <xsl:when test="$code = 'fmo'">former owner</xsl:when>
-        <xsl:when test="$code = 'ill'">illustrator</xsl:when>
-        <xsl:when test="$code = 'itr'">instrumentalist</xsl:when>
-        <xsl:when test="$code = 'lbt'">librettist</xsl:when>
-        <xsl:when test="$code = 'ltg'">lithograph</xsl:when>
-        <xsl:when test="$code = 'lyr'">lyricist</xsl:when>
-        <xsl:when test="$code = 'otm'">event organizer</xsl:when>
-        <xsl:when test="$code = 'pat'">patron</xsl:when>
-        <xsl:when test="$code = 'pbl'">publisher</xsl:when>
-        <xsl:when test="$code = 'ppm'">paper maker</xsl:when>
-        <xsl:when test="$code = 'prd'">production personnel</xsl:when>
-        <xsl:when test="$code = 'prf'">performer</xsl:when>
-        <xsl:when test="$code = 'prt'">printer</xsl:when>
-        <xsl:when test="$code = 'scr'">scribe</xsl:when>
-        <xsl:when test="$code = 'trl'">translator</xsl:when>
-        <xsl:when test="$code = 'voc'">vocalist</xsl:when>
-        <xsl:otherwise>[unknown]</xsl:otherwise>
+        <xsl:when test="$marcRelList/mei:relator[@code=$code]">
+          <xsl:value-of select="$marcRelList/mei:relator[@code=$code]"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>[unknown]</xsl:text>
+        </xsl:otherwise>
       </xsl:choose>
+    </resp>
+  </xsl:template>
+
+  <!-- relator terms -->
+  <xsl:template match="marc:subfield[@code='e']" mode="respStmt">
+    <xsl:variable name="term">
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:value-of select="."/>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:variable>
+    <resp>
+      <xsl:attribute name="code">
+        <xsl:value-of select="$marcRelList/mei:relator[.=$term]/@code"/>
+      </xsl:attribute>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="concat(../@tag, '4')"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:value-of select="$term"/>
     </resp>
   </xsl:template>
 
