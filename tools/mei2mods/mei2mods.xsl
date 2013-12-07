@@ -53,16 +53,68 @@
   <xsl:template match="mei:fileDesc">
     <!-- Title and statement of responsibility -->
     <xsl:apply-templates select="mei:titleStmt"/>
+
     <!-- Publication info -->
     <xsl:apply-templates select="mei:pubStmt"/>
+
+    <!-- Language -->
+    <xsl:apply-templates select="../mei:workDesc/mei:work/mei:langUsage/mei:language"/>
+
     <!-- Physical Description -->
     <xsl:call-template name="physicalDescription"/>
-    <!-- Record info -->
-    <xsl:call-template name="recordInfo"/>
+
     <!-- Notes -->
     <xsl:apply-templates select="mei:notesStmt/mei:annot[contains(@analog, 'marc:500')]"/>
+
     <!-- Subject -->
-    <!-- Call number -->
+    <xsl:if test="//mei:classification//mei:term[contains(@analog, 'marc:650')]">
+      <subject>
+        <xsl:apply-templates select="//mei:classification//mei:term[contains(@analog, 'marc:650')]"
+        />
+      </subject>
+    </xsl:if>
+
+    <!-- Record info -->
+    <xsl:call-template name="recordInfo"/>
+
+  </xsl:template>
+
+  <xsl:template match="mei:term">
+    <xsl:variable name="elementName">
+      <xsl:choose>
+        <xsl:when test="@label='persName' or @analog='marc:600'">
+          <xsl:text>name</xsl:text>
+        </xsl:when>
+        <xsl:when test="@label='geogName' or @analog='marc:651'">
+          <xsl:text>geographic</xsl:text>
+        </xsl:when>
+        <xsl:when test="@label='genreForm' or @analog='marc:655'">
+          <xsl:text>genre</xsl:text>
+        </xsl:when>
+        <xsl:when test="@label='occupation' or @analog='marc:656'">
+          <xsl:text>occupation</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>topic</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:element name="{$elementName}">
+      <xsl:value-of select="."/>
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="mei:language">
+    <language>
+      <languageTerm type="text">
+        <xsl:value-of select="."/>
+      </languageTerm>
+      <xsl:if test="@xml:id">
+        <languageTerm type="code">
+          <xsl:value-of select="@xml:id"/>
+        </languageTerm>
+      </xsl:if>
+    </language>
   </xsl:template>
 
   <xsl:template match="mei:annot">
@@ -75,7 +127,8 @@
     <physicalDescription>
       <form authority="marcform">electronic</form>
       <form authority="gmd">electronic resource</form>
-      <form>Computer data and programs.</form>
+      <form>Computer data and programs</form>
+      <digitalOrigin>born digital</digitalOrigin>
     </physicalDescription>
   </xsl:template>
 
@@ -84,24 +137,38 @@
       <recordContentSource authority="marcorg">
         <xsl:value-of select="$agency_code"/>
       </recordContentSource>
-      <xsl:if test="ancestor::mei:meiHead/mei:altId">
+      <xsl:for-each select="ancestor::mei:meiHead/@xml:id | ancestor::mei:meiHead/mei:altId">
         <recordIdentifier>
-          <xsl:value-of select="ancestor::mei:meiHead/mei:altId"/>
+          <xsl:value-of select="."/>
         </recordIdentifier>
-      </xsl:if>
-      <recordOrigin><xsl:text>Converted from MEI to MODS version 3.4 using </xsl:text><xsl:value-of
-          select="$progName"/>
-        <xsl:text> (version </xsl:text><xsl:value-of select="$version"
-          /><xsl:text> on </xsl:text><xsl:value-of select="format-date(current-date(),
-          '[Y]-[M02]-[D02]')"/>)</recordOrigin>
+      </xsl:for-each>
+      <recordOrigin>
+        <xsl:text>Converted from MEI to MODS version 3.4 using </xsl:text>
+        <xsl:value-of select="$progName"/>
+        <xsl:text> (version </xsl:text>
+        <xsl:value-of select="$version"/>
+        <xsl:text>)</xsl:text>
+      </recordOrigin>
+      <recordCreationDate encoding="iso8601">
+        <xsl:value-of select="format-dateTime(current-dateTime(),
+          '[Y][M02][D02][H02][m02][s02].[f1,1-1]')"/>
+      </recordCreationDate>
     </recordInfo>
   </xsl:template>
 
   <xsl:template match="mei:titleStmt">
     <!-- Title Proper -->
     <titleInfo>
-      <xsl:apply-templates select="mei:title"/>
+      <xsl:apply-templates select="mei:title[not(@type='uniform' or contains(@analog, 'marc:240'))]"
+      />
     </titleInfo>
+
+    <!-- Uniform Title -->
+    <xsl:if test="mei:title[@type='uniform']">
+      <titleInfo type="uniform">
+        <xsl:apply-templates select="mei:title[@type='uniform' or contains(@analog, 'marc:240')]"/>
+      </titleInfo>
+    </xsl:if>
 
     <!-- Alternative Title(s) ? -->
 
@@ -171,6 +238,25 @@
           <xsl:value-of select="mei:date"/>
         </namePart>
       </xsl:if>
+      <xsl:if test="@role or ../mei:resp">
+        <role>
+          <xsl:if test="@role">
+            <roleTerm type="text">
+              <xsl:value-of select="@role"/>
+            </roleTerm>
+          </xsl:if>
+          <xsl:if test="../mei:resp">
+            <roleTerm type="text">
+              <xsl:value-of select="../mei:resp"/>
+            </roleTerm>
+          </xsl:if>
+          <xsl:if test="../mei:resp/@code">
+            <roleTerm type="code">
+              <xsl:value-of select="../mei:resp/@code"/>
+            </roleTerm>
+          </xsl:if>
+        </role>
+      </xsl:if>
     </name>
   </xsl:template>
 
@@ -183,6 +269,13 @@
         <namePart type="date">
           <xsl:value-of select="mei:date"/>
         </namePart>
+      </xsl:if>
+      <xsl:if test="@role">
+        <role>
+          <roleTerm>
+            <xsl:value-of select="@role"/>
+          </roleTerm>
+        </role>
       </xsl:if>
     </name>
   </xsl:template>
