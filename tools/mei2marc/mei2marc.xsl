@@ -1441,6 +1441,9 @@
 
     <!-- 300 (Physical description) -->
 
+    <!-- 490 (Series statement) -->
+    <xsl:apply-templates select="mei:seriesStmt"/>
+
     <!-- 505 (Contents note) -->
     <xsl:apply-templates select="mei:sourceDesc/mei:source/mei:contents"/>
 
@@ -2010,6 +2013,30 @@
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
+      </xsl:if>
+    </datafield>
+  </xsl:template>
+
+  <xsl:template match="mei:seriesStmt">
+    <xsl:variable name="tag" select="'490'"/>
+    <datafield>
+      <xsl:attribute name="tag" select="$tag"/>
+      <xsl:call-template name="indicators">
+        <xsl:with-param name="ind1">0</xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfield">
+        <xsl:with-param name="code">a</xsl:with-param>
+        <xsl:with-param name="value">
+          <xsl:value-of select="mei:title"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:if test="mei:biblScope">
+        <xsl:call-template name="subfield">
+          <xsl:with-param name="code">v</xsl:with-param>
+          <xsl:with-param name="value">
+            <xsl:value-of select="mei:biblScope"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:if>
     </datafield>
   </xsl:template>
