@@ -1419,18 +1419,7 @@
     </xsl:choose>
 
     <!-- 245 (Title) -->
-    <xsl:choose>
-      <xsl:when test="mei:titleStmt/mei:title[contains(@analog, 'marc:245a') or contains(@type,
-        'proper')]">
-        <xsl:apply-templates select="mei:titleStmt/mei:title[contains(@analog, 'marc:245a') or
-          contains(@type, 'proper')]"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="mei:titleStmt/mei:title[not(contains(@type, 'proper')
-          or contains(@type, 'subtitle') or contains(@analog, 'marc:245') or
-          contains(@analog, 'marc:240'))][1]"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:apply-templates select="mei:titleStmt"/>
 
     <!-- 246 (First line of text) -->
     <xsl:apply-templates select="//mei:incip[mei:incipText[contains(@analog, 'marc:246')]] |
@@ -1443,6 +1432,10 @@
 
     <!-- 490 (Series statement) -->
     <xsl:apply-templates select="mei:seriesStmt"/>
+
+    <!-- 500 (General note) -->
+    <xsl:apply-templates select="../mei:encodingDesc/mei:projectDesc"/>
+    <xsl:apply-templates select="../mei:encodingDesc/mei:samplingDecl"/>
 
     <!-- 505 (Contents note) -->
     <xsl:apply-templates select="mei:sourceDesc/mei:source/mei:contents"/>
@@ -1459,6 +1452,8 @@
       not(contains(@role, 'creator') or contains(@role, 'composer'))]"/>
     <xsl:apply-templates select="mei:titleStmt/mei:respStmt/mei:corpName[not(@analog) and
       not(contains(@role, 'creator') or contains(@role, 'composer'))]"/>
+    <xsl:apply-templates select="mei:seriesStmt/mei:respStmt/mei:persName |
+      mei:seriesStmt/mei:respStmt/mei:corpName"/>
   </xsl:template>
 
   <xsl:template match="mei:altId | mei:*[contains(@analog, 'marc:001')]" mode="id001">
@@ -1466,7 +1461,7 @@
     <xsl:call-template name="controlField">
       <xsl:with-param name="tag">001</xsl:with-param>
       <xsl:with-param name="value">
-        <xsl:value-of select="."/>
+        <xsl:value-of select="normalize-space(.)"/>
       </xsl:with-param>
     </xsl:call-template>
     <!-- 003 (Control number identifier) -->
@@ -1492,7 +1487,7 @@
           <xsl:if test="not($agency_code='')">
             <xsl:value-of select="concat('(', $agency_code, ')')"/>
           </xsl:if>
-          <xsl:value-of select="."/>
+          <xsl:value-of select="normalize-space(.)"/>
         </xsl:with-param>
       </xsl:call-template>
     </datafield>
@@ -1521,7 +1516,7 @@
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">t</xsl:with-param>
               <xsl:with-param name="value">
-                <xsl:value-of select="."/>
+                <xsl:value-of select="normalize-space(.)"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:for-each>
@@ -1536,7 +1531,6 @@
         </xsl:otherwise>
       </xsl:choose>
     </datafield>
-
   </xsl:template>
 
   <xsl:template match="mei:corpName">
@@ -1557,7 +1551,7 @@
           <xsl:call-template name="subfield">
             <xsl:with-param name="code">a</xsl:with-param>
             <xsl:with-param name="value">
-              <xsl:value-of select="."/>
+              <xsl:value-of select="normalize-space(.)"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
@@ -1566,15 +1560,17 @@
           <xsl:call-template name="subfield">
             <xsl:with-param name="code">a</xsl:with-param>
             <xsl:with-param name="value">
-              <xsl:value-of select="text()"/>
+              <xsl:value-of select="normalize-space(text())"/>
             </xsl:with-param>
           </xsl:call-template>
-          <xsl:call-template name="subfield">
-            <xsl:with-param name="code">d</xsl:with-param>
-            <xsl:with-param name="value">
-              <xsl:value-of select="mei:date"/>
-            </xsl:with-param>
-          </xsl:call-template>
+          <xsl:if test="mei:date">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">d</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="mei:date"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:if test="@dbkey">
@@ -1589,10 +1585,24 @@
         <xsl:variable name="role">
           <xsl:choose>
             <xsl:when test="ancestor::mei:respStmt/mei:resp">
-              <xsl:value-of select="ancestor::mei:respStmt/mei:resp"/>
+              <xsl:choose>
+                <xsl:when test="matches(ancestor::mei:respStmt/mei:resp, 'encoder')">
+                  <xsl:text>markup editor</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="ancestor::mei:respStmt/mei:resp"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:value-of select="@role"/>
+              <xsl:choose>
+                <xsl:when test="matches(@role, 'encoder')">
+                  <xsl:text>markup editor</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="@role"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -1627,7 +1637,7 @@
               <xsl:when test="mei:address">
                 <xsl:for-each select="mei:address[1]">
                   <xsl:for-each select="mei:addrLine">
-                    <xsl:value-of select="."/>
+                    <xsl:value-of select="normalize-space(.)"/>
                     <xsl:if test="position() != last()">
                       <xsl:text>, &#32;</xsl:text>
                     </xsl:if>
@@ -1751,7 +1761,7 @@
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">t</xsl:with-param>
               <xsl:with-param name="value">
-                <xsl:value-of select="."/>
+                <xsl:value-of select="normalize-space(.)"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:for-each>
@@ -1863,6 +1873,9 @@
               <xsl:when test="@solo='true'">
                 <xsl:value-of select="format-number(1, '00')"/>
               </xsl:when>
+              <xsl:when test="matches(., '^[0-9]+&#32;')">
+                <xsl:value-of select="format-number(number(substring-before(., '&#32;')), '00')"/>
+              </xsl:when>
             </xsl:choose>
           </xsl:with-param>
         </xsl:call-template>
@@ -1890,7 +1903,7 @@
           <xsl:value-of select="@xml:id"/>
         </xsl:variable>
         <xsl:variable name="thisTerm">
-          <xsl:value-of select="."/>
+          <xsl:value-of select="normalize-space(.)"/>
         </xsl:variable>
         <xsl:call-template name="subfield">
           <xsl:with-param name="code">h</xsl:with-param>
@@ -1913,7 +1926,7 @@
   <xsl:template match="mei:meiHead/@xml:lang">
     <xsl:variable name="tag" select="'040'"/>
     <xsl:variable name="thisLang">
-      <xsl:value-of select="."/>
+      <xsl:value-of select="normalize-space(.)"/>
     </xsl:variable>
     <xsl:if test="$marcLangList/marc:lang[@code=lower-case($thisLang)]">
       <datafield>
@@ -1960,7 +1973,7 @@
           <xsl:call-template name="subfield">
             <xsl:with-param name="code">a</xsl:with-param>
             <xsl:with-param name="value">
-              <xsl:value-of select="."/>
+              <xsl:value-of select="normalize-space(.)"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
@@ -1970,17 +1983,19 @@
             <xsl:with-param name="code">a</xsl:with-param>
             <xsl:with-param name="value">
               <xsl:variable name="name">
-                <xsl:value-of select="text()"/>
+                <xsl:value-of select="normalize-space(text())"/>
               </xsl:variable>
               <xsl:value-of select="normalize-space($name)"/>
             </xsl:with-param>
           </xsl:call-template>
-          <xsl:call-template name="subfield">
-            <xsl:with-param name="code">d</xsl:with-param>
-            <xsl:with-param name="value">
-              <xsl:value-of select="mei:date"/>
-            </xsl:with-param>
-          </xsl:call-template>
+          <xsl:if test="mei:date">
+            <xsl:call-template name="subfield">
+              <xsl:with-param name="code">d</xsl:with-param>
+              <xsl:with-param name="value">
+                <xsl:value-of select="mei:date"/>
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
         </xsl:otherwise>
       </xsl:choose>
       <xsl:if test="@dbkey">
@@ -1995,10 +2010,24 @@
         <xsl:variable name="role">
           <xsl:choose>
             <xsl:when test="ancestor::mei:respStmt/mei:resp">
-              <xsl:value-of select="ancestor::mei:respStmt/mei:resp"/>
+              <xsl:choose>
+                <xsl:when test="matches(ancestor::mei:respStmt/mei:resp, 'encoder')">
+                  <xsl:text>markup editor</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="ancestor::mei:respStmt/mei:resp"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:value-of select="@role"/>
+              <xsl:choose>
+                <xsl:when test="matches(@role, 'encoder')">
+                  <xsl:text>markup editor</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="@role"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
@@ -2014,6 +2043,24 @@
           </xsl:call-template>
         </xsl:if>
       </xsl:if>
+    </datafield>
+  </xsl:template>
+
+  <xsl:template match="mei:projectDesc">
+    <xsl:variable name="tag" select="'500'"/>
+    <datafield>
+      <xsl:attribute name="tag" select="$tag"/>
+      <xsl:call-template name="indicators"/>
+      <xsl:value-of select="concat('&quot;', normalize-space(.), '&quot;')"/>
+    </datafield>
+  </xsl:template>
+
+  <xsl:template match="mei:samplingDecl">
+    <xsl:variable name="tag" select="'500'"/>
+    <datafield>
+      <xsl:attribute name="tag" select="$tag"/>
+      <xsl:call-template name="indicators"/>
+      <xsl:value-of select="concat('&quot;', normalize-space(.), '&quot;')"/>
     </datafield>
   </xsl:template>
 
@@ -2049,7 +2096,7 @@
       <xsl:call-template name="subfield">
         <xsl:with-param name="code">a</xsl:with-param>
         <xsl:with-param name="value">
-          <xsl:value-of select="."/>
+          <xsl:value-of select="normalize-space(.)"/>
         </xsl:with-param>
       </xsl:call-template>
     </datafield>
@@ -2071,7 +2118,7 @@
                 <xsl:value-of select="$code"/>
               </xsl:with-param>
               <xsl:with-param name="value">
-                <xsl:value-of select="."/>
+                <xsl:value-of select="normalize-space(.)"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:for-each>
@@ -2080,7 +2127,7 @@
           <xsl:call-template name="subfield">
             <xsl:with-param name="code">a</xsl:with-param>
             <xsl:with-param name="value">
-              <xsl:value-of select="."/>
+              <xsl:value-of select="normalize-space(.)"/>
             </xsl:with-param>
           </xsl:call-template>
         </xsl:otherwise>
@@ -2088,7 +2135,7 @@
     </datafield>
   </xsl:template>
 
-  <xsl:template match="mei:title[@type='proper' or @analog='marc:245'] | mei:title">
+  <xsl:template match="mei:titleStmt">
     <xsl:variable name="tag" select="'245'"/>
     <datafield>
       <xsl:attribute name="tag" select="$tag"/>
@@ -2096,19 +2143,30 @@
       <xsl:call-template name="subfield">
         <xsl:with-param name="code">a</xsl:with-param>
         <xsl:with-param name="value">
-          <xsl:value-of select="."/>
+          <xsl:choose>
+            <xsl:when test="mei:title[@type='proper' or @analog='marc:245']">
+              <xsl:value-of select="mei:title[@type='proper' or @analog='marc:245']"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="mei:title[not(@type='uniform' or @type='subtitle')][1]"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </xsl:with-param>
       </xsl:call-template>
-      <xsl:if test="$tag='245' and ../mei:title[contains(@type, 'subtitle') or
-        contains(@analog, 'marc:245b')]">
-        <xsl:call-template name="subfield">
-          <xsl:with-param name="code">b</xsl:with-param>
-          <xsl:with-param name="value">
-            <xsl:value-of select="../mei:title[contains(@type, 'subtitle') or contains(@analog,
-              'marc:245b')]"/>
-          </xsl:with-param>
-        </xsl:call-template>
-      </xsl:if>
+      <xsl:call-template name="subfield">
+        <xsl:with-param name="code">b</xsl:with-param>
+        <xsl:with-param name="value">
+          <xsl:choose>
+            <xsl:when test="mei:title[@type='proper' or @analog='marc:245']">
+              <xsl:value-of select="mei:title[not(@type='proper' or @analog='marc:245') and
+                not(@type='uniform')]"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="mei:title[not(@type='uniform')][position() &gt; 1]"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:with-param>
+      </xsl:call-template>
     </datafield>
   </xsl:template>
 
@@ -2121,64 +2179,117 @@
       <xsl:variable name="tag" select="'045'"/>
       <datafield>
         <xsl:attribute name="tag" select="$tag"/>
+        <xsl:variable name="dateType">
+          <xsl:choose>
+            <!-- order of tests *is significant* -->
+            <xsl:when test="count($workCreation/mei:date[mei:date]) &gt; 0 or
+              (($workCreation/mei:date/@notbefore != $workCreation/mei:date/@notafter) or
+              ($workCreation/mei:date/@notafter != $workCreation/mei:date/@notbefore))">
+              <!-- date range -->
+              <xsl:text>2</xsl:text>
+            </xsl:when>
+            <xsl:when test="count($workCreation/mei:date[not(mei:date)]) &gt; 1">
+              <!-- multiple dates -->
+              <xsl:text>1</xsl:text>
+            </xsl:when>
+            <xsl:otherwise>
+              <!-- single date -->
+              <xsl:text>0</xsl:text>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:variable>
         <xsl:call-template name="indicators">
           <xsl:with-param name="ind1">
-            <xsl:choose>
-              <!-- order of tests *is significant* -->
-              <xsl:when test="count($workCreation/mei:date[mei:date]) &gt; 0">
-                <!-- date range -->
-                <xsl:text>2</xsl:text>
-              </xsl:when>
-              <xsl:when test="count($workCreation/mei:date[not(mei:date)]) &gt; 1">
-                <!-- multiple dates -->
-                <xsl:text>1</xsl:text>
-              </xsl:when>
-              <xsl:when test="count($workCreation/mei:date[not(mei:date)]) = 1">
-                <!-- single date -->
-                <xsl:text>0</xsl:text>
-              </xsl:when>
-            </xsl:choose>
+            <xsl:value-of select="$dateType"/>
           </xsl:with-param>
           <xsl:with-param name="ind2" xml:space="preserve">&#32;</xsl:with-param>
         </xsl:call-template>
         <xsl:choose>
-          <xsl:when test="count($workCreation/mei:date[mei:date]) &gt; 0">
+          <xsl:when test="$dateType = '2'">
             <!-- date range -->
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">b</xsl:with-param>
               <xsl:with-param name="value">
                 <xsl:text>d</xsl:text>
-                <xsl:value-of select="$workCreation/mei:date[mei:date][1]/mei:date[1]"/>
+                <xsl:choose>
+                  <!-- first date contains a date element with @notbefore attribute -->
+                  <xsl:when test="$workCreation/mei:date[mei:date][1]/mei:date[1]/@notbefore">
+                    <xsl:value-of
+                      select="substring($workCreation/mei:date[mei:date][1]/mei:date[1]/@notbefore,
+                      1, 4)"/>
+                  </xsl:when>
+                  <!-- first date contains a date element with some content -->
+                  <xsl:when test="$workCreation/mei:date[mei:date][1]/mei:date[1]/text()">
+                    <xsl:value-of select="$workCreation/mei:date[mei:date][1]/mei:date[1]"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <!-- first date has @notbefore attribute -->
+                    <xsl:value-of select="substring($workCreation/mei:date[1]/@notbefore, 1, 4)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">b</xsl:with-param>
               <xsl:with-param name="value">
                 <xsl:text>d</xsl:text>
-                <xsl:value-of
-                  select="$workCreation/mei:date[mei:date][1]/mei:date[position()=last()]"/>
+                <xsl:choose>
+                  <!-- first date contains multiple date elements, the last of which has @notafter attribute -->
+                  <xsl:when
+                    test="$workCreation/mei:date[mei:date][1]/mei:date[position()=last()]/@notafter">
+                    <xsl:value-of
+                      select="substring($workCreation/mei:date[mei:date][1]/mei:date[position()=last()]/@notafter,
+                      1, 4)"/>
+                  </xsl:when>
+                  <!-- first date contains multiple date elements, the last of which has content -->
+                  <xsl:when
+                    test="$workCreation/mei:date[mei:date][1]/mei:date[position()=last()]/text()">
+                    <xsl:value-of
+                      select="$workCreation/mei:date[mei:date][1]/mei:date[position()=last()]"/>
+                  </xsl:when>
+                  <!-- first date has @notafter attribute -->
+                  <xsl:otherwise>
+                    <xsl:value-of select="substring($workCreation/mei:date[1]/@notafter, 1, 4)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:when>
-          <xsl:when test="count($workCreation/mei:date[not(mei:date)]) &gt; 1">
+          <xsl:when test="$dateType = '1'">
             <!-- multiple dates -->
             <xsl:for-each select="$workCreation/mei:date[not(mei:date)]">
               <xsl:call-template name="subfield">
                 <xsl:with-param name="code">b</xsl:with-param>
                 <xsl:with-param name="value">
                   <xsl:text>d</xsl:text>
-                  <xsl:value-of select="."/>
+                  <xsl:choose>
+                    <!-- single date element with @isodate attribute -->
+                    <xsl:when test="@isodate">
+                      <xsl:value-of select="substring(@isodate, 1, 4)"/>
+                    </xsl:when>
+                    <!-- single date element with content -->
+                    <xsl:otherwise>
+                      <xsl:value-of select="normalize-space(.)"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
                 </xsl:with-param>
               </xsl:call-template>
             </xsl:for-each>
           </xsl:when>
-          <xsl:when test="count($workCreation/mei:date[not(mei:date)]) = 1">
+          <xsl:when test="$dateType = '0'">
             <!-- single date -->
             <xsl:call-template name="subfield">
               <xsl:with-param name="code">b</xsl:with-param>
               <xsl:with-param name="value">
                 <xsl:text>d</xsl:text>
-                <xsl:value-of select="$workCreation/mei:date[not(mei:date)]"/>
+                <xsl:choose>
+                  <xsl:when test="$workCreation/mei:date[not(mei:date)]/text()">
+                    <xsl:value-of select="$workCreation/mei:date[not(mei:date)]"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="substring(@isodate, 1, 4)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:when>
