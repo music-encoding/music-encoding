@@ -54,7 +54,7 @@
 
   <!-- program name -->
   <xsl:variable name="progname">
-    <xsl:text>marc2mei-2013.xsl</xsl:text>
+    <xsl:text>marc2mei.xsl</xsl:text>
   </xsl:variable>
 
   <!-- program version -->
