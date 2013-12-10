@@ -6,14 +6,97 @@
   <xsl:output method="xml" indent="yes" encoding="UTF-8" omit-xml-declaration="no" standalone="no"/>
   <xsl:strip-space elements="*"/>
 
-  <!-- parameters -->
+  <!-- ======================================================================= -->
+  <!-- PARAMETERS                                                              -->
+  <!-- ======================================================================= -->
+
   <!-- PARAM:verbose
       This parameter controls the feedback provided by the stylesheet. The default value of 'true()'
       produces a log message for every change. When set to 'false()' no messages are produced.
   -->
   <xsl:param name="verbose" select="true()"/>
+  <!-- path to rng -->
+  <xsl:param name="rng_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <!-- path to schematron -->
+  <xsl:param name="sch_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+
+  <!-- ======================================================================= -->
+  <!-- GLOBAL VARIABLES                                                        -->
+  <!-- ======================================================================= -->
+
+  <!-- program name -->
+  <xsl:variable name="progname">
+    <xsl:text>mei2012To2013.xsl</xsl:text>
+  </xsl:variable>
+
+  <!-- program version -->
+  <xsl:variable name="version">
+    <xsl:text>1.0 beta</xsl:text>
+  </xsl:variable>
+
+  <!-- new line -->
+  <xsl:variable name="nl">
+    <xsl:text>&#xa;</xsl:text>
+  </xsl:variable>
+
+  <!-- ======================================================================= -->
+  <!-- UTILITIES / NAMED TEMPLATES                                             -->
+  <!-- ======================================================================= -->
+
+  <xsl:template name="thisID">
+    <xsl:choose>
+      <xsl:when test="@xml:id">
+        <xsl:value-of select="concat('[#', @xml:id, ']')"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="concat('[#', generate-id(), ']')"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="thisMeasure">
+    <xsl:choose>
+      <xsl:when test="ancestor::mei:measure[@n]">
+        <xsl:value-of select="ancestor::mei:measure/@n"/>
+      </xsl:when>
+      <xsl:when test="ancestor::mei:measure">
+        <xsl:for-each select="ancestor::mei:measure">
+          <xsl:value-of select="count(preceding::mei:measure) + 1"/>
+        </xsl:for-each>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="warning">
+    <xsl:param name="warningText"/>
+    <xsl:message>
+      <xsl:value-of select="normalize-space($warningText)"/>
+    </xsl:message>
+  </xsl:template>
+
+
+  <!-- ======================================================================= -->
+  <!-- MAIN OUTPUT TEMPLATE                                                    -->
+  <!-- ======================================================================= -->
 
   <xsl:template match="/">
+    <xsl:if test="$rng_model_path != ''">
+      <xsl:processing-instruction name="xml-model">
+        <xsl:value-of select="concat('&#32;href=&quot;', $rng_model_path, '&quot;')"/>
+        <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+      </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
+    </xsl:if>
+
+    <xsl:if test="$sch_model_path != ''">
+      <xsl:processing-instruction name="xml-model">
+        <xsl:value-of select="concat('&#32;href=&quot;', $sch_model_path, '&quot;')"/>
+        <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+      </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
+    </xsl:if>
     <xsl:choose>
       <xsl:when test="mei:mei|mei:meiHead|mei:music">
         <xsl:apply-templates select="mei:* | comment()" mode="copy"/>
@@ -26,6 +109,10 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+  <!-- ======================================================================= -->
+  <!-- MATCH TEMPLATES                                                         -->
+  <!-- ======================================================================= -->
 
   <xsl:template match="mei:mei|mei:meiHead|mei:music" mode="copy">
     <!-- Add @meiversion attribute to document element -->
@@ -591,7 +678,8 @@
         </xsl:attribute>
         <respStmt/>
         <changeDesc>
-          <p>Converted to MEI 2013 using mei2012To2013.xsl</p>
+          <p>Converted to MEI 2013 using <xsl:value-of select="$progname"/>, version <xsl:value-of
+              select="$version"/></p>
         </changeDesc>
         <date>
           <xsl:attribute name="isodate">
@@ -643,6 +731,36 @@
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
+
+  <xsl:template match="mei:score/mei:scoreDef/mei:staffGrp" mode="copy">
+    <xsl:choose>
+      <xsl:when test="not(@symbol='line') and not(mei:staffGrp)">
+        <staffGrp xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
+          xlink">
+          <xsl:attribute name="symbol">line</xsl:attribute>
+          <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates mode="copy"/>
+          </xsl:copy>
+        </staffGrp>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:copy-of select="@* except @symbol "/>
+          <xsl:choose>
+            <xsl:when test="@symbol">
+              <xsl:copy-of select="@symbol"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="symbol">line</xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:apply-templates mode="copy"/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
 
   <xsl:template match="mei:seriesStmt" mode="asBibl">
     <!-- Rename seriesStmt to series -->
@@ -805,37 +923,6 @@
       <xsl:apply-templates select="mei:notesStmt" mode="copy"/>
       <xsl:apply-templates select="mei:classification" mode="copy"/>
     </xsl:copy>
-  </xsl:template>
-
-  <xsl:template name="thisID">
-    <xsl:choose>
-      <xsl:when test="@xml:id">
-        <xsl:value-of select="concat('[#', @xml:id, ']')"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="concat('[#', generate-id(), ']')"/>
-      </xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="thisMeasure">
-    <xsl:choose>
-      <xsl:when test="ancestor::mei:measure[@n]">
-        <xsl:value-of select="ancestor::mei:measure/@n"/>
-      </xsl:when>
-      <xsl:when test="ancestor::mei:measure">
-        <xsl:for-each select="ancestor::mei:measure">
-          <xsl:value-of select="count(preceding::mei:measure) + 1"/>
-        </xsl:for-each>
-      </xsl:when>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="warning">
-    <xsl:param name="warningText"/>
-    <xsl:message>
-      <xsl:value-of select="normalize-space($warningText)"/>
-    </xsl:message>
   </xsl:template>
 
   <xsl:template match="@dur.ges" mode="copy">
