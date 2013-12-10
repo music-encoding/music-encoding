@@ -2583,7 +2583,8 @@
           </titleStmt>
 
           <!-- creation -->
-          <xsl:variable name="creation_note" select="marc:datafield[@tag='045' or @tag='508']"/>
+          <xsl:variable name="creation_note" select="marc:datafield[(@tag='045' and
+            marc:subfield[@code='b']) or @tag='508']"/>
 
           <!-- incipits -->
           <xsl:apply-templates select="marc:datafield[@tag='031']"/>
