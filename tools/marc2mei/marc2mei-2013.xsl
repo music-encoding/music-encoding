@@ -2000,6 +2000,27 @@
     <relator code="wit">witness</relator>
   </xsl:variable>
 
+  <!-- Name and Title Authority Source Codes -->
+  <xsl:variable name="nameAuthList">
+    <nameAuth code="abne">Autoridades de la Biblioteca Nacional de España</nameAuth>
+    <nameAuth code="banqa">Fichier d'autorité local de Bibliothèque et Archives nationales du
+      Québec</nameAuth>
+    <nameAuth code="bibalex">Bibliotheca Alexandrina Name and Subject Authority file</nameAuth>
+    <nameAuth code="conorsi">CONOR.SI(IZUM)</nameAuth>
+    <nameAuth code="gkd">Gemeinsame Körperschaftsdatei</nameAuth>
+    <nameAuth code="gnd">Gemeinsame Normdatei</nameAuth>
+    <nameAuth code="hapi">HAPI Thesaurus and Name Authority, 1970-2000</nameAuth>
+    <nameAuth code="hkcan">Hong Kong Chinese Authority File (Name)</nameAuth>
+    <nameAuth code="lacnaf">Library and Archives Canada Name Authority File</nameAuth>
+    <nameAuth code="naf">NACO Authority File</nameAuth>
+    <nameAuth code="nalnaf">National Agricultural Library Name Authority File</nameAuth>
+    <nameAuth code="nlmnaf">National Library of Medicine Name Authority File</nameAuth>
+    <nameAuth code="nznb">New Zealand National Bibliographic</nameAuth>
+    <nameAuth code="sanb">South African National Bibliography Authority File</nameAuth>
+    <nameAuth code="ulan">Union List of Artist Names</nameAuth>
+    <nameAuth code="unbisn">UNBIS Name Authority List</nameAuth>
+  </xsl:variable>
+
   <!-- New line -->
   <xsl:variable name="nl">
     <xsl:text>&#xa;</xsl:text>
@@ -2038,7 +2059,8 @@
   <xsl:template name="classification">
     <xsl:variable name="classification" select="marc:datafield[@tag='047' or @tag='050' or
       @tag='082' or @tag='090' or @tag='648' or @tag='600' or @tag='650' or @tag='651' or @tag='653'
-      or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658']"/>
+      or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658' or @tag='751' or
+      @tag='752']"/>
 
     <xsl:if test="$classification">
       <!-- classification codes -->
@@ -2096,15 +2118,29 @@
 
           <!-- record-defined schemes -->
           <xsl:for-each select="marc:datafield[(@tag='600' or @tag='650' or @tag='651' or @tag='653'
-            or @tag='657') and marc:subfield[@code='2']]">
+            or @tag='657' or @tag='751' or @tag='752') and marc:subfield[@code='2']]">
             <xsl:variable name="classScheme">
               <xsl:value-of select="marc:subfield[@code='2']"/>
             </xsl:variable>
             <classCode>
               <xsl:attribute name="xml:id">
-                <xsl:value-of select="replace($classScheme, '&#32;', '_')"/>
+                <xsl:choose>
+                  <xsl:when test="@tag='751' or @tag='752'">
+                    <xsl:value-of select="upper-case(replace($classScheme, '&#32;', '_'))"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="replace($classScheme, '&#32;', '_')"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:attribute>
-              <xsl:value-of select="$classScheme"/>
+              <xsl:choose>
+                <xsl:when test="@tag='751' or @tag='752'">
+                  <xsl:value-of select="$nameAuthList/mei:nameAuth[@code=$classScheme]"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="$classScheme"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </classCode>
           </xsl:for-each>
         </xsl:variable>
@@ -3667,6 +3703,11 @@
           </xsl:call-template>
         </xsl:otherwise>
       </xsl:choose>
+      <xsl:if test="marc:subfield[@code='5']">
+        <xsl:text> (</xsl:text>
+        <xsl:value-of select="marc:subfield[@code='5']"/>
+        <xsl:text>)</xsl:text>
+      </xsl:if>
     </annot>
   </xsl:template>
 
@@ -3970,7 +4011,6 @@
             <xsl:call-template name="subfieldSelect">
               <xsl:with-param name="codes">abcd</xsl:with-param>
             </xsl:call-template>
-            <!--<xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>-->
           </corpName>
         </xsl:when>
         <xsl:otherwise>
@@ -4103,6 +4143,45 @@
         </xsl:with-param>
       </xsl:call-template>
     </contentItem>
+  </xsl:template>
+
+  <!-- associated place -->
+  <xsl:template match="marc:datafield[@tag='751' or @tag='752']">
+    <term>
+      <xsl:variable name="tag" select="@tag"/>
+      <xsl:attribute name="label">
+        <xsl:text>place</xsl:text>
+      </xsl:attribute>
+      <xsl:if test="marc:subfield[@code='2']">
+        <xsl:attribute name="classCode">
+          <xsl:value-of select="concat('#', upper-case(marc:subfield[@code='2']))"/>
+        </xsl:attribute>
+      </xsl:if>
+      <!-- @dbkey not permitted, but should be -->
+      <!--<xsl:if test="marc:subfield[@code='0']">
+        <xsl:attribute name="dbkey">
+          <xsl:value-of select="marc:subfield[@code='0']"/>
+        </xsl:attribute>
+      </xsl:if>-->
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="chopPunctuation">
+        <xsl:with-param name="chopString">
+          <xsl:call-template name="subfieldSelect">
+            <xsl:with-param name="codes">
+              <xsl:choose>
+                <xsl:when test="$tag='751'">a</xsl:when>
+                <xsl:when test="$tag='752'">abcdefgh</xsl:when>
+              </xsl:choose>
+            </xsl:with-param>
+            <xsl:with-param name="delimiter">, </xsl:with-param>
+          </xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </term>
   </xsl:template>
 
   <!-- relator codes -->
