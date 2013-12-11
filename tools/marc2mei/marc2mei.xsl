@@ -2433,6 +2433,9 @@
             <!-- single source if no fields with $3 -->
             <xsl:when test="count(//marc:subfield[@code='3']) = 0">
               <source>
+                <!-- system control number(s) -->
+                <xsl:variable name="systemIDs" select="marc:datafield[@tag='010' or @tag='035']"/>
+                <xsl:apply-templates select="$systemIDs"/>
                 <titleStmt>
 
                   <!-- source title(s) -->
@@ -2521,6 +2524,9 @@
                   <xsl:attribute name="label">
                     <xsl:value-of select="current-grouping-key()"/>
                   </xsl:attribute>
+                  <!-- system control number(s) -->
+                  <xsl:variable name="systemIDs" select="marc:datafield[@tag='010' or @tag='035']"/>
+                  <xsl:apply-templates select="$systemIDs"/>
                   <!-- source title same as work title? -->
                   <xsl:variable name="sourceContent">
                     <xsl:for-each select="current-group()">
@@ -2675,6 +2681,21 @@
         </work>
       </workDesc>
     </meiHead>
+  </xsl:template>
+
+  <!-- LC control number -->
+  <xsl:template match="marc:datafield[@tag='010']">
+    <xsl:variable name="tag" select="@tag"/>
+    <identifier>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">ab</xsl:with-param>
+      </xsl:call-template>
+    </identifier>
   </xsl:template>
 
   <!-- ISBN -->
@@ -2898,6 +2919,21 @@
         </incipText>
       </xsl:if>
     </incip>
+  </xsl:template>
+
+  <!-- system control number -->
+  <xsl:template match="marc:datafield[@tag='035']">
+    <xsl:variable name="tag" select="@tag"/>
+    <identifier>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">a</xsl:with-param>
+      </xsl:call-template>
+    </identifier>
   </xsl:template>
 
   <!-- language -->
@@ -3402,11 +3438,7 @@
                   <xsl:value-of select="concat(../@tag, 'a')"/>
                 </xsl:with-param>
               </xsl:call-template>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:value-of select="."/>
-                </xsl:with-param>
-              </xsl:call-template>
+              <xsl:value-of select="."/>
             </pubPlace>
           </xsl:when>
           <xsl:when test="@code='b'">
@@ -3416,11 +3448,7 @@
                   <xsl:value-of select="concat(../@tag, 'b')"/>
                 </xsl:with-param>
               </xsl:call-template>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:value-of select="."/>
-                </xsl:with-param>
-              </xsl:call-template>
+              <xsl:value-of select="."/>
             </publisher>
           </xsl:when>
           <xsl:when test="@code='c'">
@@ -3430,11 +3458,7 @@
                   <xsl:value-of select="concat(../@tag, 'c')"/>
                 </xsl:with-param>
               </xsl:call-template>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:value-of select="."/>
-                </xsl:with-param>
-              </xsl:call-template>
+              <xsl:value-of select="."/>
             </date>
           </xsl:when>
         </xsl:choose>
