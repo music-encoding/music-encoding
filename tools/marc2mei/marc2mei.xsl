@@ -47,6 +47,8 @@
   <xsl:param name="fileMainEntryOnly">true</xsl:param>
   <!-- preserve main entry in description of work -->
   <xsl:param name="workMainEntryOnly">false</xsl:param>
+  <!-- preserve local notes (59x) -->
+  <xsl:param name="keepLocalNotes">true</xsl:param>
 
   <!-- ======================================================================= -->
   <!-- GLOBAL VARIABLES                                                        -->
@@ -2382,7 +2384,7 @@
           </xsl:for-each>
         </titleStmt>
 
-        <!-- edtStmt -->
+        <!-- edition statement -->
         <!-- UNUSED -->
 
         <!-- extent -->
@@ -2397,16 +2399,29 @@
         <!-- UNUSED -->
 
         <!-- notesStmt-->
-        <!-- if multiple sources, notes go here -->
+        <!-- if multiple sources, general notes go here -->
         <xsl:if test="count(//marc:subfield[@code='3']) &gt; 0">
-          <xsl:variable name="notes" select="marc:datafield[@tag='254' or @tag='500' or @tag='506'
-            or @tag='510' or @tag='520' or @tag='525' or @tag='533' or @tag='541' or
-            @tag='545' or @tag='546' or @tag='555' or @tag='561' or @tag='563' or
-            @tag='580' or @tag='590' or @tag='591' or @tag='592' or @tag='593' or
-            @tag='594' or @tag='596' or @tag='597' or @tag='598'][not(marc:subfield[@code='3'])]"/>
+          <xsl:variable name="notes">
+            <xsl:choose>
+              <xsl:when test="$keepLocalNotes = 'true'">
+                <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
+                  @tag='506' or @tag='510' or @tag='520' or @tag='525' or
+                  @tag='533' or @tag='541' or @tag='545' or @tag='546' or
+                  @tag='555' or @tag='561' or @tag='563' or @tag='580' or @tag='590' or
+                  @tag='591' or @tag='592' or @tag='593' or @tag='594' or @tag='596' or @tag='597'
+                  or @tag='598']"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
+                  @tag='506' or @tag='510' or @tag='520' or @tag='525' or
+                  @tag='533' or @tag='541' or @tag='545' or @tag='546' or
+                  @tag='555' or @tag='561' or @tag='563' or @tag='580']"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
           <xsl:if test="$notes">
             <notesStmt>
-              <xsl:apply-templates select="$notes"/>
+              <xsl:apply-templates select="$notes/*"/>
             </notesStmt>
           </xsl:if>
         </xsl:if>
@@ -2463,6 +2478,13 @@
                   </xsl:for-each>
                 </titleStmt>
 
+                <!-- edition statement -->
+                <xsl:if test="marc:datafield[@tag='250']">
+                  <editionStmt>
+                    <xsl:apply-templates select="marc:datafield[@tag='250']"/>
+                  </editionStmt>
+                </xsl:if>
+
                 <!-- pubStmt -->
                 <xsl:apply-templates select="marc:datafield[@tag='260']"/>
 
@@ -2484,15 +2506,27 @@
                 </xsl:if>
 
                 <!-- notesStmt -->
-                <xsl:variable name="notes" select="marc:datafield[@tag='254' or @tag='500' or
-                  @tag='506' or @tag='510' or @tag='520' or @tag='525' or
-                  @tag='533' or @tag='541' or @tag='545' or @tag='546' or
-                  @tag='555' or @tag='561' or @tag='563' or @tag='580' or @tag='590' or
-                  @tag='591' or @tag='592' or @tag='593' or @tag='594' or @tag='596' or @tag='597'
-                  or @tag='598']"/>
+                <xsl:variable name="notes">
+                  <xsl:choose>
+                    <xsl:when test="$keepLocalNotes = 'true'">
+                      <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
+                        @tag='506' or @tag='510' or @tag='520' or @tag='525' or
+                        @tag='533' or @tag='541' or @tag='545' or @tag='546' or
+                        @tag='555' or @tag='561' or @tag='563' or @tag='580' or @tag='590' or
+                        @tag='591' or @tag='592' or @tag='593' or @tag='594' or @tag='596' or
+                        @tag='597' or @tag='598']"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
+                        @tag='506' or @tag='510' or @tag='520' or @tag='525' or
+                        @tag='533' or @tag='541' or @tag='545' or @tag='546' or
+                        @tag='555' or @tag='561' or @tag='563' or @tag='580']"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+                </xsl:variable>
                 <xsl:if test="$notes">
                   <notesStmt>
-                    <xsl:apply-templates select="$notes"/>
+                    <xsl:apply-templates select="$notes/*"/>
                   </notesStmt>
                 </xsl:if>
 
@@ -2513,12 +2547,28 @@
             </xsl:when>
             <xsl:otherwise>
               <!-- multiple sources; group datafields that can have subfield 3 on the value of subfield 3 -->
-              <xsl:for-each-group select="marc:datafield[@tag='260' or @tag='300' or @tag='490' or
-                @tag='500' or @tag='506' or @tag='510' or @tag='520' or @tag='521' or @tag='524' or
-                @tag='530' or @tag='533' or @tag='534' or @tag='535' or @tag='540' or @tag='541' or
-                @tag='542' or @tag='544' or @tag='546' or @tag='561' or @tag='563' or @tag='581' or
-                @tag='585' or @tag='586' or @tag='590' or @tag='592' or
-                @tag='593'][marc:subfield[@code='3']]" group-by="marc:subfield[@code='3']">
+              <xsl:variable name="notes">
+                <xsl:choose>
+                  <xsl:when test="$keepLocalNotes = 'true'">
+                    <xsl:copy-of select="marc:datafield[@tag='250' or @tag='260' or @tag='300' or
+                      @tag='490' or @tag='500' or @tag='506' or @tag='510' or @tag='520' or
+                      @tag='521' or @tag='524' or @tag='530' or @tag='533' or
+                      @tag='534' or @tag='535' or @tag='540' or @tag='541' or
+                      @tag='542' or @tag='544' or @tag='546' or @tag='561' or @tag='563' or
+                      @tag='581' or @tag='585' or @tag='586' or @tag='590' or @tag='592' or
+                      @tag='593'][marc:subfield[@code='3']]"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:copy-of select="marc:datafield[@tag='250' or @tag='260' or @tag='300' or
+                      @tag='490' or @tag='500' or @tag='506' or @tag='510' or @tag='520' or
+                      @tag='521' or @tag='524' or @tag='530' or @tag='533' or
+                      @tag='534' or @tag='535' or @tag='540' or @tag='541' or
+                      @tag='542' or @tag='544' or @tag='546' or @tag='561' or @tag='563' or
+                      @tag='581' or @tag='585' or @tag='586'][marc:subfield[@code='3']]"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:variable>
+              <xsl:for-each-group select="$notes/*" group-by="marc:subfield[@code='3']">
                 <xsl:sort select="current-grouping-key()"/>
                 <source>
                   <xsl:attribute name="label">
@@ -2534,9 +2584,11 @@
                     </xsl:for-each>
                   </xsl:variable>
                   <xsl:copy-of select="$sourceContent/*[not(local-name()='annot')]"/>
-                  <notesStmt>
-                    <xsl:copy-of select="$sourceContent/*[local-name()='annot']"/>
-                  </notesStmt>
+                  <xsl:if test="$sourceContent/*[local-name()='annot']">
+                    <notesStmt>
+                      <xsl:copy-of select="$sourceContent/*[local-name()='annot']"/>
+                    </notesStmt>
+                  </xsl:if>
                 </source>
               </xsl:for-each-group>
             </xsl:otherwise>
@@ -3414,6 +3466,21 @@
         </incipText>
       </xsl:if>
     </incip>
+  </xsl:template>
+
+  <!-- edition statement -->
+  <xsl:template match="marc:datafield[@tag='250']">
+    <edition>
+      <xsl:variable name="tag" select="@tag"/>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">ab</xsl:with-param>
+      </xsl:call-template>
+    </edition>
   </xsl:template>
 
   <!-- music presentation -->
