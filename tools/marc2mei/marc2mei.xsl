@@ -2702,10 +2702,6 @@
                         </pubStmt>
                       </xsl:if>
 
-                      <!-- pubStmt -->
-                      <xsl:apply-templates select="$componentContent/marc:datafield[@tag='260' or
-                        @tag='264'][marc:subfield[@code='3'] = current-grouping-key()]"/>
-
                       <!-- physLoc -->
                       <xsl:apply-templates
                         select="$componentContent/marc:datafield[@tag='852'][marc:subfield[@code='3']
