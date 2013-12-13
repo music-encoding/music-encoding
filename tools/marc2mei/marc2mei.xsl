@@ -2477,8 +2477,10 @@
                 <xsl:choose>
                   <xsl:when test="marc:datafield[@tag='700' or @tag='730' or
                     @tag='740'][@ind2='2']">
-                    <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
-                      @tag='740'][@ind2='2']"/>
+                    <contents>
+                      <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
+                        @tag='740'][@ind2='2']" mode="contents"/>
+                    </contents>
                   </xsl:when>
                   <xsl:when test="marc:datafield[@tag='505']">
                     <xsl:apply-templates select="marc:datafield[@tag='505']"/>
@@ -2605,8 +2607,10 @@
                 <xsl:choose>
                   <xsl:when test="marc:datafield[@tag='700' or @tag='730' or
                     @tag='740'][@ind2='2']">
-                    <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
-                      @tag='740'][@ind2='2']"/>
+                    <contents>
+                      <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
+                        @tag='740'][@ind2='2']" mode="contents"/>
+                    </contents>
                   </xsl:when>
                   <xsl:when test="marc:datafield[@tag='505']">
                     <xsl:apply-templates select="marc:datafield[@tag='505']"/>
@@ -4034,15 +4038,16 @@
       </xsl:if>
       <xsl:choose>
         <xsl:when test="@ind2='0'">
-          <xsl:for-each select="marc:subfield[@code='t']">
-            <contentItem>
-              <xsl:call-template name="chopPunctuation">
-                <xsl:with-param name="chopString">
-                  <xsl:value-of select="replace(., '--$', '')"/>
-                </xsl:with-param>
-              </xsl:call-template>
-            </contentItem>
-          </xsl:for-each>
+          <xsl:variable name="contentItems">
+            <xsl:value-of select="."/>
+          </xsl:variable>
+          <xsl:analyze-string select="$contentItems" regex="--">
+            <xsl:non-matching-substring>
+              <contentItem>
+                <xsl:value-of select="normalize-space(.)"/>
+              </contentItem>
+            </xsl:non-matching-substring>
+          </xsl:analyze-string>
         </xsl:when>
         <xsl:otherwise>
           <p>
@@ -4282,6 +4287,26 @@
     </annot>
   </xsl:template>
 
+  <!-- contents -->
+  <xsl:template match="marc:datafield[@tag='700' or @tag='730' or @tag='740']" mode="contents">
+    <xsl:variable name="tag" select="@tag"/>
+    <contentItem>
+      <xsl:call-template name="analog">
+        <xsl:with-param name="tag">
+          <xsl:value-of select="$tag"/>
+        </xsl:with-param>
+      </xsl:call-template>
+      <xsl:call-template name="subfieldSelect">
+        <xsl:with-param name="codes">
+          <xsl:choose>
+            <xsl:when test="$tag='700'">adt</xsl:when>
+            <xsl:otherwise>a</xsl:otherwise>
+          </xsl:choose>
+        </xsl:with-param>
+      </xsl:call-template>
+    </contentItem>
+  </xsl:template>
+
   <!-- responsibility statement; added entry -->
   <xsl:template match="marc:datafield[@tag='700' or @tag='710']" mode="respStmt">
     <xsl:variable name="tag">
@@ -4357,27 +4382,6 @@
         </xsl:when>
       </xsl:choose>
     </respStmt>
-  </xsl:template>
-
-  <!-- contents -->
-  <xsl:template match="marc:datafield[@tag='730' or @tag='740']">
-    <xsl:variable name="tag" select="@tag"/>
-    <contents>
-      <contentItem>
-        <xsl:call-template name="analog">
-          <xsl:with-param name="tag">
-            <xsl:value-of select="$tag"/>
-          </xsl:with-param>
-        </xsl:call-template>
-        <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString">
-            <xsl:call-template name="subfieldSelect">
-              <xsl:with-param name="codes">a</xsl:with-param>
-            </xsl:call-template>
-          </xsl:with-param>
-        </xsl:call-template>
-      </contentItem>
-    </contents>
   </xsl:template>
 
   <!-- associated place -->
