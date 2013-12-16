@@ -2551,9 +2551,9 @@
             <!-- copy events -->
             <xsl:copy-of select="events"/>
             <!-- copy controlevents, dropping any empty controlevents containers -->
-            <xsl:if test="controlevents/node()">
+            <!--<xsl:if test="controlevents/node()">
               <xsl:copy-of select="controlevents"/>
-            </xsl:if>
+            </xsl:if>-->
 
           </part>
         </xsl:for-each>
@@ -4248,7 +4248,7 @@
       </xsl:if>
     </direction>
   </xsl:template>
-  
+
   <xsl:template match="mei:tempo" mode="stage2.dir">
     <direction xmlns="">
       <xsl:if test="@place">
