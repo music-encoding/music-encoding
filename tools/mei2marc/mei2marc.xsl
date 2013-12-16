@@ -1292,12 +1292,8 @@
   </xsl:template>
 
   <xsl:template name="leader">
-    <xsl:variable name="leaderComment">The leader value is *bogus*, just here to get the output to
-      validate!</xsl:variable>
-    <xsl:comment>
-      <xsl:value-of select="normalize-space($leaderComment)"/>
-    </xsl:comment>
-    <leader>01044ccm a2200301Ia 4500</leader>
+    <!-- currently produces a generic (read, not very useful) leader -->
+    <leader>00000nmm0a22000007004500</leader>
   </xsl:template>
 
   <xsl:template name="subfield">
