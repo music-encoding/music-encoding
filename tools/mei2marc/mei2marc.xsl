@@ -2009,25 +2009,14 @@
       <xsl:if test="ancestor::mei:respStmt/mei:resp or @role">
         <xsl:variable name="role">
           <xsl:choose>
-            <xsl:when test="ancestor::mei:respStmt/mei:resp">
-              <xsl:choose>
-                <xsl:when test="matches(ancestor::mei:respStmt/mei:resp, 'encoder')">
-                  <xsl:text>markup editor</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:value-of select="ancestor::mei:respStmt/mei:resp"/>
-                </xsl:otherwise>
-              </xsl:choose>
+            <xsl:when test="ancestor::mei:respStmt/mei:resp[matches(., 'encoder')]">
+              <xsl:text>markup editor</xsl:text>
+            </xsl:when>
+            <xsl:when test="matches(@role, 'encoder')">
+              <xsl:text>markup editor</xsl:text>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:choose>
-                <xsl:when test="matches(@role, 'encoder')">
-                  <xsl:text>markup editor</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                  <xsl:value-of select="@role"/>
-                </xsl:otherwise>
-              </xsl:choose>
+              <xsl:value-of select="@role"/>
             </xsl:otherwise>
           </xsl:choose>
         </xsl:variable>
