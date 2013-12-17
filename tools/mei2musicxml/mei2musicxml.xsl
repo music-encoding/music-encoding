@@ -174,40 +174,11 @@
         </xsl:choose>
       </xsl:variable>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <!-- use the xml:id of preceding staffGrp that has staff definition child for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <!-- use the xml:id of preceding staffGrp that has staff definition descendant for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <!-- use the xml:id of preceding staffDef for the current staff -->
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <xsl:attribute name="partID">
         <xsl:value-of select="$partID"/>
@@ -327,41 +298,11 @@
         <xsl:value-of select="$measureDuration"/>
       </xsl:attribute>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <!-- use the xml:id of preceding staffGrp that has staff definition child for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <!-- use the xml:id of preceding staffGrp that has staff definition descendant for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <!-- use the xml:id of preceding staffDef for the current staff -->
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <!-- construct a part ID -->
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <xsl:attribute name="partID">
         <xsl:value-of select="$partID"/>
@@ -566,41 +507,11 @@
         <xsl:value-of select="$measureDuration"/>
       </xsl:attribute>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <!-- use the xml:id of preceding staffGrp that has staff definition child for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <!-- use the xml:id of preceding staffGrp that has staff definition descendant for the current staff -->
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <!-- use the xml:id of preceding staffDef for the current staff -->
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <!-- construct a part ID -->
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <xsl:attribute name="partID">
         <xsl:value-of select="$partID"/>
@@ -758,37 +669,11 @@
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name() = 'staff') and not(name()='dur.ges')]"/>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <xsl:attribute name="partID">
         <xsl:value-of select="$partID"/>
@@ -863,7 +748,7 @@
           </xsl:choose>
         </xsl:variable>
         <xsl:for-each select="mei:respStmt/*[@role='encoder']">
-          <xsl:value-of select="replace(., '\.+', '.')"/>
+          <xsl:value-of select="replace(., '[.:,;+/ ]+$', '')"/>
           <xsl:if test="position() != last()">
             <xsl:value-of select="$separator"/>
           </xsl:if>
@@ -871,7 +756,7 @@
       </xsl:variable>
       <xsl:variable name="title">
         <xsl:for-each select="mei:title">
-          <xsl:value-of select="."/>
+          <xsl:value-of select="replace(., '[.:,;+/ ]+$', '')"/>
           <xsl:if test="position() != last()">
             <xsl:text>,&#32;</xsl:text>
           </xsl:if>
@@ -879,7 +764,7 @@
       </xsl:variable>
       <xsl:variable name="publisher">
         <xsl:for-each select="../mei:pubStmt/mei:respStmt[1]/mei:*">
-          <xsl:value-of select="replace(., '\.+', '.')"/>
+          <xsl:value-of select="replace(., '[.:,;+/ ]+$', '')"/>
           <xsl:if test="position() != last()">
             <xsl:text>,&#32;</xsl:text>
           </xsl:if>
@@ -887,7 +772,7 @@
       </xsl:variable>
       <xsl:variable name="pubPlace">
         <xsl:for-each select="../mei:pubStmt/mei:address[1]/mei:addrLine">
-          <xsl:value-of select="replace(., '\.+', '.')"/>
+          <xsl:value-of select="replace(., '[.:,;+/ ]+$', '')"/>
           <xsl:if test="position() != last()">
             <xsl:text>,&#32;</xsl:text>
           </xsl:if>
@@ -2647,37 +2532,11 @@
         <xsl:value-of select="$measureDuration"/>
       </xsl:attribute>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <!-- part ID -->
       <xsl:attribute name="partID">
@@ -3109,37 +2968,11 @@
         <xsl:value-of select="ancestor::mei:staff/@n"/>
       </xsl:variable>
       <xsl:variable name="partID">
-        <xsl:choose>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
-            <xsl:value-of
-              select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
-            />
-          </xsl:when>
-          <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
-            <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
-              @xml:id][1]/@xml:id"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <!-- construct a part ID -->
-            <xsl:text>P_</xsl:text>
-            <xsl:choose>
-              <xsl:when
-                test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
-                />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of
-                  select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:call-template name="partID">
+          <xsl:with-param name="thisStaff">
+            <xsl:value-of select="$thisStaff"/>
+          </xsl:with-param>
+        </xsl:call-template>
       </xsl:variable>
       <!-- part ID -->
       <xsl:attribute name="partID">
@@ -3692,6 +3525,48 @@
         <xsl:value-of select="($meterCount div ($meterUnit div ($meterUnit div 4))) * $ppq"/>
       </xsl:when>
     </xsl:choose>
+  </xsl:template>
+  
+  <xsl:template name="partID">
+    <xsl:param name="thisStaff">1</xsl:param>
+    <xsl:choose>
+      <!-- use the xml:id of preceding staffGrp that has staff definition child for the current staff -->
+      <xsl:when test="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]]">
+        <xsl:value-of
+          select="preceding::mei:staffGrp[@xml:id][mei:staffDef[@n=$thisStaff]][1]/@xml:id"/>
+      </xsl:when>
+      <!-- use the xml:id of preceding staffGrp that has staff definition descendant for the current staff -->
+      <xsl:when test="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+        <xsl:value-of
+          select="preceding::mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/@xml:id"
+        />
+      </xsl:when>
+      <!-- use the xml:id of preceding staffDef for the current staff -->
+      <xsl:when test="preceding::mei:staffDef[@n=$thisStaff and @xml:id]">
+        <xsl:value-of select="preceding::mei:staffDef[@n=$thisStaff and
+          @xml:id][1]/@xml:id"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <!-- construct a part ID -->
+        <xsl:text>P_</xsl:text>
+        <xsl:value-of select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff])"/>
+        
+        <!-- construct a part ID -->
+        <!--<xsl:text>P_</xsl:text>
+        <xsl:choose>
+          <xsl:when
+            test="count(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef)=1">
+            <xsl:value-of
+              select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[1])"
+            />
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of
+              select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1])"/>
+          </xsl:otherwise>
+        </xsl:choose>-->
+      </xsl:otherwise>
+    </xsl:choose>    
   </xsl:template>
 
   <xsl:template name="rendition">
