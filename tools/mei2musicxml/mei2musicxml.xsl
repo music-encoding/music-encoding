@@ -1347,8 +1347,223 @@
                     </system-layout>
                   </xsl:if>
                   <xsl:variable name="staffLayout">
-                    <xsl:for-each select="$localScoreDef//mei:staffDef[@spacing]">
-                      <!-- if the staff belongs to the current part, output its layout info -->
+
+                    <xsl:choose>
+                      <!-- local definitions present; look for distances on staff definitions -->
+                      <xsl:when test="$localScoreDef//mei:staffDef[@spacing]">
+                        <xsl:for-each select="$localScoreDef//mei:staffDef[@spacing]">
+                          <xsl:variable name="thisStaff">
+                            <xsl:value-of select="@n"/>
+                          </xsl:variable>
+                          <!-- the part this staff belongs to -->
+                          <xsl:variable name="staffPart">
+                            <xsl:choose>
+                              <xsl:when
+                                test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                                <xsl:value-of
+                                  select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                                />
+                              </xsl:when>
+                              <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id and
+                                @n=$thisStaff]">
+                                <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id and
+                                  @n=$thisStaff]/@xml:id"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </xsl:variable>
+                          <!-- if this staff belongs to the current part -->
+                          <xsl:if test="$staffPart=$thisPart">
+                            <staff-layout>
+                              <xsl:attribute name="number">
+                                <xsl:choose>
+                                  <xsl:when
+                                    test="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]]">
+                                    <xsl:for-each
+                                      select="$defaultScoreDef//mei:staffGrp[@xml:id][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                      <xsl:value-of select="count(preceding-sibling::mei:staffDef) +
+                                        1"/>
+                                    </xsl:for-each>
+                                  </xsl:when>
+                                  <xsl:when
+                                    test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                                    <xsl:value-of select="1"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </xsl:attribute>
+                              <staff-distance>
+                                <xsl:choose>
+                                  <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                                    <xsl:value-of select="@spacing"/>
+                                  </xsl:when>
+                                  <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                                    <xsl:value-of select="format-number(number(replace(@spacing,
+                                      '[a-z]+$', '')) * 5, '###0.####')"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </staff-distance>
+                            </staff-layout>
+                          </xsl:if>
+                        </xsl:for-each>
+                      </xsl:when>
+                      <!--if initial measure, look for staff distances on default scoreDef -->
+                      <xsl:when test="$localScoreDef/mei:initialAttributes">
+                        <xsl:choose>
+                          <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart] or
+                            $defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef">
+                            <xsl:for-each select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart]">
+                              <staff-layout>
+                                <staff-distance>
+                                  <xsl:choose>
+                                    <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                                      <xsl:value-of select="@spacing"/>
+                                    </xsl:when>
+                                    <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                                      <xsl:value-of select="format-number(number(replace(@spacing,
+                                        '[a-z]+$', '')) * 5, '###0.####')"/>
+                                    </xsl:when>
+                                  </xsl:choose>
+                                </staff-distance>
+                              </staff-layout>
+                            </xsl:for-each>
+                            <xsl:for-each
+                              select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart]//mei:staffDef">
+                              <staff-layout>
+                                <xsl:attribute name="number">
+                                  <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"
+                                  />
+                                </xsl:attribute>
+                                <staff-distance>
+                                  <xsl:choose>
+                                    <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                                      <xsl:value-of select="@spacing"/>
+                                    </xsl:when>
+                                    <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                                      <xsl:value-of select="format-number(number(replace(@spacing,
+                                        '[a-z]+$', '')) * 5, '###0.####')"/>
+                                    </xsl:when>
+                                  </xsl:choose>
+                                </staff-distance>
+                              </staff-layout>
+                            </xsl:for-each>
+                          </xsl:when>
+                        </xsl:choose>
+                      </xsl:when>
+                    </xsl:choose>
+
+
+
+
+
+                    <!--<xsl:choose>
+                      <xsl:when test="$localScoreDef//mei:staffDef[@spacing]">
+                        <xsl:for-each select="$localScoreDef//mei:staffDef[@spacing]">
+                          <!-\- if the staff belongs to the current part, output its layout info -\->
+                          <xsl:variable name="thisStaff">
+                            <xsl:value-of select="@n"/>
+                          </xsl:variable>
+                          <xsl:variable name="staffPart">
+                            <xsl:choose>
+                              <xsl:when
+                                test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                                <xsl:value-of
+                                  select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                                />
+                              </xsl:when>
+                              <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                                @n=$thisStaff]">
+                                <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart
+                                  and @n=$thisStaff]/@xml:id"/>
+                              </xsl:when>
+                            </xsl:choose>
+                          </xsl:variable>
+                          <xsl:if test="$staffPart=$thisPart">
+                            <staff-layout>
+                              <xsl:attribute name="number">
+                                <xsl:choose>
+                                  <xsl:when
+                                    test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                                    <xsl:for-each
+                                      select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                      <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"
+                                      />
+                                    </xsl:for-each>
+                                  </xsl:when>
+                                  <xsl:when
+                                    test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                                    <xsl:value-of select="1"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </xsl:attribute>
+                              <staff-distance>
+                                <xsl:choose>
+                                  <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                                    <xsl:value-of select="@spacing"/>
+                                  </xsl:when>
+                                  <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                                    <xsl:value-of select="format-number(number(replace(@spacing,
+                                      '[a-z]+$', '')) * 5, '###0.####')"/>
+                                  </xsl:when>
+                                </xsl:choose>
+                              </staff-distance>
+                            </staff-layout>
+                          </xsl:if>
+                        </xsl:for-each>
+                      </xsl:when>
+                      <xsl:when test="$localScoreDef/mei:initialAttributes">
+                        <xsl:variable name="thisStaff">
+                          <xsl:value-of select="@n"/>
+                        </xsl:variable>
+                        <xsl:variable name="staffPart">
+                          <xsl:choose>
+                            <xsl:when
+                              test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                              <xsl:value-of
+                                select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]/@xml:id"
+                              />
+                            </xsl:when>
+                            <xsl:when test="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart and
+                              @n=$thisStaff]">
+                              <xsl:value-of select="$defaultScoreDef//mei:staffDef[@xml:id=$thisPart
+                                and @n=$thisStaff]/@xml:id"/>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:variable>
+                        <xsl:if test="$staffPart=$thisPart">
+                          <staff-layout>
+                            <xsl:attribute name="number">
+                              <xsl:choose>
+                                <xsl:when
+                                  test="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]]">
+                                  <xsl:for-each
+                                    select="$defaultScoreDef//mei:staffGrp[@xml:id=$thisPart][descendant::mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff]">
+                                    <xsl:value-of select="count(preceding-sibling::mei:staffDef) + 1"
+                                    />
+                                  </xsl:for-each>
+                                </xsl:when>
+                                <xsl:when
+                                  test="$defaultScoreDef//mei:staffGrp[mei:staffDef[@n=$thisStaff]]/mei:staffDef[@n=$thisStaff]">
+                                  <xsl:value-of select="1"/>
+                                </xsl:when>
+                              </xsl:choose>
+                            </xsl:attribute>
+                            <staff-distance>
+                              <xsl:choose>
+                                <xsl:when test="replace(@spacing, '[a-z]+$', '') = '0'">
+                                  <xsl:value-of select="@spacing"/>
+                                </xsl:when>
+                                <xsl:when test="number(replace(@spacing, '[a-z]+$', ''))">
+                                  <xsl:value-of select="format-number(number(replace(@spacing,
+                                    '[a-z]+$', '')) * 5, '###0.####')"/>
+                                </xsl:when>
+                              </xsl:choose>
+                            </staff-distance>
+                          </staff-layout>
+                        </xsl:if>
+                      </xsl:when>
+                    </xsl:choose>
+                    -->
+                    <!--<xsl:for-each select="$localScoreDef//mei:staffDef[@spacing]">
+                      <!-\- if the staff belongs to the current part, output its layout info -\->
                       <xsl:variable name="thisStaff">
                         <xsl:value-of select="@n"/>
                       </xsl:variable>
@@ -1399,6 +1614,7 @@
                         </staff-layout>
                       </xsl:if>
                     </xsl:for-each>
+                  -->
                   </xsl:variable>
                   <!-- if defined multiple times, keep only the last staff-distance -->
                   <xsl:for-each-group select="$staffLayout/staff-layout" group-by="@number">
@@ -3526,7 +3742,7 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template name="partID">
     <xsl:param name="thisStaff">1</xsl:param>
     <xsl:choose>
@@ -3549,8 +3765,9 @@
       <xsl:otherwise>
         <!-- construct a part ID -->
         <xsl:text>P_</xsl:text>
-        <xsl:value-of select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff])"/>
-        
+        <xsl:value-of
+          select="generate-id(preceding::mei:staffGrp[mei:staffDef[@n=$thisStaff]][1]/mei:staffDef[@n=$thisStaff])"/>
+
         <!-- construct a part ID -->
         <!--<xsl:text>P_</xsl:text>
         <xsl:choose>
@@ -3566,7 +3783,7 @@
           </xsl:otherwise>
         </xsl:choose>-->
       </xsl:otherwise>
-    </xsl:choose>    
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template name="rendition">
@@ -3922,7 +4139,7 @@
     <xsl:apply-templates select="mei:note|mei:rest" mode="stage2"/>
   </xsl:template>
 
-  <!--<xsl:template match="mei:clef" mode="stage2">
+  <xsl:template match="mei:clef" mode="stage2">
     <attributes>
       <clef>
         <xsl:attribute name="number">
@@ -3936,7 +4153,7 @@
         </line>
       </clef>
     </attributes>
-  </xsl:template>-->
+  </xsl:template>
 
   <xsl:template match="mei:mRest | mei:mSpace | mei:rest | mei:space" mode="stage2">
     <xsl:variable name="noteIDref">
@@ -4998,7 +5215,14 @@
       <xsl:for-each select="mei:verse">
         <lyric>
           <xsl:attribute name="number">
-            <xsl:value-of select="@n"/>
+            <xsl:choose>
+              <xsl:when test="@n">
+                <xsl:value-of select="@n"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:text>1</xsl:text>
+              </xsl:otherwise>
+            </xsl:choose>
           </xsl:attribute>
           <syllabic>
             <xsl:choose>
