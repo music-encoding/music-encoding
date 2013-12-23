@@ -987,9 +987,9 @@
           <xsl:attribute name="label">direction</xsl:attribute>
         </xsl:if>
         <xsl:call-template name="tstampAttrs"/>
-        <xsl:attribute name="startid">
+        <!--<xsl:attribute name="startid">
           <xsl:value-of select="generate-id(following::note[1])"/>
-        </xsl:attribute>
+        </xsl:attribute>-->
         <xsl:for-each select="direction-type/*[@relative-x or @relative-y][1]">
           <xsl:call-template name="positionRelative"/>
         </xsl:for-each>
