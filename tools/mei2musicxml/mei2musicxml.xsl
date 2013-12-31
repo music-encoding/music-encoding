@@ -4683,21 +4683,7 @@
                 </xsl:when>
                 <xsl:otherwise>
                   <other-dynamics>
-                    <xsl:for-each select="mei:rend | text()">
-                      <words>
-                        <xsl:choose>
-                          <!-- rend element -->
-                          <xsl:when test="local-name()='rend'">
-                            <xsl:call-template name="rendition"/>
-                            <xsl:value-of select="normalize-space($dynamValue)"/>
-                          </xsl:when>
-                          <!-- text node -->
-                          <xsl:when test="name()=''">
-                            <xsl:value-of select="normalize-space($dynamValue)"/>
-                          </xsl:when>
-                        </xsl:choose>
-                      </words>
-                    </xsl:for-each>
+                    <xsl:value-of select="normalize-space(.)"/>
                   </other-dynamics>
                 </xsl:otherwise>
               </xsl:choose>
@@ -5675,6 +5661,9 @@
         <pedal>
           <xsl:attribute name="type">
             <xsl:choose>
+              <xsl:when test="@dir='bounce'">
+                <xsl:text>change</xsl:text>
+              </xsl:when>
               <xsl:when test="@dir='down'">
                 <xsl:text>start</xsl:text>
               </xsl:when>
@@ -5692,6 +5681,22 @@
   </xsl:template>
 
   <xsl:template match="controlevents" mode="stage2"/>
+
+  <!-- for now, ignore any controlevents (other than those currently dealt with) that happen to 
+    get into the stream of events -->
+  <xsl:template match="mei:add | mei:anchoredText | mei:annot | mei:app | mei:arpeg |
+    mei:beamSpan | mei:bend | mei:breath | mei:choice | mei:corr | mei:curve | mei:damage |
+    mei:del | mei:div | mei:fermata | mei:gap | mei:gliss | mei:hairpin | mei:handShift |
+    mei:harm | mei:harpPedal | mei:line | mei:lyrics | mei:midi | mei:mordent | mei:octave |
+    mei:orig | mei:ossia | mei:pb | mei:phrase | mei:reg | mei:reh | mei:restore | mei:sb |
+    mei:sic | mei:slur | mei:subst | mei:supplied | mei:symbol | mei:tie | mei:trill |
+    mei:tupletSpan | mei:turn | mei:unclear" mode="stage2">
+    <xsl:comment>
+      <xsl:comment>
+        <xsl:value-of select="local-name()"/>
+      </xsl:comment>
+    </xsl:comment>
+  </xsl:template>
 
   <!-- Default template for addStaffPartID mode -->
   <xsl:template match="@* | node() | comment()" mode="addStaffPartID">
