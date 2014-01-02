@@ -732,7 +732,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:score/mei:scoreDef/mei:staffGrp" mode="copy">
+  <!--<xsl:template match="mei:score/mei:scoreDef/mei:staffGrp" mode="copy">
     <xsl:choose>
       <xsl:when test="@symbol and not(@symbol='line')">
         <staffGrp xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
@@ -759,7 +759,7 @@
         </xsl:copy>
       </xsl:otherwise>
     </xsl:choose>
-  </xsl:template>
+  </xsl:template>-->
 
   <xsl:template match="mei:seriesStmt" mode="asBibl">
     <!-- Rename seriesStmt to series -->
