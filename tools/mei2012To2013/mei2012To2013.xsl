@@ -117,7 +117,7 @@
   <xsl:template match="mei:mei|mei:meiHead|mei:music" mode="copy">
     <!-- Add @meiversion attribute to document element -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='meiversion')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='meiversion')]" mode="copy"/>
       <xsl:if test="count(ancestor::mei:*) = 0">
         <xsl:attribute name="meiversion">
           <xsl:text>2013</xsl:text>
@@ -177,7 +177,7 @@
     <!-- Output as annotation -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:if test="not(@label)">
         <xsl:attribute name="label">
           <xsl:value-of select="local-name()"/>
@@ -191,13 +191,13 @@
     <!-- Output as annotation containing a table, list, or p as appropriate -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
-      <xsl:copy-of select="@*[not(local-name()='target' or local-name()='targettype' or
-        matches(name(), 'xlink:'))]"/>
+      <xsl:apply-templates select="@*[not(local-name()='target' or local-name()='targettype' or
+        matches(name(), 'xlink:'))]" mode="copy"/>
       <xsl:choose>
         <!-- 2-column table in order accommodate label element content -->
         <xsl:when test="mei:label">
           <table>
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*" mode="copy"/>
             <xsl:if test="mei:head">
               <caption>
                 <xsl:apply-templates select="mei:head/node()" mode="copy"/>
@@ -249,7 +249,7 @@
   <xsl:template match="mei:date" mode="copy">
     <!-- @reg renamed to @isodate -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='reg')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='reg')]" mode="copy"/>
       <xsl:if test="@reg">
         <xsl:attribute name="isodate">
           <xsl:value-of select="@reg"/>
@@ -274,7 +274,7 @@
     <!-- Output as annotation; drop @unit, adding its value to content if not already present -->
     <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
       xlink">
-      <xsl:copy-of select="@*[not(local-name()='unit')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='unit')]" mode="copy"/>
       <xsl:if test="not(@label)">
         <xsl:attribute name="label">
           <xsl:value-of select="local-name()"/>
@@ -300,7 +300,7 @@
   <xsl:template match="mei:event" mode="copy">
     <!-- @reg renamed to @isodate, mixed content wrapped by <p> -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='reg')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='reg')]" mode="copy"/>
       <xsl:if test="@reg">
         <xsl:attribute name="isodate">
           <xsl:value-of select="@reg"/>
@@ -347,7 +347,8 @@
   <xsl:template match="mei:fermata" mode="copy">
     <!-- @dur on control events renamed to @tstamp2 -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='dur') and not(local-name()='place')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='dur') and not(local-name()='place')]"
+        mode="copy"/>
       <xsl:if test="@dur">
         <xsl:attribute name="tstamp2">
           <xsl:value-of select="@dur"/>
@@ -406,7 +407,7 @@
   <xsl:template match="mei:incipCode" mode="copy">
     <!-- Add @form -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:if test="not(@form)">
         <xsl:attribute name="form">
           <xsl:choose>
@@ -489,7 +490,7 @@
   <xsl:template match="mei:physDesc" mode="copy">
     <!-- physLoc is pulled out and presented after physDesc. -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="mei:*[not(local-name()='physLoc')]" mode="copy"/>
     </xsl:copy>
     <xsl:if test="mei:physLoc">
@@ -511,7 +512,7 @@
   <xsl:template match="mei:physLoc" mode="copy">
     <!-- The 2013 model only allows repository and identifier elements. -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="comment()" mode="copy"/>
       <xsl:apply-templates select="mei:repository" mode="copy"/>
       <xsl:apply-templates select="mei:identifier" mode="copy"/>
@@ -533,7 +534,7 @@
     <!-- New repository element will contain the textual content of the ancestor 
       physLoc as well as any textual and element content of repository -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="ancestor::mei:physLoc/text() |
         ancestor::mei:physLoc/mei:*[not(local-name()='repository') and
         not(local-name()='identifier')] | text() | mei:*" mode="copy"/>
@@ -564,7 +565,7 @@
       <xsl:when test="not($attributeValues='')">
         <geogName xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
           xlink">
-          <xsl:copy-of select="@*"/>
+          <xsl:apply-templates select="@*" mode="copy"/>
           <xsl:apply-templates mode="copy"/>
         </geogName>
       </xsl:when>
@@ -596,7 +597,7 @@
         <xsl:when test="not($attributeValues='')">
           <geogName xmlns:mei="http://www.music-encoding.org/ns/mei"
             xsl:exclude-result-prefixes="mei xlink">
-            <xsl:copy-of select="@*"/>
+            <xsl:apply-templates select="@*" mode="copy"/>
             <xsl:apply-templates mode="copy"/>
           </geogName>
         </xsl:when>
@@ -639,7 +640,8 @@
   <xsl:template match="mei:rest" mode="copy">
     <!-- Translate @line values to @loc (which includes spaces) -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='line' or local-name()='dur.ges')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='line' or local-name()='dur.ges')]"
+        mode="copy"/>
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
       </xsl:variable>
@@ -669,7 +671,7 @@
   <xsl:template match="mei:revisionDesc" mode="copy">
     <!-- Add a record of the conversion to 2013 to revisionDesc -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
       <change xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
         xlink">
@@ -704,7 +706,8 @@
   <xsl:template match="mei:scoreDef" mode="copy">
     <!-- @page.scale is replaced by @vu.height; @page.units is removed. -->
     <xsl:copy>
-      <xsl:copy-of select="@*[not(local-name()='page.scale') and not(local-name()='page.units')]"/>
+      <xsl:apply-templates select="@*[not(local-name()='page.scale') and
+        not(local-name()='page.units')]" mode="copy"/>
       <xsl:choose>
         <xsl:when test="contains(@page.scale,':')">
           <xsl:attribute name="vu.height">
@@ -771,7 +774,7 @@
   <xsl:template match="mei:source" mode="copy">
     <!-- history, key, tempo, meter, perfMedium, and incip are removed. -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="comment()" mode="copy"/>
       <xsl:apply-templates select="mei:identifier" mode="copy"/>
       <xsl:apply-templates select="mei:titleStmt" mode="copy"/>
@@ -863,7 +866,8 @@
   <xsl:template match="mei:tempo[ancestor::mei:work]" mode="copy">
     <!-- Drop attributes not allowed by schematron rule for tempo in meiHead -->
     <xsl:copy>
-      <xsl:copy-of select="@*[local-name()='label' or local-name()='n' or matches(name(), '^xml')]"/>
+      <xsl:apply-templates select="@*[local-name()='label' or local-name()='n' or matches(name(),
+        '^xml')]" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
@@ -871,7 +875,7 @@
   <xsl:template match="mei:work" mode="copy">
     <!-- Re-order work sub-elements -->
     <xsl:copy>
-      <xsl:copy-of select="@*"/>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="comment()" mode="copy"/>
       <xsl:apply-templates select="mei:identifier" mode="copy"/>
       <xsl:apply-templates select="mei:titleStmt" mode="copy"/>
@@ -1029,16 +1033,15 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="@startid|@endid" mode="copy">
+  <xsl:template match="@startid | @endid | @altsym | @authURI | @copyof | custos/@target | @hand |
+    @chordref | @instr | @def | @nymref | @xlink:role | @new | @old | @ref | @classcode | @avref |
+    @origin" mode="copy">
     <xsl:variable name="thisAttr">
       <xsl:value-of select="local-name()"/>
     </xsl:variable>
     <xsl:attribute name="{$thisAttr}">
       <xsl:choose>
-        <xsl:when test="matches(., '^#')">
-          <xsl:value-of select="."/>
-        </xsl:when>
-        <xsl:otherwise>
+        <xsl:when test="not(matches(., '^(http|#)')) and not(matches(., '/'))">
           <xsl:value-of select="concat('#', .)"/>
           <xsl:if test="$verbose">
             <xsl:variable name="thisID">
@@ -1054,14 +1057,57 @@
                 <xsl:if test="ancestor::mei:incip">
                   <xsl:text>incip/</xsl:text>
                 </xsl:if>
-                <xsl:value-of select="concat('m. ', $thisMeasure, '/',
-                  local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Added
-                  &quot;#&quot; to ', $thisAttr)"/>
+                <xsl:if test="ancestor::mei:measure">
+                  <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
+                </xsl:if>
+                <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID,
+                  '&#32;: Added &quot;#&quot; to ', $thisAttr)"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
         </xsl:otherwise>
       </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@plist" mode="copy">
+    <xsl:attribute name="plist">
+      <xsl:variable name="plistNew">
+        <xsl:choose>
+          <xsl:when test="not(matches(., '^(http|#)')) and not(matches(., '/'))">
+            <xsl:value-of select="concat('#', replace(., '(&#32;)([^#])', '$1#$2'))"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:value-of select="replace(., '(&#32;)([^#])', '$1#$2')"/>
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="$plistNew"/>
+      <xsl:if test="$verbose and not(normalize-space($plistNew) = normalize-space(.))">
+        <xsl:variable name="thisID">
+          <xsl:for-each select="..">
+            <xsl:call-template name="thisID"/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="thisMeasure">
+          <xsl:call-template name="thisMeasure"/>
+        </xsl:variable>
+        <xsl:call-template name="warning">
+          <xsl:with-param name="warningText">
+            <xsl:if test="ancestor::mei:incip">
+              <xsl:text>incip/</xsl:text>
+            </xsl:if>
+            <xsl:if test="ancestor::mei:measure">
+              <xsl:value-of select="concat('m. ', $thisMeasure, '/')"/>
+            </xsl:if>
+            <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID,
+              '&#32;: Added &quot;#&quot; to plist')"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:if>
     </xsl:attribute>
   </xsl:template>
 
