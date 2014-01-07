@@ -590,28 +590,24 @@
         </xsl:attribute>
         <respStmt/>
         <changeDesc>
-          <p>Added MIDI-like timing information (@dur.ges, @tstamp.ges, sometimes @tstamp) using
-              <xsl:value-of select="$progName"/>, <xsl:value-of select="$progVersion"/><xsl:text>.</xsl:text>
+          <p>
+            <xsl:value-of select="normalize-space(concat('Added MIDI-like timing information
+              (@dur.ges, @tstamp.ges, sometimes @tstamp) using&#32;', $progName, ', ',
+              $progVersion, '.'))"/>
             <xsl:choose>
               <xsl:when test="not($reQuantize='false')">
-                <xsl:text>&#32;The global value for @ppq was set to</xsl:text>
-                <xsl:text>&#32;</xsl:text>
-                <xsl:value-of select="$ppqNew"/>
-                <xsl:text>.</xsl:text>
+                <xsl:value-of select="concat('&#32;', normalize-space(concat('The global value for
+                  @ppq was set to&#32;',$ppqNew, '.')))"/>
               </xsl:when>
               <xsl:otherwise>
                 <xsl:choose>
                   <xsl:when test="ancestor::mei:mei//mei:scoreDef[@ppq] or
                     ancestor::mei:mei//mei:scoreDef//mei:staffDef[@ppq]">
                     <xsl:text>&#32;Pre-existing values for @ppq were retained.</xsl:text>
-                    <!--<xsl:text>&#32;</xsl:text>
-                    <xsl:value-of select="$ppqNew"/><xsl:text>.</xsl:text>-->
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:text>&#32;The global value for @ppq was set to</xsl:text>
-                    <xsl:text>&#32;</xsl:text>
-                    <xsl:value-of select="$ppqNew"/>
-                    <xsl:text>.</xsl:text>
+                    <xsl:value-of select="concat('&#32;', normalize-space(concat('The global value
+                      for @ppq was set to&#32;', $ppqNew, '.')))"/>
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:otherwise>
@@ -672,8 +668,7 @@
         will result in @xml:id being created for each staffDef. In other words, each staff
         is assumed to represent a separate part. -->
         <xsl:attribute name="xml:id">
-          <xsl:text>P</xsl:text>
-          <xsl:value-of select="generate-id()"/>
+          <xsl:value-of select="concat('P', generate-id())"/>
         </xsl:attribute>
       </xsl:if>
       <xsl:apply-templates mode="MIDIfy_stage1"/>
