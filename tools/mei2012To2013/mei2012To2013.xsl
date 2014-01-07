@@ -331,7 +331,7 @@
             <xsl:call-template name="warning">
               <xsl:with-param name="warningText">
                 <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Wrapped content
-                  with &lt;p&gt;')"/>
+                  with p element')"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:if>
@@ -793,8 +793,11 @@
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
             <xsl:value-of select="concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
-              $thisID, '&#32;: Reordered content; removed history, key, tempo, meter, perfMedium,
-              and incip')"/>
+              $thisID, '&#32;: Reordered content')"/>
+            <xsl:if test="mei:history | mei:key | mei:tempo | mei:meter | mei:perfMedium |
+              mei:incip">
+              <xsl:text>;&#32;Removed history, key, tempo, meter, perfMedium, and incip</xsl:text>
+            </xsl:if>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
