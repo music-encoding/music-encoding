@@ -10,8 +10,8 @@
   <!-- ======================================================================= -->
 
   <!-- This stylesheet adds/recalculates values for the attributes dur.ges, 
-  tstamp.ges, and tstamp based on the value of the ppq attributes in the file or 
-  based on the value supplied in the ppqNew parameter. These attributes are useful 
+  tstamp.ges, and tstamp based either on the value of the ppq attributes in the 
+  file or the value supplied in the ppqNew parameter. These attributes are useful 
   in converting MEI to one-pass, MIDI-based representations. -->
 
   <!-- ======================================================================= -->
@@ -259,13 +259,13 @@
   <xsl:template match="/">
     <xsl:choose>
       <xsl:when test="mei:mei[@meiversion='2013']">
-        <xsl:variable name="MIDIfy_stage1">
-          <xsl:apply-templates mode="MIDIfy_stage1"/>
+        <xsl:variable name="meiAddTiming_stage1">
+          <xsl:apply-templates mode="meiAddTiming_stage1"/>
         </xsl:variable>
-        <xsl:variable name="MIDIfy_stage2">
-          <xsl:apply-templates select="$MIDIfy_stage1" mode="MIDIfy_stage2"/>
+        <xsl:variable name="meiAddTiming_stage2">
+          <xsl:apply-templates select="$meiAddTiming_stage1" mode="meiAddTiming_stage2"/>
         </xsl:variable>
-        <xsl:apply-templates select="$MIDIfy_stage2" mode="MIDIfy_stage3"/>
+        <xsl:apply-templates select="$meiAddTiming_stage2" mode="meiAddTiming_stage3"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:variable name="warning">The source file is not a 2013 version MEI file!</xsl:variable>
@@ -276,7 +276,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="mei:chord" mode="MIDIfy_stage1">
+  <xsl:template match="mei:chord" mode="meiAddTiming_stage1">
     <xsl:variable name="thisStaff">
       <xsl:choose>
         <!-- use @staff when provided -->
@@ -403,20 +403,20 @@
         </xsl:choose>
         <xsl:text>p</xsl:text>
       </xsl:attribute>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:meiHead | mei:music" mode="MIDIfy_stage1">
+  <xsl:template match="mei:meiHead | mei:music" mode="meiAddTiming_stage1">
     <xsl:copy>
       <xsl:copy-of select="@*[not(local-name()='meiversion') and
         not(local-name()='meiversion.num')]"/>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
   <xsl:template match="mei:note | mei:rest | mei:space | mei:mRest | mei:mSpace"
-    mode="MIDIfy_stage1">
+    mode="meiAddTiming_stage1">
     <xsl:variable name="thisStaff">
       <xsl:choose>
         <!-- use @staff when provided -->
@@ -576,14 +576,14 @@
           <xsl:text>p</xsl:text>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:revisionDesc" mode="MIDIfy_stage1">
+  <xsl:template match="mei:revisionDesc" mode="meiAddTiming_stage1">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
       <change xmlns="http://www.music-encoding.org/ns/mei">
         <xsl:attribute name="n">
           <xsl:value-of select="count(mei:change) + 1"/>
@@ -623,7 +623,7 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:scoreDef[not(ancestor::mei:section)]" mode="MIDIfy_stage1">
+  <xsl:template match="mei:scoreDef[not(ancestor::mei:section)]" mode="meiAddTiming_stage1">
     <xsl:copy>
       <xsl:copy-of select="@* except @ppq"/>
       <xsl:choose>
@@ -646,11 +646,11 @@
           </xsl:attribute>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:staffDef[not(ancestor::mei:section)]" mode="MIDIfy_stage1">
+  <xsl:template match="mei:staffDef[not(ancestor::mei:section)]" mode="meiAddTiming_stage1">
     <xsl:copy>
       <xsl:copy-of select="@* except @ppq"/>
       <xsl:choose>
@@ -671,7 +671,7 @@
           <xsl:value-of select="concat('P', generate-id())"/>
         </xsl:attribute>
       </xsl:if>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
@@ -681,7 +681,7 @@
     local-name()='mRpt' or local-name()='mRpt2' or local-name()='mSpace' or
     local-name()='multiRest' or local-name()='multiRpt' or local-name()='pad']
     [not(ancestor::mei:chord)] | mei:layer/mei:*[local-name()='accid' or local-name()='artic' or
-    local-name()='clef' or local-name()='dot']" mode="MIDIfy_stage2">
+    local-name()='clef' or local-name()='dot']" mode="meiAddTiming_stage2">
     <xsl:variable name="thisLayer">
       <xsl:value-of select="generate-id(ancestor::mei:layer)"/>
     </xsl:variable>
@@ -694,7 +694,7 @@
           local-name()='mRest' or local-name()='mSpace'][not(ancestor::mei:chord)]
           [generate-id(ancestor::mei:layer)=$thisLayer]/number(substring-before(@dur.ges, 'p')))"/>
       </xsl:attribute>
-      <xsl:apply-templates mode="MIDIfy_stage2"/>
+      <xsl:apply-templates mode="meiAddTiming_stage2"/>
     </xsl:copy>
   </xsl:template>
 
@@ -707,7 +707,7 @@
     local-name()='mordent' or local-name()='octave' or local-name()='pedal' or
     local-name()='phrase' or local-name()='reh' or local-name()='slur' or local-name()='tempo'
     or local-name()='tie' or local-name()='trill' or local-name()='tupletSpan' or
-    local-name()='turn'][ancestor::mei:incip or ancestor::mei:body]" mode="MIDIfy_stage3">
+    local-name()='turn'][ancestor::mei:incip or ancestor::mei:body]" mode="meiAddTiming_stage3">
     <xsl:variable name="thisStaff">
       <xsl:choose>
         <xsl:when test="contains(@staff, '&#32;')">
@@ -830,31 +830,31 @@
           </xsl:when>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:apply-templates mode="MIDIfy_stage3"/>
+      <xsl:apply-templates mode="meiAddTiming_stage3"/>
     </xsl:copy>
   </xsl:template>
 
   <!-- Default template for stage1 -->
-  <xsl:template match="@* | node() | comment()" mode="MIDIfy_stage1">
+  <xsl:template match="@* | node() | comment()" mode="meiAddTiming_stage1">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="MIDIfy_stage1"/>
+      <xsl:apply-templates mode="meiAddTiming_stage1"/>
     </xsl:copy>
   </xsl:template>
 
   <!-- Default template for stage2 -->
-  <xsl:template match="@* | node() | comment()" mode="MIDIfy_stage2">
+  <xsl:template match="@* | node() | comment()" mode="meiAddTiming_stage2">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="MIDIfy_stage2"/>
+      <xsl:apply-templates mode="meiAddTiming_stage2"/>
     </xsl:copy>
   </xsl:template>
 
   <!-- Default template for stage3 -->
-  <xsl:template match="@* | node() | comment()" mode="MIDIfy_stage3">
+  <xsl:template match="@* | node() | comment()" mode="meiAddTiming_stage3">
     <xsl:copy>
       <xsl:copy-of select="@*"/>
-      <xsl:apply-templates mode="MIDIfy_stage3"/>
+      <xsl:apply-templates mode="meiAddTiming_stage3"/>
     </xsl:copy>
   </xsl:template>
 
