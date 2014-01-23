@@ -15,6 +15,14 @@
 
   <!-- parameters -->
 
+  <!-- PARAM:rng_model_path -->
+  <xsl:param name="rng_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+
+  <!-- PARAM:sch_model_path -->
+  <xsl:param name="sch_model_path"
+    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+
   <!-- PARAM:layout
       This parameter defines the degree of layout information transformed into MEI. Possible values are:
       'preserve': All layout information available in the MusicXML file will be converted to MEI
@@ -24,21 +32,21 @@
   <xsl:param name="layout" select="'strip'"/>
 
   <!-- PARAM:formeWork
-      This parameter decides if credit-words, page heads etc. will be preserved or not. Values are:
+      This parameter decides if credit-words, page heads, etc. will be preserved or not. Values are:
       'preserve': All pageHeads etc. will be included
       'strip': All credits in the music branch will be stripped
   -->
   <xsl:param name="formeWork" select="'strip'"/>
 
   <!-- PARAM:keepAttributes 
-      This parameter indicates whether redundant attributes for beams, tuplets and syls should be preserved. BOOLEAN
+      This parameter indicates whether redundant attributes for beams, tuplets and syls should be preserved.
   -->
-  <xsl:param name="keepAttributes" select="false()"/>
+  <xsl:param name="keepAttributes" select="'false'"/>
 
   <!-- PARAM:generateMIDI 
-      This parameter indicates whether MIDI-relevant data should be preserved. BOOLEAN
+      This parameter indicates whether MIDI-relevant data should be preserved.
   -->
-  <xsl:param name="generateMIDI" select="false()"/>
+  <xsl:param name="generateMIDI" select="'false'"/>
 
   <!-- PARAM:articStyle
       This parameter defines how to handle articulation. Possible values are:
@@ -73,12 +81,11 @@
   <xsl:param name="labelStyle" select="'attr'"/>
 
   <!-- PARAM:keepRights
-      This parameter defines how to treat the rights statement for the MEI file. If set to 'false()', then the rights
-      statement given in the source MusicXML file is discarded. Otherwise, if the value of this parameter is
-      'true()', the rights statement in the MusicXML file is used as the value of the fileDesc/availability/useRestrict
-      element.
+      This parameter defines how to treat the rights statement for the MEI file. If set to 'true', then
+      the rights statement in the MusicXML file is used as the value of the fileDesc/availability/useRestrict
+      element. Otherwise, the rights statement given in the source MusicXML file is discarded.
   -->
-  <xsl:param name="keepRights" select="true()"/>
+  <xsl:param name="keepRights" select="'false'"/>
 
   <xsl:character-map name="delimiters">
     <xsl:output-character character="&beamstart;" string="&lt;beam&gt;"/>
@@ -342,6 +349,21 @@
 
   <!-- 'Match' templates -->
   <xsl:template match="/">
+    <xsl:if test="$rng_model_path != ''">
+      <xsl:processing-instruction name="xml-model">
+        <xsl:value-of select="concat('&#32;href=&quot;', $rng_model_path, '&quot;')"/>
+        <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+      </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
+    </xsl:if>
+
+    <xsl:if test="$sch_model_path != ''">
+      <xsl:processing-instruction name="xml-model">
+        <xsl:value-of select="concat('&#32;href=&quot;', $sch_model_path, '&quot;')"/>
+        <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+      </xsl:processing-instruction>
+      <xsl:value-of select="$nl"/>
+    </xsl:if>
 
     <xsl:variable name="firstRun">
       <mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="2013">
@@ -7319,22 +7341,13 @@
       <fileDesc>
         <xsl:call-template name="titleStmt"/>
         <pubStmt>
-          <xsl:choose>
-            <xsl:when test="$keepRights">
-              <availability>
-                <useRestrict>
-                  <xsl:choose>
-                    <xsl:when test="identification/rights">
-                      <xsl:value-of select="identification/rights"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                      <xsl:text>No rights specified in MusicXML source file</xsl:text>
-                    </xsl:otherwise>
-                  </xsl:choose>
-                </useRestrict>
-              </availability>
-            </xsl:when>
-          </xsl:choose>
+          <xsl:if test="$keepRights = 'true' and identification/rights">
+            <availability>
+              <useRestrict>
+                <xsl:value-of select="identification/rights"/>
+              </useRestrict>
+            </availability>
+          </xsl:if>
         </pubStmt>
         <sourceDesc>
           <source>
@@ -10720,17 +10733,17 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
   <!-- First cleanup step (in postProcess phase), according to selected parameters -->
 
   <xsl:template match="@ppq" mode="postProcess">
-    <xsl:if test="$generateMIDI">
+    <xsl:if test="$generateMIDI != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
   <xsl:template match="@*[starts-with(local-name(),'midi')]" mode="postProcess">
-    <xsl:if test="$generateMIDI">
+    <xsl:if test="$generateMIDI != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
   <xsl:template match="mei:instrDef" mode="postProcess">
-    <xsl:if test="$generateMIDI">
+    <xsl:if test="$generateMIDI != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
@@ -10804,12 +10817,12 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
   </xsl:template>
 
   <xsl:template match="@tstamp.ges" mode="postProcess">
-    <xsl:if test="$generateMIDI">
+    <xsl:if test="$generateMIDI != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
   <xsl:template match="@dur.ges" mode="postProcess">
-    <xsl:if test="$generateMIDI">
+    <xsl:if test="$generateMIDI != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
@@ -10930,17 +10943,17 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
   </xsl:template>
 
   <xsl:template match="@beam" mode="cleanUp">
-    <xsl:if test="$keepAttributes">
+    <xsl:if test="$keepAttributes != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
   <xsl:template match="@tuplet" mode="cleanUp">
-    <xsl:if test="$keepAttributes">
+    <xsl:if test="$keepAttributes != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
   <xsl:template match="@syl" mode="postProcess">
-    <xsl:if test="$keepAttributes">
+    <xsl:if test="$keepAttributes != 'false'">
       <xsl:copy-of select="."/>
     </xsl:if>
   </xsl:template>
