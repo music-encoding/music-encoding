@@ -10597,7 +10597,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                           <xsl:otherwise>
                             <xsl:copy-of select="."/>
                             <xsl:message>The tuplet starting with <xsl:value-of
-                                select=".//@xml:id[1]"/> couldn't be resolved.</xsl:message>
+                              select="descendant::*[1]/@xml:id"/> couldn't be resolved.</xsl:message>
                           </xsl:otherwise>
                         </xsl:choose>
 
