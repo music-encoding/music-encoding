@@ -2026,7 +2026,11 @@
         <xsl:if test="count(preceding::measure) &gt; 0">
           <!-- Ignore time signature in the first measure since it's already been recorded in /score/scoreDef. -->
           <xsl:if test="part/attributes[1]/time">
-            <xsl:if test="not(part[attributes[time[count(beats) &gt; 1]]])">
+            <xsl:if test="part/attributes[1]/time/senza-misura">
+              <xsl:attribute name="meter.rend">invis</xsl:attribute>
+            </xsl:if>
+            <xsl:if test="count(part/attributes/time/beats) = 1">
+              <!-- simple time signature -->
               <xsl:attribute name="meter.count">
                 <xsl:value-of
                   select="part[attributes/time/beats][1]/attributes[time/beats][1]/time/beats"/>
@@ -2070,9 +2074,6 @@
                 </xsl:when>
                 <xsl:when test="part/attributes[1]/time/@symbol='single-number'">
                   <xsl:attribute name="meter.rend">num</xsl:attribute>
-                </xsl:when>
-                <xsl:when test="part/attributes[1]/time/senza-misura">
-                  <xsl:attribute name="meter.rend">invis</xsl:attribute>
                 </xsl:when>
               </xsl:choose>
             </xsl:if>
@@ -7578,6 +7579,9 @@
                 <xsl:value-of select="$scorePPQ"/>
               </xsl:attribute>
               <!-- Look in first measure for score-level meter signature -->
+              <xsl:if test="descendant::measure[1]/part/attributes[time/senza-misura]">
+                <xsl:attribute name="meter.rend">invis</xsl:attribute>
+              </xsl:if>
               <xsl:if test="descendant::measure[1]/part/attributes[time/beats]">
                 <xsl:choose>
                   <xsl:when
@@ -7639,10 +7643,6 @@
                       </xsl:when>
                       <xsl:when test="$symbol='single-number'">
                         <xsl:attribute name="meter.rend">num</xsl:attribute>
-                      </xsl:when>
-                      <xsl:when
-                        test="descendant::measure[1]/part[attributes/time/senza-misura][1]/attributes/time/senza-misura">
-                        <xsl:attribute name="meter.rend">invis</xsl:attribute>
                       </xsl:when>
                     </xsl:choose>
                   </xsl:when>
@@ -10121,7 +10121,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
           <xsl:value-of select="ancestor::part[@id=$thisPart and
             attributes/time/beat-type]/attributes/time/beat-type"/>
         </xsl:when>
-        <xsl:when test="preceding::part[@id=$thisPart and attributes/time]">
+        <xsl:when test="preceding::part[@id=$thisPart and attributes/time/beat-type]">
           <xsl:value-of select="preceding::part[@id=$thisPart and
             attributes/time][1]/attributes/time/beat-type"/>
         </xsl:when>
@@ -10597,7 +10597,8 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                           <xsl:otherwise>
                             <xsl:copy-of select="."/>
                             <xsl:message>The tuplet starting with <xsl:value-of
-                              select="descendant::*[1]/@xml:id"/> couldn't be resolved.</xsl:message>
+                                select="descendant::*[1]/@xml:id"/> couldn't be
+                              resolved.</xsl:message>
                           </xsl:otherwise>
                         </xsl:choose>
 
