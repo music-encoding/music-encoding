@@ -8669,6 +8669,9 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
       <xsl:value-of select="$max - $min"/>
     </xsl:variable>
     <xsl:choose>
+      <xsl:when test="$x = 0">
+        <xsl:value-of select="$min"/>
+      </xsl:when>
       <xsl:when test="$x = $min">
         <xsl:value-of select="$x"/>
       </xsl:when>
@@ -10562,10 +10565,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                                 <xsl:copy-of select="."/>
                               </xsl:otherwise>
                             </xsl:choose>
-
-
                           </xsl:otherwise>
-
                         </xsl:choose>
                       </xsl:when>
 
@@ -10596,9 +10596,12 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                           </xsl:when>
                           <xsl:otherwise>
                             <xsl:copy-of select="."/>
-                            <xsl:message>The tuplet starting with <xsl:value-of
-                                select="descendant::*[1]/@xml:id"/> couldn't be
-                              resolved.</xsl:message>
+                            <xsl:variable name="tupletStartID">
+                              <xsl:value-of select="descendant::*[1]/@xml:id"/>
+                            </xsl:variable>
+                            <xsl:message>
+                              <xsl:value-of select="normalize-space(concat('The tuplet starting with ', $tupletStartID, ' could not be resolved.'))"/>
+                            </xsl:message>
                           </xsl:otherwise>
                         </xsl:choose>
 
