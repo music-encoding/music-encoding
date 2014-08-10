@@ -3535,8 +3535,8 @@
           mei:mordent|mei:octave|mei:pedal|mei:reh|mei:slur|mei:tempo|mei:tie|
           mei:trill|mei:tupletSpan|mei:turn">
           <!-- Sort control events by timestamp, staff, and element name -->
-          <xsl:sort select="@tstamp"/>
-          <xsl:sort select="@staff"/>
+          <xsl:sort select="number(@tstamp)"/>
+          <xsl:sort select="number(@staff)"/>
           <xsl:sort select="local-name()"/>
           <xsl:choose>
             <xsl:when test="local-name()='beamSpan' or local-name()='hairpin' or local-name()='slur'
