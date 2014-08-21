@@ -62,5 +62,6 @@ case "$1" in
     * )
         echo "Build options:"
         echo "  all"
+        echo "  test"
     ;;
 esac
