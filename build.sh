@@ -29,7 +29,7 @@ all()
     for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
     do
         echo "processing" "${file}"
-        $TEI_TO_RELAXNG_BIN --verbose --saxonjar=$PATH_TO_SAXON_JAR --trangjar=$PATH_TO_TRANG_JAR --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
+        $TEI_TO_RELAXNG_BIN --saxonjar=$PATH_TO_SAXON_JAR --trangjar=$PATH_TO_TRANG_JAR --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
