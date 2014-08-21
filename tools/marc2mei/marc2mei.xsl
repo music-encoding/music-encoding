@@ -2483,7 +2483,112 @@
                     </contents>
                   </xsl:when>
                   <xsl:when test="marc:datafield[@tag='505']">
-                    <xsl:apply-templates select="marc:datafield[@tag='505']"/>
+                    <contents>
+                      <xsl:choose>
+                        <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind1)) =
+                          1">
+                          <!-- all ind1 values are the same -->
+                          <xsl:if test="not(distinct-values(marc:datafield[@tag='505']/@ind1) =
+                            '8')">
+                            <!-- generate a label -->
+                            <xsl:attribute name="label">
+                              <xsl:choose>
+                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind1) =
+                                  '1' and count(marc:datafield[@tag='505']) = 1">
+                                  <xsl:text>Incomplete contents</xsl:text>
+                                </xsl:when>
+                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind1) =
+                                  '2' and count(marc:datafield[@tag='505']) = 1">
+                                  <xsl:text>Partial contents</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                  <xsl:text>Contents</xsl:text>
+                                </xsl:otherwise>
+                              </xsl:choose>
+                            </xsl:attribute>
+                          </xsl:if>
+                          <xsl:choose>
+                            <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind2))
+                              = 1">
+                              <!-- ind2 values are the same -->
+                              <xsl:choose>
+                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind2) =
+                                  '0'">
+                                  <!-- "enhanced" contents -->
+                                  <xsl:variable name="contentItems">
+                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                      <xsl:value-of select="."/>
+                                    </xsl:for-each>
+                                  </xsl:variable>
+                                  <xsl:analyze-string select="$contentItems" regex="--">
+                                    <xsl:non-matching-substring>
+                                      <contentItem>
+                                        <xsl:value-of select="normalize-space(.)"/>
+                                      </contentItem>
+                                    </xsl:non-matching-substring>
+                                  </xsl:analyze-string>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                  <!-- basic contents -->
+                                  <p>
+                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                      <xsl:value-of select="."/>
+                                    </xsl:for-each>
+                                  </p>
+                                </xsl:otherwise>
+                              </xsl:choose>
+                            </xsl:when>
+                            <xsl:otherwise>
+                              <!-- ind2 values are NOT the same -->
+                              <!-- treat as "basic" contents -->
+                              <p>
+                                <xsl:for-each select="marc:datafield[@tag='505']">
+                                  <xsl:value-of select="."/>
+                                </xsl:for-each>
+                              </p>
+                            </xsl:otherwise>
+                          </xsl:choose>
+                        </xsl:when>
+                        <xsl:otherwise>
+                          <!-- all ind1 values are NOT the same -->
+                          <xsl:choose>
+                            <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind2))
+                              = 1">
+                              <!-- ind2 values are the same -->
+                              <xsl:choose>
+                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind2) =
+                                  '0'">
+                                  <!-- "enhanced" contents -->
+                                  <xsl:variable name="contentItems">
+                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                      <xsl:value-of select="."/>
+                                    </xsl:for-each>
+                                  </xsl:variable>
+                                  <xsl:analyze-string select="$contentItems" regex="--">
+                                    <xsl:non-matching-substring>
+                                      <contentItem>
+                                        <xsl:value-of select="normalize-space(.)"/>
+                                      </contentItem>
+                                    </xsl:non-matching-substring>
+                                  </xsl:analyze-string>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                  <!-- ind2 values are NOT the same -->
+                                  <!-- treat as "basic" contents -->
+                                  <p>
+                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                      <xsl:call-template name="subfieldSelect">
+                                        <xsl:with-param name="codes">a</xsl:with-param>
+                                      </xsl:call-template>
+                                    </xsl:for-each>
+                                  </p>
+                                </xsl:otherwise>
+                              </xsl:choose>
+                            </xsl:when>
+                          </xsl:choose>
+                        </xsl:otherwise>
+                      </xsl:choose>
+                    </contents>
                   </xsl:when>
                 </xsl:choose>
 
@@ -2884,8 +2989,8 @@
         <change>
           <respStmt/>
           <changeDesc>
-            <p>This MEI 2013 stand-alone header generated using <xsl:value-of select="$progname"/>,
-              version <xsl:value-of select="$version"/></p>
+            <p>Header generated using <xsl:value-of select="$progname"/>, version <xsl:value-of
+                select="$version"/></p>
           </changeDesc>
           <date>
             <xsl:attribute name="isodate">
@@ -4047,7 +4152,7 @@
   </xsl:template>
 
   <!-- contents note -->
-  <xsl:template match="marc:datafield[@tag='505']">
+  <!--<xsl:template match="marc:datafield[@tag='505']">
     <contents>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
@@ -4074,7 +4179,7 @@
           <xsl:variable name="contentItems">
             <xsl:value-of select="."/>
           </xsl:variable>
-          <xsl:analyze-string select="$contentItems" regex="--">
+          <xsl:analyze-string select="$contentItems" regex="-\-">
             <xsl:non-matching-substring>
               <contentItem>
                 <xsl:value-of select="normalize-space(.)"/>
@@ -4091,7 +4196,7 @@
         </xsl:otherwise>
       </xsl:choose>
     </contents>
-  </xsl:template>
+  </xsl:template>-->
 
   <!-- creation note -->
   <xsl:template match="marc:datafield[@tag='508']">
