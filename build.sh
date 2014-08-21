@@ -18,7 +18,7 @@ all()
 {
     if [ -d "build" ]; then
         echo "Removing old build directory"
-        rm -r ${BUILD_DIR}/*
+        rm -r ${BUILD_DIR}
     fi
 
     mkdir -p ${BUILD_DIR}
@@ -26,10 +26,17 @@ all()
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
-    for file in ${CUSTOMIZATIONS_DIR}/*.xml
+    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
     do
-        echo "processing " $file
+        echo "processing" "${file}"
         $TEI_TO_RELAXNG_BIN --verbose --saxonjar=$PATH_TO_SAXON_JAR --trangjar=$PATH_TO_TRANG_JAR --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
+
+        if [ $? = 1 ]; then
+            IFS=$SAVEIFS
+            echo "Build failed on" $file
+            exit 1
+        fi
+
     done
 
     IFS=$SAVEIFS
@@ -41,6 +48,7 @@ test()
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
+
     for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
     do
         echo "Testing: " $file
@@ -51,8 +59,8 @@ test()
             echo "Tests failed on" $file
             exit 1
         fi
-
     done
+
     IFS=$SAVEIFS
 }
 
