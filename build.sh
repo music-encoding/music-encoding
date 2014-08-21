@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ## Customize here
-PATH_TO_TEI_STYLESHEETS="/Users/ahankins/Documents/code/devel/Stylesheets"
-PATH_TO_SAXON_JAR="/Users/ahankins/Documents/code/devel/Stylesheets/lib/saxon9he.jar"
-PATH_TO_TRANG_JAR="/Users/ahankins/Documents/code/devel/Stylesheets/lib/trang.jar"
-PATH_TO_JING="/usr/local/bin/jing"
+PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
+PATH_TO_SAXON_JAR="/usr/share/java/Saxon-HE-9.4.0.7.jar"
+PATH_TO_TRANG_JAR="/usr/share/java/trang.jar"
+PATH_TO_JING="/usr/bin/jing"
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
