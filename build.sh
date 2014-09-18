@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## testing commit
+
 ## Customize here
 PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
 PATH_TO_SAXON_JAR="/usr/share/java/Saxon-HE-9.4.0.7.jar"
