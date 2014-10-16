@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  © 2012 by the Music Encoding Initiative (MEI) Council.
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://www.osedu.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="userSymbols" n="0" xml:lang="en">
+  <head>User-defined Symbols</head>
+  <p>This chapter describes the elements, model classes, and attribute classes that are part of the
+    MEI.usersymbols module.</p>
+  <div type="div2" xml:id="usersymbolsOverview">
+    <!-- Overview -->
+    <head>Overview of the User Symbols Module</head>
+    <p>The module described in this chapter makes available the following components:</p>
+    <div type="div3" xml:id="usersymbolsElements">
+      <head>Elements</head>
+      <p>
+        <specList>
+          <specDesc key="anchoredText"/>
+          <specDesc key="curve"/>
+          <specDesc key="line"/>
+          <specDesc key="symbol"/>
+          <specDesc key="symbolDef"/>
+          <specDesc key="symbolTable"/>
+        </specList>
+      </p>
+    </div>
+    <div type="div3" xml:id="usersymbolsAttributeClasses">
+      <head>Attribute Classes</head>
+      <p>No attribute classes are defined in this module.</p>
+    </div>
+    <div type="div3" xml:id="usersymbolsModelClasses">
+      <head>Model Classes</head>
+      <p>The usersymbols module defines the following model classes:</p>
+      <p>
+        <specList>
+          <specDesc key="model.graphicprimitiveLike"/>
+          <specDesc key="model.symbolTableLike"/>
+        </specList>
+      </p>
+    </div>
+  </div>
+  <div>
+    <head>Uses of the Usersymbols Module</head>
+    <p> The elements provided by the usersymbols module may be used in two ways: <list
+        type="ordered">
+        <item>For defining lines, curves and text elements that cannot be represented by a more
+          specific element.</item>
+        <item>For defining reusable symbols and special graphical renditions.</item>
+      </list>For this purpose, it provides three elements as graphic primitives, <gi scheme="MEI"
+        >line</gi>, <gi scheme="MEI">curve</gi> and <gi scheme="MEI">anchoredText</gi>. Anywhere
+      these elements are allowed, the <gi scheme="MEI">symbol</gi> element can be used as well. The
+        <gi scheme="MEI">symbol</gi> element reuses symbols that were defined by <gi scheme="MEI"
+        >symbolDef</gi> elements.</p>
+    <div>
+      <head>Defining Reusable Symbols</head>
+      <p>The <gi scheme="MEI">symbolDef</gi> element uses the graphic primitives to describe a
+        symbol. Using the <gi scheme="MEI">symbol</gi> element, a symbol definition may also use
+        symbols defined by other <gi scheme="MEI">symbolDef</gi> elements.</p>
+      <figure>
+        <head>Definition of a triangle percussion symbol</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <symbolDef xml:id="userSymbols.triangleSymbol3">
+            <line x="0" y="0" x2="2.55" y2="4.25"/>
+            <line x="2.55" y="4.25" x2="5.1" y2="0"/>
+            <line x="5.1" y="0" x2="0.85" y2="0"/>
+          </symbolDef>
+        </egXML>
+      </figure>
+      <figure>
+        <head>Rendition of the triangle defined above</head>
+        <graphic url="Images/modules/usersymbols/triangle.png"/>
+      </figure>
+      <figure>
+        <head>Symbol composed of the symbol defined above and additional graphics primitives</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <symbolDef xml:id="userSymbols.triangleSymbolWithStick">
+            <symbol ref="#userSymbols.triangleSymbol3"/>
+            <line x="2.55" y="1.25" x2="5.95" y2="3.4"/>
+          </symbolDef>
+        </egXML>
+      </figure>
+      <figure>
+        <head>Rendition of the composite triangle symbol</head>
+        <graphic url="Images/modules/usersymbols/triangleWithStick.svg"/>
+      </figure>
+    </div>
+    <div>
+      <head>Elements Without Semantic Implications</head>
+      <p>The graphics primitives and symbols can be used directly in the music to describe text and
+        lines on a purely graphical level, without implying a specific logical meaning. If possible,
+        however, more meaningful elements should be used. This means for example, "a tempo" or "da
+        capo" should in general not be put inside <gi scheme="MEI">anchoredText</gi>. Instead, <gi
+          scheme="MEI">tempo</gi> and <gi scheme="MEI">dir</gi> should be used. Likewise, slurs and
+        ties should be encoded using their respective elements, not using <gi scheme="MEI"
+          >curve</gi>, and for glissandi, <gi scheme="MEI">gliss</gi> should be used instead of <gi
+          scheme="MEI">line</gi>.</p>
+      <p>An example usage for <gi scheme="MEI">line</gi> is the visualization of voice leading,
+        which is not covered by a specific MEI element.</p>
+      <figure xml:id="mignonFigure">
+        <head>Voice leading visualization as found in an Edition Peters print of <title>Album für
+            die Jugend</title> by Schumann, No. 35 (Mignon), measure 6. (Unknown date, plate number
+          is 10478.)</head>
+        <graphic url="Images/modules/usersymbols/mignon.svg"/>
+      </figure>
+      <figure>
+        <head>Encoding of the Schumann example</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <measure n="6">
+            <staff n="1">
+              <layer n="1">
+                <rest dur="4" xml:id="userSymbols.r1"/>
+                <beam>
+                  <note pname="c" oct="4" dur="8" xml:id="userSymbols.n1"/>
+                  <note pname="e" oct="4" dur="8" xml:id="userSymbols.n2"/>
+                </beam>
+                <beam>
+                  <note pname="g" oct="4" dur="8" xml:id="userSymbols.n3"/>
+                  <note pname="e" oct="4" dur="8" xml:id="userSymbols.n4"/>
+                  <note pname="b" oct="4" dur="8" xml:id="userSymbols.n5"/>
+                  <note pname="g" oct="4" dur="8" xml:id="userSymbols.n6"/>
+                </beam>
+                <slur startid="#userSymbols.n1" endid="#userSymbols.n6" curvedir="above"/>
+              </layer>
+              <layer n="2">
+                <rest dur="4"/>
+                <note stem.dir="down" pname="c" oct="4" dur="2" xml:id="userSymbols.n7"
+                  next="#userSymbols.n9"/>
+              </layer>
+            </staff>
+            <staff n="2">
+              <layer n="1">
+                <note pname="g" oct="2" dur="2" dots="1" xml:id="userSymbols.n8"/>
+                <note pname="b" oct="3" dur="4" xml:id="userSymbols.n9" prev="#userSymbols.n7
+                  #userSymbols.n8"/>
+                <slur startid="#userSymbols.n8" endid="#userSymbols.n9" curvedir="above"/>
+              </layer>
+            </staff>
+            <line startid="#userSymbols.n7" endid="#userSymbols.n9" rend="dotted"/>
+          </measure>
+        </egXML>
+      </figure>
+    </div>
+    <div>
+      <head>Defining a Specific Graphical Rendition for a Semantic Element</head>
+      <p>Usersymbols can define the rendition of different elements in two ways. Some elements,
+        namely <gi scheme="MEI">dir</gi> and <gi scheme="MEI">tempo</gi>, can have user symbol
+        elements as content. This can e.g. be used to indicate percussion instruments using
+        pictograms.</p>
+      <figure>
+        <head>Indicating percussion instruments using pictograms</head>
+        <graphic url="Images/modules/usersymbols/percussion.svg"/>
+      </figure>
+      <figure>
+        <head>Encoding of above example</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <section>
+            <scoreDef meter.count="4" meter.unit="4">
+              <symbolTable>
+                <symbolDef xml:id="userSymbols.triangleSymbol1">
+                  <line x="0" y="0" x2="2.55" y2="4.25"/>
+                  <line x="2.55" y="4.25" x2="5.1" y2="0"/>
+                  <line x="5.1" y="0" x2="0.85" y2="0"/>
+                  <line x="2.55" y="1.25" x2="5.95" y2="3.4"/>
+                </symbolDef>
+                <symbolDef xml:id="userSymbols.cowbellSymbol">
+                  <line x="1" y="0" x2="1.8" y2="4"/>
+                  <line x="1.8" y="4" x2="4.2" y2="4"/>
+                  <line x="4.2" y="4" x2="5" y2="0"/>
+                  <line x="5" y="0" x2="1" y2="0"/>
+                  <curve startho="1" startvo="4" bezier="0 1.5 0 1.5" endho="3" endvo="4"/>
+                </symbolDef>
+              </symbolTable>
+              <staffGrp>
+                <staffDef n="1" clef.shape="G" clef.line="2"/>
+              </staffGrp>
+            </scoreDef>
+            <measure n="1">
+              <staffDef n="1">
+                <instrDef midi.instrname="Open_Triangle"/>
+              </staffDef>
+              <staff n="1">
+                <layer>
+                  <dir tstamp="1">
+                    <symbol ref="#userSymbols.triangleSymbol2"/>
+                  </dir>
+                  <note dur="1"/>
+                </layer>
+              </staff>
+            </measure>
+            <measure n="2">
+              <staffDef n="1">
+                <instrDef midi.instrname="Cowbell"/>
+              </staffDef>
+              <staff n="1">
+                <layer>
+                  <dir tstamp="1">
+                    <symbol ref="#userSymbols.cowbellSymbol"/>
+                  </dir>
+                  <note dur="4"/>
+                  <note dur="4"/>
+                  <note dur="4"/>
+                  <note dur="4"/>
+                </layer>
+              </staff>
+            </measure>
+          </section>
+        </egXML>
+      </figure>
+      <p>A number of other elements can point to a symbol for rendering using the <att>altsym</att>
+        attribute.</p>
+      <figure>
+        <head>Different treble clef renditions as written by Charpentier (source: <ref
+            target="www.sscm-jscm.org/v12/no1/gosine.html">Journal of Seventeenth-Century Music,
+            Volume 12, No. 1 (2006)</ref>, <ref
+            target="http://www.sscm-jscm.org/v12/no1/gosine.html#ch10">figure 3</ref>)</head>
+        <graphic url="Images/modules/usersymbols/charpentier.png"/>
+      </figure>
+      <figure>
+        <head>Defining two staffs, each using its own treble clef shape</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples">
+          <scoreDef>
+            <symbolTable>
+              <symbolDef xml:id="userSymbols.clefA">
+                <curve startho="1.2" startvo=" 4   " bezier="-1.2   0.1 -0.9 -0.8 " endho="1.1"
+                  endvo=" 6.6"/>
+                <curve startho="1.1" startvo=" 6.6 " bezier=" 1     0.9  0.1  1.6 " endho="3  "
+                  endvo=" 5.3"/>
+                <curve startho="3  " startvo=" 5.3 " bezier="-0.1  -2.6  0    2.3 " endho="0.6"
+                  endvo="-0.1"/>
+                <curve startho="0.6" startvo="-0.1 " bezier=" 0.07 -1.3 -0.2 -1.63" endho="2.4"
+                  endvo=" 0.23"/>
+                <curve startho="2.4" startvo=" 0.23" bezier=" 0.2   1.3  0.5  0.62" endho="0.8"
+                  endvo=" 0.81"/>
+              </symbolDef>
+              <symbolDef xml:id="userSymbols.clefB">
+                <curve startho="2.5" startvo=" 1.3 " bezier="-0.7   0.1   0.3   0.92" endho="0.7"
+                  endvo="-0.2"/>
+                <curve startho="0.7" startvo="-0.2 " bezier="-0.27 -0.76 -1.25 -1.26" endho="2  "
+                  endvo="-0.74"/>
+                <curve startho="2  " startvo="-0.74" bezier=" 1.4   1.8   0.4  -1   " endho="1.6"
+                  endvo=" 4.36"/>
+                <curve startho="1.6" startvo=" 4.36" bezier="-0.89  2.2  -1.1   1.6 " endho="3.5"
+                  endvo=" 6.06"/>
+                <curve startho="3.5" startvo=" 6.06" bezier=" 0.8  -1.2   0     0   " endho="3.7"
+                  endvo=" 2.66"/>
+              </symbolDef>
+            </symbolTable>
+            <staffGrp>
+              <staffDef n="1">
+                <clef shape="G" line="2" altsym="#userSymbols.clefA"/>
+              </staffDef>
+              <staffDef n="2">
+                <clef shape="G" line="2" altsym="#userSymbols.clefB"/>
+              </staffDef>
+            </staffGrp>
+          </scoreDef>
+        </egXML>
+      </figure>
+    </div>
+  </div>
+  <div>
+    <head>Positioning and Coordinates</head>
+    <div xml:id="coordinateSystem">
+      <head>Axis Orientation</head>
+      <p>MEI uses the classic axis directions where the x-axis points from left to right and the
+        y-axis points from bottom up. (This is compatible with PostScript's axis orientation, while
+        SVG's y-axis points in the opposite direction.)</p>
+    </div>
+    <div>
+      <head>Units</head>
+      <p>There are two types of units used by MEI: Staff units (data.MEASUREMENT) and units of the
+        output coordinate system. Units of the output coordinate system can be translated to
+        physical real world distances by means of the <att>vu.height</att> and <att>page.scale</att>
+        of a <gi scheme="MEI">scoreDef</gi> element. Real world units are multiplied by the value of
+          <att>page.scale</att> to get the corresponding value in output coordinate units.</p>
+      <p>If an element is scaled using the <att>scale</att> attribute, the actual size of the units
+        changes accordingly.</p>
+    </div>
+    <div>
+      <head>Positioning</head>
+      <p>An element may be positioned using either absolute or relative coordinates. If absolute
+        start point coordinates are specified using <att>x</att>/<att>y</att> coordinates (or their
+        relatives <att>x2</att>/<att>y2</att> for endpoints) they take precedence over relative
+        positions specified by <att>ho</att>/<att>vo</att>/<att>to</att> (or
+          <att>startho</att>/<att>startvo</att>/<att>startto</att>). Analogously,
+          <att>x2</att>/<att>y2</att> override
+        <att>endho</att><att>endvo</att>/<att>endto</att>.</p>
+      <p>If <att>to</att>/<att>startto</att>/<att>endto</att> attributes are used, the start or end
+        point is x-aligned with the indicated timestamp.</p>
+      <p>If relative start coordinates (<att>ho</att>/<att>vo</att> or
+          <att>startho</att>/<att>startvo</att>) are used, the origin of the coordinate system to be
+        used for the start point is the first one found by the following search schema:</p>
+      <list type="ordered">
+        <item>If <att>startid</att> is present, the origin of the referenced element;</item>
+        <item>If the element is inside running text (e.g. inside <gi scheme="MEI">tempo</gi>), the
+          end of the preceding text or element;</item>
+        <item>Otherwise, the origin of the containing element.</item>
+      </list>
+      <p>The start point is offset from this origin by the value of the start coordinates
+          (<att>ho</att>/<att>vo</att> or <att>startho</att>/<att>startvo</att>), using staff
+        units.</p>
+      <p>Analogously, the endpoint is determined using end coordinates
+          (<att>endho</att>/<att>endvo</att>). If <att>endid</att> is specified, it takes precedence
+        over <att>startid</att>.</p>
+      <p>Examples of origins are:</p>
+      <list type="bulleted">
+        <item><gi scheme="MEI">staff</gi> and <gi scheme="MEI">layer</gi>: The horizontal origin is
+          the starting point of the measure, the vertical one is the bottom staff line;</item>
+        <item><gi scheme="MEI">note</gi>: The horizontal origin is the left end of the notehead, the
+          vertical one the center of the notehead;</item>
+        <item><gi scheme="MEI">clef</gi>: The horizontal origin is the left end of the clef, the
+          vertical one the line specified by <gi scheme="MEI">clef</gi>/<att>line</att> (or
+            <att>clef.line</att>);</item>
+        <item>For elements containing text: The left end of the baseline;</item>
+        <item><gi scheme="MEI">symbolDef</gi>: As symbol definitions aren't rendered directly, their
+          coordinate system and origin are considered virtual. When they are referenced by <gi
+            scheme="MEI">symbol</gi> or <att>altsym</att>, the origin of the context, i.e. the
+          referencing symbol, is used.</item>
+      </list>
+      <p>If neither absolute nor relative coordinates are specified, determining visually suitable
+        start points (and endpoints for <gi scheme="MEI">lines</gi> and <gi scheme="MEI"
+        >curve</gi>s) is left to the rendering application. A value of 0 is not always assumed for
+        absent relative coordinates. A typical example where a rendering application may not choose
+        the origins of absent relative start and end coordinates to be the start point as well is
+        the line connecting two notes in the above <ref target="#mignonFigure">Schumann
+          example</ref>.</p>
+    </div>
+    <div>
+      <head>Curve Shape</head>
+      <p>If neither a <att>bezier</att> nor <att>bulge</att> attribute is present, the renderer
+        determines a suitable shape. However, if <att>curvedir</att> is present, the curve must
+        respect the curvature direction specified there.</p>
+      <p>The attributes <att>bezier</att> and <att>bulge</att> define the shape of a curve in two
+        different ways. If both are present, a rendering application may choose either one. They
+        override <att>curvedir</att>.</p>
+      <p><att>bezier</att> defines the inner control points of a cubic Bézier curve, i.e., a Bézier
+        curve with two inner control points. The coordinates are given by a space separated list,
+        first x and y offsets for the first control point, then x and y offsets for the second one.
+        The x and y offsets are given in staff units (or inside the context of <gi scheme="MEI"
+          >symbolDef</gi> in abstract units). The offsets for the first inner control point are
+        relative to the start point, the ones for the second inner control point are relative to the
+        end point.</p>
+      <!--<p>{PROBLEM: Samples converted from MusicXML seem to use MusicXML tenth, which doesn't make
+        sense in the context of MEI.}</p>-->
+      <p>The <att>bulge</att> attribute allows specification of the curve shape by a number of
+        interpolation points. The interpolation points are given by their distance from the line
+        connecting the start and end point. The distance values are stored as a space separated
+        list.</p>
+      <p>The interpolation points are calculated as follows: If <att>bulge</att> provides
+          <formula>n</formula> distance values, the connection line is divided into
+          <formula>n+1</formula> subsegments of equal length. The interpolation points are found by
+        drawing a perpendicular line of the respective length at each subsegment joint. Positive
+        distance values are drawn to the left of the connection line (left when traveling from start
+        to end), negative ones to the right.</p>
+      <figure>
+        <head>Rendering a bulge attribute with value "2 1"</head>
+        <graphic url="Images/modules/usersymbols/bulge.png"/>
+      </figure>
+      <p>The interpolation algorithm used by the rendering application is implementation
+        dependent.</p>
+    </div>
+  </div>
+
+  <div>
+    <head>Line Rendition</head>
+    <p>The <att>rend</att> attribute of lines and curves can take the following values:</p>
+    <list type="bulleted">
+      <item>narrow</item>
+      <item>medium</item>
+      <item>wide</item>
+      <item>dashed</item>
+      <item>dotted</item>
+    </list>
+    <p>These attributes are only qualitative. The actual line width, dot and dash distance, dash
+      length and line ending shapes are implementation dependent.</p>
+  </div>
+  <div>
+    <head>Limitations</head>
+    <p>The usersymbols module does currently not support continuous composite lines or filled areas.
+      As mentioned above, the rendition of lines is highly implementation dependent. Coordinate
+      system transforms are restricted to scaling using <att>scale</att>.</p>
+    <!--<p>{QUESTION: What is the significance of att.coordinated on <gi scheme="MEI">symbolDef</gi>?}</p>-->
+  </div>
+</div>

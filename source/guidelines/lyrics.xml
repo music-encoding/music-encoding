@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  © 2012 by the Music Encoding Initiative (MEI) Council.
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://www.osedu.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="lyricsDesc" n="0">
+  <head>Vocal Text</head>
+  <p>This chapter describes how to encode words and syllables in vocal notation. This text is
+    typically written under a staff to indicate the text to be vocally performed. As such, this text
+    should not be confused with other text on the score, for which see <ptr
+      target="#textualElements"/> and <ptr target="#text"/>
+  </p>
+  <p>These guidelines suggest two methods for encoding text in vocal notation: encoding syllables
+      <ref target="#lyricsInEvents">under each note</ref> and encoding performed text <ref
+      target="#lyricsAfterEvents">after the notes</ref> (and other staff events) either within <gi
+      scheme="MEI">layer</gi> elements or within <gi scheme="MEI">measure</gi> elements when
+    available (for example in a Common Music Notation context). Each method may be more convenient
+    depending on the source text and on the textual phenomena that the encoding intends to
+    record.</p>
+  <!-- TODO: Check if <syl> belongs here or in the shared chapter (#lyricSyllables). Writing here for now! -->
+  <p>Both methods eventually rely on the <gi scheme="MEI">syl</gi> element, which is part of the
+      <soCalled>shared</soCalled> module and is therefore available in all MEI files. The following
+    sections will begin by introducing the general use of <gi scheme="MEI">syl</gi> and then show in
+    detail the two different encoding methods.</p>
+
+  <div type="div2" xml:id="lyricsSyl">
+    <head>Lyric Syllables</head>
+    <p>By <soCalled>lyric syllable</soCalled>, these guidelines mean a word or portion of a word
+      that is to be performed vocally. Each syllable is encoded with the <gi scheme="MEI">syl</gi>
+      element, with which it is also possible to specify the position of the syllable in a word, the
+      type of connectors between syllables, alignment adjustments, and the formatting for each
+      syllable. These are the key components:</p>
+    <p>
+      <specList>
+        <specDesc key="syl" atts="worpos con halign"/>
+      </specList>
+    </p>
+
+    <p>The attribute <att>wordpos</att> is used to specify the position of the marked-up lyric
+      syllable in a word. It allows the following values:</p>
+    <list type="gloss">
+      <label>i</label>
+      <item> - Indicates that the current syllable's position is <emph>i</emph>nitial; that is, at
+        the beginning of a word;</item>
+      <label>m</label>
+      <item> - Indicates that the current syllable is in the <emph>m</emph>iddle of a word;</item>
+      <label>t</label>
+      <item> - Indicates that the syllable's position is <emph>t</emph>erminal; that is, at the end
+        of a word.</item>
+      <!-- TODO: Need a value to indicate the syllable is the entire word? -->
+    </list>
+
+    <p>When a syllable is at the beginning or in the middle of a word (in which case it will have
+      the <att>wordpos</att> attribute set to <soCalled>i</soCalled> or <soCalled>m</soCalled>), it
+      is recommended to specify the type of connector written between the current and the following
+      syllable. This is expressed with the <att>con</att> attribute, which takes the following
+      values:</p>
+    <list type="gloss">
+      <label>s</label>
+      <item> - A <emph>s</emph>pace is used as a connector between syllables;</item>
+      <label>d</label>
+      <item> - A <emph>d</emph>ash is used as a connector between syllables;</item>
+      <label>u</label>
+      <item> - An <emph>u</emph>nderscore sign (indicating prologation of the syllable) is used as a
+        connector between syllables;</item>
+      <label>t</label>
+      <item> - A <emph>t</emph>ilde is used to indicate elision with the following syllable. This is
+        typically rendered as a small curved line between the syllables.</item>
+    </list>
+
+    <p>Occasionally, a word or a final syllable needs to be extended across multiple notes. In this
+      case an <soCalled>extender</soCalled> is provided. An extender is a continuous line drawn at
+      the text's baseline from the end of the syllable associated with the first note until the last
+      note to be sung with the syllable. The </p>
+
+    <p>The use of <gi scheme="MEI">syl</gi> described in this section is common to CMN and other
+      notation systems, such as mensural notation. Other uses specific to certain types of notation
+      and repertoires are addressed in other chapters. See for example <ptr target="neumes1.2"
+      />.</p>
+  </div>
+
+  <div type="div2" xml:id="lyricsInEvents">
+    <head>Vocally Performed Text Encoded Within Notes</head>
+    <p>Each lyric syllable can be encoded directly within an associated note, either by using the
+        <att>syl</att> attribute on <gi scheme="MEI">note</gi> or the <gi scheme="MEI">verse</gi>
+      element.</p>
+    <p>Using the <att>syl</att> attribute on notes is the simplest way of encoding vocally performed
+      text and is recommended only for simple situations or for those encodings which do not focus
+      on vocally performed text.</p>
+    <p>The following example from Handel's <title>Messiah</title> (HWV 56) shows the use of
+        <att>syl</att>:</p>
+    <figure>
+      <head>Handel, Messiah HWV 56, Halleluja</head>
+      <figDesc>Example of a simple encoding of sung text</figDesc>
+      <graphic url="Images/modules/lyrics/ex_syl_att.png" height="100px"/>
+    </figure>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <staff>
+    <layer>
+      <note pname="c" oct="5" dur="4" dots="1" syl="Hal-"/>
+      <note pname="g" oct="4" dur="8" syl="le-"/>
+      <beam>
+        <note pname="a" oct="4" dur="8" syl="lu-"/>
+        <note pname="g" oct="4" dur="8" syl="jah,"/>
+      </beam>
+      <rest dur="4"/>
+    </layer>
+  </staff>
+</measure>
+    </egXML>
+
+    <p>When there are multiple lines of vocally performed text, or the encoder wishes to be more
+      specific about connectors, etc., the use of <gi scheme="MEI">verse</gi> and <gi scheme="MEI"
+        >syl</gi> is recommended.</p>
+
+    <p>
+      <specList>
+        <specDesc key="verse" atts="rhythm"/>
+      </specList>
+    </p>
+
+    <p>The following example from Handel's <title>Messiah</title> (HWV 56) shows the use of <gi
+        scheme="MEI">verse</gi>:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <staff>
+    <layer>
+      <note pname="c" oct="5" dur="4" dots="1">
+        <verse n="1">
+          <syl wordpos="i" con="d">Hal</syl>
+        </verse>
+      </note>
+      <note pname="g" oct="4" dur="8">
+        <verse n="1">
+          <syl wordpos="m" con="d">le</syl>
+        </verse>
+      </note>
+      <beam>
+        <note pname="a" oct="4" dur="8">
+          <verse n="1">
+            <syl wordpos="m" con="d">lu</syl>
+          </verse>
+        </note>
+        <note pname="g" oct="4" dur="8">
+          <verse n="1">
+            <syl wordpos="t">jah,</syl>
+          </verse>
+        </note>
+      </beam>
+      <rest dur="4"/>
+    </layer>
+        </staff>
+</measure>
+    </egXML>
+
+    <p>As it is common practice in written text, it is assumed that a space separates words. Many
+      vocal texts, however, introduce elisions and connect two syllables into one unit. For example,
+      the vocal text from Mozart's <title>Don Giovanni</title> sung by Don Giovanni in Finale II,
+        <q>Ho fermo il core in petto</q> introduces an elision between the word <q>fermo</q> and
+        <q>il</q> and between <q>core</q> and <q>in</q>. An elision can be indicated by placing both
+      syllables within the same <gi scheme="MEI">note</gi> and setting the <gi scheme="MEI">syl</gi>
+      element's <att>con</att> attribute value to 't':</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<note>
+  <verse>
+    <syl wordpos="t" con="t">re</syl>
+    <syl wordpos="i">in</syl>
+  </verse>
+</note>
+    </egXML>
+
+    <p>When there is more than one line of text, more than one <gi scheme="MEI">verse</gi> element
+      can be used. The following example from a piano reduction of Wagner's <title>Rheingold</title>
+      has two lines of text, with an English translation on the second line. Note the use of the
+        <att>xml:lang</att> attribute to differentiate the two languages:</p>
+    <figure>
+      <head>Example from Wagner's Rheingold with translated text.</head>
+      <!--<graphic url="Images/modules/lyrics/ex_syl_att.png" width="100px"/>-->
+    </figure>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<scoreDef>
+  <staffGrp>
+    <staffDef n="1" lines="5" clef.line="4" clef.shape="F" key.sig="4s"/>
+  </staffGrp>
+</scoreDef>
+<section>
+  <measure>
+    <staff n="1">
+      <layer n="1">
+        <note pname="f" oct="3" dur="2" stem.dir="down">
+          <verse n="1" xml:lang="ger">
+            <syl wordpos="i" con="d">Rei</syl>
+          </verse>
+          <verse n="2" xml:lang="eng">
+            <syl>thinks</syl>
+          </verse>
+        </note>
+        <note pname="f" oct="3" dur="8" stem.dir="down">
+          <verse n="1">
+            <syl wordpos="t">fes</syl>
+          </verse>
+          <verse n="2">
+            <syl>it</syl>
+          </verse>
+        </note>
+        <note pname="f" oct="3" dur="8" stem.dir="down">
+          <verse n="1">
+            <syl>zu</syl>
+          </verse>
+          <verse n="2">
+            <syl>were</syl>
+          </verse>
+        </note>
+      </layer>
+    </staff>
+  </measure>
+  <measure>
+    <staff n="1">
+      <layer>
+        <note pname="b" oct="3" dur="4" stem.dir="down">
+          <verse n="1">
+            <syl wordpos="i" con="d">wal</syl>
+          </verse>
+          <verse n="2">
+            <syl>wise</syl>
+          </verse>
+        </note>
+        <note pname="d" oct="3" dur="4" stem.dir="down">
+          <accid accid="n"/>
+          <verse n="1">
+            <syl wordpos="t">ten,</syl>
+          </verse>
+          <verse n="2">
+            <syl>now</syl>
+          </verse>
+        </note>
+        <rest dur="4" dur.ges="8p"/>
+      </layer>
+    </staff>
+  </measure>
+</section>
+    </egXML>
+
+    <p>Optionally, it is possible to include an <gi scheme="MEI">lb</gi> element within <gi
+        scheme="MEI">verse</gi> to explicitly encode line and line group endings. This is
+      specifically meant to facilitate karaoke applications.</p>
+
+    <p>Finally, the <att>rhythm</att> attribute can be used to specify a rhythm for the syllable
+      that differs from that of the notes on the staff.</p>
+    <!-- TODO: NEED EXAMPLE HERE -->
+
+  </div>
+
+  <div type="div2" xml:id="lyricsAfterEvents">
+    <head>Vocally Performed Text Encoded Separately</head>
+    <p>Vocally performed text may also be encoded separately from the notes with the <gi
+        scheme="MEI">lyrics</gi> element. These are the main components:</p>
+
+    <p><specList>
+        <specDesc key="lyrics" atts="staff layer"/>
+      </specList></p>
+
+    <p>Since this element is separated from the encoding of the notes, it must be associated with a
+      staff that will provide rhythm information when required for automated processing. The
+        <att>staff</att> attribute gives the associated staff and if there is more than one layer on
+      that staff, the <att>layer</att> attribute may be used to indicate the layer from which the
+      rhythm should be taken. If there is any divergence between the rhythm of the vocally performed
+      text and the notes, the <att>rhythm</att> attribute on <gi scheme="MEI">verse</gi> may be used
+      to specify the text's rhythm.</p>
+
+    <p>The following example from Carl Maria von Weber's <title>Der Freischütz</title> illustrates
+      this encoding method:</p>
+    <figure>
+      <head>Weber, Der Freischütz</head>
+      <figDesc>Example of separate vocally performed text encoding</figDesc>
+      <!--<graphic url="Images/modules/lyrics/ex_syl_att.png" width="100px"/>-->
+    </figure>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<measure>
+  <staff n="1">
+    <layer n="1">
+      <note pname="a" dur="4" oct="3" dots="1">
+        <artic artic="acc"/>
+      </note>
+      <note pname="a" dur="4" oct="3" dots="1">
+        <artic artic="acc"/>
+      </note>
+    </layer>
+  </staff>
+  <lyrics staff="1">
+    <verse>
+      <syl>Sturm</syl>
+      <syl>und</syl>
+    </verse>
+  </lyrics>
+</measure>
+<measure>
+  <staff n="1">
+    <layer n="1">
+      <note pname="g" dur="2" oct="3" dots="1" tie="i"/>
+    </layer>
+  </staff>
+  <lyrics staff="1">
+    <verse>
+      <syl>Nacht!</syl>
+    </verse>
+  </lyrics>
+</measure>
+<measure>
+  <staff n="1">
+    <layer n="1">
+      <note pname="g" dur="2" oct="3" dots="1" tie="t"/>
+    </layer>
+  </staff>
+</measure>
+    </egXML>
+
+    <p>In this encoding style, a <gi scheme="MEI">syl</gi> element with its <att>con</att> attribute
+      set to 't' and the following syllable are presumed to be associated with a single note. In the
+      following example, the first two syllables occur on the first note and the third syllable
+      occurs on the second note.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+<staff>
+  <layer>
+    <note pname="g" dur="2" oct="3"/>
+    <note pname="f" dur="2" oct="3"/>
+  </layer>
+</staff>
+<!-- later -->
+<lyrics staff="1">
+  <verse>
+    <syl wordpos="t" con="t">re</syl>
+    <syl wordpos="i">il</syl>
+    <syl wordpos="i">pet</syl>
+  </verse>
+</lyrics>
+    </egXML>
+
+  </div>
+
+</div>
