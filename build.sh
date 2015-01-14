@@ -1,7 +1,6 @@
 #!/bin/bash
 
 ## Customize here
-# Edit to test customization service
 PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
 PATH_TO_SAXON_JAR="/usr/share/java/Saxon-HE-9.4.0.7.jar"
 PATH_TO_TRANG_JAR="/usr/share/java/trang.jar"
