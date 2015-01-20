@@ -9676,9 +9676,9 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The starting point of the beam may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded by either a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify one starting and one
+        <p>The starting point of the beam may be indicated by either a startid, tstamp, tstamp.ges,
+          or tstamp.real attribute, while the ending point may be recorded by either a dur, dur.ges,
+          endid, or tstamp2 attribute. It is a semantic error not to specify one starting and one
           ending type of attribute.</p>
       </remarks>
     </elementSpec>
@@ -9865,7 +9865,7 @@
           breath. Therefore, it often functions as a guide to phrasing. The usual sign for the
           breath mark is a comma; however, other visual forms of the breath mark may be indicated
           using the altsym attribute. The starting point of the breath mark may be indicated by
-          either a tstamp, tstamp.ges, tstamp.real or startid attribute. It is a semantic error not
+          either a startid, tstamp, tstamp.ges, or tstamp.real attribute. It is a semantic error not
           to specify a starting point attribute.</p>
       </remarks>
     </elementSpec>
@@ -10929,9 +10929,9 @@
         <p>Examples include text strings, such as 'affettuoso' or fingering numbers, and music
           symbols, such as segno and coda symbols, fermatas over a bar line, etc. Directives can be
           control elements. That is, they can linked via their attributes to other events. The
-          starting point of the directive may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded by either a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify a starting point
+          starting point of the directive may be indicated by either a startid, tstamp, tstamp.ges,
+          or tstamp.real attribute, while the ending point may be recorded by either a dur, dur.ges,
+          endid, or tstamp2 attribute. It is a semantic error not to specify a starting point
           attribute.</p>
       </remarks>
     </elementSpec>
@@ -11047,11 +11047,10 @@
         <p>This element may be used for instantaneous or continuous textual dynamics, e.g. 'p',
           'mf', or 'cresc. poco a poco'. The &lt;hairpin&gt; element should be used for graphical,
           i.e., crescendo and diminuendo, dynamic markings. The starting point of the dynamic
-          marking may be indicated by either a tstamp, tstamp.ges, tstamp.real or startid attribute,
-          while the ending point may be recorded by either a dur, dur.ges or endid attribute. It is
-          a semantic error not to specify a starting point attribute. Please note that the dur
-          attribute is not a true duration, but rather a time stamp for the end point of the dynamic
-          mark. A MIDI value associated with the graphical dynamic sign may be recorded in the val
+          marking may be indicated by either a startid, tstamp, tstamp.ges, or tstamp.real
+          attribute, while the ending point may be recorded by either a dur, dur.ges, endid, or
+          tstamp2 attribute. It is a semantic error not to specify a starting point attribute. A
+          MIDI value associated with the graphical dynamic sign may be recorded in the val
           attribute.</p>
       </remarks>
     </elementSpec>
@@ -11613,8 +11612,8 @@
           dir/@type="fermata" with &amp;ferm; or &amp;uferm; as its PCDATA content. The shape
           attribute may be used to record whether the fermata is curved or square. Other visual
           forms of a fermata may be indicated via the altsym attribute. The starting point of the
-          fermata may be indicated by either a tstamp, tstamp.ges, tstamp.real or startid attribute.
-          It is a semantic error not to specify a starting point attribute.</p>
+          fermata may be indicated by either a startid, tstamp, tstamp.ges, or tstamp.real
+          attribute. It is a semantic error not to specify a starting point attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="fig" module="MEI.figtable">
@@ -11955,9 +11954,10 @@
           the case where distinct intermediate pitches are produced (as on the piano) and the case
           where they are not (as on the trombone), though the latter is sometimes referred to as
           'portamento'. The visual appearance of the indicating line may be recorded in the rend
-          attribute. The starting point of the glissando may be indicated by either a tstamp,
-          tstamp.ges, tstamp.real or startid attribute. It is a semantic error not to specify a
-          starting point attribute.</p>
+          attribute. The starting point of the glissando may be indicated by either a startid,
+          tstamp, tstamp.ges, or tstamp.real attribute, while the ending point may be recorded by
+          either a dur, dur.ges, endid, or tstamp2 attribute. It is a semantic error not to specify
+          one starting and one ending type of attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="graphic" module="MEI.figtable">
@@ -12074,11 +12074,10 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The starting point of the hairpin may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded by either a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify one starting and one
-          ending type of attribute. Please note that the value of the dur attribute is not a true
-          duration, but rather a time stamp for the end point of the hairpin.</p>
+        <p>The starting point of the hairpin may be indicated by either a startid, tstamp,
+          tstamp.ges, or tstamp.real attribute, while the ending point may be recorded by either a
+          dur, dur.ges, endid, or tstamp2 attribute. It is a semantic error not to specify one
+          starting and one ending type of attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="halfmRpt" module="MEI.cmn">
@@ -12736,6 +12735,14 @@
       <content>
         <rng:empty/>
       </content>
+      <constraintSpec ident="Check_keyAccidPlacement" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:keyAccid">
+            <sch:assert test="(@x and @y) or @loc">The @x and @y pair of attributes or @loc
+              required.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="form" usage="opt">
           <desc>specifies whether enharmonic (written) values or implicit ("perform-able") values
@@ -13604,8 +13611,8 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The starting point of the mordent may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute. It is a semantic error not to specify one of these
+        <p>The starting point of the mordent may be indicated by either a startid, tstamp,
+          tstamp.ges, or tstamp.real attribute. It is a semantic error not to specify one of these
           attributes.</p>
       </remarks>
     </elementSpec>
@@ -13931,12 +13938,11 @@
         <p>The dis and dis.place attributes record the amount and direction of displacement,
           respectively. The rend attribute captures the appearance of the continuation line
           associated with the octave displacement. The starting point of the octave displacement may
-          be indicated by either a tstamp, tstamp.ges, tstamp.real or startid attribute, while the
-          ending point may be recorded by either a dur, dur.ges or endid attribute. It is a semantic
-          error not to specify one starting and one ending type of attribute. Please note that the
-          dur attribute here is not a true duration, but rather a time stamp for the end point of
-          the octave displacement. Also, note that the dur attribute is not required because the
-          octave displacement can be visually instantaneous.</p>
+          be indicated by either a startid, tstamp, tstamp.ges, or tstamp.real attribute, while the
+          ending point may be recorded by either a dur, dur.ges, endid, or tstamp2 attribute. It is
+          a semantic error not to specify one starting and one ending type of attribute. Also, note
+          that the dur attribute is not required because the octave displacement can be visually
+          instantaneous.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="orig" module="MEI.edittrans">
@@ -14195,8 +14201,8 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The starting point of the pedal mark may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute. It is a semantic error not to specify one of these
+        <p>The starting point of the pedal mark may be indicated by either a startid, tstamp,
+          tstamp.ges, or tstamp.real attribute. It is a semantic error not to specify one of these
           attributes.</p>
       </remarks>
     </elementSpec>
@@ -14474,9 +14480,9 @@
           concepts is the same. MEI provides two distinct elements so that those users wishing to
           maintain a distinction for historical reasons may do so. If the user does not want to
           maintain the distinction, then the more generic &lt;slur&gt; element should be employed.
-          The starting point of the phrase may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded by either a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify one starting and one
+          The starting point of the phrase may be indicated by either a startid, tstamp, tstamp.ges,
+          or tstamp.real attribute, while the ending point may be recorded by either a dur, dur.ges,
+          endid, or tstamp2 attribute. It is a semantic error not to specify one starting and one
           ending type of attribute. Either place, bulge, or bezier attributes may be used to record
           the curvature of the phrase. Please note that the dur attribute here is not a true
           duration, but rather a time stamp for the end point of the phrase mark.</p>
@@ -15714,9 +15720,9 @@
           concepts is the same. MEI provides two distinct elements so that those users wishing to
           maintain a distinction for historical reasons may do so. If the user does not want to
           maintain the distinction, then the more generic &lt;slur&gt; element should be employed.
-          The starting point of the slur may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded by either a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify one starting and one
+          The starting point of the slur may be indicated by either a startid, tstamp, tstamp.ges,
+          or tstamp.real attribute, while the ending point may be recorded by either a dur, dur.ges,
+          endid, or tstamp2 attribute. It is a semantic error not to specify one starting and one
           ending type of attribute. Either place, bulge, or bezier attributes may be used to record
           the curvature of the slur. The slur and tie elements may be used instead of the slur.* and
           tie.* attributes provided on chord and note elements when 1) they are required by
@@ -16924,11 +16930,10 @@
         <p>The interval between the main and auxiliary notes is usually understood to be diatonic
           unless altered by an accidental. The starting note of the trill; i.e., the written one or
           the ornamenting one, and the speed of alternation depends on performance practice. The
-          starting point of the trill may be indicated by either a tstamp, tstamp.ges, tstamp.real
-          or startid attribute, while the ending point may be recorded by either a dur, dur.ges or
-          endid attribute. It is a semantic error not to specify a starting point attribute. Please
-          note that the dur attribute is not a true duration, but rather a time stamp for the end
-          point of the trill.</p>
+          starting point of the trill may be indicated by either a startid, tstamp, tstamp.ges, or
+          tstamp.real attribute, while the ending point may be recorded by either a dur, dur.ges,
+          endid, or tstamp2 attribute. It is a semantic error not to specify a starting point
+          attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="trkName" module="MEI.midi">
@@ -17016,10 +17021,10 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The starting point of the tuplet may be indicated by either a tstamp, tstamp.ges,
-          tstamp.real or startid attribute, while the ending point may be recorded using a dur,
-          dur.ges or endid attribute. It is a semantic error not to specify one starting and one
-          ending type of attribute.</p>
+        <p>The starting point of the tuplet may be indicated by either a startid, tstamp,
+          tstamp.ges, or tstamp.real attribute, while the ending point may be recorded by either a
+          dur, dur.ges, endid, or tstamp2 attribute. It is a semantic error not to specify one
+          starting and one ending type of attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="turn" module="MEI.cmnOrnaments">
