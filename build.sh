@@ -16,6 +16,13 @@ DRIVER_FILE=${SOURCE_DIR}"/driver.xml"
 
 all()
 {
+    if [ ! -f $TEI_TO_RELAXNG_BIN ]; then
+        echo $TEI_TO_RELAXNG_BIN
+        echo "The TEI Stylesheets were not found at:" $PATH_TO_TEI_STYLESHEETS
+        echo "Please specify using -t flag."
+        exit 1
+    fi
+
     if [ -d "build" ]; then
         echo "Removing old build directory"
         rm -r ${BUILD_DIR}
@@ -29,7 +36,8 @@ all()
     for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
     do
         echo "processing" "${file}"
-        $TEI_TO_RELAXNG_BIN --saxonjar=$PATH_TO_SAXON_JAR --trangjar=$PATH_TO_TRANG_JAR --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
+        echo $DRIVER_FILE
+        $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
@@ -64,12 +72,35 @@ test()
     IFS=$SAVEIFS
 }
 
-case "$1" in
+usage()
+{
+    echo "Flags:"
+    echo "  -h Print usage"
+    echo "  -t Path to TEI Stylesheets"
+    echo ""
+    echo "Build options:"
+    echo "  all"
+    echo "  test"
+    exit 1
+}
+
+SKIP=0
+while getopts "h:t:" OPT; do
+    case $OPT in
+        h) 
+            usage;;
+        t)
+            PATH_TO_TEI_STYLESHEETS=$OPTARG
+            TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
+            SKIP=$(($SKIP + 2));;
+    esac
+done
+
+args=("$@")
+TYPE=${args[$SKIP]}
+
+case $TYPE in
     "all" ) all;;
     "test" ) test;;
-    * )
-        echo "Build options:"
-        echo "  all"
-        echo "  test"
-    ;;
+    * ) usage;;
 esac
