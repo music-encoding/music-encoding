@@ -16,12 +16,13 @@
   <!-- parameters -->
 
   <!-- PARAM:rng_model_path -->
+  <!-- This points to the 2.1.1 bugfix release tag -->
   <xsl:param name="rng_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+    >https://raw.githubusercontent.com/music-encoding/music-encoding/b9dff53ad25203cfe43fa6b68eab6fad6d2a088e/schemata/mei-all.rng</xsl:param>
 
   <!-- PARAM:sch_model_path -->
   <xsl:param name="sch_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+    >https://raw.githubusercontent.com/music-encoding/music-encoding/b9dff53ad25203cfe43fa6b68eab6fad6d2a088e/schemata/mei-all.rng</xsl:param>
 
   <!-- PARAM:layout
       This parameter defines the degree of layout information transformed into MEI. Possible values are:
