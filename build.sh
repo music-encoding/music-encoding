@@ -14,6 +14,11 @@ SOURCE_DIR="source"
 SAMPLES_DIR="samples"
 DRIVER_FILE=${SOURCE_DIR}"/driver.xml"
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+PURPLE='\033[0;35m'
+NORM='\033[0m'  # No Color
+
 all()
 {
     if [ ! -f $TEI_TO_RELAXNG_BIN ]; then
@@ -24,7 +29,7 @@ all()
     fi
 
     if [ -d "build" ]; then
-        echo "Removing old build directory"
+        echo -e "${PURPLE}Removing old build directory${NORM}"
         rm -r ${BUILD_DIR}
     fi
 
@@ -35,13 +40,12 @@ all()
 
     for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
     do
-        echo "processing" "${file}"
-        echo $DRIVER_FILE
+        echo -e "${GREEN}Processing" "${file}"$NORM
         $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
-            echo "Build failed on" $file
+            echo -e "${RED}Build failed on" $file$NORM
             exit 1
         fi
 
@@ -52,20 +56,22 @@ all()
 
 test()
 {
-    echo "Validating 2013 samples directory against mei-all"
+    echo -e "\nValidating 2013 samples directory against mei-all\n"
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
     for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
     do
-        echo "Testing: " $file
+        echo -e "${PURPLE} Testing: ${NORM}" $file
         $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
-            echo "Tests failed on" $file
+            echo -e "${RED}\tTests failed on" $file$NORM
             exit 1
+        else
+            echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
         fi
     done
 
