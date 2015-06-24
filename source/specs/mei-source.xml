@@ -16,7 +16,8 @@
   
   CONTACT: info@music-encoding.org
 -->
-<?oxygen RNGSchema="../tei_odds.rng" type="xml"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <div xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
@@ -2180,6 +2181,15 @@
         </rng:list>
       </content>
     </macroSpec>
+    <macroSpec ident="data.WORD" module="MEI" type="dt">
+      <desc>defines the range of attribute values expressed as a single
+        word or token.</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})+</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
 
     <!-- ATTRIBUTE CLASSES -->
     <classSpec ident="att.accid.anl" module="MEI.shared" type="atts">
@@ -2259,6 +2269,9 @@
         <attDef ident="agent" usage="opt">
           <desc>signifies the causative agent of damage, illegibility, or other loss of original
             text.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -2445,6 +2458,9 @@
         <attDef ident="authority" usage="opt">
           <desc>a name or label associated with the controlled vocabulary from which the value is
             taken.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="authURI" usage="opt">
           <desc>the web-accessible location of the controlled vocabulary from which the value is
@@ -2566,6 +2582,10 @@
         <attDef ident="beam.group" usage="opt">
           <desc>provides an example of how automated beaming (including secondary beams) is to be
             performed.</desc>
+          <!-- This probably needs a better datatype -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="beam.rests" usage="opt">
           <desc>indicates whether automatically-drawn beams should include rests shorter than a
@@ -2782,6 +2802,9 @@
         <attDef ident="analog" usage="opt">
           <desc>contains a reference to a field or element in another descriptive encoding system to
             which this MEI element is comparable.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -3156,6 +3179,10 @@
       <attList>
         <attDef ident="label" usage="opt">
           <desc>provides a label for an element. The value may be any string.</desc>
+          <!-- This should probably data.WORD instead -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
         <attDef ident="n" usage="opt">
           <desc>provides a name or number designation for an element. While the value need not be
@@ -3295,11 +3322,19 @@
         <attDef ident="bezier" usage="opt">
           <desc>records the placement of Bezier control points as a series of space-separated xy
             coordinates, e.g., 19 45 -32 118.</desc>
+          <!-- Needs a better datatype ASAP -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
         <attDef ident="bulge" usage="opt">
           <desc>describes a curve as a set of distance values above or below an imaginary line
             connecting the endpoints of the curve. The bulge attribute must contain one or more
             decimal values expressed in inter-line units.</desc>
+          <!-- Needs a better datatype ASAP -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
         <attDef ident="curvedir" usage="opt">
           <desc>describes a curve with a generic term indicating the direction of curvature.</desc>
@@ -3739,6 +3774,9 @@
       <attList>
         <attDef ident="extent" usage="opt">
           <desc>indicates the extent of damage or omission.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -3910,6 +3948,10 @@
       <attList>
         <attDef ident="text" usage="opt">
           <desc>records a text string, such as 'gliss', that accompanies the glissando mark.</desc>
+          <!-- May need a stricter datatype (or even an element) to avoid dumping long text in this attribute --> 
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -4355,6 +4397,10 @@
           <desc>specifies the applicable MIME (multimedia internet mail extension) type. The value
             should be a valid MIME media type defined by the Internet Engineering Task Force in RFC
             2046.</desc>
+          <!-- Needs a better datatype ASAP -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -4529,6 +4575,9 @@
         <attDef ident="label.abbr" usage="opt">
           <desc>provides a label for a group of staves on pages after the first page. Usually, this
             label takes an abbreviated form.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -4812,6 +4861,10 @@
       <attList>
         <attDef ident="unit" usage="opt">
           <desc>indicates the unit used for a measurement of size.</desc>
+          <!-- Needs a better datatype -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
           <valList type="semi">
             <valItem ident="cm">
               <desc>centimeter.</desc>
@@ -4853,11 +4906,19 @@
         <attDef ident="begin" usage="opt">
           <desc>specifies a point where the relevant content begins. A numerical value must be less
             and a time value must be earlier than that in the end attribute.</desc>
+          <!-- Needs a better datatype -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="end" usage="opt">
           <desc>specifies a point where the relevant content ends. If not specified, the end of the
             content is assumed to be the end point. A numerical value must be greater and a time
             value must be later than that in the begin attribute.</desc>
+          <!-- Needs a better datatype -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="betype" usage="opt">
           <desc>type of values used in the begin/end attributes. The begin and end attributes can
@@ -4888,6 +4949,9 @@
       <attList>
         <attDef ident="medium" usage="opt">
           <desc>describes the writing medium.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -5644,6 +5708,9 @@
         <attDef ident="role" usage="opt">
           <desc>used to specify further information about the entity referenced by this name, for
             example, the occupation of a person or the status of a place.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -6320,6 +6387,10 @@
         <!--<attDef ident="title" ns="http://www.w3.org/1999/xlink" usage="opt">-->
         <attDef ident="xlink:title" usage="opt">
           <desc>contains a human-readable description of the entire link.</desc>
+          <!-- Attributes should never be phrases. Needs to be fixed ASAP -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -6363,6 +6434,10 @@
         <attDef ident="reason" usage="opt">
           <desc>holds a short phrase describing the reason for missing textual material (gap), why
             material is supplied (supplied), or why transcription is difficult (unclear).</desc>
+          <!-- Attributes should never be phrases. This needs to be fixed ASAP -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -6371,6 +6446,9 @@
       <attList>
         <attDef ident="reg" usage="opt">
           <desc>provides a regularized, authorized value.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -7004,6 +7082,10 @@
         <attDef ident="psolfa" usage="opt">
           <desc>contains sol-fa designation, e.g., do, re, mi, etc., in either a fixed or movable Do
             system.</desc>
+          <!-- Needs a better datatype -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -7275,7 +7357,7 @@
     <classSpec ident="att.staffident" module="MEI.shared" type="atts">
       <desc>Attributes for identifying the staff associated with the current feature.</desc>
       <attList>
-        <attDef ident="staff" usage="mwa">
+        <attDef ident="staff" usage="opt">
           <desc>signifies the staff on which a notated event occurs or to which a control event
             applies. Mandatory when applicable.</desc>
           <datatype>
@@ -7476,6 +7558,9 @@
       <attList>
         <attDef ident="syl" usage="opt">
           <desc>holds an associated sung text syllable.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -8040,6 +8125,10 @@
         <attDef ident="rhythm" usage="opt">
           <desc>used to specify a rhythm for the lyric syllables that differs from that of the notes
             on the staff, e.g. '4,4,4,4' when the rhythm of the notes is '4.,8,4.,8'.</desc>
+          <!-- this probably needs a better datatype! -->
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -9010,6 +9099,9 @@
       <attList>
         <attDef ident="expan" usage="opt">
           <desc>records the expansion of a text abbreviation.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -9383,6 +9475,9 @@
         <attDef ident="version" usage="opt">
           <desc>supplies a version number for an application, independent of its identifier or
             display name.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -10842,6 +10937,9 @@
       <attList>
         <attDef ident="degree" usage="opt">
           <desc>records the degree of damage.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -10912,6 +11010,9 @@
       <attList>
         <attDef ident="rend" usage="opt">
           <desc>contains an indication of how the deletion should be rendered.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -11463,6 +11564,9 @@
       <attList>
         <attDef ident="abbr" usage="opt">
           <desc>captures the unabbreviated form of the text.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -12269,6 +12373,9 @@
       <attList>
         <attDef ident="character" usage="opt">
           <desc>describes the character of the new hand.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="new" usage="opt">
           <desc>identifies the new hand. The value must contain the ID of a hand element given
@@ -12565,6 +12672,9 @@
       <attList>
         <attDef ident="form" usage="opt">
           <desc>form of the encoded incipit.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
           <valList type="semi">
             <valItem ident="plaineAndEasie">
               <desc>Plaine &amp; Easie Code.</desc>
@@ -15302,6 +15412,9 @@
       <attList>
         <attDef ident="altrend" usage="opt">
           <desc>used to extend the values of the rend attribute.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="rend" usage="opt">
           <desc>captures the appearance of the element's contents using MEI-defined
@@ -15490,6 +15603,9 @@
         <attDef ident="desc" usage="opt">
           <desc>provides a description of the means of restoration, 'stet' or 'strike-down', for
             example.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
       </attList>
       <remarks>
@@ -16103,6 +16219,9 @@
         <attDef ident="delim" usage="opt">
           <desc>indicates the delimiter used to mark the portions of text that are to be
             stacked.</desc>
+          <datatype>
+            <rng:ref name="data.WORD"/>
+          </datatype>
         </attDef>
         <attDef ident="align" usage="opt">
           <desc>specifies how the stacked text components should be aligned.</desc>
@@ -17541,6 +17660,11 @@
           <desc>specifies the time interval between this time point and the one designated by the
             since attribute. This attribute can only be interpreted meaningfully in conjunction with
             the inttype attribute.</desc>
+          <!-- Temporarily adding string datatype -->
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
+          <!-- Why was this commented out? I suggest restoring it or reduce limitations (eg make it any positive float --> 
           <!-- <datatype>
                 <rng:data type="decimal">
                   <rng:param name="minInclusive">1</rng:param>
