@@ -475,41 +475,47 @@
   </macroSpec>
   <macroSpec ident="data.BEATRPT.REND" module="MEI" type="dt">
       <desc>Visual and performance information for a repeated beat symbol.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="positiveInteger">
+            <rng:param name="pattern">4|8|16|32|64|128</rng:param>
+          </rng:data>
+          <rng:data type="token">
+            <rng:param name="pattern">mixed</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.BEND.AMOUNT" module="MEI" type="dt">
       <desc>Either a decimal value or a token. The decimal values are limited to .25, .5, .75,
           or 1, while the token values are restricted to 'full'.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="decimal">
+            <rng:param name="pattern">1|\.25|\.5|\.75</rng:param>
+          </rng:data>
+          <rng:data type="token">
+            <rng:param name="pattern">full</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.BOOLEAN" module="MEI" type="dt">
       <desc>Boolean attribute values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="true">
-              <desc/>
-          </valItem>
-          <valItem ident="false">
-              <desc/>
-          </valItem>
+      <valList>
+          <valItem ident="true"/>
+          <valItem ident="false"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.CERTAINTY" module="MEI" type="dt">
       <desc>Values for certainty attribute. Certainty may be expressed by one of the values
           'high', 'medium', or 'low'. The value 'unknown' should be used in cases where the
           encoder does not wish to assert an opinion.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="high">
-              <desc/>
-          </valItem>
-          <valItem ident="medium">
-              <desc/>
-          </valItem>
-          <valItem ident="low">
-              <desc/>
-          </valItem>
-          <valItem ident="unknown">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="high"/>
+          <valItem ident="medium"/>
+          <valItem ident="low"/>
+          <valItem ident="unknown"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.CLEFLINE" module="MEI" type="dt">
@@ -559,55 +565,23 @@
       <desc>A value in one of the following forms is expected: 1) hexadecimal RRGGBB, 2)
           hexadecimal AARRGGBB, 3) CSS RGB, 4) CSS RGBA, 5) HSL, 6) HSLA, or 7) HTML 4.01
           color name.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="aqua">
-              <desc/>
-          </valItem>
-          <valItem ident="black">
-              <desc/>
-          </valItem>
-          <valItem ident="blue">
-              <desc/>
-          </valItem>
-          <valItem ident="fuchsia">
-              <desc/>
-          </valItem>
-          <valItem ident="gray">
-              <desc/>
-          </valItem>
-          <valItem ident="green">
-              <desc/>
-          </valItem>
-          <valItem ident="lime">
-              <desc/>
-          </valItem>
-          <valItem ident="maroon">
-              <desc/>
-          </valItem>
-          <valItem ident="navy">
-              <desc/>
-          </valItem>
-          <valItem ident="olive">
-              <desc/>
-          </valItem>
-          <valItem ident="purple">
-              <desc/>
-          </valItem>
-          <valItem ident="red">
-              <desc/>
-          </valItem>
-          <valItem ident="silver">
-              <desc/>
-          </valItem>
-          <valItem ident="teal">
-              <desc/>
-          </valItem>
-          <valItem ident="white">
-              <desc/>
-          </valItem>
-          <valItem ident="yellow">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="aqua"/>
+          <valItem ident="black"/>
+          <valItem ident="blue"/>
+          <valItem ident="fuchsia"/>
+          <valItem ident="gray"/>
+          <valItem ident="green"/>
+          <valItem ident="lime"/>
+          <valItem ident="maroon"/>
+          <valItem ident="navy"/>
+          <valItem ident="olive"/>
+          <valItem ident="purple"/>
+          <valItem ident="red"/>
+          <valItem ident="silver"/>
+          <valItem ident="teal"/>
+          <valItem ident="white"/>
+          <valItem ident="yellow"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.CURVERENDITION" module="MEI" type="dt">
@@ -642,7 +616,12 @@
   </macroSpec>
   <macroSpec ident="data.DURATION" module="MEI" type="dt">
       <desc>Logical, that is, written, duration attribute values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:ref name="data.DURATION.cmn"/>
+          <rng:ref name="data.DURATION.mensural"/>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.DURATION.additive" module="MEI" type="dt">
       <desc>records duration using optionally dotted, relative durational values provided by
@@ -710,36 +689,37 @@
   </macroSpec>
   <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
       <desc>Performed duration attribute values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:list>
+            <rng:oneOrMore>
+              <!-- Humdrum **recip -->
+              <rng:data type="token">
+                <rng:param name="pattern">[0-9]+(\.)*r</rng:param>
+              </rng:data>
+            </rng:oneOrMore>
+          </rng:list>
+          <rng:data type="token">
+            <!-- ppq, beats, seconds -->
+            <rng:param name="pattern">[0-9]+((\.)*p|(\.[0-9]+)?(b|s))</rng:param>
+          </rng:data>
+          <!-- mensural durations -->
+          <rng:ref name="data.DURATION.mensural"/>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.DURATION.mensural" module="MEI.mensural" type="dt">
       <desc>Logical, that is, written, duration attribute values for the mensural
           repertoire.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="maxima">
-              <desc/>
-          </valItem>
-          <valItem ident="longa">
-              <desc/>
-          </valItem>
-          <valItem ident="brevis">
-              <desc/>
-          </valItem>
-          <valItem ident="semibrevis">
-              <desc/>
-          </valItem>
-          <valItem ident="minima">
-              <desc/>
-          </valItem>
-          <valItem ident="semiminima">
-              <desc/>
-          </valItem>
-          <valItem ident="fusa">
-              <desc/>
-          </valItem>
-          <valItem ident="semifusa">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="maxima"/>
+          <valItem ident="longa"/>
+          <valItem ident="brevis"/>
+          <valItem ident="semibrevis"/>
+          <valItem ident="minima"/>
+          <valItem ident="semiminima"/>
+          <valItem ident="fusa"/>
+          <valItem ident="semifusa"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.ENCLOSURE" module="MEI" type="dt">
@@ -758,7 +738,17 @@
           to play an individual string. The index, middle, ring, and little fingers are
           represented by the values 1-4, while 't' is for the thumb. The values 'x' and 'o'
           indicate stopped and open strings, respectively.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">1</rng:param>
+            <rng:param name="maxInclusive">4</rng:param>
+          </rng:data>
+          <rng:data type="token">
+            <rng:param name="pattern">x|o|t</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.FONTFAMILY" module="MEI" type="dt">
       <desc>Font family (for text) attribute values. Mup-acceptable values: avantgarde,
@@ -798,13 +788,9 @@
   </macroSpec>
   <macroSpec ident="data.FONTWEIGHT" module="MEI" type="dt">
       <desc>Font weight (for text) attribute values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="bold">
-              <desc/>
-          </valItem>
-          <valItem ident="normal">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="bold"/>
+          <valItem ident="normal"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.FRET" module="MEI" type="dt">
@@ -822,7 +808,17 @@
   <macroSpec ident="data.FRETNUMBER" module="MEI" type="dt">
       <desc>In string tablature, the fret number, i.e., [1-9]. The value 'o' indicates the
           open string.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="nonNegativeInteger">
+            <rng:param name="minInclusive">1</rng:param>
+            <rng:param name="maxInclusive">9</rng:param>
+          </rng:data>
+          <rng:data type="token">
+            <rng:param name="pattern">o</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.GLISSANDO" module="MEI" type="dt">
       <desc>Analytical glissando attribute values.</desc>
@@ -972,58 +968,58 @@
   <macroSpec ident="data.INEUMEFORM" module="MEI" type="dt">
       <desc>Interrupted neume forms.</desc>
       <valList type="closed">
-          <valItem ident="liquescent1">
-              <desc/>
-          </valItem>
-          <valItem ident="liquescent2">
-              <desc/>
-          </valItem>
-          <valItem ident="tied">
-              <desc/>
-          </valItem>
-          <valItem ident="tiedliquescent1">
-              <desc/>
-          </valItem>
-          <valItem ident="tiedliquescent2">
-              <desc/>
-          </valItem>
+          <valItem ident="liquescent1"/>
+          <valItem ident="liquescent2"/>
+          <valItem ident="tied"/>
+          <valItem ident="tiedliquescent1"/>
+          <valItem ident="tiedliquescent2"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.INEUMENAME" module="MEI" type="dt">
       <desc>Interrupted neume, i.e. neume written as 2 or more sub-neumes.</desc>
       <valList type="closed">
-          <valItem ident="pessubpunctis">
-              <desc/>
-          </valItem>
-          <valItem ident="climacus">
-              <desc/>
-          </valItem>
-          <valItem ident="scandicus">
-              <desc/>
-          </valItem>
-          <valItem ident="bistropha">
-              <desc/>
-          </valItem>
-          <valItem ident="tristropha">
-              <desc/>
-          </valItem>
-          <valItem ident="pressusminor">
-              <desc/>
-          </valItem>
-          <valItem ident="pressusmaior">
-              <desc/>
-          </valItem>
+          <valItem ident="pessubpunctis"/>
+          <valItem ident="climacus"/>
+          <valItem ident="scandicus"/>
+          <valItem ident="bistropha"/>
+          <valItem ident="tristropha"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="pressusmaior"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.AMOUNT" module="MEI" type="dt">
       <desc>A token indicating direction of the interval but not its precise value, an
           indication of diatonic interval quality and size, or a decimal value in half steps.
           Decimal values are permitted to accommodate micro-tuning.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="decimal"/>
+          <rng:data type="token">
+            <rng:param name="pattern">u|d|s</rng:param>
+          </rng:data>
+          <rng:data type="token">
+            <rng:param name="pattern">(\+|\-)?[AdMmP][0-9]+</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.ISODATE" module="MEI" type="dt">
       <desc>ISO date formats.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:data type="date"/>
+          <rng:data type="gYear"/>
+          <rng:data type="gMonth"/>
+          <rng:data type="gDay"/>
+          <rng:data type="gYearMonth"/>
+          <rng:data type="gMonthDay"/>
+          <rng:data type="time"/>
+          <rng:data type="dateTime"/>
+          <rng:data type="token">
+            <rng:param name="pattern">[0-9.,DHMPRSTWYZ/:+\-]+</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.ISOTIME" module="MEI" type="dt">
       <desc>ISO 24-hour time format: HH:MM:SS.ss, i.e.,
@@ -1072,12 +1068,8 @@
           <valItem ident="2f">
               <desc>two layers with 'floating' stems</desc>
           </valItem>
-          <valItem ident="3o">
-              <desc/>
-          </valItem>
-          <valItem ident="3f">
-              <desc/>
-          </valItem>
+          <valItem ident="3o"/>
+          <valItem ident="3f"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.LIGATUREFORM" module="MEI" type="dt">
@@ -1812,31 +1804,15 @@
   </macroSpec>
   <macroSpec ident="data.MODE" module="MEI" type="dt">
       <desc>Modes.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="major">
-              <desc/>
-          </valItem>
-          <valItem ident="minor">
-              <desc/>
-          </valItem>
-          <valItem ident="dorian">
-              <desc/>
-          </valItem>
-          <valItem ident="phrygian">
-              <desc/>
-          </valItem>
-          <valItem ident="lydian">
-              <desc/>
-          </valItem>
-          <valItem ident="mixolydian">
-              <desc/>
-          </valItem>
-          <valItem ident="aeolian">
-              <desc/>
-          </valItem>
-          <valItem ident="locrian">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="major"/>
+          <valItem ident="minor"/>
+          <valItem ident="dorian"/>
+          <valItem ident="phrygian"/>
+          <valItem ident="lydian"/>
+          <valItem ident="mixolydian"/>
+          <valItem ident="aeolian"/>
+          <valItem ident="locrian"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.MODUSMAIOR" module="MEI" type="dt">
@@ -1907,13 +1883,9 @@
   <macroSpec ident="data.OTHERSTAFF" module="MEI" type="dt">
       <desc>For musical material designated to appear on another staff, the location of the
           staff relative to the current one; i.e., the staff above or the staff below.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="above">
-              <desc/>
-          </valItem>
-          <valItem ident="below">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="above"/>
+          <valItem ident="below"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.PAGE.PANELS" module="MEI" type="dt">
@@ -1936,7 +1908,11 @@
   <macroSpec ident="data.PGSCALE" module="MEI" type="dt">
       <desc>Page scale factor; a percentage of the values in page.height and
           page.width.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0"/>
+      <content>
+        <rng:choice>
+          <rng:ref name="data.PERCENT"/>
+        </rng:choice>
+      </content>
   </macroSpec>
   <macroSpec ident="data.PITCHCLASS" module="MEI" type="dt">
       <desc>Pclass (pitch class) attribute values.</desc>
@@ -1972,13 +1948,9 @@
   </macroSpec>
   <macroSpec ident="data.PLACE" module="MEI" type="dt">
       <desc>Location of symbol relative to other notational components.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="above">
-              <desc/>
-          </valItem>
-          <valItem ident="below">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="above"/>
+          <valItem ident="below"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.PROLATIO" module="MEI" type="dt">
@@ -2009,7 +1981,7 @@
   </macroSpec>
   <macroSpec ident="data.SIZE" module="MEI" type="dt">
       <desc>Relative size attribute values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="normal">
               <desc>default size</desc>
           </valItem>
@@ -2040,7 +2012,7 @@
   </macroSpec>
   <macroSpec ident="data.SLURDIRECTION" module="MEI" type="dt">
       <desc>Slur direction.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="up">
               <desc>upward-curving line</desc>
           </valItem>
@@ -2060,7 +2032,7 @@
   </macroSpec>
   <macroSpec ident="data.STAFFREL" module="MEI" type="dt">
       <desc>Location of musical material relative to a staff.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="above">
               <desc>written above staff</desc>
           </valItem>
@@ -2074,7 +2046,7 @@
   </macroSpec>
   <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt">
       <desc>Stem direction.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="up">
               <desc>stem points upward</desc>
           </valItem>
@@ -2085,7 +2057,7 @@
   </macroSpec>
   <macroSpec ident="data.STEMMODIFIER" module="MEI" type="dt">
       <desc>Stem modification.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="1slash">
               <desc>1 slash through stem</desc>
           </valItem>
@@ -2114,7 +2086,7 @@
   </macroSpec>
   <macroSpec ident="data.STEMPOSITION" module="MEI" type="dt">
       <desc>Position of a note's stem relative to the head of the note.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="left">
               <desc>stem attached to left side of note head</desc>
           </valItem>
@@ -2134,7 +2106,7 @@
   </macroSpec>
   <macroSpec ident="data.TEMPERAMENT" module="MEI" type="dt">
       <desc>Temperament or tuning system.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="equal">
               <desc>equal or 12-tone temperament</desc>
           </valItem>
@@ -2166,7 +2138,7 @@
   </macroSpec>
   <macroSpec ident="data.TEXTRENDITION" module="MEI" type="dt">
       <desc>Text rendition values.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="xx-small">
               <desc>relative font size</desc>
           </valItem>
@@ -2279,7 +2251,7 @@
   </macroSpec>
   <macroSpec ident="data.TIEDIRECTION" module="MEI" type="dt">
       <desc>Tie direction.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
+      <valList type="closed">
           <valItem ident="up">
               <desc>upward curving line</desc>
           </valItem>
@@ -2305,72 +2277,32 @@
   </macroSpec>
   <macroSpec ident="data.UNEUMEFORM" module="MEI" type="dt">
       <desc>Basic, i.e., single, uninterrupted, neume forms.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="liquescent1">
-              <desc/>
-          </valItem>
-          <valItem ident="liquescent2">
-              <desc/>
-          </valItem>
-          <valItem ident="liquescent3">
-              <desc/>
-          </valItem>
-          <valItem ident="quilismatic">
-              <desc/>
-          </valItem>
-          <valItem ident="rectangular">
-              <desc/>
-          </valItem>
-          <valItem ident="rhombic">
-              <desc/>
-          </valItem>
-          <valItem ident="tied">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="liquescent1"/>
+          <valItem ident="liquescent2"/>
+          <valItem ident="liquescent3"/>
+          <valItem ident="quilismatic"/>
+          <valItem ident="rectangular"/>
+          <valItem ident="rhombic"/>
+          <valItem ident="tied"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.UNEUMENAME" module="MEI" type="dt">
       <desc>Basic, i.e., single, uninterrupted, neume names.</desc>
-      <valList xmlns:tei="http://www.tei-c.org/ns/1.0">
-          <valItem ident="punctum">
-              <desc/>
-          </valItem>
-          <valItem ident="virga">
-              <desc/>
-          </valItem>
-          <valItem ident="pes">
-              <desc/>
-          </valItem>
-          <valItem ident="clivis">
-              <desc/>
-          </valItem>
-          <valItem ident="torculus">
-              <desc/>
-          </valItem>
-          <valItem ident="torculusresupinus">
-              <desc/>
-          </valItem>
-          <valItem ident="porrectus">
-              <desc/>
-          </valItem>
-          <valItem ident="porrectusflexus">
-              <desc/>
-          </valItem>
-          <valItem ident="apostropha">
-              <desc/>
-          </valItem>
-          <valItem ident="oriscus">
-              <desc/>
-          </valItem>
-          <valItem ident="pressusmaior">
-              <desc/>
-          </valItem>
-          <valItem ident="pressusminor">
-              <desc/>
-          </valItem>
-          <valItem ident="virgastrata">
-              <desc/>
-          </valItem>
+      <valList type="closed">
+          <valItem ident="punctum"/>
+          <valItem ident="virga"/>
+          <valItem ident="pes"/>
+          <valItem ident="clivis"/>
+          <valItem ident="torculus"/>
+          <valItem ident="torculusresupinus"/>
+          <valItem ident="porrectus"/>
+          <valItem ident="porrectusflexus"/>
+          <valItem ident="apostropha"/>
+          <valItem ident="oriscus"/>
+          <valItem ident="pressusmaior"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="virgastrata"/>
       </valList>
   </macroSpec>
   <macroSpec ident="data.URI" module="MEI" type="dt">
