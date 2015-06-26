@@ -56,11 +56,38 @@ all()
 
 test()
 {
-    echo -e "\nValidating 2013 samples directory against mei-all\n"
+    echo -e "\nValidating 2013 samples directory against built customizations\n"
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
+    for file in $(find ${BUILD_DIR} -name '*.rng');
+    do
+        echo -e "${PURPLE} Testing: ${NORM}" $file
+        # this gets the name of a possible testing directory from the name of the customization
+        testdir=`echo $file | sed -n 's/build\/\(.*\)\.rng/\1/p'`
+        if [ -d tests/${testdir} ]; then
+            echo -e "${PURPLE} Found ${NORM} $testdir"
+            for tfile in $(find tests/${testdir} -name '*.mei');
+            do
+                echo -e "${PURPLE} Testing: ${NORM}" $tfile
+
+                $PATH_TO_JING $file "${tfile}"
+
+                if [ $? = 1 ]; then
+                    IFS=$SAVEIFS
+                    echo -e "${RED}\tTests failed on" $tfile$NORM
+                    exit 1
+                else
+                    echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
+                fi
+            done
+        fi
+    done
+
+    # REMOVE SOON
+    # Until we get the test set up and running we'll still validate the whole sample collection against
+    # mei-all. This testing scheme should be removed after the tests are ready.
     for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
     do
         echo -e "${PURPLE} Testing: ${NORM}" $file
