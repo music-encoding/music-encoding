@@ -44,11 +44,13 @@ The MEI Schema may be customized to express and validate different types of musi
 
 ## Why Customizations?
 
-The customization process at first seems like a complex way of validating music notation. However, customizations are a vital part of the expressive power of MEI, and when used to their full extent, can assist organizations in ensuring the integrity of their data.
+For those who are used to haing a single DTD or W3C Schema to validate music notation encodings, the customization process may seem like a complex way of arriving at a schema to validate music notation. However, customizations are a vital part of the expressive power of MEI, and when used to their full extent, can assist organizations in ensuring the integrity and validity of their data.
 
-When designing a music encoding system, the designer must attempt to address the sometimes contradictory and non-standardized practices associated with writing music notation. Different repertoires may have extremely different ways of expressing pitch or rhythm; for example, rhythm in Mensural notation is incompatible with the later systems developed in common Western notation.
+When designing a music encoding system there are many contradictory and non-standardized practices associated with writing music notation. Different repertoires may have extremely different ways of expressing pitch or rhythm; for example, rhythm in Mensural notation is incompatible with the later systems developed in common Western notation.
 
-Customizations will customize the schema, but they will also build custom versions of the documentation and guidelines.
+Most attempts at addressing this complexity restricts a schema to only a certain subset of music notation, and does not attempt to accurately represent the semantics of music notation that falls outside of its defined scope. So, for example, a system designed for common Western notation that depends on the existence of measures, duration, note shapes, or even staves, cannot semantically represent notations that do not have these features.
+
+The MEI takes a different approach. With the customization system, schemas may be generated from an existing "library" of well-defined musical behaviours, but each behaviour may be mixed and matched according to the needs of the notation. In this sense, the MEI source functions more as a "library" of music encoding tools from which many different types of notation can be expressed, and not just a single monolithic schema.
 
 ## Building MEI Schemas
 
