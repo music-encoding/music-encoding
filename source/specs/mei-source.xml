@@ -561,10 +561,8 @@
           </valItem>
       </valList>
   </macroSpec>
-  <macroSpec ident="data.COLOR" module="MEI" type="dt">
-      <desc>A value in one of the following forms is expected: 1) hexadecimal RRGGBB, 2)
-          hexadecimal AARRGGBB, 3) CSS RGB, 4) CSS RGBA, 5) HSL, 6) HSLA, or 7) HTML 4.01
-          color name.</desc>
+  <macroSpec ident="data.COLORLIST" module="MEI" type="dt">
+      <desc>List of HTML 4.01 color names.</desc>
       <valList type="closed">
           <valItem ident="aqua"/>
           <valItem ident="black"/>
@@ -584,7 +582,52 @@
           <valItem ident="yellow"/>
       </valList>
   </macroSpec>
-  <macroSpec ident="data.CURVERENDITION" module="MEI" type="dt">
+  <macroSpec ident="data.COLORPAR" module="MEI" type="dt">
+      <desc>Parameterized color values</desc>
+      <content>
+        <rng:choice>
+          <!-- hex values -->
+          <rng:data type="token">
+            <rng:param name="pattern">#[0-9A-Fa-f]{6,6}</rng:param>
+          </rng:data>
+          <!-- AARRGGBB values -->
+          <rng:data type="token">
+            <rng:param name="pattern">#[0-9A-Fa-f]{8,8}</rng:param>
+          </rng:data>
+          <!-- RGB values -->
+          <rng:data type="token">
+            <rng:param name="pattern"
+              >rgb\((\s*(([01]?[0-9]?[0-9])|2[0-4][0-9]|25[0-5])\s*,\s*){2}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*\)</rng:param>
+          </rng:data>
+          <!-- RGBA values -->
+          <rng:data type="token">
+            <rng:param name="pattern"
+              >rgba\(\s*(([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\s*,\s*){3}(0(\.\d+)?|1(\.0+)?)\s*\)|rgba\(\s*(((\d{1,2})?%|100%)\s*,\s*){2}(\d{1,2}%|100%)\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)</rng:param>
+          </rng:data>
+          <!-- HSL values -->
+          <rng:data type="token">
+            <rng:param name="pattern"
+              >hsl\(\s*((\d{1,2})|[12]\d{2}|3[0-5]\d|360)\s*,\s*(\d{1,2}%|100%)\s*,\s*(\d{1,2}%|100%)\s*\)</rng:param>
+          </rng:data>
+          <!-- HSLA values -->
+          <rng:data type="token">
+            <rng:param name="pattern"
+              >hsla\(\s*(\d{1,2}|[12]\d{2}|3[0-5]\d|360)\s*,\s*(\d{1,2}%|100%)\s*,\s*(\d{1,2}%|100%)\s*,\s*(0(\.\d+)?|1(\.0+)?)\s*\)</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.COLOR" module="MEI" type="dt">
+      <desc>A value in one of the following forms is expected: 1) hexadecimal RRGGBB, 2) hexadecimal
+        AARRGGBB, 3) CSS RGB, 4) CSS RGBA, 5) HSL, 6) HSLA, or 7) HTML 4.01 color name.</desc>
+      <content>
+        <alternate>
+          <macroRef key="data.COLORLIST"/>
+          <macroRef key="data.COLORPAR"/>
+        </alternate>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.CURVERENDITION" module="MEI" type="dt">
       <desc>Renderings of curves.</desc>
       <valList type="closed">
           <valItem ident="narrow">
@@ -629,14 +672,9 @@
           case with tuplets, multiple space-separated values that add up to the total duration
           may be used.</desc>
       <content>
-          <rng:list>
-              <rng:oneOrMore>
-                  <rng:data type="token">
-                      <rng:param name="pattern"
-                          >(long|breve|1|2|4|8|16|32|64|128|256|1024|2048)(\.)*</rng:param>
-                  </rng:data>
-              </rng:oneOrMore>
-          </rng:list>
+          <rng:data type="token">
+              <rng:param name="pattern">(long|breve|1|2|4|8|16|32|64|128|256|1024|2048)(\.)*</rng:param>
+          </rng:data>
       </content>
   </macroSpec>
   <macroSpec ident="data.DURATION.cmn" module="MEI.cmn" type="dt">
@@ -687,25 +725,30 @@
           </valItem>
       </valList>
   </macroSpec>
+  <macroSpec ident="data.DURATION.gestural.prop" module="MEI" type="dt">
+    <desc>Beat proportion representation equivalent to Humdrum **recip</desc>
+    <content>
+      <rng:data type="token">
+        <rng:param name="pattern">[0-9]+(\.)*r</rng:param>
+      </rng:data>
+    </content>
+  </macroSpec>
+    <macroSpec ident="data.DURATION.gestural.pat" module="MEI" type="dt">
+      <desc>Pattern for ppq, beats, seconds, etc.</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">[0-9]+((\.)*p|(\.[0-9]+)?(b|s))</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
   <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
       <desc>Performed duration attribute values.</desc>
       <content>
-        <rng:choice>
-          <rng:list>
-            <rng:oneOrMore>
-              <!-- Humdrum **recip -->
-              <rng:data type="token">
-                <rng:param name="pattern">[0-9]+(\.)*r</rng:param>
-              </rng:data>
-            </rng:oneOrMore>
-          </rng:list>
-          <rng:data type="token">
-            <!-- ppq, beats, seconds -->
-            <rng:param name="pattern">[0-9]+((\.)*p|(\.[0-9]+)?(b|s))</rng:param>
-          </rng:data>
-          <!-- mensural durations -->
-          <rng:ref name="data.DURATION.mensural"/>
-        </rng:choice>
+        <alternate>
+          <macroRef key="data.DURATION.gestural.prop"/>
+          <macroRef key="data.DURATION.gestural.pat"/>
+          <macroRef key="data.DURATION.mensural"/>
+        </alternate>
       </content>
   </macroSpec>
   <macroSpec ident="data.DURATION.mensural" module="MEI.mensural" type="dt">
@@ -1040,7 +1083,16 @@
           </rng:data>
       </content>
   </macroSpec>
-  <macroSpec ident="data.KEYSIGTOKEN" module="MEI" type="dt">
+  <macroSpec ident="data.KEYSIGNATURE.MIXED" module="MEI" type="dt">
+      <desc>Key signature may consist of a mixture of flats and sharps (Read, p. 143, ex. 9-39),
+        often with unorthodox placement of the accidentals (Read, p. 141).</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">[a-g][0-9](\-{1,3}|f{1,3}|#{1,3}|s{1,3}|x)</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.KEYSIGTOKEN" module="MEI" type="dt">
       <desc>A token describing the pitch name, inflection, and octave number of an altered
           pitch in a key signature.</desc>
       <content>
@@ -2242,7 +2294,7 @@
       </valList>
   </macroSpec>
   <macroSpec ident="data.TEXTRENDITIONPAR" module="MEI" type="dt">
-    <desc>Parametrized text rendition values</desc>
+    <desc>Parameterized text rendition values</desc>
     <content>
       <rng:choice>
         <rng:data type="string">
@@ -2335,18 +2387,7 @@
           <rng:data type="anyURI"/>
       </content>
   </macroSpec>
-  <macroSpec ident="data.URIS" module="MEI" type="dt">
-      <desc>One or more URIs.</desc>
-      <content>
-          <rng:list>
-              <rng:zeroOrMore>
-                  <rng:ref name="data.URI"/>
-              </rng:zeroOrMore>
-          </rng:list>
-      </content>
-  </macroSpec>
-
-    <!-- ATTRIBUTE CLASSES -->
+  <!-- ATTRIBUTE CLASSES -->
     <classSpec ident="att.accid.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -3378,33 +3419,33 @@
         <attDef ident="corresp" usage="opt">
           <desc>used to point to other elements that correspond to this one in a generic
             fashion.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="next" usage="opt">
           <desc>used to point to the next event(s) in a user-defined collection.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="prev" usage="opt">
           <desc>points to the previous event(s) in a user-defined collection.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="sameas" usage="opt">
           <desc>points to an element that is the same as the current element but is not a literal
             copy of the current element.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="synch" usage="opt">
           <desc>points to elements that are synchronous with the current element.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -3597,8 +3638,8 @@
       <attList>
         <attDef ident="data" usage="opt">
           <desc>used to link metadata elements to one or more data-containing elements.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -3610,8 +3651,8 @@
         <attDef ident="decls" usage="opt">
           <desc>identifies one or more metadata elements within the header, which are understood to
             apply to the element bearing this attribute and its content.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -3725,7 +3766,7 @@
             data.DURATION datatype. When the duration is "irrational", as is sometimes the case with
             tuplets, multiple space-separated values that add up to the total duration may be used.
             When dotted values are present, the dots attribute must be ignored.</desc>
-          <datatype>
+          <datatype maxOccurs="unbounded">
             <rng:ref name="data.DURATION.additive"/>
           </datatype>
           <constraintSpec ident="ignore_dots_attribute" scheme="isoschematron">
@@ -3937,8 +3978,8 @@
         <attDef ident="facs" usage="opt">
           <desc>permits the current element to reference a facsimile image or image zone which
             corresponds to it.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -4592,8 +4633,8 @@
             Also used to indicate a measure which metrically completes the current one. Record the
             identifiers of the separately encoded components, excluding the one carrying the
             attribute.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -4686,14 +4727,8 @@
             &lt;keySig&gt; element. It is intended that key.sig.mixed contain a series of tokens
             with each token containing pitch name, accidental, and octave, such as 'A4 Cs5 Ef5' that
             indicate what key accidentals should be rendered and where they should be placed.</desc>
-          <datatype>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="token">
-                  <rng:param name="pattern">[a-g][0-9](\-{1,3}|f{1,3}|#{1,3}|s{1,3}|x)</rng:param>
-                </rng:data>
-              </rng:oneOrMore>
-            </rng:list>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.KEYSIGNATURE.MIXED"/>
           </datatype>
         </attDef>
       </attList>
@@ -4819,12 +4854,8 @@
       <attList>
         <attDef ident="layer" usage="opt">
           <desc>identifies the layer to which a feature applies.</desc>
-          <datatype>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="positiveInteger"/>
-              </rng:oneOrMore>
-            </rng:list>
+          <datatype maxOccurs="unbounded">
+            <rng:data type="positiveInteger"/>
           </datatype>
         </attDef>
       </attList>
@@ -5011,7 +5042,7 @@
         <attDef ident="unit" usage="opt">
           <desc>indicates the unit used for a measurement of size.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
           <valList type="semi">
             <valItem ident="cm">
@@ -5855,7 +5886,7 @@
           <desc>used to specify further information about the entity referenced by this name, for
             example, the occupation of a person or the status of a place.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
       </attList>
@@ -6438,8 +6469,8 @@
         <attDef ident="plist" usage="opt">
           <desc>contains a space separated list of references that identify logical events that
             participate in a collection, such as notes under a phrase mark.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="evaluate" usage="opt">
@@ -6519,8 +6550,8 @@
         <attDef ident="target" usage="opt">
           <desc>allows the use of one or more previously-undeclared URIs to identify an external
             electronic object.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="targettype" usage="opt">
@@ -6727,8 +6758,8 @@
           <desc>captures information regarding responsibility for some aspect of the text's
             creation, transcription, editing, or encoding. Its value must point to one or more
             identifiers declared in the document header.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -7051,10 +7082,8 @@
             (minimum and maximum, respectively) provides a range between which a rendering
             system-supplied value may fall, while a single value indicates a fixed amount of space;
             that is, the minimum and maximum values are equal.</desc>
-          <datatype>
-            <rng:list>
-              <rng:ref name="data.MEASUREMENT"/>
-            </rng:list>
+          <datatype minOccurs="1" maxOccurs="2">
+            <rng:ref name="data.MEASUREMENT"/>
           </datatype>
         </attDef>
         <attDef ident="system.leftmar" usage="opt">
@@ -7227,7 +7256,7 @@
           <desc>contains sol-fa designation, e.g., do, re, mi, etc., in either a fixed or movable Do
             system.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
       </attList>
@@ -7239,8 +7268,8 @@
           <desc>contains a list of one or more pointers indicating the sources which attest to a
             given reading. Each value should correspond to the ID of a &lt;source&gt; element
             located in the document header.</desc>
-          <datatype>
-            <rng:ref name="data.URIS"/>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
       </attList>
@@ -7331,14 +7360,10 @@
       <attList>
         <attDef ident="tab.strings" usage="opt">
           <desc>provides a *written* pitch and octave for each open string.</desc>
-          <datatype>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="token">
-                  <rng:param name="pattern">[a-g][\-#fs]?[0-9]</rng:param>
-                </rng:data>
-              </rng:oneOrMore>
-            </rng:list>
+          <datatype maxOccurs="unbounded">
+            <rng:data type="token">
+              <rng:param name="pattern">[a-g][\-#fs]?[0-9]</rng:param>
+            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -7503,12 +7528,8 @@
         <attDef ident="staff" usage="opt">
           <desc>signifies the staff on which a notated event occurs or to which a control event
             applies. Mandatory when applicable.</desc>
-          <datatype>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="positiveInteger"/>
-              </rng:oneOrMore>
-            </rng:list>
+          <datatype maxOccurs="unbounded">
+            <rng:data type="positiveInteger"/>
           </datatype>
         </attDef>
       </attList>
@@ -9618,7 +9639,7 @@
           <desc>supplies a version number for an application, independent of its identifier or
             display name.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
       </attList>
@@ -11153,7 +11174,7 @@
         <attDef ident="rend" usage="opt">
           <desc>contains an indication of how the deletion should be rendered.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="token"/>
           </datatype>
         </attDef>
       </attList>
@@ -11705,7 +11726,7 @@
       </content>
       <attList>
         <attDef ident="abbr" usage="opt">
-          <desc>captures the unabbreviated form of the text.</desc>
+          <desc>captures the abbreviated form of the text.</desc>
           <datatype>
             <rng:data type="string"/>
           </datatype>
@@ -12815,7 +12836,7 @@
         <attDef ident="form" usage="opt">
           <desc>form of the encoded incipit.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
           <valList type="semi">
             <valItem ident="plaineAndEasie">
@@ -15555,7 +15576,7 @@
         <attDef ident="altrend" usage="opt">
           <desc>used to extend the values of the rend attribute.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
         <attDef ident="rend" usage="opt">
@@ -17104,12 +17125,8 @@
         <attDef ident="otherLangs">
           <desc>(other languages) one or more codes identifying any other languages used in the
             bibliographic work.</desc>
-          <datatype>
-            <rng:list>
-              <rng:oneOrMore>
-                <rng:data type="language"/>
-              </rng:oneOrMore>
-            </rng:list>
+          <datatype maxOccurs="unbounded">
+            <rng:data type="language"/>
           </datatype>
         </attDef>
       </attList>
