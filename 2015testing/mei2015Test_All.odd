@@ -7272,6 +7272,52 @@
               standard.</p>
           </remarks>
         </elementSpec>
+        <elementSpec ident="dir" module="MEI.shared" mode="replace">
+          <desc>(directive) – An instruction expressed as a combination of text and symbols — such as
+            segno and coda symbols, fermatas over a bar line, etc., typically above, below, or between
+            staves, but not on the staff — that is not encoded elsewhere in more specific elements, like
+            &lt;tempo&gt; or &lt;dynam&gt;.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="att.dir.log"/>
+            <memberOf key="att.dir.vis"/>
+            <memberOf key="att.dir.ges"/>
+            <memberOf key="att.dir.anl"/>
+            <memberOf key="model.controleventLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="dir_start-type_attributes_required" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:dir[not(ancestor::mei:syllable)]">
+                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+                  the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <remarks>
+            <p>Examples include text strings, such as 'affettuoso' or fingering numbers, and music
+              symbols, such as segno and coda symbols, fermatas over a bar line, etc. Directives can be
+              control elements. That is, they can linked via their attributes to other events. The
+              starting point of the directive may be indicated by either a <att>startid</att>,
+              <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+              ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
+              <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify
+              a starting point attribute.</p>
+          </remarks>
+        </elementSpec>
 
         <!-- Fix problem with string *courses* -->
         <classSpec ident="att.staffDef.ges.tablature" module="MEI.tablature" type="atts"
