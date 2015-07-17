@@ -92,19 +92,24 @@ test()
     # REMOVE SOON
     # Until we get the test set up and running we'll still validate the whole sample collection against
     # mei-all. This testing scheme should be removed after the tests are ready.
-    for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
-    do
-        echo -e "${PURPLE} Testing: ${NORM}" $file
-        $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
+    # for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
+    # do
+    #     echo -e "${PURPLE} Testing: ${NORM}" $file
 
-        if [ $? = 1 ]; then
-            IFS=$SAVEIFS
-            echo -e "${RED}\tTests failed on" $file$NORM
-            exit 1
-        else
-            echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
-        fi
-    done
+    #     if $USE_XMLLINT; then
+    #         $PATH_TO_XMLLINT --noout --relaxng $BUILD_DIR/mei-all.rng "${file}"
+    #     else
+    #         $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
+    #     fi
+
+    #     if [ $? = 1 ]; then
+    #         IFS=$SAVEIFS
+    #         echo -e "${RED}\tTests failed on" $file$NORM
+    #         exit 1
+    #     else
+    #         echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
+    #     fi
+    # done
 
     IFS=$SAVEIFS
 }
