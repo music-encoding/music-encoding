@@ -82,9 +82,9 @@ test()
                     echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
                 fi
 
-                echo -e "\n${GREEN}***********************************************"
-                echo -e "$file passed validation tests"
-                echo -e "***********************************************${NORM}\n"
+                echo -e "\n${GREEN}***********************************************${NORM}"
+                echo -e "${GREEN}$file passed validation tests${NORM}"
+                echo -e "${GREEN}***********************************************${NORM}\n"
             done
         fi
     done
