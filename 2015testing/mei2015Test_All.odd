@@ -90,6 +90,14 @@
         <moduleRef key="MEI.tablature"/>
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
+        <!-- Include SVG, issue #53 -->
+        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
+          <content>
+            <rng:define name="mei_model.graphicLike" combine="choice">
+              <rng:ref name="svg"/>
+            </rng:define>
+          </content>
+        </moduleRef>
 
         <!-- Revise version number -->
         <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
@@ -614,15 +622,6 @@
           </attList>
         </classSpec>
 
-        <!-- Include SVG, issue #53 -->
-        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
-          <content>
-            <rng:define name="mei_model.graphicLike" combine="choice">
-              <rng:ref name="svg"/>
-            </rng:define>
-          </content>
-        </moduleRef>
-        
         <!-- Deprecate <vel> and add @vel to <note>, issue #90 -->
         <!-- <vel> *not* removed since it serves the purpose of setting the velocity of all notes
           from the point of its occurence forward; @vel added in new att.midivelocity class in MIDI module. -->
@@ -4226,9 +4225,9 @@
         </elementSpec>-\->                
         -->
 
-        <!--<!-\- Revise content model of figDesc, issue #217 -\->
-        <!-\- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -\->
-        <elementSpec ident="figDesc" module="MEI.figtable" mode="replace">
+        <!-- Revise content model of figDesc, issue #217 -->
+        <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
+         <elementSpec ident="figDesc" module="MEI.figtable" mode="replace">
           <desc>(figure description) – Contains a brief prose description of the appearance or
             content of a graphic figure, for use when documenting an image without displaying
             it.</desc>
@@ -4241,10 +4240,7 @@
             <rng:zeroOrMore>
               <rng:choice>
                 <rng:text/>
-                <rng:ref name="model.textcomponentLike"/>
                 <rng:ref name="model.texphraseLike.limited"/>
-                <!-\-<rng:ref name="model.graphicprimitiveLike"/>
-                <rng:ref name="model.annotLike"/>-\->
               </rng:choice>
             </rng:zeroOrMore>
           </content>
@@ -4258,7 +4254,7 @@
             <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
               standard.</p>
           </remarks>
-        </elementSpec>-->
+        </elementSpec> 
 
         <!-- Harmonize content models of biblList, eventList, handList, list, and termList 
         by allowing head and by permitting each item to be preceded by an optional label. biblList
