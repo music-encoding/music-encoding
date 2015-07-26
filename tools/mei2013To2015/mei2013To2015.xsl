@@ -190,9 +190,9 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:barLine | mei:beam | mei:beatRpt | mei:bTrem | mei:meterSig | mei:pedal |
-    mei:sb" mode="copy">
-    <!-- Rename @rend to @form on barLine, beam, beatRpt, bTrem, meterSig, pedal, and sb. -->
+  <xsl:template match="mei:barLine | mei:beam | mei:beatRpt | mei:bTrem | mei:meterSig | mei:sb"
+    mode="copy">
+    <!-- Rename @rend to @form on barLine, beam, beatRpt, bTrem, meterSig, and sb. -->
     <xsl:copy>
       <xsl:apply-templates select="@*[not(local-name() = 'rend')]" mode="copy"/>
       <xsl:if test="@rend">
@@ -206,6 +206,30 @@
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
               <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @rend to
+                @form')"/>
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:if>
+      <xsl:apply-templates mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:pedal" mode="copy">
+    <!-- Rename @style to @form on pedal. -->
+    <xsl:copy>
+      <xsl:apply-templates select="@*[not(local-name() = 'style')]" mode="copy"/>
+      <xsl:if test="@style">
+        <xsl:attribute name="form">
+          <xsl:value-of select="@style"/>
+        </xsl:attribute>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @style to
                 @form')"/>
             </xsl:with-param>
           </xsl:call-template>
