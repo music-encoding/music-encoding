@@ -117,8 +117,11 @@
   <xsl:template match="mei:mei | mei:meiHead | mei:music" mode="copy">
     <!-- Change @meiversion attribute on document element; drop @meiversion.num -->
     <xsl:copy>
-      <xsl:apply-templates select="@*[not(local-name() = 'meiversion') and not(local-name() =
-        'meiversion.num')]" mode="copy"/>
+      <xsl:apply-templates
+        select="
+          @*[not(local-name() = 'meiversion') and not(local-name() =
+          'meiversion.num')]"
+        mode="copy"/>
       <xsl:if test="count(ancestor::mei:*) = 0">
         <xsl:attribute name="meiversion">
           <xsl:text>3.0.0</xsl:text>
@@ -129,8 +132,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Modified
-                @meiversion')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Modified
+                @meiversion')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -169,14 +175,18 @@
               <xsl:with-param name="warningText">
                 <xsl:choose>
                   <xsl:when test="comment()">
-                    <xsl:value-of select="
-                      concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
-                      $thisID, '&#32;: Reordered content, moved comments')"/>
+                    <xsl:value-of
+                      select="
+                        concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+                        $thisID, '&#32;: Reordered content, moved comments')"
+                    />
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:value-of select="
-                      concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
-                      $thisID, '&#32;: Reordered content')"/>
+                    <xsl:value-of
+                      select="
+                        concat(local-name(ancestor::mei:*[1]), '/', local-name(), '&#32;',
+                        $thisID, '&#32;: Reordered content')"
+                    />
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:with-param>
@@ -205,8 +215,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @rend to
-                @form')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @rend to
+                @form')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -229,8 +242,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @style to
-                @form')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Renamed @style to
+                @form')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -262,8 +278,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Moved @rend to
-                @lform or @lwidth')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Moved @rend to
+                @lform or @lwidth')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -295,8 +314,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Moved @rend value
-                to @form or @width')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Moved @rend value
+                to @form or @width')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -315,8 +337,11 @@
         </xsl:variable>
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
-            <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Moved outer
-              staffGrp @symbol value to @system.leftline')"/>
+            <xsl:value-of
+              select="
+                concat(local-name(), '&#32;', $thisID, '&#32;: Moved outer
+              staffGrp @symbol value to @system.leftline')"
+            />
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -334,8 +359,11 @@
         </xsl:variable>
         <xsl:call-template name="warning">
           <xsl:with-param name="warningText">
-            <xsl:value-of select="concat(local-name(), '&#32;', $thisID, '&#32;: Removed
-              @symbol')"/>
+            <xsl:value-of
+              select="
+                concat(local-name(), '&#32;', $thisID, '&#32;: Removed
+              @symbol')"
+            />
           </xsl:with-param>
         </xsl:call-template>
       </xsl:if>
@@ -348,7 +376,8 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
-      <change xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
+      <change xmlns:mei="http://www.music-encoding.org/ns/mei"
+        xsl:exclude-result-prefixes="mei
         xlink">
         <xsl:attribute name="n">
           <xsl:value-of select="count(mei:change) + 1"/>
@@ -371,8 +400,11 @@
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of select=" concat(local-name(ancestor::mei:*[1]), '/',
-            local-name(), '&#32;', $thisID, '&#32;: Added change element')"/>
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '/',
+              local-name(), '&#32;', $thisID, '&#32;: Added change element')"
+          />
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -385,22 +417,29 @@
     </xsl:copy>
   </xsl:template>
 
-  <xsl:template match="mei:figDesc[mei:lg or mei:p or mei:quote  or mei:table]" mode="copy">
+  <xsl:template match="mei:figDesc[mei:lg or mei:p or mei:quote or mei:table]" mode="copy">
     <xsl:choose>
       <xsl:when test="*[../text()[normalize-space()]]">
         <!-- If there's text directly in figDesc, copy everything but the textcomponent and graphicprimitive elements -->
         <xsl:copy>
           <xsl:apply-templates select="@*" mode="copy"/>
-          <xsl:apply-templates select="node()[not(local-name()='lg') and not(local-name()='p') and
-            not(local-name()='quote') and not(local-name()='table') and
-            not(local-name()='anchoredText') and not(local-name()='curve') and
-            not(local-name()='line')]" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              node()[not(local-name() = 'lg') and not(local-name() = 'p') and
+              not(local-name() = 'quote') and not(local-name() = 'table') and
+              not(local-name() = 'anchoredText') and not(local-name() = 'curve') and
+              not(local-name() = 'line')]"
+            mode="copy"/>
         </xsl:copy>
         <!-- move textcomponent elements into new figDesc -->
-        <figDesc xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
+        <figDesc xmlns:mei="http://www.music-encoding.org/ns/mei"
+          xsl:exclude-result-prefixes="mei
           xlink">
-          <xsl:apply-templates select="@*[not(name()='xml:id') and not(local-name()='n') and
-            not(local-name()='label')]" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              @*[not(name() = 'xml:id') and not(local-name() = 'n') and
+              not(local-name() = 'label')]"
+            mode="copy"/>
           <xsl:if test="@xml:id">
             <xsl:attribute name="xml:id">
               <xsl:value-of select="generate-id()"/>
@@ -416,8 +455,11 @@
               <xsl:value-of select="concat(@label, '_struct')"/>
             </xsl:attribute>
           </xsl:if>
-          <xsl:apply-templates select="*[local-name()='lg' or local-name()='p' or
-            local-name()='quote' or local-name()='table']" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              *[local-name() = 'lg' or local-name() = 'p' or
+              local-name() = 'quote' or local-name() = 'table']"
+            mode="copy"/>
         </figDesc>
         <xsl:if test="$verbose">
           <xsl:variable name="thisID">
@@ -425,8 +467,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select=" concat(local-name(), '&#32;', $thisID, '&#32;: Split figDesc
-                with mixed content into two figDesc elements')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Split figDesc
+                with mixed content into two figDesc elements')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -434,35 +479,48 @@
     </xsl:choose>
     <xsl:if test="(mei:anchoredText or mei:curve or mei:line) and $verbose">
       <xsl:text disable-output-escaping="yes">&lt;!-- </xsl:text>
-      <xsl:apply-templates select="*[local-name()='anchoredText' or local-name()='curve' or
-        local-name()='line']" mode="copy"/>
+      <xsl:apply-templates
+        select="
+          *[local-name() = 'anchoredText' or local-name() = 'curve' or
+          local-name() = 'line']"
+        mode="copy"/>
       <xsl:text disable-output-escaping="yes"> --&gt;</xsl:text>
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of select=" concat(local-name(), '&#32;', $thisID, '&#32;: Commented out
-            anchoredText,  curve, and line elements')"/>
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Commented out
+            anchoredText,  curve, and line elements')"
+          />
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="mei:annot[mei:lg or mei:p or mei:quote  or mei:table]" mode="copy">
+  <xsl:template match="mei:annot[mei:lg or mei:p or mei:quote or mei:table]" mode="copy">
     <xsl:choose>
       <xsl:when test="*[../text()[normalize-space()]]">
         <!-- If there's text directly in annot, copy everything but the textcomponent and graphicprimitive elements -->
         <xsl:copy>
           <xsl:apply-templates select="@*" mode="copy"/>
-          <xsl:apply-templates select="node()[not(local-name()='lg') and not(local-name()='p') and
-            not(local-name()='quote') and not(local-name()='table')]" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              node()[not(local-name() = 'lg') and not(local-name() = 'p') and
+              not(local-name() = 'quote') and not(local-name() = 'table')]"
+            mode="copy"/>
         </xsl:copy>
         <!-- move textcomponent elements into new annot -->
-        <annot xmlns:mei="http://www.music-encoding.org/ns/mei" xsl:exclude-result-prefixes="mei
+        <annot xmlns:mei="http://www.music-encoding.org/ns/mei"
+          xsl:exclude-result-prefixes="mei
           xlink">
-          <xsl:apply-templates select="@*[not(name()='xml:id') and not(local-name()='n') and
-            not(local-name()='label')]" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              @*[not(name() = 'xml:id') and not(local-name() = 'n') and
+              not(local-name() = 'label')]"
+            mode="copy"/>
           <xsl:if test="@xml:id">
             <xsl:attribute name="xml:id">
               <xsl:value-of select="generate-id()"/>
@@ -478,8 +536,11 @@
               <xsl:value-of select="concat(@label, '_struct')"/>
             </xsl:attribute>
           </xsl:if>
-          <xsl:apply-templates select="*[local-name()='lg' or local-name()='p' or
-            local-name()='quote' or local-name()='table']" mode="copy"/>
+          <xsl:apply-templates
+            select="
+              *[local-name() = 'lg' or local-name() = 'p' or
+              local-name() = 'quote' or local-name() = 'table']"
+            mode="copy"/>
         </annot>
         <xsl:if test="$verbose">
           <xsl:variable name="thisID">
@@ -487,8 +548,11 @@
           </xsl:variable>
           <xsl:call-template name="warning">
             <xsl:with-param name="warningText">
-              <xsl:value-of select=" concat(local-name(), '&#32;', $thisID, '&#32;: Split annot
-                with mixed content into two annot elements')"/>
+              <xsl:value-of
+                select="
+                  concat(local-name(), '&#32;', $thisID, '&#32;: Split annot
+                with mixed content into two annot elements')"
+              />
             </xsl:with-param>
           </xsl:call-template>
         </xsl:if>
@@ -503,11 +567,13 @@
         <xsl:analyze-string select="." regex="^([a-g])([0-9])(.*)$">
           <xsl:matching-substring>
             <xsl:value-of select="regex-group(1)"/>
-            <xsl:value-of
-              select="replace(replace(replace(replace(replace(replace(replace(replace(regex-group(3),
-              '---', 'tf'), 'fff', 'tf'), '###', 'ts'), 'sss', 'ts'), '--', 'ff'), '##', 'ss'),
-              '-','f'), '#', 's')"/>
             <xsl:value-of select="regex-group(2)"/>
+            <xsl:value-of
+              select="
+                replace(replace(replace(replace(replace(replace(replace(replace(regex-group(3),
+                '---', 'tf'), 'fff', 'tf'), '###', 'ts'), 'sss', 'ts'), '--', 'ff'), '##', 'ss'),
+                '-', 'f'), '#', 's')"
+            />
           </xsl:matching-substring>
         </xsl:analyze-string>
       </xsl:variable>
@@ -519,8 +585,46 @@
       </xsl:variable>
       <xsl:call-template name="warning">
         <xsl:with-param name="warningText">
-          <xsl:value-of select=" concat(local-name(ancestor::mei:*[1]), '/@',
-            local-name(), '&#32;', $thisID, '&#32;: Modified @key.sig.mixed')"/>
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '/@',
+              local-name(), '&#32;', $thisID, '&#32;: Modified @key.sig.mixed')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@tab.strings" mode="copy" priority="1">
+    <!-- new pattern for tab.strings -->
+    <xsl:attribute name="tab.strings">
+      <xsl:variable name="new">
+        <xsl:analyze-string select="." regex="\s+">
+          <xsl:non-matching-substring>
+            <xsl:analyze-string select="." regex="^([a-g])([\-#fs]?)([0-9])$">
+              <xsl:matching-substring>
+                <xsl:value-of select="regex-group(1)"/>
+                <xsl:value-of select="regex-group(3)"/>
+                <xsl:value-of select="replace(replace(regex-group(2), '-', 'f'), '#', 's')"/>
+                <xsl:text>&#32;</xsl:text>
+              </xsl:matching-substring>
+            </xsl:analyze-string>
+          </xsl:non-matching-substring>
+        </xsl:analyze-string>
+      </xsl:variable>
+      <xsl:value-of select="normalize-space($new)"/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '/@',
+              local-name(), '&#32;', $thisID, '&#32;: Modified @tab.strings')"
+          />
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
