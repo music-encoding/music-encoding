@@ -1119,7 +1119,7 @@
             <memberOf key="att.altsym"/>
             <memberOf key="att.color"/>
             <memberOf key="att.expandable"/>
-            <memberOf key="att.typography"/>            
+            <memberOf key="att.typography"/>
           </classes>
           <attList>
             <attDef ident="form" usage="req">
@@ -2216,7 +2216,7 @@
             <memberOf key="att.visualoffset"/>
             <memberOf key="att.xy"/>
           </classes>
-        </classSpec>  
+        </classSpec>
 
         <!-- Add quarter-tone accidentals, issue #168 -->
         <macroSpec ident="data.ACCIDENTAL.EXPLICIT" module="MEI" type="dt" mode="replace">
@@ -2297,8 +2297,21 @@
             </p>
           </remarks>
         </macroSpec>
-        <!-- Rewrite pattern spec for key.sig.mixed -->
+        <!-- Remove data.KEYSIGNATURE.MIXED; use multiple occurences of data.KEYSIGTOKEN instead. -->
+        <macroSpec ident="data.KEYSIGNATURE.MIXED" module="MEI" type="dt" mode="delete"/>
+        <!-- Rewrite pattern spec for data.KEYSIGTOKEN -->
         <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
+        <macroSpec ident="data.KEYSIGTOKEN" module="MEI" type="dt" mode="replace">
+          <desc>A token describing the pitch name, inflection, and octave number of an altered pitch
+            in a key signature.</desc>
+          <content>
+            <rng:data type="token">
+              <rng:param name="pattern"
+                >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
+            </rng:data>
+          </content>
+        </macroSpec>
+        <!-- use data.KEYSIGTOKEN in @key.sig.mixed -->
         <classSpec ident="att.keySigDefault.log" module="MEI.shared" type="atts" mode="replace">
           <desc>Used by staffDef and scoreDef to provide default values for attributes in the
             logical domain related to key signatures.</desc>
@@ -2335,17 +2348,10 @@
                 'mixed' and providing explicit key signature information in the key.sig.mixed
                 attribute or in the &lt;keySig&gt; element. It is intended that key.sig.mixed
                 contain a series of tokens with each token containing pitch name, accidental, and
-                octave, such as 'bf3 an4 cs5 etf5' that indicate what key accidentals should be
-                rendered and where they should be placed.</desc>
-              <datatype>
-                <rng:list>
-                  <rng:oneOrMore>
-                    <rng:data type="token">
-                      <rng:param name="pattern"
-                        >[a-g](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)[0-9]</rng:param>
-                    </rng:data>
-                  </rng:oneOrMore>
-                </rng:list>
+                octave, such as 'a4 c5s e5f' that indicate what key accidentals should be rendered
+                and where they should be placed.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.KEYSIGTOKEN"/>
               </datatype>
             </attDef>
           </attList>
@@ -3804,7 +3810,7 @@
             <p>Like a chord table, a symbolTable may be shared between mei instances through the use
               of an external parsed entity containing the symbolTable to be shared.</p>
           </remarks>
-        </elementSpec> -->         
+        </elementSpec> -->
 
         <!-- Harmonize models of gliss and line by allowing gliss to contain text to be 
           rendered with the line, issue #215 -->
@@ -4227,7 +4233,7 @@
 
         <!-- Revise content model of figDesc, issue #217 -->
         <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
-         <elementSpec ident="figDesc" module="MEI.figtable" mode="replace">
+        <elementSpec ident="figDesc" module="MEI.figtable" mode="replace">
           <desc>(figure description) – Contains a brief prose description of the appearance or
             content of a graphic figure, for use when documenting an image without displaying
             it.</desc>
@@ -4241,21 +4247,24 @@
               <rng:choice>
                 <rng:text/>
                 <rng:ref name="model.textcomponentLike"/>
-              <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.textphraseLike.limited"/>
               </rng:choice>
             </rng:zeroOrMore>
           </content>
           <constraintSpec ident="figDesc_content_constraint" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:figDesc[mei:lg or mei:p or mei:quote or
+              <sch:rule
+                context="mei:figDesc[mei:lg or mei:p or mei:quote or
                 mei:table]">
                 <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
                   when lg, p, quote, or table is used.</sch:assert>
-                <sch:assert test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList'
+                <sch:assert
+                  test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList'
                   or local-name() eq 'lg' or local-name() eq 'list' or
                   local-name() eq 'p' or local-name() eq 'quote' or local-name()
-                  eq 'table')])">Unstructured text not allowed when lg, p, quote, or table elements
-                  are used.</sch:assert>
+                  eq 'table')])"
+                  >Unstructured text not allowed when lg, p, quote, or table elements are
+                  used.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -4269,7 +4278,7 @@
             <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
               standard.</p>
           </remarks>
-        </elementSpec> 
+        </elementSpec>
 
         <!-- Harmonize content models of biblList, eventList, handList, list, and termList 
         by allowing head and by permitting each item to be preceded by an optional label. biblList
@@ -6328,6 +6337,79 @@
           </attList>
         </elementSpec>
 
+        <!-- Add generic ornament element, issue #253 -->
+        <classSpec ident="model.ornamentLike" module="MEI.shared" type="model" mode="add">
+          <desc>groups generic ornament elements.</desc>
+          <classes>
+            <memberOf key="model.controleventLike"/>
+          </classes>
+        </classSpec>
+        <elementSpec ident="ornam" module="MEI.shared" mode="add">
+          <desc>A generic ornament not encoded elsewhere using more specific elements, such as
+            &lt;mordent&gt;, &lt;turn&gt;, or &lt;trill&gt;.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="att.ornam.log"/>
+            <memberOf key="att.ornam.vis"/>
+            <memberOf key="att.ornam.ges"/>
+            <memberOf key="att.ornam.anl"/>
+            <memberOf key="model.ornamentLike"/>
+          </classes>
+          <content>
+            <rng:empty/>
+          </content>
+          <constraintSpec ident="ornam_start-type_attributes_required" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:ornam">
+                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
+                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <remarks>
+            <p>The glyph of the ornament may be indicated with the <att>altsym</att> attribute, and
+              it is recommended to provide an expansion of the ornament on the staff content. The
+              starting point of the ornament may be indicated by either a <att>startid</att>,
+                <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is
+              a semantic error not to specify one of these attributes.</p>
+          </remarks>
+        </elementSpec>
+        <classSpec ident="att.ornam.anl" module="MEI.shared" type="atts">
+          <desc>Analytical domain attributes.</desc>
+          <classes>
+            <memberOf key="att.common.anl"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.ges" module="MEI.shared" type="atts">
+          <desc>Gestural domain attributes.</desc>
+          <classes>
+            <memberOf key="att.duration.performed"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.log" module="MEI.shared" type="atts">
+          <desc>Logical domain attributes.</desc>
+          <classes>
+            <memberOf key="att.controlevent"/>
+            <memberOf key="att.duration.additive"/>
+            <memberOf key="att.ornamentaccid"/>
+            <memberOf key="att.startendid"/>
+            <memberOf key="att.timestamp2.musical"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.vis" module="MEI.shared" type="atts">
+          <desc>Visual domain attributes.</desc>
+          <classes>
+            <memberOf key="att.color"/>
+            <memberOf key="att.placement"/>
+            <memberOf key="att.visualoffset"/>
+            <memberOf key="att.visualoffset2.ho"/>
+            <memberOf key="att.visualoffset2.to"/>
+            <memberOf key="att.xy"/>
+          </classes>
+        </classSpec>
+
         <!-- Make more elements members of att.typed -->
         <elementSpec ident="bibl" module="MEI.shared" mode="replace">
           <desc>(bibliographic reference) – Provides a loosely-structured bibliographic citation in
@@ -6996,18 +7078,21 @@
         </elementSpec>
 
         <!-- Fix problem with string *courses* -->
+        <!-- Make pitch specification consistent with data.KEYSIGTOKEN -->
+        <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
         <classSpec ident="att.staffDef.ges.tablature" module="MEI.tablature" type="atts"
           mode="replace">
           <desc>Gestural domain attributes for staffDef in tablature.</desc>
           <attList>
             <attDef ident="tab.strings" usage="opt">
-              <desc>provides a *written* pitch and octave for each open string or course of
-                strings.</desc>
+              <desc>provides a *written* pitch, octave, and accidental for each open string or
+                course of strings.</desc>
               <datatype>
                 <rng:list>
                   <rng:oneOrMore>
                     <rng:data type="token">
-                      <rng:param name="pattern">[a-g][\-#fs]?[0-9]([a-g][\-#fs]?[0-9])*</rng:param>
+                      <rng:param name="pattern"
+                        >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
                     </rng:data>
                   </rng:oneOrMore>
                 </rng:list>
@@ -7826,7 +7911,7 @@
           <remarks>
             <p>An accidental may raise a pitch by one or two semitones or it may cancel a previous
               accidental or part of a key signature. This element provides an alternative to the
-              <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI"
+                <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI"
                 >note</gi> element. The element may be used when specific display info, such as size
               or color, needs to be recorded for the accidental or when multiple accidentals occur
               on a single note. The <att>func</att> attribute can be used to differentiate between
@@ -7856,8 +7941,8 @@
               chord.</p>
           </remarks>
         </elementSpec>
-        
-         <!-- Allow the use of symbol to include music characters anywhere text is permitted. Make 
+
+        <!-- Allow the use of symbol to include music characters anywhere text is permitted. Make 
           symbol member of att.altsym; @ref is no longer necessary. Its function can be performed 
           by @altsym. Remove symbol from model.graphicprimitiveLike class and add to model.textphraseLike 
           classes. This last change fixes a problem that allowed symbol to occur in too many places, for
@@ -7889,7 +7974,7 @@
               to another element using the <att>startid</att> attribute. Attributes in the
               att.visualoffset class may be used to record horizontal, vertical, or time offsets
               from the absolute coordinates or from the location of the referenced element. The
-              <att>ref</att> attribute must contain the id of a <gi scheme="MEI">symbolDef</gi>
+                <att>ref</att> attribute must contain the id of a <gi scheme="MEI">symbolDef</gi>
               element. The <att>scale</att> attribute indicates that the printed output must be
               scaled by the specified percentage.</p>
           </remarks>
@@ -7918,7 +8003,7 @@
               of an external parsed entity containing the symbolTable to be shared.</p>
           </remarks>
         </elementSpec>
-      
+
       </schemaSpec>
     </body>
   </text>
