@@ -560,6 +560,28 @@
     </xsl:choose>
   </xsl:template>
 
+  <xsl:template match="mei:tapeConfig" mode="copy">
+    <trackConfig xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates/>
+    </trackConfig>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Renamed tapeConfig to trackConfig')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
   <xsl:template match="@key.sig.mixed" mode="copy" priority="1">
     <!-- new pattern for key.sig.mixed -->
     <xsl:attribute name="key.sig.mixed">
