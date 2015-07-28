@@ -710,6 +710,17 @@
     </xsl:copy>
   </xsl:template>
 
+  <xsl:template match="mei:classCode" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:if test="not(@xml:id)">
+        <xsl:attribute name="xml:id">
+          <xsl:value-of select="replace(normalize-space(@authority), ' ', '')"/>
+        </xsl:attribute>
+      </xsl:if>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="@key.sig.mixed" mode="copy" priority="1">
     <!-- new pattern for key.sig.mixed -->
     <xsl:attribute name="key.sig.mixed">
@@ -845,8 +856,85 @@
 
   <xsl:template match="mei:symbol/@ref" mode="copy">
     <xsl:attribute name="altsym">
+      <xsl:if test="substring(., 1, 1) != '#'">
+        <xsl:text>#</xsl:text>
+      </xsl:if>
       <xsl:value-of select="."/>
     </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), $thisID, '&#32;: Replaced @ref with @altsym')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:title/@type" mode="copy">
+    <xsl:attribute name="type">
+      <xsl:choose>
+        <xsl:when test="matches(normalize-space(), 'subtitle') or matches(normalize-space(), 'sub')">
+          <xsl:text>subordinate</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:attribute>
+  </xsl:template>
+
+  <xsl:template match="@tstamp.ges" mode="copy">
+    <xsl:attribute name="tstamp.ges">
+      <xsl:value-of select="."/>
+      <xsl:text>p</xsl:text>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), $thisID, '&#32;: Modified @tstamp.ges')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@altsym | @classcode | @nymref" mode="copy">
+    <xsl:choose>
+      <xsl:when test="string-length(normalize-space()) > 0 and (substring(., 1, 1) != '#')">
+        <xsl:variable name="attrName" select="local-name()"/>
+        <xsl:attribute name="{$attrName}">
+          <xsl:text>#</xsl:text>
+          <xsl:value-of select="."/>
+        </xsl:attribute>
+        <xsl:if test="$verbose">
+          <xsl:variable name="thisID">
+            <xsl:call-template name="thisID"/>
+          </xsl:variable>
+          <xsl:call-template name="warning">
+            <xsl:with-param name="warningText">
+              <xsl:value-of
+                select="
+                  concat(local-name(ancestor::mei:*[1]), $thisID, '&#32;: Modified @', $attrName)"
+              />
+            </xsl:with-param>
+          </xsl:call-template>
+        </xsl:if>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy-of select="."/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="@* | node()" mode="copy">
