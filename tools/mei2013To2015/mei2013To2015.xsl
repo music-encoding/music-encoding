@@ -50,6 +50,10 @@
       <xsl:when test="@xml:id">
         <xsl:value-of select="concat('[#', @xml:id, ']')"/>
       </xsl:when>
+      <xsl:when test="count(. | ../@*) = count(../@*)">
+        <!-- this node is an attribute -->
+        <xsl:value-of select="concat('[#', generate-id(..), ']')"/>
+      </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="concat('[#', generate-id(), ']')"/>
       </xsl:otherwise>
@@ -402,8 +406,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(ancestor::mei:*[1]), '/',
-              local-name(), '&#32;', $thisID, '&#32;: Added change element')"
+              concat(local-name(), '&#32;', $thisID, '&#32;: Added change element')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -582,6 +585,131 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:timeline" mode="copy">
+    <xsl:apply-templates select="mei:performance" mode="copy"/>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Removed timeline')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:performance" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:recording" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:avFile" mode="copy"/>
+      <!-- insert when elements here -->
+      <xsl:apply-templates select="mei:clip" mode="copy"/>
+    </xsl:copy>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Reconfigured recording')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:avFile" mode="copy">
+    <xsl:variable name="thisAvFile">
+      <xsl:value-of select="@xml:id"/>
+    </xsl:variable>
+    <avFile xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:clip" mode="copy"/>
+    </avFile>
+    <xsl:apply-templates
+      select="preceding::mei:timeline[substring(@avref, 2) = $thisAvFile]/mei:when" mode="copy"/>
+  </xsl:template>
+
+  <xsl:template match="mei:when" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*[not(. = '')]" mode="copy"/>
+      <!-- supply attributes -->
+      <xsl:if test="@interval != ''">
+        <xsl:if test="not(@since) or @since = ''">
+          <xsl:attribute name="since">
+            <xsl:choose>
+              <xsl:when test="preceding-sibling::mei:when[@xml:id]">
+                <xsl:value-of select="concat('#', preceding-sibling::mei:when[@xml:id])"/>
+              </xsl:when>
+              <xsl:when test="preceding-sibling::mei:when">
+                <xsl:value-of select="concat('#', generate-id(preceding-sibling::mei:when))"/>
+              </xsl:when>
+              <xsl:when test="@xml:id">
+                <xsl:value-of select="concat('#', @xml:id)"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="concat('#', generate-id())"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(), '&#32;', $thisID, '&#32;: Supplied missing since attribute; likely incorrect')"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:if>
+        <xsl:if test="not(@inttype)">
+          <xsl:attribute name="inttype">
+            <xsl:text>time</xsl:text>
+          </xsl:attribute>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(), '&#32;', $thisID, '&#32;: Supplied missing inttype attribute; likely incorrect')"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:if>
+      </xsl:if>
+      <xsl:if test="not(@since) or @since = ''">
+        <xsl:comment>&#32;The supplied value in @since is likely incorrect.&#32;</xsl:comment>
+      </xsl:if>
+      <xsl:if test="not(@inttype)">
+        <xsl:comment>&#32;The supplied value in @inttype is likely incorrect.&#32;</xsl:comment>
+      </xsl:if>
+      <xsl:apply-templates mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="@key.sig.mixed" mode="copy" priority="1">
     <!-- new pattern for key.sig.mixed -->
     <xsl:attribute name="key.sig.mixed">
@@ -609,8 +737,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(ancestor::mei:*[1]), '/@',
-              local-name(), '&#32;', $thisID, '&#32;: Modified @key.sig.mixed')"
+              concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Modified @key.sig.mixed')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -644,9 +771,73 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(ancestor::mei:*[1]), '/@',
-              local-name(), '&#32;', $thisID, '&#32;: Modified @tab.strings')"
+              concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Modified @tab.strings')"
           />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@bulge" mode="copy">
+    <xsl:if test="string-length(normalize-space()) > 0">
+      <xsl:attribute name="bulge">
+        <xsl:variable name="normalizedBulge">
+          <xsl:value-of select="normalize-space()"/>
+        </xsl:variable>
+        <xsl:variable name="tokenCount">
+          <xsl:value-of
+            select="translate($normalizedBulge, translate($normalizedBulge, ' ', ''), '')"/>
+          <xsl:text> </xsl:text>
+        </xsl:variable>
+        <xsl:variable name="bulgePosFactor">
+          <xsl:value-of select="round(100 div (string-length($tokenCount) + 1))"/>
+        </xsl:variable>
+        <xsl:call-template name="bulgePos">
+          <xsl:with-param name="bulgeString">
+            <xsl:value-of select="concat($normalizedBulge, ' ')"/>
+          </xsl:with-param>
+          <xsl:with-param name="tokensPrinted">
+            <xsl:value-of select="0"/>
+          </xsl:with-param>
+          <xsl:with-param name="bulgePosFactor">
+            <xsl:value-of select="$bulgePosFactor"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:attribute>
+      <xsl:if test="$verbose">
+        <xsl:variable name="thisID">
+          <xsl:call-template name="thisID"/>
+        </xsl:variable>
+        <xsl:call-template name="warning">
+          <xsl:with-param name="warningText">
+            <xsl:value-of
+              select="
+                concat(local-name(ancestor::mei:*[1]), $thisID, '&#32;: Modified @bulge')"
+            />
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:if>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="bulgePos">
+    <xsl:param name="bulgeString"/>
+    <xsl:param name="tokensPrinted"/>
+    <xsl:param name="bulgePosFactor"/>
+    <xsl:value-of select="substring-before($bulgeString, ' ')"/>
+    <xsl:text> </xsl:text>
+    <xsl:value-of select="concat(($tokensPrinted + 1) * $bulgePosFactor, '%')"/>
+    <xsl:if test="string-length(substring-after($bulgeString, ' ')) > 0">
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="bulgePos">
+        <xsl:with-param name="bulgeString">
+          <xsl:value-of select="substring-after($bulgeString, ' ')"/>
+        </xsl:with-param>
+        <xsl:with-param name="tokensPrinted">
+          <xsl:value-of select="$tokensPrinted + 1"/>
+        </xsl:with-param>
+        <xsl:with-param name="bulgePosFactor">
+          <xsl:value-of select="$bulgePosFactor"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
