@@ -2005,7 +2005,7 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
-          <!-- Allow curve to deal with slurs that continue across system or page breaks. -->
+          <!-- Allow curve to deal with slurs that continue across endings, system breaks, and page breaks. -->
           <content>
             <rng:zeroOrMore>
               <rng:ref name="curve"/>
@@ -2025,7 +2025,7 @@
           <constraintSpec ident="slur_containing_curve" scheme="isoschematron">
             <constraint>
               <sch:rule
-                context="mei:phrase[mei:curve[@bezier or @bulge or @curvedir or @lform or 
+                context="mei:slur[mei:curve[@bezier or @bulge or @curvedir or @lform or 
                 @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or 
                 @startvo or @endvo or @x or @y or @x2 or @y2]]">
                 <sch:assert
@@ -2120,8 +2120,11 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
+          <!-- Allow curve to deal with ties that continue across endings, system breaks, and page breaks. -->
           <content>
-            <rng:empty/>
+            <rng:zeroOrMore>
+              <rng:ref name="curve"/>
+            </rng:zeroOrMore>
           </content>
           <constraintSpec ident="tie_start-_and_end-type_attributes_required" scheme="isoschematron">
             <constraint>
@@ -2130,6 +2133,23 @@
                   of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
                 <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
                   attributes: dur, dur.ges, endid, or tstamp2</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="tie_containing_curve" scheme="isoschematron">
+            <constraint>
+              <sch:rule
+                context="mei:tie[mei:curve[@bezier or @bulge or @curvedir or @lform or 
+                @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or 
+                @startvo or @endvo or @x or @y or @x2 or @y2]]">
+                <sch:assert
+                  test="not(@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or 
+                  @startho or @endho or @to or @startto or @endto or @vo or @startvo or 
+                  @endvo or @x or @y or @x2 or @y2)"
+                  role="warning">The visual attributes of the slur (@bezier, @bulge, @curvedir,
+                  @lform, @lwidth, @ho, @startho, @endho, @to, @startto, @endto, @vo, @startvo,
+                  @endvo, @x, @y, @x2, and @y2) will be overridden by visual attributes of the
+                  contained curve elements.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -2536,16 +2556,65 @@
         </classSpec>
 
         <!-- Harmonize content model of <fw> and <pgHead>, <pgFoot>, etc., issue #179 -->
-        <elementSpec ident="fw" module="MEI.shared" mode="replace">
-          <desc>(forme work) – Captures header/footer material that is non-repeating; that is,
-            occuring on isolated pages. For recurring headers and footers use pgHead* and pgFoot*
-            elements.</desc>
+        <!-- Better approach is to revise macro.metaLike.page to allow pgHead and pgFoot, then
+          remove <fw> -->
+        <macroSpec ident="macro.metaLike.page" module="MEI.shared" type="pe" mode="replace">
+          <desc>groups elements that contain meta-data about a single page.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="pgHead"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pgFoot"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pgDesc"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+        <!-- Add datatype so horizontal alignment values are re-usable -->
+        <macroSpec ident="data.HORIZONTALALIGNMENT" module="MEI.shared" type="dt" mode="add">
+          <content>
+            <valList type="closed">
+              <valItem ident="left">
+                <desc>left aligned.</desc>
+              </valItem>
+              <valItem ident="right">
+                <desc>right aligned.</desc>
+              </valItem>
+              <valItem ident="center">
+                <desc>centered.</desc>
+              </valItem>
+              <valItem ident="justify">
+                <desc>left and right aligned.</desc>
+              </valItem>
+            </valList>
+          </content>
+        </macroSpec>
+        <!-- Use data.HORIZONTALALIGNMENT for @halign -->
+        <classSpec ident="att.horizontalalign" module="MEI.shared" type="atts" mode="replace">
+          <desc>Attributes that record horizontal alignment.</desc>
+          <attList>
+            <attDef ident="halign" usage="opt">
+              <desc>records horizontal alignment.</desc>
+              <datatype>
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        <!-- Remove fw -->
+        <elementSpec ident="fw" module="MEI.shared" mode="delete"/>
+        <!-- pgFoot, pgFoot2, pgHead, and pgHead2: add att.typed, revise documentation -->
+        <elementSpec ident="pgFoot" module="MEI.shared" mode="replace">
+          <desc>(page footer) – A running footer on the first page. Also, used to temporarily
+            override a running footer on individual pages.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
-            <memberOf key="model.metaLike.page"/>
+            <memberOf key="model.metaLike.score"/>
           </classes>
           <content>
             <rng:zeroOrMore>
@@ -2561,8 +2630,163 @@
             </rng:zeroOrMore>
           </content>
           <remarks>
-            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-              standard.</p>
+            <p>Typically, this element is used to capture the textual data that often appears at the
+              top of the first page of printed music. It may also be used for similarly formatted
+              material in manuscripts. When used as a child of the <gi scheme="MEI">pb</gi> element,
+              the data it contains temporarily overrides that provided in the <gi scheme="MEI"
+                >pgHead</gi> element child of <gi scheme="MEI">scoreDef</gi>. Auto-generated page
+              numbers may be indicated with a processing instruction. The <gi scheme="MEI"
+                >pgHead</gi>, <gi scheme="MEI">pgHead2</gi>, <gi scheme="MEI">pgFoot</gi>, and <gi
+                scheme="MEI">pgFoot2</gi> elements should <hi rend="bold">*not*</hi> be used to
+              encode textual notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgFoot2" module="MEI.shared" mode="replace">
+          <desc>(page footer 2) – A running footer on the pages following the first.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.metaLike.score"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="halign">
+              <desc>records horizontal alignment. Use multiple values to capture repeating
+                pattern.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+          <remarks>
+            <p>This element captures the textual data that often appears at the bottom of the second
+              and succeeding pages of printed music. It may also be used for similarly formatted
+              material in manuscripts. Auto-generated page numbers may be indicated with a
+              processing instruction. Multiple values may be used in the <att>halign</att> attribute
+              to capture an alternating pattern. The order of multiple values is significant. The
+              value(s) in <att>halign</att> take(s) precedence over any horizontal alignment values
+              specified on descendant elements. The <gi scheme="MEI">pgHead</gi>, <gi scheme="MEI"
+                >pgHead2</gi>, <gi scheme="MEI">pgFoot</gi>, and <gi scheme="MEI">pgFoot2</gi>
+              elements should <hi rend="bold">*not*</hi> be used to encode textual
+              notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgHead" module="MEI.shared" mode="replace">
+          <desc>(page header) – A running header on the first page. Also, used to temporarily
+            override a running header on individual pages.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.metaLike.score"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <remarks>
+            <p>Typically, this element is used to capture the textual data that often appears at the
+              top of the first page of printed music. It may also be used for similarly formatted
+              material in manuscripts. When used as a child of the <gi scheme="MEI">pb</gi> element,
+              the data it contains temporarily overrides that provided in the <gi scheme="MEI"
+                >pgHead</gi> element child of <gi scheme="MEI">scoreDef</gi>. Auto-generated page
+              numbers may be indicated with a processing instruction. The <gi scheme="MEI"
+                >pgHead</gi>, <gi scheme="MEI">pgHead2</gi>, <gi scheme="MEI">pgFoot</gi>, and <gi
+                scheme="MEI">pgFoot2</gi> elements should <hi rend="bold">*not*</hi> be used to
+              encode textual notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgHead2" module="MEI.shared" mode="replace">
+          <desc>(page header 2) – A running header on the pages following the first.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.metaLike.score"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="halign">
+              <desc>records horizontal alignment. Use multiple values to capture repeating
+                pattern.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+          <remarks>
+            <p>This element captures the textual data that often appears at the top of the second
+              and succeeding pages of printed music. It may also be used for similarly formatted
+              material in manuscripts. Auto-generated page numbers may be indicated with a
+              processing instruction. Multiple values may be used in the <att>halign</att> attribute
+              to capture an alternating pattern. The order of multiple values is significant. The
+              value(s) in <att>halign</att> take(s) precedence over any horizontal alignment values
+              specified on descendant elements. The <gi scheme="MEI">pgHead</gi>, <gi scheme="MEI"
+                >pgHead2</gi>, <gi scheme="MEI">pgFoot</gi>, and <gi scheme="MEI">pgFoot2</gi>
+              elements should <hi rend="bold">*not*</hi> be used to encode textual
+              notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <!-- Remove pgDesc from undeclared model.metaLike.page class -->
+        <elementSpec ident="pgDesc" module="MEI.shared" mode="replace">
+          <desc>(page description) – Contains a brief prose description of the appearance or
+            description of the content of a physical page.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.graphicprimitiveLike"/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.annotLike"/>
+                <rng:ref name="model.locrefLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <remarks>
+            <p>Best practice suggests the use of controlled vocabulary. Don't confuse this element
+              with a figure caption. A caption is text primarily intended for display with an
+              illustration. It may or may not function as a description of the illustration.</p>
           </remarks>
         </elementSpec>
 
@@ -7325,6 +7549,7 @@
           </attList>
         </classSpec>
 
+        <!-- Better to add @term to @att.declaring that requires xml:id of term element! -->
         <!-- add @class attribute in att.typed -->
         <!-- <classSpec ident="att.typed" module="MEI.shared" type="atts" mode="replace">
           <desc>Attributes which can be used to classify or sub-classify features.</desc>
