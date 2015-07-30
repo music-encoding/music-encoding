@@ -106,7 +106,7 @@
         <xsl:apply-templates select="mei:* | comment()" mode="copy"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:variable name="warning">The source file is not an MEI file!</xsl:variable>
+        <xsl:variable name="warning">The source document is not an MEI file!</xsl:variable>
         <xsl:message terminate="yes">
           <xsl:value-of select="normalize-space($warning)"/>
         </xsl:message>
@@ -127,23 +127,32 @@
           'meiversion.num')]"
         mode="copy"/>
       <xsl:if test="count(ancestor::mei:*) = 0">
-        <xsl:attribute name="meiversion">
-          <xsl:text>3.0.0</xsl:text>
-        </xsl:attribute>
-        <xsl:if test="$verbose">
-          <xsl:variable name="thisID">
-            <xsl:call-template name="thisID"/>
-          </xsl:variable>
-          <xsl:call-template name="warning">
-            <xsl:with-param name="warningText">
-              <xsl:value-of
-                select="
-                  concat(local-name(), '&#32;', $thisID, '&#32;: Modified
-                @meiversion')"
-              />
-            </xsl:with-param>
-          </xsl:call-template>
-        </xsl:if>
+        <xsl:choose>
+          <xsl:when test="@meiversion = '3.0.0'">
+            <!-- Already 3.0.0, copy @meiversion -->
+            <xsl:apply-templates select="@meiversion" mode="copy"/>
+          </xsl:when>
+          <xsl:otherwise>
+            <!-- Add new meiversion attribute -->
+            <xsl:attribute name="meiversion">
+              <xsl:text>3.0.0</xsl:text>
+            </xsl:attribute>
+            <xsl:if test="$verbose">
+              <xsl:variable name="thisID">
+                <xsl:call-template name="thisID"/>
+              </xsl:variable>
+              <xsl:call-template name="warning">
+                <xsl:with-param name="warningText">
+                  <xsl:value-of
+                    select="
+                      concat(local-name(), '&#32;', $thisID, '&#32;: Modified
+                    @meiversion')"
+                  />
+                </xsl:with-param>
+              </xsl:call-template>
+            </xsl:if>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:if>
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
@@ -376,41 +385,52 @@
   </xsl:template>
 
   <xsl:template match="mei:revisionDesc" mode="copy">
-    <!-- Add a record of the conversion to 2015 to revisionDesc -->
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
-      <change xmlns:mei="http://www.music-encoding.org/ns/mei"
-        xsl:exclude-result-prefixes="mei
-        xlink">
-        <xsl:attribute name="n">
-          <xsl:value-of select="count(mei:change) + 1"/>
-        </xsl:attribute>
-        <respStmt/>
-        <changeDesc>
-          <p>Converted to version 3.0.0 using <xsl:value-of select="$progname"/>, version
-              <xsl:value-of select="$version"/></p>
-        </changeDesc>
-        <date>
-          <xsl:attribute name="isodate">
-            <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
-          </xsl:attribute>
-        </date>
-      </change>
+      <xsl:choose>
+        <!-- Already a v. 3.0.0 file -->
+        <xsl:when test="ancestor::*[@meiversion = '3.0.0']">
+          <xsl:variable name="warning">The source document is a v. 3.0.0 MEI file!</xsl:variable>
+          <xsl:message>
+            <xsl:value-of select="normalize-space($warning)"/>
+          </xsl:message>
+        </xsl:when>
+        <xsl:otherwise>
+          <!-- Add a record of the conversion to 2015 to revisionDesc -->
+          <change xmlns:mei="http://www.music-encoding.org/ns/mei"
+            xsl:exclude-result-prefixes="mei
+            xlink">
+            <xsl:attribute name="n">
+              <xsl:value-of select="count(mei:change) + 1"/>
+            </xsl:attribute>
+            <respStmt/>
+            <changeDesc>
+              <p>Converted to version 3.0.0 using <xsl:value-of select="$progname"/>, version
+                  <xsl:value-of select="$version"/></p>
+            </changeDesc>
+            <date>
+              <xsl:attribute name="isodate">
+                <xsl:value-of select="format-date(current-date(), '[Y]-[M02]-[D02]')"/>
+              </xsl:attribute>
+            </date>
+          </change>
+          <xsl:if test="$verbose">
+            <xsl:variable name="thisID">
+              <xsl:call-template name="thisID"/>
+            </xsl:variable>
+            <xsl:call-template name="warning">
+              <xsl:with-param name="warningText">
+                <xsl:value-of
+                  select="
+                    concat(local-name(), '&#32;', $thisID, '&#32;: Added change element')"
+                />
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
-    <xsl:if test="$verbose">
-      <xsl:variable name="thisID">
-        <xsl:call-template name="thisID"/>
-      </xsl:variable>
-      <xsl:call-template name="warning">
-        <xsl:with-param name="warningText">
-          <xsl:value-of
-            select="
-              concat(local-name(), '&#32;', $thisID, '&#32;: Added change element')"
-          />
-        </xsl:with-param>
-      </xsl:call-template>
-    </xsl:if>
   </xsl:template>
 
   <xsl:template match="mei:gliss[@text]" mode="copy">
@@ -568,7 +588,7 @@
       xsl:exclude-result-prefixes="mei
       xlink">
       <xsl:apply-templates select="@*" mode="copy"/>
-      <xsl:apply-templates/>
+      <xsl:apply-templates mode="copy"/>
     </trackConfig>
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
@@ -719,6 +739,28 @@
         </xsl:attribute>
       </xsl:if>
     </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:fw" mode="copy">
+    <pgHead xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates mode="copy"/>
+    </pgHead>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced fw with pgHead')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="@key.sig.mixed" mode="copy" priority="1">
