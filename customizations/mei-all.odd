@@ -61,6 +61,7 @@
         <moduleRef key="MEI.tablature"/>
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
+
         <!-- Include SVG, issue #53 -->
         <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
           <content>
@@ -1968,7 +1969,8 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
-          <!-- Allow curve to deal with slurs that continue across system or page breaks. -->
+          <!-- Allow curve to deal with slurs that continue across system or page breaks. Also,
+            fix a bug in the schematron constraint. -->
           <content>
             <rng:zeroOrMore>
               <rng:ref name="curve"/>
@@ -1987,7 +1989,7 @@
           </constraintSpec>
           <constraintSpec ident="slur_containing_curve" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:phrase[mei:curve[@bezier or @bulge or @curvedir or @lform or
+              <sch:rule context="mei:slur[mei:curve[@bezier or @bulge or @curvedir or @lform or
                 @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or
                 @startvo or @endvo or @x or @y or @x2 or @y2]]">
                 <sch:assert test="not(@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or
@@ -2065,6 +2067,7 @@
             </constraint>
           </constraintSpec>
         </elementSpec>
+        <!-- Allow curve to deal with ties that continue across system or page breaks. -->
         <elementSpec ident="tie" module="MEI.cmn" mode="replace">
           <desc>An indication that two notes of the same pitch form a single note with their
             combined rhythmic values.</desc>
@@ -2079,7 +2082,9 @@
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
           <content>
-            <rng:empty/>
+            <rng:zeroOrMore>
+              <rng:ref name="curve"/>
+            </rng:zeroOrMore>
           </content>
           <constraintSpec ident="tie_start-_and_end-type_attributes_required" scheme="isoschematron">
             <constraint>
@@ -2088,6 +2093,20 @@
                   of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
                 <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
                   attributes: dur, dur.ges, endid, or tstamp2</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="tie_containing_curve" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:tie[mei:curve[@bezier or @bulge or @curvedir or @lform or
+                @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or
+                @startvo or @endvo or @x or @y or @x2 or @y2]]">
+                <sch:assert test="not(@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or
+                  @startho or @endho or @to or @startto or @endto or @vo or @startvo or
+                  @endvo or @x or @y or @x2 or @y2)" role="warning">The visual attributes of the tie
+                  (@bezier, @bulge, @curvedir, @lform, @lwidth, @ho, @startho, @endho, @to,
+                  @startto, @endto, @vo, @startvo, @endvo, @x, @y, @x2, and @y2) will be overridden
+                  by visual attributes of the contained curve elements.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -2292,17 +2311,10 @@
                 'mixed' and providing explicit key signature information in the key.sig.mixed
                 attribute or in the &lt;keySig&gt; element. It is intended that key.sig.mixed
                 contain a series of tokens with each token containing pitch name, accidental, and
-                octave, such as 'bf3 an4 cs5 etf5' that indicate what key accidentals should be
-                rendered and where they should be placed.</desc>
-              <datatype>
-                <rng:list>
-                  <rng:oneOrMore>
-                    <rng:data type="token">
-                      <rng:param name="pattern"
-                        >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
-                    </rng:data>
-                  </rng:oneOrMore>
-                </rng:list>
+                octave, such as 'a4 c5s e5f' that indicate what key accidentals should be rendered
+                and where they should be placed.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.KEYSIGTOKEN"/>
               </datatype>
             </attDef>
           </attList>
@@ -2488,16 +2500,33 @@
         </classSpec>
 
         <!-- Harmonize content model of <fw> and <pgHead>, <pgFoot>, etc., issue #179 -->
-        <elementSpec ident="fw" module="MEI.shared" mode="replace">
-          <desc>(forme work) – Captures header/footer material that is non-repeating; that is,
-            occuring on isolated pages. For recurring headers and footers use pgHead* and pgFoot*
-            elements.</desc>
+        <!-- Actually, the best course of action is to replace <fw> with <pgHead> and <pgFoot>.
+          <pgHead>, etc. are all now members of att.typed. In addition, <pgHead2> and <pgFoot2>
+          have been given a new @halign attribute which facilitates the capture of horizontal
+          alignment. -->
+        <elementSpec ident="fw" module="MEI.shared" mode="delete"/>
+        <macroSpec ident="macro.metaLike.page" module="MEI.shared" type="pe" mode="replace">
+          <desc>groups elements that contain meta-data about a single page.</desc>
+          <content>
+            <rng:optional>
+              <rng:ref name="pgHead"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pgFoot"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="pgDesc"/>
+            </rng:optional>
+          </content>
+        </macroSpec>
+        <elementSpec ident="pgFoot" module="MEI.shared" mode="replace">
+          <desc>(page footer) – A running footer on the first page. Also, used to temporarily
+            override a running footer on individual pages.</desc>
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
-            <memberOf key="model.metaLike.page"/>
           </classes>
           <content>
             <rng:zeroOrMore>
@@ -2513,8 +2542,123 @@
             </rng:zeroOrMore>
           </content>
           <remarks>
-            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-              standard.</p>
+            <p>This element is used to capture the textual data that often appears on the first page
+              of printed music. It may also be used for similarly formatted material in manuscripts.
+              When used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the
+              pattern of page footers established by the use of <gi scheme="MEI">pgFoot</gi> within
+              a previous <gi scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be
+              indicated with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2
+              elements should <hi rend="bold">*not*</hi> be used to encode textual
+              notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgFoot2" module="MEI.shared" mode="replace">
+          <desc>(page footer 2) – A running footer on the pages following the first.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="halign" usage="opt">
+              <desc>records horizontal alignment. Use multiple values to capture a repeating
+                pattern.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+          <remarks>
+            <p>This element is used to capture the textual data that often appears on the second and
+              succeeding pages of printed music. It may also be used for similarly formatted
+              material in manuscripts. Auto-generated page numbers may be indicated with a
+              processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
+                rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgHead" module="MEI.shared" mode="replace">
+          <desc>(page header) – A running header on the first page. Also, used to temporarily
+            override a running header on individual pages.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <remarks>
+            <p>This element is used to capture the textual data that often appears on the first page
+              of printed music. It may also be used for similarly formatted material in manuscripts.
+              When used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the
+              pattern of page headers established by the use of <gi scheme="MEI">pgHead</gi> within
+              a previous <gi scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be
+              indicated with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2
+              elements should <hi rend="bold">*not*</hi> be used to encode textual
+              notes/annotations.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="pgHead2" module="MEI.shared" mode="replace">
+          <desc>(page header 2) – A running header on the pages following the first.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textcomponentLike"/>
+                <rng:ref name="model.textphraseLike.limited"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="anchoredText"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="halign" usage="opt">
+              <desc>records horizontal alignment. Use multiple values to capture a repeating
+                pattern.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+          <remarks>
+            <p>This element is used to capture the textual data that often appears at the top of the
+              second and succeeding pages of printed music. It may also be used for similarly
+              formatted material in manuscripts. Auto-generated page numbers may be indicated with a
+              processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
+                rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
           </remarks>
         </elementSpec>
 
@@ -5370,7 +5514,7 @@
               </datatype>
               <constraintSpec ident="check_defTarget_layer" scheme="isoschematron">
                 <constraint>
-                  <sch:rule context="@def">
+                  <sch:rule context="layer/@def">
                     <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute
                       has no content.</sch:assert>
                     <sch:assert role="warning" test="every $i in tokenize(., '\s+') satisfies
@@ -5468,7 +5612,7 @@
               </datatype>
               <constraintSpec ident="check_defTarget_staff" scheme="isoschematron">
                 <constraint>
-                  <sch:rule context="@def">
+                  <sch:rule context="staff/@def">
                     <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute
                       has no content.</sch:assert>
                     <sch:assert role="warning" test="every $i in tokenize(., '\s+') satisfies
@@ -6900,7 +7044,8 @@
                 <rng:list>
                   <rng:oneOrMore>
                     <rng:data type="token">
-                      <rng:param name="pattern">[a-g][0-9][\-#fs]?([a-g][0-9][\-#fs]?)*</rng:param>
+                      <rng:param name="pattern"
+                        >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
                     </rng:data>
                   </rng:oneOrMore>
                 </rng:list>
@@ -7258,7 +7403,7 @@
                 <rng:list>
                   <rng:oneOrMore>
                     <rng:data type="decimal"/>
-                    <rng:data type="decimal"/>
+                    <rng:ref name="data.PERCENT"/>
                   </rng:oneOrMore>
                 </rng:list>
               </datatype>
@@ -7810,6 +7955,104 @@
             <p>Like a chord table, a symbolTable may be shared between mei instances through the use
               of an external parsed entity containing the symbolTable to be shared.</p>
           </remarks>
+        </elementSpec>
+
+        <macroSpec ident="data.KEYSIGTOKEN" module="MEI" type="dt" mode="replace">
+          <desc>A token describing the pitch name, inflection, and octave number of an altered pitch
+            in a key signature.</desc>
+          <content>
+            <rng:data type="token">
+              <rng:param name="pattern"
+                >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
+            </rng:data>
+          </content>
+        </macroSpec>
+
+        <macroSpec ident="data.HORIZONTALALIGNMENT" module="MEI" type="dt" mode="add">
+          <desc>data values for attributes that capture horizontal alignment.</desc>
+          <content>
+            <valList type="closed">
+              <valItem ident="left">
+                <desc>left aligned.</desc>
+              </valItem>
+              <valItem ident="right">
+                <desc>right aligned.</desc>
+              </valItem>
+              <valItem ident="center">
+                <desc>centered.</desc>
+              </valItem>
+              <valItem ident="justify">
+                <desc>left and right aligned.</desc>
+              </valItem>
+            </valList>
+          </content>
+        </macroSpec>
+        <classSpec ident="att.horizontalalign" module="MEI.shared" type="atts" mode="replace">
+          <desc>Attributes that record horizontal alignment.</desc>
+          <attList>
+            <attDef ident="halign" usage="opt">
+              <desc>records horizontal alignment.</desc>
+              <datatype>
+                <rng:ref name="data.HORIZONTALALIGNMENT"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <!-- Add a generic ornam element -->
+        <classSpec ident="att.ornam.log" module="MEI.shared" type="atts" mode="add">
+          <classes>
+            <memberOf key="att.controlevent"/>
+            <memberOf key="att.duration.additive"/>
+            <memberOf key="att.ornamentaccid"/>
+            <memberOf key="att.startendid"/>
+            <memberOf key="att.timestamp2.musical"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.vis" module="MEI.shared" type="atts" mode="add">
+          <classes>
+            <memberOf key="att.color"/>
+            <memberOf key="att.placement"/>
+            <memberOf key="att.visualoffset"/>
+            <memberOf key="att.visualoffset2.ho"/>
+            <memberOf key="att.visualoffset2.to"/>
+            <memberOf key="att.xy"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.ges" module="MEI.shared" type="atts" mode="add">
+          <classes>
+            <memberOf key="att.duration.performed"/>
+          </classes>
+        </classSpec>
+        <classSpec ident="att.ornam.anl" module="MEI.shared" type="atts" mode="add">
+          <classes>
+            <memberOf key="att.common.anl"/>
+          </classes>
+        </classSpec>
+        <elementSpec ident="ornam" module="MEI.shared" mode="add">
+          <desc>A generic ornament not encoded elsewhere using more specific elements, such as
+            &lt;mordent&gt;, &lt;turn&gt;, or &lt;trill&gt;.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="att.ornam.log"/>
+            <memberOf key="att.ornam.vis"/>
+            <memberOf key="att.ornam.ges"/>
+            <memberOf key="att.ornam.anl"/>
+            <memberOf key="model.controleventLike"/>
+          </classes>
+          <content>
+            <rng:empty/>
+          </content>
+          <constraintSpec ident="ornam_start-type_attributes_required" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:ornam">
+                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
+                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </elementSpec>
 
       </schemaSpec>
