@@ -38,7 +38,7 @@ all()
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
-    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
+    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.odd');
     do
         echo -e "${GREEN}Processing" "${file}"$NORM
         $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
@@ -56,7 +56,7 @@ all()
 
 test()
 {
-    echo -e "\nValidating 2013 samples directory against built customizations\n"
+    echo -e "\nValidating samples directory against built customizations\n"
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
@@ -70,7 +70,7 @@ test()
             echo -e "${PURPLE} Found ${NORM} $testdir"
             for tfile in $(find tests/${testdir} -name '*.mei');
             do
-                echo -e "${PURPLE} Testing: ${NORM}" $tfile
+                echo -e "${PURPLE} Testing Against: ${NORM}" $tfile
 
                 $PATH_TO_JING $file "${tfile}"
 
