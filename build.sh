@@ -60,6 +60,7 @@ test()
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
+    SUCCESS=true
 
     for file in $(find ${BUILD_DIR} -name '*.rng');
     do
@@ -77,14 +78,18 @@ test()
                 if [ $? = 1 ]; then
                     IFS=$SAVEIFS
                     echo -e "${RED}\tTests failed on" $tfile$NORM
-                    exit 1
+                    SUCCESS=false;
                 else
                     echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
                 fi
 
-                echo -e "\n${GREEN}***********************************************${NORM}"
-                echo -e "${GREEN}$file passed validation tests${NORM}"
-                echo -e "${GREEN}***********************************************${NORM}\n"
+                if $SUCCESS; then
+                    echo -e "\n${GREEN}***********************************************${NORM}"
+                    echo -e "${GREEN}$file passed validation tests${NORM}"
+                    echo -e "${GREEN}***********************************************${NORM}\n"
+                else
+                    echo -e "\n${RED} FAILURE ${NORM}"
+                fi
             done
         fi
     done
