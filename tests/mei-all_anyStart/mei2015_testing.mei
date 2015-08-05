@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <!-- meiversion.num removed; @meiversion gets new value. -->
-<?xml-model href="mei2015Test_All.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<?xml-model href="mei2015Test_All.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="mei-all_anyStart.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="mei-all_anyStart.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <mei xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
   xmlns="http://www.music-encoding.org/ns/mei"
   xml:id="edirom_source_ebf14eac-f052-4428-82f4-32fae53b9c0f" meiversion="3.0.0"
@@ -136,10 +136,8 @@
               <head/>
               <p>I read a good book: <biblList>
                   <bibl>my book</bibl>
-                </biblList> But it took <rend rend="bold"
-                  altrend="this is what i want it to look
-                  like">me</rend> a
-                looooooonnnngggg time.</p>
+                </biblList> But it took <rend rend="bold" altrend="this is what i want it to look
+                  like">me</rend> a looooooonnnngggg time.</p>
             </annot>
             <annot>
               <!-- <biblList> is now recursively nest-able. -->
@@ -358,7 +356,9 @@
     <front>
       <!-- titlePage now allows presentational and semantic markup -->
       <titlePage>
-        <p><fig><svg:svg/></fig></p>
+        <p><fig>
+            <svg:svg/>
+          </fig></p>
         <lg>
           <l/>
         </lg>
@@ -443,14 +443,14 @@
             <staffGrp barthru="true" symbol="line">
               <!-- notationtype allows 2-level classification of the notation found on the staff. For more complex 
                 classification, use @decls to refer to <classification> in header. -->
-              <staffDef n="0" lines="5" key.sig="mixed" key.sig.mixed="as4 cn5 dts9"
+              <staffDef n="0" lines="5" key.sig="mixed" key.sig.mixed="a4s c5n d9ts"
                 notationtype="tab" notationsubtype="guitar"/>
               <staffDef xml:id="P1" n="1" clef.shape="G" clef.line="2" lines="5"/>
               <staffDef xml:id="P2" n="2" clef.shape="F" clef.line="4" lines="5"/>
               <staffDef xml:id="P3" n="3" clef.shape="G" clef.line="2" lines="5"/>
               <staffDef xml:id="P4" n="4" clef.shape="F" clef.line="4" lines="5"/>
-              <staffDef xml:id="P5" n="5" clef.shape="TAB" lines="6" beam.group=""
-                tab.strings="e4e3 a4a3 d4 g5g4 b4b4 e5"/>
+              <staffDef xml:id="P5" n="5" clef.shape="TAB" lines="6" beam.group="" tab.strings="e4e3
+                a4a3 d4 g5g4 b4b4 e5"/>
             </staffGrp>
             <!-- Overlapping group symbols -->
             <grpSym symbol="bracket" startid="#P1" endid="#P3" level="1"/>
@@ -458,28 +458,29 @@
           </scoreDef>
           <section>
             <pb>
-              <!-- fw now uses same model as pgHead* and pgFoot* -->
-              <fw>
+              <!-- fw has been replaced by pgFoot and pgHead -->
+              <pgFoot>
                 <anchoredText>
                   <fig>
                     <graphic/>
                   </fig>
                 </anchoredText>
-                <bibl/> text <symbol altsym="#mySymbol1"/></fw>
+                <bibl/> text <symbol altsym="#mySymbol1"/>
+              </pgFoot>
             </pb>
             <measure>
               <anchoredText><symbol altsym="#mySymbol1" scale="50%"/></anchoredText>
               <staff n="0"/>
               <staff n="1">
                 <layer>
-                  <clef />
+                  <clef/>
                   <!-- @rend reserved for CSS-like renditional info; use @form -->
                   <beam form="acc">
                     <!-- added @vel on note; added "scoop" to values of @artic -->
                     <!-- @altsym must contain a valid xml:id reference -->
                     <note xml:id="n1" pname="a" oct="5" dur="16" stem.dir="down" accid="1qs"
                       altsym="#mySymbol1" vel="127" artic="scoop">
-                      <accid fontname="Leipzig" fontsize="12" fontweight="bold" />
+                      <accid fontname="Leipzig" fontsize="12" fontweight="bold"/>
                       <artic fontname="Bravua" fontsize="11.5" fontweight="normal" color="blue"/>
                       <!-- verse now member of att.color -->
                       <!-- Allow app within verse -->
@@ -489,7 +490,6 @@
                             <sic>So</sic>
                             <corr>Some</corr>
                           </choice>
-                          
                         </syl>
                         <syl>wo<rend color="fuchsia">rd</rend></syl>
                         <app>
@@ -519,7 +519,7 @@
                   <meterSig form="denomsym"/>
                   <sb form="hash"/>
                   <!-- control events now members of att.typed -->
-                  <dir type="foo" tstamp="2.5" place="above" staff="1" xml:lang="zh" 
+                  <dir type="foo" tstamp="2.5" place="above" staff="1" xml:lang="zh"
                     translit="pinyin">xin nian kuai le</dir>
                   <!-- @lform and @lwidth allowed on pedal and octave to capture line characteristics -->
                   <pedal type="quick" tstamp="1" dir="down" form="line" lform="wavy" lwidth="0.02vu"/>
@@ -529,7 +529,8 @@
                     multiple curves. Visual attributes on the contained curve elements override those on
                     the parent. -->
                   <slur tstamp="1" tstamp2="2" startid="#trill01" endid="#n2">
-                    <curve bezier="19 45 -32 118" startid="#trill01" endid="#n2" lwidth="0.2mm" color="#AABBCC"/>
+                    <curve bezier="19 45 -32 118" startid="#trill01" endid="#n2" lwidth="0.2mm"
+                      color="#AABBCC"/>
                     <curve bezier="19 45 -32 118" startid="#trill01" endid="#n2" lwidth="0.2mm"/>
                   </slur>
                   <!-- The following element raises a warning. -->
@@ -554,7 +555,8 @@
               <breath tstamp="1" fontname="Bravura" fontsize="10" fontstyle="normal" color="purple"/>
               <!-- line form and width are now separate attributes, allowing for more combinations -->
               <!-- octave also now permits textual content -->
-              <octave xml:id="oc1" tstamp="1" tstamp2="0m+4.5" dis="8" dis.place="above" staff="1">in octaves</octave>
+              <octave xml:id="oc1" tstamp="1" tstamp2="0m+4.5" dis="8" dis.place="above" staff="1"
+                >in octaves</octave>
               <!-- dynam can now take start and end values -->
               <dynam tstamp="1" tstamp2="1m+2" val="2" val2="8">cres.</dynam>
             </measure>
