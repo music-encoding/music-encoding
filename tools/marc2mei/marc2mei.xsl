@@ -62,7 +62,7 @@
 
   <!-- program version -->
   <xsl:variable name="version">
-    <xsl:text>1.0 beta</xsl:text>
+    <xsl:text>1.0beta</xsl:text>
   </xsl:variable>
 
   <!-- MARC Instruments or Voices Codes -->
@@ -107,7 +107,7 @@
     <instr code="od" class="Larger ensemble">Band</instr>
     <instr code="oe" class="Larger ensemble">Dance orchestra</instr>
     <instr code="of" class="Larger ensemble">Brass band</instr>
-    <instr code="on" class="Larger ensemble">Unspecified esemble</instr>
+    <instr code="on" class="Larger ensemble">Unspecified ensemble</instr>
     <instr code="ou" class="Larger ensemble">Unknown ensemble</instr>
     <instr code="oy" class="Larger ensemble">Ethnic ensemble</instr>
     <instr code="oz" class="Larger ensemble">Other ensemble</instr>
