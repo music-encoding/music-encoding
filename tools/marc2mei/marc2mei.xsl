@@ -62,7 +62,7 @@
 
   <!-- program version -->
   <xsl:variable name="version">
-    <xsl:text>1.0beta</xsl:text>
+    <xsl:text>1.0 beta</xsl:text>
   </xsl:variable>
 
   <!-- MARC Instruments or Voices Codes -->
@@ -2858,7 +2858,7 @@
         <appInfo>
           <application>
             <xsl:attribute name="version">
-              <xsl:value-of select="$version"/>
+              <xsl:value-of select="replace($version, '\s+', '_')"/>
             </xsl:attribute>
             <name>
               <xsl:value-of select="$progname"/>
