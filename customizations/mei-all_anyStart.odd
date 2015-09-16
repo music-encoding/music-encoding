@@ -608,8 +608,9 @@
           <remarks>
             <p>Use the <gi scheme="MEI">dimensions</gi> element when it is necessary to specify the
                 <hi rend="bold">physical</hi> size of materials being described, for example, height
-              and width. The units in which the @quantity attribute or the extent element's content
-              is measured can be recorded in the @unit attribute.</p>
+              and width. The @unit attribute can be used to record the unit of measure in which the
+              the extent element's content (or its equivalent, as specified in the @quantity
+              attribute) is provided.</p>
           </remarks>
           <remarks>
             <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and
@@ -5643,6 +5644,8 @@
         <elementSpec ident="instrVoiceGrp" module="MEI.header" mode="replace">
           <desc>Several instrumental or vocal resources treated as a group.</desc>
           <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
+          <!-- Disallow text in instrVoiceGrp -->
+          <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.authorized"/>
@@ -5653,25 +5656,23 @@
           </classes>
           <content>
             <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
               <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.headLike"/>
                 <rng:ref name="instrVoice"/>
                 <rng:ref name="instrVoiceGrp"/>
               </rng:choice>
             </rng:zeroOrMore>
           </content>
-          <constraintSpec ident="instrVoiceGrp_content_constraint" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:instrVoiceGrp[mei:head or mei:instrVoice or mei:instrVoiceGrp]">
-                <sch:assert test="not(mei:head[preceding-sibling::*[not(local-name()='head')]])"
-                  >Head elements can only occur at the start of instrVoiceGrp.</sch:assert>
-                <!-- This rule interferes with the capture of instrumental doublings. -->
-                <!--<sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
-                  when head, instrVoice, or instrVoiceGrp is used.</sch:assert>-->
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
+          <attList>
+            <attDef ident="count" usage="opt">
+              <desc>Indicates the number of performers.</desc>
+              <datatype>
+                <rng:data type="positiveInteger"/>
+              </datatype>
+            </attDef>
+          </attList>
         </elementSpec>
         <elementSpec ident="lg" module="MEI.text" mode="replace">
           <desc>(line group) – May be used for any section of text that is organized as a group of
@@ -6497,7 +6498,6 @@
         </elementSpec>
 
         <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
-        <!-- instrumentation and instrVoiceGrp addressed elsewhere -->
         <elementSpec ident="ensemble" module="MEI.header" mode="replace">
           <desc>The name of a standard instrumental or vocal grouping, such as 'orchestra' or
             'marching band'.</desc>
@@ -6531,12 +6531,7 @@
             <memberOf key="att.lang"/>
           </classes>
           <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="instrVoice"/>
-              </rng:choice>
-            </rng:zeroOrMore>
+            <rng:text/>
           </content>
           <attList>
             <attDef ident="count" usage="opt">
@@ -6553,12 +6548,6 @@
               </datatype>
             </attDef>
           </attList>
-          <remarks>
-            <p>
-              <gi scheme="MEI">instrVoice</gi> is permitted to contain <gi scheme="MEI"
-                >instrVoiceGrp</gi> for those situations where a group of instruments is performed
-              upon by a single player or group of players, i.e., doubling.</p>
-          </remarks>
         </elementSpec>
         <elementSpec ident="expression" module="MEI.frbr" mode="replace">
           <desc>Intellectual or artistic realization of a work.</desc>
