@@ -3,7 +3,7 @@
   datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   ns="http://www.music-encoding.org/ns/mei">
   <!--
-Schema generated from ODD source 2015-09-16T20:02:51Z. .
+Schema generated from ODD source 2015-09-17T20:21:10Z. .
 TEI Edition: 2013 Release
 TEI Edition Location: http://www.tei-c.org/Vault/P5//
   
@@ -12913,7 +12913,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
           <ref name="mei_role"/>
           <ref name="mei_roleDesc"/>
           <ref name="mei_actor"/>
-          <ref name="mei_instrVoice"/>
         </choice>
       </oneOrMore>
       <ref name="mei_att.common.attributes"/>
@@ -13494,10 +13493,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </optional>
       <optional>
-        <choice>
-          <ref name="mei_instrVoice"/>
-          <ref name="mei_instrVoiceGrp"/>
-        </choice>
+        <empty/>
       </optional>
       <optional>
         <ref name="mei_key"/>
@@ -15653,21 +15649,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <empty/>
     </element>
   </define>
-  <define name="mei_ensemble">
-    <element name="ensemble">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">The name of a
-        standard instrumental or vocal grouping, such as 'orchestra' or 'marching
-        band'.</a:documentation>
-      <text/>
-      <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
-      <ref name="mei_att.edit.attributes"/>
-      <ref name="mei_att.lang.attributes"/>
-      <empty/>
-    </element>
-  </define>
   <define name="mei_event">
     <element name="event">
       <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Contains a
@@ -15938,78 +15919,15 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         <ref name="mei_model.headLike"/>
       </zeroOrMore>
       <zeroOrMore>
-        <choice>
-          <ref name="mei_ensemble"/>
-          <ref name="mei_instrVoice"/>
-          <ref name="mei_instrVoiceGrp"/>
-        </choice>
+        <ref name="mei_perfResList"/>
       </zeroOrMore>
-      <optional>
+      <zeroOrMore>
         <ref name="mei_model.annotLike"/>
-      </optional>
-      <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.edit.attributes"/>
-      <empty/>
-    </element>
-  </define>
-  <define name="mei_instrVoice">
-    <element name="instrVoice">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(instrument or
-        voice) – Name of an instrument on which a performer plays or a performer's voice
-        range.</a:documentation>
-      <text/>
-      <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
-      <ref name="mei_att.edit.attributes"/>
-      <ref name="mei_att.lang.attributes"/>
-      <optional>
-        <attribute name="count">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
-            the number of performers.</a:documentation>
-          <data type="positiveInteger"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="solo">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Marks this
-            instrument or vocal part as a soloist. Do not use this attribute for a solo instrument
-            which is not accompanied.</a:documentation>
-          <ref name="mei_data.BOOLEAN"/>
-        </attribute>
-      </optional>
-      <empty/>
-    </element>
-  </define>
-  <define name="mei_instrVoiceGrp">
-    <element name="instrVoiceGrp">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Several
-        instrumental or vocal resources treated as a group.</a:documentation>
-      <zeroOrMore>
-        <ref name="mei_model.headLike"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <choice>
-          <ref name="mei_instrVoice"/>
-          <ref name="mei_instrVoiceGrp"/>
-        </choice>
       </zeroOrMore>
       <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
+      <ref name="mei_att.authorized.attributes"/>
       <ref name="mei_att.edit.attributes"/>
-      <ref name="mei_att.lang.attributes"/>
-      <optional>
-        <attribute name="count">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
-            the number of performers.</a:documentation>
-          <data type="positiveInteger"/>
-        </attribute>
-      </optional>
       <empty/>
     </element>
   </define>
@@ -24508,6 +24426,35 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <empty/>
     </element>
   </define>
+  <define name="mei_perfResList">
+    <element name="perfResList">
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Several
+        instrumental or vocal resources treated as a group.</a:documentation>
+      <zeroOrMore>
+        <ref name="mei_model.headLike"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <choice>
+          <ref name="mei_perfRes"/>
+          <ref name="mei_perfResList"/>
+        </choice>
+      </zeroOrMore>
+      <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.authorized.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
+      <ref name="mei_att.coded.attributes"/>
+      <ref name="mei_att.edit.attributes"/>
+      <ref name="mei_att.lang.attributes"/>
+      <optional>
+        <attribute name="count">
+          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
+            the number of performers.</a:documentation>
+          <data type="positiveInteger"/>
+        </attribute>
+      </optional>
+      <empty/>
+    </element>
+  </define>
   <define name="mei_att.classcodeident.attributes">
     <ref name="mei_att.classcodeident.attribute.classcode"/>
   </define>
@@ -24536,6 +24483,36 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         element.</sch:assert>
     </sch:rule>
   </pattern>
+  <define name="mei_perfRes">
+    <element name="perfRes">
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(performance
+        resource) – Name of an instrument on which a performer plays, a performer's voice range, or
+        a standard ensemble designation.</a:documentation>
+      <text/>
+      <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.authorized.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
+      <ref name="mei_att.coded.attributes"/>
+      <ref name="mei_att.edit.attributes"/>
+      <ref name="mei_att.lang.attributes"/>
+      <optional>
+        <attribute name="count">
+          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
+            the number of performers.</a:documentation>
+          <data type="positiveInteger"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="solo">
+          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Marks this
+            instrument or vocal part as a soloist. Do not use this attribute for a solo instrument
+            which is not accompanied.</a:documentation>
+          <ref name="mei_data.BOOLEAN"/>
+        </attribute>
+      </optional>
+      <empty/>
+    </element>
+  </define>
   <define name="mei_att.notationtype.attributes">
     <ref name="mei_att.notationtype.attribute.notationtype"/>
     <ref name="mei_att.notationtype.attribute.notationsubtype"/>
