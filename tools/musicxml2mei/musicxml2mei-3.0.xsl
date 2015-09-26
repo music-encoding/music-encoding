@@ -10422,9 +10422,15 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
 
                   <xsl:variable name="prec" select="preceding-sibling::mei:*//@beam"/>
                   <xsl:variable name="num" select="substring($prec[1],2)"/>
+                  <xsl:variable name="elem" select="." as="node()"/>
 
                   <xsl:choose>
-                    <xsl:when test="following-sibling::mei:*//@beam[. = concat('t',$num)]">
+                    
+                    <xsl:when test="count($elem/preceding-sibling::mei:*//@beam[starts-with(.,'i')]) gt count($elem/preceding-sibling::mei:*//@beam[starts-with(.,'t')]) 
+                      and $elem/preceding-sibling::mei:*//@beam[starts-with(.,'i')][1]/@beam = concat('i',$num)
+                      and $elem/following-sibling::mei:*//@beam[. = concat('t',$num)]">
+                    
+                    <!--<xsl:when test="following-sibling::mei:*//@beam[. = concat('t',$num)]">-->
                       <xsl:variable name="start" select="preceding-sibling::mei:*[.//@beam =
                         concat('i',$num)][1]"/>
                       <xsl:variable name="end" select="following-sibling::mei:*[.//@beam =
@@ -10575,17 +10581,20 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                         <xsl:variable name="end" select="./following-sibling::mei:*[.//@tuplet[. =
                           concat('t',$num)]][1]"/>
                         <xsl:variable name="elems" select="f:getElems(.,$end)" as="node()*"/>
-                        <xsl:variable name="tuppable" select="every $elem in $elems satisfies
-                          (@tuplet[ends-with(.,$num)] or
-                          (local-name($elem) = 'beam' and (every $child in
-                          ($elem/child::mei:* except $elem/child::mei:*[last()])
-                          satisfies @grace or (@tuplet = concat('m',$num))) and
-                          ($elem/child::mei:*[last()]/@tuplet = concat('t',$num) or
-                          $elem/child::mei:*[last()]/@tuplet = concat('m',$num))))"/>
+                        <xsl:variable name="notes" select="$elems/descendant-or-self::mei:note" as="node()*"/>
+                        
+                        <xsl:variable name="tuppable" select="(every $note in $notes satisfies
+                          ($note/@tuplet[ends-with(.,$num)] or 
+                          $note/@grace))
+                          and
+                          count($notes[@tuplet and starts-with(@tuplet,'i')]) =
+                          count($notes[@tuplet and starts-with(@tuplet,'t')])
+                          " as="xs:boolean"/>
+                          
                         <xsl:choose>
                           <xsl:when test="$tuppable">
                             <tuplet xmlns="http://www.music-encoding.org/ns/mei">
-                              <xsl:variable name="id" select="@xml:id"/>
+                              <xsl:variable name="id" select="if(local-name() = 'beam') then(child::mei:*[1]/@xml:id) else(@xml:id)"/>
                               <xsl:variable name="tupletSpan"
                                 select="$measure//mei:tupletSpan[@startid = $id]"/>
 
@@ -10603,6 +10612,7 @@ following-sibling::measure[1][attributes[not(preceding-sibling::note)]] -->
                             <xsl:message>
                               <xsl:value-of select="normalize-space(concat('The tuplet starting with ', $tupletStartID, ' could not be resolved.'))"/>
                             </xsl:message>
+                            <xsl:message select="$elems"/>
                           </xsl:otherwise>
                         </xsl:choose>
 
