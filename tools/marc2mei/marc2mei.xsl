@@ -33,11 +33,9 @@
   <!-- ======================================================================= -->
 
   <!-- path to rng -->
-  <xsl:param name="rng_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <xsl:param name="rng_model_path"/>
   <!-- path to schematron -->
-  <xsl:param name="sch_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <xsl:param name="sch_model_path"/>
   <!-- name of agency running the transform -->
   <xsl:param name="agency"/>
   <!-- agency code -->
@@ -62,7 +60,7 @@
 
   <!-- program version -->
   <xsl:variable name="version">
-    <xsl:text>1.0 beta</xsl:text>
+    <xsl:text>1.1 beta</xsl:text>
   </xsl:variable>
 
   <!-- MARC Instruments or Voices Codes -->
@@ -2035,7 +2033,7 @@
 
   <xsl:template name="analog">
     <xsl:param name="tag"/>
-    <xsl:if test="$analog='true'">
+    <xsl:if test="$analog = 'true'">
       <xsl:attribute name="analog">
         <xsl:value-of select="concat('marc:', $tag)"/>
       </xsl:attribute>
@@ -2046,10 +2044,10 @@
     <xsl:param name="chopString"/>
     <xsl:variable name="length" select="string-length($chopString)"/>
     <xsl:choose>
-      <xsl:when test="$length=0"/>
-      <xsl:when test="contains('.:,;+/ ', substring($chopString,$length,1))">
+      <xsl:when test="$length = 0"/>
+      <xsl:when test="contains('.:,;+/ ', substring($chopString, $length, 1))">
         <xsl:call-template name="chopPunctuation">
-          <xsl:with-param name="chopString" select="substring($chopString,1,$length - 1)"/>
+          <xsl:with-param name="chopString" select="substring($chopString, 1, $length - 1)"/>
         </xsl:call-template>
       </xsl:when>
       <xsl:when test="not($chopString)"/>
@@ -2060,10 +2058,12 @@
   </xsl:template>
 
   <xsl:template name="classification">
-    <xsl:variable name="classification" select="marc:datafield[@tag='047' or @tag='050' or
-      @tag='082' or @tag='648' or @tag='600' or @tag='650' or @tag='651' or @tag='653' or
-      @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658' or @tag='751' or
-      @tag='752' or (number(@tag)&gt;=90 and number(@tag)&lt;=99)]"/>
+    <xsl:variable name="classification"
+      select="
+        marc:datafield[@tag = '047' or @tag = '050' or
+        @tag = '082' or @tag = '648' or @tag = '600' or @tag = '650' or @tag = '651' or @tag = '653' or
+        @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or @tag = '658' or @tag = '751' or
+        @tag = '752' or (number(@tag) >= 90 and number(@tag) &lt;= 99)]"/>
 
     <xsl:if test="$classification">
       <!-- classification codes -->
@@ -2071,67 +2071,81 @@
         <xsl:variable name="classCodes">
 
           <!-- common schemes -->
-          <xsl:if test="marc:datafield[@tag='047' and marc:subfield[@code='2']='iamlmf']">
+          <xsl:if test="marc:datafield[@tag = '047' and marc:subfield[@code = '2'] = 'iamlmf']">
             <classCode xml:id="IFMC">IAML Form of Musical Composition</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='047' and @ind2=' ']">
+          <xsl:if test="marc:datafield[@tag = '047' and @ind2 = ' ']">
             <classCode xml:id="MFMC">MARC Form of Musical Composition Code List</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[number(@tag) &gt;=90 and number(@tag) &lt;=99]">
-            <xsl:for-each select="marc:datafield[number(@tag) &gt;=90 and number(@tag) &lt;=99]">
+          <xsl:if test="marc:datafield[number(@tag) >= 90 and number(@tag) &lt;= 99]">
+            <xsl:for-each select="marc:datafield[number(@tag) >= 90 and number(@tag) &lt;= 99]">
               <classCode xml:id="LocalNum{@tag}">Local Shelf Number (<xsl:value-of select="@tag"
                 />)</classCode>
             </xsl:for-each>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='082']">
+          <xsl:if test="marc:datafield[@tag = '082']">
             <classCode xml:id="DDC">Dewey Decimal Classification Number</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='050']">
+          <xsl:if test="marc:datafield[@tag = '050']">
             <classCode xml:id="LCCN">Library of Congress Classification Number</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='0']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '0']">
             <classCode xml:id="LCSH">Library of Congress Subject Headings</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='1']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '1']">
             <classCode xml:id="LCCL">Library of Congress Subject Headings for Children's
               Literature</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='2']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '2']">
             <classCode xml:id="MeSH">Medical Subject Headings </classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='3']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '3']">
             <classCode xml:id="NALSA">National Agricultural Library Subject Authority
               file</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='5']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '5']">
             <classCode xml:id="CSH">Canadian Subject Headings</classCode>
           </xsl:if>
-          <xsl:if test="marc:datafield[@tag='600' or @tag='648' or @tag='650' or @tag='651' or
-            @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or
-            @tag='658'][@ind2='6']">
+          <xsl:if
+            test="
+              marc:datafield[@tag = '600' or @tag = '648' or @tag = '650' or @tag = '651' or
+              @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or @tag = '657' or
+              @tag = '658'][@ind2 = '6']">
             <classCode xml:id="RVM">Répertoire de vedettes-matière</classCode>
           </xsl:if>
 
           <!-- record-defined schemes -->
-          <xsl:for-each select="marc:datafield[(@tag='600' or @tag='650' or @tag='651' or @tag='653'
-            or @tag='657' or @tag='751' or @tag='752') and marc:subfield[@code='2']]">
+          <xsl:for-each
+            select="
+              marc:datafield[(@tag = '600' or @tag = '650' or @tag = '651' or @tag = '653'
+              or @tag = '657' or @tag = '751' or @tag = '752') and marc:subfield[@code = '2']]">
             <xsl:variable name="classScheme">
-              <xsl:value-of select="marc:subfield[@code='2']"/>
+              <xsl:value-of select="marc:subfield[@code = '2']"/>
             </xsl:variable>
             <classCode>
               <xsl:attribute name="xml:id">
                 <xsl:choose>
-                  <xsl:when test="@tag='751' or @tag='752'">
+                  <xsl:when test="@tag = '751' or @tag = '752'">
                     <xsl:value-of select="upper-case(replace($classScheme, '&#32;', '_'))"/>
                   </xsl:when>
                   <xsl:otherwise>
@@ -2140,8 +2154,8 @@
                 </xsl:choose>
               </xsl:attribute>
               <xsl:choose>
-                <xsl:when test="@tag='751' or @tag='752'">
-                  <xsl:value-of select="$nameAuthList/mei:nameAuth[@code=$classScheme]"/>
+                <xsl:when test="@tag = '751' or @tag = '752'">
+                  <xsl:value-of select="$nameAuthList/mei:nameAuth[@code = $classScheme]"/>
                 </xsl:when>
                 <xsl:otherwise>
                   <xsl:value-of select="$classScheme"/>
@@ -2193,13 +2207,13 @@
     </xsl:param>
     <xsl:param name="element"/>
     <xsl:choose>
-      <xsl:when test="string-length($element) &gt; 0">
+      <xsl:when test="string-length($element) > 0">
         <xsl:element name="{$element}">
           <xsl:variable name="str">
             <xsl:for-each select="marc:subfield">
               <xsl:if test="contains($codes, @code)">
                 <xsl:choose>
-                  <xsl:when test="$chop='no'">
+                  <xsl:when test="$chop = 'no'">
                     <xsl:value-of select="text()"/>
                   </xsl:when>
                   <xsl:otherwise>
@@ -2214,7 +2228,8 @@
               </xsl:if>
             </xsl:for-each>
           </xsl:variable>
-          <xsl:value-of select="substring($str,1,string-length($str)-string-length($delimiter))"/>
+          <xsl:value-of select="substring($str, 1, string-length($str) - string-length($delimiter))"
+          />
         </xsl:element>
       </xsl:when>
       <xsl:otherwise>
@@ -2222,7 +2237,7 @@
           <xsl:for-each select="marc:subfield">
             <xsl:if test="contains($codes, @code)">
               <xsl:choose>
-                <xsl:when test="$chop='no'">
+                <xsl:when test="$chop = 'no'">
                   <xsl:value-of select="text()"/>
                 </xsl:when>
                 <xsl:otherwise>
@@ -2237,17 +2252,19 @@
             </xsl:if>
           </xsl:for-each>
         </xsl:variable>
-        <xsl:value-of select="substring($str,1,string-length($str)-string-length($delimiter))"/>
+        <xsl:value-of select="substring($str, 1, string-length($str) - string-length($delimiter))"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
 
   <xsl:template name="workLang">
     <xsl:variable name="langCode">
-      <xsl:value-of select="substring(marc:controlfield[@tag='008'], 36, 3)"/>
+      <xsl:value-of select="substring(marc:controlfield[@tag = '008'], 36, 3)"/>
     </xsl:variable>
-    <xsl:if test="matches($langCode, '[a-z]{3}') or
-      marc:datafield[@tag='041']/marc:subfield[@code='h' or @code='n']">
+    <xsl:if
+      test="
+        matches($langCode, '[a-z]{3}') or
+        marc:datafield[@tag = '041']/marc:subfield[@code = 'h' or @code = 'n']">
       <langUsage>
         <xsl:if test="matches($langCode, '[a-z]{3}')">
           <language xml:id="{$langCode}">
@@ -2256,21 +2273,23 @@
                 <xsl:value-of select="'008/35-37'"/>
               </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+            <xsl:value-of select="$marcLangList/mei:lang[@code = $langCode]"/>
           </language>
         </xsl:if>
-        <xsl:for-each select="marc:datafield[@tag='041']/marc:subfield[@code='h' or @code='n'][. !=
-          $langCode]">
+        <xsl:for-each
+          select="
+            marc:datafield[@tag = '041']/marc:subfield[@code = 'h' or @code = 'n'][. !=
+            $langCode]">
           <xsl:variable name="langCode">
             <xsl:value-of select="."/>
           </xsl:variable>
           <language xml:id="{$langCode}">
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat('041', @code)"/>
+                <xsl:value-of select="concat('041|', @code)"/>
               </xsl:with-param>
             </xsl:call-template>
-            <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+            <xsl:value-of select="$marcLangList/mei:lang[@code = $langCode]"/>
           </language>
         </xsl:for-each>
       </langUsage>
@@ -2303,7 +2322,7 @@
 
     <xsl:if test="$rng_model_path != ''">
       <xsl:processing-instruction name="xml-model">
-        <xsl:value-of select="concat('&#32;href=&quot;', $rng_model_path, '&quot;')"/>
+        <xsl:value-of select="concat('&amp;#32;href=&quot;', $rng_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
       </xsl:processing-instruction>
       <xsl:value-of select="$nl"/>
@@ -2311,17 +2330,17 @@
 
     <xsl:if test="$sch_model_path != ''">
       <xsl:processing-instruction name="xml-model">
-        <xsl:value-of select="concat('&#32;href=&quot;', $sch_model_path, '&quot;')"/>
+        <xsl:value-of select="concat('&amp;#32;href=&quot;', $sch_model_path, '&quot;')"/>
         <xsl:text> type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
       </xsl:processing-instruction>
       <xsl:value-of select="$nl"/>
     </xsl:if>
 
     <meiHead>
-      <xsl:attribute name="meiversion">2013</xsl:attribute>
-      <xsl:if test="marc:datafield[@tag='040']/marc:subfield[@code='b']">
+      <xsl:attribute name="meiversion">3.0.0</xsl:attribute>
+      <xsl:if test="marc:datafield[@tag = '040']/marc:subfield[@code = 'b']">
         <xsl:attribute name="xml:lang">
-          <xsl:value-of select="marc:datafield[@tag='040']/marc:subfield[@code='b']"/>
+          <xsl:value-of select="marc:datafield[@tag = '040']/marc:subfield[@code = 'b']"/>
         </xsl:attribute>
       </xsl:if>
       <fileDesc>
@@ -2329,19 +2348,21 @@
         <!-- file title(s) -->
         <titleStmt>
           <!-- title for electronic text (240 and 245) -->
-          <xsl:apply-templates select="marc:datafield[@tag='240' or @tag='245']" mode="titleProper"/>
+          <xsl:apply-templates select="marc:datafield[@tag = '240' or @tag = '245']"
+            mode="titleProper"/>
 
           <!-- statements of responsibility -->
           <xsl:variable name="respStmts">
-            <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
+            <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
             <xsl:if test="not($fileMainEntryOnly = 'true')">
-              <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']" mode="respStmt"
-              />
+              <xsl:apply-templates select="marc:datafield[@tag = '700' or @tag = '710']"
+                mode="respStmt"/>
             </xsl:if>
           </xsl:variable>
           <xsl:variable name="sortedRespStmts">
             <xsl:for-each select="$respStmts/mei:respStmt">
-              <xsl:sort select="mei:*[local-name()='persName' or local-name()='corpName']/@analog"/>
+              <xsl:sort
+                select="mei:*[local-name() = 'persName' or local-name() = 'corpName']/@analog"/>
               <xsl:sort/>
               <xsl:copy-of select="."/>
             </xsl:for-each>
@@ -2367,9 +2388,11 @@
               <xsl:value-of select="$agency"/>
               <xsl:if test="$agency_code != ''">
                 <xsl:text>&#32;</xsl:text>
+                <xsl:text>(</xsl:text>
                 <identifier authority="MARC Code List for Organizations">
                   <xsl:value-of select="$agency_code"/>
                 </identifier>
+                <xsl:text>)</xsl:text>
               </xsl:if>
             </corpName>
           </respStmt>
@@ -2385,51 +2408,59 @@
         <sourceDesc>
           <xsl:choose>
             <!-- single source if no fields with $3 -->
-            <xsl:when test="count(//marc:subfield[@code='3']) = 0">
+            <xsl:when test="count(//marc:subfield[@code = '3']) = 0">
               <source>
-                <xsl:if test="$analog='true'">
+                <xsl:if test="$analog = 'true'">
                   <xsl:attribute name="xml:id">
                     <xsl:choose>
-                      <xsl:when test="matches(marc:controlfield[@tag='001'], '[\i-[:]][\c-[:]]*')">
-                        <xsl:value-of select="marc:controlfield[@tag='001']"/>
+                      <xsl:when test="matches(marc:controlfield[@tag = '001'], '[\i-[:]][\c-[:]]*')">
+                        <xsl:value-of select="marc:controlfield[@tag = '001']"/>
                       </xsl:when>
-                      <xsl:when test="marc:datafield[@tag='001']">
+                      <xsl:when test="marc:datafield[@tag = '001']">
                         <!-- Records from Axel treat 001-009 as datafields, not controlfields -->
-                        <xsl:value-of select="concat('_', replace(marc:datafield[@tag='001'], '\s+',
-                          ''))"/>
+                        <xsl:value-of
+                          select="
+                            concat('_', replace(marc:datafield[@tag = '001'], '\s+',
+                            ''))"
+                        />
                       </xsl:when>
                       <xsl:otherwise>
-                        <xsl:value-of select="concat('_', marc:controlfield[@tag='001'])"/>
+                        <xsl:value-of select="concat('_', marc:controlfield[@tag = '001'])"/>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:attribute>
                 </xsl:if>
 
                 <!-- system control number(s) -->
-                <xsl:variable name="systemIDs" select="marc:datafield[@tag='010' or @tag='035']"/>
+                <xsl:variable name="systemIDs" select="marc:datafield[@tag = '010' or @tag = '035']"/>
                 <xsl:apply-templates select="$systemIDs"/>
 
                 <!-- cataloging source -->
-                <xsl:variable name="catalogingSource" select="marc:datafield[@tag='040']"/>
+                <xsl:variable name="catalogingSource" select="marc:datafield[@tag = '040']"/>
                 <xsl:apply-templates select="$catalogingSource"/>
 
                 <!-- source title statement -->
                 <titleStmt>
 
                   <!-- source title(s) -->
-                  <xsl:apply-templates select="marc:datafield[@tag='240' or @tag='245']"
+                  <xsl:apply-templates select="marc:datafield[@tag = '240' or @tag = '245']"
                     mode="diplomatic"/>
 
                   <!-- source statements of responsibility -->
                   <xsl:variable name="respStmts">
-                    <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='700' or
-                      @tag='710'][not(@ind2='2')]" mode="respStmt"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
+                    <xsl:apply-templates
+                      select="
+                        marc:datafield[@tag = '700' or
+                        @tag = '710'][not(@ind2 = '2')]"
+                      mode="respStmt"/>
                   </xsl:variable>
                   <xsl:variable name="sortedRespStmts">
                     <xsl:for-each select="$respStmts/mei:respStmt">
-                      <xsl:sort select="mei:*[local-name()='persName' or
-                        local-name()='corpName']/@analog"/>
+                      <xsl:sort
+                        select="
+                          mei:*[local-name() = 'persName' or
+                          local-name() = 'corpName']/@analog"/>
                       <xsl:sort/>
                       <xsl:copy-of select="."/>
                     </xsl:for-each>
@@ -2442,63 +2473,94 @@
                 </titleStmt>
 
                 <!-- source edition statement -->
-                <xsl:if test="marc:datafield[@tag='250']">
+                <xsl:if test="marc:datafield[@tag = '250']">
                   <editionStmt>
-                    <xsl:apply-templates select="marc:datafield[@tag='250']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '250']"/>
                   </editionStmt>
                 </xsl:if>
 
                 <!-- source pubStmt -->
-                <xsl:if test="marc:datafield[@tag='260' or @tag='264']">
+                <xsl:if test="marc:datafield[@tag = '260' or @tag = '264']">
                   <pubStmt>
-                    <xsl:apply-templates select="marc:datafield[@tag='260' or
-                      @tag='264']"/>
+                    <xsl:apply-templates
+                      select="
+                        marc:datafield[@tag = '260' or
+                        @tag = '264']"
+                    />
                   </pubStmt>
                 </xsl:if>
 
                 <!-- source physDesc -->
-                <xsl:if test="marc:datafield[@tag='028' and @ind1='2'] or marc:datafield[@tag='300'
-                  or @tag='306' or @tag='561']">
+                <xsl:if
+                  test="
+                    marc:datafield[@tag = '028' and @ind1 = '2'] or marc:datafield[@tag = '300'
+                    or @tag = '306' or @tag = '561']">
                   <physDesc>
-                    <xsl:apply-templates select="marc:datafield[@tag='300']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='028'][@ind1='2']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='306']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='561']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '300']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '028'][@ind1 = '2']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '306']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '561']"/>
                   </physDesc>
                 </xsl:if>
 
                 <!-- source physLoc -->
-                <xsl:apply-templates select="marc:datafield[@tag='852']"/>
+                <xsl:apply-templates select="marc:datafield[@tag = '852']"/>
 
                 <!-- source seriesStmt -->
-                <xsl:apply-templates select="marc:datafield[@tag='490']"/>
+                <xsl:apply-templates select="marc:datafield[@tag = '490']"/>
+
+                <!-- source language(s) -->
+                <xsl:variable name="langUsage" select="marc:datafield[@tag = '041']"/>
+                <xsl:if test="$langUsage">
+                  <langUsage>
+                    <xsl:apply-templates select="$langUsage"/>
+                  </langUsage>
+                </xsl:if>
 
                 <!-- source contents -->
                 <xsl:choose>
-                  <xsl:when test="marc:datafield[@tag='700' or @tag='730' or
-                    @tag='740'][@ind2='2']">
+                  <xsl:when
+                    test="
+                      marc:datafield[@tag = '700' or @tag = '730' or
+                      @tag = '740'][@ind2 = '2']">
                     <contents>
-                      <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
-                        @tag='740'][@ind2='2']" mode="contents"/>
+                      <xsl:apply-templates
+                        select="
+                          marc:datafield[@tag = '700' or @tag = '730' or
+                          @tag = '740'][@ind2 = '2']"
+                        mode="contents"/>
                     </contents>
                   </xsl:when>
-                  <xsl:when test="marc:datafield[@tag='505']">
+                  <xsl:when test="marc:datafield[@tag = '505']">
                     <contents>
+                      <xsl:call-template name="analog">
+                        <xsl:with-param name="tag">
+                          <xsl:value-of select="'505'"/>
+                        </xsl:with-param>
+                      </xsl:call-template>
                       <xsl:choose>
-                        <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind1)) =
-                          1">
+                        <xsl:when
+                          test="
+                            count(distinct-values(marc:datafield[@tag = '505']/@ind1)) =
+                            1">
                           <!-- all ind1 values are the same -->
-                          <xsl:if test="not(distinct-values(marc:datafield[@tag='505']/@ind1) =
-                            '8')">
+                          <xsl:if
+                            test="
+                              not(distinct-values(marc:datafield[@tag = '505']/@ind1) =
+                              '8')">
                             <!-- generate a label -->
                             <xsl:attribute name="label">
                               <xsl:choose>
-                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind1) =
-                                  '1' and count(marc:datafield[@tag='505']) = 1">
+                                <xsl:when
+                                  test="
+                                    distinct-values(marc:datafield[@tag = '505']/@ind1) =
+                                    '1' and count(marc:datafield[@tag = '505']) = 1">
                                   <xsl:text>Incomplete contents</xsl:text>
                                 </xsl:when>
-                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind1) =
-                                  '2' and count(marc:datafield[@tag='505']) = 1">
+                                <xsl:when
+                                  test="
+                                    distinct-values(marc:datafield[@tag = '505']/@ind1) =
+                                    '2' and count(marc:datafield[@tag = '505']) = 1">
                                   <xsl:text>Partial contents</xsl:text>
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -2508,15 +2570,19 @@
                             </xsl:attribute>
                           </xsl:if>
                           <xsl:choose>
-                            <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind2))
-                              = 1">
+                            <xsl:when
+                              test="
+                                count(distinct-values(marc:datafield[@tag = '505']/@ind2))
+                                = 1">
                               <!-- ind2 values are the same -->
                               <xsl:choose>
-                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind2) =
-                                  '0'">
+                                <xsl:when
+                                  test="
+                                    distinct-values(marc:datafield[@tag = '505']/@ind2) =
+                                    '0'">
                                   <!-- "enhanced" contents -->
                                   <xsl:variable name="contentItems">
-                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                    <xsl:for-each select="marc:datafield[@tag = '505']">
                                       <xsl:value-of select="."/>
                                     </xsl:for-each>
                                   </xsl:variable>
@@ -2531,7 +2597,7 @@
                                 <xsl:otherwise>
                                   <!-- basic contents -->
                                   <p>
-                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                    <xsl:for-each select="marc:datafield[@tag = '505']">
                                       <xsl:value-of select="."/>
                                     </xsl:for-each>
                                   </p>
@@ -2542,7 +2608,7 @@
                               <!-- ind2 values are NOT the same -->
                               <!-- treat as "basic" contents -->
                               <p>
-                                <xsl:for-each select="marc:datafield[@tag='505']">
+                                <xsl:for-each select="marc:datafield[@tag = '505']">
                                   <xsl:value-of select="."/>
                                 </xsl:for-each>
                               </p>
@@ -2552,15 +2618,19 @@
                         <xsl:otherwise>
                           <!-- all ind1 values are NOT the same -->
                           <xsl:choose>
-                            <xsl:when test="count(distinct-values(marc:datafield[@tag='505']/@ind2))
-                              = 1">
+                            <xsl:when
+                              test="
+                                count(distinct-values(marc:datafield[@tag = '505']/@ind2))
+                                = 1">
                               <!-- ind2 values are the same -->
                               <xsl:choose>
-                                <xsl:when test="distinct-values(marc:datafield[@tag='505']/@ind2) =
-                                  '0'">
+                                <xsl:when
+                                  test="
+                                    distinct-values(marc:datafield[@tag = '505']/@ind2) =
+                                    '0'">
                                   <!-- "enhanced" contents -->
                                   <xsl:variable name="contentItems">
-                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                    <xsl:for-each select="marc:datafield[@tag = '505']">
                                       <xsl:value-of select="."/>
                                     </xsl:for-each>
                                   </xsl:variable>
@@ -2576,7 +2646,7 @@
                                   <!-- ind2 values are NOT the same -->
                                   <!-- treat as "basic" contents -->
                                   <p>
-                                    <xsl:for-each select="marc:datafield[@tag='505']">
+                                    <xsl:for-each select="marc:datafield[@tag = '505']">
                                       <xsl:call-template name="subfieldSelect">
                                         <xsl:with-param name="codes">a</xsl:with-param>
                                       </xsl:call-template>
@@ -2592,24 +2662,21 @@
                   </xsl:when>
                 </xsl:choose>
 
-                <!-- source language(s) -->
-                <xsl:variable name="langUsage" select="marc:datafield[@tag='041']"/>
-                <xsl:if test="$langUsage">
-                  <langUsage>
-                    <xsl:apply-templates select="$langUsage"/>
-                  </langUsage>
-                </xsl:if>
-
                 <!-- source notesStmt -->
                 <xsl:variable name="notes">
-                  <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
-                    @tag='504' or @tag='506' or @tag='510' or @tag='520' or @tag='525' or
-                    @tag='530' or @tag='533' or @tag='541' or @tag='545' or @tag='546' or
-                    @tag='555' or @tag='563' or @tag='580']"/>
+                  <xsl:copy-of
+                    select="
+                      marc:datafield[@tag = '254' or @tag = '500' or
+                      @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or @tag = '525' or
+                      @tag = '530' or @tag = '533' or @tag = '541' or @tag = '545' or @tag = '546' or
+                      @tag = '555' or @tag = '563' or @tag = '580']"/>
                   <xsl:if test="$keepLocalNotes = 'true'">
-                    <xsl:copy-of select="marc:datafield[@tag='590' or @tag='591' or
-                      @tag='592' or @tag='593' or @tag='594' or @tag='596' or
-                      @tag='597' or @tag='598' or @tag='599']"/>
+                    <xsl:copy-of
+                      select="
+                        marc:datafield[@tag = '590' or @tag = '591' or
+                        @tag = '592' or @tag = '593' or @tag = '594' or @tag = '596' or
+                        @tag = '597' or @tag = '598' or @tag = '599']"
+                    />
                   </xsl:if>
                 </xsl:variable>
                 <xsl:if test="$notes">
@@ -2628,49 +2695,57 @@
               <!-- source has multiple components; source contains data common to all
               components, componentGrp/source contains source-specific data -->
               <source>
-                <xsl:if test="$analog='true'">
+                <xsl:if test="$analog = 'true'">
                   <xsl:attribute name="xml:id">
                     <xsl:choose>
-                      <xsl:when test="matches(marc:controlfield[@tag='001'], '[\i-[:]][\c-[:]]*')">
-                        <xsl:value-of select="marc:controlfield[@tag='001']"/>
+                      <xsl:when test="matches(marc:controlfield[@tag = '001'], '[\i-[:]][\c-[:]]*')">
+                        <xsl:value-of select="marc:controlfield[@tag = '001']"/>
                       </xsl:when>
-                      <xsl:when test="marc:datafield[@tag='001']">
+                      <xsl:when test="marc:datafield[@tag = '001']">
                         <!-- Records from Axel treat 001-009 as datafields, not controlfields -->
-                        <xsl:value-of select="concat('_', replace(marc:datafield[@tag='001'], '\s+',
-                          ''))"/>
+                        <xsl:value-of
+                          select="
+                            concat('_', replace(marc:datafield[@tag = '001'], '\s+',
+                            ''))"
+                        />
                       </xsl:when>
                       <xsl:otherwise>
-                        <xsl:value-of select="concat('_', marc:controlfield[@tag='001'])"/>
+                        <xsl:value-of select="concat('_', marc:controlfield[@tag = '001'])"/>
                       </xsl:otherwise>
                     </xsl:choose>
                   </xsl:attribute>
                 </xsl:if>
 
                 <!-- system control number(s) -->
-                <xsl:variable name="systemIDs" select="marc:datafield[@tag='010' or @tag='035']"/>
+                <xsl:variable name="systemIDs" select="marc:datafield[@tag = '010' or @tag = '035']"/>
                 <xsl:apply-templates select="$systemIDs"/>
 
                 <!-- cataloging source -->
-                <xsl:variable name="catalogingSource" select="marc:datafield[@tag='040']"/>
+                <xsl:variable name="catalogingSource" select="marc:datafield[@tag = '040']"/>
                 <xsl:apply-templates select="$catalogingSource"/>
 
                 <!-- source title statement -->
                 <titleStmt>
 
                   <!-- source title(s) -->
-                  <xsl:apply-templates select="marc:datafield[@tag='240' or @tag='245']"
+                  <xsl:apply-templates select="marc:datafield[@tag = '240' or @tag = '245']"
                     mode="diplomatic"/>
 
                   <!-- source statements of responsibility -->
                   <xsl:variable name="respStmts">
-                    <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='700' or
-                      @tag='710'][not(@ind2='2')]" mode="respStmt"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
+                    <xsl:apply-templates
+                      select="
+                        marc:datafield[@tag = '700' or
+                        @tag = '710'][not(@ind2 = '2')]"
+                      mode="respStmt"/>
                   </xsl:variable>
                   <xsl:variable name="sortedRespStmts">
                     <xsl:for-each select="$respStmts/mei:respStmt">
-                      <xsl:sort select="mei:*[local-name()='persName' or
-                        local-name()='corpName']/@analog"/>
+                      <xsl:sort
+                        select="
+                          mei:*[local-name() = 'persName' or
+                          local-name() = 'corpName']/@analog"/>
                       <xsl:sort/>
                       <xsl:copy-of select="."/>
                     </xsl:for-each>
@@ -2683,59 +2758,71 @@
                 </titleStmt>
 
                 <!-- source edition statement -->
-                <xsl:if test="marc:datafield[@tag='250'][not(marc:subfield[@code='3'])]">
+                <xsl:if test="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3'])]">
                   <editionStmt>
                     <xsl:apply-templates
-                      select="marc:datafield[@tag='250'][not(marc:subfield[@code='3'])]"/>
+                      select="marc:datafield[@tag = '250'][not(marc:subfield[@code = '3'])]"/>
                   </editionStmt>
                 </xsl:if>
 
                 <!-- source pubStmt -->
-                <xsl:if test="marc:datafield[@tag='260' or
-                  @tag='264'][not(marc:subfield[@code='3'])]">
+                <xsl:if
+                  test="
+                    marc:datafield[@tag = '260' or
+                    @tag = '264'][not(marc:subfield[@code = '3'])]">
                   <pubStmt>
-                    <xsl:apply-templates select="marc:datafield[@tag='260' or
-                      @tag='264'][not(marc:subfield[@code='3'])]"/>
+                    <xsl:apply-templates
+                      select="
+                        marc:datafield[@tag = '260' or
+                        @tag = '264'][not(marc:subfield[@code = '3'])]"
+                    />
                   </pubStmt>
                 </xsl:if>
 
                 <!-- source physDesc -->
-                <xsl:if test="marc:datafield[@tag='028' and @ind1='2'] or marc:datafield[@tag='300'
-                  or @tag='306' or @tag='561'][not(marc:subfield[@code='3'])]">
+                <xsl:if
+                  test="
+                    marc:datafield[@tag = '028' and @ind1 = '2'] or marc:datafield[@tag = '300'
+                    or @tag = '306' or @tag = '561'][not(marc:subfield[@code = '3'])]">
                   <physDesc>
                     <xsl:apply-templates
-                      select="marc:datafield[@tag='300'][not(marc:subfield[@code='3'])]"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='028'][@ind1='2']"/>
-                    <xsl:apply-templates select="marc:datafield[@tag='306']"/>
+                      select="marc:datafield[@tag = '300'][not(marc:subfield[@code = '3'])]"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '028'][@ind1 = '2']"/>
+                    <xsl:apply-templates select="marc:datafield[@tag = '306']"/>
                     <xsl:apply-templates
-                      select="marc:datafield[@tag='561'][not(marc:subfield[@code='3'])]"/>
+                      select="marc:datafield[@tag = '561'][not(marc:subfield[@code = '3'])]"/>
                   </physDesc>
                 </xsl:if>
 
                 <!-- source physLoc -->
                 <xsl:apply-templates
-                  select="marc:datafield[@tag='852'][not(marc:subfield[@code='3'])]"/>
+                  select="marc:datafield[@tag = '852'][not(marc:subfield[@code = '3'])]"/>
 
                 <!-- source seriesStmt -->
                 <xsl:apply-templates
-                  select="marc:datafield[@tag='490'][not(marc:subfield[@code='3'])]"/>
+                  select="marc:datafield[@tag = '490'][not(marc:subfield[@code = '3'])]"/>
 
                 <!-- source contents -->
                 <xsl:choose>
-                  <xsl:when test="marc:datafield[@tag='700' or @tag='730' or
-                    @tag='740'][@ind2='2']">
+                  <xsl:when
+                    test="
+                      marc:datafield[@tag = '700' or @tag = '730' or
+                      @tag = '740'][@ind2 = '2']">
                     <contents>
-                      <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='730' or
-                        @tag='740'][@ind2='2']" mode="contents"/>
+                      <xsl:apply-templates
+                        select="
+                          marc:datafield[@tag = '700' or @tag = '730' or
+                          @tag = '740'][@ind2 = '2']"
+                        mode="contents"/>
                     </contents>
                   </xsl:when>
-                  <xsl:when test="marc:datafield[@tag='505']">
-                    <xsl:apply-templates select="marc:datafield[@tag='505']"/>
+                  <xsl:when test="marc:datafield[@tag = '505']">
+                    <xsl:apply-templates select="marc:datafield[@tag = '505']"/>
                   </xsl:when>
                 </xsl:choose>
 
                 <!-- source language(s) -->
-                <xsl:variable name="langUsage" select="marc:datafield[@tag='041']"/>
+                <xsl:variable name="langUsage" select="marc:datafield[@tag = '041']"/>
                 <xsl:if test="$langUsage">
                   <langUsage>
                     <xsl:apply-templates select="$langUsage"/>
@@ -2744,14 +2831,19 @@
 
                 <!-- source notesStmt -->
                 <xsl:variable name="notes">
-                  <xsl:copy-of select="marc:datafield[@tag='254' or @tag='500' or
-                    @tag='504' or @tag='506' or @tag='510' or @tag='520' or @tag='525' or
-                    @tag='533' or @tag='541' or @tag='545' or @tag='546' or @tag='555' or
-                    @tag='563' or @tag='580'][not(marc:subfield[@code='3'])]"/>
+                  <xsl:copy-of
+                    select="
+                      marc:datafield[@tag = '254' or @tag = '500' or
+                      @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or @tag = '525' or
+                      @tag = '533' or @tag = '541' or @tag = '545' or @tag = '546' or @tag = '555' or
+                      @tag = '563' or @tag = '580'][not(marc:subfield[@code = '3'])]"/>
                   <xsl:if test="$keepLocalNotes = 'true'">
-                    <xsl:copy-of select="marc:datafield[@tag='590' or @tag='591' or
-                      @tag='592' or @tag='593' or @tag='594' or @tag='596' or @tag='597' or
-                      @tag='598' or @tag='599'][not(marc:subfield[@code='3'])]"/>
+                    <xsl:copy-of
+                      select="
+                        marc:datafield[@tag = '590' or @tag = '591' or
+                        @tag = '592' or @tag = '593' or @tag = '594' or @tag = '596' or @tag = '597' or
+                        @tag = '598' or @tag = '599'][not(marc:subfield[@code = '3'])]"
+                    />
                   </xsl:if>
                 </xsl:variable>
                 <xsl:if test="$notes">
@@ -2766,23 +2858,28 @@
                 <!-- source components -->
                 <!-- $componentContent contains copy of datafields that have subfield 3 -->
                 <xsl:variable name="componentContent">
-                  <xsl:copy-of select="marc:datafield[@tag='250' or @tag='260' or
-                    @tag='264' or @tag='300' or @tag='490' or @tag='500' or
-                    @tag='504' or @tag='506' or @tag='510' or @tag='520' or
-                    @tag='521' or @tag='524' or @tag='530' or @tag='533' or
-                    @tag='534' or @tag='535' or @tag='540' or @tag='541' or
-                    @tag='542' or @tag='544' or @tag='546' or @tag='561' or
-                    @tag='563' or @tag='581' or @tag='585' or @tag='586' or
-                    @tag='852'][marc:subfield[@code='3']]"/>
+                  <xsl:copy-of
+                    select="
+                      marc:datafield[@tag = '250' or @tag = '260' or
+                      @tag = '264' or @tag = '300' or @tag = '490' or @tag = '500' or
+                      @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or
+                      @tag = '521' or @tag = '524' or @tag = '530' or @tag = '533' or
+                      @tag = '534' or @tag = '535' or @tag = '540' or @tag = '541' or
+                      @tag = '542' or @tag = '544' or @tag = '546' or @tag = '561' or
+                      @tag = '563' or @tag = '581' or @tag = '585' or @tag = '586' or
+                      @tag = '852'][marc:subfield[@code = '3']]"/>
                   <xsl:if test="$keepLocalNotes = 'true'">
-                    <xsl:copy-of select="marc:datafield[@tag='590' or @tag='591' or
-                      @tag='592' or @tag='593' or @tag='594' or @tag='596' or
-                      @tag='597' or @tag='598' or @tag='599']"/>
+                    <xsl:copy-of
+                      select="
+                        marc:datafield[@tag = '590' or @tag = '591' or
+                        @tag = '592' or @tag = '593' or @tag = '594' or @tag = '596' or
+                        @tag = '597' or @tag = '598' or @tag = '599']"
+                    />
                   </xsl:if>
                 </xsl:variable>
                 <componentGrp>
                   <xsl:for-each-group select="$componentContent/*"
-                    group-by="marc:subfield[@code='3']">
+                    group-by="marc:subfield[@code = '3']">
                     <xsl:sort select="current-grouping-key()"/>
                     <source>
                       <xsl:attribute name="label">
@@ -2790,58 +2887,78 @@
                       </xsl:attribute>
 
                       <!-- component edition statement -->
-                      <xsl:if test="$componentContent/marc:datafield[@tag='250']">
+                      <xsl:if test="$componentContent/marc:datafield[@tag = '250']">
                         <editionStmt>
-                          <xsl:apply-templates select="$componentContent/marc:datafield[@tag='250']"
-                          />
+                          <xsl:apply-templates
+                            select="$componentContent/marc:datafield[@tag = '250']"/>
                         </editionStmt>
                       </xsl:if>
 
                       <!-- component pubStmt -->
-                      <xsl:if test="$componentContent/marc:datafield[@tag='260' or
-                        @tag='264'][marc:subfield[@code='3'] = current-grouping-key()]">
+                      <xsl:if
+                        test="
+                          $componentContent/marc:datafield[@tag = '260' or
+                          @tag = '264'][marc:subfield[@code = '3'] = current-grouping-key()]">
                         <pubStmt>
-                          <xsl:apply-templates select="$componentContent/marc:datafield[@tag='260'
-                            or @tag='264'][marc:subfield[@code='3'] = current-grouping-key()]"/>
+                          <xsl:apply-templates
+                            select="
+                              $componentContent/marc:datafield[@tag = '260'
+                              or @tag = '264'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                          />
                         </pubStmt>
                       </xsl:if>
 
                       <!-- component physDesc -->
-                      <xsl:if test="$componentContent/marc:datafield[@tag='300' or
-                        @tag='561'][marc:subfield[@code='3'] = current-grouping-key()]">
+                      <xsl:if
+                        test="
+                          $componentContent/marc:datafield[@tag = '300' or
+                          @tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]">
                         <physDesc>
-                          <xsl:apply-templates select="$componentContent/marc:datafield[@tag='300'
-                            or @tag='561'][marc:subfield[@code='3'] = current-grouping-key()]"/>
+                          <xsl:apply-templates
+                            select="
+                              $componentContent/marc:datafield[@tag = '300'
+                              or @tag = '561'][marc:subfield[@code = '3'] = current-grouping-key()]"
+                          />
                         </physDesc>
                       </xsl:if>
 
                       <!-- component physLoc -->
                       <xsl:apply-templates
-                        select="$componentContent/marc:datafield[@tag='852'][marc:subfield[@code='3']
-                        = current-grouping-key()]"/>
+                        select="
+                          $componentContent/marc:datafield[@tag = '852'][marc:subfield[@code = '3']
+                          = current-grouping-key()]"/>
 
                       <!-- component seriesStmt -->
                       <xsl:apply-templates
-                        select="$componentContent/marc:datafield[@tag='490'][marc:subfield[@code='3']
-                        = current-grouping-key()]"/>
+                        select="
+                          $componentContent/marc:datafield[@tag = '490'][marc:subfield[@code = '3']
+                          = current-grouping-key()]"/>
 
                       <!-- component notesStmt -->
                       <xsl:variable name="sourceNotes">
-                        <xsl:copy-of select="$componentContent/marc:datafield[@tag='254' or
-                          @tag='500' or @tag='504' or @tag='506' or @tag='510' or @tag='520' or
-                          @tag='525' or @tag='530' or @tag='533' or @tag='541' or @tag='545' or
-                          @tag='546' or @tag='555' or @tag='563' or
-                          @tag='580'][marc:subfield[@code='3']]"/>
+                        <xsl:copy-of
+                          select="
+                            $componentContent/marc:datafield[@tag = '254' or
+                            @tag = '500' or @tag = '504' or @tag = '506' or @tag = '510' or @tag = '520' or
+                            @tag = '525' or @tag = '530' or @tag = '533' or @tag = '541' or @tag = '545' or
+                            @tag = '546' or @tag = '555' or @tag = '563' or
+                            @tag = '580'][marc:subfield[@code = '3']]"/>
                         <xsl:if test="$keepLocalNotes = 'true'">
-                          <xsl:copy-of select="$componentContent/marc:datafield[@tag='590' or
-                            @tag='591' or @tag='592' or @tag='593' or @tag='594' or
-                            @tag='596' or @tag='597' or @tag='598'][marc:subfield[@code='3']]"/>
+                          <xsl:copy-of
+                            select="
+                              $componentContent/marc:datafield[@tag = '590' or
+                              @tag = '591' or @tag = '592' or @tag = '593' or @tag = '594' or
+                              @tag = '596' or @tag = '597' or @tag = '598'][marc:subfield[@code = '3']]"
+                          />
                         </xsl:if>
                       </xsl:variable>
                       <xsl:if test="$sourceNotes/*">
                         <notesStmt>
-                          <xsl:apply-templates select="$sourceNotes/marc:*[marc:subfield[@code='3']
-                            = current-grouping-key()]"/>
+                          <xsl:apply-templates
+                            select="
+                              $sourceNotes/marc:*[marc:subfield[@code = '3']
+                              = current-grouping-key()]"
+                          />
                         </notesStmt>
                       </xsl:if>
                     </source>
@@ -2872,20 +2989,23 @@
         <work>
           <!-- work title(s) -->
           <titleStmt>
-            <xsl:apply-templates select="marc:datafield[@tag='130' or @tag='240' or @tag='245']"
+            <xsl:apply-templates
+              select="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
               mode="titleProper"/>
             <!-- work statements of responsibility -->
             <xsl:variable name="respStmts">
-              <xsl:apply-templates select="marc:datafield[@tag='100' or @tag='110']"/>
+              <xsl:apply-templates select="marc:datafield[@tag = '100' or @tag = '110']"/>
               <xsl:if test="not($workMainEntryOnly = 'true')">
-                <xsl:apply-templates select="marc:datafield[@tag='700' or @tag='710']"
+                <xsl:apply-templates select="marc:datafield[@tag = '700' or @tag = '710']"
                   mode="respStmt"/>
               </xsl:if>
             </xsl:variable>
             <xsl:variable name="sortedRespStmts">
               <xsl:for-each select="$respStmts/mei:respStmt">
-                <xsl:sort select="mei:*[local-name()='persName' or
-                  local-name()='corpName']/@analog"/>
+                <xsl:sort
+                  select="
+                    mei:*[local-name() = 'persName' or
+                    local-name() = 'corpName']/@analog"/>
                 <xsl:sort/>
                 <xsl:copy-of select="."/>
               </xsl:for-each>
@@ -2898,16 +3018,20 @@
           </titleStmt>
 
           <!-- work creation -->
-          <xsl:variable name="creation_note" select="marc:datafield[(@tag='045' and
-            marc:subfield[@code='b']) or @tag='508']"/>
+          <xsl:variable name="creation_note"
+            select="
+              marc:datafield[(@tag = '045' and
+              marc:subfield[@code = 'b']) or @tag = '508']"/>
 
           <!-- work incipits -->
-          <xsl:apply-templates select="marc:datafield[@tag='031']"/>
-          <xsl:apply-templates select="marc:datafield[@tag='246' and
-            matches(marc:subfield[@code='i'], 'First\s+line\s+of\s+text', 'i')]"/>
+          <xsl:apply-templates select="marc:datafield[@tag = '031']"/>
+          <xsl:apply-templates
+            select="
+              marc:datafield[@tag = '246' and
+              matches(marc:subfield[@code = 'i'], 'First\s+line\s+of\s+text', 'i')]"/>
 
           <!-- work eventList -->
-          <xsl:variable name="events" select="marc:datafield[@tag='511' or @tag='518']"/>
+          <xsl:variable name="events" select="marc:datafield[@tag = '511' or @tag = '518']"/>
           <xsl:if test="$creation_note or $events">
             <history>
               <xsl:if test="$creation_note">
@@ -2915,25 +3039,25 @@
                   <xsl:call-template name="analog">
                     <xsl:with-param name="tag">
                       <xsl:choose>
-                        <xsl:when test="marc:datafield[@tag='508']">
+                        <xsl:when test="marc:datafield[@tag = '508']">
                           <xsl:value-of select="'508'"/>
                         </xsl:when>
-                        <xsl:when test="marc:datafield[@tag='045']">
+                        <xsl:when test="marc:datafield[@tag = '045']">
                           <xsl:value-of select="'045'"/>
                         </xsl:when>
                       </xsl:choose>
                     </xsl:with-param>
                   </xsl:call-template>
-                  <xsl:for-each select="marc:datafield[@tag='508']">
+                  <xsl:for-each select="marc:datafield[@tag = '508']">
                     <xsl:apply-templates select="."/>
                     <xsl:if test="position() != last()">
                       <xsl:text>;&#32;</xsl:text>
                     </xsl:if>
                   </xsl:for-each>
-                  <xsl:if test="marc:datafield[@tag='508'] and marc:datafield[@tag='045']">
+                  <xsl:if test="marc:datafield[@tag = '508'] and marc:datafield[@tag = '045']">
                     <xsl:text>&#32;</xsl:text>
                   </xsl:if>
-                  <xsl:apply-templates select="marc:datafield[@tag='045']"/>
+                  <xsl:apply-templates select="marc:datafield[@tag = '045']"/>
                 </creation>
               </xsl:if>
               <xsl:if test="$events">
@@ -2945,16 +3069,16 @@
           </xsl:if>
 
           <!-- work language(s) -->
-          <xsl:if test="not(substring(marc:controlfield[@tag='008'], 36, 3) = 'zxx')">
+          <xsl:if test="not(substring(marc:controlfield[@tag = '008'], 36, 3) = 'zxx')">
             <xsl:call-template name="workLang"/>
           </xsl:if>
 
           <!-- work cast list -->
-          <xsl:variable name="instrumentation" select="marc:datafield[@tag='048']"/>
-          <xsl:variable name="castNotes" select="marc:datafield[@tag='595']"/>
-          <xsl:if test="$instrumentation or ($castNotes and $keepLocalNotes='true')">
+          <xsl:variable name="instrumentation" select="marc:datafield[@tag = '048']"/>
+          <xsl:variable name="castNotes" select="marc:datafield[@tag = '595']"/>
+          <xsl:if test="$instrumentation or ($castNotes and $keepLocalNotes = 'true')">
             <perfMedium>
-              <xsl:if test="$castNotes and $keepLocalNotes='true'">
+              <xsl:if test="$castNotes and $keepLocalNotes = 'true'">
                 <castList>
                   <xsl:variable name="sortedCastList">
                     <xsl:apply-templates select="$castNotes">
@@ -3003,7 +3127,7 @@
   </xsl:template>
 
   <!-- LC control number -->
-  <xsl:template match="marc:datafield[@tag='010']">
+  <xsl:template match="marc:datafield[@tag = '010']">
     <xsl:variable name="tag" select="@tag"/>
     <identifier>
       <xsl:call-template name="analog">
@@ -3018,7 +3142,7 @@
   </xsl:template>
 
   <!-- ISBN -->
-  <xsl:template match="marc:datafield[@tag='020']">
+  <xsl:template match="marc:datafield[@tag = '020']">
     <identifier type="isbn">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
@@ -3032,7 +3156,7 @@
   </xsl:template>
 
   <!-- ISSN -->
-  <xsl:template match="marc:datafield[@tag='022']">
+  <xsl:template match="marc:datafield[@tag = '022']">
     <identifier type="issn">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
@@ -3046,30 +3170,30 @@
   </xsl:template>
 
   <!-- Other standard number -->
-  <xsl:template match="marc:datafield[@tag='024']">
+  <xsl:template match="marc:datafield[@tag = '024']">
     <identifier>
       <xsl:variable name="identifierType">
         <xsl:choose>
-          <xsl:when test="@ind1='0'">isrc</xsl:when>
-          <xsl:when test="@ind1='1'">upc</xsl:when>
-          <xsl:when test="@ind1='2'">ismn</xsl:when>
-          <xsl:when test="@ind1='3'">ian</xsl:when>
-          <xsl:when test="@ind1='4'">sici</xsl:when>
-          <xsl:when test="@ind1='7'">other</xsl:when>
-          <xsl:when test="@ind1='8'">unspecified</xsl:when>
+          <xsl:when test="@ind1 = '0'">isrc</xsl:when>
+          <xsl:when test="@ind1 = '1'">upc</xsl:when>
+          <xsl:when test="@ind1 = '2'">ismn</xsl:when>
+          <xsl:when test="@ind1 = '3'">ian</xsl:when>
+          <xsl:when test="@ind1 = '4'">sici</xsl:when>
+          <xsl:when test="@ind1 = '7'">other</xsl:when>
+          <xsl:when test="@ind1 = '8'">unspecified</xsl:when>
         </xsl:choose>
       </xsl:variable>
       <xsl:variable name="identifierLabel">
         <xsl:choose>
-          <xsl:when test="@ind1='0'">International Standard Recording Code</xsl:when>
-          <xsl:when test="@ind1='1'">Universal Product Code</xsl:when>
-          <xsl:when test="@ind1='2'">International Standard Music Number</xsl:when>
-          <xsl:when test="@ind1='3'">International Article Number</xsl:when>
-          <xsl:when test="@ind1='4'">Serial Item and Contribution Identifier</xsl:when>
-          <xsl:when test="@ind1='7'">
-            <xsl:value-of select="marc:subfield[@code='2']"/>
+          <xsl:when test="@ind1 = '0'">International Standard Recording Code</xsl:when>
+          <xsl:when test="@ind1 = '1'">Universal Product Code</xsl:when>
+          <xsl:when test="@ind1 = '2'">International Standard Music Number</xsl:when>
+          <xsl:when test="@ind1 = '3'">International Article Number</xsl:when>
+          <xsl:when test="@ind1 = '4'">Serial Item and Contribution Identifier</xsl:when>
+          <xsl:when test="@ind1 = '7'">
+            <xsl:value-of select="marc:subfield[@code = '2']"/>
           </xsl:when>
-          <xsl:when test="@ind1='8'">unspecified</xsl:when>
+          <xsl:when test="@ind1 = '8'">unspecified</xsl:when>
         </xsl:choose>
       </xsl:variable>
       <xsl:attribute name="type">
@@ -3090,23 +3214,23 @@
   </xsl:template>
 
   <!-- plate number (028) -->
-  <xsl:template match="marc:datafield[@tag='028']">
+  <xsl:template match="marc:datafield[@tag = '028']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="elementName">
       <xsl:choose>
-        <xsl:when test="@ind1='2'">plateNum</xsl:when>
+        <xsl:when test="@ind1 = '2'">plateNum</xsl:when>
         <xsl:otherwise>identifier</xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
     <xsl:element name="{$elementName}">
-      <xsl:if test="$elementName='identifier'">
+      <xsl:if test="$elementName = 'identifier'">
         <xsl:variable name="identifierType">
           <xsl:choose>
-            <xsl:when test="@ind1='0'">issue</xsl:when>
-            <xsl:when test="@ind1='1'">matrix</xsl:when>
-            <xsl:when test="@ind1='3'">otherMusic</xsl:when>
-            <xsl:when test="@ind1='4'">videorecording</xsl:when>
-            <xsl:when test="@ind1='5'">publisher</xsl:when>
+            <xsl:when test="@ind1 = '0'">issue</xsl:when>
+            <xsl:when test="@ind1 = '1'">matrix</xsl:when>
+            <xsl:when test="@ind1 = '3'">otherMusic</xsl:when>
+            <xsl:when test="@ind1 = '4'">videorecording</xsl:when>
+            <xsl:when test="@ind1 = '5'">publisher</xsl:when>
           </xsl:choose>
         </xsl:variable>
         <xsl:attribute name="type">
@@ -3122,7 +3246,7 @@
         <xsl:with-param name="codes">a</xsl:with-param>
       </xsl:call-template>
       <!-- plate number source -->
-      <xsl:if test="marc:subfield[@code='b']">
+      <xsl:if test="marc:subfield[@code = 'b']">
         <xsl:text> (</xsl:text>
         <xsl:call-template name="subfieldSelect">
           <xsl:with-param name="codes">b</xsl:with-param>
@@ -3133,20 +3257,23 @@
   </xsl:template>
 
   <!-- incipit -->
-  <xsl:template match="marc:datafield[@tag='031']">
+  <xsl:template match="marc:datafield[@tag = '031']">
     <incip>
       <xsl:attribute name="n">
-        <xsl:value-of select="normalize-space(concat(marc:subfield[@code='a'], '&#32;',
-          marc:subfield[@code='b'], '&#32;', marc:subfield[@code='c']))"/>
+        <xsl:value-of
+          select="
+            normalize-space(concat(marc:subfield[@code = 'a'], '&#32;',
+            marc:subfield[@code = 'b'], '&#32;', marc:subfield[@code = 'c']))"
+        />
       </xsl:attribute>
       <xsl:attribute name="label">
         <xsl:choose>
-          <xsl:when test="marc:subfield[@code='d']">
-            <xsl:value-of select="marc:subfield[@code='d'][1]"/>
+          <xsl:when test="marc:subfield[@code = 'd']">
+            <xsl:value-of select="marc:subfield[@code = 'd'][1]"/>
           </xsl:when>
-          <xsl:when test="marc:subfield[@code='e']">
+          <xsl:when test="marc:subfield[@code = 'e']">
             <xsl:text>[</xsl:text>
-            <xsl:value-of select="marc:subfield[@code='e'][1]"/>
+            <xsl:value-of select="marc:subfield[@code = 'e'][1]"/>
             <xsl:text>]</xsl:text>
           </xsl:when>
         </xsl:choose>
@@ -3209,32 +3336,32 @@
         </tempo>
       </xsl:if> -->
 
-      <xsl:if test="marc:subfield[@code='p']">
+      <xsl:if test="marc:subfield[@code = 'p']">
         <incipCode>
           <xsl:attribute name="form">
             <xsl:choose>
-              <xsl:when test="marc:subfield[@code='2']='pe'">
+              <xsl:when test="marc:subfield[@code = '2'] = 'pe'">
                 <xsl:text>plaineAndEasie</xsl:text>
               </xsl:when>
             </xsl:choose>
           </xsl:attribute>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'p')"/>
+              <xsl:value-of select="concat(@tag, '|p')"/>
             </xsl:with-param>
           </xsl:call-template>
-          <xsl:value-of select="marc:subfield[@code='p']"/>
+          <xsl:value-of select="marc:subfield[@code = 'p']"/>
         </incipCode>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='t']">
+      <xsl:if test="marc:subfield[@code = 't']">
         <incipText>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 't')"/>
+              <xsl:value-of select="concat(@tag, '|t')"/>
             </xsl:with-param>
           </xsl:call-template>
           <p>
-            <xsl:value-of select="marc:subfield[@code='t']"/>
+            <xsl:value-of select="marc:subfield[@code = 't']"/>
           </p>
         </incipText>
       </xsl:if>
@@ -3242,7 +3369,7 @@
   </xsl:template>
 
   <!-- system control number -->
-  <xsl:template match="marc:datafield[@tag='035']">
+  <xsl:template match="marc:datafield[@tag = '035']">
     <xsl:variable name="tag" select="@tag"/>
     <identifier>
       <xsl:call-template name="analog">
@@ -3257,13 +3384,13 @@
   </xsl:template>
 
   <!-- source of cataloging -->
-  <xsl:template match="marc:datafield[@tag='040']">
+  <xsl:template match="marc:datafield[@tag = '040']">
     <xsl:variable name="tag" select="@tag"/>
-    <xsl:for-each select="marc:subfield[@code='a' or @code='c' or @code='d']">
+    <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'c' or @code = 'd']">
       <identifier>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat($tag, @code)"/>
+            <xsl:value-of select="concat($tag, '|', @code)"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:value-of select="."/>
@@ -3272,39 +3399,39 @@
   </xsl:template>
 
   <!-- language -->
-  <xsl:template match="marc:datafield[@tag='041']">
+  <xsl:template match="marc:datafield[@tag = '041']">
     <xsl:for-each select="marc:subfield[matches(@code, '[a-gjkm]')]">
       <language>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(../@tag, @code)"/>
+            <xsl:value-of select="concat(../@tag, '|', @code)"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:attribute name="label">
           <xsl:choose>
-            <xsl:when test="@code='a'">text/sound track</xsl:when>
-            <xsl:when test="@code='b'">summary/abstract</xsl:when>
-            <xsl:when test="@code='d'">sung/spoken text</xsl:when>
-            <xsl:when test="@code='e'">libretto</xsl:when>
-            <xsl:when test="@code='f'">table of contents</xsl:when>
-            <xsl:when test="@code='g'">accompanying material</xsl:when>
-            <xsl:when test="@code='h'">original</xsl:when>
-            <xsl:when test="@code='k'">intermediate translation</xsl:when>
-            <xsl:when test="@code='j'">subtitles/captions</xsl:when>
-            <xsl:when test="@code='m'">original accompanying material</xsl:when>
-            <xsl:when test="@code='n'">original libretto</xsl:when>
+            <xsl:when test="@code = 'a'">text/sound track</xsl:when>
+            <xsl:when test="@code = 'b'">summary/abstract</xsl:when>
+            <xsl:when test="@code = 'd'">sung/spoken text</xsl:when>
+            <xsl:when test="@code = 'e'">libretto</xsl:when>
+            <xsl:when test="@code = 'f'">table of contents</xsl:when>
+            <xsl:when test="@code = 'g'">accompanying material</xsl:when>
+            <xsl:when test="@code = 'h'">original</xsl:when>
+            <xsl:when test="@code = 'k'">intermediate translation</xsl:when>
+            <xsl:when test="@code = 'j'">subtitles/captions</xsl:when>
+            <xsl:when test="@code = 'm'">original accompanying material</xsl:when>
+            <xsl:when test="@code = 'n'">original libretto</xsl:when>
           </xsl:choose>
         </xsl:attribute>
         <xsl:variable name="langCode">
           <xsl:value-of select="."/>
         </xsl:variable>
-        <xsl:value-of select="$marcLangList/mei:lang[@code=$langCode]"/>
+        <xsl:value-of select="$marcLangList/mei:lang[@code = $langCode]"/>
       </language>
     </xsl:for-each>
   </xsl:template>
 
   <!-- date of composition -->
-  <xsl:template match="marc:datafield[@tag='045']">
+  <xsl:template match="marc:datafield[@tag = '045']">
     <!-- dates in 045 are assumed to be C.E. -->
     <!--<xsl:text>Date of composition:&#32;</xsl:text>-->
     <xsl:choose>
@@ -3312,14 +3439,14 @@
         <!-- Not yet dealt with. -->
       </xsl:when>
       <xsl:when test="@ind1 = '0' or @ind1 = '1'">
-        <xsl:for-each select="marc:subfield[@code='b']">
+        <xsl:for-each select="marc:subfield[@code = 'b']">
           <date>
             <xsl:attribute name="isodate">
               <xsl:value-of select="substring(., 2, 8)"/>
             </xsl:attribute>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="'045b'"/>
+                <xsl:value-of select="'045|b'"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="substring(., 2)"/>
@@ -3328,24 +3455,25 @@
       </xsl:when>
       <xsl:when test="@ind1 = '2'">
         <xsl:variable name="sortedDates">
-          <xsl:for-each select="marc:subfield[@code='b']">
+          <xsl:for-each select="marc:subfield[@code = 'b']">
             <xsl:sort/>
             <xsl:copy-of select="."/>
           </xsl:for-each>
         </xsl:variable>
         <date>
           <xsl:attribute name="notbefore">
-            <xsl:value-of select="substring($sortedDates/marc:subfield[@code='b'][1], 2, 8)"/>
+            <xsl:value-of select="substring($sortedDates/marc:subfield[@code = 'b'][1], 2, 8)"/>
           </xsl:attribute>
           <xsl:attribute name="notafter">
             <xsl:value-of
-              select="substring($sortedDates/marc:subfield[@code='b'][position()=last()], 2, 8)"/>
+              select="substring($sortedDates/marc:subfield[@code = 'b'][position() = last()], 2, 8)"
+            />
           </xsl:attribute>
-          <xsl:for-each select="marc:subfield[@code='b']">
+          <xsl:for-each select="marc:subfield[@code = 'b']">
             <date>
               <xsl:call-template name="analog">
                 <xsl:with-param name="tag">
-                  <xsl:value-of select="'045b'"/>
+                  <xsl:value-of select="'045|b'"/>
                 </xsl:with-param>
               </xsl:call-template>
               <xsl:value-of select="substring(., 2)"/>
@@ -3357,22 +3485,22 @@
   </xsl:template>
 
   <!-- musical form -->
-  <xsl:template match="marc:datafield[@tag='047']">
+  <xsl:template match="marc:datafield[@tag = '047']">
     <xsl:variable name="ind2" select="@ind2"/>
     <xsl:variable name="classcode">
       <xsl:choose>
         <xsl:when test="$ind2 = ' '">
           <xsl:text>MFMC</xsl:text>
         </xsl:when>
-        <xsl:when test="$ind2 = '7' and marc:subfield[@code='2']='iamlmf'">
+        <xsl:when test="$ind2 = '7' and marc:subfield[@code = '2'] = 'iamlmf'">
           <xsl:text>IFMC</xsl:text>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:value-of select="replace(marc:subfield[@code='2'], '&#32;', '_')"/>
+          <xsl:value-of select="replace(marc:subfield[@code = '2'], '&#32;', '_')"/>
         </xsl:otherwise>
       </xsl:choose>
     </xsl:variable>
-    <xsl:for-each select="marc:subfield[@code='a']">
+    <xsl:for-each select="marc:subfield[@code = 'a']">
       <term label="musForm">
         <xsl:if test="not($classcode = '')">
           <xsl:attribute name="classcode" select="concat('#', $classcode)"/>
@@ -3386,11 +3514,11 @@
           <xsl:value-of select="."/>
         </xsl:variable>
         <xsl:choose>
-          <xsl:when test="../@ind2='7' and ../marc:subfield[@code='2']='iamlmf'">
-            <xsl:value-of select="$iamlFormList/mei:form[@code=$form]"/>
+          <xsl:when test="../@ind2 = '7' and ../marc:subfield[@code = '2'] = 'iamlmf'">
+            <xsl:value-of select="$iamlFormList/mei:form[@code = $form]"/>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:value-of select="$marcFormList/mei:form[@code=$form]"/>
+            <xsl:value-of select="$marcFormList/mei:form[@code = $form]"/>
           </xsl:otherwise>
         </xsl:choose>
       </term>
@@ -3398,22 +3526,22 @@
   </xsl:template>
 
   <!-- scoring -->
-  <xsl:template match="marc:datafield[@tag='048']">
-    <instrVoiceGrp>
+  <xsl:template match="marc:datafield[@tag = '048']">
+    <instrVoiceList>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
           <xsl:value-of select="'048'"/>
         </xsl:with-param>
       </xsl:call-template>
       <xsl:choose>
-        <xsl:when test="@ind2='7' and matches(marc:subfield[@code='2'], 'iamlmp', 'i')">
+        <xsl:when test="@ind2 = '7' and matches(marc:subfield[@code = '2'], 'iamlmp', 'i')">
           <!-- Use IAML Medium of Performance codes -->
           <xsl:attribute name="authority">iamlmp</xsl:attribute>
           <xsl:attribute name="authURI"
             >http://www.iaml.info/en/activities/cataloguing/unimarc/medium</xsl:attribute>
-          <xsl:for-each select="marc:subfield[@code='a' or @code='b']">
+          <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
             <instrVoice>
-              <xsl:if test="@code='b'">
+              <xsl:if test="@code = 'b'">
                 <xsl:attribute name="solo">true</xsl:attribute>
               </xsl:if>
               <xsl:variable name="code048" select="substring(., 1, 3)"/>
@@ -3426,7 +3554,7 @@
                   <xsl:value-of select="number($num048)"/>
                 </xsl:attribute>
               </xsl:if>
-              <xsl:value-of select="$iamlMusPerfList/mei:instr[@code=$code048]"/>
+              <xsl:value-of select="$iamlMusPerfList/mei:instr[@code = $code048]"/>
             </instrVoice>
           </xsl:for-each>
         </xsl:when>
@@ -3435,9 +3563,9 @@
           <xsl:attribute name="authority">marcmusperf</xsl:attribute>
           <xsl:attribute name="authURI"
             >http://www.loc.gov/standards/valuelist/marcmusperf.html</xsl:attribute>
-          <xsl:for-each select="marc:subfield[@code='a' or @code='b']">
+          <xsl:for-each select="marc:subfield[@code = 'a' or @code = 'b']">
             <instrVoice>
-              <xsl:if test="@code='b'">
+              <xsl:if test="@code = 'b'">
                 <xsl:attribute name="solo">true</xsl:attribute>
               </xsl:if>
               <xsl:variable name="code048" select="substring(., 1, 2)"/>
@@ -3450,24 +3578,26 @@
                   <xsl:value-of select="number($num048)"/>
                 </xsl:attribute>
               </xsl:if>
-              <xsl:value-of select="$marcMusPerfList/mei:instr[@code=$code048]"/>
+              <xsl:value-of select="$marcMusPerfList/mei:instr[@code = $code048]"/>
             </instrVoice>
           </xsl:for-each>
         </xsl:otherwise>
       </xsl:choose>
-    </instrVoiceGrp>
+    </instrVoiceList>
   </xsl:template>
 
   <!-- classification -->
-  <xsl:template match="marc:datafield[@tag='050' or @tag='082' or @tag='648' or @tag='600' or
-    @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or
-    @tag='657' or @tag='658' or (number(@tag)&gt;=90 and number(@tag)&lt;=99)]">
+  <xsl:template
+    match="
+      marc:datafield[@tag = '050' or @tag = '082' or @tag = '648' or @tag = '600' or
+      @tag = '650' or @tag = '651' or @tag = '653' or @tag = '654' or @tag = '655' or @tag = '656' or
+      @tag = '657' or @tag = '658' or (number(@tag) >= 90 and number(@tag) &lt;= 99)]">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="label">
       <xsl:choose>
         <xsl:when test="$tag = '050'">callNum</xsl:when>
         <xsl:when test="$tag = '082'">callNum</xsl:when>
-        <xsl:when test="number($tag)&gt;=90 and number($tag)&lt;=99">callNum</xsl:when>
+        <xsl:when test="number($tag) >= 90 and number($tag) &lt;= 99">callNum</xsl:when>
         <xsl:when test="$tag = '600'">persName</xsl:when>
         <xsl:when test="$tag = '650'">topic</xsl:when>
         <xsl:when test="$tag = '651'">geogName</xsl:when>
@@ -3483,7 +3613,7 @@
       <xsl:choose>
         <xsl:when test="$tag = '050'">LCCN</xsl:when>
         <xsl:when test="$tag = '082'">DDC</xsl:when>
-        <xsl:when test="number($tag)&gt;=90 and number($tag)&lt;=99">
+        <xsl:when test="number($tag) >= 90 and number($tag) &lt;= 99">
           <xsl:value-of select="concat('LocalNum', $tag)"/>
         </xsl:when>
         <xsl:when test="$ind2 = '0'">LCSH</xsl:when>
@@ -3493,7 +3623,7 @@
         <xsl:when test="$ind2 = '5'">CSH</xsl:when>
         <xsl:when test="$ind2 = '6'">RVM</xsl:when>
         <xsl:when test="$ind2 = '7'">
-          <xsl:value-of select="replace(marc:subfield[@code='2'], '&#32;', '_')"/>
+          <xsl:value-of select="replace(marc:subfield[@code = '2'], '&#32;', '_')"/>
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
@@ -3516,10 +3646,10 @@
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">
               <xsl:choose>
-                <xsl:when test="$tag='050' or $tag='082'">
+                <xsl:when test="$tag = '050' or $tag = '082'">
                   <xsl:text>ab</xsl:text>
                 </xsl:when>
-                <xsl:when test="number($tag)&gt;=90 and number($tag)&lt;=99">
+                <xsl:when test="number($tag) >= 90 and number($tag) &lt;= 99">
                   <xsl:text>abcdefghijklmnopqrstuvwxyz</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
@@ -3529,8 +3659,10 @@
             </xsl:with-param>
             <xsl:with-param name="delimiter">
               <xsl:choose>
-                <xsl:when test="$tag='050' or $tag='082' or number($tag)&gt;=90 and
-                  number($tag)&lt;=99">
+                <xsl:when
+                  test="
+                    $tag = '050' or $tag = '082' or number($tag) >= 90 and
+                    number($tag) &lt;= 99">
                   <xsl:text>&#32;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
@@ -3546,7 +3678,7 @@
   </xsl:template>
 
   <!-- main entry -->
-  <xsl:template match="marc:datafield[@tag='100' or @tag='110']">
+  <xsl:template match="marc:datafield[@tag = '100' or @tag = '110']">
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
     </xsl:variable>
@@ -3554,17 +3686,17 @@
       elements -->
     <respStmt>
       <xsl:choose>
-        <xsl:when test="$tag='110'">
+        <xsl:when test="$tag = '110'">
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName role="creator">
-            <xsl:if test="marc:subfield[@code='0']">
+            <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
+                <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat($tag, 'a')"/>
+                <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="subfieldSelect">
@@ -3575,18 +3707,18 @@
         <xsl:otherwise>
           <!-- personal name; use subfields a and d -->
           <persName role="creator">
-            <xsl:if test="marc:subfield[@code='0']">
+            <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
+                <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat($tag, 'a')"/>
+                <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
+              <xsl:when test="marc:subfield[@code = 'd']">
                 <xsl:call-template name="subfieldSelect">
                   <xsl:with-param name="codes">abcjq</xsl:with-param>
                 </xsl:call-template>
@@ -3594,12 +3726,12 @@
                 <date>
                   <xsl:call-template name="analog">
                     <xsl:with-param name="tag">
-                      <xsl:value-of select="concat($tag, 'd')"/>
+                      <xsl:value-of select="concat($tag, '|d')"/>
                     </xsl:with-param>
                   </xsl:call-template>
                   <xsl:call-template name="chopPunctuation">
                     <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                      <xsl:value-of select="marc:subfield[@code = 'd']"/>
                     </xsl:with-param>
                   </xsl:call-template>
                 </date>
@@ -3614,18 +3746,18 @@
         </xsl:otherwise>
       </xsl:choose>
       <xsl:choose>
-        <xsl:when test="marc:subfield[@code='4']">
-          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+        <xsl:when test="marc:subfield[@code = '4']">
+          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
         </xsl:when>
-        <xsl:when test="marc:subfield[@code='e']">
-          <xsl:apply-templates select="marc:subfield[@code='e']" mode="respStmt"/>
+        <xsl:when test="marc:subfield[@code = 'e']">
+          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
         </xsl:when>
       </xsl:choose>
     </respStmt>
   </xsl:template>
 
   <!-- uniform title -->
-  <xsl:template match="marc:datafield[@tag='130' or @tag='240']" mode="titleProper">
+  <xsl:template match="marc:datafield[@tag = '130' or @tag = '240']" mode="titleProper">
     <xsl:variable name="tag" select="@tag"/>
     <title type="uniform">
       <xsl:call-template name="analog">
@@ -3643,14 +3775,16 @@
 
       <!-- test for certain other subfields to append to main value -->
       <!-- some subfields are repeatable, so loop through all -->
-      <xsl:for-each select="marc:subfield[@code='k' or @code='m' or @code='n' or @code='o' or
-        @code='p' or @code='r' or @code='s']">
+      <xsl:for-each
+        select="
+          marc:subfield[@code = 'k' or @code = 'm' or @code = 'n' or @code = 'o' or
+          @code = 'p' or @code = 'r' or @code = 's']">
         <xsl:choose>
-          <xsl:when test="@code='r'">
+          <xsl:when test="@code = 'r'">
             <!-- subfield r = 'Key for music'; add 'in' -->
             <xsl:text>, in </xsl:text>
             <xsl:choose>
-              <xsl:when test="position()=last()">
+              <xsl:when test="position() = last()">
                 <xsl:value-of select="."/>
               </xsl:when>
               <xsl:otherwise>
@@ -3665,7 +3799,7 @@
           <xsl:otherwise>
             <xsl:text>, </xsl:text>
             <xsl:choose>
-              <xsl:when test="position()=last()">
+              <xsl:when test="position() = last()">
                 <xsl:value-of select="."/>
               </xsl:when>
               <xsl:otherwise>
@@ -3686,11 +3820,11 @@
     alternative title but excluding parallel titles and other title information.
     This template includes parallel titles, but ignores the statement of responsibility,
     inclusive or bulk dates, and physical medium, which are recorded elsewhere. -->
-  <xsl:template match="marc:datafield[@tag='245']" mode="titleProper">
+  <xsl:template match="marc:datafield[@tag = '245']" mode="titleProper">
     <title type="proper">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
-          <xsl:value-of select="concat(@tag, 'ab')"/>
+          <xsl:value-of select="concat(@tag, '|a-b')"/>
         </xsl:with-param>
       </xsl:call-template>
       <xsl:variable name="titleProper">
@@ -3701,7 +3835,7 @@
       <xsl:value-of select="replace($titleProper, '\s*/\s*$', '')"/>
       <!-- test for certain other subfields to append to main value -->
       <!-- some subfields are repeatable, so loop through all -->
-      <xsl:for-each select="marc:subfield[@code='n' or @code='p']">
+      <xsl:for-each select="marc:subfield[@code = 'n' or @code = 'p']">
         <xsl:text>, </xsl:text>
         <xsl:call-template name="chopPunctuation">
           <xsl:with-param name="chopString">
@@ -3713,11 +3847,12 @@
   </xsl:template>
 
   <!-- diplomatic title -->
-  <xsl:template match="marc:datafield[@tag='130' or @tag='240' or @tag='245']" mode="diplomatic">
+  <xsl:template match="marc:datafield[@tag = '130' or @tag = '240' or @tag = '245']"
+    mode="diplomatic">
     <title>
       <xsl:attribute name="type">
         <xsl:choose>
-          <xsl:when test="@tag='245'">
+          <xsl:when test="@tag = '245'">
             <xsl:text>diplomatic</xsl:text>
           </xsl:when>
           <xsl:otherwise>
@@ -3725,11 +3860,11 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>
-      <xsl:for-each select="marc:subfield[not(@code='0' or @code='6' or @code='8')]">
+      <xsl:for-each select="marc:subfield[not(@code = '0' or @code = '6' or @code = '8')]">
         <title>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat(../@tag, @code)"/>
+              <xsl:value-of select="concat(../@tag, '|', @code)"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:value-of select="."/>
@@ -3739,25 +3874,27 @@
   </xsl:template>
 
   <!-- text incipit (246) -->
-  <xsl:template match="marc:datafield[@tag='246' and matches(marc:subfield[@code='i'],
-    'First\s+line\s+of\s+text', 'i')]">
+  <xsl:template
+    match="
+      marc:datafield[@tag = '246' and matches(marc:subfield[@code = 'i'],
+      'First\s+line\s+of\s+text', 'i')]">
     <incip>
-      <xsl:if test="marc:subfield[@code='a']">
+      <xsl:if test="marc:subfield[@code = 'a']">
         <incipText>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat(@tag, 'a')"/>
+              <xsl:value-of select="concat(@tag, '|a')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:attribute name="label">
             <xsl:call-template name="chopPunctuation">
               <xsl:with-param name="chopString">
-                <xsl:value-of select="marc:subfield[@code='i']"/>
+                <xsl:value-of select="marc:subfield[@code = 'i']"/>
               </xsl:with-param>
             </xsl:call-template>
           </xsl:attribute>
           <p>
-            <xsl:value-of select="marc:subfield[@code='a']"/>
+            <xsl:value-of select="marc:subfield[@code = 'a']"/>
           </p>
         </incipText>
       </xsl:if>
@@ -3765,7 +3902,7 @@
   </xsl:template>
 
   <!-- edition statement -->
-  <xsl:template match="marc:datafield[@tag='250']">
+  <xsl:template match="marc:datafield[@tag = '250']">
     <edition>
       <xsl:variable name="tag" select="@tag"/>
       <xsl:call-template name="analog">
@@ -3780,7 +3917,7 @@
   </xsl:template>
 
   <!-- music presentation -->
-  <xsl:template match="marc:datafield[@tag='254']">
+  <xsl:template match="marc:datafield[@tag = '254']">
     <xsl:variable name="tag" select="@tag"/>
     <annot type="musical_presentation">
       <xsl:call-template name="analog">
@@ -3795,34 +3932,34 @@
   </xsl:template>
 
   <!-- publication statement -->
-  <xsl:template match="marc:datafield[@tag='260'] | marc:datafield[@tag='264' and @ind2='1']">
+  <xsl:template match="marc:datafield[@tag = '260'] | marc:datafield[@tag = '264' and @ind2 = '1']">
     <xsl:for-each select="marc:subfield">
       <xsl:choose>
-        <xsl:when test="@code='a'">
+        <xsl:when test="@code = 'a'">
           <pubPlace>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(../@tag, 'a')"/>
+                <xsl:value-of select="concat(../@tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="."/>
           </pubPlace>
         </xsl:when>
-        <xsl:when test="@code='b'">
+        <xsl:when test="@code = 'b'">
           <publisher>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(../@tag, 'b')"/>
+                <xsl:value-of select="concat(../@tag, '|b')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="."/>
           </publisher>
         </xsl:when>
-        <xsl:when test="@code='c'">
+        <xsl:when test="@code = 'c'">
           <date>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(../@tag, 'c')"/>
+                <xsl:value-of select="concat(../@tag, '|c')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="."/>
@@ -3830,7 +3967,7 @@
         </xsl:when>
       </xsl:choose>
     </xsl:for-each>
-    <xsl:for-each select="marc:subfield[@code='e']">
+    <xsl:for-each select="marc:subfield[@code = 'e']">
       <xsl:variable name="thisManufacturer">
         <xsl:value-of select="generate-id(.)"/>
       </xsl:variable>
@@ -3838,30 +3975,30 @@
         <geogName>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat(../@tag, 'e')"/>
+              <xsl:value-of select="concat(../@tag, '|e')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:value-of select="$thisManufacturer"/>
         </geogName>
-        <xsl:for-each select="../marc:subfield[@code='f' or @code='g']">
+        <xsl:for-each select="../marc:subfield[@code = 'f' or @code = 'g']">
           <xsl:if
-            test="generate-id(preceding-sibling::marc:subfield[@code='e'][1])=$thisManufacturer">
+            test="generate-id(preceding-sibling::marc:subfield[@code = 'e'][1]) = $thisManufacturer">
             <xsl:choose>
-              <xsl:when test="@code='f'">
+              <xsl:when test="@code = 'f'">
                 <name>
                   <xsl:call-template name="analog">
                     <xsl:with-param name="tag">
-                      <xsl:value-of select="concat(../@tag, 'f')"/>
+                      <xsl:value-of select="concat(../@tag, '|f')"/>
                     </xsl:with-param>
                   </xsl:call-template>
                   <xsl:value-of select="."/>
                 </name>
               </xsl:when>
-              <xsl:when test="@code='g'">
+              <xsl:when test="@code = 'g'">
                 <date>
                   <xsl:call-template name="analog">
                     <xsl:with-param name="tag">
-                      <xsl:value-of select="concat(@tag, 'g')"/>
+                      <xsl:value-of select="concat(@tag, '|g')"/>
                     </xsl:with-param>
                   </xsl:call-template>
                   <xsl:value-of select="."/>
@@ -3873,46 +4010,49 @@
       </distributor>
     </xsl:for-each>
     <xsl:apply-templates
-      select="../marc:datafield[@tag='028'][marc:subfield[@code='a']][not(@ind1='2')]"/>
-    <xsl:apply-templates select="../marc:datafield[@tag='020' or @tag='022' or
-      @tag='024'][marc:subfield[@code='a']]"/>
+      select="../marc:datafield[@tag = '028'][marc:subfield[@code = 'a']][not(@ind1 = '2')]"/>
+    <xsl:apply-templates
+      select="
+        ../marc:datafield[@tag = '020' or @tag = '022' or
+        @tag = '024'][marc:subfield[@code = 'a']]"
+    />
   </xsl:template>
 
   <!-- production, publication, distribution, etc. -->
-  <xsl:template match="marc:datafield[@tag='264'][not(@ind2='1')]">
+  <xsl:template match="marc:datafield[@tag = '264'][not(@ind2 = '1')]">
     <xsl:variable name="resp">
       <xsl:choose>
-        <xsl:when test="@ind2='2'">
+        <xsl:when test="@ind2 = '2'">
           <xsl:text>distribution</xsl:text>
         </xsl:when>
-        <xsl:when test="@ind2='3'">
+        <xsl:when test="@ind2 = '3'">
           <xsl:text>manufacture</xsl:text>
         </xsl:when>
-        <xsl:when test="@ind2='4'">
+        <xsl:when test="@ind2 = '4'">
           <xsl:text>copyright</xsl:text>
         </xsl:when>
       </xsl:choose>
     </xsl:variable>
-    <xsl:if test="@ind2='2' or @ind2='3'">
+    <xsl:if test="@ind2 = '2' or @ind2 = '3'">
       <respSmt>
         <resp>
           <xsl:value-of select="$resp"/>
         </resp>
-        <xsl:for-each select="marc:subfield[@code='a']">
+        <xsl:for-each select="marc:subfield[@code = 'a']">
           <name>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(../@tag, 'a')"/>
+                <xsl:value-of select="concat(../@tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="."/>
           </name>
         </xsl:for-each>
-        <xsl:for-each select="marc:subfield[@code='b']">
+        <xsl:for-each select="marc:subfield[@code = 'b']">
           <name>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat(../@tag, 'b')"/>
+                <xsl:value-of select="concat(../@tag, '|b')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:value-of select="."/>
@@ -3920,14 +4060,14 @@
         </xsl:for-each>
       </respSmt>
     </xsl:if>
-    <xsl:for-each select="marc:subfield[@code='c']">
+    <xsl:for-each select="marc:subfield[@code = 'c']">
       <date>
         <xsl:attribute name="label">
           <xsl:value-of select="concat($resp, ' date')"/>
         </xsl:attribute>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(../@tag, 'c')"/>
+            <xsl:value-of select="concat(../@tag, '|c')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:value-of select="."/>
@@ -3936,12 +4076,12 @@
   </xsl:template>
 
   <!-- physical description -->
-  <xsl:template match="marc:datafield[@tag='300']">
-    <xsl:if test="marc:subfield[@code='a']">
+  <xsl:template match="marc:datafield[@tag = '300']">
+    <xsl:if test="marc:subfield[@code = 'a']">
       <extent>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(@tag, 'a')"/>
+            <xsl:value-of select="concat(@tag, '|a')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="subfieldSelect">
@@ -3949,11 +4089,11 @@
         </xsl:call-template>
       </extent>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code='b']">
+    <xsl:if test="marc:subfield[@code = 'b']">
       <physMedium>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(@tag, 'b')"/>
+            <xsl:value-of select="concat(@tag, '|b')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="subfieldSelect">
@@ -3961,11 +4101,11 @@
         </xsl:call-template>
       </physMedium>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code='c']">
+    <xsl:if test="marc:subfield[@code = 'c']">
       <dimensions>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(@tag, 'c')"/>
+            <xsl:value-of select="concat(@tag, '|c')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="subfieldSelect">
@@ -3973,11 +4113,11 @@
         </xsl:call-template>
       </dimensions>
     </xsl:if>
-    <xsl:if test="marc:subfield[@code='e']">
+    <xsl:if test="marc:subfield[@code = 'e']">
       <carrierForm>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(@tag, 'e')"/>
+            <xsl:value-of select="concat(@tag, '|e')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="subfieldSelect">
@@ -3988,22 +4128,25 @@
   </xsl:template>
 
   <!-- playing time -->
-  <xsl:template match="marc:datafield[@tag='306']">
-    <xsl:for-each select="marc:subfield[@code='a']">
+  <xsl:template match="marc:datafield[@tag = '306']">
+    <xsl:for-each select="marc:subfield[@code = 'a']">
       <extent>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat(../@tag, 'a')"/>
+            <xsl:value-of select="concat(../@tag, '|a')"/>
           </xsl:with-param>
         </xsl:call-template>
-        <xsl:value-of select="concat(substring(., 1, 2), ':', substring(., 3, 2), ':', substring(.,
-          5, 2))"/>
+        <xsl:value-of
+          select="
+            concat(substring(., 1, 2), ':', substring(., 3, 2), ':', substring(.,
+            5, 2))"
+        />
       </extent>
     </xsl:for-each>
   </xsl:template>
 
   <!-- series title -->
-  <xsl:template match="marc:datafield[@tag='490']">
+  <xsl:template match="marc:datafield[@tag = '490']">
     <seriesStmt>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
@@ -4019,14 +4162,14 @@
           </xsl:with-param>
         </xsl:call-template>
       </title>
-      <xsl:if test="marc:subfield[@code='v']">
+      <xsl:if test="marc:subfield[@code = 'v']">
         <biblScope>
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">v</xsl:with-param>
           </xsl:call-template>
         </biblScope>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='x']">
+      <xsl:if test="marc:subfield[@code = 'x']">
         <identifier>
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">x</xsl:with-param>
@@ -4037,11 +4180,13 @@
   </xsl:template>
 
   <!-- notes (5XX) -->
-  <xsl:template match="marc:datafield[@tag='500' or @tag='504' or @tag='506' or @tag='510' or
-    @tag='520' or @tag='521' or @tag='524' or @tag='525' or @tag='530' or @tag='533' or
-    @tag='534' or @tag='535' or @tag='540' or @tag='541' or @tag='542' or @tag='545' or
-    @tag='546' or @tag='555' or @tag='563' or @tag='580' or @tag='581' or @tag='585' or
-    @tag='586']">
+  <xsl:template
+    match="
+      marc:datafield[@tag = '500' or @tag = '504' or @tag = '506' or @tag = '510' or
+      @tag = '520' or @tag = '521' or @tag = '524' or @tag = '525' or @tag = '530' or @tag = '533' or
+      @tag = '534' or @tag = '535' or @tag = '540' or @tag = '541' or @tag = '542' or @tag = '545' or
+      @tag = '546' or @tag = '555' or @tag = '563' or @tag = '580' or @tag = '581' or @tag = '585' or
+      @tag = '586']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:variable name="annottype">
       <xsl:choose>
@@ -4083,55 +4228,55 @@
         </xsl:with-param>
       </xsl:call-template>
       <xsl:choose>
-        <xsl:when test="$tag='506'">
+        <xsl:when test="$tag = '506'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">af</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='510'">
+        <xsl:when test="$tag = '510'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">abcu</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='530'">
+        <xsl:when test="$tag = '530'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">abcd</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='533'">
+        <xsl:when test="$tag = '533'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">ad</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='534'">
+        <xsl:when test="$tag = '534'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">tabl</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='535'">
+        <xsl:when test="$tag = '535'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">acg</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='541'">
+        <xsl:when test="$tag = '541'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">acd</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='542'">
+        <xsl:when test="$tag = '542'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">lgd</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
           </xsl:call-template>
         </xsl:when>
-        <xsl:when test="$tag='544'">
+        <xsl:when test="$tag = '544'">
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">ac</xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
@@ -4143,9 +4288,9 @@
           </xsl:call-template>
         </xsl:otherwise>
       </xsl:choose>
-      <xsl:if test="marc:subfield[@code='5']">
+      <xsl:if test="marc:subfield[@code = '5']">
         <xsl:text> (</xsl:text>
-        <xsl:value-of select="marc:subfield[@code='5']"/>
+        <xsl:value-of select="marc:subfield[@code = '5']"/>
         <xsl:text>)</xsl:text>
       </xsl:if>
     </annot>
@@ -4199,7 +4344,7 @@
   </xsl:template>-->
 
   <!-- creation note -->
-  <xsl:template match="marc:datafield[@tag='508']">
+  <xsl:template match="marc:datafield[@tag = '508']">
     <xsl:variable name="tag" select="@tag"/>
     <xsl:call-template name="subfieldSelect">
       <xsl:with-param name="codes">a</xsl:with-param>
@@ -4207,7 +4352,7 @@
   </xsl:template>
 
   <!-- participants in event -->
-  <xsl:template match="marc:datafield[@tag='511']">
+  <xsl:template match="marc:datafield[@tag = '511']">
     <xsl:variable name="tag" select="@tag"/>
     <event>
       <xsl:call-template name="analog">
@@ -4224,7 +4369,7 @@
   </xsl:template>
 
   <!-- event -->
-  <xsl:template match="marc:datafield[@tag='518']">
+  <xsl:template match="marc:datafield[@tag = '518']">
     <xsl:variable name="tag" select="@tag"/>
     <event>
       <xsl:call-template name="analog">
@@ -4242,13 +4387,13 @@
   </xsl:template>
 
   <!-- provenance -->
-  <xsl:template match="marc:datafield[@tag='561']">
+  <xsl:template match="marc:datafield[@tag = '561']">
     <xsl:variable name="tag" select="@tag"/>
     <provenance>
       <repository>
         <xsl:call-template name="analog">
           <xsl:with-param name="tag">
-            <xsl:value-of select="concat($tag, 'a')"/>
+            <xsl:value-of select="concat($tag, '|a')"/>
           </xsl:with-param>
         </xsl:call-template>
         <xsl:call-template name="subfieldSelect">
@@ -4261,7 +4406,7 @@
   <!-- If the marc2mei59x.xsl module is unavailable, 59x fields are 
     output as MEI annotations. -->
   <!-- 59x (local notes) -->
-  <xsl:template match="marc:datafield[starts-with(@tag, '59')]">
+  <xsl:template match="marc:datafield[starts-with(@tag, '59')]" priority="1">
     <annot type="local">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
@@ -4273,7 +4418,7 @@
   </xsl:template>
 
   <!-- contents -->
-  <xsl:template match="marc:datafield[@tag='700' or @tag='730' or @tag='740']" mode="contents">
+  <xsl:template match="marc:datafield[@tag = '700' or @tag = '730' or @tag = '740']" mode="contents">
     <xsl:variable name="tag" select="@tag"/>
     <contentItem>
       <xsl:call-template name="analog">
@@ -4284,7 +4429,7 @@
       <xsl:call-template name="subfieldSelect">
         <xsl:with-param name="codes">
           <xsl:choose>
-            <xsl:when test="$tag='700'">adt</xsl:when>
+            <xsl:when test="$tag = '700'">adt</xsl:when>
             <xsl:otherwise>a</xsl:otherwise>
           </xsl:choose>
         </xsl:with-param>
@@ -4293,23 +4438,23 @@
   </xsl:template>
 
   <!-- responsibility statement; added entry -->
-  <xsl:template match="marc:datafield[@tag='700' or @tag='710']" mode="respStmt">
+  <xsl:template match="marc:datafield[@tag = '700' or @tag = '710']" mode="respStmt">
     <xsl:variable name="tag">
       <xsl:value-of select="@tag"/>
     </xsl:variable>
     <respStmt>
       <xsl:choose>
-        <xsl:when test="$tag='710'">
+        <xsl:when test="$tag = '710'">
           <!-- corporate name; use subfield a (non-repeatable) -->
           <corpName>
-            <xsl:if test="marc:subfield[@code='0']">
+            <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
+                <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat($tag, 'a')"/>
+                <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="subfieldSelect">
@@ -4320,18 +4465,18 @@
         <xsl:otherwise>
           <!-- personal name -->
           <persName>
-            <xsl:if test="marc:subfield[@code='0']">
+            <xsl:if test="marc:subfield[@code = '0']">
               <xsl:attribute name="dbkey">
-                <xsl:value-of select="marc:subfield[@code='0']"/>
+                <xsl:value-of select="marc:subfield[@code = '0']"/>
               </xsl:attribute>
             </xsl:if>
             <xsl:call-template name="analog">
               <xsl:with-param name="tag">
-                <xsl:value-of select="concat($tag, 'a')"/>
+                <xsl:value-of select="concat($tag, '|a')"/>
               </xsl:with-param>
             </xsl:call-template>
             <xsl:choose>
-              <xsl:when test="marc:subfield[@code='d']">
+              <xsl:when test="marc:subfield[@code = 'd']">
                 <xsl:call-template name="subfieldSelect">
                   <xsl:with-param name="codes">abcjq</xsl:with-param>
                 </xsl:call-template>
@@ -4339,12 +4484,12 @@
                 <date>
                   <xsl:call-template name="analog">
                     <xsl:with-param name="tag">
-                      <xsl:value-of select="concat($tag, 'd')"/>
+                      <xsl:value-of select="concat($tag, '|d')"/>
                     </xsl:with-param>
                   </xsl:call-template>
                   <xsl:call-template name="chopPunctuation">
                     <xsl:with-param name="chopString">
-                      <xsl:value-of select="marc:subfield[@code='d']"/>
+                      <xsl:value-of select="marc:subfield[@code = 'd']"/>
                     </xsl:with-param>
                   </xsl:call-template>
                 </date>
@@ -4359,26 +4504,26 @@
         </xsl:otherwise>
       </xsl:choose>
       <xsl:choose>
-        <xsl:when test="marc:subfield[@code='4']">
-          <xsl:apply-templates select="marc:subfield[@code='4']" mode="respStmt"/>
+        <xsl:when test="marc:subfield[@code = '4']">
+          <xsl:apply-templates select="marc:subfield[@code = '4']" mode="respStmt"/>
         </xsl:when>
-        <xsl:when test="marc:subfield[@code='e']">
-          <xsl:apply-templates select="marc:subfield[@code='e']" mode="respStmt"/>
+        <xsl:when test="marc:subfield[@code = 'e']">
+          <xsl:apply-templates select="marc:subfield[@code = 'e']" mode="respStmt"/>
         </xsl:when>
       </xsl:choose>
     </respStmt>
   </xsl:template>
 
   <!-- associated place -->
-  <xsl:template match="marc:datafield[@tag='751' or @tag='752']">
+  <xsl:template match="marc:datafield[@tag = '751' or @tag = '752']">
     <term>
       <xsl:variable name="tag" select="@tag"/>
       <xsl:attribute name="label">
         <xsl:text>place</xsl:text>
       </xsl:attribute>
-      <xsl:if test="marc:subfield[@code='2']">
+      <xsl:if test="marc:subfield[@code = '2']">
         <xsl:attribute name="classCode">
-          <xsl:value-of select="concat('#', upper-case(marc:subfield[@code='2']))"/>
+          <xsl:value-of select="concat('#', upper-case(marc:subfield[@code = '2']))"/>
         </xsl:attribute>
       </xsl:if>
       <!-- @dbkey not permitted, but should be -->
@@ -4397,8 +4542,8 @@
           <xsl:call-template name="subfieldSelect">
             <xsl:with-param name="codes">
               <xsl:choose>
-                <xsl:when test="$tag='751'">a</xsl:when>
-                <xsl:when test="$tag='752'">abcdefgh</xsl:when>
+                <xsl:when test="$tag = '751'">a</xsl:when>
+                <xsl:when test="$tag = '752'">abcdefgh</xsl:when>
               </xsl:choose>
             </xsl:with-param>
             <xsl:with-param name="delimiter">, </xsl:with-param>
@@ -4409,10 +4554,10 @@
   </xsl:template>
 
   <!-- physical location -->
-  <xsl:template match="marc:datafield[@tag='852']">
+  <xsl:template match="marc:datafield[@tag = '852']">
     <xsl:variable name="tag" select="@tag"/>
     <physLoc>
-      <xsl:if test="marc:subfield[@code='a' or @code='b' or @code='e']">
+      <xsl:if test="marc:subfield[@code = 'a' or @code = 'b' or @code = 'e']">
         <repository>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
@@ -4420,15 +4565,15 @@
             </xsl:with-param>
           </xsl:call-template>
           <name>
-            <xsl:value-of select="marc:subfield[@code='a']"/>
-            <xsl:if test="marc:subfield[@code='b']">
+            <xsl:value-of select="marc:subfield[@code = 'a']"/>
+            <xsl:if test="marc:subfield[@code = 'b']">
               <xsl:text>, </xsl:text>
               <name>
-                <xsl:value-of select="marc:subfield[@code='b']"/>
+                <xsl:value-of select="marc:subfield[@code = 'b']"/>
               </name>
             </xsl:if>
           </name>
-          <xsl:for-each select="marc:subfield[@code='e']">
+          <xsl:for-each select="marc:subfield[@code = 'e']">
             <address>
               <addrLine>
                 <xsl:for-each select="..">
@@ -4437,12 +4582,12 @@
                   </xsl:call-template>
                 </xsl:for-each>
               </addrLine>
-              <xsl:if test="../marc:subfield[@code='n']">
+              <xsl:if test="../marc:subfield[@code = 'n']">
                 <addrLine>
                   <identifier type="countryCode">
                     <xsl:call-template name="analog">
                       <xsl:with-param name="tag">
-                        <xsl:value-of select="concat($tag, 'n')"/>
+                        <xsl:value-of select="concat($tag, '|n')"/>
                       </xsl:with-param>
                     </xsl:call-template>
                     <xsl:for-each select="..">
@@ -4457,9 +4602,9 @@
           </xsl:for-each>
         </repository>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='c']">
+      <xsl:if test="marc:subfield[@code = 'c']">
         <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code='2']">
+          <xsl:if test="marc:subfield[@code = '2']">
             <xsl:attribute name="authority">
               <xsl:call-template name="subfieldSelect">
                 <xsl:with-param name="codes">2</xsl:with-param>
@@ -4468,7 +4613,7 @@
           </xsl:if>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, 'c')"/>
+              <xsl:value-of select="concat($tag, '|c')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:call-template name="subfieldSelect">
@@ -4476,9 +4621,9 @@
           </xsl:call-template>
         </identifier>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='j']">
+      <xsl:if test="marc:subfield[@code = 'j']">
         <identifier type="shelvingControlNumber">
-          <xsl:if test="marc:subfield[@code='2']">
+          <xsl:if test="marc:subfield[@code = '2']">
             <xsl:attribute name="authority">
               <xsl:call-template name="subfieldSelect">
                 <xsl:with-param name="codes">2</xsl:with-param>
@@ -4487,7 +4632,7 @@
           </xsl:if>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, 'j')"/>
+              <xsl:value-of select="concat($tag, '|j')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:call-template name="subfieldSelect">
@@ -4497,7 +4642,7 @@
       </xsl:if>
       <xsl:if test="marc:subfield[matches(@code, 'khim')]">
         <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code='2']">
+          <xsl:if test="marc:subfield[@code = '2']">
             <xsl:attribute name="authority">
               <xsl:call-template name="subfieldSelect">
                 <xsl:with-param name="codes">2</xsl:with-param>
@@ -4509,9 +4654,9 @@
           </xsl:call-template>
         </identifier>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='p']">
+      <xsl:if test="marc:subfield[@code = 'p']">
         <identifier type="shelfLocation">
-          <xsl:if test="marc:subfield[@code='2']">
+          <xsl:if test="marc:subfield[@code = '2']">
             <xsl:attribute name="authority">
               <xsl:call-template name="subfieldSelect">
                 <xsl:with-param name="codes">2</xsl:with-param>
@@ -4520,7 +4665,7 @@
           </xsl:if>
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, 'p')"/>
+              <xsl:value-of select="concat($tag, '|p')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:call-template name="subfieldSelect">
@@ -4528,11 +4673,11 @@
           </xsl:call-template>
         </identifier>
       </xsl:if>
-      <xsl:if test="marc:subfield[@code='t']">
+      <xsl:if test="marc:subfield[@code = 't']">
         <identifier type="copy">
           <xsl:call-template name="analog">
             <xsl:with-param name="tag">
-              <xsl:value-of select="concat($tag, 't')"/>
+              <xsl:value-of select="concat($tag, '|t')"/>
             </xsl:with-param>
           </xsl:call-template>
           <xsl:call-template name="subfieldSelect">
@@ -4544,19 +4689,19 @@
   </xsl:template>
 
   <!-- relator codes -->
-  <xsl:template match="marc:subfield[@code='4']" mode="respStmt">
+  <xsl:template match="marc:subfield[@code = '4']" mode="respStmt">
     <xsl:variable name="code">
       <xsl:value-of select="."/>
     </xsl:variable>
     <resp code="{$code}">
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
-          <xsl:value-of select="concat(./@tag, '4')"/>
+          <xsl:value-of select="concat(./@tag, '|4')"/>
         </xsl:with-param>
       </xsl:call-template>
       <xsl:choose>
-        <xsl:when test="$marcRelList/mei:relator[@code=$code]">
-          <xsl:value-of select="$marcRelList/mei:relator[@code=$code]"/>
+        <xsl:when test="$marcRelList/mei:relator[@code = $code]">
+          <xsl:value-of select="$marcRelList/mei:relator[@code = $code]"/>
         </xsl:when>
         <xsl:otherwise>
           <xsl:text>[unknown]</xsl:text>
@@ -4566,7 +4711,7 @@
   </xsl:template>
 
   <!-- relator terms -->
-  <xsl:template match="marc:subfield[@code='e']" mode="respStmt">
+  <xsl:template match="marc:subfield[@code = 'e']" mode="respStmt">
     <xsl:variable name="term">
       <xsl:call-template name="chopPunctuation">
         <xsl:with-param name="chopString">
@@ -4576,11 +4721,11 @@
     </xsl:variable>
     <resp>
       <xsl:attribute name="code">
-        <xsl:value-of select="$marcRelList/mei:relator[.=$term]/@code"/>
+        <xsl:value-of select="$marcRelList/mei:relator[. = $term]/@code"/>
       </xsl:attribute>
       <xsl:call-template name="analog">
         <xsl:with-param name="tag">
-          <xsl:value-of select="concat(../@tag, '4')"/>
+          <xsl:value-of select="concat(../@tag, '|4')"/>
         </xsl:with-param>
       </xsl:call-template>
       <xsl:value-of select="$term"/>
@@ -4592,8 +4737,10 @@
   <xsl:template match="marc:datafield[starts-with(@tag, '9')]">
     <xsl:comment>
       <xsl:value-of select="$nl"/>
-      <xsl:value-of select="concat('&lt;marc:datafield tag=&quot;', @tag, '&quot; ind1=&quot;',
-        @ind1, '&quot; ind2=&quot;', @ind2, '&quot;>')"/>
+      <xsl:value-of
+        select="
+          concat('&lt;marc:datafield tag=&quot;', @tag, '&quot; ind1=&quot;',
+          @ind1, '&quot; ind2=&quot;', @ind2, '&quot;>')"/>
       <xsl:apply-templates select="marc:subfield"/>
       <xsl:value-of select="$nl"/>
       <xsl:value-of select="'&lt;/marc:datafield>'"/>
@@ -4608,9 +4755,9 @@
   </xsl:template>
 
   <!-- default template -->
-  <xsl:template match="@*|node()">
+  <xsl:template match="@* | node()">
     <xsl:copy>
-      <xsl:apply-templates select="@*|node()"/>
+      <xsl:apply-templates select="@* | node()"/>
     </xsl:copy>
   </xsl:template>
 
