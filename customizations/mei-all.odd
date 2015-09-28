@@ -438,6 +438,8 @@
           <desc>Contains a transcription of the title page of a text.</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
@@ -2212,6 +2214,8 @@
             "cantabile", "Moderato", "♩=60", "Moderato ♩ =60").</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.tempo.log"/>
@@ -3212,7 +3216,8 @@
             </attDef>
             <attDef ident="role" usage="opt">
               <desc>Used to specify further information about the entity referenced by this name,
-                for example, the occupation of a person or the status of a place.</desc>
+                for example, the occupation of a person or the status of a place. Use a standard
+                value whenever possible.</desc>
               <datatype>
                 <rng:text/>
               </datatype>
@@ -3226,8 +3231,8 @@
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.authorized"/>
-            <memberOf key="att.canonical"/>
             <memberOf key="att.bibl"/>
+            <memberOf key="att.canonical"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.filing"/>
             <memberOf key="att.lang"/>
@@ -5321,6 +5326,8 @@
           <desc>Contains a single cast list or dramatis personae.</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
@@ -5584,41 +5591,24 @@
             </rng:zeroOrMore>
           </content>
         </elementSpec>
-        <elementSpec ident="instrumentation" module="MEI.header" mode="replace">
-          <desc>Instrumental and non-dramatic vocal resources.</desc>
-          <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.authorized"/>
-            <memberOf key="att.edit"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:zeroOrMore>
-              <rng:ref name="perfResList"/>
-            </rng:zeroOrMore>
-            <!-- Add <annot> for the annotation of complex instrumentation markup and circumstances -->
-            <rng:zeroOrMore>
-              <rng:ref name="model.annotLike"/>
-            </rng:zeroOrMore>
-          </content>
-        </elementSpec>
+        <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
+        <!-- rename instrVoice and instrVoiceGrp to perfRes (performance resource) and
+          perfResList, respectively. Delete ensemble and instrumentation and ensemble, 
+          allowing the content of the former instrVoiceGrp to occur directly within
+          perfMedium. Disallow text content within perfResList. In addition, make former
+          members of att.coded members of att.canonical instead. -->
+        <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
+        <elementSpec ident="instrumentation" module="MEI.header" mode="delete"/>
         <elementSpec ident="ensemble" module="MEI.header" mode="delete"/>
         <elementSpec ident="instrVoice" module="MEI.header" mode="delete"/>
         <elementSpec ident="instrVoiceGrp" module="MEI.header" mode="delete"/>
         <elementSpec ident="perfResList" module="MEI.header" mode="add">
           <desc>Several instrumental or vocal resources treated as a group.</desc>
-          <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
-          <!-- Disallow text in instrVoiceGrp -->
-          <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.authorized"/>
             <memberOf key="att.bibl"/>
-            <memberOf key="att.coded"/>
+            <memberOf key="att.canonical"/>
             <memberOf key="att.edit"/>
             <memberOf key="att.lang"/>
           </classes>
@@ -5648,6 +5638,77 @@
               original medium.</p>
           </remarks>
         </elementSpec>
+        <elementSpec ident="perfRes" module="MEI.header" mode="add">
+          <desc>(performance resource) – Name of an instrument on which a performer plays, a
+            performer's voice range, or a standard performing ensemble designation.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.authorized"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.canonical"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <attList>
+            <attDef ident="count" usage="opt">
+              <desc>Indicates the number of performers.</desc>
+              <datatype>
+                <rng:data type="positiveInteger"/>
+              </datatype>
+            </attDef>
+            <attDef ident="solo" usage="opt">
+              <desc>Marks this instrument or vocal part as a soloist. Do not use this attribute for
+                a solo instrument which is not accompanied.</desc>
+              <datatype>
+                <rng:ref name="data.BOOLEAN"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </elementSpec>
+        <classSpec ident="att.canonical" module="MEI.shared" type="atts" mode="replace">
+          <desc>Attributes that can be used to associate a representation such as a name or title
+            with canonical information about the object being named or referenced.</desc>
+          <attList>
+            <attDef ident="codedval" usage="opt">
+              <desc>a value that represents or identifies the element content. May serve as a
+                primary key in a web-accessible database identified by the authURI attribute.</desc>
+              <datatype maxOccurs="unbounded">
+                <rng:data type="NMTOKEN"/>
+              </datatype>
+            </attDef>
+          </attList>
+        </classSpec>
+        <elementSpec ident="resp" module="MEI.shared" mode="replace">
+          <desc>(responsibility) – A phrase describing the nature of intellectual
+            responsibility.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.authorized"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.canonical"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:text/>
+          </content>
+          <remarks>
+            <p>The name of the list from which a controlled value is taken may be recorded using the
+                <att>authority</att> attribute.</p>
+          </remarks>
+          <remarks>
+            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+              standard.</p>
+          </remarks>
+        </elementSpec>
+
         <elementSpec ident="lg" module="MEI.text" mode="replace">
           <desc>(line group) – May be used for any section of text that is organized as a group of
             lines; however, it is most often used for a group of verse lines functioning as a formal
@@ -5717,8 +5778,12 @@
               <rng:ref name="castList"/>
             </rng:optional>
             <rng:optional>
-              <rng:ref name="instrumentation"/>
+              <rng:ref name="perfResList"/>
             </rng:optional>
+            <!-- Add <annot> -->
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
           </content>
           <remarks>
             <p> Arrangements are coded for the medium of the work being described, not for the
@@ -5929,8 +5994,8 @@
           <desc>Keyword or phrase which describes a resource.</desc>
           <classes>
             <memberOf key="att.common"/>
-            <memberOf key="att.classcodeident"/>
             <memberOf key="att.bibl"/>
+            <memberOf key="att.classcodeident"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
           </classes>
@@ -6469,37 +6534,6 @@
           </remarks>
         </elementSpec>
 
-        <!-- instrumentation and its subelements should allow att.edit, issue #227 -->
-        <elementSpec ident="perfRes" module="MEI.header" mode="add">
-          <desc>(performance resource) – Name of an instrument on which a performer plays, a
-            performer's voice range, or a standard ensemble designation.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.authorized"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.coded"/>
-            <memberOf key="att.edit"/>
-            <memberOf key="att.lang"/>
-          </classes>
-          <content>
-            <rng:text/>
-          </content>
-          <attList>
-            <attDef ident="count" usage="opt">
-              <desc>Indicates the number of performers.</desc>
-              <datatype>
-                <rng:data type="positiveInteger"/>
-              </datatype>
-            </attDef>
-            <attDef ident="solo" usage="opt">
-              <desc>Marks this instrument or vocal part as a soloist. Do not use this attribute for
-                a solo instrument which is not accompanied.</desc>
-              <datatype>
-                <rng:ref name="data.BOOLEAN"/>
-              </datatype>
-            </attDef>
-          </attList>
-        </elementSpec>
         <elementSpec ident="expression" module="MEI.frbr" mode="replace">
           <desc>Intellectual or artistic realization of a work.</desc>
           <classes>

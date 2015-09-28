@@ -3,7 +3,7 @@
   datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   ns="http://www.music-encoding.org/ns/mei">
   <!--
-Schema generated from ODD source 2015-09-17T20:21:10Z. .
+Schema generated from ODD source 2015-09-28T15:01:21Z. .
 TEI Edition: 2013 Release
 TEI Edition Location: http://www.tei-c.org/Vault/P5//
   
@@ -8088,14 +8088,19 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
     </optional>
   </define>
   <define name="mei_att.canonical.attributes">
-    <ref name="mei_att.canonical.attribute.dbkey"/>
+    <ref name="mei_att.canonical.attribute.codedval"/>
   </define>
-  <define name="mei_att.canonical.attribute.dbkey">
+  <define name="mei_att.canonical.attribute.codedval">
     <optional>
-      <attribute name="dbkey">
-        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">used to
-          record a value which serves as a primary key in an external database.</a:documentation>
-        <data type="NMTOKEN"/>
+      <attribute name="codedval">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">a value that
+          represents or identifies the element content. May serve as a primary key in a
+          web-accessible database identified by the authURI attribute.</a:documentation>
+        <list>
+          <oneOrMore>
+            <data type="NMTOKEN"/>
+          </oneOrMore>
+        </list>
       </attribute>
     </optional>
   </define>
@@ -8262,18 +8267,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">describes a
           clef's shape.</a:documentation>
         <ref name="mei_data.CLEFSHAPE"/>
-      </attribute>
-    </optional>
-  </define>
-  <define name="mei_att.coded.attributes">
-    <ref name="mei_att.coded.attribute.code"/>
-  </define>
-  <define name="mei_att.coded.attribute.code">
-    <optional>
-      <attribute name="code">
-        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">captures one
-          or more coded values for the textual content of this element.</a:documentation>
-        <data type="NMTOKENS"/>
       </attribute>
     </optional>
   </define>
@@ -9829,7 +9822,8 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <attribute name="role">
         <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Used to
           specify further information about the entity referenced by this name, for example, the
-          occupation of a person or the status of a place.</a:documentation>
+          occupation of a person or the status of a place. Use a standard value whenever
+          possible.</a:documentation>
         <text/>
       </attribute>
     </optional>
@@ -12936,6 +12930,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </oneOrMore>
       <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <ref name="mei_att.typed.attributes"/>
@@ -14327,7 +14322,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <ref name="mei_att.common.attributes"/>
       <ref name="mei_att.authorized.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
+      <ref name="mei_att.canonical.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <empty/>
@@ -14927,6 +14922,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </sch:rule>
       </pattern>
       <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <ref name="mei_att.tempo.log.attributes"/>
@@ -14989,8 +14985,8 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </zeroOrMore>
       <ref name="mei_att.common.attributes"/>
       <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.canonical.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
+      <ref name="mei_att.canonical.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
       <ref name="mei_att.filing.attributes"/>
       <ref name="mei_att.lang.attributes"/>
@@ -15083,6 +15079,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </oneOrMore>
       <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <ref name="mei_att.typed.attributes"/>
@@ -15911,26 +15908,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <empty/>
     </element>
   </define>
-  <define name="mei_instrumentation">
-    <element name="instrumentation">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Instrumental
-        and non-dramatic vocal resources.</a:documentation>
-      <zeroOrMore>
-        <ref name="mei_model.headLike"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="mei_perfResList"/>
-      </zeroOrMore>
-      <zeroOrMore>
-        <ref name="mei_model.annotLike"/>
-      </zeroOrMore>
-      <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.edit.attributes"/>
-      <empty/>
-    </element>
-  </define>
   <define name="mei_interpretation">
     <element name="interpretation">
       <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Describes the
@@ -16111,8 +16088,11 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         <ref name="mei_castList"/>
       </optional>
       <optional>
-        <ref name="mei_instrumentation"/>
+        <ref name="mei_perfResList"/>
       </optional>
+      <zeroOrMore>
+        <ref name="mei_model.annotLike"/>
+      </zeroOrMore>
       <ref name="mei_att.common.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
       <ref name="mei_att.authorized.attributes"/>
@@ -16495,8 +16475,8 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </zeroOrMore>
       <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.classcodeident.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
+      <ref name="mei_att.classcodeident.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <ref name="mei_att.typed.attributes"/>
       <empty/>
@@ -24442,7 +24422,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <ref name="mei_att.common.attributes"/>
       <ref name="mei_att.authorized.attributes"/>
       <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
+      <ref name="mei_att.canonical.attributes"/>
       <ref name="mei_att.edit.attributes"/>
       <ref name="mei_att.lang.attributes"/>
       <optional>
@@ -24450,6 +24430,38 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
           <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
             the number of performers.</a:documentation>
           <data type="positiveInteger"/>
+        </attribute>
+      </optional>
+      <empty/>
+    </element>
+  </define>
+  <define name="mei_perfRes">
+    <element name="perfRes">
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(performance
+        resource) – Name of an instrument on which a performer plays, a performer's voice range, or
+        a standard performing ensemble designation.</a:documentation>
+      <zeroOrMore>
+        <text/>
+      </zeroOrMore>
+      <ref name="mei_att.common.attributes"/>
+      <ref name="mei_att.authorized.attributes"/>
+      <ref name="mei_att.bibl.attributes"/>
+      <ref name="mei_att.canonical.attributes"/>
+      <ref name="mei_att.edit.attributes"/>
+      <ref name="mei_att.lang.attributes"/>
+      <optional>
+        <attribute name="count">
+          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
+            the number of performers.</a:documentation>
+          <data type="positiveInteger"/>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="solo">
+          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Marks this
+            instrument or vocal part as a soloist. Do not use this attribute for a solo instrument
+            which is not accompanied.</a:documentation>
+          <ref name="mei_data.BOOLEAN"/>
         </attribute>
       </optional>
       <empty/>
@@ -24483,36 +24495,6 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         element.</sch:assert>
     </sch:rule>
   </pattern>
-  <define name="mei_perfRes">
-    <element name="perfRes">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">(performance
-        resource) – Name of an instrument on which a performer plays, a performer's voice range, or
-        a standard ensemble designation.</a:documentation>
-      <text/>
-      <ref name="mei_att.common.attributes"/>
-      <ref name="mei_att.authorized.attributes"/>
-      <ref name="mei_att.bibl.attributes"/>
-      <ref name="mei_att.coded.attributes"/>
-      <ref name="mei_att.edit.attributes"/>
-      <ref name="mei_att.lang.attributes"/>
-      <optional>
-        <attribute name="count">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Indicates
-            the number of performers.</a:documentation>
-          <data type="positiveInteger"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="solo">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Marks this
-            instrument or vocal part as a soloist. Do not use this attribute for a solo instrument
-            which is not accompanied.</a:documentation>
-          <ref name="mei_data.BOOLEAN"/>
-        </attribute>
-      </optional>
-      <empty/>
-    </element>
-  </define>
   <define name="mei_att.notationtype.attributes">
     <ref name="mei_att.notationtype.attribute.notationtype"/>
     <ref name="mei_att.notationtype.attribute.notationsubtype"/>
