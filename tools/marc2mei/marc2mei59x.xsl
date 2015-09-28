@@ -26,7 +26,7 @@
   <xsl:output method="xml" encoding="UTF-8" indent="yes" media-type="text/xml"/>
 
   <!-- 594 (RISM scoring note) -->
-  <xsl:template match="marc:datafield[@tag='594']">
+  <xsl:template match="marc:datafield[@tag = '594']" priority="2">
     <xsl:variable name="tag" select="@tag"/>
     <annot type="scoring">
       <xsl:attribute name="analog">
@@ -67,17 +67,16 @@
         </xsl:for-each>
       </xsl:variable>
       <!-- truncate the last delimiter -->
-      <xsl:value-of select="substring($str,1,string-length($str)-string-length($delimiter))"/>
+      <xsl:value-of select="substring($str, 1, string-length($str) - string-length($delimiter))"/>
     </annot>
   </xsl:template>
 
   <!-- 595 (RISM cast item) -->
-  <xsl:template match="marc:datafield[@tag='595']">
+  <xsl:template match="marc:datafield[@tag = '595']" priority="2">
     <xsl:variable name="tag" select="@tag"/>
     <castItem xmlns="http://www.music-encoding.org/ns/mei">
-      <xsl:if test="$analog='true'">
-        <!-- Unfortunately, castItem doesn't allow @analog, so we have to abuse @label -->
-        <xsl:attribute name="label">
+      <xsl:if test="$analog = 'true'">
+        <xsl:attribute name="analog">
           <xsl:value-of select="concat('marc:', $tag)"/>
         </xsl:attribute>
       </xsl:if>
