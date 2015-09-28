@@ -47,14 +47,25 @@
 
   <xsl:template name="thisID">
     <xsl:choose>
+      <!-- this node is an element with an ID -->
       <xsl:when test="@xml:id">
         <xsl:value-of select="concat('[#', @xml:id, ']')"/>
       </xsl:when>
       <xsl:when test="count(. | ../@*) = count(../@*)">
         <!-- this node is an attribute -->
-        <xsl:value-of select="concat('[#', generate-id(..), ']')"/>
+        <xsl:choose>
+          <!-- use parent's ID when it's available -->
+          <xsl:when test="../@xml:id">
+            <xsl:value-of select="concat('[#', ../@xml:id, ']')"/>
+          </xsl:when>
+          <!-- otherwise generate an ID for the parent -->
+          <xsl:otherwise>
+            <xsl:value-of select="concat('[#', generate-id(..), ']')"/>
+          </xsl:otherwise>
+        </xsl:choose>
       </xsl:when>
       <xsl:otherwise>
+        <!-- this is an element without an ID -->
         <xsl:value-of select="concat('[#', generate-id(), ']')"/>
       </xsl:otherwise>
     </xsl:choose>
@@ -102,7 +113,13 @@
       <xsl:value-of select="$nl"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="mei:mei | mei:meiHead | mei:music">
+      <xsl:when test="mei:*[@meiversion='3.0.0']">
+        <xsl:variable name="warning">The source document is already a version 3.0.0 MEI file!</xsl:variable>
+        <xsl:message terminate="yes">
+          <xsl:value-of select="normalize-space($warning)"/>
+        </xsl:message>
+      </xsl:when>
+      <xsl:when test="mei:*">
         <xsl:apply-templates select="mei:* | comment()" mode="copy"/>
       </xsl:when>
       <xsl:otherwise>
@@ -615,8 +632,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(), '&#32;', $thisID, '&#32;: Removed timeline')"
-          />
+              concat(local-name(), '&#32;', $thisID, '&#32;: Removed')"/>
         </xsl:with-param>
       </xsl:call-template>
     </xsl:if>
@@ -633,7 +649,6 @@
     <xsl:copy>
       <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates select="mei:avFile" mode="copy"/>
-      <!-- insert when elements here -->
       <xsl:apply-templates select="mei:clip" mode="copy"/>
     </xsl:copy>
     <xsl:if test="$verbose">
@@ -644,7 +659,7 @@
         <xsl:with-param name="warningText">
           <xsl:value-of
             select="
-              concat(local-name(), '&#32;', $thisID, '&#32;: Reconfigured recording')"
+              concat(local-name(), '&#32;', $thisID, '&#32;: Reconfigured content')"
           />
         </xsl:with-param>
       </xsl:call-template>
@@ -667,65 +682,7 @@
 
   <xsl:template match="mei:when" mode="copy">
     <xsl:copy>
-      <xsl:apply-templates select="@*[not(. = '')]" mode="copy"/>
-      <!-- supply attributes -->
-      <xsl:if test="@interval != ''">
-        <xsl:if test="not(@since) or @since = ''">
-          <xsl:attribute name="since">
-            <xsl:choose>
-              <xsl:when test="preceding-sibling::mei:when[@xml:id]">
-                <xsl:value-of select="concat('#', preceding-sibling::mei:when[@xml:id])"/>
-              </xsl:when>
-              <xsl:when test="preceding-sibling::mei:when">
-                <xsl:value-of select="concat('#', generate-id(preceding-sibling::mei:when))"/>
-              </xsl:when>
-              <xsl:when test="@xml:id">
-                <xsl:value-of select="concat('#', @xml:id)"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="concat('#', generate-id())"/>
-              </xsl:otherwise>
-            </xsl:choose>
-          </xsl:attribute>
-          <xsl:if test="$verbose">
-            <xsl:variable name="thisID">
-              <xsl:call-template name="thisID"/>
-            </xsl:variable>
-            <xsl:call-template name="warning">
-              <xsl:with-param name="warningText">
-                <xsl:value-of
-                  select="
-                    concat(local-name(), '&#32;', $thisID, '&#32;: Supplied missing since attribute; likely incorrect')"
-                />
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-        </xsl:if>
-        <xsl:if test="not(@inttype)">
-          <xsl:attribute name="inttype">
-            <xsl:text>time</xsl:text>
-          </xsl:attribute>
-          <xsl:if test="$verbose">
-            <xsl:variable name="thisID">
-              <xsl:call-template name="thisID"/>
-            </xsl:variable>
-            <xsl:call-template name="warning">
-              <xsl:with-param name="warningText">
-                <xsl:value-of
-                  select="
-                    concat(local-name(), '&#32;', $thisID, '&#32;: Supplied missing inttype attribute; likely incorrect')"
-                />
-              </xsl:with-param>
-            </xsl:call-template>
-          </xsl:if>
-        </xsl:if>
-      </xsl:if>
-      <xsl:if test="not(@since) or @since = ''">
-        <xsl:comment>&#32;The supplied value in @since is likely incorrect.&#32;</xsl:comment>
-      </xsl:if>
-      <xsl:if test="not(@inttype)">
-        <xsl:comment>&#32;The supplied value in @inttype is likely incorrect.&#32;</xsl:comment>
-      </xsl:if>
+      <xsl:apply-templates select="@*" mode="copy"/>
       <xsl:apply-templates mode="copy"/>
     </xsl:copy>
   </xsl:template>
@@ -757,6 +714,203 @@
           <xsl:value-of
             select="
               concat(local-name(), '&#32;', $thisID, '&#32;: Replaced fw with pgHead')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:instrumentation" mode="copy">
+    <xsl:choose>
+      <xsl:when test="count(mei:*) > 1">
+        <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
+          xsl:exclude-result-prefixes="mei
+          xlink">
+          <xsl:apply-templates select="@*" mode="copy"/>
+          <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
+            mode="copy"/>
+        </perfResList>
+      </xsl:when>
+      <xsl:when test="count(mei:*) = 0">
+        <!-- retain empty element, but call it perfResList -->
+        <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
+          xsl:exclude-result-prefixes="mei
+          xlink"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
+          mode="restructure"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfResList ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:instrVoiceGrp" mode="copy">
+    <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
+        mode="restructure"/>
+    </perfResList>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfResList ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:instrVoice | mei:ensemble" mode="copy">
+    <perfRes xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:value-of select="."/>
+    </perfRes>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfRes ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:instrVoiceGrp" mode="restructure">
+    <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
+        mode="restructure"/>
+    </perfResList>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfResList ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:instrVoice | mei:ensemble" mode="restructure">
+    <perfRes xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:value-of select="."/>
+    </perfRes>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfRes ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@code" mode="copy">
+    <!-- replace @code with @codedval -->
+    <xsl:attribute name="codedval">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Replaced @code with @codedval')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@dbkey" mode="copy">
+    <!-- replace @dbkey with @codedval -->
+    <xsl:attribute name="codedval">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Replaced @dbkey with @codedval')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="@decls" mode="copy" priority="1">
+    <!-- remove references to timeline in @decls -->
+    <xsl:variable name="notTimelineRefs"
+      select="
+        for $x in distinct-values(tokenize(., '\s+'))
+        return
+          replace(concat('#', //*[@xml:id = substring($x, 2) and local-name() != 'timeline']/@xml:id), '^#$', '')"/>
+    <xsl:variable name="notTimelineRefs2" as="text()">
+      <xsl:value-of select="$notTimelineRefs"/>
+    </xsl:variable>
+    <xsl:if test="not(normalize-space($notTimelineRefs2) = '')">
+      <xsl:attribute name="decls">
+        <xsl:value-of select="normalize-space($notTimelineRefs2)"/>
+      </xsl:attribute>
+    </xsl:if>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(ancestor::mei:*[1]), '&#32;', $thisID, '&#32;: Removed references to timeline elements in @decls')"
           />
         </xsl:with-param>
       </xsl:call-template>
