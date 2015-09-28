@@ -5082,6 +5082,8 @@
           <desc>List of bibliographic references.</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.typed"/>
@@ -5696,6 +5698,96 @@
             </attDef>
           </attList>
         </elementSpec>
+        <!-- Replace references to instrVoice and instrVoiceGrp in castItem and incip elements -->
+        <elementSpec ident="castItem" module="MEI.shared" mode="replace">
+          <desc>Contains a single entry within a cast list, describing either a single role or a
+            list of non-speaking roles.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+          </classes>
+          <content>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="role"/>
+                <rng:ref name="roleDesc"/>
+                <rng:ref name="actor"/>
+                <rng:ref name="perfRes"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+          <remarks>
+            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+              standard.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="incip" module="MEI.shared" mode="replace">
+          <desc>(incipit) – The opening music and/or words of a composition.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.incipLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="tempo"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="role"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:choice>
+                <rng:ref name="clef"/>
+                <rng:ref name="clefGrp"/>
+              </rng:choice>
+            </rng:optional>
+            <rng:optional>
+              <rng:choice>
+                <rng:ref name="perfRes"/>
+                <rng:ref name="perfResList"/>
+              </rng:choice>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="key"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="meter"/>
+            </rng:optional>
+            <rng:optional>
+              <rng:ref name="mensuration"/>
+            </rng:optional>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="incipCode"/>
+                <rng:ref name="incipText"/>
+                <rng:ref name="model.scoreLike"/>
+                <rng:ref name="model.graphicLike"/>
+                <rng:ref name="annot"/>
+                <!-- 
+              Can XSLT be used here to "select" an incipit from the already-encoded MEI transcription in the music element?
+              <rng:ref name="macro.XSLT"/> 
+            -->
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <remarks>
+            <p>The <gi scheme="MEI">incipText</gi> element may be used to capture a text incipit,
+              while <gi scheme="MEI">score</gi> is available to provide an MEI-encoded musical
+              incipit. Images of an incipit may be referenced using the <gi scheme="MEI"
+                >graphic</gi> element. An incipit encoded in a text format other than MEI may be
+              placed in the <gi scheme="MEI">incipCode</gi> element.</p>
+          </remarks>
+        </elementSpec>
+
+        <!-- merge @dbkey and @code into att.canonical/@codedval -->
+        <classSpec ident="att.coded" module="MEI.shared" type="atts" mode="delete"/>
         <classSpec ident="att.canonical" module="MEI.shared" type="atts" mode="replace">
           <desc>Attributes that can be used to associate a representation such as a name or title
             with canonical information about the object being named or referenced.</desc>
@@ -7078,6 +7170,8 @@
             which the sub-components may or may not be explicitly marked.</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.pointing"/>
@@ -7484,6 +7578,7 @@
           <desc>(audio/video file) – References an external digital audio or video file.</desc>
           <classes>
             <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
             <memberOf key="att.declaring"/>
             <memberOf key="att.internetmedia"/>
             <memberOf key="att.facsimile"/>
@@ -9585,6 +9680,28 @@
               where chord changes occur. When these parts require durations longer or shorter than a
               beat; however, <gi scheme="MEI">note</gi> elements with appropriately-shaped note
               heads should be employed.</p>
+          </remarks>
+        </elementSpec>
+
+        <elementSpec ident="relation" module="MEI.frbr" mode="replace">
+          <desc>A relation element describes the relationship between its parent and the object
+            referenced by the relation element's target attribute.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <!-- Make member of att.bibl -->
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.edit"/>
+            <memberOf key="att.pointing"/>
+            <memberOf key="att.rel"/>
+            <memberOf key="model.relationLike"/>
+          </classes>
+          <content>
+            <rng:empty/>
+          </content>
+          <remarks>
+            <p>The <att>rel</att> attribute describes the nature of the relationship. In this
+              triple, the parent element serves as subject, the referenced object as object. This
+              element is used to implement FRBR-like structures in MEI.</p>
           </remarks>
         </elementSpec>
 
