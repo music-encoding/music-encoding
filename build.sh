@@ -125,7 +125,7 @@ test()
 
     IFS=$SAVEIFS
     echo -e "\n${GREEN} PASSED TESTS: $PASSED_TESTS${NORM}"
-    echo -e "${PURPLE} TOTAL_TESTS: $TOTAL_TESTS${NORM}"
+    echo -e "${PURPLE} TOTAL TESTS: $TOTAL_TESTS${NORM}"
 
     if [ $PASSED_TESTS != $TOTAL_TESTS ]; then
         echo -e "\n${RED} $((TOTAL_TESTS - PASSED_TESTS)) TESTS FAILED ${NORM}"
