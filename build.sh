@@ -60,7 +60,9 @@ test()
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
-    SUCCESS=true
+
+    TOTAL_TESTS=0
+    PASSED_TESTS=0
 
     for file in $(find ${BUILD_DIR} -name '*.rng');
     do
@@ -71,6 +73,9 @@ test()
             echo -e "${PURPLE} Found ${NORM} $testdir"
             for tfile in $(find tests/${testdir} -name '*.mei');
             do
+                SUCCESS=true
+                TOTAL_TESTS=$((TOTAL_TESTS + 1))
+
                 echo -e "${PURPLE} Testing Against: ${NORM}" $tfile
 
                 $PATH_TO_JING $file "${tfile}"
@@ -78,12 +83,14 @@ test()
                 if [ $? = 1 ]; then
                     IFS=$SAVEIFS
                     echo -e "${RED}\tTests failed on" $tfile$NORM
-                    SUCCESS=false;
+                    SUCCESS=false
                 else
                     echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
                 fi
 
-                if $SUCCESS; then
+                if [ $SUCCESS == true ]; then
+                    PASSED_TESTS=$((PASSED_TESTS + 1))
+
                     echo -e "\n${GREEN}***********************************************${NORM}"
                     echo -e "${GREEN}$file passed validation tests${NORM}"
                     echo -e "${GREEN}***********************************************${NORM}\n"
@@ -117,6 +124,13 @@ test()
     # done
 
     IFS=$SAVEIFS
+    echo -e "\n${GREEN} PASSED TESTS: $PASSED_TESTS${NORM}"
+    echo -e "${PURPLE} TOTAL_TESTS: $TOTAL_TESTS${NORM}"
+
+    if [ $PASSED_TESTS != $TOTAL_TESTS ]; then
+        echo -e "\n${RED} $((TOTAL_TESTS - PASSED_TESTS)) TESTS FAILED ${NORM}"
+        exit 1
+    fi
 }
 
 usage()
