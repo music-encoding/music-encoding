@@ -2,9 +2,9 @@
 
 ## Customize here
 PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
-PATH_TO_SAXON="/usr/local/bin/saxon"
+PATH_TO_SAXON="/usr/bin/saxon"
 PATH_TO_SAXON_JAR="/usr/local/Cellar/saxon/9.6.0.5/libexec/saxon9he.jar"
-PATH_TO_JING="/usr/local/bin/jing"
+PATH_TO_JING="/usr/bin/jing"
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
@@ -30,6 +30,22 @@ PURPLE='\033[0;35m'
 NORM='\033[0m'  # No Color
 
 SCHEMATRON_PASS=true
+
+if [ ! -f $PATH_TO_SAXON ]; then
+    echo "Saxon was not found at:" $PATH_TO_SAXON
+    exit 1
+fi
+
+if [ ! -f $PATH_TO_SAXON_JAR ]; then
+    echo "Saxon JAR file was not found at:" $PATH_TO_SAXON_JAR
+    exit 1
+fi
+
+if [ ! -f $PATH_TO_JING ]; then
+    echo "Jing was not found at:" $PATH_TO_JING
+    exit 1
+fi
+
 
 build_schematron()
 {
