@@ -2,8 +2,8 @@
 
 ## Customize here
 PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
-PATH_TO_SAXON="/usr/bin/saxon"
-PATH_TO_SAXON_JAR="/usr/local/Cellar/saxon/9.6.0.5/libexec/saxon9he.jar"
+PATH_TO_SAXON="/usr/bin/saxonb-xslt"
+PATH_TO_SAXON_JAR="/usr/share/java/saxonb.jar"
 PATH_TO_JING="/usr/bin/jing"
 
 ## Do not customize here
