@@ -27,7 +27,6 @@ SCHEMATRON_VALIDATOR=${SCHEMATRON_FILES}"/validation-checker.xquery"
 
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
 
-
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 PURPLE='\033[0;35m'
