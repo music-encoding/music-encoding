@@ -2,9 +2,9 @@
 
 ## Customize here
 PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
-PATH_TO_SAXON_JAR="/usr/share/java/Saxon-HE-9.4.0.7.jar"
-PATH_TO_TRANG_JAR="/usr/share/java/trang.jar"
-PATH_TO_JING="/usr/bin/jing"
+PATH_TO_SAXON="/usr/local/bin/saxon"
+PATH_TO_SAXON_JAR="/usr/local/Cellar/saxon/9.6.0.5/libexec/saxon9he.jar"
+PATH_TO_JING="/usr/local/bin/jing"
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
@@ -12,14 +12,89 @@ BUILD_DIR="build"
 CUSTOMIZATIONS_DIR="customizations"
 SOURCE_DIR="source"
 SAMPLES_DIR="samples"
+TOOLS_DIR="tools"
+
+SCHEMATRON_FILES=${TOOLS_DIR}"/schematron"
 DRIVER_FILE=${SOURCE_DIR}"/driver.xml"
+
+SCHEMATRON_EXTRACT=${SCHEMATRON_FILES}"/ExtractSchFromRNG-2.xsl"
+SCHEMATRON_PREPROCESS=${SCHEMATRON_FILES}"/iso_dsdl_include.xsl"
+SCHEMATRON_EXPAND=${SCHEMATRON_FILES}"/iso_abstract_expand.xsl"
+SCHEMATRON_COMPILE=${SCHEMATRON_FILES}"/iso_svrl_for_xslt2.xsl"
+SCHEMATRON_LOCATION=${BUILD_DIR}"/schematron"
+SCHEMATRON_VALIDATOR=${SCHEMATRON_FILES}"/validation-checker.xquery"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 PURPLE='\033[0;35m'
 NORM='\033[0m'  # No Color
 
-all()
+SCHEMATRON_PASS=true
+
+build_schematron()
+{
+    rngfile=$1
+
+    schematron_rules=$(basename ${rngfile%%.*}).xsl
+
+    if [ ! -d $SCHEMATRON_LOCATION ]; then
+        echo -e "${PURPLE}Creating schematron directory${NORM}"
+        mkdir -p $SCHEMATRON_LOCATION
+    fi
+
+    tempdir=$(mktemp -d)
+
+    # 1. Extract rules from the RNG schema
+    $PATH_TO_SAXON -versionmsg:off -s:$rngfile -xsl:$SCHEMATRON_EXTRACT -o:${tempdir}/schematron-rules.sch
+
+    # 2. Preprocess
+    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-rules.sch -xsl:$SCHEMATRON_PREPROCESS -o:${tempdir}/schematron-preprocess.sch
+
+    # 3. Expand
+    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-preprocess.sch -xsl:$SCHEMATRON_EXPAND -o:${tempdir}/schematron-expand.sch
+
+    # 4. Compile
+    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-expand.sch -xsl:$SCHEMATRON_COMPILE -o:${SCHEMATRON_LOCATION}/${schematron_rules}
+
+    rm -r $tempdir
+
+    echo -e "${GREEN}Finished generating Schematron for ${rngfile}${NORM}"
+}
+
+validate_with_schematron()
+{
+    rngfile=$1
+    meifile=$2
+    SCHEMATRON_PASS=false
+
+    echo -e "${PURPLE}Validating $meifile with schematron${NORM}"
+
+    tempdir=$(mktemp -d)
+    schematron_file=$SCHEMATRON_LOCATION/$(basename ${rngfile%%.*}).xsl
+
+    # Generate validation file from the XSL
+    echo -e "${PURPLE} Applying validation stylesheet${NORM}"
+    $PATH_TO_SAXON -versionmsg:off -s:$meifile -xsl:$schematron_file -o:${tempdir}"/schematron-output.xml"
+
+    # Validate
+    echo -e "${PURPLE} Validating Schematron...${NORM}\n"
+    msg=$(java -cp $PATH_TO_SAXON_JAR net.sf.saxon.Query -s:${tempdir}/schematron-output.xml -q:${SCHEMATRON_VALIDATOR})
+
+    passed=1
+    if [ ! -n $msg ]; then
+        SCHEMATRON_PASS=false
+        echo -e "${RED} Schematron validation failed for ${meifile}.${NORM}"
+        echo -e $msg
+        passed=0
+    else
+        SCHEMATRON_PASS=true
+        echo -e "${GREEN} Schematron validation passed for ${meifile}.${NORM}"
+    fi
+
+    rm -r $tempdir
+}
+
+build()
 {
     if [ ! -f $TEI_TO_RELAXNG_BIN ]; then
         echo $TEI_TO_RELAXNG_BIN
@@ -29,7 +104,7 @@ all()
     fi
 
     if [ -d "build" ]; then
-        echo -e "${PURPLE}Removing old build directory${NORM}"
+        echo -e "${PURPLE} Removing old build directory${NORM}"
         rm -r ${BUILD_DIR}
     fi
 
@@ -40,14 +115,20 @@ all()
 
     for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.odd');
     do
-        echo -e "${GREEN}Processing" "${file}"$NORM
+        echo -e "${GREEN} Processing" "${file}"$NORM
+        echo -e $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
+
         $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
-            echo -e "${RED}Build failed on" $file$NORM
+            echo -e "${RED} Build failed on" $file$NORM
             exit 1
         fi
+
+        # build the schematron rules for this schema
+        echo -e "${GREEN} Building Schematron Rules for ${file}${NORM}"
+        build_schematron $BUILD_DIR/$(basename ${file%%.*}).rng
 
     done
 
@@ -88,12 +169,14 @@ test()
                     echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
                 fi
 
-                if [ $SUCCESS == true ]; then
+                validate_with_schematron $file $tfile
+
+                if [[ "$SUCCESS" = true && "$SCHEMATRON_PASS" = true ]]; then
                     PASSED_TESTS=$((PASSED_TESTS + 1))
 
-                    echo -e "\n${GREEN}***********************************************${NORM}"
-                    echo -e "${GREEN}$file passed validation tests${NORM}"
-                    echo -e "${GREEN}***********************************************${NORM}\n"
+                    echo -e "\n${GREEN} ***********************************************${NORM}"
+                    echo -e "${GREEN} $file passed validation tests${NORM}"
+                    echo -e "${GREEN} ***********************************************${NORM}\n"
                 else
                     echo -e "\n${RED} FAILURE ${NORM}"
                 fi
@@ -140,7 +223,7 @@ usage()
     echo "  -t Path to TEI Stylesheets"
     echo ""
     echo "Build options:"
-    echo "  all"
+    echo "  build"
     echo "  test"
     exit 1
 }
@@ -161,7 +244,7 @@ args=("$@")
 TYPE=${args[$SKIP]}
 
 case $TYPE in
-    "all" ) all;;
+    "build" ) build;;
     "test" ) test;;
     * ) usage;;
 esac
