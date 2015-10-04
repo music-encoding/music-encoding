@@ -1,10 +1,17 @@
 #!/bin/bash
 
-## Customize here
-PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
-PATH_TO_SAXON="/usr/bin/saxon-xslt"
-PATH_TO_SAXON_JAR="/usr/share/java/saxon.jar"
-PATH_TO_JING="/usr/bin/jing"
+# If these environment variables are not set, set some defaults
+if [ ! -z $PATH_TO_TEI_STYLESHEETS ]; then
+    PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
+fi
+
+if [ ! -z $PATH_TO_SAXON_JAR ]; then
+    PATH_TO_SAXON_JAR="/usr/share/java/saxon.jar"
+fi
+
+if [ ! -z $PATH_TO_JING ]; then
+    PATH_TO_JING="/usr/bin/jing"
+fi
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
@@ -23,6 +30,9 @@ SCHEMATRON_EXPAND=${SCHEMATRON_FILES}"/iso_abstract_expand.xsl"
 SCHEMATRON_COMPILE=${SCHEMATRON_FILES}"/iso_svrl_for_xslt2.xsl"
 SCHEMATRON_LOCATION=${BUILD_DIR}"/schematron"
 SCHEMATRON_VALIDATOR=${SCHEMATRON_FILES}"/validation-checker.xquery"
+
+TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
+
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -236,7 +246,6 @@ usage()
 {
     echo "Flags:"
     echo "  -h Print usage"
-    echo "  -t Path to TEI Stylesheets"
     echo ""
     echo "Build options:"
     echo "  build"
@@ -250,8 +259,6 @@ while getopts "h:t:" OPT; do
         h) 
             usage;;
         t)
-            PATH_TO_TEI_STYLESHEETS=$OPTARG
-            TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
             SKIP=$(($SKIP + 2));;
     esac
 done
