@@ -7,7 +7,6 @@
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
-PATH_TO_SAXON="java -jar ${PATH_TO_SAXON_JAR}"
 
 BUILD_DIR="build"
 CUSTOMIZATIONS_DIR="customizations"
@@ -46,22 +45,21 @@ build_schematron()
     fi
 
     tempdir=$(mktemp -d)
-
     # 1. Extract rules from the RNG schema
-    $PATH_TO_SAXON -versionmsg:off -s:$rngfile -xsl:$SCHEMATRON_EXTRACT -o:${tempdir}/schematron-rules.sch
+    java -jar $PATH_TO_SAXON_JAR -versionmsg:off -s:$rngfile -xsl:$SCHEMATRON_EXTRACT -o:${tempdir}/schematron-rules.sch
 
     # 2. Preprocess
-    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-rules.sch -xsl:$SCHEMATRON_PREPROCESS -o:${tempdir}/schematron-preprocess.sch
+    java -jar $PATH_TO_SAXON_JAR -versionmsg:off -s:${tempdir}/schematron-rules.sch -xsl:$SCHEMATRON_PREPROCESS -o:${tempdir}/schematron-preprocess.sch
 
     # 3. Expand
-    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-preprocess.sch -xsl:$SCHEMATRON_EXPAND -o:${tempdir}/schematron-expand.sch
+    java -jar $PATH_TO_SAXON_JAR -versionmsg:off -s:${tempdir}/schematron-preprocess.sch -xsl:$SCHEMATRON_EXPAND -o:${tempdir}/schematron-expand.sch
 
     # 4. Compile
-    $PATH_TO_SAXON -versionmsg:off -s:${tempdir}/schematron-expand.sch -xsl:$SCHEMATRON_COMPILE -o:${SCHEMATRON_LOCATION}/${schematron_rules}
+    java -jar $PATH_TO_SAXON_JAR -versionmsg:off -s:${tempdir}/schematron-expand.sch -xsl:$SCHEMATRON_COMPILE -o:${SCHEMATRON_LOCATION}/${schematron_rules}
 
     rm -r $tempdir
 
-    echo -e "${GREEN}Finished generating Schematron for ${rngfile}${NORM}"
+    echo -e "${GREEN} Finished generating Schematron for ${rngfile}${NORM}"
 }
 
 validate_with_schematron()
@@ -77,7 +75,7 @@ validate_with_schematron()
 
     # Generate validation file from the XSL
     echo -e "${PURPLE} Applying validation stylesheet${NORM}"
-    $PATH_TO_SAXON -versionmsg:off -s:$meifile -xsl:$schematron_file -o:${tempdir}"/schematron-output.xml"
+    java -jar $PATH_TO_SAXON_JAR -versionmsg:off -s:$meifile -xsl:$schematron_file -o:${tempdir}"/schematron-output.xml"
 
     # Validate
     echo -e "${PURPLE} Validating Schematron...${NORM}\n"
@@ -118,7 +116,7 @@ build()
 
     for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.odd');
     do
-        echo -e "${GREEN} Processing" "${file}"$NORM
+        echo -e "${PURPLE} Processing" "${file}"$NORM
         echo -e $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
@@ -130,7 +128,7 @@ build()
         fi
 
         # build the schematron rules for this schema
-        echo -e "${GREEN} Building Schematron Rules for ${file}${NORM}"
+        echo -e "${PURPLE} Building Schematron Rules for ${file}${NORM}"
         build_schematron $BUILD_DIR/$(basename ${file%%.*}).rng
 
     done
