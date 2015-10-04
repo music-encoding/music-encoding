@@ -1,17 +1,9 @@
 #!/bin/bash
 
 # If these environment variables are not set, set some defaults
-if [ ! -z $PATH_TO_TEI_STYLESHEETS ]; then
-    PATH_TO_TEI_STYLESHEETS="/usr/local/share/tei/Stylesheets"
-fi
-
-if [ ! -z $PATH_TO_SAXON_JAR ]; then
-    PATH_TO_SAXON_JAR="/usr/share/java/saxon.jar"
-fi
-
-if [ ! -z $PATH_TO_JING ]; then
-    PATH_TO_JING="/usr/bin/jing"
-fi
+: ${PATH_TO_TEI_STYLESHEETS?"Need to set TEI Stylesheets."}
+: ${PATH_TO_SAXON_JAR?"The path to the Saxon jar needs to be set."}
+: ${PATH_TO_JING?"The path to the jing binary needs to be set."}
 
 ## Do not customize here
 TEI_TO_RELAXNG_BIN="${PATH_TO_TEI_STYLESHEETS}/bin/teitorelaxng"
