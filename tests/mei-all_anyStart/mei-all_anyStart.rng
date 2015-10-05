@@ -3,7 +3,7 @@
   datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   ns="http://www.music-encoding.org/ns/mei">
   <!--
-Schema generated from ODD source 2015-09-28T21:50:40Z. .
+Schema generated from ODD source 2015-10-05T15:59:35Z. .
 TEI Edition: 2013 Release
 TEI Edition Location: http://www.tei-c.org/Vault/P5//
   
@@ -7101,30 +7101,8 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
   </define>
   <define name="mei_data.STEMDIRECTION">
     <choice>
-      <value>up</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        upward.</a:documentation>
-      <value>down</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        downward.</a:documentation>
-      <value>left</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        left.</a:documentation>
-      <value>right</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        right.</a:documentation>
-      <value>ne</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points up
-        and right.</a:documentation>
-      <value>nw</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points up
-        and left.</a:documentation>
-      <value>se</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        down and right.</a:documentation>
-      <value>sw</value>
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
-        down and left.</a:documentation>
+      <ref name="mei_data.STEMDIRECTION.basic"/>
+      <ref name="mei_data.STEMDIRECTION.extended"/>
     </choice>
   </define>
   <define name="mei_data.STEMMODIFIER">
@@ -7752,6 +7730,38 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <value>sw</value>
       <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Rotated 225
         degrees clockwise.</a:documentation>
+    </choice>
+  </define>
+  <define name="mei_data.STEMDIRECTION.basic">
+    <choice>
+      <value>up</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        upward.</a:documentation>
+      <value>down</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        downward.</a:documentation>
+    </choice>
+  </define>
+  <define name="mei_data.STEMDIRECTION.extended">
+    <choice>
+      <value>left</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        left.</a:documentation>
+      <value>right</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        right.</a:documentation>
+      <value>ne</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points up
+        and right.</a:documentation>
+      <value>nw</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points up
+        and left.</a:documentation>
+      <value>se</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        down and right.</a:documentation>
+      <value>sw</value>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Stem points
+        down and left.</a:documentation>
     </choice>
   </define>
   <define name="mei_att.accid.anl.attributes">
@@ -23610,66 +23620,47 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
   </define>
   <define name="mei_line">
     <element name="line">
-      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">A line that
-        cannot be represented by a more specific element.</a:documentation>
+      <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">A visual line
+        that cannot be represented by a more specific; i.e., semantic, element.</a:documentation>
       <zeroOrMore>
         <choice>
           <text/>
           <ref name="mei_model.textphraseLike.limited"/>
         </choice>
       </zeroOrMore>
-      <ref name="mei_att.common.anl.attributes"/>
-      <ref name="mei_att.color.attributes"/>
+      <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+        id="mei-line-line_start-_and_end-type_attributes_required-constraint-90">
+        <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
+          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+          xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+          xmlns="http://www.tei-c.org/ns/1.0" context="mei:line[ancestor::mei:symbolDef]">
+          <sch:assert test="@startid or (@x and @y)">When used in the symbolDef context, must have
+            either a startid attribute or x and y attributes.</sch:assert>
+          <sch:assert test="@endid or (@x2 and @y2)">When used in the symbolDef context, must have
+            either an endid attribute or both x2 and y2 attributes.</sch:assert>
+        </sch:rule>
+      </pattern>
+      <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+        id="mei-line-line_start-_and_end-type_attributes_required-constraint-91">
+        <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
+          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+          xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+          xmlns="http://www.tei-c.org/ns/1.0" context="mei:line[not(ancestor::mei:symbolDef)]">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real or (@x and @y)">When
+            used in the score context, must have a startid, tstamp, tstamp.ges or tstamp.real
+            attribute or both x and y attributes.</sch:assert>
+          <sch:assert test="@dur or @dur.ges or @endid or @tstamp2 or (@x2 and @y2)">When used in
+            the score context, must have an endid, dur, dur.ges, or tstamp2 attribute or both x2 and
+            y2 attributes.</sch:assert>
+        </sch:rule>
+      </pattern>
       <ref name="mei_att.common.attributes"/>
       <ref name="mei_att.facsimile.attributes"/>
-      <ref name="mei_att.startendid.attributes"/>
+      <ref name="mei_att.line.anl.attributes"/>
+      <ref name="mei_att.line.ges.attributes"/>
+      <ref name="mei_att.line.log.attributes"/>
+      <ref name="mei_att.line.vis.attributes"/>
       <ref name="mei_att.typed.attributes"/>
-      <ref name="mei_att.visualoffset.attributes"/>
-      <ref name="mei_att.visualoffset2.attributes"/>
-      <ref name="mei_att.xy.attributes"/>
-      <ref name="mei_att.xy2.attributes"/>
-      <optional>
-        <attribute name="form">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Visual form
-            of the line.</a:documentation>
-          <ref name="mei_data.LINEFORM"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="width">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Width of
-            the line.</a:documentation>
-          <ref name="mei_data.LINEWIDTH"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="endsym">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Symbol
-            rendered at end of line.</a:documentation>
-          <ref name="mei_data.LINESTARTENDSYMBOL"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="endsymsize">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Holds the
-            relative size of the line-end symbol.</a:documentation>
-          <ref name="mei_data.LINESTARTENDSYMBOLSIZE"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="startsym">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Symbol
-            rendered at start of line.</a:documentation>
-          <ref name="mei_data.LINESTARTENDSYMBOL"/>
-        </attribute>
-      </optional>
-      <optional>
-        <attribute name="startsymsize">
-          <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Holds the
-            relative size of the line-start symbol.</a:documentation>
-          <ref name="mei_data.LINESTARTENDSYMBOLSIZE"/>
-        </attribute>
-      </optional>
       <empty/>
     </element>
   </define>
@@ -23905,7 +23896,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
     </optional>
   </define>
   <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-    id="mei-att.alignment-check_whenTarget-constraint-90">
+    id="mei-att.alignment-check_whenTarget-constraint-92">
     <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
       xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -23924,7 +23915,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         element (using the interval and since attributes).</a:documentation>
       <empty/>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-when-check_when_interval-constraint-91">
+        id="mei-when-check_when_interval-constraint-93">
         <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -23982,7 +23973,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </attribute>
       </optional>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-when-since-check_sinceTarget-constraint-92">
+        id="mei-when-since-check_sinceTarget-constraint-94">
         <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -24292,6 +24283,86 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       <empty/>
     </element>
   </define>
+  <define name="mei_att.line.anl.attributes">
+    <empty/>
+  </define>
+  <define name="mei_att.line.log.attributes">
+    <ref name="mei_att.controlevent.attributes"/>
+    <ref name="mei_att.duration.additive.attributes"/>
+    <ref name="mei_att.startendid.attributes"/>
+    <ref name="mei_att.timestamp2.musical.attributes"/>
+  </define>
+  <define name="mei_att.line.vis.attributes">
+    <ref name="mei_att.color.attributes"/>
+    <ref name="mei_att.placement.attributes"/>
+    <ref name="mei_att.visualoffset.attributes"/>
+    <ref name="mei_att.visualoffset2.attributes"/>
+    <ref name="mei_att.xy.attributes"/>
+    <ref name="mei_att.xy2.attributes"/>
+    <ref name="mei_att.line.vis.attribute.form"/>
+    <ref name="mei_att.line.vis.attribute.width"/>
+    <ref name="mei_att.line.vis.attribute.endsym"/>
+    <ref name="mei_att.line.vis.attribute.endsymsize"/>
+    <ref name="mei_att.line.vis.attribute.startsym"/>
+    <ref name="mei_att.line.vis.attribute.startsymsize"/>
+  </define>
+  <define name="mei_att.line.vis.attribute.form">
+    <optional>
+      <attribute name="form">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Visual form
+          of the line.</a:documentation>
+        <ref name="mei_data.LINEFORM"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.vis.attribute.width">
+    <optional>
+      <attribute name="width">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Width of the
+          line.</a:documentation>
+        <ref name="mei_data.LINEWIDTH"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.vis.attribute.endsym">
+    <optional>
+      <attribute name="endsym">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Symbol
+          rendered at end of line.</a:documentation>
+        <ref name="mei_data.LINESTARTENDSYMBOL"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.vis.attribute.endsymsize">
+    <optional>
+      <attribute name="endsymsize">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Holds the
+          relative size of the line-end symbol.</a:documentation>
+        <ref name="mei_data.LINESTARTENDSYMBOLSIZE"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.vis.attribute.startsym">
+    <optional>
+      <attribute name="startsym">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Symbol
+          rendered at start of line.</a:documentation>
+        <ref name="mei_data.LINESTARTENDSYMBOL"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.vis.attribute.startsymsize">
+    <optional>
+      <attribute name="startsymsize">
+        <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Holds the
+          relative size of the line-start symbol.</a:documentation>
+        <ref name="mei_data.LINESTARTENDSYMBOLSIZE"/>
+      </attribute>
+    </optional>
+  </define>
+  <define name="mei_att.line.ges.attributes">
+    <ref name="mei_att.duration.performed.attributes"/>
+  </define>
   <define name="mei_att.extsym.attributes">
     <ref name="mei_att.extsym.attribute.glyphname"/>
     <ref name="mei_att.extsym.attribute.glyphnum"/>
@@ -24459,7 +24530,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
     </optional>
   </define>
   <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-    id="mei-att.classcodeident-classcode-check_classcodeTarget-constraint-93">
+    id="mei-att.classcodeident-classcode-check_classcodeTarget-constraint-95">
     <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
       xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -24497,7 +24568,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
     </optional>
   </define>
   <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-    id="mei-att.notationtype-notationsubtype-When_notationsubtype-constraint-94">
+    id="mei-att.notationtype-notationsubtype-When_notationsubtype-constraint-96">
     <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
       xmlns:sch="http://purl.oclc.org/dsdl/schematron"
       xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -24812,7 +24883,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         &lt;turn&gt;, or &lt;trill&gt;.</a:documentation>
       <empty/>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-ornam-ornam_start-type_attributes_required-constraint-95">
+        id="mei-ornam-ornam_start-type_attributes_required-constraint-97">
         <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -24917,7 +24988,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </zeroOrMore>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-fing-stack_exclusion-constraint-96">
+        id="mei-fing-stack_exclusion-constraint-98">
         <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
@@ -25003,7 +25074,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         </choice>
       </zeroOrMore>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-fingGrp-require_fingeringLike_children-constraint-97">
+        id="mei-fingGrp-require_fingeringLike_children-constraint-99">
         <sch:rule xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron"
           xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
