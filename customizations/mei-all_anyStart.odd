@@ -4228,6 +4228,25 @@
               </rng:choice>
             </rng:zeroOrMore>
           </content>
+          <constraintSpec ident="line_start-_and_end-type_attributes_required"
+            scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:line[ancestor::mei:symbolDef]">
+                <sch:assert test="@startid or (@x and @y)">When used in the symbolDef context, must
+                  have either a startid attribute or x and y attributes.</sch:assert>
+                <sch:assert test="@endid or (@x2 and @y2)">When used in the symbolDef context, must
+                  have either an endid attribute or both x2 and y2 attributes.</sch:assert>
+              </sch:rule>
+              <sch:rule context="mei:line[not(ancestor::mei:symbolDef)]">
+                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real or (@x and @y)"
+                  >When used in the score context, must have a startid, tstamp, tstamp.ges or
+                  tstamp.real attribute or both x and y attributes.</sch:assert>
+                <sch:assert test="@dur or @dur.ges or @endid or @tstamp2 or (@x2 and @y2)">When used
+                  in the score context, must have an endid, dur, dur.ges, or tstamp2 attribute or
+                  both x2 and y2 attributes.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
           <remarks>
             <p>The starting point of the line may be identified in absolute output coordinate terms
               using the <att>x</att> and <att>y</att> attributes. The attributes in the
@@ -8862,6 +8881,41 @@
         <!-- Revise datatypes related to stems -->
         <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt" mode="replace">
           <desc>Stem direction.</desc>
+          <content>
+            <alternate>
+              <macroRef key="data.STEMDIRECTION.basic"/>
+              <macroRef key="data.STEMDIRECTION.extended"/>
+            </alternate>
+          </content>
+          <!--<valList type="closed">
+            <valItem ident="up">
+              <desc>Stem points upward.</desc>
+            </valItem>
+            <valItem ident="down">
+              <desc>Stem points downward.</desc>
+            </valItem>
+            <valItem ident="left">
+              <desc>Stem points left.</desc>
+            </valItem>
+            <valItem ident="right">
+              <desc>Stem points right.</desc>
+            </valItem>
+            <valItem ident="ne">
+              <desc>Stem points up and right.</desc>
+            </valItem>
+            <valItem ident="nw">
+              <desc>Stem points up and left.</desc>
+            </valItem>
+            <valItem ident="se">
+              <desc>Stem points down and right.</desc>
+            </valItem>
+            <valItem ident="sw">
+              <desc>Stem points down and left.</desc>
+            </valItem>
+          </valList>-->
+        </macroSpec>
+        <macroSpec ident="data.STEMDIRECTION.basic" module="MEI" type="dt" mode="add">
+          <desc>Common stem directions.</desc>
           <valList type="closed">
             <valItem ident="up">
               <desc>Stem points upward.</desc>
@@ -8869,6 +8923,11 @@
             <valItem ident="down">
               <desc>Stem points downward.</desc>
             </valItem>
+          </valList>
+        </macroSpec>
+        <macroSpec ident="data.STEMDIRECTION.extended" module="MEI" type="dt" mode="add">
+          <desc>Additional stem directions.</desc>
+          <valList type="closed">
             <valItem ident="left">
               <desc>Stem points left.</desc>
             </valItem>
