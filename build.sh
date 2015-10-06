@@ -38,7 +38,7 @@ all()
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
-    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
+    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.odd');
     do
         echo -e "${GREEN}Processing" "${file}"$NORM
         $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
@@ -56,10 +56,11 @@ all()
 
 test()
 {
-    echo -e "\nValidating 2013 samples directory against built customizations\n"
+    echo -e "\nValidating samples directory against built customizations\n"
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
+    SUCCESS=true
 
     for file in $(find ${BUILD_DIR} -name '*.rng');
     do
@@ -70,21 +71,25 @@ test()
             echo -e "${PURPLE} Found ${NORM} $testdir"
             for tfile in $(find tests/${testdir} -name '*.mei');
             do
-                echo -e "${PURPLE} Testing: ${NORM}" $tfile
+                echo -e "${PURPLE} Testing Against: ${NORM}" $tfile
 
                 $PATH_TO_JING $file "${tfile}"
 
                 if [ $? = 1 ]; then
                     IFS=$SAVEIFS
                     echo -e "${RED}\tTests failed on" $tfile$NORM
-                    exit 1
+                    SUCCESS=false;
                 else
                     echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
                 fi
 
-                echo -e "\n${GREEN}***********************************************"
-                echo -e "$file passed validation tests"
-                echo -e "***********************************************${NORM}\n"
+                if $SUCCESS; then
+                    echo -e "\n${GREEN}***********************************************${NORM}"
+                    echo -e "${GREEN}$file passed validation tests${NORM}"
+                    echo -e "${GREEN}***********************************************${NORM}\n"
+                else
+                    echo -e "\n${RED} FAILURE ${NORM}"
+                fi
             done
         fi
     done
@@ -92,19 +97,24 @@ test()
     # REMOVE SOON
     # Until we get the test set up and running we'll still validate the whole sample collection against
     # mei-all. This testing scheme should be removed after the tests are ready.
-    for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
-    do
-        echo -e "${PURPLE} Testing: ${NORM}" $file
-        $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
+    # for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
+    # do
+    #     echo -e "${PURPLE} Testing: ${NORM}" $file
 
-        if [ $? = 1 ]; then
-            IFS=$SAVEIFS
-            echo -e "${RED}\tTests failed on" $file$NORM
-            exit 1
-        else
-            echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
-        fi
-    done
+    #     if $USE_XMLLINT; then
+    #         $PATH_TO_XMLLINT --noout --relaxng $BUILD_DIR/mei-all.rng "${file}"
+    #     else
+    #         $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
+    #     fi
+
+    #     if [ $? = 1 ]; then
+    #         IFS=$SAVEIFS
+    #         echo -e "${RED}\tTests failed on" $file$NORM
+    #         exit 1
+    #     else
+    #         echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
+    #     fi
+    # done
 
     IFS=$SAVEIFS
 }
