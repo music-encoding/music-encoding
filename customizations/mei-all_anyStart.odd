@@ -1248,333 +1248,7 @@
           </content>
         </macroSpec>
 
-        <!-- Make control events members of att.typed, issue #166 -->
-        <elementSpec ident="arpeg" module="MEI.cmn" mode="replace">
-          <desc>(arpeggiation) – Indicates that the notes of a chord are to be performed
-            successively rather than simultaneously, usually from lowest to highest. Sometimes
-            called a "roll".</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.arpeg.log"/>
-            <memberOf key="att.arpeg.vis"/>
-            <memberOf key="att.arpeg.ges"/>
-            <memberOf key="att.arpeg.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <remarks>
-            <p>The modern arpeggiation symbol is a vertical wavy line preceding the chord. When the
-              notes of the chord are to be performed from highest to lowest, an arrowhead may be
-              added to the lower end of the line. Even though it is redundant, an arrowhead is
-              sometimes added to the upper end of the line for the sake of consistency or when the
-              direction of successive arpeggios alternates. In music for keyboard instruments,
-              sometimes a distinction is made between a single arpeggio in which both hands play
-              successively and simultaneous arpeggios in two hands. In the case of the former,
-              multiple values may be required in the <att>staff</att> and <att>layer</att>
-              attributes. Arpeggios that do not cross staves, but still involve more than one layer
-              require multiple values for the <att>layer</att> attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="bend" module="MEI.cmn" mode="replace">
-          <desc>A variation in pitch (often micro-tonal) upwards or downwards during the course of a
-            note.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.bend.log"/>
-            <memberOf key="att.bend.vis"/>
-            <memberOf key="att.bend.ges"/>
-            <memberOf key="att.bend.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="bend_start-_and_end-type_attributes_required"
-            scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:bend">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-                <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
-                  attributes: dur, dur.ges, endid, or tstamp2</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-        </elementSpec>
-        <elementSpec ident="breath" module="MEI.cmn" mode="replace">
-          <desc>(breath mark) – A indication of a point at which the performer on an instrument
-            requiring breath (including the voice) may breathe.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.breath.log"/>
-            <memberOf key="att.breath.vis"/>
-            <memberOf key="att.breath.ges"/>
-            <memberOf key="att.breath.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="breath_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:breath">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>This element may also indicate a short pause or break for instruments *not* requiring
-              breath. Therefore, it often functions as a guide to phrasing. The usual sign for the
-              breath mark is a comma; however, other visual forms of the breath mark may be
-              indicated using the <att>altsym</att> attribute. The starting point of the breath mark
-              may be indicated by either a <att>startid</att>, <att>tstamp</att>,
-                <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic error
-              not to specify a starting point attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="dynam" module="MEI.shared" mode="replace">
-          <desc>(dynamic) – Indication of the volume of a note, phrase, or section of music.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.dynam.log"/>
-            <memberOf key="att.dynam.vis"/>
-            <memberOf key="att.dynam.ges"/>
-            <memberOf key="att.dynam.anl"/>
-            <!-- Make control events members of att.typed, issue #166 -->
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <constraintSpec ident="dynam_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:dynam">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <constraintSpec ident="dynam_end-type_attributes" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:dynam[@val2]">
-                <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">When @val2 is present,
-                  either @dur, @dur.ges, @endid, or @tstamp2 must also be present.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>This element may be used for instantaneous or continuous <emph>textual</emph>
-              dynamics, e.g. 'p', 'mf', or 'cresc. poco a poco'. The <gi scheme="MEI">hairpin</gi>
-              element should be used for <emph>graphical</emph>, i.e., crescendo and diminuendo,
-              dynamic markings. The starting point of the dynamic marking may be indicated by either
-              a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or
-                <att>tstamp.real</att> attribute, while the ending point may be recorded by either a
-                <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att>
-              attribute. It is a semantic error not to specify a starting point attribute. MIDI
-              values associated with the graphical dynamic sign may be recorded in the
-                <att>val</att> and <att>val2</att> attributes.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="fermata" module="MEI.cmn" mode="replace">
-          <desc>An indication placed over a note or rest to indicate that it should be held longer
-            than its written value. May also occur over a bar line to indicate the end of a phrase
-            or section. Sometimes called a 'hold' or 'pause'.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.fermata.log"/>
-            <memberOf key="att.fermata.vis"/>
-            <memberOf key="att.fermata.ges"/>
-            <memberOf key="att.fermata.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="fermata_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:fermata">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The <gi scheme="MEI">fermata</gi> element is a specialized form of, i.e., syntactic
-              sugar for, dir/@type="fermata" with &amp;ferm; or &amp;uferm; as its PCDATA content.
-              The <att>shape</att> attribute may be used to record whether the fermata is curved or
-              square. Other visual forms of a fermata may be indicated via the <att>altsym</att>
-              attribute. The starting point of the fermata may be indicated by either a
-                <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or
-                <att>tstamp.real</att> attribute. It is a semantic error not to specify a starting
-              point attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="hairpin" module="MEI.cmn" mode="replace">
-          <desc>Indicates continuous dynamics expressed on the score as wedge-shaped graphics, e.g.
-            &lt; and &gt;.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.hairpin.log"/>
-            <memberOf key="att.hairpin.vis"/>
-            <memberOf key="att.hairpin.ges"/>
-            <memberOf key="att.hairpin.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="hairpin_start-_and_end-type_attributes_required"
-            scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:hairpin">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-                <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
-                  attributes: dur, dur.ges, endid, or tstamp2</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The <gi scheme="MEI">hairpin</gi> element is used for <emph>graphical</emph>, i.e.,
-              crescendo and diminuendo, dynamic markings. For instantaneous or continuous
-                <emph>textual</emph> dynamics, such as 'p', 'mf', or 'cres. poco a poco', the <gi
-                scheme="MEI">dynam</gi> element should be used. The starting point of the hairpin
-              marking may be indicated by either a <att>startid</att>, <att>tstamp</att>,
-                <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the ending point
-              may be recorded by either a <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or
-                <att>tstamp2</att> attribute. It is a semantic error not to specify one starting and
-              one ending type of attribute. MIDI values associated with the graphical dynamic sign
-              may be recorded in the <att>val</att> and <att>val2</att> attributes.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="harm" module="MEI.harmony" mode="replace">
-          <desc>(harmony) – An indication of harmony, e.g., chord names, tablature grids, harmonic
-            analysis, figured bass.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.harm.log"/>
-            <memberOf key="att.harm.vis"/>
-            <memberOf key="att.harm.ges"/>
-            <memberOf key="att.harm.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.harmLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.graphicprimitiveLike"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-                <rng:ref name="model.figbassLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <constraintSpec ident="harm_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:harm">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <!-- The addition of this constraint BREAKS BACKWARD COMPATIBILITY! -->
-          <!--<constraintSpec ident="harm_extender_requires_tstamp2" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:harm[@extender]">
-                <sch:assert
-                  test="@tstamp2 or (count(descendant::mei:f) &gt; 0 and count(descendant::mei:f[@tstamp2]) = count(descendant::mei:f))"
-                  >The use of @extender requires the presence of @tstamp2.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>-->
-        </elementSpec>
-        <elementSpec ident="harpPedal" module="MEI.cmn" mode="replace">
-          <desc>(harp pedal) – Harp pedal diagram.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.harpPedal.log"/>
-            <memberOf key="att.harpPedal.vis"/>
-            <memberOf key="att.harpPedal.ges"/>
-            <memberOf key="att.harpPedal.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="harpPedal_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:harpPedal">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The starting point of the harp pedal diagram may be indicated by either a
-                <att>tstamp</att>, <att>tstamp.ges</att>, <att>tstamp.real</att> or
-                <att>startid</att> attribute. It is a semantic error not to specify a starting point
-              attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="mordent" module="MEI.cmnOrnaments" mode="replace">
-          <desc>An ornament indicating rapid alternation of the main note with a secondary note,
-            usually a step below, but sometimes a step above. <!--See Read, p. 245-246.-->
-          </desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.mordent.log"/>
-            <memberOf key="att.mordent.vis"/>
-            <memberOf key="att.mordent.ges"/>
-            <memberOf key="att.mordent.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.ornamentLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="mordent_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:mordent">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The starting point of the mordent may be indicated by either a <att>startid</att>,
-                <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is
-              a semantic error not to specify one of these attributes.</p>
-          </remarks>
-        </elementSpec>
+        <!-- Allow octave to have text content for associated text, e.g., "in 8va", "ottava bassa", etc.  -->
         <elementSpec ident="octave" module="MEI.cmn" mode="replace">
           <desc>An indication that a passage should be performed one or more octaves above or below
             its written pitch.</desc>
@@ -1588,7 +1262,6 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
-          <!-- Allow octave to have text content for associated text, e.g., "in 8va", "ottava bassa", etc.  -->
           <content>
             <rng:zeroOrMore>
               <rng:choice>
@@ -1621,35 +1294,8 @@
               octave displacement can be visually instantaneous.</p>
           </remarks>
         </elementSpec>
-        <elementSpec ident="pedal" module="MEI.cmn" mode="replace">
-          <desc>Piano pedal mark. <!-- (Read, p. 317-318). --></desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.pedal.log"/>
-            <memberOf key="att.pedal.vis"/>
-            <memberOf key="att.pedal.ges"/>
-            <memberOf key="att.pedal.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="pedal_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:pedal">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The starting point of the pedal mark may be indicated by either a <att>startid</att>,
-                <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is
-              a semantic error not to specify one of these attributes.</p>
-          </remarks>
-        </elementSpec>
+        
+        <!-- Allow curve to deal with slurs that continue across system or page breaks. -->
         <elementSpec ident="phrase" module="MEI.cmn" mode="replace">
           <desc>Indication of 1) a "unified melodic idea" or 2) performance technique.</desc>
           <classes>
@@ -1662,7 +1308,6 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
-          <!-- Allow curve to deal with slurs that continue across system or page breaks. -->
           <content>
             <rng:zeroOrMore>
               <rng:ref name="curve"/>
@@ -1714,35 +1359,9 @@
               needed.</p>
           </remarks>
         </elementSpec>
-        <elementSpec ident="reh" module="MEI.cmn" mode="replace">
-          <desc>(rehearsal mark) – In an orchestral score and its corresponding parts, a mark
-            indicating a convenient point from which to resume rehearsal after a break.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.reh.log"/>
-            <memberOf key="att.reh.vis"/>
-            <memberOf key="att.reh.ges"/>
-            <memberOf key="att.reh.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike.cmn"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.lbLike"/>
-                <rng:ref name="model.rendLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>It may also be called a "rehearsal figure", or when numbers are used instead of
-              letters, a "rehearsal number". See Read, p. 443. <gi scheme="MEI">reh</gi> uses a
-              subset of model.textphraseLike.limited.</p>
-          </remarks>
-        </elementSpec>
+        
+        <!-- Allow curve to deal with slurs that continue across system or page breaks. Also,
+            fix a bug in the schematron constraint. -->
         <elementSpec ident="slur" module="MEI.cmn" mode="replace">
           <desc>Indication of 1) a "unified melodic idea" or 2) performance technique.</desc>
           <classes>
@@ -1755,8 +1374,6 @@
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike.cmn"/>
           </classes>
-          <!-- Allow curve to deal with slurs that continue across system or page breaks. Also,
-            fix a bug in the schematron constraint. -->
           <content>
             <rng:zeroOrMore>
               <rng:ref name="curve"/>
@@ -1809,12 +1426,13 @@
               needed.</p>
           </remarks>
         </elementSpec>
+        
+        <!-- Make member of att.bibl -->
         <elementSpec ident="tempo" module="MEI.shared" mode="replace">
           <desc>Text and symbols descriptive of tempo, mood, or style, e.g., "allarg.", "a tempo",
             "cantabile", "Moderato", "♩=60", "Moderato ♩ =60").</desc>
           <classes>
             <memberOf key="att.common"/>
-            <!-- Make member of att.bibl -->
             <memberOf key="att.bibl"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
@@ -1857,6 +1475,7 @@
             </constraint>
           </constraintSpec>
         </elementSpec>
+        
         <!-- Allow curve to deal with ties that continue across system or page breaks. -->
         <elementSpec ident="tie" module="MEI.cmn" mode="replace">
           <desc>An indication that two notes of the same pitch form a single note with their
@@ -1907,72 +1526,7 @@
               110-111, 122.</p>
           </remarks>
         </elementSpec>
-        <elementSpec ident="trill" module="MEI.cmnOrnaments" mode="replace">
-          <desc>Rapid alternation of a note with another (usually at the interval of a second
-            above).</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.trill.log"/>
-            <memberOf key="att.trill.vis"/>
-            <memberOf key="att.trill.ges"/>
-            <memberOf key="att.trill.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.ornamentLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="trill_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:trill">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>The interval between the main and auxiliary notes is usually understood to be
-              diatonic unless altered by an accidental. The starting note of the trill; i.e., the
-              written one or the ornamenting one, and the speed of alternation depends on
-              performance practice. The starting point of the trill may be indicated by either a
-                <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or
-                <att>tstamp.real</att> attribute, while the ending point may be recorded by either a
-                <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att>
-              attribute. It is a semantic error not to specify a starting point attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="turn" module="MEI.cmnOrnaments" mode="replace">
-          <desc>An ornament consisting of four notes — the upper neighbor of the written note, the
-            written note, the lower neighbor, and the written note.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.turn.log"/>
-            <memberOf key="att.turn.vis"/>
-            <memberOf key="att.turn.ges"/>
-            <memberOf key="att.turn.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.ornamentLike.cmn"/>
-          </classes>
-          <content>
-            <rng:empty/>
-          </content>
-          <constraintSpec ident="turn_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:turn">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>See Read, p. 246-247. Whether the turn is accented or unaccented may be inferred from
-              the timestamp — accented turns occur directly on the affected beat, unaccented ones do
-              not.</p>
-          </remarks>
-        </elementSpec>
-
+        
         <!-- Make <breath> a member of att.typography, issue #167. -->
         <classSpec ident="att.breath.vis" module="MEI.cmn" type="atts" mode="replace">
           <desc>Visual domain attributes.</desc>
@@ -4127,7 +3681,6 @@
             <memberOf key="att.gliss.vis"/>
             <memberOf key="att.gliss.ges"/>
             <memberOf key="att.gliss.anl"/>
-            <!-- Make control events members of att.typed, issue #166 -->
             <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike"/>
           </classes>
@@ -4707,13 +4260,13 @@
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
             <memberOf key="att.source"/>
-            <memberOf key="att.typed"/>
             <memberOf key="att.annot.log"/>
             <memberOf key="att.annot.vis"/>
             <memberOf key="att.annot.ges"/>
             <memberOf key="att.annot.anl"/>
             <memberOf key="att.plist"/>
             <memberOf key="att.responsibility"/>
+            <memberOf key="att.typed"/>
             <memberOf key="model.annotLike"/>
           </classes>
           <content>
@@ -7051,12 +6604,12 @@
             <memberOf key="att.common"/>
             <memberOf key="att.declaring"/>
             <memberOf key="att.facsimile"/>
-            <memberOf key="att.typed"/>
             <memberOf key="att.pointing"/>
             <memberOf key="att.measure.log"/>
             <memberOf key="att.measure.vis"/>
             <memberOf key="att.measure.ges"/>
             <memberOf key="att.measure.anl"/>
+            <memberOf key="att.typed"/>
             <memberOf key="model.measureLike"/>
           </classes>
           <content>
@@ -7167,11 +6720,11 @@
             <memberOf key="att.common"/>
             <memberOf key="att.facsimile"/>
             <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
             <memberOf key="att.dir.log"/>
             <memberOf key="att.dir.vis"/>
             <memberOf key="att.dir.ges"/>
             <memberOf key="att.dir.anl"/>
+            <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike"/>
           </classes>
           <content>
@@ -8426,11 +7979,11 @@
           <classes>
             <memberOf key="att.common"/>
             <memberOf key="att.facsimile"/>
-            <memberOf key="att.typed"/>
             <memberOf key="att.ornam.log"/>
             <memberOf key="att.ornam.vis"/>
             <memberOf key="att.ornam.ges"/>
             <memberOf key="att.ornam.anl"/>
+            <memberOf key="att.typed"/>
             <memberOf key="model.controleventLike"/>
           </classes>
           <content>
