@@ -3873,6 +3873,7 @@
       <classes>
         <memberOf key="att.duration.performed"/>
         <memberOf key="att.midivalue"/>
+        <memberOf key="att.midivalue2"/>
       </classes>
     </classSpec>
     <classSpec ident="att.dynam.log" module="MEI.shared" type="atts">
@@ -5613,6 +5614,17 @@
       <desc>Attributes that record MIDI values.</desc>
       <attList>
         <attDef ident="val" usage="opt">
+          <desc>MIDI number.</desc>
+          <datatype>
+            <rng:ref name="data.MIDIVALUE"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.midivalue2" module="MEI.midi" type="atts">
+      <desc>Attributes that record terminal MIDI values.</desc>
+      <attList>
+        <attDef ident="val2" usage="opt">
           <desc>MIDI number.</desc>
           <datatype>
             <rng:ref name="data.MIDIVALUE"/>
@@ -11451,21 +11463,29 @@
       <constraintSpec ident="dynam_start-type_attributes_required" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:dynam">
-            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must have one of
               the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
+      <constraintSpec ident="dynam_end-type_attributes" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:dynam[@val2]">
+            <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">When @val2 is present, either
+              @dur, @dur.ges, @endid, or @tstamp2 must also be present.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
-        <p>This element may be used for instantaneous or continuous textual dynamics, e.g. 'p',
-          'mf', or 'cresc. poco a poco'. The <gi scheme="MEI">hairpin</gi> element should be used
-          for graphical, i.e., crescendo and diminuendo, dynamic markings. The starting point of the
-          dynamic marking may be indicated by either a <att>startid</att>, <att>tstamp</att>,
-            <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the ending point may
-          be recorded by either a <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or
-            <att>tstamp2</att> attribute. It is a semantic error not to specify a starting point
-          attribute. A MIDI value associated with the graphical dynamic sign may be recorded in the
-            <att>val</att> attribute.</p>
+        <p>This element may be used for instantaneous or continuous <emph>textual</emph> dynamics,
+          e.g. 'p', 'mf', or 'cresc. poco a poco'. The <gi scheme="MEI">hairpin</gi> element should
+          be used for <emph>graphical</emph>, i.e., crescendo and diminuendo, dynamic markings. The
+          starting point of the dynamic marking may be indicated by either a <att>startid</att>,
+            <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+          ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
+            <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify
+          a starting point attribute. MIDI values associated with the graphical dynamic sign may be
+          recorded in the <att>val</att> and <att>val2</att> attributes.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="edition" module="MEI.shared">
