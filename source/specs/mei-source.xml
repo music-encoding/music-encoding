@@ -8607,6 +8607,7 @@
         <memberOf key="model.textphraseLike.limited"/>
         <memberOf key="model.pubStmtPart"/>
         <memberOf key="model.eventPart"/>
+        <memberOf key="model.titlePagePart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.divLike" module="MEI.text" type="model">
@@ -8616,6 +8617,7 @@
       <desc>Groups elements containing bibliographic edition information.</desc>
       <classes>
         <memberOf key="model.biblPart"/>
+        <memberOf key="titlePagePart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.editLike" module="MEI.edittrans" type="model">
@@ -9026,6 +9028,14 @@
         <memberOf key="model.biblPart"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.respLikePart" module="MEI.shared" type="model">
+      <desc>Groups elements that delineate particular responsibilities as opposed to the respStmt
+        element that provides for generic statements of responsibility.</desc>
+      <classes>
+        <memberOf key="model.respLike"/>
+        <memberOf key="model.titlePagePart"/>
+      </classes>
+    </classSpec>
     <classSpec ident="model.scoreDefLike" module="MEI.shared" type="model">
       <desc>Groups elements that provide score meta-information.</desc>
       <classes>
@@ -9201,7 +9211,11 @@
       <desc>Groups elements that denote names of a bibliographic item.</desc>
       <classes>
         <memberOf key="model.textphraseLike.limited"/>
+        <memberOf key="model.titlePagePart"/>
       </classes>
+    </classSpec>
+    <classSpec ident="model.titlePagePart" module="MEI.shared" type="model">
+      <desc>Groups elements that may appear as part of a title page transcription.</desc>
     </classSpec>
     <classSpec ident="model.transcriptionLike" module="MEI.edittrans" type="model">
       <desc>Groups elements used for editorial transcription of pre-existing source
@@ -9694,7 +9708,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -9756,7 +9770,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -10189,6 +10203,26 @@
           <rng:ref name="chord"/>
           <rng:ref name="note"/>
         </rng:choice>
+      </content>
+    </elementSpec>
+    <elementSpec ident="byline" module="MEI.header">
+      <desc>Contains the primary statement of responsibility given for a work on its title
+        page.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.titlePagePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+            <rng:ref name="model.respLikePart"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="caption" module="MEI.shared">
@@ -10733,7 +10767,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -11454,7 +11488,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -12164,7 +12198,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -12734,24 +12768,21 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="model.biblPart"/>
+        <memberOf key="model.titlePagePart"/>
       </classes>
       <content>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
           <rng:choice>
+            <rng:text/>
             <rng:ref name="model.imprintPart"/>
-            <rng:ref name="model.dateLike"/>
-          </rng:choice>
-          <rng:zeroOrMore>
+            <rng:ref name="model.textphraseLike"/>
             <rng:ref name="respStmt"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:ref name="model.annotLike"/>
-          </rng:zeroOrMore>
-        </rng:oneOrMore>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-          standard.</p>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI) and Encoded
+          Archival Description (EAD) standards.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="incip" module="MEI.shared">
@@ -13485,7 +13516,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -13612,7 +13643,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -16077,6 +16108,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="model.biblPart"/>
+        <memberOf key="model.titlePagePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -16354,7 +16386,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.respLike"/>
+        <memberOf key="model.respLikePart"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -17321,24 +17353,29 @@
       <desc>Contains a transcription of the title page of a text.</desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
+        <memberOf key="att.typed"/>
         <memberOf key="model.frontPart"/>
       </classes>
       <content>
         <rng:oneOrMore>
           <rng:choice>
-            <rng:ref name="model.textcomponentLike"/>
+            <rng:ref name="model.figureLike"/>
             <rng:ref name="model.milestoneLike.text"/>
+            <rng:ref name="model.textcomponentLike"/>
+            <rng:ref name="model.titlePagePart"/>
+            <rng:ref name="titleStmt"/>
           </rng:choice>
         </rng:oneOrMore>
       </content>
       <remarks>
-        <p>This element may be used within the physDesc element when no other transcription is
-          provided.</p>
+        <p>This element may be used within the <gi scheme="MEI">physDesc</gi> element when no other
+          transcription is provided.</p>
       </remarks>
       <remarks>
-        <p>This element is modelled on an element in the Encoded Archival Description (EAD)
+        <p>This element is modelled on an element in Encoded Archival Description (EAD)
           standard.</p>
       </remarks>
     </elementSpec>
