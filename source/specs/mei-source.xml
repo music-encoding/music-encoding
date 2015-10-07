@@ -199,59 +199,82 @@
     <!-- DATATYPES -->
     <macroSpec ident="data.ACCIDENTAL.EXPLICIT" module="MEI" type="dt">
       <desc>Accidental attribute values.</desc>
-      <valList type="closed">
-        <valItem ident="s">
-          <desc>Sharp.</desc>
-        </valItem>
-        <valItem ident="f">
-          <desc>Flat.</desc>
-        </valItem>
-        <valItem ident="ss">
-          <desc>Double sharp (written as 2 sharps).</desc>
-        </valItem>
-        <valItem ident="x">
-          <desc>Double sharp (written using croix).</desc>
-        </valItem>
-        <valItem ident="ff">
-          <desc>Double flat.</desc>
-        </valItem>
-        <valItem ident="xs">
-          <desc>Triple sharp (written as croix and 2 sharps).</desc>
-        </valItem>
-        <valItem ident="ts">
-          <desc>Triple sharp (written as 3 sharps).</desc>
-        </valItem>
-        <valItem ident="tf">
-          <desc>Triple flat.</desc>
-        </valItem>
-        <valItem ident="n">
-          <desc>Natural.</desc>
-        </valItem>
-        <valItem ident="nf">
-          <desc>Natural + flat; used to cancel preceding double flat.</desc>
-        </valItem>
-        <valItem ident="ns">
-          <desc>Natural + sharp; used to cancel preceding double sharp.</desc>
-        </valItem>
-        <valItem ident="su">
-          <desc>Sharp note raised by quarter tone.</desc>
-        </valItem>
-        <valItem ident="sd">
-          <desc>Sharp note lowered by quarter tone.</desc>
-        </valItem>
-        <valItem ident="fu">
-          <desc>Flat note raised by quarter tone.</desc>
-        </valItem>
-        <valItem ident="fd">
-          <desc>Flat note lowered by quarter tone.</desc>
-        </valItem>
-        <valItem ident="nu">
-          <desc>Natural note raised by quarter tone.</desc>
-        </valItem>
-        <valItem ident="nd">
-          <desc>Natural note lowered by quarter tone.</desc>
-        </valItem>
-      </valList>
+      <content>
+        <valList type="closed">
+          <valItem ident="s">
+            <desc>Sharp.</desc>
+          </valItem>
+          <valItem ident="f">
+            <desc>Flat.</desc>
+          </valItem>
+          <valItem ident="ss">
+            <desc>Double sharp (written as 2 sharps).</desc>
+          </valItem>
+          <valItem ident="x">
+            <desc>Double sharp (written using croix).</desc>
+          </valItem>
+          <valItem ident="ff">
+            <desc>Double flat.</desc>
+          </valItem>
+          <valItem ident="xs">
+            <desc>Triple sharp (written as croix and 2 sharps).</desc>
+          </valItem>
+          <valItem ident="ts">
+            <desc>Triple sharp (written as 3 sharps).</desc>
+          </valItem>
+          <valItem ident="tf">
+            <desc>Triple flat.</desc>
+          </valItem>
+          <valItem ident="n">
+            <desc>Natural.</desc>
+          </valItem>
+          <valItem ident="nf">
+            <desc>Natural + flat; used to cancel preceding double flat.</desc>
+          </valItem>
+          <valItem ident="ns">
+            <desc>Natural + sharp; used to cancel preceding double sharp.</desc>
+          </valItem>
+          <!-- su, sd, fu, fd are equivalent to usual symbols plus an arrow (Gould, p. 95)-->
+          <valItem ident="su">
+            <desc>Sharp note raised by quarter tone (sharp modified by arrow).</desc>
+          </valItem>
+          <valItem ident="sd">
+            <desc>Sharp note lowered by quarter tone (sharp modified by arrow).</desc>
+          </valItem>
+          <valItem ident="fu">
+            <desc>Flat note raised by quarter tone (flat modified by arrow).</desc>
+          </valItem>
+          <valItem ident="fd">
+            <desc>Flat note lowered by quarter tone (flat modified by arrow).</desc>
+          </valItem>
+          <valItem ident="nu">
+            <desc>Natural note raised by quarter tone (natural modified by arrow).</desc>
+          </valItem>
+          <valItem ident="nd">
+            <desc>Natural note lowered by quarter tone (natural modified by arrow).</desc>
+          </valItem>
+          <!-- 1qf, 3qf, 1qs, 3qs represent fixed symbols (Gould, p. 96) -->
+          <valItem ident="1qf">
+            <desc>1/4-tone flat accidental.</desc>
+          </valItem>
+          <valItem ident="3qf">
+            <desc>3/4-tone flat accidental.</desc>
+          </valItem>
+          <valItem ident="1qs">
+            <desc>1/4-tone sharp accidental.</desc>
+          </valItem>
+          <valItem ident="3qs">
+            <desc>3/4-tone sharp accidental.</desc>
+          </valItem>
+        </valList>
+      </content>
+      <remarks>
+        <p>
+          <graphic
+            url="https://music-encoding.googlecode.com/svn/trunk/source/guidelines/Images/ExampleImages/accid-20100510.png"
+            height="50%" width="50%"/>
+        </p>
+      </remarks>
     </macroSpec>
     <macroSpec ident="data.ACCIDENTAL.IMPLICIT" module="MEI" type="dt">
       <desc>Accidental attribute values.</desc>
@@ -1099,7 +1122,8 @@
         a key signature.</desc>
       <content>
         <rng:data type="token">
-          <rng:param name="pattern">[a-g][s|f|ss|x|ff|n|nf|ns|su|sd|fu|fd|nu|nd][0-9]</rng:param>
+          <rng:param name="pattern"
+            >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
         </rng:data>
       </content>
     </macroSpec>
@@ -4747,10 +4771,10 @@
             (Read, p. 141) must be indicated by setting the key.sig attribute to 'mixed' and
             providing explicit key signature information in the key.sig.mixed attribute or in the
             &lt;keySig&gt; element. It is intended that key.sig.mixed contain a series of tokens
-            with each token containing pitch name, accidental, and octave, such as 'A4 Cs5 Ef5' that
+            with each token containing pitch name, accidental, and octave, such as 'a4 c5s e5f' that
             indicate what key accidentals should be rendered and where they should be placed.</desc>
           <datatype maxOccurs="unbounded">
-            <rng:ref name="data.KEYSIGNATURE.MIXED"/>
+            <rng:ref name="data.KEYSIGTOKEN"/>
           </datatype>
         </attDef>
       </attList>
@@ -16816,7 +16840,7 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="supplied" module="MEI.edittrans" mode="replace">
+    <elementSpec ident="supplied" module="MEI.edittrans">
       <desc>Contains material supplied by the transcriber or editor for any reason.</desc>
       <classes>
         <memberOf key="att.agentident"/>
