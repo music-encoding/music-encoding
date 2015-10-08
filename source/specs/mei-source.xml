@@ -9969,11 +9969,14 @@
       </classes>
       <content>
         <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
           <rng:ref name="application"/>
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>"Applications" in this context is not to be confused with software which was used to
+        <p>"Applications" in this context is not to be confused with applications which were used to
           create the MEI file. The latter may be recorded in the <gi scheme="MEI">projectDesc</gi>
           element.</p>
       </remarks>
@@ -10981,6 +10984,9 @@
         <memberOf key="att.datapointing"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:choice>
             <rng:ref name="classCode"/>
@@ -10989,10 +10995,11 @@
         </rng:oneOrMore>
       </content>
       <remarks>
-        <p>Although use of names and terms from locally controlled vocabularies is possible, terms
-          used here should come from standard national or international vocabularies whenever they
-          are available in order to enable searches in systems that include multiple MEI documents,
-          or MEI documents and bibliographic records from many institutions.</p>
+        <p>Although the use of names and terms from locally controlled vocabularies is possible,
+          best practice suggests that terms should come from standard national or international
+          vocabularies whenever they are available in order to enable searches in systems that
+          include multiple MEI documents, or MEI documents and bibliographic records from many
+          institutions.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="clef" module="MEI.shared">
@@ -11081,15 +11088,14 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="componentGrp" module="MEI.frbr">
-      <desc>(component group) – The child elements of this element are treated as parts of the
-        elements header. Although this is an implicit way of expressing FRBR's hasPart / isPartOf
-        -relationships, it avoids this terminology in order to prevent confusion with musical
-        terminology. All children of a component must be the same type as its parent: works within
-        work, items in item, etc.</desc>
+      <desc>(component group) – Container for components of a bibliographic entity.</desc>
       <classes>
         <memberOf key="att.common"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:choice>
           <rng:zeroOrMore>
             <rng:ref name="model.workLike"/>
@@ -11109,12 +11115,21 @@
         <constraint>
           <sch:rule context="mei:componentGrp">
             <sch:assert
-              test="every $i in ./child::mei:* satisfies $i/local-name() eq               ./parent::mei:*/local-name()"
+              test="every $i in ./child::mei:*[not(local-name()='head')] satisfies $i/local-name() eq ./parent::mei:*/local-name()"
               >Only child elements of the same name as the parent of the componentGrp-element are
               allowed.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
+      <remarks>
+        <p>The child elements of this element are treated as parts of the bibliographic entity
+          containing the <gi scheme="MEI">componentGrp</gi>. Although this is an implicit way of
+          expressing FRBR's hasPart / isPartOf-relationships, it avoids this terminology in order to
+          prevent confusion with musical terminology. All children of a component must be the same
+          type as its parent: only <gi scheme="MEI">work</gi> children are allowed within <gi
+            scheme="MEI">work</gi>, <gi scheme="MEI">item</gi> in <gi scheme="MEI">item</gi>,
+          etc.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="composer" module="MEI.shared">
       <desc>The name of the creator of the intellectual content of a musical work.</desc>
@@ -11881,6 +11896,9 @@
         <memberOf key="model.encodingPart"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:choice>
           <rng:oneOrMore>
             <rng:ref name="model.pLike"/>
@@ -12233,6 +12251,9 @@
         <memberOf key="att.common"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="model.expressionLike"/>
         </rng:zeroOrMore>
@@ -13467,8 +13488,12 @@
       <desc>Gathers bibliographic item entities.</desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="model.itemLike"/>
         </rng:zeroOrMore>
@@ -13641,6 +13666,9 @@
         <memberOf key="att.datapointing"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="language"/>
         </rng:oneOrMore>
@@ -15569,6 +15597,9 @@
         <memberOf key="model.encodingPart"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="model.pLike"/>
         </rng:oneOrMore>
@@ -16023,6 +16054,9 @@
       </classes>
       <content>
         <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
           <rng:ref name="model.relationLike"/>
         </rng:zeroOrMore>
       </content>
@@ -16323,6 +16357,9 @@
         <memberOf key="model.encodingPart"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="model.pLike"/>
         </rng:oneOrMore>
