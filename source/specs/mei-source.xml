@@ -16583,8 +16583,8 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="soundChan" module="MEI.header">
-      <desc>(sound channels) – Reflects the number of sound channels used to make a recording
-        (monaural, stereophonic, quadraphonic, etc.).</desc>
+      <desc>(sound channels) – Reflects the number of apparent sound channels in the playback of a
+        recording (monaural, stereophonic, quadraphonic, etc.).</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.authorized"/>
@@ -16600,6 +16600,21 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="num" usage="opt">
+          <desc>Records the channel configuration in numeric form.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>The number of apparent playback channels can differ from the number of physical channels
+          of the recording medium, i.e., 2-track monophonic recordings. In this example, the
+          soundChan element should record the fact that there is a single output channel, while the
+            <gi scheme="MEI">trackConfig</gi> element should capture the existence of two physical
+          tracks. This element is analogous to MARC field 344 subfield g.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="source" module="MEI.header">
       <desc>A bibliographic description of a source used in the creation of the electronic
@@ -17308,25 +17323,6 @@
           Encoding Initiative (TEI), and HTML standards.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="tapeConfig" module="MEI.header">
-      <desc>(tape configuration) – Number of tracks on a sound tape (e.g., eight track, twelve
-        track).</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.authorized"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.lang"/>
-        <memberOf key="model.physDescPart"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textphraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-    </elementSpec>
     <elementSpec ident="td" module="MEI.figtable">
       <desc>(table data) – Designates a table cell that contains data as opposed to a cell that
         contains column or row heading information.</desc>
@@ -17747,6 +17743,41 @@
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the HTML standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="trackConfig" module="MEI.header">
+      <desc>(track configuration) – Number of physical/input tracks on a sound medium (e.g., eight
+        track, twelve track).</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.physDescPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="num" usage="opt">
+          <desc>Records the track configuration in numeric form.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>The number of apparent playback channels can differ from the number of physical channels
+          of the recording medium, i.e., 2-track monophonic recordings. In this example, the
+          trackConfig element should record the fact that there are two physical tracks on the sound
+          medium, while the <gi scheme="MEI">soundChan</gi> element should be used to state that
+          there is a single output channel. This element may be mapped to MARC field 344 subfield e
+          or subfield f as appropriate.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="treatHist" module="MEI.header">
