@@ -1160,28 +1160,100 @@
         </valItem>
       </valList>
     </macroSpec>
-    <macroSpec ident="data.LINERENDITION" module="MEI" type="dt">
-      <desc>Renderings of lines.</desc>
-      <valList type="closed">
-        <valItem ident="narrow">
-          <desc>Default line width.</desc>
-        </valItem>
-        <valItem ident="medium">
-          <desc>Twice as wide as narrow.</desc>
-        </valItem>
-        <valItem ident="wide">
-          <desc>Twice as wide as medium.</desc>
-        </valItem>
-        <valItem ident="dashed">
-          <desc>Dashed line.</desc>
-        </valItem>
-        <valItem ident="dotted">
-          <desc>Dotted line.</desc>
-        </valItem>
-        <valItem ident="wavy">
-          <desc>Undulating line.</desc>
-        </valItem>
-      </valList>
+    <macroSpec ident="data.LINEFORM" module="MEI" type="dt">
+      <desc>Visual form of a line.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="dashed">
+            <desc>Dashed line.</desc>
+          </valItem>
+          <valItem ident="dotted">
+            <desc>Dotted line.</desc>
+          </valItem>
+          <valItem ident="solid">
+            <desc>Straight, uninterrupted line.</desc>
+          </valItem>
+          <valItem ident="wavy">
+            <desc>Undulating line.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.LINESTARTENDSYMBOL" module="MEI" type="dt">
+      <desc>Symbol that may begin/end a line.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="angledown">
+            <desc>90 degree turn down (similar to Unicode 231D at end of line, 231C at
+              start).</desc>
+          </valItem>
+          <valItem ident="angleup">
+            <desc>90 degree turn up (similar to Unicode 231F at end of line, 231E at start).</desc>
+          </valItem>
+          <valItem ident="angleright">
+            <desc>90 degree turn right (syntactic sugar for "angledown" for vertical or angled
+              lines).</desc>
+          </valItem>
+          <valItem ident="angleleft">
+            <desc>90 degree turn left (syntactic sugar for "angleup" for vertical or angled
+              lines).</desc>
+          </valItem>
+          <valItem ident="arrow">
+            <desc>Filled, triangular arrowhead (similar to SMuFL U+EB78).</desc>
+          </valItem>
+          <valItem ident="arrowopen">
+            <desc>Open triangular arrowhead (similar to SMuFL U+EB8A).</desc>
+          </valItem>
+          <valItem ident="arrowwhite">
+            <desc>Unfilled, triangular arrowhead (similar to SMuFL U+EB82).</desc>
+          </valItem>
+          <valItem ident="harpoonleft">
+            <desc>Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode
+              U+21BD).</desc>
+          </valItem>
+          <valItem ident="harpoonright">
+            <desc>Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode
+              U+21BC).</desc>
+          </valItem>
+          <valItem ident="none">
+            <desc>No start symbol.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.LINESTARTENDSYMBOLSIZE" module="MEI" type="dt">
+      <desc>Relative size of symbol that may begin/end a line.</desc>
+      <content>
+        <rng:data type="positiveInteger">
+          <rng:param name="minInclusive">1</rng:param>
+          <rng:param name="maxInclusive">9</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.LINEWIDTH" module="MEI" type="dt">
+      <desc>Datatype of line width measurements.</desc>
+      <content>
+        <alternate>
+          <macroRef key="data.LINEWIDTHTERM"/>
+          <macroRef key="data.MEASUREMENT"/>
+        </alternate>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.LINEWIDTHTERM" module="MEI" type="dt">
+      <desc>Relative width of a line.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="narrow">
+            <desc>Default line width.</desc>
+          </valItem>
+          <valItem ident="medium">
+            <desc>Twice as wide as narrow.</desc>
+          </valItem>
+          <valItem ident="wide">
+            <desc>Twice as wide as medium.</desc>
+          </valItem>
+        </valList>
+      </content>
     </macroSpec>
     <macroSpec ident="data.MEASUREBEAT" module="MEI" type="dt">
       <desc>A count of measures plus a beat location, i.e., [0-9]+m *\+ *[0-9]+(\.?[0-9]*)?. The
@@ -3574,10 +3646,16 @@
     <classSpec ident="att.curverend" module="MEI.shared" type="atts">
       <desc>Attributes that record the visual rendition of curves.</desc>
       <attList>
-        <attDef ident="rend" usage="opt">
-          <desc>Describes the line style of the curve.</desc>
+        <attDef ident="lform" usage="opt">
+          <desc>Describes the line style of a curve.</desc>
           <datatype>
-            <rng:ref name="data.CURVERENDITION"/>
+            <rng:ref name="data.LINEFORM"/>
+          </datatype>
+        </attDef>
+        <attDef ident="lwidth" usage="opt">
+          <desc>Width of a curved line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEWIDTH"/>
           </datatype>
         </attDef>
       </attList>
@@ -4932,6 +5010,91 @@
     <classSpec ident="att.ligature.vis" module="MEI.mensural" type="atts">
       <desc>Visual domain attributes.</desc>
     </classSpec>
+    <classSpec ident="att.line.anl" module="MEI.shared" type="atts">
+      <desc>Analytical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.line.ges" module="MEI.shared" type="atts">
+      <desc>Attributes for describing the performed components of a line.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.line.log" module="MEI.shared" type="atts">
+      <desc>Attributes for describing the logical behaviour of a line.</desc>
+      <classes>
+        <memberOf key="att.controlevent"/>
+        <memberOf key="att.duration.additive"/>
+        <memberOf key="att.startendid"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.line.vis" module="MEI.shared" type="atts">
+      <desc>Attributes for describing the visual appearance of a line.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.visualoffset"/>
+        <memberOf key="att.visualoffset2"/>
+        <memberOf key="att.xy"/>
+        <memberOf key="att.xy2"/>
+      </classes>
+      <attList>
+        <attDef ident="form" usage="opt">
+          <desc>Visual form of the line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEFORM"/>
+          </datatype>
+        </attDef>
+        <!-- @llength implies we know the direction of the vector which we 
+              can't know without establishing an end point, which in turn makes
+              @llength redundant.
+            -->
+        <attDef ident="width" usage="opt">
+          <desc>Width of the line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEWIDTH"/>
+          </datatype>
+        </attDef>
+        <!-- additional visual characteristics of the line -->
+        <attDef ident="endsym" usage="opt">
+          <desc>Symbol rendered at end of line.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOL"/>
+          </datatype>
+        </attDef>
+        <attDef ident="endsymsize" usage="opt">
+          <desc>Holds the relative size of the line-end symbol.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOLSIZE"/>
+          </datatype>
+        </attDef>
+        <!--<attDef ident="segments" usage="opt">
+              <desc>Stores the number of segments used to render a dashed, dotted, or wavy
+                line.</desc>
+              <datatype>
+                <rng:data type="positiveInteger"/>
+              </datatype>
+            </attDef>-->
+        <attDef ident="startsym" usage="opt">
+          <desc>Symbol rendered at start of line.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOL"/>
+          </datatype>
+        </attDef>
+        <attDef ident="startsymsize" usage="opt">
+          <desc>Holds the relative size of the line-start symbol.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOLSIZE"/>
+          </datatype>
+        </attDef>
+        <!--<attDef ident="waveheight" usage="opt">
+              <desc>Captures the wave height of a wavy line.</desc>
+              <datatype>
+                <rng:ref name="data.MEASUREMENT"/>
+              </datatype>
+            </attDef>-->
+      </attList>
+    </classSpec>
     <classSpec ident="att.lineloc" module="MEI.shared" type="atts">
       <desc>Attributes for identifying the staff line with which a feature is associated.</desc>
       <attList>
@@ -4948,12 +5111,60 @@
     <classSpec ident="att.linerend" module="MEI.shared" type="atts">
       <desc>Attributes that record the visual rendition of lines.</desc>
       <attList>
-        <attDef ident="rend" usage="opt">
-          <desc>Records the appearance of a line.</desc>
+        <attDef ident="lform" usage="opt">
+          <desc>Describes the line style of a line.</desc>
           <datatype>
-            <rng:ref name="data.LINERENDITION"/>
+            <rng:ref name="data.LINEFORM"/>
           </datatype>
         </attDef>
+        <!-- @llength implies we know the direction of the vector which we 
+              can't know without establishing an end point, which in turn makes
+              @llength redundant.
+            -->
+        <attDef ident="lwidth" usage="opt">
+          <desc>Width of a line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEWIDTH"/>
+          </datatype>
+        </attDef>
+        <!-- additional visual characteristics of the line -->
+        <attDef ident="lendsym" usage="opt">
+          <desc>Symbol rendered at end of line.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOL"/>
+          </datatype>
+        </attDef>
+        <attDef ident="lendsymsize" usage="opt">
+          <desc>Holds the relative size of the line-end symbol.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOLSIZE"/>
+          </datatype>
+        </attDef>
+        <!--<attDef ident="lsegments" usage="opt">
+              <desc>Stores the number of segments used to render a dashed, dotted, or wavy
+                line.</desc>
+              <datatype>
+                <rng:data type="positiveInteger"/>
+              </datatype>
+            </attDef>-->
+        <attDef ident="lstartsym" usage="opt">
+          <desc>Symbol rendered at start of line.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOL"/>
+          </datatype>
+        </attDef>
+        <attDef ident="lstartsymsize" usage="opt">
+          <desc>Holds the relative size of the line-start symbol.</desc>
+          <datatype>
+            <rng:ref name="data.LINESTARTENDSYMBOLSIZE"/>
+          </datatype>
+        </attDef>
+        <!--<attDef ident="lwaveheight" usage="opt">
+              <desc>Captures the wave height of a wavy line.</desc>
+              <datatype>
+                <rng:ref name="data.MEASUREMENT"/>
+              </datatype>
+            </attDef>-->
       </attList>
     </classSpec>
     <classSpec ident="att.lvpresent" module="MEI.cmn" type="atts">
@@ -13650,20 +13861,18 @@
           in the original source.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="line" module="MEI.usersymbols">
-      <desc>A line that cannot be represented by a more specific element.</desc>
+    <elementSpec ident="line" module="MEI.usersymbols" prefix="mei_">
+      <!-- @prefix necessary to explicitly reference line in MEI namespace, avoid confusion with line in SVG namespace -->
+      <desc>A visual line that cannot be represented by a more specific; i.e., semantic,
+        element.</desc>
       <classes>
-        <memberOf key="att.common.anl"/>
-        <memberOf key="att.color"/>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
-        <memberOf key="att.linerend"/>
-        <memberOf key="att.startendid"/>
+        <memberOf key="att.line.anl"/>
+        <memberOf key="att.line.ges"/>
+        <memberOf key="att.line.log"/>
+        <memberOf key="att.line.vis"/>
         <memberOf key="att.typed"/>
-        <memberOf key="att.visualoffset"/>
-        <memberOf key="att.visualoffset2"/>
-        <memberOf key="att.xy"/>
-        <memberOf key="att.xy2"/>
         <memberOf key="model.graphicprimitiveLike"/>
       </classes>
       <content>
@@ -13674,18 +13883,35 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="line_start-_and_end-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:line[ancestor::mei:symbolDef]">
+            <sch:assert test="@startid or (@x and @y)">When used in the symbolDef context, must have
+              either a startid attribute or x and y attributes.</sch:assert>
+            <sch:assert test="@endid or (@x2 and @y2)">When used in the symbolDef context, must have
+              either an endid attribute or both x2 and y2 attributes.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:line[not(ancestor::mei:symbolDef)]">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real or (@x and @y)"
+              >When used in the score context, must have a startid, tstamp, tstamp.ges or
+              tstamp.real attribute or both x and y attributes.</sch:assert>
+            <sch:assert test="@dur or @dur.ges or @endid or @tstamp2 or (@x2 and @y2)">When used in
+              the score context, must have an endid, dur, dur.ges, or tstamp2 attribute or both x2
+              and y2 attributes.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The starting point of the line may be identified in absolute output coordinate terms
-          using the <att>x</att> and <att>y</att> attributes or relative to the location of another
-          element using the <att>startid</att> attribute. The attributes in the att.visualoffset
-          class may be used to record horizontal, vertical, or time offsets from the absolute
-          coordinates or from the location of the referenced element. Similarly, the terminal point
-          of the line may be recorded using either the <att>x2</att> and <att>y2</att> attributes or
-          in relation to the location of another element using the <att>endid</att> attribute.
-          Attributes in the att.visualoffset2 class maybe used to record the offsets of the ending
-          point. Text content of the <gi scheme="MEI">line</gi> element, e.g. 'gliss.', may be
-          rendered with the line. The appearance of the line is captured in the <att>rend</att>
-          attribute.</p>
+          using the <att>x</att> and <att>y</att> attributes. The attributes in the att.visualoffset
+          class may be used to record horizontal, vertical, or time offsets from these absolute
+          coordinates or from the location of the element reference in the <att>startid</att>
+          attribute. Similarly, the terminal point of the line may be recorded using the
+            <att>x2</att> and <att>y2</att> attributes. Attributes in the att.visualoffset2 class
+          maybe used to record the offsets of the ending point. Textual content of the <gi
+            scheme="MEI">line</gi> element, e.g. 'gliss.', may be rendered with the line. The
+          appearance of the line is captured in the color, <att>form</att> and <att>width</att>
+          attributes.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="list" module="MEI.text">
