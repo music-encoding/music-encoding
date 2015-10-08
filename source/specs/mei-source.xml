@@ -12423,16 +12423,30 @@
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
-            <rng:ref name="model.graphicprimitiveLike"/>
             <rng:ref name="model.textcomponentLike"/>
-            <rng:ref name="model.annotLike"/>
+            <rng:ref name="model.textphraseLike.limited"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="figDesc_content_constraint" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:figDesc[mei:lg or mei:p or mei:quote or mei:table]">
+            <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
+              when lg, p, quote, or table is used.</sch:assert>
+            <sch:assert
+              test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList' or 
+              local-name() eq 'lg' or local-name() eq 'list' or local-name() eq 'p' or 
+              local-name() eq 'quote' or local-name() eq 'table')])"
+              >Unstructured text not allowed when lg, p, quote, or table elements are
+              used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
-        <p>Best practice suggests the use of controlled vocabulary. Don't confuse this entity with a
-          figure caption. A caption is text primarily intended for display with an illustration. It
-          may or may not function as a description of the illustration.</p>
+        <p>Best practice suggests the use of controlled vocabulary for figure descriptions. Don't
+          confuse this entity with a figure caption. A caption is text primarily intended for
+          display with an illustration. It may or may not function as a description of the
+          illustration.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
