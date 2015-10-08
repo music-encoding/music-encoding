@@ -106,6 +106,7 @@
             </rng:define>
           </content>
         </moduleRef>
+
         <!-- Revise content model of midi element to explicitly reference marker in the MEI namespace.
           This is necessary because SVG has a marker element. -->
         <elementSpec ident="midi" module="MEI.midi" mode="replace">
@@ -780,39 +781,6 @@
           </attList>
         </classSpec>
 
-        <!-- Provide new data.HORIZONTALALIGMENT datatype -->
-        <macroSpec ident="data.HORIZONTALALIGNMENT" module="MEI" type="dt" mode="add">
-          <desc>Data values for attributes that capture horizontal alignment.</desc>
-          <content>
-            <valList type="closed">
-              <valItem ident="left">
-                <desc>Left aligned.</desc>
-              </valItem>
-              <valItem ident="right">
-                <desc>Right aligned.</desc>
-              </valItem>
-              <valItem ident="center">
-                <desc>Centered.</desc>
-              </valItem>
-              <valItem ident="justify">
-                <desc>Left and right aligned.</desc>
-              </valItem>
-            </valList>
-          </content>
-        </macroSpec>
-        <!-- Add new att.horizontalalign class -->
-        <classSpec ident="att.horizontalalign" module="MEI.shared" type="atts" mode="replace">
-          <desc>Attributes that record horizontal alignment.</desc>
-          <attList>
-            <attDef ident="halign" usage="opt">
-              <desc>Records horizontal alignment.</desc>
-              <datatype>
-                <rng:ref name="data.HORIZONTALALIGNMENT"/>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
-
         <!-- Fix rip articulation, issue #164; data.ARTICULATIONS is missing 'scoop', issue #204 -->
         <!-- Add scoop, shake, and longfall; revise documentation of rip, damp, dampall, and fall -->
         <macroSpec ident="data.ARTICULATION" module="MEI" type="dt" mode="replace">
@@ -1327,169 +1295,6 @@
             </attDef>
           </attList>
         </classSpec>
-
-        <!-- Harmonize content model of <fw> and <pgHead>, <pgFoot>, etc., issue #179 -->
-        <!-- Actually, the best course of action is to replace <fw> with <pgHead> and <pgFoot>.
-          <pgHead>, etc. are all now members of att.typed. In addition, <pgHead2> and <pgFoot2>
-          have been given a new @halign attribute which facilitates the capture of horizontal
-          alignment. -->
-        <elementSpec ident="fw" module="MEI.shared" mode="delete"/>
-        <macroSpec ident="macro.metaLike.page" module="MEI.shared" type="pe" mode="replace">
-          <desc>Groups elements that contain meta-data about a single page.</desc>
-          <content>
-            <rng:optional>
-              <rng:ref name="pgHead"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="pgFoot"/>
-            </rng:optional>
-            <rng:optional>
-              <rng:ref name="pgDesc"/>
-            </rng:optional>
-          </content>
-        </macroSpec>
-        <elementSpec ident="pgFoot" module="MEI.shared" mode="replace">
-          <desc>(page footer) – A running footer on the first page. Also, used to temporarily
-            override a running footer on individual pages.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textcomponentLike"/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-                <rng:ref name="model.appLike"/>
-                <rng:ref name="anchoredText"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>This element is used to capture the textual data that often appears on the first page
-              of printed music. It may also be used for similarly formatted material in manuscripts.
-              When used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the
-              pattern of page footers established by the use of <gi scheme="MEI">pgFoot</gi> within
-              a previous <gi scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be
-              indicated with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2
-              elements should <hi rend="bold">*not*</hi> be used to encode textual
-              notes/annotations.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="pgFoot2" module="MEI.shared" mode="replace">
-          <desc>(page footer 2) – A running footer on the pages following the first.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textcomponentLike"/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-                <rng:ref name="model.appLike"/>
-                <rng:ref name="anchoredText"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <attList>
-            <attDef ident="halign" usage="opt">
-              <desc>Records horizontal alignment. Use multiple values to capture a repeating
-                pattern.</desc>
-              <datatype maxOccurs="unbounded">
-                <rng:ref name="data.HORIZONTALALIGNMENT"/>
-              </datatype>
-            </attDef>
-          </attList>
-          <remarks>
-            <p>This element is used to capture the textual data that often appears on the second and
-              succeeding pages of printed music. It may also be used for similarly formatted
-              material in manuscripts. Auto-generated page numbers may be indicated with a
-              processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
-                rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="pgHead" module="MEI.shared" mode="replace">
-          <desc>(page header) – A running header on the first page. Also, used to temporarily
-            override a running header on individual pages.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textcomponentLike"/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-                <rng:ref name="model.appLike"/>
-                <rng:ref name="anchoredText"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>This element is used to capture the textual data that often appears on the first page
-              of printed music. It may also be used for similarly formatted material in manuscripts.
-              When used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the
-              pattern of page headers established by the use of <gi scheme="MEI">pgHead</gi> within
-              a previous <gi scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be
-              indicated with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2
-              elements should <hi rend="bold">*not*</hi> be used to encode textual
-              notes/annotations.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="pgHead2" module="MEI.shared" mode="replace">
-          <desc>(page header 2) – A running header on the pages following the first.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textcomponentLike"/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-                <rng:ref name="model.appLike"/>
-                <rng:ref name="anchoredText"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <attList>
-            <attDef ident="halign" usage="opt">
-              <desc>Records horizontal alignment. Use multiple values to capture a repeating
-                pattern.</desc>
-              <datatype maxOccurs="unbounded">
-                <rng:ref name="data.HORIZONTALALIGNMENT"/>
-              </datatype>
-            </attDef>
-          </attList>
-          <remarks>
-            <p>This element is used to capture the textual data that often appears at the top of the
-              second and succeeding pages of printed music. It may also be used for similarly
-              formatted material in manuscripts. Auto-generated page numbers may be indicated with a
-              processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
-                rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
-          </remarks>
-        </elementSpec>
 
         <!-- Modify @symbol values on grpSym, issue #180 -->
         <!-- THIS CHANGE BREAKS BACKWARD COMPATIBILITY! -->

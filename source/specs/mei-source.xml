@@ -143,9 +143,12 @@
     <macroSpec ident="macro.metaLike.page" module="MEI.shared" type="pe">
       <desc>Groups elements that contain meta-data about a single page.</desc>
       <content>
-        <rng:zeroOrMore>
-          <rng:ref name="fw"/>
-        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="pgHead"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="pgFoot"/>
+        </rng:optional>
         <rng:optional>
           <rng:ref name="pgDesc"/>
         </rng:optional>
@@ -1026,6 +1029,25 @@
           <desc>Added diagonal backslash (\) through default note head (MusicXML).</desc>
         </valItem>
       </valList>
+    </macroSpec>
+    <macroSpec ident="data.HORIZONTALALIGNMENT" module="MEI" type="dt">
+      <desc>Data values for attributes that capture horizontal alignment.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="left">
+            <desc>Left aligned.</desc>
+          </valItem>
+          <valItem ident="right">
+            <desc>Right aligned.</desc>
+          </valItem>
+          <valItem ident="center">
+            <desc>Centered.</desc>
+          </valItem>
+          <valItem ident="justify">
+            <desc>Left and right aligned.</desc>
+          </valItem>
+        </valList>
+      </content>
     </macroSpec>
     <macroSpec ident="data.IDREF" module="MEI" type="dt">
       <desc>An ID reference.</desc>
@@ -4651,20 +4673,9 @@
       <attList>
         <attDef ident="halign" usage="opt">
           <desc>Records horizontal alignment.</desc>
-          <valList type="closed">
-            <valItem ident="left">
-              <desc>Left aligned.</desc>
-            </valItem>
-            <valItem ident="right">
-              <desc>Right aligned.</desc>
-            </valItem>
-            <valItem ident="center">
-              <desc>Centered.</desc>
-            </valItem>
-            <valItem ident="justify">
-              <desc>Left and right aligned.</desc>
-            </valItem>
-          </valList>
+          <datatype>
+            <rng:ref name="data.HORIZONTALALIGNMENT"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -12566,34 +12577,6 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="fw" module="MEI.shared">
-      <desc>(forme work) – This element is intended for capture of header/footer material that is
-        non-repeating; that is, occuring on isolated pages. For recurring headers and footers use
-        pgHead* and pgFoot* elements.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-        <memberOf key="att.lang"/>
-        <memberOf key="att.typed"/>
-        <memberOf key="model.metaLike.page"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textcomponentLike"/>
-            <rng:ref name="model.textphraseLike.limited"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-            <rng:ref name="model.appLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <remarks>
-        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-          standard.</p>
-      </remarks>
-    </elementSpec>
     <elementSpec ident="gap" module="MEI.edittrans">
       <desc>Indicates a point where material has been omitted in a transcription, whether as part of
         sampling practice or for editorial reasons described in the MEI header.</desc>
@@ -15214,12 +15197,13 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="pgFoot" module="MEI.shared">
-      <desc>(page footer) – A running footer on the first page.</desc>
+      <desc>(page footer) – A running footer on the first page. Also, used to temporarily override a
+        running footer on individual pages.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.metaLike.score"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15234,10 +15218,20 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="halign" usage="opt">
+          <desc>Records horizontal alignment of the page footer.</desc>
+          <datatype>
+            <rng:ref name="data.HORIZONTALALIGNMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
-        <p>This element is a specialized form of the fw element for capturing the textual data that
-          often appears on the first page of printed music. It may also be used for similarly
-          formatted material in manuscripts. Auto-generated page numbers may be indicated with a
+        <p>This element is used to capture the textual data that often appears on the first page of
+          printed music. It may also be used for similarly formatted material in manuscripts. When
+          used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
+          page footers established by the use of <gi scheme="MEI">pgFoot</gi> within a previous <gi
+            scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a
           processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
             rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
       </remarks>
@@ -15248,7 +15242,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.metaLike.score"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15263,21 +15257,31 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="halign" usage="opt">
+          <desc>Records horizontal alignment of the page footer. Use multiple values to capture an
+            alternating pattern.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.HORIZONTALALIGNMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
-        <p>This element is a specialized form of the fw element for capturing the textual data that
-          often appears on the second and succeeding pages of printed music. It may also be used for
-          similarly formatted material in manuscripts. Auto-generated page numbers may be indicated
-          with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should
-            <hi rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
+        <p>This element is used to capture the textual data that often appears on the second and
+          succeeding pages of printed music. It may also be used for similarly formatted material in
+          manuscripts. Auto-generated page numbers may be indicated with a processing instruction.
+          The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold">*not*</hi> be
+          used to encode textual notes/annotations.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="pgHead" module="MEI.shared">
-      <desc>(page header) – A running header on the first page.</desc>
+      <desc>(page header) – A running header on the first page. Also, used to temporarily override a
+        running header on individual pages.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.metaLike.score"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15292,10 +15296,20 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="halign" usage="opt">
+          <desc>Records horizontal alignment of the page header.</desc>
+          <datatype>
+            <rng:ref name="data.HORIZONTALALIGNMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
-        <p>This element is a specialized form of the fw element for capturing the textual data that
-          often appears on the first page of printed music. It may also be used for similarly
-          formatted material in manuscripts. Auto-generated page numbers may be indicated with a
+        <p>This element is used to capture the textual data that often appears on the first page of
+          printed music. It may also be used for similarly formatted material in manuscripts. When
+          used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
+          page headers established by the use of <gi scheme="MEI">pgHead</gi> within a previous <gi
+            scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a
           processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi
             rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
       </remarks>
@@ -15306,7 +15320,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.metaLike.score"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15321,12 +15335,21 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="halign" usage="opt">
+          <desc>Records horizontal alignment of the page header. Use multiple values to capture an
+            alternating pattern.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.HORIZONTALALIGNMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
-        <p>This element is a specialized form of the fw element for capturing the textual data that
-          often appears on the second and succeeding pages of printed music. It may also be used for
-          similarly formatted material in manuscripts. Auto-generated page numbers may be indicated
-          with a processing instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should
-            <hi rend="bold">*not*</hi> be used to encode textual notes/annotations.</p>
+        <p>This element is used to capture the textual data that often appears at the top of the
+          second and succeeding pages of printed music. It may also be used for similarly formatted
+          material in manuscripts. Auto-generated page numbers may be indicated with a processing
+          instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
+            >*not*</hi> be used to encode textual notes/annotations.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="phrase" module="MEI.shared">
