@@ -3675,18 +3675,31 @@
       <desc>Attributes that describe curvature.</desc>
       <attList>
         <attDef ident="bezier" usage="opt">
-          <desc>Records the placement of Bezier control points as a series of space-separated xy
-            coordinates, e.g., 19 45 -32 118.</desc>
+          <desc>Records the placement of Bezier control points as a series of pairs of
+            space-separated values; e.g., 19 45 -32 118.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="decimal"/>
+                <rng:data type="decimal"/>
+              </rng:oneOrMore>
+            </rng:list>
           </datatype>
         </attDef>
         <attDef ident="bulge" usage="opt">
-          <desc>Describes a curve as a set of distance values above or below an imaginary line
-            connecting the endpoints of the curve. The bulge attribute must contain one or more
-            decimal values expressed in inter-line units.</desc>
+          <desc>Describes a curve as one or more pairs of values with respect to an imaginary line
+            connecting the starting and ending points of the curve. The first value of each pair
+            represents a point along the line, expressed as a percentage of the line's length. The
+            second value captures a distance to the left (positive value) or right (negative value)
+            of the line, expressed in virtual units. N.B. An MEI virtual unit (VU) is half the
+            distance between adjacent staff lines.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="decimal"/>
+                <rng:ref name="data.PERCENT"/>
+              </rng:oneOrMore>
+            </rng:list>
           </datatype>
         </attDef>
         <attDef ident="curvedir" usage="opt">
@@ -3697,6 +3710,9 @@
             </valItem>
             <valItem ident="below">
               <desc>Downward curve.</desc>
+            </valItem>
+            <valItem ident="mixed">
+              <desc>A "meandering" curve, both above and below the items it pertains to.</desc>
             </valItem>
           </valList>
         </attDef>
