@@ -51,6 +51,9 @@
     <moduleSpec ident="MEI.figtable">
       <desc>Figures and tables component declarations.</desc>
     </moduleSpec>
+    <moduleSpec ident="MEI.fingering">
+      <desc>Fingerings.</desc>
+    </moduleSpec>
     <moduleSpec ident="MEI.frbr">
       <desc>FRBR (Functional Requirements for Bibliographic Records) declarations.</desc>
     </moduleSpec>
@@ -2754,8 +2757,8 @@
         <attDef ident="artic" usage="opt">
           <desc>Encodes the written articulation(s). Articulations are normally encoded in order
             from the note head outward; that is, away from the stem. See additional notes at
-            att.vis.note. Only articulations should be encoded in the artic attribute; fingerings
-            should be encoded using the &lt;dir&gt; element.</desc>
+            att.vis.note. Only articulations should be encoded in the artic attribute; for example,
+            fingerings should be encoded using the &lt;fingering&gt; element.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.ARTICULATION"/>
           </datatype>
@@ -4145,6 +4148,21 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.extender" module="MEI.shared" type="atts">
+      <desc>Attributes that describe extension symbols, typically lines. Members of this class are
+        also typically members of the att.linerend class.</desc>
+      <classes>
+        <memberOf key="att.linerend"/>
+      </classes>
+      <attList>
+        <attDef ident="extender" usage="opt">
+          <desc>Indicates the presence of an extension symbol, typically a line.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.extent" module="MEI.edittrans" type="atts">
       <desc>Attributes for identification of the extent of editorial assertions.</desc>
       <attList>
@@ -4155,6 +4173,42 @@
           </datatype>
         </attDef>
       </attList>
+    </classSpec>
+    <classSpec ident="att.f.anl" module="MEI.shared" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.f.ges" module="MEI.shared" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.f.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlevent"/>
+        <memberOf key="att.augmentdots"/>
+        <memberOf key="att.duration.additive"/>
+        <memberOf key="att.startendid"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.f.vis" module="MEI.shared" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altsym"/>
+        <memberOf key="att.extender"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.visualoffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
+      <remarks>
+        <p>If @tstamp2 is not provided, then the extender should be drawn based on the value of
+          @tstamp2 on the harm ancestor.</p>
+      </remarks>
     </classSpec>
     <classSpec ident="att.facsimile" module="MEI.facsimile" type="atts">
       <desc>Attributes that associate a feature corresponding with all or part of an image.</desc>
@@ -4236,6 +4290,101 @@
           <datatype>
             <rng:ref name="data.PLACE"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.fing.anl" module="MEI.fingering" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.fing.ges" module="MEI.fingering" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlevent"/>
+        <memberOf key="att.augmentdots"/>
+        <memberOf key="att.duration.additive"/>
+        <memberOf key="att.startendid"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.fing.vis" module="MEI.fingering" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altsym"/>
+        <memberOf key="att.extender"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.visualoffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
+      <remarks>
+        <p>If @tstamp2 is not provided, then the extender should be drawn based on the value of
+          @tstamp2 on a fingering ancestor.</p>
+      </remarks>
+    </classSpec>
+    <classSpec ident="att.fingGrp.anl" module="MEI.fingering" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.fingGrp.ges" module="MEI.fingering" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlevent"/>
+        <memberOf key="att.augmentdots"/>
+        <memberOf key="att.duration.additive"/>
+        <memberOf key="att.startendid"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+      <attList>
+        <attDef ident="form" usage="opt">
+          <valList type="closed">
+            <valItem ident="alter">
+              <desc>alternation of fingers.</desc>
+            </valItem>
+            <valItem ident="combi">
+              <desc>combination of fingers.</desc>
+            </valItem>
+            <valItem ident="subst">
+              <desc>substitution of fingers.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.fingGrp.vis" module="MEI.fingering" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altsym"/>
+        <memberOf key="att.extender"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.visualoffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
+      <attList>
+        <attDef ident="orient" usage="opt">
+          <valList type="closed">
+            <valItem ident="horiz">
+              <desc>Combination expressed horizontally, as for brass instruments.</desc>
+            </valItem>
+            <valItem ident="vert">
+              <desc>Combination expressed vertically, as for woodwind instruments or piano.</desc>
+            </valItem>
+          </valList>
         </attDef>
       </attList>
     </classSpec>
@@ -4495,6 +4644,7 @@
     <classSpec ident="att.harm.vis" module="MEI.harmony" type="atts">
       <desc>Visual domain attributes.</desc>
       <classes>
+        <memberOf key="att.extender"/>
         <memberOf key="att.placement"/>
         <memberOf key="att.visualoffset"/>
         <memberOf key="att.visualoffset2.ho"/>
@@ -4502,14 +4652,6 @@
         <memberOf key="att.xy"/>
       </classes>
       <attList>
-        <attDef ident="extender" usage="opt">
-          <desc>Indicates the presence of an extension symbol, typically a dash or underscore, drawn
-            from the end of the harmonic indication to the point indicated by the dur
-            attribute.</desc>
-          <datatype>
-            <rng:ref name="data.BOOLEAN"/>
-          </datatype>
-        </attDef>
         <attDef ident="rendgrid" usage="opt">
           <desc>Describes how the harmonic indication should be rendered.</desc>
           <valList type="closed">
@@ -9107,6 +9249,13 @@
         <memberOf key="model.textphraseLike.limited"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.fingeringLike" module="MEI.fingering" type="model">
+      <desc>Groups elements that capture performance instructions regarding the use of the fingers
+        of the hand (or a subset of them).</desc>
+      <classes>
+        <memberOf key="model.controleventLike"/>
+      </classes>
+    </classSpec>
     <classSpec ident="model.fLike" module="MEI.harmony" type="model">
       <desc>Groups elements that represent single figured bass elements.</desc>
     </classSpec>
@@ -12384,9 +12533,11 @@
       <desc>(figure) – Single element of a figured bass indication.</desc>
       <classes>
         <memberOf key="att.common"/>
-        <memberOf key="att.common.anl"/>
-        <memberOf key="att.altsym"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.f.anl"/>
+        <memberOf key="att.f.ges"/>
+        <memberOf key="att.f.log"/>
+        <memberOf key="att.f.vis"/>
         <memberOf key="model.fLike"/>
       </classes>
       <content>
@@ -12399,16 +12550,6 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="extender" usage="opt">
-          <desc>Indicates the presence of an extension symbol, typically a dash or underscore, drawn
-            from the end of the harmonic indication to the point indicated by the dur
-            attribute.</desc>
-          <datatype>
-            <rng:ref name="data.BOOLEAN"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="facsimile" module="MEI.facsimile">
       <desc>Contains a representation of some written source in the form of a set of images rather
@@ -12599,6 +12740,38 @@
           Archival Description (EAD) standards.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="fing" module="MEI.fingering">
+      <desc>finger – An individual finger in a fingering indication.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.fing.anl"/>
+        <memberOf key="att.fing.ges"/>
+        <memberOf key="att.fing.log"/>
+        <memberOf key="att.fing.vis"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.fingeringLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="stack_exclusion" scheme="isoschematron">
+        <!-- Exclusion implemented using Schematron -->
+        <constraint>
+          <sch:rule context="mei:fing">
+            <sch:assert test="not(descendant::mei:stack)">The stack element is not allowed anywhere
+              in fing.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+    </elementSpec>
     <elementSpec ident="fingerprint" module="MEI.header">
       <desc>Contains a string that uniquely identifies an item, such as those constructed by
         combining groups of characters transcribed from specified pages of a printed item or a
@@ -12612,6 +12785,53 @@
       <content>
         <rng:text/>
       </content>
+    </elementSpec>
+    <elementSpec ident="fingGrp" module="MEI.fingering">
+      <desc>(finger group)– A group of individual fingers in a fingering indication.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.fingGrp.anl"/>
+        <memberOf key="att.fingGrp.ges"/>
+        <memberOf key="att.fingGrp.log"/>
+        <memberOf key="att.fingGrp.vis"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.fingeringLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.fingeringLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="require_fingeringLike_children" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:fingGrp">
+            <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or
+              fingGrp elements are required.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="isoschematron">
+        <constraint>
+          <sch:pattern>
+            <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
+              <sch:assert test="not(child::mei:*[@tstamp or @startid])">When @tstamp or @startid is
+                present on fingGrp, its child elements cannot have a @tstamp or @startid
+                attribute.</sch:assert>
+            </sch:rule>
+            <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][not(@tstamp or @startid)]">
+              <sch:assert
+                test="count(descendant::mei:*[@tstamp or @startid]) = count(child::mei:*[local-name()='fing' or local-name()='fingGrp'])"
+                >When @tstamp or @startid is not present on fingGrp, each of its child elements must
+                have a @tstamp or @startid attribute.</sch:assert>
+            </sch:rule>
+          </sch:pattern>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="front" module="MEI.text">
       <desc>(front matter) – Bundles prefatory text found before the start of the musical
