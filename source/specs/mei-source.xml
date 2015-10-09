@@ -6982,6 +6982,18 @@
     <classSpec ident="att.proport.vis" module="MEI.mensural" type="atts">
       <desc>Visual domain attributes.</desc>
     </classSpec>
+    <classSpec ident="att.quantity" module="MEI.shared" type="atts">
+      <desc>Attributes that specify a measurement in numerical terms.</desc>
+      <attList>
+        <attDef ident="quantity" usage="opt">
+          <desc>Numeric value capturing a measurement or count. Can only be interpreted in
+            combination with the unit or currency attribute.</desc>
+          <datatype>
+            <rng:data type="decimal"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.rdg.anl" module="MEI.critapp" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -8940,6 +8952,10 @@
         <memberOf key="model.eventPart"/>
         <memberOf key="model.titlePagePart"/>
       </classes>
+    </classSpec>
+    <classSpec ident="model.dimLike" module="MEI.shared" type="model">
+      <desc>Groups elements which describe a measurement forming part of the physical dimensions of
+        an object.</desc>
     </classSpec>
     <classSpec ident="model.divLike" module="MEI.text" type="model">
       <desc>Groups elements used to represent generic structural divisions of text.</desc>
@@ -11608,6 +11624,25 @@
           Archival Description (EAD) standards.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="depth" module="MEI.shared">
+      <desc>Description of a measurement taken through a three-dimensional object.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.quantity"/>
+        <memberOf key="att.measurement"/>
+        <memberOf key="model.dimLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
     <elementSpec ident="dimensions" module="MEI.header">
       <desc>Information about the physical size of a bibliographic source; usually includes
         numerical data.</desc>
@@ -11623,14 +11658,15 @@
           <rng:choice>
             <rng:text/>
             <rng:ref name="model.textphraseLike.limited"/>
+            <rng:ref name="model.dimLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>There are no height and width sub-elements; however, <gi scheme="MEI">num</gi>
-          sub-elements may be used with appropriate attribute values. Do not confuse this element
-          with the <gi scheme="MEI">extent</gi> element, which is used to indicate the quantity of
-          described materials.</p>
+        <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
+            scheme="MEI">depth</gi> are available for circumstances that require the capture of the
+          individual dimensions of an object. Do not confuse this element with the <gi scheme="MEI"
+            >extent</gi> element, which is used to indicate the quantity of described materials.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -13085,6 +13121,25 @@
         <p>This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding
           Initiative (TEI), and HTML standards.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="height" module="MEI.shared">
+      <desc>Description of the vertical size of an object.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.quantity"/>
+        <memberOf key="att.measurement"/>
+        <memberOf key="model.dimLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="hex" module="MEI.midi">
       <desc>Arbitrary MIDI data in hexadecimal form.</desc>
@@ -14756,6 +14811,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.measurement"/>
+        <memberOf key="att.quantity"/>
         <memberOf key="model.numLike"/>
       </classes>
       <content>
@@ -15579,7 +15635,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.measurement"/>
+        <memberOf key="att.quantity"/>
         <memberOf key="model.availabilityPart"/>
       </classes>
       <content>
@@ -15590,6 +15646,18 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="currency" usage="opt">
+          <desc>Monetary unit.</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>Best practice suggests the use of controlled vocabulary for the currency attribute, such
+          as the ISO 4217 list of currency designators.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="prog" module="MEI.midi">
       <desc>(program) – MIDI program change.</desc>
@@ -18457,6 +18525,25 @@
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="width" module="MEI.shared">
+      <desc>Description of the horizontal size of an object.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.quantity"/>
+        <memberOf key="att.measurement"/>
+        <memberOf key="model.dimLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="work" module="MEI.header">
       <desc>Provides a detailed description of a work, specifically its history, language use, and

@@ -4255,6 +4255,32 @@
         </elementSpec>
 
         <!-- Make more elements members of att.typed, issue #166 -->
+        <elementSpec ident="num" module="MEI.shared" mode="replace">
+          <desc>(number) – Numeric information in any form.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.measurement"/>
+            <memberOf key="att.quantity"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.numLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.textphraseLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <remarks>
+            <p>Use this element only when it is necessary to display a number in a special way or to
+              identify it with a <att>type</att> attribute.</p>
+          </remarks>
+        </elementSpec>
         <elementSpec ident="head" module="MEI.shared" mode="replace">
           <desc>(heading) – Contains any heading, for example, the title of a section of text, or
             the heading of a list.</desc>
@@ -4953,161 +4979,6 @@
             <memberOf key="att.evidence"/>
           </classes>
         </classSpec>
-
-        <!-- create att.quantity class -->
-        <classSpec ident="att.quantity" module="MEI.shared" type="atts" mode="add">
-          <desc>Attributes that specify a measurement in numerical terms.</desc>
-          <attList>
-            <attDef ident="quantity" usage="opt">
-              <desc>Numeric value capturing a measurement or count. Can only be interpreted in
-                combination with the unit attribute.</desc>
-              <datatype>
-                <rng:data type="decimal"/>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
-        <!-- Make num and price members of att.quantity -->
-        <elementSpec ident="num" module="MEI.shared" mode="replace">
-          <desc>(number) – Numeric information in any form.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="att.quantity"/>
-            <memberOf key="model.numLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>Use this element only when it is necessary to display a number in a special way or to
-              identify it with a <att>type</att> attribute.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="price" module="MEI.header" mode="replace">
-          <desc>The cost of access to a bibliographic item.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="att.quantity"/>
-            <memberOf key="model.availabilityPart"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-        </elementSpec>
-
-        <classSpec ident="model.dimLike" module="MEI.shared" type="model" mode="add">
-          <desc>Groups elements which describe a measurement forming part of the physical dimensions
-            of an object.</desc>
-        </classSpec>
-
-        <!-- add height, width, and depth elements for use as children of dimensions element -->
-        <elementSpec ident="height" module="MEI.shared" mode="add">
-          <desc>Description of the vertical size of an object.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.quantity"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="model.dimLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-        </elementSpec>
-        <elementSpec ident="width" module="MEI.shared" mode="add">
-          <desc>Description of the horizontal size of an object.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.quantity"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="model.dimLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-        </elementSpec>
-        <elementSpec ident="depth" module="MEI.shared" mode="add">
-          <desc>Description of a measurement taken through a three-dimensional object.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.quantity"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="model.dimLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-        </elementSpec>
-        <!-- revise content model and remarks -->
-        <elementSpec ident="dimensions" module="MEI.header" mode="replace">
-          <desc>Information about the physical size of a bibliographic source; usually includes
-            numerical data.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.measurement"/>
-            <memberOf key="model.physDescPart"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.dimLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
-                scheme="MEI">depth</gi> are available for circumstances that require the capture of
-              the individual dimensions of an object. Do not confuse this element with the <gi
-                scheme="MEI">extent</gi> element, which is used to indicate the quantity of
-              described materials.</p>
-          </remarks>
-          <remarks>
-            <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and
-              Encoded Archival Description (EAD) standards.</p>
-          </remarks>
-        </elementSpec>
 
         <!-- add commonPart class for the truly common part of att.common -->
         <classSpec ident="att.commonPart" module="MEI.shared" type="atts" mode="add">
