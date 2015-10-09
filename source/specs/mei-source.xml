@@ -2008,6 +2008,33 @@
         <rng:data type="token"/>
       </content>
     </macroSpec>
+    <macroSpec ident="data.NOTATIONTYPE" module="MEI" type="dt">
+      <desc>Notation type and subtype</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="cmn">
+            <desc>Common Music Notation.</desc>
+          </valItem>
+          <valItem ident="mensural">
+            <desc>Mensural notation.</desc>
+          </valItem>
+          <valItem ident="mensural.black">
+            <desc>Black mensural notation.</desc>
+          </valItem>
+          <valItem ident="mensural.white">
+            <desc>White mensural notation.</desc>
+          </valItem>
+          <valItem ident="neume">
+            <desc>Neumatic notation.</desc>
+          </valItem>
+          <!--<valItem ident="neume.heighted"><desc>Heighted neumatic notation</desc></valItem>
+              <valItem ident="neume.unheighted"><desc>Unheighted neumatic notation</desc></valItem>-->
+          <valItem ident="tab">
+            <desc>Tablature notation.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.OCTAVE" module="MEI" type="dt">
       <desc>Oct attribute values. The default values conform to Acoustical Society of America
         representation. Read, p. 44.</desc>
@@ -6215,6 +6242,33 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.notationtype" module="MEI" type="atts">
+      <desc>Attributes that provide for classification of notation.</desc>
+      <attList>
+        <attDef ident="notationtype" usage="opt">
+          <desc>Contains classification of the notation contained or described by the element
+            bearing this attribute.</desc>
+          <datatype>
+            <rng:ref name="data.NOTATIONTYPE"/>
+          </datatype>
+        </attDef>
+        <attDef ident="notationsubtype" usage="opt">
+          <desc>Provides any sub-classification of the notation contained or described by the
+            element, additional to that given by its notationtype attribute.</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+          <constraintSpec ident="When_notationsubtype" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@notationsubtype]">
+                <sch:assert test="@notationtype">An element with a notationsubtype attribute must
+                  have a notationtype attribute.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.note.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -7689,6 +7743,7 @@
         <memberOf key="att.duration.default"/>
         <memberOf key="att.keySigDefault.log"/>
         <memberOf key="att.meterSigDefault.log"/>
+        <memberOf key="att.notationtype"/>
         <memberOf key="att.octavedefault"/>
         <memberOf key="att.transposition"/>
         <memberOf key="att.staffDef.log.cmn"/>
