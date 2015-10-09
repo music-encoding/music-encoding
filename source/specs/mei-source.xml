@@ -13809,7 +13809,7 @@
     <elementSpec ident="layer" module="MEI.shared">
       <desc>An independent stream of events on a staff.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.layer.log"/>
@@ -13832,14 +13832,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-      <constraintSpec ident="Check_layern" scheme="isoschematron">
-        <constraint>
-          <sch:rule context="mei:layer[@n]">
-            <sch:assert test="number(@n) = round(number(@n))">The n attribute must be a single
-              integer.</sch:assert>
-          </sch:rule>
-        </constraint>
-      </constraintSpec>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>A non-negative integer value functioning as a "name".</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>The term 'layer' is used instead of 'voice' in order to avoid confusion between 'voice'
           and 'voice leading' and 'voicing'. The <att>def</att> attribute may be used to create a
@@ -13854,7 +13854,7 @@
     <elementSpec ident="layerDef" module="MEI.shared">
       <desc>(layer definition) – Container for layer meta-information.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.layerDef.log"/>
         <memberOf key="att.layerDef.vis"/>
@@ -13870,14 +13870,14 @@
           <rng:ref name="model.instrDefLike"/>
         </rng:zeroOrMore>
       </content>
-      <constraintSpec ident="Check_layerDefn" scheme="isoschematron">
-        <constraint>
-          <sch:rule context="mei:layerDef">
-            <sch:assert test="number(@n) = round(number(@n))">An n attribute with a single integer
-              value must be present.</sch:assert>
-          </sch:rule>
-        </constraint>
-      </constraintSpec>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>A non-negative integer value functioning as a "name".</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
     </elementSpec>
     <elementSpec ident="lb" module="MEI.shared">
       <desc>(line break) – An empty formatting element that forces text to begin on a new
@@ -17080,7 +17080,7 @@
         not actually be rendered on staff lines; that is, both diastematic and non-diastematic
         signs.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.staff.log"/>
@@ -17103,14 +17103,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-      <constraintSpec ident="Check_staffn" scheme="isoschematron">
-        <constraint>
-          <sch:rule context="mei:staff[@n]">
-            <sch:assert test="number(@n) = round(number(@n))">The n attribute must be a single
-              integer.</sch:assert>
-          </sch:rule>
-        </constraint>
-      </constraintSpec>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>A non-negative integer value functioning as a "name".</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>The <att>def</att> attribute may be used to create a connection with a <gi scheme="MEI"
             >staffDef</gi> element where logical and visual information about the staff is recorded.
@@ -17123,7 +17123,7 @@
     <elementSpec ident="staffDef" module="MEI.shared">
       <desc>(staff definition) – Container for staff meta-information.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.staffDef.log"/>
         <memberOf key="att.staffDef.vis"/>
@@ -17177,7 +17177,7 @@
           <sch:rule context="mei:staffDef[@clef.line and not(@lines)]">
             <sch:let name="thisstaff" value="@n"/>
             <sch:let name="stafflines"
-              value="preceding::mei:staffDef[@n=$thisstaff and               @lines][1]/@lines"/>
+              value="preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines"/>
             <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The clef position must
               be less than or equal to the number of lines on the staff.</sch:assert>
           </sch:rule>
@@ -17186,8 +17186,7 @@
       <constraintSpec ident="Check_tab_strings_lines" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:staffDef[@tab.strings and @lines]">
-            <sch:let name="countTokens"
-              value="count(tokenize(normalize-space(@tab.strings),               '\s'))"/>
+            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
             <sch:assert test="$countTokens = 1 or $countTokens = @lines">The tab.strings attribute
               must have the same number of values as there are staff lines.</sch:assert>
           </sch:rule>
@@ -17196,11 +17195,10 @@
       <constraintSpec ident="Check_tab_strings_nolines" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
-            <sch:let name="countTokens"
-              value="count(tokenize(normalize-space(@tab.strings),               '\s'))"/>
+            <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
             <sch:let name="thisStaff" value="@n"/>
             <sch:assert
-              test="$countTokens = 1 or $countTokens =               preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines"
+              test="$countTokens = 1 or $countTokens = preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines"
               >The tab.strings attribute must have the same number of values as there are staff
               lines.</sch:assert>
           </sch:rule>
@@ -17211,17 +17209,17 @@
           <sch:pattern>
             <sch:rule context="mei:staffDef[@lines.color and @lines]">
               <sch:let name="countTokens"
-                value="count(tokenize(normalize-space(@lines.color),                 '\s'))"/>
+                value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
               <sch:assert test="$countTokens = 1 or $countTokens = @lines">The lines.color attribute
                 must have either 1) a single value or 2) the same number of values as there are
                 staff lines.</sch:assert>
             </sch:rule>
             <sch:rule context="mei:staffDef[@lines.color and not(@lines)]">
               <sch:let name="countTokens"
-                value="count(tokenize(normalize-space(@lines.color),                 '\s'))"/>
+                value="count(tokenize(normalize-space(@lines.color), '\s'))"/>
               <sch:let name="thisStaff" value="@n"/>
               <sch:assert
-                test="$countTokens = 1 or $countTokens =                 preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines"
+                test="$countTokens = 1 or $countTokens = preceding::mei:staffDef[@n=$thisStaff and @lines][1]/@lines"
                 >The lines.color attribute must have either 1) a single value or 2) the same number
                 of values as there are staff lines.</sch:assert>
             </sch:rule>
@@ -17252,6 +17250,14 @@
           </sch:pattern>
         </constraint>
       </constraintSpec>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>A non-negative integer value functioning as a "name".</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
     </elementSpec>
     <elementSpec ident="staffGrp" module="MEI.shared">
       <desc>(staff group) – A group of bracketed or braced staves.</desc>
