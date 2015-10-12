@@ -280,8 +280,6 @@
                 <rng:ref name="model.staffGrpLike"/>
               </rng:optional>
             </rng:choice>
-            <!-- Facilitate overlapping staff groups, issue #178 -->
-            <!-- Allow grpSym in scoreDef -->
             <rng:zeroOrMore>
               <rng:ref name="grpSym"/>
             </rng:zeroOrMore>
@@ -737,61 +735,6 @@
             <memberOf key="att.visualoffset"/>
             <memberOf key="att.xy"/>
           </classes>
-        </classSpec>
-
-        <!-- Facilitate overlapping staff groups, issue #178 -->
-        <elementSpec ident="grpSym" module="MEI.shared" mode="replace">
-          <desc>(group symbol) – A brace or bracket used to group two or more staves of a score or
-            part.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.grpSym.log"/>
-            <memberOf key="att.grpSym.vis"/>
-            <memberOf key="att.grpSym.ges"/>
-            <memberOf key="att.grpSym.anl"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="model.labelLike"/>
-            </rng:zeroOrMore>
-          </content>
-          <constraintSpec ident="check_grpSym_attributes_scoreDef" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:grpSym[parent::mei:scoreDef]">
-                <sch:assert test="@startid and @endid and @level">In this context, grpSym must have
-                  startid, endid, and level attributes.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <constraintSpec ident="check_grpSym_attributes_staffDef" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:grpSym[parent::mei:staffGrp]">
-                <sch:assert test="not(@startid or @endid or @level)">In this context, grpSym must
-                  not have startid, endid, or level attributes.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>This element provides an alternative to the <gi scheme="MEI">staffGrp</gi> element's
-                <att>symbol</att> attribute. It may be used when exact placement or editorial
-              details for the grouping symbol must be recorded.</p>
-          </remarks>
-        </elementSpec>
-        <classSpec ident="att.grpSym.log" module="MEI.shared" type="atts" mode="replace">
-          <desc>Logical domain attributes.</desc>
-          <classes>
-            <memberOf key="att.staffgroupingsym"/>
-            <memberOf key="att.startendid"/>
-          </classes>
-          <attList>
-            <attDef ident="level" usage="opt">
-              <desc>Indicates the nesting level of staff grouping symbols.</desc>
-              <datatype>
-                <rng:data type="positiveInteger"/>
-              </datatype>
-            </attDef>
-          </attList>
         </classSpec>
 
         <!-- Include SVG, issue #53: add @prefix to explicitly reference title in MEI namespace -->
