@@ -10737,11 +10737,19 @@
         <memberOf key="model.listLike"/>
       </classes>
       <content>
-        <rng:optional>
-          <rng:ref name="model.headLike"/>
-        </rng:optional>
         <rng:zeroOrMore>
-          <rng:ref name="model.biblLike"/>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:group>
+              <rng:optional>
+                <rng:ref name="model.labelLike"/>
+              </rng:optional>
+              <rng:ref name="model.biblLike"/>
+            </rng:group>
+            <rng:ref name="biblList"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
       <remarks>
@@ -12362,7 +12370,7 @@
             </rng:zeroOrMore>
           </content> -->
     </elementSpec>
-    <elementSpec ident="eventList" module="MEI.header">
+    <elementSpec ident="eventList" module="MEI.header" mode="replace">
       <desc>Contains historical information given as a sequence of significant past events.</desc>
       <classes>
         <memberOf key="att.bibl"/>
@@ -12370,19 +12378,22 @@
         <memberOf key="att.typed"/>
       </classes>
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
-        <rng:oneOrMore>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:optional>
+            <rng:ref name="model.labelLike"/>
+          </rng:optional>
           <rng:ref name="event"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
       </content>
       <remarks>
         <p>An <gi scheme="MEI">eventList</gi> contains <gi scheme="MEI">event</gi> elements that
-          contain a brief description of the associated event, including dates and locations where
+          capture a brief description of the associated event, including dates and locations where
           the event took place. An <gi scheme="MEI">eventList</gi> describes events associated with
           a work when it appears in the <gi scheme="MEI">workDesc</gi> element or events associated
           with the custodial history of a given copy of a source for the encoding when it appears
@@ -13298,12 +13309,19 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.typed"/>
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:optional>
+            <rng:ref name="model.labelLike"/>
+          </rng:optional>
           <rng:ref name="hand"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -14393,26 +14411,37 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.typed"/>
         <memberOf key="att.xy"/>
         <memberOf key="model.listLike"/>
       </classes>
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
-        <rng:oneOrMore>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:optional>
+            <rng:ref name="model.labelLike"/>
+          </rng:optional>
           <rng:ref name="li"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="list_type_constraint" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:list[@type='gloss']">
+            <sch:assert test="count(mei:label) = count(mei:li)">In a list of type "gloss" all items
+              must be immediately preceded by a label.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="form" usage="opt">
-          <desc>Used to identify and format a list. In a "simple" list, &lt;item&gt;s are not
-            numbered or bulleted. In a "marked" list, the sequence of the list items is not
-            critical, and a bullet, box, dash, or other character is displayed at the start of each
-            &lt;item&gt;. In an "ordered" list, the sequence of the items is important, and each
-            &lt;item&gt; is lettered or numbered. Style sheet functions should be used to specify
-            the mark or numeration system for each &lt;item&gt;.</desc>
+          <desc>Used to indicate the format of a list. In a "simple" list, <gi scheme="MEI">li</gi>
+            elements are not numbered or bulleted. In a "marked" list, the sequence of the list
+            items is not critical, and a bullet, box, dash, or other character is displayed at the
+            start of each <gi scheme="MEI">item</gi>. In an "ordered" list, the sequence of the
+            items is important, and each <gi scheme="MEI">li</gi> is lettered or numbered. Style
+            sheet functions should be used to specify the mark or numeration system for each <gi
+              scheme="MEI">li</gi>.</desc>
           <valList type="closed">
             <valItem ident="simple">
               <desc>Items are not numbered or bulleted.</desc>
@@ -14425,10 +14454,41 @@
             </valItem>
           </valList>
         </attDef>
+        <attDef ident="type" usage="opt">
+          <desc>Captures the nature of the content of a list.</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+          <valList type="semi">
+            <valItem ident="gloss">
+              <desc>Each list item glosses some term or concept, which is given by a label element
+                preceding the list item.</desc>
+            </valItem>
+            <valItem ident="index">
+              <desc>Each list item is an entry in an index such as the alphabetical topical index at
+                the back of a print volume.</desc>
+            </valItem>
+            <valItem ident="instructions">
+              <desc>Each list item is a step in a sequence of instructions, as in a recipe.</desc>
+            </valItem>
+            <valItem ident="litany">
+              <desc>Each list item is one of a sequence of petitions, supplications or invocations,
+                typically in a religious ritual.</desc>
+            </valItem>
+            <valItem ident="syllogism">
+              <desc>Each list item is part of an argument consisting of two or more propositions and
+                a final conclusion derived from them.</desc>
+            </valItem>
+          </valList>
+          <remarks>
+            <p>In a list of type "gloss" it is a semantic error not to precede each list item with a
+              label.</p>
+          </remarks>
+        </attDef>
       </attList>
       <remarks>
-        <p>This element is modelled on elements in the Encoded Archival Description (EAD), Text
-          Encoding Initiative (TEI), and HTML standards.</p>
+        <p>This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding
+          Initiative (TEI), and HTML standards.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="lyricist" module="MEI.shared">
@@ -18054,9 +18114,15 @@
         <memberOf key="att.bibl"/>
       </classes>
       <content>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:optional>
+            <rng:ref name="model.labelLike"/>
+          </rng:optional>
           <rng:ref name="term"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
       </content>
       <attList>
         <attDef ident="classcode" usage="opt">
