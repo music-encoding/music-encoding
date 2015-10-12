@@ -724,55 +724,6 @@
           </attList>
         </classSpec>
 
-        <!-- Make member of att.bibl -->
-        <elementSpec ident="tempo" module="MEI.shared" mode="replace">
-          <desc>Text and symbols descriptive of tempo, mood, or style, e.g., "allarg.", "a tempo",
-            "cantabile", "Moderato", "♩=60", "Moderato ♩ =60").</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.tempo.log"/>
-            <memberOf key="att.tempo.vis"/>
-            <memberOf key="att.tempo.ges"/>
-            <memberOf key="att.tempo.anl"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.controleventLike"/>
-            <memberOf key="model.workIdent"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike.limited"/>
-                <rng:ref name="model.graphicprimitiveLike"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:tempo[ancestor::mei:meiHead]">
-                <sch:assert
-                  test="not(@*[name() != 'label' and name() != 'n' and name() != 'xml:base' and name() != 'xml:id' and name() != 'xml:lang'])"
-                  >Only label, n, xml:base, xml:id, and xml:lang attributes allowed when this
-                  element occurs in the header.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <constraintSpec ident="tempo_start-type_attributes_required" scheme="isoschematron">
-            <constraint>
-              <sch:rule
-                context="mei:tempo[not(ancestor::mei:syllable) and not(ancestor::mei:meiHead)]">
-                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-                  of the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-        </elementSpec>
-
         <!-- Make <breath> a member of att.typography, issue #167. -->
         <classSpec ident="att.breath.vis" module="MEI.cmn" type="atts" mode="replace">
           <desc>Visual domain attributes.</desc>
@@ -1762,39 +1713,6 @@
         </elementSpec>-\->                
         -->
 
-        <!-- Make member of att.bibl -->
-        <elementSpec ident="biblList" module="MEI.shared" mode="replace">
-          <desc>List of bibliographic references.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.listLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:group>
-                  <rng:optional>
-                    <rng:ref name="model.labelLike"/>
-                  </rng:optional>
-                  <rng:ref name="model.biblLike"/>
-                </rng:group>
-                <rng:ref name="biblList"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-              standard.</p>
-          </remarks>
-        </elementSpec>
-
         <!-- Enforce constraints on attribute targets, issue #226 -->
         <elementSpec ident="termList" module="MEI.header" mode="replace">
           <desc>Collection of text phrases which describe a resource.</desc>
@@ -1881,33 +1799,6 @@
           </remarks>
         </elementSpec>
 
-        <elementSpec ident="castList" module="MEI.shared" mode="replace">
-          <desc>Contains a single cast list or dramatis personae.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <!-- Make member of att.bibl -->
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.listLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:oneOrMore>
-              <rng:choice>
-                <rng:ref name="castItem"/>
-                <rng:ref name="castGrp"/>
-              </rng:choice>
-            </rng:oneOrMore>
-          </content>
-          <remarks>
-            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-              standard.</p>
-          </remarks>
-        </elementSpec>
         <elementSpec ident="contents" module="MEI.header" mode="replace">
           <desc>Description of the material contained within a resource.</desc>
           <classes>
@@ -3250,6 +3141,83 @@
         </elementSpec>
 
         <!-- Make more elements members of att.typed, issue #166 -->
+        <elementSpec ident="bibl" module="MEI.shared" mode="replace">
+          <desc>(bibliographic reference) – Provides a loosely-structured bibliographic citation in
+            which the sub-components may or may not be explicitly marked.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.pointing"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.biblLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:text/>
+                <rng:ref name="model.biblPart"/>
+                <rng:ref name="model.imprintPart"/>
+                <rng:ref name="model.textphraseLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <!-- To produce a more strict bibliographic citation, the following content model may be used: -->
+          <!-- <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.titleLike"/>
+                <rng:ref name="model.identifierLike"/>
+                <rng:ref name="model.annotLike"/>
+                <rng:ref name="model.biblPart"/>
+                <rng:ref name="imprint"/>
+                <rng:ref name="creation"/>
+                <rng:ref name="genre"/>
+                <rng:ref name="relatedItem"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+           </content> -->
+          <remarks>
+            <p>
+              <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such
+              as <gi scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI"
+                >persName</gi>, and <gi scheme="MEI">corpName</gi>. This element may also function
+              as a hypertext reference to an external electronic resource. Do not confuse this
+              element with <gi scheme="MEI">ref</gi>, which does not provide special bibliographic
+              sub-elements.</p>
+          </remarks>
+          <remarks>
+            <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and
+              Encoded Archival Description (EAD) standards.</p>
+          </remarks>
+        </elementSpec>
+        <elementSpec ident="castList" module="MEI.shared" mode="replace">
+          <desc>Contains a single cast list or dramatis personae.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.typed"/>
+            <memberOf key="model.listLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="castItem"/>
+                <rng:ref name="castGrp"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </content>
+          <remarks>
+            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+              standard.</p>
+          </remarks>
+        </elementSpec>
         <elementSpec ident="lg" module="MEI.text" mode="replace">
           <desc>(line group) – May be used for any section of text that is organized as a group of
             lines; however, it is most often used for a group of verse lines functioning as a formal
@@ -3337,58 +3305,6 @@
           <remarks>
             <p>This element is modelled on elements in Encoded Archival Description (EAD), Text
               Encoding Initiative (TEI), and HTML standards.</p>
-          </remarks>
-        </elementSpec>
-        <elementSpec ident="bibl" module="MEI.shared" mode="replace">
-          <desc>(bibliographic reference) – Provides a loosely-structured bibliographic citation in
-            which the sub-components may or may not be explicitly marked.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <!-- Make member of att.bibl -->
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="att.pointing"/>
-            <memberOf key="att.typed"/>
-            <memberOf key="model.biblLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.biblPart"/>
-                <rng:ref name="model.imprintPart"/>
-                <rng:ref name="model.textphraseLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <!-- To produce a more strict bibliographic citation, the following content model may be used: -->
-          <!-- <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:ref name="model.titleLike"/>
-                <rng:ref name="model.identifierLike"/>
-                <rng:ref name="model.annotLike"/>
-                <rng:ref name="model.biblPart"/>
-                <rng:ref name="imprint"/>
-                <rng:ref name="creation"/>
-                <rng:ref name="genre"/>
-                <rng:ref name="relatedItem"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-           </content> -->
-          <remarks>
-            <p>
-              <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such
-              as <gi scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI"
-                >persName</gi>, and <gi scheme="MEI">corpName</gi>. This element may also function
-              as a hypertext reference to an external electronic resource. Do not confuse this
-              element with <gi scheme="MEI">ref</gi>, which does not provide special bibliographic
-              sub-elements.</p>
-          </remarks>
-          <remarks>
-            <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and
-              Encoded Archival Description (EAD) standards.</p>
           </remarks>
         </elementSpec>
         <elementSpec ident="change" module="MEI.header" mode="replace">
@@ -3748,35 +3664,6 @@
               project-specific schema description.</p>
           </remarks>
         </classSpec>
-        <elementSpec ident="avFile" module="MEI.performance" mode="replace">
-          <desc>(audio/video file) – References an external digital audio or video file.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <!-- Make member of att.bibl -->
-            <memberOf key="att.declaring"/>
-            <memberOf key="att.internetmedia"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.pointing"/>
-            <memberOf key="att.typed"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:ref name="clip"/>
-            </rng:zeroOrMore>
-          </content>
-          <constraintSpec ident="avFile_child_of_clip" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:clip/mei:avFile">
-                <sch:assert test="count(mei:*) = 0">An avFile child of clip cannot have
-                  children</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-          <remarks>
-            <p>This element is analogous to the <gi scheme="MEI">graphic</gi> element in the
-              figtable module.</p>
-          </remarks>
-        </elementSpec>
         <elementSpec ident="barLine" module="MEI.shared" mode="replace">
           <desc>Vertical line drawn through one or more staves that divides musical notation into
             metrical units.</desc>
