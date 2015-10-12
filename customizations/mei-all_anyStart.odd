@@ -96,54 +96,6 @@
 
         <!-- =============================== RESOLVE ISSUES =============================== -->
 
-        <!-- Include SVG, issue #53 -->
-        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
-          <content>
-            <rng:define name="mei_model.graphicLike" combine="choice">
-              <rng:ref name="svg"/>
-            </rng:define>
-          </content>
-        </moduleRef>
-        <!-- Revise content model of midi element to explicitly reference marker in the MEI namespace.
-          This is necessary because SVG has a marker element. -->
-        <elementSpec ident="midi" module="MEI.midi" mode="replace">
-          <desc>Container for elements that contain information useful when generating MIDI
-            output.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.midi.log"/>
-            <memberOf key="att.midi.vis"/>
-            <memberOf key="att.midi.ges"/>
-            <memberOf key="att.midi.anl"/>
-            <memberOf key="model.midiLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:ref name="cc"/>
-                <rng:ref name="chan"/>
-                <rng:ref name="chanPr"/>
-                <rng:ref name="cue"/>
-                <rng:ref name="hex"/>
-                <rng:ref name="mei_marker"/>
-                <rng:ref name="metaText"/>
-                <rng:ref name="noteOff"/>
-                <rng:ref name="noteOn"/>
-                <rng:ref name="port"/>
-                <rng:ref name="prog"/>
-                <rng:ref name="seqNum"/>
-                <rng:ref name="trkName"/>
-                <rng:ref name="vel"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <remarks>
-            <p>The <att>label</att> attribute can be used to differentiate between multiple MIDI
-              data streams, e.g. quantized/unquantized, straight/swing, ornamented/as notated,
-              etc.</p>
-          </remarks>
-        </elementSpec>
-
         <!-- Revise timeline and performance, issue #94 -->
         <!-- Create new datatype for begin/end and interval types -->
         <macroSpec ident="data.BETYPE" module="MEI.shared" type="dt" mode="add">
@@ -737,109 +689,6 @@
           </classes>
         </classSpec>
 
-        <!-- Include SVG, issue #53: add @prefix to explicitly reference title in MEI namespace -->
-        <elementSpec ident="title" module="MEI.shared" mode="replace" prefix="mei_">
-          <desc>Title of a bibliographic entity.</desc>
-          <classes>
-            <memberOf key="att.common"/>
-            <memberOf key="att.authorized"/>
-            <memberOf key="att.bibl"/>
-            <memberOf key="att.canonical"/>
-            <memberOf key="att.facsimile"/>
-            <memberOf key="att.filing"/>
-            <memberOf key="att.lang"/>
-            <memberOf key="model.titleLike"/>
-          </classes>
-          <content>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:text/>
-                <rng:ref name="model.textphraseLike"/>
-                <rng:ref name="model.editLike"/>
-                <rng:ref name="model.transcriptionLike"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content>
-          <attList>
-            <attDef ident="level" usage="opt">
-              <desc>Indicates the bibliographic level for a title.</desc>
-              <valList type="closed">
-                <valItem ident="a">
-                  <desc>Analyzed component, such as an article or chapter, within a larger
-                    bibliographic entity.</desc>
-                </valItem>
-                <valItem ident="m">
-                  <desc>Monograph.</desc>
-                </valItem>
-                <valItem ident="j">
-                  <desc>Journal.</desc>
-                </valItem>
-                <valItem ident="s">
-                  <desc>Series.</desc>
-                </valItem>
-                <valItem ident="u">
-                  <desc>Unpublished (including theses and dissertations unless published by a
-                    commercial press).</desc>
-                </valItem>
-              </valList>
-            </attDef>
-            <attDef ident="type" usage="opt">
-              <desc>Characterizes the element in some sense, using any convenient classification
-                scheme or typology.</desc>
-              <datatype>
-                <rng:data type="NMTOKEN"/>
-              </datatype>
-              <valList type="semi">
-                <valItem ident="main">
-                  <desc>Main title.</desc>
-                </valItem>
-                <valItem ident="subordinate">
-                  <desc>Subtitle or title of part.</desc>
-                </valItem>
-                <valItem ident="abbreviated">
-                  <desc>Abbreviated form of title.</desc>
-                </valItem>
-                <valItem ident="alternative">
-                  <desc>Alternate title by which the item is also known.</desc>
-                </valItem>
-                <valItem ident="translated">
-                  <desc>Translated form of title.</desc>
-                </valItem>
-                <valItem ident="uniform">
-                  <desc>Collective title.</desc>
-                </valItem>
-              </valList>
-            </attDef>
-            <attDef ident="subtype" usage="opt">
-              <desc>Provide any sub-classification for the element, additional to that given by its
-                type attribute.</desc>
-              <datatype>
-                <rng:data type="NMTOKEN"/>
-              </datatype>
-            </attDef>
-          </attList>
-          <remarks>
-            <p>The <att>type</att> attribute may be used to classify the title according to some
-              convenient typology. Sample values include: main (main title), subordinate (subtitle,
-              title of part), abbreviated (abbreviated form of title), alternative (alternate title
-              by which the work is also known), translated (translated form of title), uniform
-              (collective title). The <att>type</att> attribute is provided for convenience in
-              analysing titles and processing them according to their type; where such specialized
-              processing is not necessary, there is no need for such analysis, and the entire title,
-              including subtitles and any parallel titles, may be enclosed within a single <gi
-                scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
-                >title</gi> sub-elements. The name of the list from which a controlled value is
-              taken may be recorded using the <att>authority</att> attribute. The number of initial
-              characters (such as those constituing an article or preposition) that should not be
-              used for sorting a title or name may be indicated in the <att>nonfiling</att>
-              attribute.</p>
-          </remarks>
-          <remarks>
-            <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-              standard.</p>
-          </remarks>
-        </elementSpec>
-
         <!-- Support SMuFL, issue #213 -->
         <!-- Add att.extsym attribute class. -->
         <classSpec ident="att.extsym" module="MEI.externalsymbols" type="atts" mode="add">
@@ -968,7 +817,6 @@
             <rng:zeroOrMore>
               <rng:choice>
                 <rng:text/>
-                <!-- Include SVG, issue #53: add @prefix to explicitly reference symbol in MEI namespace -->
                 <rng:ref name="mei_symbol"/>
               </rng:choice>
             </rng:zeroOrMore>
@@ -980,7 +828,6 @@
           model.textphraseLike.imited class. This last change fixes a problem that allowed symbol to 
           occur in too many places, for instance, within measure. With this change, symbol can only 
           occur if wrapped by anchoredText. -->
-        <!-- Include SVG, issue #53: add @prefix to explicitly reference symbol in MEI namespace -->
         <elementSpec ident="symbol" module="MEI.usersymbols" mode="replace" prefix="mei_">
           <desc>A reference to a previously defined symbol.</desc>
           <classes>
