@@ -794,59 +794,6 @@
           </attList>
         </classSpec>
 
-        <!-- Method for capturing non-filing part of title/name, issue #185 -->
-        <!-- Add att.filing class -->
-        <classSpec ident="att.filing" module="MEI.shared" type="atts" mode="add">
-          <desc>Attributes that deal with string filing characteristics.</desc>
-          <attList>
-            <attDef ident="nonfiling" usage="opt">
-              <desc>Holds the number of initial characters (such as those constituing an article or
-                preposition) that should not be used for sorting a title or name.</desc>
-              <datatype>
-                <rng:data type="positiveInteger"/>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
-        <!-- Make att.name a member of att.filing -->
-        <classSpec ident="att.name" module="MEI.shared" type="atts" mode="replace">
-          <desc>Attributes shared by names.</desc>
-          <classes>
-            <memberOf key="att.authorized"/>
-            <memberOf key="att.canonical"/>
-            <memberOf key="att.filing"/>
-          </classes>
-          <attList>
-            <attDef ident="nymref" usage="opt">
-              <desc>Used to record a pointer to the regularized form of the name elsewhere in the
-                document.</desc>
-              <datatype>
-                <rng:ref name="data.URI"/>
-              </datatype>
-              <constraintSpec ident="check_nymrefTarget" scheme="isoschematron">
-                <constraint>
-                  <sch:rule context="@nymref">
-                    <sch:assert role="warning" test="not(normalize-space(.) eq '')">@nymref
-                      attribute has no content.</sch:assert>
-                    <sch:assert role="warning"
-                      test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
-                      >The value in @nymref must correspond to the @xml:id attribute of an
-                      element.</sch:assert>
-                  </sch:rule>
-                </constraint>
-              </constraintSpec>
-            </attDef>
-            <attDef ident="role" usage="opt">
-              <desc>Used to specify further information about the entity referenced by this name,
-                for example, the occupation of a person or the status of a place. Use a standard
-                value whenever possible.</desc>
-              <datatype>
-                <rng:text/>
-              </datatype>
-            </attDef>
-          </attList>
-        </classSpec>
-        <!-- Make <title> a member of att.filing; add @prefix -->
         <!-- Include SVG, issue #53: add @prefix to explicitly reference title in MEI namespace -->
         <elementSpec ident="title" module="MEI.shared" mode="replace" prefix="mei_">
           <desc>Title of a bibliographic entity.</desc>
