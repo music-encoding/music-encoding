@@ -2652,6 +2652,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_altsymTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@altsym">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@altsym attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:symbolDef/@xml:id"
+                  >The value in @altsym must correspond to the @xml:id attribute of a symbolDef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -3386,6 +3398,30 @@
         <memberOf key="att.beamsecondary"/>
       </classes>
     </classSpec>
+    <classSpec ident="att.classcodeident" module="MEI.shared" type="atts">
+      <attList>
+        <attDef ident="classcode" usage="opt">
+          <desc>Contains a reference to the controlled vocabulary from which the term is drawn. The
+            value must match the value of an ID attribute on a classCode element given elsewhere in
+            the document.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+          <constraintSpec ident="check_classcodeTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@classcode">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@classcode attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:classCode/@xml:id"
+                  >The value in @classcode must correspond to the @xml:id attribute of a classCode
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.clef.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -3582,11 +3618,23 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
-          <constraintSpec ident="When_copyof_element_empy" scheme="isoschematron">
+          <constraintSpec ident="When_copyof_element_empty" scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:*[@copyof]">
                 <sch:assert test="count(child::node()) = 0">An element with a copyof attribute
                   cannot have content.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="check_copyofTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@copyof">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@copyof attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >The value in @copyof must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -3597,18 +3645,54 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_correspTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@corresp">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@corresp attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @corresp must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="next" usage="opt">
           <desc>Used to point to the next event(s) in a user-defined collection.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_nextTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@next">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@next attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @next must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="prev" usage="opt">
           <desc>Points to the previous event(s) in a user-defined collection.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_prevTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@prev">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@prev attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @prev must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="sameas" usage="opt">
           <desc>Points to an element that is the same as the current element but is not a literal
@@ -3616,12 +3700,36 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_sameasTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@sameas">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@sameas attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @sameas must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="synch" usage="opt">
           <desc>Points to elements that are synchronous with the current element.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_synchTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@synch">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@synch attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @synch must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -3770,6 +3878,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_custosTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:custos/@target">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@target attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:note/@xml:id"
+                  >The value in @target must correspond to the @xml:id attribute of a note
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -3838,6 +3958,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_dataTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@data">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@data attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[ancestor::mei:music]/@xml:id"
+                  >The value in @data must correspond to the @xml:id attribute of a descendant of
+                  the music element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -3851,6 +3983,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_declsTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@decls">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@decls attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[ancestor::mei:meiHead]/@xml:id"
+                  >Each value in @decls must correspond to the @xml:id attribute of an element
+                  within the metadata header.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -4256,11 +4400,23 @@
       <desc>Attributes that associate a feature corresponding with all or part of an image.</desc>
       <attList>
         <attDef ident="facs" usage="opt">
-          <desc>Permits the current element to reference a facsimile image or image zone which
+          <desc>Permits the current element to reference a facsimile surface or image zone which
             corresponds to it.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_facsTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@facs">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@facs attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[local-name() eq 'surface' or local-name() eq 'zone']/@xml:id"
+                  >Each value in @facs must correspond to the @xml:id attribute of a surface or zone
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -4659,6 +4815,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_handTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@hand">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@hand attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:hand/@xml:id"
+                  >Each value in @hand must correspond to the @xml:id attribute of a hand
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -4689,6 +4857,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_chordrefTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@chordref">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@chordref attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:chordDef/@xml:id"
+                  >The value in @chordref must correspond to the @xml:id attribute of a chordDef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -4947,6 +5127,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_instrTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@instr">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@instr attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:instrDef/@xml:id"
+                  >The value in @instr must correspond to the @xml:id attribute of an instrDef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -5005,6 +5197,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_joinTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@join">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@join attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @join must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -5177,6 +5381,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_defTarget_layer" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="layer/@def">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:layerDef/@xml:id"
+                  >The value in @def must correspond to the @xml:id attribute of a layerDef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -6417,6 +6633,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_nymrefTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@nymref">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@nymref attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >The value in @nymref must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="role" usage="opt">
           <desc>Used to specify further information about the entity referenced by this name, for
@@ -7122,6 +7350,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_plistTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@plist">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@plist attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >Each value in @plist must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="evaluate" usage="opt">
           <desc>Specifies the intended meaning when the target of a pointer is itself a
@@ -7423,6 +7663,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_respTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@resp">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@resp attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[ancestor::mei:meiHead]/@xml:id"
+                  >The value in @resp must correspond to the @xml:id attribute of an element within
+                  the metadata header.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -7800,6 +8052,18 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_sourceTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@source">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@source attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:source/@xml:id"
+                  >Each value in @source must correspond to the @xml:id attribute of a source
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -7900,6 +8164,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_defTarget_staff" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="staff/@def">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:staffDef/@xml:id"
+                  >The value in @def must correspond to the @xml:id attribute of a staffDef
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -8151,6 +8427,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_endidTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@endid">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@endid attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >The value in @endid must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -8163,6 +8451,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_startidTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@startid">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@startid attribute
+                  has no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id"
+                  >The value in @startid must correspond to the @xml:id attribute of an
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -13419,7 +13719,7 @@
         <attDef ident="character" usage="opt">
           <desc>Describes the character of the new hand.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:text/>
           </datatype>
         </attDef>
         <attDef ident="new" usage="opt">
@@ -13428,6 +13728,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_newTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@new">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@new attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:hand/@xml:id"
+                  >The value in @new must correspond to the @xml:id attribute of a hand
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="old" usage="opt">
           <desc>Identifies the old hand. The value must contain the ID of a hand element given
@@ -13435,6 +13747,18 @@
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_oldTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@old">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@old attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:hand/@xml:id"
+                  >The value in @old must correspond to the @xml:id attribute of a hand
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
       <remarks>
@@ -18157,7 +18481,9 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.classcodeident"/>
         <memberOf key="att.lang"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -18168,16 +18494,6 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="classcode" usage="opt">
-          <desc>Contains a reference to the controlled vocabulary from which the term is drawn. The
-            value must match the value of an ID attribute on a classCode element given elsewhere in
-            the document.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-        </attDef>
-      </attList>
       <remarks>
         <p>The <att>classcode</att> attribute may be used to link the term to a terminological
           source given in a <gi scheme="MEI">classCode</gi> element. The <gi scheme="MEI">term</gi>
@@ -18195,6 +18511,8 @@
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.classcodeident"/>
+        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -18207,16 +18525,6 @@
           <rng:ref name="term"/>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="classcode" usage="opt">
-          <desc>Contains a reference to the controlled vocabulary from which the terms are drawn.
-            The value must match the value of an ID attribute on a classCode element given elsewhere
-            in the document.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="textLang" module="MEI.shared">
       <desc>(text language) – Identifies the languages and writing systems within the work described
