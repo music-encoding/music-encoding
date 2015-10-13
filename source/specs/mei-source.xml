@@ -10648,19 +10648,20 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.source"/>
-        <memberOf key="att.typed"/>
         <memberOf key="att.annot.log"/>
         <memberOf key="att.annot.vis"/>
         <memberOf key="att.annot.ges"/>
         <memberOf key="att.annot.anl"/>
         <memberOf key="att.plist"/>
         <memberOf key="att.responsibility"/>
+        <memberOf key="att.typed"/>
         <memberOf key="model.annotLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
+            <rng:ref name="model.headLike"/>
             <rng:ref name="model.textcomponentLike"/>
             <rng:ref name="model.textphraseLike"/>
             <rng:ref name="model.editLike"/>
@@ -10668,13 +10669,29 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="annot_content_constraint" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:annot[mei:head or mei:lg or mei:p or mei:quote or mei:table]">
+            <sch:assert test="not(mei:head[preceding-sibling::*[not(local-name()='head')]])">Head
+              elements can only occur at the start of annot.</sch:assert>
+            <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
+              when head, lg, p, quote, or table is used.</sch:assert>
+            <sch:assert
+              test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList' or local-name() eq 'head' or 
+              local-name() eq 'lg' or local-name() eq 'list' or local-name() eq 'p' or local-name() eq 'quote' or 
+              local-name() eq 'table')])"
+              >Unstructured text not allowed when head, lg, p, quote, or table elements are
+              used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
-        <p>The <gi scheme="MEI">annot</gi> element can be used for both general comments and for an
-          annotation of the musical text. It provides a way to group participating *events* and/or
-          *control events*, for example, the notes that form a descending bass line or phrase marks,
-          and a label for or comment regarding the group. Participating entities may be identified
-          in the <att>plist</att> attribute. An editorial or analytical comment or observation may
-          be included directly within the <gi scheme="MEI">annot</gi> element. The starting point of
+        <p>The <gi scheme="MEI">annot</gi> element can be used for both general comments and for
+          annotations of the musical text. It provides a way to group participating *events* and/or
+          *control events*, for example, the notes that form a descending bass line, and provide a
+          label for and comment regarding the group. Participating entities may be identified in the
+            <att>plist</att> attribute. An editorial or analytical comment or observation may be
+          included directly within the <gi scheme="MEI">annot</gi> element. The starting point of
           the annotation may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
             <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
           recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. The
@@ -11966,9 +11983,9 @@
         <memberOf key="att.pointing"/>
       </classes>
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
+        </rng:zeroOrMore>
         <rng:choice>
           <rng:optional>
             <rng:ref name="model.pLike"/>
@@ -11981,28 +11998,32 @@
           </rng:oneOrMore>
         </rng:choice>
       </content>
-      <!--<exemplum>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <contents>
-            <p>A suitable tone ; Left hand colouring ; Rhythm and accent ; Tempo ; Flexibility ;
-              Ornaments</p>
-          </contents>
-        </egXML>
+      <exemplum>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<contents>
+  <p>A suitable tone ; Left hand colouring ; Rhythm and accent ; Tempo ; 
+    Flexibility ; Ornaments</p>
+</contents>
+            </egXML>
       </exemplum>
       <exemplum>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples">
-          <contents>
-            <contentItem>Sonata in D major, op. V, no. 1 / Corelli</contentItem>
-            <contentItem>Sonata in G minor / Purcell (with Robert Donington, gamba)</contentItem>
-            <contentItem>Forlane from Concert royal no. 3 / Couperin</contentItem>
-          </contents>
-        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<contents>
+  <head>Contents</head>
+  <label>1.</label><contentItem>Sonata in D major, op. V, no. 1 /
+     Corelli</contentItem>
+  <label>2.</label><contentItem>Sonata in G minor / Purcell (with Robert Donington,
+     gamba)</contentItem>
+  <label>3.</label><contentItem>Forlane from Concert royal no. 3 /
+     Couperin</contentItem>
+</contents>
+            </egXML>
       </exemplum>
       <exemplum>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <contents target="http://www.contentProvider.org/toc/toc01.html"/>
-        </egXML>
-      </exemplum>-->
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
+<contents target="http://www.contentProvider.org/toc/toc01.html"/>
+            </egXML>
+      </exemplum>
     </elementSpec>
     <elementSpec ident="context" module="MEI.header">
       <desc>The historical, social, intellectual, artistic, or other context within which the work
@@ -12844,9 +12865,6 @@
     <elementSpec ident="event" module="MEI.header">
       <desc>Contains a description of an event, including the dates and locations of its occurrence
         and prominent participants.</desc>
-      <!-- This model allows for both semi-structured (using only model.eventPart members) and
-            "free" descriptions (using p, table, list, and castList) as well as a mixture of
-            the two approaches. -->
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.calendared"/>
@@ -12854,11 +12872,15 @@
         <memberOf key="att.datable"/>
         <memberOf key="att.edit"/>
         <memberOf key="att.lang"/>
+        <memberOf key="att.typed"/>
       </classes>
+      <!-- This model allows for both semi-structured (using only model.eventPart members) and
+            "free" descriptions (using p, table, list, and castList) as well as a mixture of
+            the two approaches. -->
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:choice>
             <rng:ref name="model.eventPart"/>
@@ -12872,47 +12894,6 @@
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
       </content>
-      <!-- <content>
-            <rng:choice>
-              <!-\- A semi-structured description using name, date, and place elements -\->
-              <rng:group>
-                <rng:optional>
-                  <!-\- A descriptive label, such as "First performance in Denmark" -\->
-                  <rng:ref name="model.headLike"/>
-                </rng:optional>
-                <rng:oneOrMore>
-                  <rng:ref name="model.eventPart"/>
-                </rng:oneOrMore>
-                <!-\- A single paragraph is allowed here in order to "grandfather in" MerMEId.  This paragraph
-                will be deprecated following MEI2013!  The <head> element should be used instead. Once this
-                paragraph is eliminated, the preceding model.eventPart reference above and the choice below
-                can be made optional. Until then, at least one element from model.eventPart must be required
-                in order to avoid an ambiguous content model when converting to XSD. -\->
-                <rng:optional>
-                  <rng:ref name="model.pLike"/>
-                </rng:optional>
-              </rng:group>
-              <!-\- A more free-form description using elements from the textcomponentLike class -\->
-              <rng:group>
-                <rng:oneOrMore>
-                  <rng:choice>
-                    <rng:ref name="model.pLike"/>
-                    <rng:ref name="model.tableLike"/>
-                    <!-\- The list and castList elements from model.listLike are invoked here
-                      individually so that biblList can be shared by both the structured and 
-                      unstructured models. -\->
-                    <rng:ref name="list"/>
-                    <rng:ref name="castList"/>
-                  </rng:choice>
-                </rng:oneOrMore>
-              </rng:group>
-            </rng:choice>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:ref name="biblList"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </content> -->
     </elementSpec>
     <elementSpec ident="eventList" module="MEI.header">
       <desc>Contains historical information given as a sequence of significant past events.</desc>
@@ -14098,9 +14079,9 @@
         <memberOf key="att.bibl"/>
       </classes>
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="creation"/>
         </rng:optional>
@@ -15773,6 +15754,9 @@
         <memberOf key="att.bibl"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="model.annotLike"/>
         </rng:oneOrMore>
@@ -17936,6 +17920,9 @@
         <memberOf key="att.common"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="source"/>
         </rng:oneOrMore>
