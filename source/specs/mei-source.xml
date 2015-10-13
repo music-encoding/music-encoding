@@ -63,9 +63,6 @@
     <moduleSpec ident="MEI.header">
       <desc>Metadata header component declarations.</desc>
     </moduleSpec>
-    <moduleSpec ident="MEI.linkalign">
-      <desc>Linking and alignment component declarations.</desc>
-    </moduleSpec>
     <moduleSpec ident="MEI.lyrics">
       <desc>Lyrics component declarations.</desc>
     </moduleSpec>
@@ -542,6 +539,52 @@
             <rng:param name="pattern">full</rng:param>
           </rng:data>
         </rng:choice>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.BETYPE" module="MEI.shared" type="dt">
+      <desc>Datatypes for values in begin, end, abstype and inttype attributes.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="byte">
+            <desc>Bytes.</desc>
+          </valItem>
+          <valItem ident="smil">
+            <desc>Synchronized Multimedia Integration Language.</desc>
+          </valItem>
+          <valItem ident="midi">
+            <desc>MIDI clicks.</desc>
+          </valItem>
+          <valItem ident="mmc">
+            <desc>MIDI machine code.</desc>
+          </valItem>
+          <valItem ident="mtc">
+            <desc>MIDI time code.</desc>
+          </valItem>
+          <valItem ident="smpte-25">
+            <desc>SMPTE 25 EBU.</desc>
+          </valItem>
+          <valItem ident="smpte-24">
+            <desc>SMPTE 24 Film Sync.</desc>
+          </valItem>
+          <valItem ident="smpte-df30">
+            <desc>SMPTE 30 Drop.</desc>
+          </valItem>
+          <valItem ident="smpte-ndf30">
+            <desc>SMPTE 30 Non-Drop.</desc>
+          </valItem>
+          <valItem ident="smpte-df29.97">
+            <desc>SMPTE 29.97 Drop.</desc>
+          </valItem>
+          <valItem ident="smpte-ndf29.97">
+            <desc>SMPTE 29.97 Non-Drop.</desc>
+          </valItem>
+          <valItem ident="tcf">
+            <desc>AES Time-code character format.</desc>
+          </valItem>
+          <valItem ident="time">
+            <desc>ISO 24-hour time format: HH:MM:SS.ss.</desc>
+          </valItem>
+        </valList>
       </content>
     </macroSpec>
     <macroSpec ident="data.BOOLEAN" module="MEI" type="dt">
@@ -2721,12 +2764,24 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.alignment" module="MEI.linkalign" type="atts">
+    <classSpec ident="att.alignment" module="MEI.performance" type="atts">
       <desc>Temporal alignment attributes.</desc>
+      <constraintSpec ident="check_whenTarget" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="@when">
+            <sch:assert role="warning" test="not(normalize-space(.) eq '')">@when attribute has no
+              content.</sch:assert>
+            <sch:assert role="warning"
+              test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:when/@xml:id">The
+              value in @when must correspond to the @xml:id attribute of a when
+              element.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="when" usage="opt">
           <desc>Indicates the point of occurrence of this feature along a time line. Its value must
-            be the ID of a &lt;when&gt; element elsewhere in the document.</desc>
+            be the ID of a <gi scheme="MEI">when</gi> element elsewhere in the document.</desc>
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
@@ -5933,40 +5988,25 @@
       <attList>
         <attDef ident="begin" usage="opt">
           <desc>Specifies a point where the relevant content begins. A numerical value must be less
-            and a time value must be earlier than that in the end attribute.</desc>
+            and a time value must be earlier than that given by the end attribute.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:text/>
           </datatype>
         </attDef>
         <attDef ident="end" usage="opt">
           <desc>Specifies a point where the relevant content ends. If not specified, the end of the
             content is assumed to be the end point. A numerical value must be greater and a time
-            value must be later than that in the begin attribute.</desc>
+            value must be later than that given by the begin attribute.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:text/>
           </datatype>
         </attDef>
         <attDef ident="betype" usage="opt">
           <desc>Type of values used in the begin/end attributes. The begin and end attributes can
             only be interpreted meaningfully in conjunction with this attribute.</desc>
-          <valList type="closed">
-            <!-- <valItem ident="byte"/>
-                <valItem ident="idref"/>
-                <valItem ident="smil"/>
-                <valItem ident="midi"/>
-                <valItem ident="smpte-25"/>
-                <valItem ident="smpte-24"/>
-                <valItem ident="smpte-df30"/>
-                <valItem ident="smpte-ndf30"/>
-                <valItem ident="smpte-df29.97"/>
-                <valItem ident="smpte-ndf29.97"/>
-                <valItem ident="tcf"/> -->
-            <valItem ident="time">
-              <desc>A modified ISO time format (HH:MM:SS.ss) where 'HH' should be interpreted as any
-                number of hours and '.ss' should be interpreted as any number of fractional parts of
-                a second.</desc>
-            </valItem>
-          </valList>
+          <datatype>
+            <rng:ref name="data.BETYPE"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -9613,9 +9653,6 @@
         <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
-    <classSpec ident="model.alignLike" module="MEI.linkalign" type="model">
-      <desc>Groups elements that are used for temporal alignment.</desc>
-    </classSpec>
     <classSpec ident="model.annotLike" module="MEI.shared" type="model">
       <desc>Groups annotation-like elements.</desc>
       <classes>
@@ -11856,6 +11893,7 @@
         file.</desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.datapointing"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.mediabounds"/>
         <memberOf key="att.startid"/>
@@ -11863,6 +11901,9 @@
       <content>
         <rng:zeroOrMore>
           <rng:ref name="avFile"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="when"/>
         </rng:zeroOrMore>
       </content>
       <remarks>
@@ -15517,9 +15558,6 @@
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.alignLike"/>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
           <rng:ref name="model.resourceLike"/>
         </rng:zeroOrMore>
         <rng:ref name="macro.musicPart"/>
@@ -16898,6 +16936,7 @@
       <desc>A recorded performance.</desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="att.datapointing"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.mediabounds"/>
         <memberOf key="att.startid"/>
@@ -16905,6 +16944,9 @@
       <content>
         <rng:zeroOrMore>
           <rng:ref name="avFile"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="when"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="clip"/>
@@ -17491,9 +17533,6 @@
         <memberOf key="model.scoreDefLike"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:ref name="model.alignLike"/>
-        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="model.chordTableLike"/>
         </rng:optional>
@@ -18794,61 +18833,6 @@
           110-111, 122.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="timeline" module="MEI.linkalign">
-      <desc>Provides a set of ordered points in time to which musical elements can be linked in
-        order to create a temporal alignment of those elements.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="model.alignLike"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:ref name="when"/>
-        </rng:zeroOrMore>
-      </content>
-      <attList>
-        <!-- <attDef ident="length" usage="opt"/>
-            <attDef ident="lentype" usage="opt">
-              <valList type="closed">
-                <valItem ident="byte"/>
-                <valItem ident="smil"/>
-                <valItem ident="midi"/>
-                <valItem ident="smpte-25"/>
-                <valItem ident="smpte-24"/>
-                <valItem ident="smpte-df30"/>
-                <valItem ident="smpte-ndf30"/>
-                <valItem ident="smpte-df29.97"/>
-                <valItem ident="smpte-ndf29.97"/>
-                <valItem ident="tcf"/>
-                <valItem ident="time"/>
-              </valList>
-            </attDef> -->
-        <attDef ident="avref" usage="opt">
-          <desc>Holds the identifier of an &lt;avFile&gt; element that references an external
-            digital media file.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-        </attDef>
-        <attDef ident="origin" usage="req">
-          <desc>Designates the origin of the timeline, i.e. the &lt;when&gt; element associated with
-            the beginning of the timeline.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-        </attDef>
-      </attList>
-      <remarks>
-        <p>The <att>origin</att> attribute designates the origin of the timeline, i.e., the time at
-          which it begins. It must point to one of the <gi scheme="MEI">when</gi> elements in its
-          content. The <att>avref</att> attribute is provided in order to link the timeline to a
-          particular external media file, such as an audio file.</p>
-      </remarks>
-      <remarks>
-        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-          standard.</p>
-      </remarks>
-    </elementSpec>
     <elementSpec ident="title" module="MEI.shared" prefix="mei_">
       <desc>Title of a bibliographic entity.</desc>
       <classes>
@@ -19483,10 +19467,9 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="when" module="MEI.linkalign">
+    <elementSpec ident="when" module="MEI.performance">
       <desc>Indicates a point in time either absolutely (using the absolute attribute), or relative
-        to other elements in the same timeline element (using the interval and since
-        attributes).</desc>
+        to another when element (using the interval and since attributes).</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.datapointing"/>
@@ -19494,13 +19477,22 @@
       <content>
         <rng:empty/>
       </content>
+      <constraintSpec ident="check_when_interval" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:when[@interval]">
+            <sch:assert test="@since">@since must be present when @interval is used.</sch:assert>
+            <sch:assert
+              test="every $i in tokenize(@since, '\s+') satisfies substring($i,2)=//mei:when/@xml:id"
+              >The value in @since must correspond to the @xml:id attribute of a when
+              element.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="absolute" usage="opt">
-          <desc>Provides an absolute value for the time associated with a point on a timeline. This
-            attribute is required for the element designated as the origin by the parent
-            timeline.</desc>
+          <desc>Provides an absolute value for the time point.</desc>
           <datatype>
-            <rng:ref name="data.ISOTIME"/>
+            <rng:text/>
           </datatype>
         </attDef>
         <attDef ident="interval" usage="opt">
@@ -19508,61 +19500,45 @@
             since attribute. This attribute can only be interpreted meaningfully in conjunction with
             the inttype attribute.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="decimal">
+              <rng:param name="minInclusive">1</rng:param>
+            </rng:data>
           </datatype>
-          <!-- <datatype>
-                <rng:data type="decimal">
-                  <rng:param name="minInclusive">1</rng:param>
-                </rng:data>
-              </datatype> -->
+        </attDef>
+        <attDef ident="abstype" usage="opt">
+          <desc>Specifies the kind of values used in the absolute attribute.</desc>
+          <datatype>
+            <rng:ref name="data.BETYPE"/>
+          </datatype>
         </attDef>
         <attDef ident="inttype" usage="opt">
           <desc>Specifies the kind of values used in the interval attribute.</desc>
-          <valList type="closed">
-            <valItem ident="byte">
-              <desc>Byte value.</desc>
-            </valItem>
-            <valItem ident="smil">
-              <desc>Synchronized Multimedia Integration Language.</desc>
-            </valItem>
-            <valItem ident="midi">
-              <desc>MIDI time code.</desc>
-            </valItem>
-            <valItem ident="smpte-25">
-              <desc>SMPTE 25 EBU.</desc>
-            </valItem>
-            <valItem ident="smpte-24">
-              <desc>SMPTE 24 Film Sync.</desc>
-            </valItem>
-            <valItem ident="smpte-df30">
-              <desc>SMPTE 30 Drop.</desc>
-            </valItem>
-            <valItem ident="smpte-ndf30">
-              <desc>SMPTE 30 Non-Drop.</desc>
-            </valItem>
-            <valItem ident="smpte-df29.97">
-              <desc>SMPTE 29.97 Drop.</desc>
-            </valItem>
-            <valItem ident="smpte-ndf29.97">
-              <desc>SMPTE 29.97 Non-Drop.</desc>
-            </valItem>
-            <valItem ident="tcf">
-              <desc>AES Time-code character format.</desc>
-            </valItem>
-            <valItem ident="time">
-              <desc>ISO 24-hour time format: HH:MM:SS.ss.</desc>
-            </valItem>
-          </valList>
+          <datatype>
+            <rng:ref name="data.BETYPE"/>
+          </datatype>
         </attDef>
+        <!-- Enforce constraints on attribute targets, issue #226 -->
         <attDef ident="since" usage="opt">
           <desc>Identifies the reference point for determining the time of the current when element,
             which is obtained by adding the interval to the time of the reference point. The value
-            should be the ID of another when element in the same timeline. If the since attribute is
-            omitted and the absolute attribute is not specified, then the reference point is
-            understood to be the immediately preceding when element.</desc>
+            should be the ID of another when element within the same parent element. If the since
+            attribute is omitted and the absolute attribute is not specified, then the reference
+            point is understood to be the immediately preceding when element.</desc>
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
+          <constraintSpec ident="check_sinceTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@since">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@since attribute has
+                  no content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:when/@xml:id"
+                  >The value in @since must correspond to the @xml:id attribute of a when
+                  element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
       <remarks>
