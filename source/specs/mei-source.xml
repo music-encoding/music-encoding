@@ -11464,7 +11464,7 @@
             <rng:ref name="role"/>
             <rng:ref name="roleDesc"/>
             <rng:ref name="actor"/>
-            <rng:ref name="instrVoice"/>
+            <rng:ref name="perfRes"/>
           </rng:choice>
         </rng:oneOrMore>
       </content>
@@ -12842,26 +12842,6 @@
           *not* contain other ending elements.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="ensemble" module="MEI.header">
-      <desc>The name of a standard instrumental or vocal grouping, such as 'orchestra' or 'marching
-        band'.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.authorized"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.coded"/>
-        <memberOf key="att.lang"/>
-      </classes>
-      <content>
-        <rng:text/>
-      </content>
-      <remarks>
-        <p>It is recommended that name values (recorded in the <att>code</att> attribute or in the
-          element's content) be taken from a standardized list, such as the IAML (International
-          Association of Music Libraries) Medium of Performance Codes List or the MARC Instruments
-          and Voices Code List.</p>
-      </remarks>
-    </elementSpec>
     <elementSpec ident="event" module="MEI.header">
       <desc>Contains a description of an event, including the dates and locations of its occurrence
         and prominent participants.</desc>
@@ -14170,8 +14150,8 @@
         </rng:optional>
         <rng:optional>
           <rng:choice>
-            <rng:ref name="instrVoice"/>
-            <rng:ref name="instrVoiceGrp"/>
+            <rng:ref name="perfRes"/>
+            <rng:ref name="perfResList"/>
           </rng:choice>
         </rng:optional>
         <rng:optional>
@@ -14340,80 +14320,6 @@
         <rng:oneOrMore>
           <rng:ref name="model.instrDefLike"/>
         </rng:oneOrMore>
-      </content>
-    </elementSpec>
-    <elementSpec ident="instrumentation" module="MEI.header">
-      <desc>Instrumental and non-dramatic vocal resources.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.authorized"/>
-      </classes>
-      <content>
-        <rng:optional>
-          <rng:ref name="model.headLike"/>
-        </rng:optional>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="ensemble"/>
-            <rng:ref name="instrVoice"/>
-            <rng:ref name="instrVoiceGrp"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-    </elementSpec>
-    <elementSpec ident="instrVoice" module="MEI.header">
-      <desc>(instrument or voice) – Name of an instrument on which a performer plays or a
-        performer's voice range.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.authorized"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.coded"/>
-        <memberOf key="att.lang"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="instrVoice"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <attList>
-        <attDef ident="count" usage="opt">
-          <desc>Indicates the number of performers.</desc>
-          <datatype>
-            <rng:data type="positiveInteger"/>
-          </datatype>
-        </attDef>
-        <attDef ident="solo" usage="opt">
-          <desc>Marks this instrument or vocal part as a soloist. Do not use this attribute for a
-            solo instrument which is not accompanied.</desc>
-          <datatype>
-            <rng:ref name="data.BOOLEAN"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </elementSpec>
-    <elementSpec ident="instrVoiceGrp" module="MEI.header">
-      <desc>Several instrumental or vocal resources treated as a group.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.authorized"/>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.coded"/>
-        <memberOf key="att.lang"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.headLike"/>
-            <rng:ref name="instrVoice"/>
-            <rng:ref name="instrVoiceGrp"/>
-          </rng:choice>
-        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="interpretation" module="MEI.header">
@@ -16149,20 +16055,21 @@
         <memberOf key="att.authorized"/>
       </classes>
       <content>
-        <rng:optional>
+        <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
-        </rng:optional>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="castList"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="instrumentation"/>
+          <rng:ref name="perfResList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.annotLike"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>The function of instrumentalists or vocalists is represented by the choice of <gi
-            scheme="MEI">ensemble</gi> and <gi scheme="MEI">performer</gi> child elements.
-          Arrangements are coded for the medium of the work being described, not for the original
+        <p> Arrangements are coded for the medium of the work being described, not for the original
           medium.</p>
       </remarks>
     </elementSpec>
@@ -16182,6 +16089,76 @@
         <p>The <att>decls</att> attribute may be used to link the collection with a particular
           source described in the header. This element is analogous to the <gi scheme="MEI"
             >facsimile</gi> element in the facsimile module.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="perfRes" module="MEI.header">
+      <desc>(performance resource) – Name of an instrument on which a performer plays, a performer's
+        voice range, or a standard performing ensemble designation.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.canonical"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.lang"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="count" usage="opt">
+          <desc>Indicates the number of performers.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+        <attDef ident="solo" usage="opt">
+          <desc>Marks this instrument or vocal part as a soloist. Do not use this attribute for a
+            solo instrument which is not accompanied.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </elementSpec>
+    <elementSpec ident="perfResList" module="MEI.header">
+      <desc>Several instrumental or vocal resources treated as a group.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.canonical"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.lang"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="perfRes"/>
+            <rng:ref name="perfResList"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="count" usage="opt">
+          <desc>Indicates the number of performers.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>The function of instrumentalists or vocalists is represented by the choice of <gi
+            scheme="MEI">perfRes</gi> and <gi scheme="MEI">perfResList</gi> child elements.
+          Arrangements are coded for the medium of the work being described, not for the original
+          medium.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="periodName" module="MEI.namesdates">
