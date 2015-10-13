@@ -21,7 +21,8 @@
       <divGen type="toc"/>
     </front>
     <body>
-      <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" start="mei meiHead meiCorpus
+      <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei"
+        start="mei meiHead meiCorpus
         music">
         <moduleRef key="MEI"/>
         <moduleRef key="MEI.shared"/>
@@ -36,11 +37,13 @@
         <moduleRef key="MEI.corpus"/>
         <moduleRef key="MEI.critapp"/>
         <moduleRef key="MEI.edittrans"/>
+        <moduleRef key="MEI.externalsymbols"/>
         <moduleRef key="MEI.facsimile"/>
         <moduleRef key="MEI.figtable"/>
+        <!-- Disable fingering module -->
+        <!--<moduleRef key="MEI.fingering"/>-->
         <moduleRef key="MEI.frbr"/>
         <moduleRef key="MEI.harmony"/>
-        <moduleRef key="MEI.linkalign"/>
         <moduleRef key="MEI.lyrics"/>
         <moduleRef key="MEI.midi"/>
         <moduleRef key="MEI.namesdates"/>
@@ -50,8 +53,18 @@
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
 
+        <!-- Include SVG -->
+        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
+          <content>
+            <rng:define name="mei_model.graphicLike" combine="choice">
+              <rng:ref name="svg"/>
+            </rng:define>
+          </content>
+        </moduleRef>
+
         <!-- Remove dur attribute -->
         <classSpec ident="att.duration.musical" module="MEI.shared" type="atts" mode="delete"/>
+        <classSpec ident="att.duration.additive" module="MEI.shared" type="atts" mode="delete"/>
 
         <!-- Disable CMN-specific model classes in the shared module -->
         <classSpec ident="model.sectionPart.cmn" module="MEI.shared" type="model" mode="delete"/>
