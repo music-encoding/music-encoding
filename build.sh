@@ -114,7 +114,7 @@ build()
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
 
-    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.odd');
+    for file in $(find ${CUSTOMIZATIONS_DIR} -name '*.xml');
     do
         echo -e "${PURPLE} Processing" "${file}"$NORM
         echo -e $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
