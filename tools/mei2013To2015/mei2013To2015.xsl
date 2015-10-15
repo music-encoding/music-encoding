@@ -16,11 +16,9 @@
   -->
   <xsl:param name="verbose" select="true()"/>
   <!-- path to rng -->
-  <xsl:param name="rng_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <xsl:param name="rng_model_path"/>
   <!-- path to schematron -->
-  <xsl:param name="sch_model_path"
-    >http://music-encoding.googlecode.com/svn/tags/MEI2013_v2.1.0/schemata/mei-all.rng</xsl:param>
+  <xsl:param name="sch_model_path"/>
 
   <!-- ======================================================================= -->
   <!-- GLOBAL VARIABLES                                                        -->
@@ -113,8 +111,9 @@
       <xsl:value-of select="$nl"/>
     </xsl:if>
     <xsl:choose>
-      <xsl:when test="mei:*[@meiversion='3.0.0']">
-        <xsl:variable name="warning">The source document is already a version 3.0.0 MEI file!</xsl:variable>
+      <xsl:when test="mei:*[@meiversion = '3.0.0']">
+        <xsl:variable name="warning">The source document is already a version 3.0.0 MEI
+          file!</xsl:variable>
         <xsl:message terminate="yes">
           <xsl:value-of select="normalize-space($warning)"/>
         </xsl:message>
@@ -721,27 +720,12 @@
   </xsl:template>
 
   <xsl:template match="mei:instrumentation" mode="copy">
-    <xsl:choose>
-      <xsl:when test="count(mei:*) > 1">
-        <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
-          xsl:exclude-result-prefixes="mei
-          xlink">
-          <xsl:apply-templates select="@*" mode="copy"/>
-          <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
-            mode="copy"/>
-        </perfResList>
-      </xsl:when>
-      <xsl:when test="count(mei:*) = 0">
-        <!-- retain empty element, but call it perfResList -->
-        <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
-          xsl:exclude-result-prefixes="mei
-          xlink"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble"
-          mode="restructure"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <perfResList xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:instrVoiceGrp | mei:instrVoice | mei:ensemble" mode="copy"/>
+    </perfResList>
     <xsl:if test="$verbose">
       <xsl:variable name="thisID">
         <xsl:call-template name="thisID"/>
@@ -841,6 +825,138 @@
           <xsl:value-of
             select="
               concat(local-name(), '&#32;', $thisID, '&#32;: Replaced by perfRes ')"
+          />
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="mei:item" mode="copy">
+    <item xmlns:mei="http://www.music-encoding.org/ns/mei"
+      xsl:exclude-result-prefixes="mei
+      xlink">
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:identifier" mode="copy"/>
+      <!-- -->
+      <xsl:if test="mei:acqSource">
+        <availability>
+          <xsl:apply-templates
+            select="mei:acqSource | mei:accessRestrict | mei:price | mei:useRestrict | mei:sysReq"
+            mode="copy"/>
+        </availability>
+      </xsl:if>
+      <xsl:apply-templates
+        select="mei:physDesc | mei:physLoc | mei:notesStmt | mei:classification | mei:componentGrp | mei:relationList"
+        mode="copy"/>
+    </item>
+  </xsl:template>
+
+  <xsl:template match="@headshape" mode="copy">
+    <xsl:choose>
+      <xsl:when test="matches(., 'dblwhole')">
+        <xsl:attribute name="head.shape">whole</xsl:attribute>
+        <xsl:attribute name="head.mod">dblwhole</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'filldiamond')">
+        <xsl:attribute name="head.shape">diamond</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwdiamond')">
+        <xsl:attribute name="head.shape">diamond</xsl:attribute>
+        <xsl:attribute name="head.rotation">down</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillisotriangle')">
+        <xsl:attribute name="head.shape">isotriangle</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwhisotriangle')">
+        <xsl:attribute name="head.shape">isotriangle</xsl:attribute>
+        <xsl:attribute name="head.rotation">down</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillpiewedge')">
+        <xsl:attribute name="head.shape">piewedge</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwhpiewedge')">
+        <xsl:attribute name="head.shape">piewedge</xsl:attribute>
+        <xsl:attribute name="head.rotation">down</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillrectangle')">
+        <xsl:attribute name="head.shape">rectangle</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwhrectangle')">
+        <xsl:attribute name="head.shape">rectangle</xsl:attribute>
+        <xsl:attribute name="head.mod">dblwhole</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillrtriangle')">
+        <xsl:attribute name="head.shape">rtriangle</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwrtriangle')">
+        <xsl:attribute name="head.shape">rtriangle</xsl:attribute>
+        <xsl:attribute name="head.mod">dblwhole</xsl:attribute>
+        <xsl:attribute name="head.rotation">down</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillurtriangle')">
+        <xsl:attribute name="head.shape">rtriangle</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+        <xsl:attribute name="head.rotation">180</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'urtriangle')">
+        <xsl:attribute name="head.shape">rtriangle</xsl:attribute>
+        <xsl:attribute name="head.rotation">180</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwurtriangle')">
+        <xsl:attribute name="head.shape">rtriangle</xsl:attribute>
+        <xsl:attribute name="head.rotation">180</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillsemicircle')">
+        <xsl:attribute name="head.shape">semicircle</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwsemicircle')">
+        <xsl:attribute name="head.shape">semicircle</xsl:attribute>
+        <xsl:attribute name="head.mod">dblwhole</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'fillslash')">
+        <xsl:attribute name="head.shape">slash</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'dwslash')">
+        <xsl:attribute name="head.shape">slash</xsl:attribute>
+        <xsl:attribute name="head.fill">void</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'addslash')">
+        <xsl:attribute name="head.mod">slash</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'addbackslash')">
+        <xsl:attribute name="head.mod">backslash</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'circlex')">
+        <xsl:attribute name="head.shape">x</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+        <xsl:attribute name="head.mod">circle</xsl:attribute>
+      </xsl:when>
+      <xsl:when test="matches(., 'cross')">
+        <xsl:attribute name="head.shape">+</xsl:attribute>
+        <xsl:attribute name="head.fill">solid</xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:attribute name="head.shape">
+          <xsl:value-of select="."/>
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:if test="$verbose">
+      <xsl:variable name="thisID">
+        <xsl:call-template name="thisID"/>
+      </xsl:variable>
+      <xsl:call-template name="warning">
+        <xsl:with-param name="warningText">
+          <xsl:value-of
+            select="
+              concat(local-name(), '&#32;', $thisID, '&#32;: Mapped @headshape to @head.* ')"
           />
         </xsl:with-param>
       </xsl:call-template>
