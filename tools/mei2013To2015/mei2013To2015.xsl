@@ -134,7 +134,7 @@
   <!-- MATCH TEMPLATES                                                         -->
   <!-- ======================================================================= -->
 
-  <xsl:template match="mei:mei | mei:meiHead | mei:music" mode="copy">
+  <xsl:template match="mei:meiCorpus | mei:mei | mei:meiHead | mei:music" mode="copy">
     <!-- Change @meiversion attribute on document element; drop @meiversion.num -->
     <xsl:copy>
       <xsl:apply-templates
