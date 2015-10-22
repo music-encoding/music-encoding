@@ -24,7 +24,7 @@
     the encoder to group different recordings of the same performance, identify temporal segments
     within the recordings and encode simple alignments with a music text.</p>
 
-  <p>The following elements are available to encode performances:</p>
+  <p>The following elements are available to encode performance information:</p>
 
   <p>
     <specList>
@@ -32,6 +32,7 @@
       <specDesc key="recording"/>
       <specDesc key="avFile"/>
       <specDesc key="clip"/>
+      <specDesc key="when"/>
     </specList>
   </p>
 
@@ -39,39 +40,16 @@
       >music</gi> element and appears alongside with, or instead of, <gi scheme="MEI">body</gi>
     (described in <ptr target="#musicElement"/> and <gi scheme="MEI">facsimile</gi> (described in
       <ptr target="#facsimiles"/>). A <gi scheme="MEI">performance</gi> element represents one
-    performance of a work; each performance, therefore, should be represented by a different <gi
-      scheme="MEI">performance</gi> element. As a performance may be recorded in multiple formats or
-    by different personnel or equipment, the <gi scheme="MEI">performance</gi> element may group one
-    or more recordings of the event.</p>
+    performance event. As a performance may be recorded in multiple formats or by different
+    personnel or or using different equipment, the <gi scheme="MEI">performance</gi> element may
+    group one or more recordings of the event.</p>
 
   <p>The <att>decls</att> attribute can be used to point to performance medium metadata for the
     performed work. See <ptr target="#workMedium"/> for more details.</p>
 
-  <p>The <gi scheme="MEI">recording</gi> element identifies an audio recording of a performance or a
-    temporal segment of the performance. In the simplest case, a recording will contain one <gi
-      scheme="MEI">avFile</gi> element identifying an audio or video file:</p>
-  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<performance>
-  <recording>
-    <avFile mimetype="audio/aiff" target="concert.aiff"/>
-  </recording>
-</performance>
-<performance>
-  <recording>
-    <avFile mimetype="audio/aiff" target="movement1.aiff"/>
-  </recording>
-  <recording>
-    <avFile mimetype="audio/aiff" target="movement2.aiff"/>
-  </recording>
-</performance>
-  </egXML>
-  <p>Use of the <att>mimetype</att> attribute is recommended for the avFile element. The value
-    should be a valid MIME media type defined by the Internet Engineering Task Force in RFC
-    2046.</p>
-
-  <p>The <gi scheme="MEI">recording</gi> element identifies an absolute temporal space in an audio
-    or video file. The class att.mediabounds contains the attributes that can be used to define this
-    space:</p>
+  <p>The <gi scheme="MEI">recording</gi> element identifies a single recording event taking place
+    within an absolute temporal space. The class att.mediabounds contains attributes that can be
+    used to define this space:</p>
 
   <p>
     <specList>
@@ -79,28 +57,125 @@
     </specList>
   </p>
 
-  <p>Consider, for example, a complete work recorded as multiple digital files. A series of <gi
-      scheme="MEI">recording</gi> elements may be used to identify each movement in the piece and
-    give start and end times for the movements in relation to the temporal space of the complete
-    work. In this case, the <att>begin</att> attribute's value must be equal to or greater than the
-    value of the <att>end</att> attribute of the preceding recording.</p>
+  <p>The <gi scheme="MEI">avFile</gi> element identifies an external file associated with a
+    recording act. In the simplest case, the recording element will contain one <gi scheme="MEI"
+      >avFile</gi> element identifying a file that represents it. The <att>target</att> attribute
+    contains the URI of the digital media file. Use of the <att>mimetype</att> attribute is
+    recommended for the <gi scheme="MEI">avFile</gi> element. Its value should be a valid MIME media
+    type defined by the Internet Engineering Task Force in RFC 2046. It is also recommended that all
+    avFile elements have a recording or clip parent which bears the <att>begin</att>,
+    <att>end</att>, and <att>betype</att> attributes.</p>
+
   <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <performance>
-  <recording n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time">
-    <avFile mimetype="audio/aiff" target="movement01.aiff"/>
-  </recording>
-  <recording n="mov2" begin="00:07:00.00" end="00:12:03.00" betype="time">
-    <avFile mimetype="audio/aiff" target="movement02.aiff"/>
+  <recording begin="00:00:00.00" end="00:03:10.00" betype="time">
+    <avFile target="http://example.com/path/to/audio/recording" mimetype="audio/wav"/>
   </recording>
 </performance>
   </egXML>
 
-  <p>If an encoding of the musical text is included in the MEI file, it is possible to use the
-      <att>startid</att> attribute to indicate the first element in the sequence of events to which
-    the recording corresponds:</p>
+  <p>Sometimes, multiple digital files are created in order to provide greater flexibility in
+    redistribution and playback capabilities. In this case, multiple avFile elements may occur, each
+    with a different mimetype. Keep in mind, however, that each file still represents the complete
+    temporal extent of the recording act in spite of the change of file format:</p>
   <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <performance>
-  <recording n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time" startid="performance.m1_1">
+  <recording begin="00:00:00.00" end="00:03:10.00" betype="time">
+    <avFile target="http://example.com/path/to/audio/recording" mimetype="audio/wav"/>
+    <avFile target="http://example.com/path/to/audio/recording" mimetype="audio/mpeg"/>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>The <gi scheme="MEI">clip</gi> element identifies a temporal segment of a recording act. In the
+    following example, the clip begins two minutes into the timeframe of the recording and ends 20
+    seconds later:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<recording begin="00:00:00.00" end="00:03:10.00" betype="time">
+  <clip begin="00:02:00.00" end="00:20:20.00" betype="time"/>    
+</recording>
+  </egXML>
+
+  <p>Beyond these relatively simple uses, complex situations may occur that require equally complex
+    markup. For example, a single performance may be represented by multiple digital media files.
+    Because they have differing durations, the media files must be the result of separate recording
+    acts, even if these recording acts took place at the same time:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording begin="00:00:00.00" end="00:03:10.00" betype="time">
+    <avFile target="http://example.com/path/to/audio/recording" mimetype="audio/wav"/>
+  </recording>
+  <recording begin="00:00:00.00" end="00:03:15.00" betype="time">
+    <avFile target="http://example.com/path/to/audio/recording" mimetype="audio/mpeg"/>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>A single performance may also be represented by multiple, <emph>sequential</emph> digital
+    files, as when a complete work is recorded in several so-called <soCalled>takes</soCalled>. In
+    this case, the files may be considered to be parts of a single recording act, the extent of
+    which is the combined extent of the individual clips. For example, a series of <gi scheme="MEI"
+      >clip</gi> elements may be used to identify each movement of a piece and give start and end
+    times for the movements in relation to the overall temporal space of the complete work:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording>
+    <clip n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time">
+      <avFile mimetype="audio/aiff" target="movement01.aiff"/>
+    </clip>
+    <clip n="mov2" begin="00:07:01.00" end="00:12:03.00" betype="time">
+      <avFile mimetype="audio/aiff" target="movement02.aiff"/>
+    </clip>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>Similar markup is also applicable when a single file representing the entirety of a recording
+    act is broken into segments later, as is often done for practical storage and distribution
+    reasons. The file from which the clips are derived is indicated using an avFile element:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording n="completeWork" begin="00:00:00.00" end="00:12:03.00" betype="time">
+    <avFile target="completeWork.aiff" mimetype="audio/aiff"/>
+    <clip n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time">
+      <avFile mimetype="audio/aiff" target="movement01.aiff"/>
+    </clip>
+    <clip n="mov2" begin="00:07:02.00" end="00:12:03.00" betype="time">
+      <avFile mimetype="audio/aiff" target="movement02.aiff"/>
+    </clip>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>A <gi scheme="MEI">clip</gi> may be used to define any region of interest, such as a cadenza or
+    a modulation, a song verse, etc. The following example shows the use of <gi scheme="MEI"
+      >clip</gi> and its attributes to identify significant sections of a recording:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording begin="00:00:00.00" end="00:05:21.00" betype="time">
+    <!-- Exposition -->
+    <clip begin="00:00:00.00" end="00:01:41.00" betype="time"/>
+    <!-- Development -->
+    <clip begin="00:01:41.00" end="00:03:14.00" betype="time"/>
+    <!-- Recapitulation -->
+    <clip begin="00:03:14.00" end="00:04:28.00" betype="time"/>
+    <!-- Coda -->
+    <clip begin="00:04:28.00" end="00:05:21.00" betype="time"/>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>The preceding example also demonstrates that media files are not required in order to define
+    the temporal space of a recording act or clip. This makes it possible to set the boundaries of
+    these features, then use the content of the performance element as a rudimentary "edit decision
+    list" to create the matching digital files.</p>
+
+  <p>If an encoding of the notated text with which the media files are associated is included in the
+    MEI file, the <att>startid</att> attribute can be used to indicate the first element in the
+    sequence of events to which the recording corresponds:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time" startid="#performance.m1_1">
     <avFile mimetype="audio/aiff" target="fullpiece.aiff"/>
   </recording>
 </performance>
@@ -118,33 +193,11 @@
 </body>
   </egXML>
 
-  <p>A <gi scheme="MEI">recording</gi> element can also contain one or more <gi scheme="MEI"
-      >clip</gi> elements, each of which represents a temporal region within the space identified by
-    its parent <gi scheme="MEI">recording</gi>. A <gi scheme="MEI">clip</gi> may be used to define
-    any region of interest, such as a cadenza or a modulation, a sung verse, etc. The following
-    example shows the use of <gi scheme="MEI">clip</gi> and the attributes from att.mediabounds to
-    identify significant sections of the recording:</p>
-  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<performance>
-  <recording begin="00:00:00.00" end="00:05:21.00" betype="time">
-    <avFile mimetype="audio/aiff" target="ABeethovenPianoSonata-Mov1.aiff"/>
-    <!-- Exposition -->
-    <clip begin="00:00:00.00" end="00:01:41.00" betype="time"/>
-    <!-- Development -->
-    <clip begin="00:01:41.00" end="00:03:14.00" betype="time"/>
-    <!-- Recapitulation -->
-    <clip begin="00:03:14.00" end="00:04:28.00" betype="time"/>
-    <!-- Coda -->
-    <clip begin="00:04:28.00" end="00:05:21.00" betype="time"/>
-  </recording>
-</performance>
-  </egXML>
-
-  <p>Like recordings, clips can also be aligned with components of the musical text encoded in the
-      <gi scheme="MEI">body</gi>. The <att>startid</att> attribute can be used to specify the
-    starting element in the sequence of events to which the clip corresponds. The following example
-    shows the encoding of a clip identifying the exposition of the first movement from Beethoven's
-    piano sonata Op. 14 N. 2 and its concluding <soCalled>codetta</soCalled>:</p>
+  <p>Clips can also be aligned with components of the musical text encoded in the <gi scheme="MEI"
+      >body</gi>. The <att>startid</att> attribute can be used to specify the starting element in
+    the sequence of events to which the clip corresponds. The following example shows the use of of
+    clip elements to identify the exposition of the first movement from Beethoven's piano sonata Op.
+    14, no. 2 and its concluding <soCalled>codetta</soCalled>.</p>
   <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <performance>
   <recording begin="00:00:00.00" end="00:05:21.00" betype="time">
@@ -171,6 +224,41 @@
     </score>
   </mdiv>
 </body>
+  </egXML>
+
+  <p>Please note that the begin and end times of clips may overlap. In the preceding example, the
+    extent of the codetta is contained within that of the exposition. Overlapping beginning and
+    ending points may also be used to provide additional performance context for a segment or
+    because there is uncertainty with regard to precise values for these points.</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording begin="00:00:00.00" end="00:03:06.54" betype="time">
+    <!-- a section of interest -->
+    <clip begin="00:00:00.00" end="00:00:41.00" betype="time"/>
+    <!-- the following section starts a little before the end of the 
+         previous one to give some "adjustment" time -->
+    <clip begin="00:00:31.00" end="00:01:07.00" betype="time"/>
+    <!-- the boundaries of the following section are "fuzzy" -->
+    <clip begin="00:02:18.00" end="00:02:49.85" betype="time"/>
+  </recording>
+</performance>
+  </egXML>
+
+  <p>A bibliographic description of a recording or metadata explaining how clip boundaries were
+    determined may be associated with the recording and clip elements via the <att>decls</att>
+    attribute:</p>
+  <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<performance>
+  <recording begin="00:00:00.00" end="00:03:06.54" betype="time" decls="#performance.recBibDesc">
+    <!-- a section of interest -->
+    <clip begin="00:00:00.00" end="00:00:41.00" betype="time"/>
+    <!-- the following section starts a little before the end of the 
+         previous one to give some "adjustment" time -->
+    <clip begin="00:00:31.00" end="00:01:07.00" betype="time" decls="#performance.clipDesc"/>
+    <!-- the boundaries of the following section are "fuzzy" -->
+    <clip begin="00:02:18.00" end="00:02:49.85" betype="time"/>
+  </recording>
+</performance>
   </egXML>
 
 </div>
