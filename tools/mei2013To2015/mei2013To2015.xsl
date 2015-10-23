@@ -1201,6 +1201,12 @@
     </xsl:attribute>
   </xsl:template>
 
+  <xsl:template match="mei:pb/@func" mode="copy">
+    <xsl:attribute name="folium">
+      <xsl:value-of select="."/>
+    </xsl:attribute>
+  </xsl:template>
+
   <xsl:template match="@tstamp.ges" mode="copy">
     <xsl:attribute name="tstamp.ges">
       <xsl:value-of select="."/>
