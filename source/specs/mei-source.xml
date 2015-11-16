@@ -12340,7 +12340,8 @@
     </elementSpec>
     <elementSpec ident="creation" module="MEI.shared">
       <desc>Non-bibliographic details of the creation of an intellectual entity, in narrative form,
-        such as the date, place, and circumstances of its composition.</desc>
+        such as the date, place, and circumstances of its composition. More detailed information may
+        be captured within the history element.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
@@ -12353,7 +12354,7 @@
           <rng:choice>
             <rng:text/>
             <rng:ref name="date"/>
-            <rng:ref name="geogName"/>
+            <rng:ref name="model.nameLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -12681,7 +12682,7 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="div" module="MEI.text">
+    <elementSpec ident="div" module="MEI.shared">
       <desc>(division) – Major structural division of text, such as a preface, chapter or
         section.</desc>
       <classes>
@@ -13188,6 +13189,9 @@
           <rng:ref name="otherChar"/>
         </rng:zeroOrMore>
         <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
           <rng:ref name="history"/>
         </rng:optional>
         <rng:optional>
@@ -13227,6 +13231,11 @@
           <rng:ref name="relationList"/>
         </rng:optional>
       </content>
+      <remarks>
+        <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
+            duration</emph> of the expression, while <gi scheme="MEI">extent</gi> records scope of
+          the expression in other terms, such as number of pages, measures, etc.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="expressionList" module="MEI.frbr">
       <desc>Gathers bibliographic expression entities.</desc>
@@ -14219,8 +14228,9 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="history" module="MEI.header">
-      <desc>Provides a container for information about the creation and history of a
-        resource.</desc>
+      <desc>Provides a container for information about the history of a resource. To facilitate
+        efficient data interchange, basic information about the circumstances surrounding the
+        creation of bibliographic resources should be recorded within the creation element.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
@@ -14229,13 +14239,10 @@
         <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
         </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="creation"/>
-        </rng:optional>
         <rng:zeroOrMore>
           <rng:choice>
-            <rng:ref name="eventList"/>
-            <rng:ref name="p"/>
+            <rng:ref name="model.divLike"/>
+            <rng:ref name="model.textcomponentLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -14510,7 +14517,6 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="item" module="MEI.frbr">
-      <!-- Should item be in the MEI.header module?  That would allow use of source and item in "out-of-the-box" MEI. -->
       <desc>Single instance or exemplar of a source/manifestation.</desc>
       <classes>
         <memberOf key="att.datapointing"/>
@@ -14531,6 +14537,9 @@
         </rng:optional>
         <rng:optional>
           <rng:ref name="physLoc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
         </rng:optional>
         <rng:optional>
           <rng:ref name="notesStmt"/>
@@ -18108,6 +18117,9 @@
         </rng:optional>
         <rng:ref name="macro.bibldescPart"/>
         <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
           <rng:ref name="langUsage"/>
         </rng:optional>
         <rng:optional>
@@ -19849,6 +19861,9 @@
           <rng:ref name="otherChar"/>
         </rng:zeroOrMore>
         <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
           <rng:ref name="history"/>
         </rng:optional>
         <rng:optional>
@@ -19889,8 +19904,8 @@
         </rng:optional>
       </content>
       <remarks>
-        <p>In this context, the perfDuration element captures the <emph>intended duration</emph> of
-          the work.</p>
+        <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
+            duration</emph> of the work.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="workDesc" module="MEI.header">
