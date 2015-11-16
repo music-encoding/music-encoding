@@ -4532,12 +4532,27 @@
           </datatype>
         </attDef>
         <attDef ident="glyphnum" usage="opt">
-          <desc>Numeric glyph reference.</desc>
+          <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". SMuFL
+            version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
-            <rng:data type="string">
-              <rng:param name="pattern">#x[A-F0-9]+</rng:param>
-            </rng:data>
+            <rng:choice>
+              <rng:data type="string">
+                <!-- a hexadecimal number in one of two common formats -->
+                <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
+              </rng:data>
+            </rng:choice>
           </datatype>
+          <!-- This rule only checks the length of @glyphnum. More complex constraints are needed to 
+                display a warning when @glyphnum is outside the range defined by the latest version of 
+                SMuFL. -->
+          <constraintSpec ident="check_glyphnum" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[starts-with(@glyphnum, 'U+')]">
+                <sch:assert role="warning" test="string-length(@glyphnum) = 6">SMuFL version 1.18
+                  uses the range U+E000 - U+ECBF.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
