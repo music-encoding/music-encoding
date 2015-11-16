@@ -13012,56 +13012,71 @@
           *not* contain other ending elements.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="event" module="MEI.header">
-      <desc>Contains a description of an event, including the dates and locations of its occurrence
-        and prominent participants.</desc>
+    <elementSpec ident="event" module="MEI.shared">
+      <desc>Contains a free-text event description.</desc>
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.calendared"/>
         <memberOf key="att.common"/>
         <memberOf key="att.datable"/>
         <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.typed"/>
       </classes>
-      <!-- This model allows for both semi-structured (using only model.eventPart members) and
-            "free" descriptions (using p, table, list, and castList) as well as a mixture of
-            the two approaches. -->
       <content>
-        <rng:zeroOrMore>
-          <rng:ref name="model.headLike"/>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
-          <rng:choice>
+        <rng:optional>
+          <rng:ref name="model.labelLike"/>
+        </rng:optional>
+        <rng:choice>
+          <!-- data-like organization -->
+          <rng:zeroOrMore>
             <rng:ref name="model.eventPart"/>
-            <rng:ref name="model.pLike"/>
-            <rng:ref name="model.tableLike"/>
-            <rng:ref name="list"/>
-            <rng:ref name="castList"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+          </rng:zeroOrMore>
+          <!-- free-form organization -->
+          <rng:zeroOrMore>
+            <rng:choice>
+              <!-- model.listLike is expanded here in order to disallow biblList -->
+              <rng:ref name="model.pLike"/>
+              <rng:ref name="model.tableLike"/>
+              <rng:ref name="castList"/>
+              <rng:ref name="eventList"/>
+              <rng:ref name="list"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
         <rng:zeroOrMore>
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="eventList" module="MEI.header">
+    <elementSpec ident="eventList" module="MEI.shared">
       <desc>Contains historical information given as a sequence of significant past events.</desc>
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
         <memberOf key="att.typed"/>
+        <memberOf key="model.listLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:optional>
-            <rng:ref name="model.labelLike"/>
-          </rng:optional>
-          <rng:ref name="event"/>
+          <rng:group>
+            <!-- an organizing data element; when not present, the list is a simple list of event descriptions -->
+            <rng:optional>
+              <rng:ref name="model.eventPart"/>
+            </rng:optional>
+            <!-- an event description or a nested group of events -->
+            <rng:choice>
+              <rng:ref name="event"/>
+              <rng:ref name="eventList"/>
+            </rng:choice>
+          </rng:group>
         </rng:zeroOrMore>
+        <!-- at the very end, a list of citations -->
         <rng:zeroOrMore>
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
