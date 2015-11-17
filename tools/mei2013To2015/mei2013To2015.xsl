@@ -831,6 +831,22 @@
     </xsl:if>
   </xsl:template>
 
+  <xsl:template match="mei:work | mei:expression" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="@*" mode="copy"/>
+      <xsl:apply-templates select="mei:history/preceding-sibling::mei:*" mode="copy"/>
+      <xsl:apply-templates select="mei:history/mei:creation" mode="copy"/>
+      <xsl:apply-templates select="mei:history" mode="copy"/>
+      <xsl:apply-templates select="mei:history/following-sibling::mei:*" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:history" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="mei:*[not(local-name() = 'creation')]" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
   <xsl:template match="mei:item" mode="copy">
     <item xmlns:mei="http://www.music-encoding.org/ns/mei"
       xsl:exclude-result-prefixes="mei
@@ -849,6 +865,47 @@
         select="mei:physDesc | mei:physLoc | mei:notesStmt | mei:classification | mei:componentGrp | mei:relationList"
         mode="copy"/>
     </item>
+  </xsl:template>
+
+  <xsl:template match="mei:physDesc" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="mei:*[not(local-name() = 'provenance')]" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:physLoc" mode="copy">
+    <xsl:copy>
+      <xsl:apply-templates select="mei:repository" mode="copy"/>
+      <xsl:apply-templates select="mei:identifier" mode="copy"/>
+      <xsl:apply-templates select="../mei:physDesc/mei:provenance" mode="copy"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="mei:event" mode="copy">
+    <xsl:copy>
+      <xsl:choose>
+        <!-- data-like organization -->
+        <xsl:when
+          test="mei:address or mei:corpName or mei:date or mei:geogName or mei:name or mei:persName">
+          <label xmlns:mei="http://www.music-encoding.org/ns/mei"
+            xsl:exclude-result-prefixes="mei xlink">
+            <xsl:apply-templates select="mei:p[1]"/>
+            <xsl:apply-templates
+              select="mei:address | mei:corpName | mei:date | mei:geogName | mei:name | mei:persName"
+              mode="copy"/>
+          </label>
+        </xsl:when>
+        <!-- free-form organization -->
+        <xsl:otherwise>
+          <xsl:apply-templates
+            select="
+              mei:*[not(local-name() = 'address') and not(local-name() = 'corpName') and
+              not(local-name() = 'date') and not(local-name() = 'geogName') and
+              not(local-name() = 'name') and not(local-name() = 'persName')]"
+            mode="copy"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="@headshape" mode="copy">
@@ -1227,7 +1284,7 @@
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="@altsym | @classcode | @nymref" mode="copy">
+  <xsl:template match="@altsym | @classcode | @nymref | @resp" mode="copy">
     <xsl:choose>
       <xsl:when test="string-length(normalize-space()) > 0 and (substring(., 1, 1) != '#')">
         <xsl:variable name="attrName" select="local-name()"/>
