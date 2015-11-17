@@ -60,8 +60,11 @@
             <handList type="typeA">
               <head type="main">My Hand List</head>
               <head type="sub">Part the First</head>
+              <!-- item may be preceded by an optional label -->
+              <label/>
               <!-- @resp must contain a valid xml:id reference -->
               <hand xml:id="lvb_brownInk1" medium="brown ink" resp="#LvB" initial="true"/>
+              <label/>
               <hand xml:id="lvb_pencil1" medium="pencil" resp="#LvB"/>
               <hand xml:id="lvb_mind" medium="none" resp="#LvB"/>
               <hand xml:id="unknownPencil" medium="pencil"/>
@@ -151,6 +154,8 @@
             <annot>
               <!-- <biblList> is now recursively nest-able. -->
               <biblList>
+                <!-- each <bibl> may be preceded by an optional <label> -->
+                <label/>
                 <bibl>My Books</bibl>
                 <biblList>
                   <head>Good Ones</head>
@@ -158,6 +163,9 @@
                 </biblList>
                 <biblList>
                   <head>Bad Ones</head>
+                  <label/>
+                  <bibl/>
+                <label/>
                   <bibl/>
                 </biblList>
               </biblList>
@@ -182,10 +190,20 @@
             <soundChan num="1">monaural</soundChan>
             <soundChan/>
           </physDesc>
+          <!-- physDesc is repeatable in source -->
+          <physDesc/>
           <physLoc/>
           <seriesStmt>
             <title/>
           </seriesStmt>
+          <history>
+            <head/>
+            <p/>
+            <div>
+              <head/>
+              <p/>
+            </div>
+          </history>
           <langUsage>
             <language/>
           </langUsage>
@@ -198,12 +216,43 @@
             <classCode/>
           </classification>
           <itemList>
-            <item/>
+            <item>
+              <!-- <provenance moved from <physDesc> to <physLoc>; <provenance> now in <physLoc> -->
+              <physDesc/>
+              <physLoc>
+                <repository>
+                  <identifier/>
+                  <address>
+                    <addrLine/>
+                  </address>
+                </repository>
+                <identifier/>
+                <identifier/>
+                <repository/>
+                <repository/>
+                <repository/>
+                <identifier/>
+                <provenance/>
+              </physLoc>
+              <!-- <history> provided in all FRBR entities -->
+              <history/>
+            </item>
           </itemList>
           <componentGrp/>
           <relationList/>
         </source>
-        <source xml:id="source3"/>
+        <source xml:id="source3">
+          <!-- <history> provided in all FRBR entities -->
+          <history/>
+          <itemList>
+            <item>
+              <physDesc>
+                <p>Like this</p>
+                <captureMode/>
+              </physDesc>
+            </item>
+          </itemList>
+        </source>
       </sourceDesc>
     </fileDesc>
     <encodingDesc>
@@ -231,12 +280,39 @@
     </encodingDesc>
     <workDesc>
       <work data="#t1">
+        <!-- <creation> and <history> are now siblings -->
+        <creation> The work was created in a villa by <geogName>Lake Geneva</geogName> in
+            <date>1827</date>. </creation>
         <history>
+          <head>Work History</head>
           <eventList>
+            <head>List of Performances by a lake</head>
+            <!-- An optional "organizing" data element -->
+            <geogName>Eastern Europe</geogName>
+            <!-- Followed by an event description or event group -->
             <event xml:id="firstPerformanceToo">
-              <p>Performance info can appear here when the FRBR module is not available.</p>
+              <name/>
+              <date/>
+              <corpName/>
+              <corpName/>
+              <date/>
+              <geogName/>              
             </event>
+            <!--  When the organizing element isn't present, the list is simply a set of event elements -->
+            <event/>
+            <event/>
+            <event/>
           </eventList>
+          <div>
+            <p/>
+            <list type="gloss">
+              <label/>
+              <li/>
+              <label/>
+              <li><address><addrLine>2303 Fontaine Ave.</addrLine></address></li>
+            </list>
+          </div>
+          <eventList type="emptyList"> </eventList>
         </history>
         <perfMedium>
           <perfResList>
@@ -286,9 +362,32 @@
             <titleStmt>
               <title/>
             </titleStmt>
+            <creation/>
             <history>
               <eventList>
+                <head>List of Performances</head>
+                <date/>
                 <event xml:id="firstPerformance"/>
+              </eventList>
+              <eventList>
+                <date>1847</date>
+                <event> </event>
+                <date>1850-1852</date>
+                <event>
+                  <label/>
+                  <address>
+                    <addrLine>2303 Fontaine Ave</addrLine>
+                    <addrLine>Apt 3</addrLine>
+                    <addrLine>
+                      Charlottesville
+                    </addrLine>
+                    <addrLine><choice><abbr>VA</abbr><expan>Virginia</expan></choice></addrLine>
+                  </address>
+
+                  <biblList/>
+                </event>
+
+                <eventList/>
               </eventList>
             </history>
             <perfMedium>
@@ -336,7 +435,8 @@
     <performance decls="#firstPerformance">
       <!-- <timeline> eliminated; <recording> revamped to behave more like <facsimile> -->
       <recording begin="00:00:00.00" end="00:03:10.00" betype="time" startid="#t1" decls="#source2">
-        <avFile target="http://example.com/path/to/audio/recording" xml:id="audio1.wav"/>
+        <avFile target="http://example.com/path/to/audio/recording" xml:id="audio1.wav"
+          mimetype="audio/wav"/>
         <avFile target="http://example.com/path/to/audio/recording" xml:id="audio1.mp3"/>
         <when xml:id="t1" absolute="00:00:01.915291666"/>
         <when xml:id="t2" absolute="00:00:03.766854166"/>
@@ -352,6 +452,28 @@
           <avFile target="http://example.com/path/to/audio/recording" xml:id="audio1-2.mp3"/>
           <when xml:id="t000.2" interval="32" since="#t1" inttype="midi"/>
           <when xml:id="t000.3" interval="48" since="#t1" inttype="smpte-25"/>
+        </clip>
+      </recording>
+    </performance>
+    <performance>
+      <recording begin="00:00:00.00" end="00:03:06.54" betype="time">
+        <!-- a section of interest -->
+        <clip begin="00:00:00.00" end="00:00:41.00" betype="time"/>
+        <!-- the following section starts a little before the end of the 
+          previous one to give some "adjustment" time -->
+        <clip begin="00:00:31.00" end="00:01:07.00" betype="time"/>
+        <!-- the boundaries of the following section are "fuzzy" -->
+        <clip begin="00:02:18.00" end="00:02:49.85" betype="time"/>
+      </recording>
+    </performance>
+    <performance>
+      <recording>
+        <avFile target="completeWork.aiff" mimetype="audio/aiff"/>
+        <clip n="mov1" begin="00:00:00.00" end="00:07:00.00" betype="time">
+          <avFile mimetype="audio/aiff" target="movement01.aiff"/>
+        </clip>
+        <clip n="mov2" begin="00:07:01.00" end="00:12:03.00" betype="time">
+          <avFile mimetype="audio/aiff" target="movement02.aiff"/>
         </clip>
       </recording>
     </performance>
@@ -485,14 +607,13 @@
           </scoreDef>
           <section>
             <!-- pb/@func renamed to @folium -->
-            <pb n="1" folium="verso">
+            <pb n="1" folium="recto">
               <!-- fw has been replaced by pgFoot and pgHead -->
-              <pgFoot>
-                <anchoredText>
-                  <fig>
-                    <graphic/>
-                  </fig>
-                </anchoredText>
+              <!-- @halign on pgHead and pgFoot -->
+              <pgFoot halign="left">
+                <fig>
+                  <graphic/>
+                </fig>
                 <bibl/> text <symbol altsym="#mySymbol1"/>
               </pgFoot>
             </pb>
