@@ -13,9 +13,13 @@
       <!-- Nonfiling characters accounted for -->
       <titleStmt>
         <!-- level="a" documentation clarified -->
-        <title level="a" nonfiling="4">The MEI-Datei des Autographs</title>
+        <!-- @type values on title now use semi-open list -->
+        <title level="a" nonfiling="4" type="main" subtype="TOKEN">The MEI-Datei des
+          Autographs</title>
         <respStmt>
-          <resp>Composer</resp>
+          <!-- @code and @dbkey merged into att.canonical/@codedval -->
+          <resp codedval="cmp" authority="MARC Code List for Relators"
+            authURI="http://www.loc.gov/marc/relators/relaterm.html">Composer</resp>
           <persName role="rth" xml:id="PR" nonfiling="3">de Roland, Pierre</persName>
         </respStmt>
       </titleStmt>
@@ -31,7 +35,7 @@
           <titleStmt>
             <title>Autograph op. 111</title>
             <respStmt>
-              <persName xml:id="LvB" role="cmp" dbkey="118508288" authURI="http://d-nb.info/gnd"
+              <persName xml:id="LvB" role="cmp" codedval="118508288" authURI="http://d-nb.info/gnd"
                 authority="GND">Ludwig van Beethoven</persName>
               <!-- @altsym, @classcode, @hand, and @resp must contain a valid xml:id reference -->
               <persName role="mcp" xml:id="pr" resp="#PR">
@@ -71,6 +75,8 @@
             </handList>
             <!-- scoreFormat now permitted within physDesc -->
             <scoreFormat/>
+            <!-- New <perfDuration> element captures actual performed duration in <source> and <item>. -->
+            <perfDuration isodur="PT2H34M45.67S">2 hours, 34 minutes, 45.67 seconds</perfDuration>
           </physDesc>
           <physLoc/>
           <notesStmt>
@@ -134,10 +140,13 @@
             <annot>
               <!-- Text and inline markup is still allowed. -->
               <head/>
-              <p>I read a good book: <biblList>
-                  <bibl>my book</bibl>
-                </biblList> But it took <rend rend="bold" altrend="this is what i want it to look
-                  like">me</rend> a looooooonnnngggg time.</p>
+              <!-- biblList and bibl now allow @analog -->
+              <p>I read a good book: <biblList analog="">
+                  <bibl analog="">my book</bibl>
+                </biblList> But it took <rend rend="bold"
+                  altrend="this is what i want it to look
+                  like">me</rend> a
+                looooooonnnngggg time.</p>
             </annot>
             <annot>
               <!-- <biblList> is now recursively nest-able. -->
@@ -180,7 +189,6 @@
           <langUsage>
             <language/>
           </langUsage>
-          <!--<perfMedium/>-->
           <contents/>
           <biblList/>
           <notesStmt>
@@ -226,40 +234,33 @@
         <history>
           <eventList>
             <event xml:id="firstPerformanceToo">
-              <p>Performance info could appear here when the FRBR module is not available.</p>
+              <p>Performance info can appear here when the FRBR module is not available.</p>
             </event>
           </eventList>
         </history>
         <perfMedium>
-          <instrumentation evidence="conjecture" resp="#PR">
-            <ensemble>foobar</ensemble>
-            <instrVoiceGrp>
+          <perfResList>
+            <perfRes codedval="or">Orchestra</perfRes>
+            <perfResList>
               <head>Orchestra</head>
-              <instrVoice count="2" source="#source2" evidence="conjecture" resp="#PR"
-                >Corno</instrVoice>
-              <instrVoice count="2" source="#source1 #source2">Oboi</instrVoice>
-              <instrVoice count="2" source="#source1 #source2">Violino</instrVoice>
-              <instrVoice count="1" source="#source2" evidence="partsFromSource2" resp="#PR"
-                >Viola</instrVoice>
-              <instrVoice count="1" source="#source1 #source2">Basso continuo</instrVoice>
+              <perfRes count="2" source="#source2" evidence="conjecture" resp="#PR">Corno</perfRes>
+              <perfRes count="2" source="#source1 #source2">Oboi</perfRes>
+              <perfRes count="2" source="#source1 #source2">Violino</perfRes>
+              <perfRes count="1" source="#source2" evidence="partsFromSource2" resp="#PR"
+                >Viola</perfRes>
+              <perfRes count="1" source="#source1 #source2">Basso continuo</perfRes>
               <!--- Clarinet/sax doubling -->
-              <instrVoice count="1">
-                <instrVoice>Clarinet/<instrVoice>Alto saxophone</instrVoice></instrVoice>
-              </instrVoice>
-            </instrVoiceGrp>
-            <annot>The violas and horns are present only in source 2. The oboes, violins and basso
-              continuo exist in both source 1 and 2.</annot>
-          </instrumentation>
+              <perfResList count="1">
+                <perfRes>Clarinet</perfRes>
+                <perfRes>Alto saxophone</perfRes>
+              </perfResList>
+            </perfResList>
+          </perfResList>
+          <annot>The violas and horns are present only in source 2. The oboes, violins and basso
+            continuo exist in both source 1 and 2.</annot>
         </perfMedium>
-        <!-- extent can be used within work; @quantity can be used to assign a value to the content of extent.
-        A @quantity attribute without a @unit attribute raises a warning. -->
-        <extent quantity="199.67" unit="second">approximately 2 hours, 34 minutes, 45.67
-          seconds</extent>
-        <!-- extent may also have a @duration attribute. -->
-        <!-- <extent duration="PT2H34M45.67S">approximately 2 hours, 34 minutes, 45.67 seconds</extent> -->
-        <!-- extent may also have a @duration attribute. When @duration is present, @quantity and @unit are not allowed. -->
-        <!-- The following line is invalid. -->
-        <!-- <extent duration="PT2H34M45.67S" quantity="199.67" unit="second">approximately 2 hours, 34 minutes, 45.67 seconds</extent> -->
+        <!-- New <perfDuration> element captures intended performed duration of work. -->
+        <perfDuration isodur="PT2H34M45.67S">2 hours, 34 minutes, 45.67 seconds</perfDuration>
         <classification>
           <!-- <head> now allowed in more places within header -->
           <head/>
@@ -291,7 +292,7 @@
               </eventList>
             </history>
             <perfMedium>
-              <instrumentation source="#source1"/>
+              <perfResList source="#source1"/>
             </perfMedium>
             <biblList/>
             <relationList>
@@ -317,7 +318,8 @@
         <relationList>
           <!-- <head> now allowed in more places within header -->
           <head/>
-          <relation rel="isRealizationOf"/>
+          <!-- More elements allow att.bibl/@analog -->
+          <relation rel="isRealizationOf" analog=""/>
         </relationList>
       </work>
     </workDesc>
@@ -355,10 +357,13 @@
     </performance>
     <front>
       <!-- titlePage now allows presentational and semantic markup -->
-      <titlePage>
-        <p><fig>
+      <!-- titlePage now allows @analog -->
+      <titlePage analog="foobar">
+        <p>
+          <fig>
             <svg:svg/>
-          </fig></p>
+          </fig>
+        </p>
         <lg>
           <l/>
         </lg>
@@ -379,6 +384,10 @@
             <td/>
           </tr>
         </table>
+        <!-- castList and castItem can now have @analog -->
+        <castList analog="marcXXX">
+          <castItem analog="marcXXX|x"/>
+        </castList>
         <title>
           <!-- relative line-height and letter-spacing values now permitted -->
           <rend rend="line-height(150%) letter-spacing(5%)" halign="center" fontsize="12">
@@ -392,7 +401,11 @@
             <rend rend="large line-height(150%)">IN SIX VOLUMES</rend>
           </rend>
         </title>
-        <byline><author><persName>Algernon Charles Swinburne</persName></author></byline>
+        <byline>
+          <author>
+            <persName>Algernon Charles Swinburne</persName>
+          </author>
+        </byline>
         <editor>Edited by John Doe</editor>
         <title>VOLUME I.<lb/>
           <rend rend="x-large smcaps" color="red">POEMS AND BALLADS</rend></title>
@@ -424,7 +437,9 @@
       <mdiv xml:id="edirom_mdiv_a6daa955-ce13-4e56-8aaf-fd706254bc60" label="Maestoso">
         <score>
           <!-- @when and @plist must contain valid xml:id references -->
-          <annot when="#t1" plist="#LvB #P1"><p>test this</p></annot>
+          <annot when="#t1" plist="#LvB #P1">
+            <p>test this</p>
+          </annot>
           <!-- new system.leftline attribute -->
           <scoreDef key.sig="3f" key.pname="c" key.accid="f" key.mode="minor" meter.count="4"
             meter.unit="4" meter.sym="common" system.leftline="true">
@@ -449,7 +464,8 @@
               <staffDef xml:id="P2" n="2" clef.shape="F" clef.line="4" lines="5"/>
               <staffDef xml:id="P3" n="3" clef.shape="G" clef.line="2" lines="5"/>
               <staffDef xml:id="P4" n="4" clef.shape="F" clef.line="4" lines="5"/>
-              <staffDef xml:id="P5" n="5" clef.shape="TAB" lines="6" beam.group="" tab.strings="e4e3
+              <staffDef xml:id="P5" n="5" clef.shape="TAB" lines="6" beam.group=""
+                tab.strings="e4e3
                 a4a3 d4 g5g4 b4b4 e5"/>
             </staffGrp>
             <!-- Overlapping group symbols -->
@@ -469,7 +485,9 @@
               </pgFoot>
             </pb>
             <measure>
-              <anchoredText><symbol altsym="#mySymbol1" scale="50%"/></anchoredText>
+              <anchoredText>
+                <symbol altsym="#mySymbol1" scale="50%"/>
+              </anchoredText>
               <staff n="0"/>
               <staff n="1">
                 <layer>
@@ -503,10 +521,12 @@
                         <syl>spake</syl>
                       </verse>
                     </note>
-                    <!-- added @vel on chord -->
-                    <chord>
-                      <note/>
-                    </chord>
+                    <!-- head.* attributes -->
+                    <note xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xmlns="http://www.music-encoding.org/ns/mei" head.shape="circle"
+                      head.mod="centerdot brack" head.color="aqua" head.fill="solid"
+                      head.fillcolor="blue" head.rotation="none" stem.dir="ne" stem.len="7"
+                      stem.mod="none" stem.pos="center"/>
                     <custos target="#n2"/>
                     <note xml:id="n2"/>
                   </beam>
@@ -548,12 +568,12 @@
               <gliss type="glissType1" tstamp="2" tstamp2="4.25">gliss.</gliss>
               <!-- @text removed, text content used instead; width can take string or numeric values -->
               <line startid="#n1" endid="#n2">cool line</line>
-              <line startid="#n1" endid="#n2" width="2.1mm">another cool line</line>
+              <!-- line form and width are now separate attributes, allowing for more combinations -->
+              <line startid="#n1" endid="#n2" width="2.1mm" form="wavy">another cool line</line>
               <!-- bend/@amount can now take wider range of values -->
               <bend type="bendType2" tstamp="1" tstamp2="2" amount="1.25"/>
               <!-- breath now has typographic attributes -->
               <breath tstamp="1" fontname="Bravura" fontsize="10" fontstyle="normal" color="purple"/>
-              <!-- line form and width are now separate attributes, allowing for more combinations -->
               <!-- octave also now permits textual content -->
               <octave xml:id="oc1" tstamp="1" tstamp2="0m+4.5" dis="8" dis.place="above" staff="1"
                 >in octaves</octave>
