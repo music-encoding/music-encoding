@@ -119,3 +119,14 @@ Unit tests should be small, discrete test to verify that one specific component 
 
 Testing in MEI is done through the `build.sh` script. This script will look through folders in the `tests` directory that match a given schema customization's name, and then test the schema against all the files contained in that folder. You can invoke the testing by running `./build.sh test`. You may need to customize the values in this file to point to your local copies of the TEI Stylesheets, etc.
 
+# Release Process
+
+Releases are declared by the MEI Board, in consultation with, and on the advice of, the MEI Technical Team.
+
+The most recent 'stable' version of MEI is always found on the 'master' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
+
+Releases are 'tagged' on the master branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
+
+## Versioning
+
+The MEI Versions follow the ['semantic' versioning scheme](http://semver.org), 'X.Y.Z'. 'X' is a major release, often defined by the presence of backwards-incompatible changes to the schema. 'Y' is a minor release, defined by backwards compatible changes (i.e., added, but not removed, features). 'Z' is the 'patch' number, indicating a release that  fixes or clarifies existing functionality.
