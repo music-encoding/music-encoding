@@ -8,15 +8,15 @@ The Music Encoding Initiative (MEI) is an open-source effort to define a system 
 
 One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviours. To validate an MEI file you need XML validator software. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com) has built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
 
-For example, you might validate an MEI file in the 'samples' directory using xmllint:
+For example, you might validate an MEI file from the the ['sample-encodings'](https://github.com/music-encoding/sample-encodings/) project using xmllint:
 
-    $> xmllint --noout --relaxng schemata/mei-CMN.rng samples/MEI2013/Music/Complete\ examples/Bach_Ein_festeBurg.mei
+    $> xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
 
-    samples/MEI2013/Music/Complete examples/Bach_Ein_festeBurg.mei validates
+    sample-encodings/MEI 3.0/Music/Complete examples/Bach_Ein_festeBurg.mei validates
 
 Or, the same command using `jing`. 
 
-    $> jing schemata/mei-CMN.rng samples/MEI2013/Music/Complete\ examples/Bach_Ein_festeBurg.mei
+    $> jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
 
 # Structure of the MEI Source Repository
 
@@ -27,7 +27,8 @@ This repository contains all the source code of the core MEI Schema. This includ
  * schemata: pre-built MEI schemas
  * source: Contains the source code to the MEI schema, expressed in TEI ODD. This includes the source code for the MEI Guidelines, and MEI Core.
  * tests: Unit tests for the MEI Schemas
- * tools: Tools for transforming other formats to and from MEI.
+
+In addition, samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) project, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.  
 
 # Building MEI
 
