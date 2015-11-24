@@ -23,6 +23,14 @@
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">
   <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" start="mei">
+
+    <!-- Declare the mei prefix for use in Schematron -->
+    <constraintSpec ident="set_ns" scheme="isoschematron">
+      <constraint>
+        <sch:ns prefix="mei" uri="http://www.music-encoding.org/ns/mei"/>
+      </constraint>
+    </constraintSpec>
+
     <!-- MODULES -->
     <moduleSpec ident="MEI">
       <desc>Data type definitions.</desc>
@@ -15322,16 +15330,10 @@
         <rng:ref name="meiHead"/>
         <rng:ref name="music"/>
       </content>
-      <constraintSpec ident="set_ns" scheme="isoschematron">
-        <constraint>
-          <sch:ns prefix="mei" uri="http://www.music-encoding.org/ns/mei"/>
-        </constraint>
-      </constraintSpec>
       <constraintSpec ident="Check_staff" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:*[@staff]">
-            <sch:assert
-              test="every $i in tokenize(@staff, '\s+') satisfies               $i=//mei:staffDef/@n"
+            <sch:assert test="every $i in tokenize(@staff, '\s+') satisfies $i=//mei:staffDef/@n"
               >The values in @staff must correspond to @n attribute of a staffDef
               element.</sch:assert>
           </sch:rule>
