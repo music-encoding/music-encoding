@@ -12,9 +12,9 @@ BUILD_DIR="build"
 CUSTOMIZATIONS_DIR="customizations"
 SOURCE_DIR="source"
 SAMPLES_DIR="samples"
-TOOLS_DIR="tools"
+UTILS_DIR="utils"
 
-SCHEMATRON_FILES=${TOOLS_DIR}"/schematron"
+SCHEMATRON_FILES=${UTILS_DIR}"/schematron"
 DRIVER_FILE=${SOURCE_DIR}"/driver.xml"
 
 SCHEMATRON_EXTRACT=${SCHEMATRON_FILES}"/ExtractSchFromRNG-2.xsl"
