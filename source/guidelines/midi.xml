@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- 
   © 2015 by the Music Encoding Initiative (MEI).
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
@@ -16,8 +16,10 @@
   
   CONTACT: info@music-encoding.org
 -->
-
-<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="midiGuidelines" n="0">
+<div xmlns="http://www.tei-c.org/ns/1.0"
+  type="div1"
+  xml:id="midiGuidelines"
+  n="0">
   <head>Musical Instrument Digital Interface (MIDI)</head>
   <p>This chapter describes the MIDI encoding functionality present in MEI. The purpose of this
     module is to allow for integrating MIDI data into MEI-encoded notation, to both aid software in
@@ -31,12 +33,10 @@
     attribute allows MIDI note numbers for specifying a pitch value.</p>
   <div type="div2" xml:id="midi.scoreDefppq">
     <head>PPQ in scoreDef and staffDef</head>
-    <p>To define the MIDI resolution of a score, the <att>ppq</att> attribute may be used on the <gi
-        scheme="MEI">scoreDef</gi> element. This value can be used to interpret the values found in
-      the <att>dur.ges</att> attribute on elements in the <ident type="class"
-        >att.duration.performed</ident> class.</p>
+    <p>To define the MIDI resolution of a score, the <att>ppq</att> attribute may be used on the <gi scheme="MEI">scoreDef</gi> element. This value can be used to interpret the values found in
+      the <att>dur.ges</att> attribute on elements in the <ident type="class">att.duration.performed</ident> class.</p>
     <p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
 <scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48">
   <staffGrp>
     <staffDef n="1" xml:id="midi.P1" lines="5" clef.line="2" clef.shape="G" key.sig="1f"/>
@@ -60,7 +60,7 @@
       attached to <gi scheme="MEI">scoreDef</gi>. <!-- TODO: Add a schematron rule? --></p>
     <p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48">
+<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48" xmlns="http://www.music-encoding.org/ns/mei">
   <staffGrp>
     <staffDef n="1" xml:id="midi.P1" lines="5" clef.line="2" clef.shape="G" key.sig="1f" ppq="2"/>
     <staffDef n="2" xml:id="midi.P2" lines="5" clef.line="4" clef.shape="F" key.sig="1f" ppq="16"/>
@@ -74,11 +74,11 @@
     <head>Recording General MIDI Instrumentation</head>
     <p>The <gi scheme="MEI">instrDef</gi> element can be used to record MIDI instrument names or
       numbers using the <att>midi.instrname</att> and <att>midi.instrnum</att> attributes. The
-        <att>midi.instrname</att> attribute must contain an instrument name from the list provided
+      <att>midi.instrname</att> attribute must contain an instrument name from the list provided
       by the data.MIDINAMES data type. By default, data.MIDINAMES contains General MIDI Instrument
       designations.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48">
+<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48" xmlns="http://www.music-encoding.org/ns/mei">
   <staffGrp>
     <staffDef n="1" xml:id="midi.P5" lines="5" clef.line="2" clef.shape="G">
       <instrDef midi.instrname="Violin"/>
@@ -99,7 +99,7 @@
       It must contain valid MIDI values; that is, 0-127. In these cases, a General MIDI Instrument
       name is redundant.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48">
+<scoreDef meter.count="4" meter.unit="4" meter.sym="common" key.sig="1f" ppq="48" xmlns="http://www.music-encoding.org/ns/mei">
   <staffGrp>
     <staffDef n="1" xml:id="midi.P5" lines="5" clef.line="2" clef.shape="G">
       <instrDef midi.instrnum="41"/>
@@ -126,16 +126,15 @@
       discouraged in favor of using the <gi scheme="MEI">note</gi> element directly. MIDI duration
       should be recorded using the <att>dur.ges</att> attribute, and MIDI pitch information should
       be recorded using the <att>pnum</att> attribute.
-      <!-- The following is only true if Issue #90 is fixed: Velocity information should be recorded using the <att>vel</att> attribute.-->
-    </p>
+      <!-- The following is only true if Issue #90 is fixed: Velocity information should be recorded using the <att>vel</att> attribute.--></p>
     <p> MIDI control changes (<gi scheme="MEI">cc</gi>) are encoded using the <att>num</att> and
-        <att>val</att> attributes. Control change numbers are specified in the General MIDI
+      <att>val</att> attributes. Control change numbers are specified in the General MIDI
       documentation. In the example below, the <gi scheme="MEI">cc</gi> elements encode increasing
       controller event 7 (volume) values, or in musical terms, a crescendo. Other MIDI event
       messages follow this same pattern, using the <att>num</att> and <att>val</att> attributes to
       record the raw MIDI data.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<measure>
+<measure xmlns="http://www.music-encoding.org/ns/mei">
   <staff>
     <layer>
       <note pnum="45" dur.ges="8"/>
@@ -154,7 +153,7 @@
     </egXML>
     <!-- TODO: Add schematron rule to require @tstamp when MIDI controllers occur within measure? -->
     <p>In the preceding example, each control change is associated with a time stamp. The
-        <att>tstamp</att> attribute is required in order to indicate when the MIDI event should take
+      <att>tstamp</att> attribute is required in order to indicate when the MIDI event should take
       place. It is often necessary to indicate a time stamp slightly earlier than the affected notes
       to compensate for MIDI delay.</p>
     <!-- TODO:  add @tstamp to <midi> to allow for grouping simultaneous control changes? -->
@@ -163,13 +162,12 @@
       attribute is required on all parameters in order to associate them with their point of
       actuation:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<midi staff="1" layer="1">
+<midi staff="1" layer="1" xmlns="http://www.music-encoding.org/ns/mei">
   <cc num="7" val="50" tstamp=".5"/>
   <cc num="64" val="64" tstamp=".5"/>
 </midi>
     </egXML>
   </div>
-
   <div type="div2" xml:id="midiNonCMN">
     <head>MIDI in Mensural and Neume Notation</head>
     <p>In mensural, neume, and other historical or non-Western repertoires, there is often no
@@ -177,7 +175,7 @@
       notations MIDI controller data is assumed to be associated with the event that immediately
       follows in the same layer. Thus, a crescendo in mensural notation may be encoded like so:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<staff>
+<staff xmlns="http://www.music-encoding.org/ns/mei">
   <layer>
     <midi>
       <cc num="7" val="50"/>
@@ -199,7 +197,6 @@
 </staff>
     </egXML>
   </div>
-
   <!--<div type="div2" xml:id="midiOverview">
     <!-\- Overview -\->
     <head>Overview of the MIDI Module</head>
@@ -266,5 +263,4 @@
       </p>
     </div>
   </div>-->
-
 </div>
