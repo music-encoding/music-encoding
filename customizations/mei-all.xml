@@ -1,14 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../source/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<?xml-model href="../source/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<!-- 
+  © 2015 by the Music Encoding Initiative (MEI).
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at http://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://www.tei-c.org/ns/1.0">
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>Music Encoding Initiative Guidelines: <title type="sub">"All"
+        <title>Music Encoding Initiative Guidelines: <title type="sub">All
           Customization</title></title>
+        <respStmt>
+          <resp>Authored by</resp>
+          <name xml:id="PR">Perry Roland</name>
+        </respStmt>
       </titleStmt>
       <publicationStmt>
         <p/>
@@ -17,16 +38,31 @@
         <p/>
       </sourceDesc>
     </fileDesc>
+    <revisionDesc>
+      <change n="1" when="2014-12-04" who="#PR">
+        <desc>Creation of the initial ODD.</desc>
+      </change>
+    </revisionDesc>
   </teiHeader>
   <text>
     <front>
       <divGen type="toc"/>
     </front>
     <body>
-      <schemaSpec ident="mei" start="mei meiHead meiCorpus music"
-        ns="http://www.music-encoding.org/ns/mei">
-        <!-- workDesc can be added to @start to support physically
-          separate work descriptions -->
+
+      <!-- Limit the set of possible start elements -->
+      <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
+        start="mei meiHead meiCorpus music">
+
+        <!-- Declare MEI namespace for use in Schematron -->
+        <constraintSpec ident="set_ns" scheme="isoschematron">
+          <constraint>
+            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
+              uri="http://www.music-encoding.org/ns/mei"/>
+          </constraint>
+        </constraintSpec>
+
+        <!-- Include all modules -->
         <moduleRef key="MEI"/>
         <moduleRef key="MEI.shared"/>
         <moduleRef key="MEI.header"/>
@@ -38,11 +74,12 @@
         <moduleRef key="MEI.corpus"/>
         <moduleRef key="MEI.critapp"/>
         <moduleRef key="MEI.edittrans"/>
+        <moduleRef key="MEI.externalsymbols"/>
         <moduleRef key="MEI.facsimile"/>
         <moduleRef key="MEI.figtable"/>
+        <moduleRef key="MEI.fingering"/>
         <moduleRef key="MEI.frbr"/>
         <moduleRef key="MEI.harmony"/>
-        <moduleRef key="MEI.linkalign"/>
         <moduleRef key="MEI.lyrics"/>
         <moduleRef key="MEI.midi"/>
         <moduleRef key="MEI.namesdates"/>
@@ -51,6 +88,16 @@
         <moduleRef key="MEI.tablature"/>
         <moduleRef key="MEI.text"/>
         <moduleRef key="MEI.usersymbols"/>
+
+        <!-- Include SVG -->
+        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
+          <content>
+            <rng:define name="mei_model.graphicLike" combine="choice">
+              <rng:ref name="svg"/>
+            </rng:define>
+          </content>
+        </moduleRef>
+
       </schemaSpec>
     </body>
   </text>

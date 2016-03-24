@@ -1,12 +1,22 @@
 language: java
-sudo: required
+sudo: false
+addons:
+    apt:
+        packages:
+            - ant
+            - jing
+
+env:
+ - PATH_TO_SAXON_JAR=Saxon-HE-9.6.0-7.jar PATH_TO_JING=/usr/bin/jing PATH_TO_TEI_STYLESHEETS=$TRAVIS_BUILD_DIR/Stylesheets
+
 before_install:
-    - sudo apt-get install ant
-    - sudo apt-get install jing
-    - git clone --depth=1 https://github.com/TEIC/Stylesheets.git
+    - git clone https://github.com/TEIC/Stylesheets.git
+    - cd Stylesheets && git checkout dc2aecc845e44ad0317e4e6562eeaa4eee639b9c && git reset --hard
+    - cd ../
+    - curl -O http://central.maven.org/maven2/net/sf/saxon/Saxon-HE/9.6.0-7/Saxon-HE-9.6.0-7.jar
 
 before_script:
-    - ./build.sh -t $TRAVIS_BUILD_DIR/Stylesheets/ all
+    - ./build.sh build
 
 script:
-    - ./build.sh -t $TRAVIS_BUILD_DIR/Stylesheets/ test
+    - ./build.sh test
