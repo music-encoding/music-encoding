@@ -63,15 +63,16 @@
       </list>For this purpose, it provides three elements as graphic primitives, <gi scheme="MEI"
         >line</gi>, <gi scheme="MEI">curve</gi> and <gi scheme="MEI">anchoredText</gi>. Anywhere
       these elements are allowed, the <gi scheme="MEI">symbol</gi> element can be used as well. The
-        <gi scheme="MEI">symbol</gi> element reuses symbols that were defined by <gi scheme="MEI"
-        >symbolDef</gi> elements.</p>
+        <gi scheme="MEI">symbol</gi> element facilitates the re-use of symbols that were defined by
+        <gi scheme="MEI">symbolDef</gi> elements.</p>
     <div type="div3" xml:id="usersymbolsReusableSymbols">
       <head>Defining Reusable Symbols</head>
-      <p>The <gi scheme="MEI">symbolDef</gi> element uses the graphic primitives to describe a
-        symbol. Using the <gi scheme="MEI">symbol</gi> element, a symbol definition may also use
-        symbols defined by other <gi scheme="MEI">symbolDef</gi> elements.</p>
+      <p>The <gi scheme="MEI">symbolDef</gi> element uses SVG markup or the aforementioned graphic
+        primitives to describe a symbol. A symbol definition may also use symbols defined by other
+          <gi scheme="MEI">symbolDef</gi> elements by employing the <gi scheme="MEI">symbol</gi>
+        element.</p>
       <figure>
-        <head>Definition of a triangle percussion symbol</head>
+        <head>Definition of a triangle percussion symbol using graphic primitives</head>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <symbolDef xml:id="userSymbols.triangleSymbol3">
   <line x="0" y="0" x2="2.55" y2="4.25"/>
@@ -95,7 +96,7 @@
       </figure>
       <figure>
         <head>Rendition of the composite triangle symbol</head>
-        <graphic url="Images/modules/usersymbols/triangleWithStick.svg"/>
+        <graphic url="Images/modules/usersymbols/triangleWithStick.png"/>
       </figure>
     </div>
     <div type="div3" xml:id="usersymbolsSemanticImplications">
@@ -114,7 +115,7 @@
         <head>Voice leading visualization as found in an Edition Peters print of <title>Album für
             die Jugend</title> by Schumann, No. 35 (Mignon), measure 6. (Unknown date, plate number
           is 10478.)</head>
-        <graphic url="Images/modules/usersymbols/mignon.svg"/>
+        <graphic url="Images/modules/usersymbols/mignon.png"/>
       </figure>
       <figure>
         <head>Encoding of the Schumann example</head>
@@ -155,13 +156,13 @@
     </div>
     <div type="div3" xml:id="usersymbolsGraphicalRendition">
       <head>Defining a Specific Graphical Rendition for a Semantic Element</head>
-      <p>Usersymbols can define the rendition of different elements in two ways. Some elements,
-        namely <gi scheme="MEI">dir</gi> and <gi scheme="MEI">tempo</gi>, can have user symbol
-        elements as content. This can e.g. be used to indicate percussion instruments using
-        pictograms.</p>
+      <p>Usersymbols can define the rendition of different elements in two ways. Some elements, for
+        example <gi scheme="MEI">dir</gi> and <gi scheme="MEI">tempo</gi>, can have user symbol
+        elements as content. In the following example, the content of <gi scheme="mei">dir</gi> is
+        used to provide pictograms of percussion instruments.</p>
       <figure>
         <head>Indicating percussion instruments using pictograms</head>
-        <graphic url="Images/modules/usersymbols/percussion.svg"/>
+        <graphic url="Images/modules/usersymbols/percussion.png"/>
       </figure>
       <figure>
         <head>Encoding of above example</head>
@@ -219,8 +220,8 @@
 </section>
         </egXML>
       </figure>
-      <p>A number of other elements can point to a symbol for rendering using the <att>altsym</att>
-        attribute.</p>
+      <p>A number of elements can point to an internally-defined symbol for rendering using the
+          <att>altsym</att> attribute.</p>
       <figure>
         <head>Different treble clef renditions as written by Charpentier (source: <ref
             target="www.sscm-jscm.org/v12/no1/gosine.html">Journal of Seventeenth-Century Music,
@@ -257,6 +258,15 @@
     </staffDef>
   </staffGrp>
 </scoreDef>
+        </egXML>
+      </figure>
+      <p>Externally-defined symbols may be referenced using a <att>glyphname</att> or
+          <att>glyphnum</att> attribute. Both attributes refer to Standard Music Font Layout (SMuFL)
+        characters. Other character sets must be treated as internally-defined character sets.</p>
+      <figure>
+        <head>Use of glyphname and glyphnum attributes</head>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<meterSig form="norm" count="2" unit="4" sym="cut" glyphname="timeSigCutCommon" glyphnum="U+E08B"/>
         </egXML>
       </figure>
     </div>
@@ -366,20 +376,34 @@
 
   <div type="div2" xml:id="usersymbolsLineRendition">
     <head>Line Rendition</head>
-    <p>The <att>rend</att> attribute of lines and curves can take the following values:</p>
+    <p>The <att>form</att> attribute of lines may take the following values:</p>
+    <list type="bulleted">
+      <item>dashed</item>
+      <item>dotted</item>
+      <item>solid</item>
+      <item>wavy</item>
+    </list>
+    <p>These attribute values are only qualitative. Actual dash length and dot and dash spacing are
+      implementation dependent.</p>
+    <p>The <att>width</att> attribute may take the following values:</p>
     <list type="bulleted">
       <item>narrow</item>
       <item>medium</item>
       <item>wide</item>
-      <item>dashed</item>
-      <item>dotted</item>
     </list>
-    <p>These attributes are only qualitative. The actual line width, dot and dash distance, dash
-      length and line ending shapes are implementation dependent.</p>
+    <p>These values are also qualitative, however, they are also relative. That is, 'narrow' is the
+      default value, 'medium' is twice as wide as 'narrow', and 'wide' is twice as wide as
+      'medium'.</p>
+    <p>In addition to these textual values, the width attribute may contain a numeric value and an
+      optional unit value, "2mm" for example. If the unit value is not provided, staff interline
+      units are presumed.</p>
+    <p>The <att>lstartsym</att> and <att>lendsym</att> attributes name the symbol that may start
+      and/or end a line, while <att>lstartsymsize</att> and <att>lendsymsize</att> indicate the
+      relative size of the symbol using a numeric value in the range from 1 to 9.</p>
   </div>
   <div type="div2" xml:id="usersymbolsLimitations">
     <head>Limitations</head>
-    <p>The usersymbols module does currently not support continuous composite lines or filled areas.
+    <p>The usersymbols module does not currently support continuous composite lines or filled areas.
       As mentioned above, the rendition of lines is highly implementation dependent. Coordinate
       system transforms are restricted to scaling using <att>scale</att>.</p>
     <!--<p>{QUESTION: What is the significance of att.coordinated on <gi scheme="MEI">symbolDef</gi>?}</p>-->
