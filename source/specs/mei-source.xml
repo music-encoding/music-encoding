@@ -4664,10 +4664,18 @@
           <datatype>
             <rng:data type="string"/>
           </datatype>
+          <constraintSpec ident="check_glyphnameTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@glyphname">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyphname attribute
+                  has no content.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="glyphnum" usage="opt">
-          <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". SMuFL
-            version 1.18 uses the range U+E000 - U+ECBF.</desc>
+          <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
+            SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
             <rng:choice>
               <rng:data type="string">
@@ -4676,9 +4684,8 @@
               </rng:data>
             </rng:choice>
           </datatype>
-          <!-- This rule only checks the length of @glyphnum. More complex constraints are needed to 
-                display a warning when @glyphnum is outside the range defined by the latest version of 
-                SMuFL. -->
+          <!-- This rule only checks the length of @glyphnum. More complex constraints are 
+                needed to display a warning when @glyphnum is outside the range defined by SMuFL. -->
           <constraintSpec ident="check_glyphnum" scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:*[starts-with(@glyphnum, 'U+')]">
