@@ -1442,6 +1442,24 @@
         </rng:data>
       </content>
     </macroSpec>
+    <macroSpec ident="data.MIDIBPM" module="MEI" type="dt">
+      <desc>Tempo expressed as "beats" per minute, where "beat" is always defined as a quarter note,
+        *not the numerator of the time signature or the metronomic indication*.</desc>
+      <content>
+        <rng:data type="positiveInteger">
+          <!-- The range is taken from Mup. -->
+          <!--<rng:param name="minInclusive">10</rng:param>
+              <rng:param name="maxInclusive">1000</rng:param>-->
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.MIDIMSPB" module="MEI" type="dt">
+      <desc>Tempo expressed as microseconds per "beat", where "beat" is always defined as a quarter
+        note, *not the numerator of the time signature or the metronomic indication*.</desc>
+      <content>
+        <rng:data type="positiveInteger"/>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.MIDINAMES" module="MEI" type="dt">
       <desc>General MIDI instrument names.</desc>
       <!-- list at http://www.midi.org/techspecs/gm1sound.php presumed to be authority -->
@@ -1974,15 +1992,6 @@
           <desc>Key #81.</desc>
         </valItem>
       </valList>
-    </macroSpec>
-    <macroSpec ident="data.MIDITEMPO" module="MEI" type="dt">
-      <desc>MIDI quarter notes per minute: positive integer in the range 10-1000.</desc>
-      <content>
-        <rng:data type="positiveInteger">
-          <rng:param name="minInclusive">10</rng:param>
-          <rng:param name="maxInclusive">1000</rng:param>
-        </rng:data>
-      </content>
     </macroSpec>
     <macroSpec ident="data.MIDIVALUE" module="MEI" type="dt">
       <desc>MIDI values in the following range.</desc>
@@ -6555,11 +6564,21 @@
     <classSpec ident="att.miditempo" module="MEI.midi" type="atts">
       <desc>Attributes that record MIDI tempo information.</desc>
       <attList>
-        <attDef ident="midi.tempo" usage="opt">
-          <desc>Contains a MIDI value, that is, the number of quarter notes per minute in the range
-            from 10 to 1000.</desc>
+        <attDef ident="midi.bmp" usage="opt">
+          <desc>Captures the number of *quarter notes* per minute. In MIDI, a beat is always defined
+            as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*.</desc>
           <datatype>
-            <rng:ref name="data.MIDITEMPO"/>
+            <rng:ref name="data.MIDIBPM"/>
+          </datatype>
+        </attDef>
+        <attDef ident="midi.mspb" usage="opt">
+          <desc>Records the number of microseconds per *quarter note*. In MIDI, a beat is always
+            defined as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*. At 120 quarter notes per minute, each quarter note will last 500,000
+            microseconds.</desc>
+          <datatype>
+            <rng:ref name="data.MIDIMSPB"/>
           </datatype>
         </attDef>
       </attList>
@@ -6602,7 +6621,9 @@
       <attList>
         <attDef ident="mm" usage="opt">
           <desc>Used to describe tempo in terms of beats (often the meter signature denominator) per
-            minute, ala M.M. (Maezel's Metronome).</desc>
+            minute, ala M.M. (Maezel's Metronome). Do not confuse this attribute with midi.bmp or
+            midi.mspb. In MIDI, a beat is always defined as a quarter note, *not the numerator of
+            the time signature or the metronomic indication*.</desc>
           <datatype>
             <rng:ref name="data.TEMPOVALUE"/>
           </datatype>
@@ -16029,8 +16050,7 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="ornam" module="MEI.shared">
-      <desc>An element indicating an ornament that is not a mordent, turn, or trill.
-      </desc>
+      <desc>An element indicating an ornament that is not a mordent, turn, or trill. </desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
@@ -16384,6 +16404,7 @@
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
+            <rng:ref name="perfRes"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -18860,7 +18881,7 @@
       </content>
     </elementSpec>
     <elementSpec ident="symbolTable" module="MEI.usersymbols">
-      <desc>Contains individual, user-defined symbols.</desc>
+      <desc>Contains a set of user-defined symbols.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="model.symbolTableLike"/>
