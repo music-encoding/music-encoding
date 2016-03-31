@@ -912,11 +912,72 @@
       </content>
     </macroSpec>
     <macroSpec ident="data.FONTSIZE" module="MEI" type="dt">
-      <desc>Font size expressed in points.</desc>
+      <desc>Font size expressions.</desc>
+      <content>
+        <alternate>
+          <macroRef key="data.FONTSIZENUMERIC"/>
+          <macroRef key="data.FONTSIZETERM"/>
+          <macroRef key="data.PERCENT"/>
+        </alternate>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.FONTSIZENUMERIC" module="MEI" type="dt">
+      <desc>Font size expressed as numbers; i.e. points.</desc>
       <content>
         <rng:data type="token">
-          <rng:param name="pattern">\d+(\.\d+)?(pt)?</rng:param>
+          <rng:param name="pattern">\d*(\.\d+)?(pt)?</rng:param>
+          <rng:except>
+            <!-- disallow no-value or all-zero patterns -->
+            <rng:choice>
+              <rng:data type="token">
+                <rng:param name="pattern">(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">0+(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">0+(\.0+)?(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">\.0+(pt)?</rng:param>
+              </rng:data>
+            </rng:choice>
+          </rng:except>
         </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.FONTSIZETERM" module="MEI" type="dt">
+      <desc>Font size expressed as terms.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="xx-small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="x-small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="medium">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="x-large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="xx-large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="smaller">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="larger">
+            <desc>Relative font size.</desc>
+          </valItem>
+        </valList>
       </content>
     </macroSpec>
     <macroSpec ident="data.FONTSTYLE" module="MEI" type="dt">
@@ -2620,33 +2681,6 @@
     <macroSpec ident="data.TEXTRENDITIONLIST" module="MEI" type="dt">
       <desc>Closed list of text rendition values.</desc>
       <valList type="closed">
-        <valItem ident="xx-small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="x-small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="medium">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="x-large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="xx-large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="smaller">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="larger">
-          <desc>Relative font size.</desc>
-        </valItem>
         <valItem ident="italic">
           <desc>Italicized (slanted to right).</desc>
         </valItem>
@@ -9630,11 +9664,11 @@
           </datatype>
         </attDef>
         <attDef ident="fontsize" usage="opt">
-          <desc>Indicates the size of a font in printers' points, i.e., 1/72nd of an inch.</desc>
+          <desc>Indicates the size of a font expressed in printers' points, i.e., 1/72nd of an inch,
+            relative terms, e.g., "small", "larger", etc., or percentage values relative to "normal"
+            size, e.g., "125%". </desc>
           <datatype>
-            <rng:data type="decimal">
-              <rng:param name="minInclusive">0.1</rng:param>
-            </rng:data>
+            <rng:ref name="data.FONTSIZE"/>
           </datatype>
         </attDef>
         <attDef ident="fontstyle" usage="opt">
