@@ -12176,6 +12176,14 @@
           <rng:ref name="when"/>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:clip[@begin or @end]">
+            <sch:assert role="warning" test="@betype or ancestor::mei:*[@betype]">When @begin or
+              @end is used, @betype must appear on clip or one of its ancestors.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>This element is analogous to the <gi scheme="MEI">zone</gi> element in the facsimile
           module.</p>
@@ -17433,6 +17441,14 @@
           <rng:ref name="clip"/>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:recording[@begin or @end]">
+            <sch:assert role="warning" test="@betype">When @begin or @end is used, @betype is
+              required.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The <att>startid</att> attribute may be used to hold a reference to the first feature
           occurring in this performance. This element is analogous to the <gi scheme="MEI"
@@ -20030,11 +20046,22 @@
       <constraintSpec ident="check_when_interval" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:when[@interval]">
-            <sch:assert test="@since">@since must be present when @interval is used.</sch:assert>
-            <sch:assert
+            <sch:assert role="warning" test="@since">@since must be present when @interval is
+              used.</sch:assert>
+            <sch:assert role="warning"
               test="every $i in tokenize(@since, '\s+') satisfies substring($i,2)=//mei:when/@xml:id"
               >The value in @since must correspond to the @xml:id attribute of a when
               element.</sch:assert>
+            <sch:assert role="warning" test="@inttype">@inttype must be present when @interval is
+              used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_when_absolute" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:when[@absolute]">
+            <sch:assert role="warning" test="@abstype or ancestor::mei:*[@betype]">When @absolute is
+              present, @abstype is required or @betype must be present on an ancestor.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -20067,7 +20094,6 @@
             <rng:ref name="data.BETYPE"/>
           </datatype>
         </attDef>
-        <!-- Enforce constraints on attribute targets, issue #226 -->
         <attDef ident="since" usage="opt">
           <desc>Identifies the reference point for determining the time of the current when element,
             which is obtained by adding the interval to the time of the reference point. The value
