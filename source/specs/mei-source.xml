@@ -1283,7 +1283,17 @@
         <valItem ident="pressusmaior"/>
       </valList>
     </macroSpec>
-    <macroSpec ident="data.INTERVAL.AMOUNT" module="MEI" type="dt">
+    <macroSpec ident="data.INTERVAL.HARMONIC" module="MEI" type="dt">
+      <desc>A token indicating diatonic interval quality and size.</desc>
+      <content>
+        <rng:choice>
+          <rng:data type="token">
+            <rng:param name="pattern">[AdMmP][0-9]+</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
       <desc>A token indicating direction of the interval but not its precise value, an indication of
         diatonic interval quality and size, or a decimal value in half steps. Decimal values are
         permitted to accommodate micro-tuning.</desc>
@@ -5256,6 +5266,7 @@
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.intervalharmonic"/>
       </classes>
     </classSpec>
     <classSpec ident="att.harm.ges" module="MEI.harmony" type="atts">
@@ -5587,10 +5598,22 @@
       <desc>Attributes that describe harmonic intervals.</desc>
       <attList>
         <attDef ident="inth" usage="opt">
-          <desc>Encodes the harmonic interval between this note and other pitches occurring at the
-            same time.</desc>
+          <desc>Encodes the harmonic interval between pitches occurring at the same time.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.INTERVAL.HARMONIC"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.intervalmelodic" module="MEI.analysis" type="atts">
+      <desc>Attributes that provide for description of intervallic content.</desc>
+      <attList>
+        <attDef ident="intm" usage="opt">
+          <desc>Encodes the melodic interval from the previous pitch. The value may be a general
+            directional indication (u, d, s), an indication of diatonic interval direction, quality,
+            and size, or a precise numeric value in half steps.</desc>
           <datatype>
-            <rng:data type="NMTOKENS"/>
+            <rng:ref name="data.INTERVAL.MELODIC"/>
           </datatype>
         </attDef>
       </attList>
@@ -5599,17 +5622,8 @@
       <desc>Attributes that provide for description of intervallic content.</desc>
       <classes>
         <memberOf key="att.intervalharmonic"/>
+        <memberOf key="att.intervalmelodic"/>
       </classes>
-      <attList>
-        <attDef ident="intm" usage="opt">
-          <desc>Encodes the melodic interval from the previous pitch. The value may be a general
-            directional indication (u, d, s), an indication of diatonic interval direction, quality,
-            and size, or a precise numeric value in half steps.</desc>
-          <datatype>
-            <rng:ref name="data.INTERVAL.AMOUNT"/>
-          </datatype>
-        </attDef>
-      </attList>
     </classSpec>
     <classSpec ident="att.joined" module="MEI.shared" type="atts">
       <desc>Attributes indicating that elements are semantically linked; that is, while the parts
@@ -7211,7 +7225,7 @@
       <classes>
         <memberOf key="att.common.anl"/>
         <memberOf key="att.harmonicfunction"/>
-        <memberOf key="att.intervallicdesc"/>
+        <memberOf key="att.intervalmelodic"/>
         <memberOf key="att.melodicfunction"/>
         <memberOf key="att.pitchclass"/>
         <memberOf key="att.solfa"/>
@@ -9717,8 +9731,8 @@
       <classes>
         <memberOf key="att.common.anl"/>
         <memberOf key="att.harmonicfunction"/>
+        <memberOf key="att.intervalmelodic"/>
         <memberOf key="att.melodicfunction"/>
-        <memberOf key="att.intervallicdesc"/>
         <memberOf key="att.solfa"/>
       </classes>
     </classSpec>
