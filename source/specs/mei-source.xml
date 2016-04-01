@@ -10061,6 +10061,12 @@
         <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.addressPart" module="MEI.namesdates" type="model">
+      <desc>Groups elements used as part of a physical address.</desc>
+      <classes>
+        <memberOf key="model.textphraseLike.limited"/>
+      </classes>
+    </classSpec>
     <classSpec ident="model.annotLike" module="MEI.shared" type="model">
       <desc>Groups annotation-like elements.</desc>
       <classes>
@@ -11005,9 +11011,16 @@
         <memberOf key="model.addressLike"/>
       </classes>
       <content>
-        <rng:oneOrMore>
-          <rng:ref name="addrLine"/>
-        </rng:oneOrMore>
+        <rng:choice>
+          <rng:oneOrMore>
+            <rng:ref name="addrLine"/>
+          </rng:oneOrMore>
+          <rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="model.addressPart"/>
+            </rng:choice>
+          </rng:oneOrMore>
+        </rng:choice>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI) and Encoded
@@ -12556,9 +12569,9 @@
         <p>Examples of corporate entities include names of associations, institutions, business
           firms, non-profit enterprises, governments, government agencies, projects, programs,
           religious bodies, churches, conferences, athletic contests, exhibitions, expeditions,
-          fairs, and ships. Secondary name parts may be encoded in <gi scheme="MEI">corpName</gi>
-          sub-elements. The name of the list from which a controlled value is taken may be recorded
-          using the <att>authority</att> attribute.</p>
+          fairs, and ships. Usually, secondary name parts are encoded in <gi scheme="MEI"
+            >corpName</gi> sub-elements. The name of the list from which a controlled value is taken
+          may be recorded using the <att>authority</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -16311,6 +16324,15 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="nameParts" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:name">
+            <sch:assert role="warning" test="not(mei:geogName or mei:persName or mei:corpName)"
+              >Recommended practice is to use name elements to capture sub-parts of a generic
+              name.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <!-- type is expanded in order to encourage the use of suggested values -->
         <attDef ident="type" usage="opt">
@@ -16359,7 +16381,7 @@
           may be used for an individual, such as 'Henry VIII, King of England'; a corporate body,
           such as 'The Beatles'; a geographical place; an expanse of time, such as 'The Romantic
           Era'; or a mechanical (often generative) process. When name parts are needed, <gi
-            scheme="MEI">name</gi> sub-elements may be used. The recommended values for the
+            scheme="MEI">name</gi> sub-elements are recommended. The recommended values for the
             <att>type</att> attribute are: person, corporation, location, period, and process. Dates
           associated with <emph>the name</emph> (not necessarily the same as those pertaining to the
             <emph>entity described by the name</emph>) may be recorded using <att>startdate</att>,
@@ -17480,6 +17502,52 @@
       <content>
         <rng:empty/>
       </content>
+    </elementSpec>
+    <elementSpec ident="postBox" module="MEI.namesdates">
+      <desc>(postal box or post office box) contains a number or other identifier for some postal
+        delivery point other than a street address.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="postCode" module="MEI.namesdates">
+      <desc>(postal code) contains a numerical or alphanumeric code used as part of a postal address
+        to simplify sorting or delivery of mail.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="price" module="MEI.header">
       <desc>The cost of access to a bibliographic item.</desc>
@@ -19293,6 +19361,30 @@
         <rng:oneOrMore>
           <rng:ref name="model.pLike"/>
         </rng:oneOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="street" module="MEI.namesdates">
+      <desc>full street address including any name or number identifying a building as well as the
+        name of the street or route on which it is located.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
