@@ -101,6 +101,30 @@
     </moduleSpec>
 
     <!-- PARAMETER ENTITIES -->
+    <macroSpec ident="macro.anyXML" module="MEI.shared" type="pe">
+      <desc>Permits any XML elements except those from the MEI or SVG namespace.</desc>
+      <content>
+        <rng:element>
+          <rng:anyName>
+            <rng:except>
+              <rng:nsName ns="http://www.music-encoding.org/ns/mei"/>
+              <rng:nsName ns="http://www.w3.org/2000/svg"/>
+            </rng:except>
+          </rng:anyName>
+          <rng:zeroOrMore>
+            <rng:attribute>
+              <rng:anyName/>
+            </rng:attribute>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="macro.anyXML"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:element>
+      </content>
+    </macroSpec>
     <macroSpec ident="macro.availabilityPart" module="MEI.header" type="pe">
       <desc>Groups elements that may appear as part of a description of the availability of and
         access to a bibliographic item.</desc>
@@ -13519,6 +13543,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
@@ -13570,6 +13597,23 @@
         <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
           Archival Description (EAD) standards.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="extMeta" module="MEI.header">
+      <desc>(extended metadata) – Provides a container element for non-MEI metadata formats.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.whitespace"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:group>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="macro.anyXML"/>
+            </rng:choice>
+          </rng:group>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="f" module="MEI.harmony">
       <desc>(figure) – Single element of a figured bass indication.</desc>
@@ -14868,6 +14912,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="itemList" module="MEI.frbr">
@@ -15677,6 +15724,9 @@
         </rng:zeroOrMore>
         <rng:ref name="fileDesc"/>
         <rng:ref name="model.headerPart_sequenceOptional"/>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="revisionDesc"/>
         </rng:optional>
@@ -18513,6 +18563,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>Multiple <gi scheme="MEI">physDesc</gi> sub-elements may be used to describe the
@@ -20294,6 +20347,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
