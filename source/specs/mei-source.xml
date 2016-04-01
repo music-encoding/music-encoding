@@ -14094,7 +14094,9 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
         <memberOf key="att.measurement"/>
+        <memberOf key="att.startid"/>
         <memberOf key="att.typed"/>
+        <memberOf key="att.visualoffset"/>
         <memberOf key="model.graphicLike"/>
       </classes>
       <content>
@@ -14102,14 +14104,38 @@
           <rng:ref name="zone"/>
         </rng:zeroOrMore>
       </content>
-      <constraintSpec ident="graphic_child_of_zone" scheme="isoschematron">
+      <constraintSpec ident="graphic_attributes" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:zone/mei:graphic">
-            <sch:assert test="count(mei:*) = 0">graphic child of zone cannot have
-              children</sch:assert>
+            <sch:assert role="warning" test="count(mei:*) = 0">Graphic child of zone cannot have
+              children.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:symbolDef/mei:graphic">
+            <sch:assert role="warning" test="@startid or (@ulx and @uly)">Graphic must have either a
+              startid attribute or ulx and uly attributes.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:graphic[not(ancestor::mei:symbolDef or ancestor::mei:zone)]">
+            <sch:assert role="warning" test="not(@ulx or @uly)">Graphic must NOT have @ulx or @uly
+              attributes.</sch:assert>
+            <sch:assert role="warning" test="not(@ho or @vo)">Graphic must NOT have @ho or @vo
+              attributes.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
+      <attList>
+        <attDef ident="ulx" usage="opt">
+          <desc>Indicates the upper-left corner x coordinate.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+        <attDef ident="uly" usage="opt">
+          <desc>Indicates the upper-left corner y coordinate.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
