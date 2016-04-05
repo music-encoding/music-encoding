@@ -101,25 +101,46 @@
     </moduleSpec>
 
     <!-- PARAMETER ENTITIES -->
+    <macroSpec ident="macro.anyXML" module="MEI.shared" type="pe">
+      <desc>Permits any XML elements except those from the MEI or SVG namespace.</desc>
+      <content>
+        <rng:element>
+          <rng:anyName>
+            <rng:except>
+              <rng:nsName ns="http://www.music-encoding.org/ns/mei"/>
+              <rng:nsName ns="http://www.w3.org/2000/svg"/>
+            </rng:except>
+          </rng:anyName>
+          <rng:zeroOrMore>
+            <rng:attribute>
+              <rng:anyName/>
+            </rng:attribute>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="macro.anyXML"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:element>
+      </content>
+    </macroSpec>
     <macroSpec ident="macro.availabilityPart" module="MEI.header" type="pe">
       <desc>Groups elements that may appear as part of a description of the availability of and
         access to a bibliographic item.</desc>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="acqSource"/>
-          <rng:zeroOrMore>
+          <rng:choice>
             <rng:ref name="accessRestrict"/>
-            <rng:optional>
-              <rng:ref name="price"/>
-            </rng:optional>
-          </rng:zeroOrMore>
+            <rng:ref name="distributor"/>
+            <rng:ref name="price"/>
+            <rng:ref name="sysReq"/>
+            <rng:ref name="useRestrict"/>
+            <rng:ref name="model.addressLike"/>
+            <rng:ref name="model.dateLike"/>
+            <rng:ref name="model.identifierLike"/>
+          </rng:choice>
         </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="useRestrict"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="sysReq"/>
-        </rng:optional>
       </content>
     </macroSpec>
     <macroSpec ident="macro.bibldescPart" module="MEI.header" type="pe">
@@ -223,7 +244,10 @@
             <desc>Double flat.</desc>
           </valItem>
           <valItem ident="xs">
-            <desc>Triple sharp (written as croix and 2 sharps).</desc>
+            <desc>Triple sharp (written as a croix followed by a sharp).</desc>
+          </valItem>
+          <valItem ident="sx">
+            <desc>Triple sharp (written as a sharp followed by a croix).</desc>
           </valItem>
           <valItem ident="ts">
             <desc>Triple sharp (written as 3 sharps).</desc>
@@ -913,11 +937,72 @@
       </content>
     </macroSpec>
     <macroSpec ident="data.FONTSIZE" module="MEI" type="dt">
-      <desc>Font size expressed in points.</desc>
+      <desc>Font size expressions.</desc>
+      <content>
+        <alternate>
+          <macroRef key="data.FONTSIZENUMERIC"/>
+          <macroRef key="data.FONTSIZETERM"/>
+          <macroRef key="data.PERCENT"/>
+        </alternate>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.FONTSIZENUMERIC" module="MEI" type="dt">
+      <desc>Font size expressed as numbers; i.e. points.</desc>
       <content>
         <rng:data type="token">
-          <rng:param name="pattern">\d+(\.\d+)?(pt)?</rng:param>
+          <rng:param name="pattern">\d*(\.\d+)?(pt)?</rng:param>
+          <rng:except>
+            <!-- disallow no-value or all-zero patterns -->
+            <rng:choice>
+              <rng:data type="token">
+                <rng:param name="pattern">(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">0+(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">0+(\.0+)?(pt)?</rng:param>
+              </rng:data>
+              <rng:data type="token">
+                <rng:param name="pattern">\.0+(pt)?</rng:param>
+              </rng:data>
+            </rng:choice>
+          </rng:except>
         </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.FONTSIZETERM" module="MEI" type="dt">
+      <desc>Font size expressed as terms.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="xx-small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="x-small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="small">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="medium">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="x-large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="xx-large">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="smaller">
+            <desc>Relative font size.</desc>
+          </valItem>
+          <valItem ident="larger">
+            <desc>Relative font size.</desc>
+          </valItem>
+        </valList>
       </content>
     </macroSpec>
     <macroSpec ident="data.FONTSTYLE" module="MEI" type="dt">
@@ -941,6 +1026,138 @@
         <valItem ident="normal"/>
       </valList>
     </macroSpec>
+    <macroSpec ident="data.FRBRRELATIONSHIP" module="MEI.frbr" type="dt">
+      <desc>Relationships between FRBR entities.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="hasAbridgement">
+            <desc>Target is an abridgement, condensation, or expurgation of the current
+              entity.</desc>
+          </valItem>
+          <valItem ident="isAbridgementOf">
+            <desc>Reciprocal relationship of hasAbridgement.</desc>
+          </valItem>
+          <valItem ident="hasAdaptation">
+            <desc>Target is an adaptation, paraphrase, free translation, variation (music),
+              harmonization (music), or fantasy (music) of the current entity.</desc>
+          </valItem>
+          <valItem ident="isAdaptationOf">
+            <desc>Reciprocal relationship of hasAdaptation.</desc>
+          </valItem>
+          <valItem ident="hasAlternate">
+            <desc>Target is an alternate format or simultaneously released edition of the current
+              entity.</desc>
+          </valItem>
+          <valItem ident="isAlternateOf">
+            <desc>Reciprocal relationship of hasAlternate.</desc>
+          </valItem>
+          <valItem ident="hasArrangement">
+            <desc>Target is an arrangement (music) of the current entity.</desc>
+          </valItem>
+          <valItem ident="isArrangementOf">
+            <desc>Reciprocal relationship of hasArrangement.</desc>
+          </valItem>
+          <valItem ident="hasComplement">
+            <desc>Target is a cadenza, libretto, choreography, ending for unfinished work,
+              incidental music, or musical setting of a text of the current entity.</desc>
+          </valItem>
+          <valItem ident="isComplementOf">
+            <desc>Reciprocal relationship of hasComplement.</desc>
+          </valItem>
+          <valItem ident="hasEmbodiment">
+            <desc>Target is a physical embodiment of the current abstract entity; describes the
+              expression-to-manifestation relationship.</desc>
+          </valItem>
+          <valItem ident="isEmbodimentOf">
+            <desc>Reciprocal relationship of hasEmbodiment.</desc>
+          </valItem>
+          <valItem ident="hasExemplar">
+            <desc>Target is an exemplar of the class of things represented by the current entity;
+              describes the manifestation-to-item relationship.</desc>
+          </valItem>
+          <valItem ident="isExemplarOf">
+            <desc>Reciprocal relationship of hasExamplar.</desc>
+          </valItem>
+          <valItem ident="hasImitation">
+            <desc>Target is a parody, imitation, or travesty of the current entity.</desc>
+          </valItem>
+          <valItem ident="isImitationOf">
+            <desc>Reciprocal relationship of hasImitation.</desc>
+          </valItem>
+          <valItem ident="hasPart">
+            <desc>Target is a chapter, section, part, etc.; volume of a multivolume manifestation;
+              volume/issue of serial; intellectual part of a multipart work; illustration for a
+              text; sound aspect of a film; soundtrack for a film on separate medium; soundtrack for
+              a film embedded in film; monograph in a series; physical component of a particular
+              copy; the binding of a book of the current entity.</desc>
+          </valItem>
+          <valItem ident="isPartOf">
+            <desc>Reciprocal relationship of hasPart.</desc>
+          </valItem>
+          <valItem ident="hasRealization">
+            <desc>Target is a realization of the current entity; describes the work-to-expression
+              relationship.</desc>
+          </valItem>
+          <valItem ident="isRealizationOf">
+            <desc>Reciprocal relationship of hasRealization.</desc>
+          </valItem>
+          <valItem ident="hasReconfiguration">
+            <desc>Target has been reconfigured: bound with, split into, extracted from the current
+              entity.</desc>
+          </valItem>
+          <valItem ident="isReconfigurationOf">
+            <desc>Reciprocal relationship of hasReconfiguration.</desc>
+          </valItem>
+          <valItem ident="hasReproduction">
+            <desc>Target is a reproduction, microreproduction, macroreproduction, reprint,
+              photo-offset reprint, or facsimile of the current entity.</desc>
+          </valItem>
+          <valItem ident="isReproductionOf">
+            <desc>Reciprocal relationship of hasReproduction.</desc>
+          </valItem>
+          <valItem ident="hasRevision">
+            <desc>Target is a revised edition, enlarged edition, or new state (graphic) of the
+              current entity.</desc>
+          </valItem>
+          <valItem ident="isRevisionOf">
+            <desc>Reciprocal relationship of hasRevision.</desc>
+          </valItem>
+          <valItem ident="hasSuccessor">
+            <desc>Target is a sequel or succeeding work of the current entity.</desc>
+          </valItem>
+          <valItem ident="isSuccessorOf">
+            <desc>Reciprocal relationship of hasSuccessor.</desc>
+          </valItem>
+          <valItem ident="hasSummarization">
+            <desc>Target is a digest or abstract of the current entity.</desc>
+          </valItem>
+          <valItem ident="isSummarizationOf">
+            <desc>Reciprocal relationship of hasSummarization.</desc>
+          </valItem>
+          <valItem ident="hasSupplement">
+            <desc>Target is an index, concordance, teacher's guide, gloss, supplement, or appendix
+              of the current entity.</desc>
+          </valItem>
+          <valItem ident="isSupplementOf">
+            <desc>Reciprocal relationship of hasSupplement.</desc>
+          </valItem>
+          <valItem ident="hasTransformation">
+            <desc>Target is a dramatization, novelization, versification, or screenplay of the
+              current entity.</desc>
+          </valItem>
+          <valItem ident="isTransformationOf">
+            <desc>Reciprocal relationship of hasTransformation.</desc>
+          </valItem>
+          <valItem ident="hasTranslation">
+            <desc>Target is a literal translation or transcription (music) of the current
+              entity.</desc>
+          </valItem>
+          <valItem ident="isTranslationOf">
+            <desc>Reciprocal relationship of hasTranslation.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.FRET" module="MEI" type="dt">
       <desc>In a guitar chord diagram, the fret where the finger should be placed. Since guitar
         chord diagrams are limited to the range of frets that fall under the hand, the value here is
@@ -954,18 +1171,10 @@
       </content>
     </macroSpec>
     <macroSpec ident="data.FRETNUMBER" module="MEI" type="dt">
-      <desc>In string tablature, the fret number, i.e., [1-9]. The value 'o' indicates the open
+      <desc>In string tablature, the fret number. The value '0' (zero) indicates the open
         string.</desc>
       <content>
-        <rng:choice>
-          <rng:data type="nonNegativeInteger">
-            <rng:param name="minInclusive">1</rng:param>
-            <rng:param name="maxInclusive">9</rng:param>
-          </rng:data>
-          <rng:data type="token">
-            <rng:param name="pattern">o</rng:param>
-          </rng:data>
-        </rng:choice>
+        <rng:data type="nonNegativeInteger"/>
       </content>
     </macroSpec>
     <macroSpec ident="data.GLISSANDO" module="MEI" type="dt">
@@ -1098,7 +1307,17 @@
         <valItem ident="pressusmaior"/>
       </valList>
     </macroSpec>
-    <macroSpec ident="data.INTERVAL.AMOUNT" module="MEI" type="dt">
+    <macroSpec ident="data.INTERVAL.HARMONIC" module="MEI" type="dt">
+      <desc>A token indicating diatonic interval quality and size.</desc>
+      <content>
+        <rng:choice>
+          <rng:data type="token">
+            <rng:param name="pattern">[AdMmP][0-9]+</rng:param>
+          </rng:data>
+        </rng:choice>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
       <desc>A token indicating direction of the interval but not its precise value, an indication of
         diatonic interval quality and size, or a decimal value in half steps. Decimal values are
         permitted to accommodate micro-tuning.</desc>
@@ -1147,16 +1366,7 @@
         in the key.sig.mixed attribute.</desc>
       <content>
         <rng:data type="token">
-          <rng:param name="pattern">mixed|0|[1-7][f|s]</rng:param>
-        </rng:data>
-      </content>
-    </macroSpec>
-    <macroSpec ident="data.KEYSIGNATURE.MIXED" module="MEI" type="dt">
-      <desc>Key signature may consist of a mixture of flats and sharps (Read, p. 143, ex. 9-39),
-        often with unorthodox placement of the accidentals (Read, p. 141).</desc>
-      <content>
-        <rng:data type="token">
-          <rng:param name="pattern">[a-g][0-9](\-{1,3}|f{1,3}|#{1,3}|s{1,3}|x)</rng:param>
+          <rng:param name="pattern">mixed|0|([1-9]|1[0-2])[f|s]</rng:param>
         </rng:data>
       </content>
     </macroSpec>
@@ -1166,7 +1376,7 @@
       <content>
         <rng:data type="token">
           <rng:param name="pattern"
-            >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
+            >[a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)</rng:param>
         </rng:data>
       </content>
     </macroSpec>
@@ -1278,7 +1488,7 @@
       <content>
         <alternate>
           <macroRef key="data.LINEWIDTHTERM"/>
-          <macroRef key="data.MEASUREMENT"/>
+          <macroRef key="data.MEASUREMENTABS"/>
         </alternate>
       </content>
     </macroSpec>
@@ -1313,9 +1523,22 @@
         </rng:data>
       </content>
     </macroSpec>
-    <macroSpec ident="data.MEASUREMENT" module="MEI" type="dt">
+    <macroSpec ident="data.MEASUREMENTABS" module="MEI" type="dt">
       <desc>Measurement expressed in real-world (e.g., centimeters, millimeters, inches, points,
-        picas, or pixels) or virtual units (vu). 'vu' is the default value.</desc>
+        picas, or pixels) or virtual units (vu). 'vu' is the default value. Unlike
+        data.MEASUREMENTREL, which may be used to express relative measures, only positive values
+        are allowed.</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">(\+)?\d+(\.\d+)?(cm|mm|in|pt|pc|px|vu)?</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.MEASUREMENTREL" module="MEI" type="dt">
+      <desc>Measurement expressed in real-world (e.g., centimeters, millimeters, inches, points,
+        picas, or pixels) or virtual units (vu). 'vu' is the default value. Unlike
+        data.MEASUREMENTABS, in which only positive values are allowed, both positive and negative
+        values are permitted.</desc>
       <content>
         <rng:data type="token">
           <rng:param name="pattern">(\+|-)?\d+(\.\d+)?(cm|mm|in|pt|pc|px|vu)?</rng:param>
@@ -1440,6 +1663,24 @@
         <rng:data type="positiveInteger">
           <rng:param name="maxInclusive">16</rng:param>
         </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.MIDIBPM" module="MEI" type="dt">
+      <desc>Tempo expressed as "beats" per minute, where "beat" is always defined as a quarter note,
+        *not the numerator of the time signature or the metronomic indication*.</desc>
+      <content>
+        <rng:data type="positiveInteger">
+          <!-- The range is taken from Mup. -->
+          <!--<rng:param name="minInclusive">10</rng:param>
+              <rng:param name="maxInclusive">1000</rng:param>-->
+        </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.MIDIMSPB" module="MEI" type="dt">
+      <desc>Tempo expressed as microseconds per "beat", where "beat" is always defined as a quarter
+        note, *not the numerator of the time signature or the metronomic indication*.</desc>
+      <content>
+        <rng:data type="positiveInteger"/>
       </content>
     </macroSpec>
     <macroSpec ident="data.MIDINAMES" module="MEI" type="dt">
@@ -1975,15 +2216,6 @@
         </valItem>
       </valList>
     </macroSpec>
-    <macroSpec ident="data.MIDITEMPO" module="MEI" type="dt">
-      <desc>MIDI quarter notes per minute: positive integer in the range 10-1000.</desc>
-      <content>
-        <rng:data type="positiveInteger">
-          <rng:param name="minInclusive">10</rng:param>
-          <rng:param name="maxInclusive">1000</rng:param>
-        </rng:data>
-      </content>
-    </macroSpec>
     <macroSpec ident="data.MIDIVALUE" module="MEI" type="dt">
       <desc>MIDI values in the following range.</desc>
       <content>
@@ -2484,33 +2716,6 @@
     <macroSpec ident="data.TEXTRENDITIONLIST" module="MEI" type="dt">
       <desc>Closed list of text rendition values.</desc>
       <valList type="closed">
-        <valItem ident="xx-small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="x-small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="small">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="medium">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="x-large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="xx-large">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="smaller">
-          <desc>Relative font size.</desc>
-        </valItem>
-        <valItem ident="larger">
-          <desc>Relative font size.</desc>
-        </valItem>
         <valItem ident="italic">
           <desc>Italicized (slanted to right).</desc>
         </valItem>
@@ -2755,6 +2960,14 @@
           <datatype>
             <rng:ref name="data.ACCIDENTAL.IMPLICIT"/>
           </datatype>
+          <constraintSpec ident="check_accid_duplication" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@accid.ges">
+                <sch:assert role="warning" test="not(. eq ../@accid)">The value of @accid.ges must
+                  not duplicate the value of @accid.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -2812,6 +3025,9 @@
                   test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:symbolDef/@xml:id"
                   >The value in @altsym must correspond to the @xml:id attribute of a symbolDef
                   element.</sch:assert>
+                <sch:assert test="not(substring(., 2) eq ancestor::mei:symbolDef/@xml:id)">The value
+                  in @altsym must not correspond to the @xml:id attribute of a symbolDef
+                  ancestor.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -2910,6 +3126,9 @@
     </classSpec>
     <classSpec ident="att.artic.ges" module="MEI.shared" type="atts">
       <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.articulation.performed"/>
+      </classes>
     </classSpec>
     <classSpec ident="att.artic.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
@@ -3255,8 +3474,9 @@
       </classes>
       <attList>
         <attDef ident="beatDef" usage="opt">
+          <desc>Indicates the performed duration represented by the beatRpt symbol.</desc>
           <datatype>
-            <rng:ref name="data.DURATION.gestural.prop"/>
+            <rng:ref name="data.DURATION.gestural"/>
           </datatype>
         </attDef>
       </attList>
@@ -3966,11 +4186,11 @@
         </attDef>
         <attDef ident="bulge" usage="opt">
           <desc>Describes a curve as one or more pairs of values with respect to an imaginary line
-            connecting the starting and ending points of the curve. The first value of each pair
-            represents a point along the line, expressed as a percentage of the line's length. The
-            second value captures a distance to the left (positive value) or right (negative value)
-            of the line, expressed in virtual units. N.B. An MEI virtual unit (VU) is half the
-            distance between adjacent staff lines.</desc>
+            connecting the starting and ending points of the curve. The first value captures a
+            distance to the left (positive value) or right (negative value) of the line, expressed
+            in virtual units. The second value of each pair represents a point along the line,
+            expressed as a percentage of the line's length. N.B. An MEI virtual unit (VU) is half
+            the distance between adjacent staff lines.</desc>
           <datatype>
             <rng:list>
               <rng:oneOrMore>
@@ -4202,20 +4422,20 @@
         <attDef ident="dynam.dist" usage="opt">
           <desc>Records the default distance from the staff for dynamic marks.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="harm.dist" usage="opt">
           <desc>Records the default distance from the staff of harmonic indications, such as guitar
             chord grids or functional labels.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="text.dist" usage="opt">
           <desc>Determines how far from the staff to render text elements.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -4530,10 +4750,18 @@
           <datatype>
             <rng:data type="string"/>
           </datatype>
+          <constraintSpec ident="check_glyphnameTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@glyphname">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyphname attribute
+                  has no content.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="glyphnum" usage="opt">
-          <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". SMuFL
-            version 1.18 uses the range U+E000 - U+ECBF.</desc>
+          <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
+            SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
             <rng:choice>
               <rng:data type="string">
@@ -4542,9 +4770,8 @@
               </rng:data>
             </rng:choice>
           </datatype>
-          <!-- This rule only checks the length of @glyphnum. More complex constraints are needed to 
-                display a warning when @glyphnum is outside the range defined by the latest version of 
-                SMuFL. -->
+          <!-- This rule only checks the length of @glyphnum. More complex constraints are 
+                needed to display a warning when @glyphnum is outside the range defined by SMuFL. -->
           <constraintSpec ident="check_glyphnum" scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:*[starts-with(@glyphnum, 'U+')]">
@@ -4984,10 +5211,11 @@
       <desc>Visual domain attributes. The startho and startvo attributes record the horizontal and
         vertical offsets of the left end, endho and endvo record the horizontal and vertical offsets
         of the right end, and the opening attribute records the width of the opening in staff
-        inter-line units. The x and y attributes give the absolute coordinates of the left side of
-        the top line of the hairpin while x2 and y2 record the coordinates of the right side of the
-        top line. The position of the end points of the bottom line can be calculated using the top
-        line coordinates and the value of the width attribute.</desc>
+        inter-line units. The x and y attributes give the absolute coordinates of the left end
+        point, and x2 and y2 the right end point, of an imaginary line that defines the length of
+        the hairpin and horizontally bifurcates it. The so-called "pitch" of hairpin may be
+        controlled by use of the startho, endho, startvo, and endvo attributes, while the placement
+        of the entire rendered mark may be controlled by use of the ho and vo attributes.</desc>
       <classes>
         <memberOf key="att.color"/>
         <memberOf key="att.linerend.base"/>
@@ -4999,10 +5227,10 @@
       </classes>
       <attList>
         <attDef ident="opening" usage="opt">
-          <desc>Specifies the distance between the points of the open end of a hairpin dynamic
+          <desc>Specifies the distance between the lines at the open end of a hairpin dynamic
             mark.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
       </attList>
@@ -5062,6 +5290,7 @@
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.intervalharmonic"/>
       </classes>
     </classSpec>
     <classSpec ident="att.harm.ges" module="MEI.harmony" type="atts">
@@ -5286,7 +5515,7 @@
         <attDef ident="height" usage="opt">
           <desc>Measurement of the vertical dimension of an entity.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
       </attList>
@@ -5393,10 +5622,22 @@
       <desc>Attributes that describe harmonic intervals.</desc>
       <attList>
         <attDef ident="inth" usage="opt">
-          <desc>Encodes the harmonic interval between this note and other pitches occurring at the
-            same time.</desc>
+          <desc>Encodes the harmonic interval between pitches occurring at the same time.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.INTERVAL.HARMONIC"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.intervalmelodic" module="MEI.analysis" type="atts">
+      <desc>Attributes that provide for description of intervallic content.</desc>
+      <attList>
+        <attDef ident="intm" usage="opt">
+          <desc>Encodes the melodic interval from the previous pitch. The value may be a general
+            directional indication (u, d, s), an indication of diatonic interval direction, quality,
+            and size, or a precise numeric value in half steps.</desc>
           <datatype>
-            <rng:data type="NMTOKENS"/>
+            <rng:ref name="data.INTERVAL.MELODIC"/>
           </datatype>
         </attDef>
       </attList>
@@ -5405,17 +5646,8 @@
       <desc>Attributes that provide for description of intervallic content.</desc>
       <classes>
         <memberOf key="att.intervalharmonic"/>
+        <memberOf key="att.intervalmelodic"/>
       </classes>
-      <attList>
-        <attDef ident="intm" usage="opt">
-          <desc>Encodes the melodic interval from the previous pitch. The value may be a general
-            directional indication (u, d, s), an indication of diatonic interval direction, quality,
-            and size, or a precise numeric value in half steps.</desc>
-          <datatype>
-            <rng:ref name="data.INTERVAL.AMOUNT"/>
-          </datatype>
-        </attDef>
-      </attList>
     </classSpec>
     <classSpec ident="att.joined" module="MEI.shared" type="atts">
       <desc>Attributes indicating that elements are semantically linked; that is, while the parts
@@ -5489,6 +5721,24 @@
         <memberOf key="att.pitch"/>
       </classes>
       <attList>
+        <attDef ident="sig" usage="opt">
+          <desc>Indicates where the key lies in the circle of fifths.</desc>
+          <datatype>
+            <rng:ref name="data.KEYSIGNATURE"/>
+          </datatype>
+        </attDef>
+        <attDef ident="sig.mixed" usage="opt">
+          <desc>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read,
+            p. 143, ex. 9-39), and key signatures with unorthodox placement of the accidentals
+            (Read, p. 141) must be indicated by setting the key.sig attribute to 'mixed' and
+            providing explicit key signature information in the key.sig.mixed attribute or in the
+            &lt;keySig&gt; element. It is intended that key.sig.mixed contain a series of tokens
+            with each token containing pitch name, accidental, and octave, such as 'a4 c5s e5f' that
+            indicate what key accidentals should be rendered and where they should be placed.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.KEYSIGTOKEN"/>
+          </datatype>
+        </attDef>
         <attDef ident="mode" usage="opt">
           <desc>Indicates major, minor, or other tonality.</desc>
           <datatype>
@@ -5499,6 +5749,18 @@
     </classSpec>
     <classSpec ident="att.keySig.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.visibility"/>
+      </classes>
+      <attList>
+        <attDef ident="sig.showchange" usage="opt">
+          <desc>Determines whether cautionary accidentals should be displayed at a key
+            change.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.keySigDefault.log" module="MEI.shared" type="atts">
       <desc>Used by staffDef and scoreDef to provide default values for attributes in the logical
@@ -5652,8 +5914,9 @@
       <desc>Logical domain attributes.</desc>
       <classes>
         <memberOf key="att.duration.default"/>
-        <memberOf key="att.octavedefault"/>
         <memberOf key="att.layerDef.log.cmn"/>
+        <memberOf key="att.octavedefault"/>
+        <memberOf key="att.transposition"/>
       </classes>
     </classSpec>
     <classSpec ident="att.layerDef.log.cmn" module="MEI.cmn" type="atts">
@@ -5911,7 +6174,7 @@
         <attDef ident="lyric.align" usage="opt">
           <desc>Describes the alignment of lyric syllables associated with a note or chord.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="lyric.fam" usage="opt">
@@ -6480,6 +6743,24 @@
     </classSpec>
     <classSpec ident="att.meterSigGrp.log" module="MEI.cmn" type="atts">
       <desc>Logical domain attributes.</desc>
+      <attList>
+        <attDef ident="func" usage="req">
+          <desc>Function of the meter signature group.</desc>
+          <valList type="closed">
+            <valItem ident="alternating">
+              <desc>Meter signatures appear in alternating measures.</desc>
+            </valItem>
+            <valItem ident="interchanging">
+              <desc>Meter signatures are interchangable, e.g. 3/4 and 6/8.</desc>
+            </valItem>
+            <valItem ident="mixed">
+              <desc>Meter signatures with different unit values are used to express a complex
+                metrical pattern that is not expressable using traditional means, such as
+                2/4+1/8.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.meterSigGrp.vis" module="MEI.cmn" type="atts">
       <desc>Visual domain attributes.</desc>
@@ -6555,11 +6836,21 @@
     <classSpec ident="att.miditempo" module="MEI.midi" type="atts">
       <desc>Attributes that record MIDI tempo information.</desc>
       <attList>
-        <attDef ident="midi.tempo" usage="opt">
-          <desc>Contains a MIDI value, that is, the number of quarter notes per minute in the range
-            from 10 to 1000.</desc>
+        <attDef ident="midi.bmp" usage="opt">
+          <desc>Captures the number of *quarter notes* per minute. In MIDI, a beat is always defined
+            as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*.</desc>
           <datatype>
-            <rng:ref name="data.MIDITEMPO"/>
+            <rng:ref name="data.MIDIBPM"/>
+          </datatype>
+        </attDef>
+        <attDef ident="midi.mspb" usage="opt">
+          <desc>Records the number of microseconds per *quarter note*. In MIDI, a beat is always
+            defined as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*. At 120 quarter notes per minute, each quarter note will last 500,000
+            microseconds.</desc>
+          <datatype>
+            <rng:ref name="data.MIDIMSPB"/>
           </datatype>
         </attDef>
       </attList>
@@ -6602,7 +6893,9 @@
       <attList>
         <attDef ident="mm" usage="opt">
           <desc>Used to describe tempo in terms of beats (often the meter signature denominator) per
-            minute, ala M.M. (Maezel's Metronome).</desc>
+            minute, ala M.M. (Maezel's Metronome). Do not confuse this attribute with midi.bmp or
+            midi.mspb. In MIDI, a beat is always defined as a quarter note, *not the numerator of
+            the time signature or the metronomic indication*.</desc>
           <datatype>
             <rng:ref name="data.TEMPOVALUE"/>
           </datatype>
@@ -6957,7 +7250,7 @@
       <classes>
         <memberOf key="att.common.anl"/>
         <memberOf key="att.harmonicfunction"/>
-        <memberOf key="att.intervallicdesc"/>
+        <memberOf key="att.intervalmelodic"/>
         <memberOf key="att.melodicfunction"/>
         <memberOf key="att.pitchclass"/>
         <memberOf key="att.solfa"/>
@@ -7398,38 +7691,38 @@
           <desc>Specifies the height of the page; may be expressed in real-world units or staff
             steps.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.width" usage="opt">
           <desc>Describes the width of the page; may be expressed in real-world units or staff
             steps.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.topmar" usage="opt">
           <desc>Indicates the amount of whitespace at the top of a page.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.botmar" usage="opt">
           <desc>Indicates the amount of whitespace at the bottom of a page.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.leftmar" usage="opt">
           <desc>Indicates the amount of whitespace at the left side of a page.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.rightmar" usage="opt">
           <desc>Indicates the amount of whitespace at the right side of a page.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="page.panels" usage="opt">
@@ -7827,7 +8120,9 @@
           <desc>Numeric value capturing a measurement or count. Can only be interpreted in
             combination with the unit or currency attribute.</desc>
           <datatype>
-            <rng:data type="decimal"/>
+            <rng:data type="decimal">
+              <rng:param name="minInclusive">0</rng:param>
+            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -7934,51 +8229,16 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.rel" type="atts" module="MEI.frbr">
+    <classSpec ident="att.rel" module="MEI.frbr" type="atts">
       <desc>Attributes specific to bibliographic entity relationships.</desc>
       <attList>
         <attDef ident="rel" usage="req">
-          <desc>Describes the relationship between the element's parent (subject) and the object
-            pointed at. The values follow FRBR (see
-            http://www.ifla.org/files/cataloguing/frbr/frbr_2008.pdf).</desc>
-          <valList type="closed">
-            <valItem ident="hasSuccessor"/>
-            <valItem ident="isSuccessorOf"/>
-            <valItem ident="hasSupplement"/>
-            <valItem ident="isSupplementOf"/>
-            <valItem ident="hasComplement"/>
-            <valItem ident="isComplementOf"/>
-            <valItem ident="hasSummarization"/>
-            <valItem ident="isSummarizationOf"/>
-            <valItem ident="hasAdaptation"/>
-            <valItem ident="isAdaptationOf"/>
-            <valItem ident="hasTransformation"/>
-            <valItem ident="isTransformationOf"/>
-            <valItem ident="hasImitation"/>
-            <valItem ident="isImitationOf"/>
-            <valItem ident="hasPart"/>
-            <valItem ident="isPartOf"/>
-            <valItem ident="hasReproduction"/>
-            <valItem ident="isReproductionOf"/>
-            <valItem ident="hasAbridgement"/>
-            <valItem ident="isAbridgementOf"/>
-            <valItem ident="hasRevision"/>
-            <valItem ident="isRevisionOf"/>
-            <valItem ident="hasTranslation"/>
-            <valItem ident="isTranslationOf"/>
-            <valItem ident="hasArrangement"/>
-            <valItem ident="isArrangementOf"/>
-            <valItem ident="hasAlternate"/>
-            <valItem ident="isAlternateOf"/>
-            <valItem ident="hasReconfiguration"/>
-            <valItem ident="isReconfigurationOf"/>
-            <valItem ident="hasRealization"/>
-            <valItem ident="isRealizationOf"/>
-            <valItem ident="hasEmbodiment"/>
-            <valItem ident="isEmbodimentOf"/>
-            <valItem ident="hasExemplar"/>
-            <valItem ident="isExemplarOf"/>
-          </valList>
+          <desc>Describes the relationship between the current entity and the target entity. The
+            values follow FRBR (see
+            http://www.ifla.org/files/assets/cataloguing/frbr/frbr_2008.pdf).</desc>
+          <datatype>
+            <rng:ref name="data.FRBRRELATIONSHIP"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -8475,7 +8735,7 @@
             measured from the bottom line of the staff above to the top line of the staff
             below.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="spacing.system" usage="opt">
@@ -8483,10 +8743,8 @@
             (minimum and maximum, respectively) provides a range between which a rendering
             system-supplied value may fall, while a single value indicates a fixed amount of space;
             that is, the minimum and maximum values are equal.</desc>
-          <datatype>
-            <rng:list>
-              <rng:ref name="data.MEASUREMENT"/>
-            </rng:list>
+          <datatype minOccurs="1" maxOccurs="2">
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -8554,7 +8812,7 @@
               <rng:oneOrMore>
                 <rng:data type="token">
                   <rng:param name="pattern"
-                    >[a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
+                    >[a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
                 </rng:data>
               </rng:oneOrMore>
             </rng:list>
@@ -8645,7 +8903,7 @@
             This value is meaningless for the first staff in a system since the spacing.system
             attribute indicates the spacing between systems.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -8829,7 +9087,7 @@
         <attDef ident="stem.len" usage="opt">
           <desc>Encodes the stem length.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="stem.mod" usage="opt">
@@ -8966,21 +9224,21 @@
           <desc>Describes the amount of whitespace at the left system margin relative to
             page.leftmar.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="system.rightmar" usage="opt">
           <desc>Describes the amount of whitespace at the right system margin relative to
             page.rightmar.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
         <attDef ident="system.topmar" usage="opt">
           <desc>Describes the distance from page's top edge to the first system; used for first page
             only.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
       </attList>
@@ -9021,6 +9279,32 @@
         <memberOf key="att.controlevent"/>
         <memberOf key="att.startid"/>
       </classes>
+      <attList>
+        <attDef ident="func">
+          <desc>Records the function of a tempo indication.</desc>
+          <valList type="closed">
+            <valItem ident="continuous">
+              <desc>Marks a gradual change of tempo, such as "accel." or "rit."</desc>
+            </valItem>
+            <valItem ident="instantaneous">
+              <desc>Represents a static tempo instruction, such as a textual term like "Adagio",
+                a metronome marking like "♩=70", or a combination of text and metronome
+                indication.</desc>
+            </valItem>
+            <valItem ident="metricmod">
+              <desc>Captures a change in pulse rate (tempo) and/or pulse grouping (subdivision)
+                in an "equation" of the form [tempo before change] = [tempo after
+                change].</desc>
+            </valItem>
+            <valItem ident="precedente">
+              <desc>Indicates a change in pulse rate (tempo) and/or pulse grouping (subdivision)
+                in an "equation" of the form [tempo after change] = [tempo before change]. The
+                term "precedente" often appears following the "equation" to distinquish this
+                kind of historical usage from the modern metric modulation form.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.tempo.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
@@ -9472,11 +9756,11 @@
           </datatype>
         </attDef>
         <attDef ident="fontsize" usage="opt">
-          <desc>Indicates the size of a font in printers' points, i.e., 1/72nd of an inch.</desc>
+          <desc>Indicates the size of a font expressed in printers' points, i.e., 1/72nd of an inch,
+            relative terms, e.g., "small", "larger", etc., or percentage values relative to "normal"
+            size, e.g., "125%". </desc>
           <datatype>
-            <rng:data type="decimal">
-              <rng:param name="minInclusive">0.1</rng:param>
-            </rng:data>
+            <rng:ref name="data.FONTSIZE"/>
           </datatype>
         </attDef>
         <attDef ident="fontstyle" usage="opt">
@@ -9498,8 +9782,8 @@
       <classes>
         <memberOf key="att.common.anl"/>
         <memberOf key="att.harmonicfunction"/>
+        <memberOf key="att.intervalmelodic"/>
         <memberOf key="att.melodicfunction"/>
-        <memberOf key="att.intervallicdesc"/>
         <memberOf key="att.solfa"/>
       </classes>
     </classSpec>
@@ -9611,7 +9895,7 @@
             in terms of staff interline distance; that is, in units of 1/2 the distance between
             adjacent staff lines.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -9636,7 +9920,7 @@
             in terms of staff interline distance; that is, in units of 1/2 the distance between
             adjacent staff lines.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -9661,14 +9945,14 @@
           <desc>Records the horizontal adjustment of a feature's programmatically-determined start
             point.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="endho" usage="opt">
           <desc>Records the horizontal adjustment of a feature's programmatically-determined end
             point.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -9700,14 +9984,14 @@
           <desc>Records a vertical adjustment of a feature's programmatically-determined start
             point.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
         <attDef ident="endvo" usage="opt">
           <desc>Records a vertical adjustment of a feature's programmatically-determined end
             point.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
         </attDef>
       </attList>
@@ -9739,7 +10023,7 @@
         <attDef ident="width" usage="opt">
           <desc>Measurement of the horizontal dimension of an entity.</desc>
           <datatype>
-            <rng:ref name="data.MEASUREMENT"/>
+            <rng:ref name="data.MEASUREMENTABS"/>
           </datatype>
         </attDef>
       </attList>
@@ -9801,6 +10085,12 @@
         <memberOf key="model.textphraseLike.limited"/>
         <memberOf key="model.pubStmtPart"/>
         <memberOf key="model.eventPart"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="model.addressPart" module="MEI.namesdates" type="model">
+      <desc>Groups elements used as part of a physical address.</desc>
+      <classes>
+        <memberOf key="model.textphraseLike.limited"/>
       </classes>
     </classSpec>
     <classSpec ident="model.annotLike" module="MEI.shared" type="model">
@@ -9868,6 +10158,9 @@
         <memberOf key="model.eventPart"/>
         <memberOf key="model.titlePagePart"/>
       </classes>
+    </classSpec>
+    <classSpec ident="model.descLike" module="MEI.shared" type="model">
+      <desc>Groups elements which provide a description of their parent entity.</desc>
     </classSpec>
     <classSpec ident="model.dimLike" module="MEI.shared" type="model">
       <desc>Groups elements which describe a measurement forming part of the physical dimensions of
@@ -9990,6 +10283,12 @@
         <memberOf key="model.physDescPart"/>
       </classes>
     </classSpec>
+    <classSpec ident="model.geogNamePart" module="MEI.namesdates" type="model">
+      <desc>Groups elements which form part of a geographic name.</desc>
+      <classes>
+        <memberOf key="model.addressPart"/>
+      </classes>
+    </classSpec>
     <classSpec ident="model.graphicLike" module="MEI.figtable" type="model">
       <desc>Groups elements that indicate the location of an inline graphic, illustration, or
         figure.</desc>
@@ -10006,7 +10305,7 @@
     <classSpec ident="model.headerPart" module="MEI.header" type="model">
       <desc>Groups elements that may appear as part of the MEI header.</desc>
     </classSpec>
-    <classSpec ident="model.headLike" module="MEI.text" type="model">
+    <classSpec ident="model.headLike" module="MEI.shared" type="model">
       <desc>Groups elements used to provide a heading at the start of a text division.</desc>
     </classSpec>
     <classSpec ident="model.identifierLike" module="MEI.shared" type="model">
@@ -10173,18 +10472,19 @@
       <desc>Groups elements that contain names.</desc>
       <classes>
         <memberOf key="model.textphraseLike.limited"/>
-        <memberOf key="model.eventPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.nameLike.agent" module="MEI.namesdates" type="model">
       <desc>Groups elements which contain names of individuals or corporate bodies.</desc>
       <classes>
+        <memberOf key="model.eventPart"/>
         <memberOf key="model.nameLike"/>
       </classes>
     </classSpec>
     <classSpec ident="model.nameLike.geogName" module="MEI.namesdates" type="model">
       <desc>Groups geographic name elements.</desc>
       <classes>
+        <memberOf key="model.eventPart"/>
         <memberOf key="model.nameLike.place"/>
       </classes>
     </classSpec>
@@ -10244,6 +10544,9 @@
         <memberOf key="model.milestoneLike.text"/>
         <memberOf key="model.textphraseLike"/>
       </classes>
+    </classSpec>
+    <classSpec ident="model.persNamePart" module="MEI.namesdates" type="model">
+      <desc>Groups elements which form part of a personal name.</desc>
     </classSpec>
     <classSpec ident="model.physDescPart" module="MEI.header" type="model">
       <desc>Groups elements that may appear as part of the physical description of a bibliographic
@@ -10607,27 +10910,6 @@
           functions, such as 'cautionary' or 'editorial'.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="acqSource" module="MEI.header">
-      <desc>(acquisition source) – Post-publication source, such as a vendor or distributor, from
-        which access to a bibliographic item may be obtained, including electronic access.</desc>
-      <classes>
-        <memberOf key="att.bibl"/>
-        <memberOf key="att.common"/>
-        <memberOf key="att.lang"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textphraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <remarks>
-        <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-          standard.</p>
-      </remarks>
-    </elementSpec>
     <elementSpec ident="actor" module="MEI.shared">
       <desc>Name of an actor appearing within a cast list.</desc>
       <classes>
@@ -10717,6 +10999,34 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="addName" module="MEI.namesdates">
+      <desc>(additional name) – Contains an additional name component, such as a nickname, epithet,
+        or alias, or any other descriptive phrase used within a personal name.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="address" module="MEI.shared">
       <desc>Contains a postal address, for example of a publisher, an organization, or an
         individual.</desc>
@@ -10727,9 +11037,16 @@
         <memberOf key="model.addressLike"/>
       </classes>
       <content>
-        <rng:oneOrMore>
-          <rng:ref name="addrLine"/>
-        </rng:oneOrMore>
+        <rng:choice>
+          <rng:oneOrMore>
+            <rng:ref name="addrLine"/>
+          </rng:oneOrMore>
+          <rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="model.addressPart"/>
+            </rng:choice>
+          </rng:oneOrMore>
+        </rng:choice>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI) and Encoded
@@ -11176,9 +11493,9 @@
           <sch:rule context="mei:barLine[@taktplace]">
             <sch:let name="staff" value="ancestor::mei:staff/@n"/>
             <sch:let name="staffpos"
-              value="count(ancestor::mei:staff/preceding-sibling::mei:staff)               + 1"/>
+              value="count(ancestor::mei:staff/preceding-sibling::mei:staff) + 1"/>
             <sch:assert
-              test="number(@taktplace) &lt;= number(2 *               preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"
+              test="number(@taktplace) &lt;= number(2 * preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"
             />
           </sch:rule>
         </constraint>
@@ -11432,6 +11749,34 @@
           <rng:choice>
             <rng:text/>
             <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="bloc" module="MEI.namesdates">
+      <desc>Contains the name of a geo-political unit consisting of two or more nation states or
+        countries.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -12035,6 +12380,14 @@
           <rng:ref name="when"/>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:clip[@begin or @end]">
+            <sch:assert role="warning" test="@betype or ancestor::mei:*[@betype]">When @begin or
+              @end is used, @betype must appear on clip or one of its ancestors.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>This element is analogous to the <gi scheme="MEI">zone</gi> element in the facsimile
           module.</p>
@@ -12242,9 +12595,9 @@
         <p>Examples of corporate entities include names of associations, institutions, business
           firms, non-profit enterprises, governments, government agencies, projects, programs,
           religious bodies, churches, conferences, athletic contests, exhibitions, expeditions,
-          fairs, and ships. Secondary name parts may be encoded in <gi scheme="MEI">corpName</gi>
-          sub-elements. The name of the list from which a controlled value is taken may be recorded
-          using the <att>authority</att> attribute.</p>
+          fairs, and ships. Usually, secondary name parts are encoded in <gi scheme="MEI"
+            >corpName</gi> sub-elements. The name of the list from which a controlled value is taken
+          may be recorded using the <att>authority</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -12338,6 +12691,35 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="country" module="MEI.namesdates">
+      <desc>Contains the name of a geo-political unit, such as a nation, country, colony, or
+        commonwealth, larger than or administratively superior to a region and smaller than a
+        bloc.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="creation" module="MEI.shared">
       <desc>Non-bibliographic details of the creation of an intellectual entity, in narrative form,
         such as the date, place, and circumstances of its composition. More detailed information may
@@ -12376,7 +12758,7 @@
     </elementSpec>
     <elementSpec ident="curve" module="MEI.usersymbols">
       <desc>A curved line that cannot be represented by a more specific element, such as a
-        &lt;slur&gt;.</desc>
+        slur.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
         <memberOf key="att.color"/>
@@ -12395,6 +12777,18 @@
       <content>
         <rng:empty/>
       </content>
+      <constraintSpec ident="symbolDef_curve_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:curve[ancestor::mei:symbolDef]">
+            <sch:assert test="@startid or (@x and @y)">In the symbolDef context, curve must have
+              either a startid attribute or x and y attributes.</sch:assert>
+            <sch:assert test="@endid or (@x2 and @y2)">In the symbolDef context, curve must have
+              either an endid attribute or both x2 and y2 attributes.</sch:assert>
+            <sch:assert test="@bezier or @bulge">In the symbolDef context, curve must have either a
+              bezier or bulge attribute.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The starting point of the curve may be identified in absolute output coordinate terms
           using the <att>x</att> and <att>y</att> attributes or relative to the location of another
@@ -12583,6 +12977,33 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
+    <elementSpec ident="desc" module="MEI.shared">
+      <desc>(description) – Container for text that briefly describes the feature to which it is
+        attached, including its intended usage, purpose, or application as appropriate.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.source"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.descLike"/>
+        <memberOf key="model.eventPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="dimensions" module="MEI.header">
       <desc>Information about the physical size of a bibliographic source; usually includes
         numerical data.</desc>
@@ -12659,8 +13080,8 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="distributor" module="MEI.shared">
-      <desc>Name of a person or other agency responsible for the distribution of a bibliographic
-        item.</desc>
+      <desc>Person or agency, other than a publisher, from which access (including electronic
+        access) to a bibliographic entity may be obtained.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
@@ -12682,6 +13103,34 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="district" module="MEI.namesdates">
+      <desc>Contains the name of any kind of subdivision of a settlement, such as a parish, ward, or
+        other administrative or geographic unit.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="div" module="MEI.shared">
       <desc>(division) – Major structural division of text, such as a preface, chapter or
         section.</desc>
@@ -12694,19 +13143,19 @@
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.milestoneLike.text"/>
+          <rng:choice>
+            <rng:ref name="model.headLike"/>
+            <rng:ref name="model.milestoneLike.text"/>
+          </rng:choice>
         </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="model.headLike"/>
-        </rng:optional>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
           <rng:choice>
             <rng:ref name="model.divLike"/>
             <rng:ref name="model.textcomponentLike"/>
           </rng:choice>
-        </rng:oneOrMore>
-        <rng:zeroOrMore>
-          <rng:ref name="model.milestoneLike.text"/>
+          <rng:zeroOrMore>
+            <rng:ref name="model.milestoneLike.text"/>
+          </rng:zeroOrMore>
         </rng:zeroOrMore>
       </content>
       <attList>
@@ -12966,7 +13415,11 @@
         <memberOf key="model.headerPart"/>
       </classes>
       <content>
-        <rng:ref name="model.encodingPart_sequenceOptional"/>
+        <rng:ref name="appInfo"/>
+        <rng:ref name="editorialDecl"/>
+        <rng:ref name="projectDesc"/>
+        <rng:ref name="samplingDecl"/>
+        <!--<rng:ref name="model.encodingPart_sequenceOptional"/>-->
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -13025,26 +13478,30 @@
         <memberOf key="att.typed"/>
       </classes>
       <content>
-        <rng:optional>
-          <rng:ref name="model.labelLike"/>
-        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:choice>
           <!-- data-like organization -->
           <rng:zeroOrMore>
-            <rng:ref name="model.eventPart"/>
+            <rng:choice>
+              <rng:ref name="model.eventPart"/>
+              <rng:ref name="castList"/>
+              <rng:ref name="eventList"/>
+            </rng:choice>
           </rng:zeroOrMore>
           <!-- free-form organization -->
           <rng:zeroOrMore>
             <rng:choice>
-              <!-- model.listLike is expanded here in order to disallow biblList -->
+              <!-- model.listLike is expanded here in order to disallow biblList,
+                    castList, and eventList -->
               <rng:ref name="model.pLike"/>
               <rng:ref name="model.tableLike"/>
-              <rng:ref name="castList"/>
-              <rng:ref name="eventList"/>
               <rng:ref name="list"/>
             </rng:choice>
           </rng:zeroOrMore>
         </rng:choice>
+        <!-- biblList may occur in either organizational approach, but must come at the end -->
         <rng:zeroOrMore>
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
@@ -13067,7 +13524,13 @@
           <rng:group>
             <!-- an organizing data element; when not present, the list is a simple list of event descriptions -->
             <rng:optional>
-              <rng:ref name="model.eventPart"/>
+              <rng:choice>
+                <rng:ref name="name"/>
+                <rng:ref name="model.addressLike"/>
+                <rng:ref name="model.dateLike"/>
+                <rng:ref name="model.nameLike.agent"/>
+                <rng:ref name="model.nameLike.geogName"/>
+              </rng:choice>
             </rng:optional>
             <!-- an event description or a nested group of events -->
             <rng:choice>
@@ -13245,6 +13708,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
@@ -13297,6 +13763,23 @@
           Archival Description (EAD) standards.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="extMeta" module="MEI.header">
+      <desc>(extended metadata) – Provides a container element for non-MEI metadata formats.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.whitespace"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:group>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="macro.anyXML"/>
+            </rng:choice>
+          </rng:group>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
     <elementSpec ident="f" module="MEI.harmony">
       <desc>(figure) – Single element of a figured bass indication.</desc>
       <classes>
@@ -13340,6 +13823,30 @@
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="famName" module="MEI.namesdates">
+      <desc>(family name) – Contains a family (inherited) name, as opposed to a given, baptismal, or
+        nick name.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="fb" module="MEI.harmony">
       <desc>(figured bass) – Symbols added to a bass line that indicate harmony. Used to improvise a
@@ -13602,6 +14109,33 @@
         </constraint>
       </constraintSpec>
     </elementSpec>
+    <elementSpec ident="foreName" module="MEI.namesdates">
+      <desc>Contains a forename, given or baptismal name.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="front" module="MEI.text">
       <desc>(front matter) – Bundles prefatory text found before the start of the musical
         text.</desc>
@@ -13728,6 +14262,34 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="genName" module="MEI.namesdates">
+      <desc>(generational name component) – Contains a name component used to distinguish otherwise
+        similar names on the basis of the relative ages or generations of the persons named.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="genre" module="MEI.shared">
       <desc>Term or terms that designate a category characterizing a particular style, form, or
         content.</desc>
@@ -13747,6 +14309,34 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+    </elementSpec>
+    <elementSpec ident="geogFeat" module="MEI.namesdates">
+      <desc>(geographical feature name) – Contains a common noun identifying a geographical
+        feature.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="geogName" module="MEI.namesdates">
       <desc>(geographic name) – The proper noun designation for a place, natural feature, or
@@ -13772,10 +14362,13 @@
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>Examples include Black Forest; Baltimore, Maryland; and Quartier Latin, Paris. Name
-          sub-parts may be encoded using <gi scheme="MEI">geogName</gi> sub-elements. The name of
-          the list from which a controlled value is taken, such as the Thesaurus of Geographic Names
-          (TGN), may be recorded using the <att>authority</att> attribute.</p>
+        <p>Examples include Black Forest; Baltimore, Maryland; and Quartier Latin, Paris. Geographic
+          name parts can be encoded using <gi scheme="MEI">geogName</gi> sub-elements. For greater
+          specificity, however, use <gi scheme="MEI">district</gi>, <gi scheme="MEI"
+          >settlement</gi>, <gi scheme="MEI">region</gi>, <gi scheme="MEI">country</gi>, and <gi
+            scheme="MEI">bloc</gi> sub-elements. The name of the list from which a controlled value
+          is taken, such as the Thesaurus of Geographic Names (TGN), may be recorded using the
+            <att>authority</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -13835,7 +14428,9 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
         <memberOf key="att.measurement"/>
+        <memberOf key="att.startid"/>
         <memberOf key="att.typed"/>
+        <memberOf key="att.visualoffset"/>
         <memberOf key="model.graphicLike"/>
       </classes>
       <content>
@@ -13843,14 +14438,38 @@
           <rng:ref name="zone"/>
         </rng:zeroOrMore>
       </content>
-      <constraintSpec ident="graphic_child_of_zone" scheme="isoschematron">
+      <constraintSpec ident="graphic_attributes" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:zone/mei:graphic">
-            <sch:assert test="count(mei:*) = 0">graphic child of zone cannot have
-              children</sch:assert>
+            <sch:assert role="warning" test="count(mei:*) = 0">Graphic child of zone cannot have
+              children.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:symbolDef/mei:graphic">
+            <sch:assert role="warning" test="@startid or (@ulx and @uly)">Graphic must have either a
+              startid attribute or ulx and uly attributes.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:graphic[not(ancestor::mei:symbolDef or ancestor::mei:zone)]">
+            <sch:assert role="warning" test="not(@ulx or @uly)">Graphic must NOT have @ulx or @uly
+              attributes.</sch:assert>
+            <sch:assert role="warning" test="not(@ho or @vo)">Graphic must NOT have @ho or @vo
+              attributes.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
+      <attList>
+        <attDef ident="ulx" usage="opt">
+          <desc>Indicates the upper-left corner x coordinate.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+        <attDef ident="uly" usage="opt">
+          <desc>Indicates the upper-left corner y coordinate.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
@@ -14568,6 +15187,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
     </elementSpec>
     <elementSpec ident="itemList" module="MEI.frbr">
@@ -14619,8 +15241,9 @@
       <constraintSpec ident="Check_keyAccidPlacement" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:keyAccid">
-            <sch:assert test="(@x and @y) or @loc">The @x and @y pair of attributes or @loc
-              required.</sch:assert>
+            <sch:assert test="(@x and @y) or (@pname and @oct) or @loc">One of the following is
+              required: @x and @y attribute pair, @pname and @oct attribute pair, or @loc
+              attribute.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -14639,8 +15262,9 @@
         </attDef>
       </attList>
       <remarks>
-        <p>It is a semantic error not to provide either the <att>x</att> and <att>y</att> pair of
-          attributes or the <att>staffloc</att> attribute.</p>
+        <p>It is a semantic error not to provide one of the following: the <att>x</att> and
+            <att>y</att> pair of attributes, the <att>pname</att> and <att>oct</att> pair of
+          attributes, or the <att>loc</att> attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="keySig" module="MEI.shared">
@@ -15016,8 +15640,7 @@
           in the original source.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="line" module="MEI.usersymbols" prefix="mei_">
-      <!-- @prefix necessary to explicitly reference line in MEI namespace, avoid confusion with line in SVG namespace -->
+    <elementSpec ident="line" module="MEI.usersymbols">
       <desc>A visual line that cannot be represented by a more specific; i.e., semantic,
         element.</desc>
       <classes>
@@ -15375,7 +15998,15 @@
           <rng:ref name="altId"/>
         </rng:zeroOrMore>
         <rng:ref name="fileDesc"/>
-        <rng:ref name="model.headerPart_sequenceOptional"/>
+        <rng:optional>
+          <rng:ref name="encodingDesc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="workDesc"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="revisionDesc"/>
         </rng:optional>
@@ -15507,24 +16138,6 @@
           <rng:ref name="meterSig"/>
         </rng:oneOrMore>
       </content>
-      <attList>
-        <attDef ident="func" usage="req">
-          <desc>Function of the meter signature group.</desc>
-          <valList type="closed">
-            <valItem ident="alternating">
-              <desc>Meter signatures appear in alternating measures.</desc>
-            </valItem>
-            <valItem ident="interchanging">
-              <desc>Meter signatures are interchangable, e.g. 3/4 and 6/8.</desc>
-            </valItem>
-            <valItem ident="mixed">
-              <desc>Meter signatures with different unit values are used to express a complex
-                metrical pattern that is not expressable using traditional means, such as
-                2/4+1/8.</desc>
-            </valItem>
-          </valList>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="midi" module="MEI.midi">
       <desc>Container for elements that contain information useful when generating MIDI
@@ -15733,6 +16346,7 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.name"/>
+        <memberOf key="model.eventPart"/>
         <memberOf key="model.nameLike"/>
       </classes>
       <content>
@@ -15745,6 +16359,15 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="nameParts" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:name">
+            <sch:assert role="warning" test="not(mei:geogName or mei:persName or mei:corpName)"
+              >Recommended practice is to use name elements to capture sub-parts of a generic
+              name.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <!-- type is expanded in order to encourage the use of suggested values -->
         <attDef ident="type" usage="opt">
@@ -15764,7 +16387,7 @@
               <desc>Name of a location.</desc>
             </valItem>
             <valItem ident="process">
-              <desc>Name of a process.</desc>
+              <desc>Name of a process or software application.</desc>
             </valItem>
             <valItem ident="style">
               <desc>Name of a musical style; i.e., form, genre, technique, etc.</desc>
@@ -15793,7 +16416,7 @@
           may be used for an individual, such as 'Henry VIII, King of England'; a corporate body,
           such as 'The Beatles'; a geographical place; an expanse of time, such as 'The Romantic
           Era'; or a mechanical (often generative) process. When name parts are needed, <gi
-            scheme="MEI">name</gi> sub-elements may be used. The recommended values for the
+            scheme="MEI">name</gi> sub-elements are recommended. The recommended values for the
             <att>type</att> attribute are: person, corporation, location, period, and process. Dates
           associated with <emph>the name</emph> (not necessarily the same as those pertaining to the
             <emph>entity described by the name</emph>) may be recorded using <att>startdate</att>,
@@ -15823,6 +16446,34 @@
         <rng:oneOrMore>
           <rng:ref name="model.pLike"/>
         </rng:oneOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="nameLink" module="MEI.namesdates">
+      <desc>(name link) – Contains a connecting phrase or link used within a name but not regarded
+        as part of it, such as "van der" or "of", "from", etc.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -15917,7 +16568,6 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.measurement"/>
-        <memberOf key="att.quantity"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.numLike"/>
       </classes>
@@ -15931,6 +16581,15 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="value" usage="opt">
+          <desc>Numeric value capturing a measurement or count. Can only be interpreted in
+            combination with the unit attribute.</desc>
+          <datatype>
+            <rng:data type="decimal"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>Use this element only when it is necessary to display a number in a special way or to
           identify it with a <att>type</att> attribute.</p>
@@ -16029,8 +16688,7 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="ornam" module="MEI.shared">
-      <desc>An element indicating an ornament that is not a mordent, turn, or trill.
-      </desc>
+      <desc>An element indicating an ornament that is not a mordent, turn, or trill. </desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
@@ -16384,6 +17042,7 @@
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
+            <rng:ref name="perfRes"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -16487,13 +17146,15 @@
             <rng:ref name="model.textphraseLike"/>
             <rng:ref name="model.editLike"/>
             <rng:ref name="model.transcriptionLike"/>
+            <rng:ref name="model.persNamePart"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>Name sub-parts may be recorded in <gi scheme="MEI">persName</gi> sub-elements. The name
-          of the list from which a controlled value is taken may be recorded using the
-            <att>authority</att> attribute.</p>
+        <p>Parts of a personal name may be captured using <gi scheme="MEI">persName</gi>
+          sub-elements. For greater specificity, however, use foreName, famName, genName, addName,
+          genName, nameLink, and roleName elements. The name of the list from which a controlled
+          value for persName is taken may be recorded using the <att>authority</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -16877,13 +17538,58 @@
         <rng:empty/>
       </content>
     </elementSpec>
+    <elementSpec ident="postBox" module="MEI.namesdates">
+      <desc>(postal box or post office box) contains a number or other identifier for some postal
+        delivery point other than a street address.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="postCode" module="MEI.namesdates">
+      <desc>(postal code) contains a numerical or alphanumeric code used as part of a postal address
+        to simplify sorting or delivery of mail.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="price" module="MEI.header">
       <desc>The cost of access to a bibliographic item.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.quantity"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -16894,6 +17600,15 @@
         </rng:zeroOrMore>
       </content>
       <attList>
+        <attDef ident="amount" usage="opt">
+          <desc>Numeric value capturing a cost. Can only be interpreted in combination with the
+            currency attribute.</desc>
+          <datatype>
+            <rng:data type="decimal">
+              <rng:param name="pattern">[0-9]+\.[0-9]{2}</rng:param>
+            </rng:data>
+          </datatype>
+        </attDef>
         <attDef ident="currency" usage="opt">
           <desc>Monetary unit.</desc>
           <datatype>
@@ -17225,6 +17940,14 @@
           <rng:ref name="clip"/>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:recording[@begin or @end]">
+            <sch:assert role="warning" test="@betype">When @begin or @end is used, @betype is
+              required.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The <att>startid</att> attribute may be used to hold a reference to the first feature
           occurring in this performance. This element is analogous to the <gi scheme="MEI"
@@ -17302,6 +18025,34 @@
           must point to one or more identifiers declared in the document header. The <att>cert</att>
           attribute signifies the degree of certainty ascribed to the regularized reading.</p>
       </remarks>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="region" module="MEI.namesdates">
+      <desc>Contains the name of an administrative unit such as a state, province, or county, larger
+        than a settlement, but smaller than a country.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
@@ -17569,6 +18320,16 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="check_respStmt" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or local-name()='seriesStmt']/mei:respStmt">
+            <sch:assert role="warning" test="mei:resp or (count(mei:*[@role]) = count(mei:*))">If at
+              least one resp element isn't present, all name-like elements must have a @role
+              attribute.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
@@ -17707,6 +18468,34 @@
           <rng:choice>
             <rng:text/>
             <rng:ref name="model.textphraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="roleName" module="MEI.namesdates">
+      <desc>(role name) – Contains a name component which indicates that the referent has a
+        particular role or position in society, such as an official title or rank.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.persNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -18012,6 +18801,34 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="settlement" module="MEI.namesdates">
+      <desc>Contains the name of a settlement such as a city, town, or village identified as a
+        single geo-political or administrative unit.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.edit"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.name"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.geogNamePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="sic" module="MEI.edittrans">
       <desc>Contains apparently incorrect or inaccurate material.</desc>
       <classes>
@@ -18195,6 +19012,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>Multiple <gi scheme="MEI">physDesc</gi> sub-elements may be used to describe the
@@ -18582,6 +19402,30 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="street" module="MEI.namesdates">
+      <desc>full street address including any name or number identifying a building as well as the
+        name of the street or route on which it is located.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.addressPart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="styleName" module="MEI.namesdates">
       <desc>(style name) – A label for a characteristic style of writing or performance, such as
         'bebop' or 'rock-n-roll'.</desc>
@@ -18768,7 +19612,7 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="symbol" module="MEI.usersymbols" prefix="mei_">
+    <elementSpec ident="symbol" module="MEI.usersymbols">
       <desc>A reference to a previously defined symbol.</desc>
       <classes>
         <memberOf key="att.altsym"/>
@@ -18789,6 +19633,17 @@
       <content>
         <rng:empty/>
       </content>
+      <constraintSpec ident="symbolDef_symbol_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:symbol[ancestor::mei:symbolDef]">
+            <sch:assert test="@startid or (@x and @y)">In the symbolDef context, symbol must have
+              either a startid attribute or x and y attributes.</sch:assert>
+            <sch:assert test="@altsym or @glyphname or @glyphnum">In the symbolDef context, symbol
+              must have one of the following attributes: altsym, glyphname, or
+              glyphnum.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The starting point, e.g. "hotspot", of the symbol may be identified in absolute output
           coordinate terms using the <att>x</att> and <att>y</att> attributes or relative to another
@@ -18818,7 +19673,7 @@
         <!-- Use either SVG or MEI elements to "draw" the symbol -->
         <rng:choice>
           <rng:optional>
-            <rng:ref name="svg"/>
+            <rng:ref name="svg_svg"/>
           </rng:optional>
           <rng:zeroOrMore>
             <rng:choice>
@@ -18860,7 +19715,7 @@
       </content>
     </elementSpec>
     <elementSpec ident="symbolTable" module="MEI.usersymbols">
-      <desc>Contains individual, user-defined symbols.</desc>
+      <desc>Contains a set of user-defined symbols.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="model.symbolTableLike"/>
@@ -19155,7 +20010,7 @@
           110-111, 122.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="title" module="MEI.shared" prefix="mei_">
+    <elementSpec ident="title" module="MEI.shared">
       <desc>Title of a bibliographic entity.</desc>
       <classes>
         <memberOf key="att.common"/>
@@ -19801,11 +20656,22 @@
       <constraintSpec ident="check_when_interval" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:when[@interval]">
-            <sch:assert test="@since">@since must be present when @interval is used.</sch:assert>
-            <sch:assert
+            <sch:assert role="warning" test="@since">@since must be present when @interval is
+              used.</sch:assert>
+            <sch:assert role="warning"
               test="every $i in tokenize(@since, '\s+') satisfies substring($i,2)=//mei:when/@xml:id"
               >The value in @since must correspond to the @xml:id attribute of a when
               element.</sch:assert>
+            <sch:assert role="warning" test="@inttype">@inttype must be present when @interval is
+              used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_when_absolute" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:when[@absolute]">
+            <sch:assert role="warning" test="@abstype or ancestor::mei:*[@betype]">When @absolute is
+              present, @abstype is required or @betype must be present on an ancestor.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -19838,7 +20704,6 @@
             <rng:ref name="data.BETYPE"/>
           </datatype>
         </attDef>
-        <!-- Enforce constraints on attribute targets, issue #226 -->
         <attDef ident="since" usage="opt">
           <desc>Identifies the reference point for determining the time of the current when element,
             which is obtained by adding the interval to the time of the reference point. The value
@@ -19955,6 +20820,9 @@
         <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended
