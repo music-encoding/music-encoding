@@ -15,15 +15,6 @@ Setup:
 
 Parameters:
 -----
-The XSLT takes the following parameters:
-- **$version** *(optional)*: This parameter defines the version string to be used for this release. This does *not* affect the internal use in the MEI specification, just the strings used to generate the HTML and PDF outputs. If not specified, it will fall back to the value provided in the specification.
-
-- $role (optional): This parameter identifies the type of input to the XSLT. A value of release (default)
-
-
-- 
-- **image.prefix** *(optional)*:
-- **$imprint.date** *(optional)*:
 
 The XSLT takes the following parameters:
 - **$version** *(optional)*: This parameter defines the version string to be used for this release. This does not affect the internal use in the MEI specification, just the strings used to generate the HTML and PDF outputs. If not specified, it will fall back to the value provided in the specification.
