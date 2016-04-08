@@ -13265,11 +13265,9 @@
       </content>
       <remarks>
         <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
-            >chord</gi>, <gi scheme="MEI">note</gi>, <gi scheme="MEI">rest</gi>, <gi scheme="MEI"
-            >space</gi>, <gi scheme="MEI">tuplet</gi>, and <gi scheme="MEI">tupletSpan</gi>
-          elements. It should be used when specific display info, such as size or color, needs to be
-          recorded for the dot. This element may also be used for dots of division in the mensural
-          repertoire.</p>
+            >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific
+          display info, such as size or color, needs to be recorded for the dot. This element may
+          also be used for dots of division in the mensural repertoire.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="dynam" module="MEI.shared">
@@ -18373,14 +18371,21 @@
         <memberOf key="model.eventLike"/>
       </classes>
       <content>
-        <rng:empty/>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="dot"/>
+            <rng:ref name="model.appLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <constraintSpec ident="Check_restline" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:rest[@line]">
             <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
             <sch:assert
-              test="number(@line) &lt;=               number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
+              test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
               >The value of @line must be less than or equal to the number of lines on the
               staff.</sch:assert>
           </sch:rule>
