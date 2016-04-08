@@ -20673,7 +20673,7 @@
     </elementSpec>
     <elementSpec ident="when" module="MEI.performance">
       <desc>Indicates a point in time either absolutely (using the absolute attribute), or relative
-        to another when element (using the interval and since attributes).</desc>
+        to another when element (using the since, interval and inttype attributes).</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.datapointing"/>
@@ -20692,6 +20692,14 @@
               element.</sch:assert>
             <sch:assert role="warning" test="@inttype">@inttype must be present when @interval is
               used.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:when[matches(@interval, '^[0-9]+$')]">
+            <sch:assert test="not(@inttype eq 'time')">When @interval contains an integer value,
+              @inttype cannot be 'time'.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:when[matches(@interval, ':')]">
+            <sch:assert test="@inttype eq 'time'">When @interval contains a time value, @inttype
+              must be 'time'.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -20715,9 +20723,12 @@
             since attribute. This attribute can only be interpreted meaningfully in conjunction with
             the inttype attribute.</desc>
           <datatype>
-            <rng:data type="decimal">
-              <rng:param name="minInclusive">1</rng:param>
-            </rng:data>
+            <rng:choice>
+              <rng:data type="decimal">
+                <rng:param name="minInclusive">1</rng:param>
+              </rng:data>
+              <rng:data type="time"/>
+            </rng:choice>
           </datatype>
         </attDef>
         <attDef ident="abstype" usage="opt">
