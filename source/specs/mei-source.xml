@@ -4127,6 +4127,7 @@
         a control event.</desc>
       <classes>
         <memberOf key="att.plist"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.timestamp.musical"/>
         <memberOf key="att.timestamp.performed"/>
         <memberOf key="att.staffident"/>
@@ -7983,11 +7984,12 @@
       </attList>
     </classSpec>
     <classSpec ident="att.plist" module="MEI.shared" type="atts">
-      <desc>Attributes listing the participants in a user-defined collection.</desc>
+      <desc>Attributes listing the active participants in a user-defined collection.</desc>
       <attList>
         <attDef ident="plist" usage="opt">
-          <desc>Contains a space separated list of references that identify logical events that
-            participate in a collection, such as notes under a phrase mark.</desc>
+          <desc>Contains a space separated list of references that identify active participants in a
+            collection/relationship, such as notes under a phrase mark; that is, the entities
+            pointed "from".</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
@@ -8004,45 +8006,23 @@
             </constraint>
           </constraintSpec>
         </attDef>
-        <attDef ident="evaluate" usage="opt">
-          <desc>Specifies the intended meaning when the target of a pointer is itself a
-            pointer.</desc>
-          <valList type="closed">
-            <valItem ident="all">
-              <desc>If the element pointed to is itself a pointer, then the target of that pointer
-                will be taken, and so on, until an element is found which is not a pointer.</desc>
-            </valItem>
-            <valItem ident="one">
-              <desc>If the element pointed to is itself a pointer, then its target (whether a
-                pointer or not) is taken as the target of this pointer.</desc>
-            </valItem>
-            <valItem ident="none">
-              <desc>No further evaluation of targets is carried out beyond that needed to find the
-                element specified in the pointer's target.</desc>
-            </valItem>
-          </valList>
-          <remarks>
-            <p>If no value is given, the application program is responsible for deciding (possibly
-              on the basis of user input) how far to trace a chain of pointers.</p>
-          </remarks>
-        </attDef>
       </attList>
     </classSpec>
     <classSpec ident="att.pointing" module="MEI.shared" type="atts">
-      <desc>Attributes common to all linking elements.</desc>
+      <desc>Attributes common to all pointing/linking elements.</desc>
       <attList>
         <!--<attDef ident="actuate" ns="http://www.w3.org/1999/xlink" usage="opt">-->
         <attDef ident="xlink:actuate" usage="opt">
           <desc>Defines whether a link occurs automatically or must be requested by the user.</desc>
           <valList type="closed">
             <valItem ident="onLoad">
-              <desc>Load the target resource immediately.</desc>
+              <desc>Load the target resource(s) immediately.</desc>
             </valItem>
             <valItem ident="onRequest">
-              <desc>Load the target resource upon user request.</desc>
+              <desc>Load the target resource(s) upon user request.</desc>
             </valItem>
             <valItem ident="none">
-              <desc>Do not permit loading of the target resource.</desc>
+              <desc>Do not permit loading of the target resource(s).</desc>
             </valItem>
             <valItem ident="other">
               <desc>Behavior other than allowed by the other values of this attribute.</desc>
@@ -8051,8 +8031,8 @@
         </attDef>
         <!--<attDef ident="role" ns="http://www.w3.org/1999/xlink" usage="opt">-->
         <attDef ident="xlink:role" usage="opt">
-          <desc>Indicates a property of the entire link. The value of the role attribute must be a
-            URI.</desc>
+          <desc>Characterization of the relationship between resources. The value of the role
+            attribute must be a URI.</desc>
           <datatype>
             <rng:ref name="data.URI"/>
           </datatype>
@@ -8079,26 +8059,27 @@
           </valList>
         </attDef>
         <attDef ident="target" usage="opt">
-          <desc>Allows the use of one or more previously-undeclared URIs to identify an external
-            electronic object.</desc>
+          <desc>Allows the use of one or more previously-undeclared URIs to identify passive
+            participants in a relationship; that is, the entities pointed "to".</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
         </attDef>
         <attDef ident="targettype" usage="opt">
-          <desc>In contrast with the role attribute, allows the target resource to be characterized
-            using any convenient classification scheme or typology.</desc>
+          <desc>Characterization of target resource(s) using any convenient classification scheme or
+            typology.</desc>
           <datatype>
             <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
+        <!-- @xlink:title duplicates @label.  Use @label instead! -->
         <!--<attDef ident="title" ns="http://www.w3.org/1999/xlink" usage="opt">-->
-        <attDef ident="xlink:title" usage="opt">
-          <desc>Contains a human-readable description of the entire link.</desc>
-          <datatype>
-            <rng:data type="string"/>
-          </datatype>
-        </attDef>
+        <!--<attDef ident="xlink:title" usage="opt">
+              <desc>Contains a human-readable description of the entire link.</desc>
+              <datatype>
+                <rng:data type="string"/>
+              </datatype>
+            </attDef>-->
       </attList>
     </classSpec>
     <classSpec ident="att.proport.anl" module="MEI.mensural" type="atts">
@@ -9273,6 +9254,33 @@
           <datatype>
             <rng:data type="positiveInteger"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.targeteval" module="MEI.shared" type="atts">
+      <desc>Attributes that deal with resolution of values in plist or target attributes.</desc>
+      <attList>
+        <attDef ident="evaluate" usage="opt">
+          <desc>Specifies the intended meaning when a participant in a relationship is itself a
+            pointer.</desc>
+          <valList type="closed">
+            <valItem ident="all">
+              <desc>If an element pointed to is itself a pointer, then the target of that pointer
+                will be taken, and so on, until an element is found which is not a pointer.</desc>
+            </valItem>
+            <valItem ident="one">
+              <desc>If an element pointed to is itself a pointer, then its target (whether a pointer
+                or not) is taken as the target of this pointer.</desc>
+            </valItem>
+            <valItem ident="none">
+              <desc>No further evaluation of targets is carried out beyond that needed to find the
+                element(s) specified in plist or target attribute.</desc>
+            </valItem>
+          </valList>
+          <remarks>
+            <p>If no value is given, the application program is responsible for deciding (possibly
+              on the basis of user input) how far to trace a chain of pointers.</p>
+          </remarks>
         </attDef>
       </attList>
     </classSpec>
@@ -11164,6 +11172,7 @@
         <memberOf key="att.annot.anl"/>
         <memberOf key="att.plist"/>
         <memberOf key="att.responsibility"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.annotLike"/>
       </classes>
@@ -11490,6 +11499,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.barLine.log"/>
         <memberOf key="att.barLine.vis"/>
         <memberOf key="att.barLine.ges"/>
@@ -11623,6 +11633,7 @@
         <memberOf key="att.beatRpt.ges"/>
         <memberOf key="att.beatRpt.anl"/>
         <memberOf key="att.plist"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="model.eventLike.cmn"/>
       </classes>
       <content>
@@ -13451,6 +13462,7 @@
         <memberOf key="att.ending.vis"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.endingLike"/>
       </classes>
@@ -13646,6 +13658,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.plist"/>
         <memberOf key="att.source"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
       </classes>
       <content>
@@ -15171,6 +15184,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="model.itemLike"/>
       </classes>
       <content>
@@ -15518,6 +15532,7 @@
         <memberOf key="att.rdg.ges"/>
         <memberOf key="att.rdg.log"/>
         <memberOf key="att.rdg.vis"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
       </classes>
       <content>
@@ -15903,11 +15918,7 @@
           therefore different score and part layout) than the other movements. The <gi scheme="MEI"
             >mdiv</gi> element may be recursively nested in order to represent music which exhibits
           this kind of structure. For example, an opera is normally divided into acts, which are in
-          turn divided into scenes.
-          <!--This may be represented by the following markup:
-        &lt;mdiv&gt; &lt;- the opera &lt;mdiv&gt; &lt;- act I &lt;mdiv&gt; &lt;- scene i
-        &lt;mdiv&gt; &lt;- scene ii &lt;/mdiv&gt; &lt;mdiv&gt; &lt;- act II &lt;mdiv&gt; &lt;- scene
-        i &lt;mdiv&gt; &lt;- scene ii &lt;/mdiv&gt; &lt;/mdiv&gt;--></p>
+          turn divided into scenes.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="measure" module="MEI.cmn">
@@ -15922,6 +15933,7 @@
         <memberOf key="att.measure.vis"/>
         <memberOf key="att.measure.ges"/>
         <memberOf key="att.measure.anl"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.measureLike"/>
       </classes>
@@ -17755,6 +17767,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.internetmedia"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.locrefLike"/>
       </classes>
@@ -17882,6 +17895,7 @@
         <memberOf key="att.rdg.ges"/>
         <memberOf key="att.rdg.log"/>
         <memberOf key="att.rdg.vis"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
       </classes>
       <content>
@@ -17975,6 +17989,7 @@
         <memberOf key="att.internetmedia"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.locrefLike"/>
       </classes>
@@ -18108,6 +18123,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.biblPart"/>
       </classes>
@@ -18169,6 +18185,7 @@
         <memberOf key="att.edit"/>
         <memberOf key="att.pointing"/>
         <memberOf key="att.rel"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="model.relationLike"/>
       </classes>
       <content>
@@ -18674,6 +18691,7 @@
         <memberOf key="att.section.vis"/>
         <memberOf key="att.section.ges"/>
         <memberOf key="att.section.anl"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="att.typed"/>
         <memberOf key="model.sectionLike"/>
       </classes>
@@ -18992,6 +19010,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.datapointing"/>
         <memberOf key="att.pointing"/>
+        <memberOf key="att.targeteval"/>
         <memberOf key="model.manifestationLike"/>
       </classes>
       <content>
