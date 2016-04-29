@@ -50,7 +50,7 @@
   <p>Many of the elements discussed here can be used in two ways. Their primary purpose is to
     indicate that their content represents an editorial intervention (or, in some cases, the lack of
     intervention) of a specific kind. Sometimes, pairs or other meaningful groupings of such
-    elements can be recorded, wrapped within the special purpose <gi scheme="MEI">choice</gi>
+    elements can be recorded, then wrapped within the special purpose <gi scheme="MEI">choice</gi>
     element:</p>
   <p>
     <specList>
@@ -82,14 +82,15 @@
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <p>... the next passage shall be performed in <abbr>pno:</abbr> ...</p>
     </egXML>
-
-    <!--<p>or abbreviations in the music itself, as in the following example:</p>
+    <p>or abbreviations in the music itself, as in the following example:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <abbr>
-  <note pname="c" oct="5" dur="4" stem.mod="2slash"/>
+  <bTrem measperf="16">
+    <note pname="c" oct="5" dur="4" stem.mod="2slash"/>  
+  </bTrem>
 </abbr>
     </egXML>
-    <!-\- TODO: add btrem to this example and check for correctness -\->-->
+    <!-- TODO: add btrem to this example and check for correctness -->
 
     <p>The type attribute may be used to classify the abbreviation according to a convenient
       typology. Sample values include:</p>
@@ -115,11 +116,11 @@
 
     <p>This tag is the mirror image of the <gi scheme="MEI">expan</gi> tag (not to be confused with
       the <gi scheme="MEI">expansion</gi> element described in <ptr target="#sharedMdivContent"/>).
-      Both <gi scheme="MEI">abbr</gi> and <gi scheme="MEI">expan</gi>allow the encoder to transcribe
-      an abbreviation and its expansion. In the case of <gi scheme="MEI">abbr</gi>, the original is
-      transcribed as the content of the element and the expansion as an attribute value, while <gi
-        scheme="MEI">expan</gi> reverses this. The choice between the two is up to the user. For
-      example:</p>
+      Both <gi scheme="MEI">abbr</gi> and <gi scheme="MEI">expan</gi> allow the encoder to
+      transcribe an abbreviation and its expansion. In the case of <gi scheme="MEI">abbr</gi>, the
+      original is transcribed as the content of the element and the expansion as an attribute value,
+      while <gi scheme="MEI">expan</gi> reverses this. The choice between the two is up to the user.
+      For example:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
 <!-- using abbr -->
 <p>... the next passage shall be performed in <abbr expan="piano">pno:</abbr> ...</p>
@@ -148,6 +149,80 @@
   </choice>
 </p>
     </egXML>
+
+    <div type="div3" xml:id="edittranscpMark">
+      <head><foreign>Colla Parte</foreign> Instructions</head>
+      <p>Many musical scores make use of various kinds of shorthand notation which omit some parts
+        of the score that have already been written elsewhere. Typical exampleS for this are symbols
+        that indicate repetition of the preceding measure or beat. In MEI, these symbols can be
+        encoded using the <gi scheme="MEI">mRpt</gi> and <gi scheme="MEI">beatRpt</gi> elements
+        respectively. Often, similar graphical symbols (often one or two slashes, "//") are used to
+        mean that the current staff should have the same or similar content as another staff.</p>
+      <p><foreign>colla parte</foreign> directives have a less strictly-defined scope than the
+          <soCalled>Rpt elements</soCalled> (<gi scheme="MEI">beatRpt</gi>, <gi scheme="MEI"
+          >halfmRpt</gi>, <gi scheme="MEI">mRpt</gi>, <gi scheme="MEI">mRpt2</gi>, <gi scheme="MEI"
+          >multiRpt</gi>). That is, rather than specifying the repetition of content of a particular
+        duration, like a measure or beat, <foreign>colla parte</foreign> instructions can refer to
+        material of any length. In order to encode such scribal shorthand, MEI offers the <gi
+          scheme="MEI">cpMark</gi> element, which allows filling of blank spaces in the score with
+        horizontally and/or vertically distant material.</p>
+      <p>
+        <specList>
+          <specDesc key="cpMark"/>
+        </specList>
+      </p>
+      <p>Like any other <soCalled>controlEvent</soCalled>, <gi scheme="MEI">cpMark</gi> is placed in
+        the score using the <att>staff</att> and <att>tstamp</att> attributes. The end point of the
+        mark itself, when necessary, may be indicated using the <att>tstamp2</att> attribute. The
+        source material, which is intended to be inserted in the space indicated by the copy mark,
+        can be identified by the attributes <att>origin.tstamp</att>, <att>origin.tstamp2</att>,
+          <att>origin.staff</att> and <att>origin.layer</att>. While <att>origin.tstamp</att>
+        provides the relative distance from the beginning of the "gap", <att>origin.tstamp</att> is
+        relative to the position identified by <att>origin.tstamp</att>. However,
+          <att>origin.tstamp</att> defaults to the same value as <att>tstamp2</att> and should only
+        be provided when necessary. When neither <att>origin.staff</att> nor
+          <att>origin.tstamp</att> are not provided, they take the same values as the cpMark's
+          <att>staff</att> and <att>tstamp</att> attributes; that is, they indicate a strict
+          <soCalled>vertical</soCalled> or <soCalled>horizontal</soCalled> copy.</p>
+      <figure>
+        <head>Copy marks in the first and second violin of C.M.v.Weber's Freischütz, Autograph, Nr.3
+          (Walzer), measures 223-231</head>
+        <graphic url="Images/ExampleImages/cpMark_2.png"/>
+      </figure>
+      <p>In the example above, there are no less than three different copy instructions, which need
+        to be encoded with four <gi scheme="MEI">cpMark</gi> elements. First, Weber inserts
+        characters from "a" to "f" in red ink to identify filled measures. Then, he repeats the same
+        characters in <emph>empty</emph> measures, which indicates that the content from the
+          <emph>filled</emph> measures should be copied here. While one could try to encode this
+        with just one <gi scheme="MEI">cpMark</gi> element, it is both clearer and easier to process
+        when using two elements.</p>
+      <p>The second and third shorthand indications are written in the second violin (lower staff).
+        Here, Weber writes "unis.[ono]", silently omitting the reference to the first violin. His
+        next shorthand ("in 8va") additionally instructs the copyist to double the written material
+        in another octave. This information can be captured using the <att>dis</att> and
+          <att>dis.place</att> attributes on <gi scheme="MEI">cpMark</gi>.</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="true">
+<cpMark tstamp="1" tstamp2="5m+4" staff="8" origin.tstamp="-6m+1">a. b. c. d. e. f. g.</cpMark>
+<cpMark tstamp="1" tstamp2="5m+4" staff="9" origin.tstamp="-6m+1">a. b. c. d. e. f. g.</cpMark>
+<cpMark tstamp="1.5" tstamp2="1m+3.5" staff="9" origin.staff="8">unis:</cpMark>
+<cpMark tstamp="2" tstamp2="2m+3.5" staff="9" origin.staff="8" dis="8" dis.place="below">in 8va</cpMark>
+      </egXML>
+      <figure>
+        <head>A transcription of the example above with all shorthand resolved and colored</head>
+        <graphic url="Images/ExampleImages/cpMark_3.png"/>
+      </figure>
+      <p>Text used as a copy mark, like the letters in the Weber example, may be encoded as content
+        of the <gi scheme="MEI">cpMark</gi> element. In the case of non-text marks, the
+          <att>altsym</att>, <att>extsym</att> and <att>facs</att> attributes may be used to refer
+        to a graphical surrogate.</p>
+      <p>Depending on the purpose of the encoding, the omitted parts in the score may be filled with
+          <gi scheme="MEI">space</gi> and <gi scheme="MEI">mSpace</gi> elements of appropriate
+        duration or silently overwritten with the content that the <gi scheme="MEI">cpMark</gi>
+        identifies. Also, these two options may be combined through the use a <gi scheme="MEI"
+          >choice</gi> element whose <gi scheme="MEI">abbr</gi> and <gi scheme="MEI">expan</gi>
+        children explicitly encode a transcription of the original <soCalled>gap</soCalled> (in
+        abbr) and the result of the insertion of the indicated material (in expan).</p>
+    </div>
   </div>
 
   <div type="div2" xml:id="edittransErrors">
