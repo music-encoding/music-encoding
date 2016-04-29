@@ -1595,6 +1595,23 @@
         </rng:data>
       </content>
     </macroSpec>
+    <macroSpec ident="data.MEASUREBEATOFFSET" module="MEI" type="dt">
+      <desc>A count of measures plus a beat location, i.e., (\+|-)?[0-9]+m\+[0-9]+(\.?[0-9]*)?. The
+        measure count is the number of barlines crossed by the event, while the beat location is a
+        timestamp expressed as a beat with an optional fractional part. The measure number must be
+        in the range of preceding measures to the number of remaining measures. A value with a
+        positive measure number, such as "1m+3", indicates a point in the following measure, while a
+        value with a negative measure number, such as "-1m+3", marks a point in the preceding
+        measure. The beat number must be in the range from 0 to the numerator of the time signature
+        plus 1. For example, in 6/8 the beat number must be within the range from 0 (the left
+        barline) to 7 (the right barline). A value with a measure number of "0", such as "0m+2",
+        indicates a point within the current measure.</desc>
+      <content>
+        <rng:data type="token">
+          <rng:param name="pattern">(\+|-)?[0-9]+m\+[0-9]+(\.[0-9]*)?</rng:param>
+        </rng:data>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.MEASUREMENTABS" module="MEI" type="dt">
       <desc>Measurement expressed in real-world (e.g., centimeters, millimeters, inches, points,
         picas, or pixels) or virtual units (vu). 'vu' is the default value. Unlike
@@ -4270,6 +4287,44 @@
           </datatype>
         </attDef>
       </attList>
+    </classSpec>
+    <classSpec ident="att.cpMark.anl" module="MEI.edittrans" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.cpMark.ges" module="MEI.edittrans" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.cpMark.log" module="MEI.edittrans" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlevent"/>
+        <memberOf key="att.startendid"/>
+        <memberOf key="att.timestamp2.musical"/>
+        <memberOf key="att.origin.timestamp.musical"/>
+        <memberOf key="att.origin.staffident"/>
+        <memberOf key="att.origin.layerident"/>
+        <memberOf key="att.origin.startendid"/>
+        <memberOf key="att.octavedisplacement"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.cpMark.vis" module="MEI.edittrans" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altsym"/>
+        <memberOf key="att.color"/>
+        <memberOf key="att.enclosingchars"/>
+        <memberOf key="att.extsym"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualoffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
     </classSpec>
     <classSpec ident="att.crit" module="MEI.critapp" type="atts">
       <desc>Attributes common to all elements representing variant readings.</desc>
@@ -7697,6 +7752,83 @@
           <datatype>
             <rng:ref name="data.BOOLEAN"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.origin.layerident" module="MEI.shared" type="atts">
+      <desc>Attributes that identify the layer associated with a distant feature.</desc>
+      <attList>
+        <attDef ident="origin.layer" usage="opt">
+          <desc>identifies the layer on which referenced notation occurs.</desc>
+          <datatype>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="positiveInteger"/>
+              </rng:oneOrMore>
+            </rng:list>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.origin.staffident" module="MEI.shared" type="atts">
+      <desc>Attributes for identifying the staff associated with a distant feature.</desc>
+      <attList>
+        <attDef ident="origin.staff" usage="rec">
+          <desc>signifies the staff on which referenced notation occurs. Defaults to the same value
+            as the local staff. Mandatory when applicable.</desc>
+          <datatype>
+            <rng:list>
+              <rng:oneOrMore>
+                <rng:data type="positiveInteger"/>
+              </rng:oneOrMore>
+            </rng:list>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.origin.startendid" module="MEI.shared" type="atts">
+      <desc>Attributes recording the identifiers of the first and last elements of a sequence of
+        distant elements.</desc>
+      <attList>
+        <attDef ident="origin.startid" usage="opt">
+          <desc>indicates the first element in a sequence of events.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+        </attDef>
+        <attDef ident="origin.endid" usage="opt">
+          <desc>indicates the final element in a sequence of events.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.origin.timestamp.musical" module="MEI.shared" type="atts">
+      <desc>Attributes that identify a musical range in terms of musical time.</desc>
+      <attList>
+        <attDef ident="origin.tstamp" usage="opt">
+          <desc>encodes the starting point of musical material in terms of musical time, i.e., a
+            (potentially negative) count of measures plus a beat location.</desc>
+          <datatype>
+            <rng:ref name="data.MEASUREBEATOFFSET"/>
+          </datatype>
+        </attDef>
+        <attDef ident="origin.tstamp2" usage="rec">
+          <desc>encodes the ending point of musical material in terms of musical time, i.e., a count
+            of measures plus a beat location. The values are relative to the measure identified by
+            @origin.tstamp.</desc>
+          <datatype>
+            <rng:ref name="data.MEASUREBEAT"/>
+          </datatype>
+          <constraintSpec ident="origin.tstamp2_requires_origin.tstamp" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[@origin.tstamp2]">
+                <sch:assert test="@origin.tstamp">When @origin.tstamp2 is used @origin.tstamp must
+                  also be present.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -12848,6 +12980,72 @@
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="cpMark" module="MEI.edittrans">
+      <desc>(copy/colla parte mark) – A verbal or graphical indication to copy musical material
+        written elsewhere.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.cpMark.log"/>
+        <memberOf key="att.cpMark.vis"/>
+        <memberOf key="att.cpMark.ges"/>
+        <memberOf key="att.cpMark.anl"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.controleventLike.cmn"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textphraseLike.limited"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="cpMark_start-_and_end-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:cpMark">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
+            <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
+              attributes: dur, dur.ges, endid, or tstamp2</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <exemplum>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+              <cpMark tstamp="1" tstamp2="5m+4" staff="8" origin.tstamp="-6m+1">a. b. c. d. e. f. g.</cpMark>
+            </egXML>
+      </exemplum>
+      <exemplum>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+              <cpMark tstamp="1.5" tstamp2="1m+3.5" staff="9" origin.staff="8">unis:</cpMark>
+              </egXML>
+      </exemplum>
+      <exemplum>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+              <cpMark tstamp="2" tstamp2="2m+3.5" staff="9" origin.staff="8" dis="8" dis.place="below">in 8va</cpMark>
+            </egXML>
+      </exemplum>
+      <remarks>
+        <p>Typical examples are <foreign>colla parte</foreign> instructions (such as "col Basso") or
+          other indications intended to result in filling gaps in the score with material written
+          elsewhere. It is recommended to capture the position of the indication itself with the
+          attributes @tstamp and @staff. The area to be filled should contain <gi scheme="MEI"
+            >space</gi> or <gi scheme="MEI">mSpace</gi> elements. The material to be used to fill
+          the gap can be identified by the attributes @origin.tstamp, @origin.tstamp2,
+          @origin.staff, and @origin.layer. If @origin.tstamp2 is not provided, a duration similar
+          to that of the local omission (as encoded in the combination of @tstamp and @tstamp2) is
+          assumed. Any missing @origin.* attributes are assumed to take the same values as
+          information associated with the cpMark. For example, when only the @origin.staff attribute
+          is provided, it is assumed that the referenced part comes from a different staff in the
+          same measure. If a different measure is provided by @origin.tstamp, but no @origin.staff
+          is given, then it is assumed that the material is to be taken from the same staff.</p>
+        <p>Textual instructions are encoded as text content of the cpMark, while graphical
+          instructions may use the @altsym, @facs, or @extsym attributes.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="creation" module="MEI.shared">
