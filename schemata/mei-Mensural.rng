@@ -3,7 +3,7 @@
    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
    ns="http://www.music-encoding.org/ns/mei">
    <!--
-Schema generated from ODD source 2016-04-28T12:19:53Z. .
+Schema generated from ODD source 2016-04-29T15:22:17Z. .
 TEI Edition: Version 3.0.0
 TEI Edition Location: http://www.tei-c.org/Vault/P5//
   
@@ -6446,6 +6446,11 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
          <param name="pattern">([0-9]+m\s*\+\s*)?[0-9]+(\.?[0-9]*)?</param>
       </data>
    </define>
+   <define name="mei_data.MEASUREBEATOFFSET">
+      <data type="token">
+         <param name="pattern">(\+|-)?[0-9]+m\+[0-9]+(\.[0-9]*)?</param>
+      </data>
+   </define>
    <define name="mei_data.MEASUREMENTABS">
       <data type="token">
          <param name="pattern">(\+)?\d+(\.\d+)?(cm|mm|in|pt|pc|px|vu)?</param>
@@ -10411,6 +10416,95 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
          </attribute>
       </optional>
    </define>
+   <define name="mei_att.origin.layerident.attributes">
+      <ref name="mei_att.origin.layerident.attribute.origin.layer"/>
+   </define>
+   <define name="mei_att.origin.layerident.attribute.origin.layer">
+      <optional>
+         <attribute name="origin.layer">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+               >identifies the layer on which referenced notation occurs.</a:documentation>
+            <list>
+               <oneOrMore>
+                  <data type="positiveInteger"/>
+               </oneOrMore>
+            </list>
+         </attribute>
+      </optional>
+   </define>
+   <define name="mei_att.origin.staffident.attributes">
+      <ref name="mei_att.origin.staffident.attribute.origin.staff"/>
+   </define>
+   <define name="mei_att.origin.staffident.attribute.origin.staff">
+      <optional>
+         <attribute name="origin.staff">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">signifies
+               the staff on which referenced notation occurs. Defaults to the same value as the
+               local staff. Mandatory when applicable.</a:documentation>
+            <list>
+               <oneOrMore>
+                  <data type="positiveInteger"/>
+               </oneOrMore>
+            </list>
+         </attribute>
+      </optional>
+   </define>
+   <define name="mei_att.origin.startendid.attributes">
+      <ref name="mei_att.origin.startendid.attribute.origin.startid"/>
+      <ref name="mei_att.origin.startendid.attribute.origin.endid"/>
+   </define>
+   <define name="mei_att.origin.startendid.attribute.origin.startid">
+      <optional>
+         <attribute name="origin.startid">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">indicates
+               the first element in a sequence of events.</a:documentation>
+            <ref name="mei_data.URI"/>
+         </attribute>
+      </optional>
+   </define>
+   <define name="mei_att.origin.startendid.attribute.origin.endid">
+      <optional>
+         <attribute name="origin.endid">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">indicates
+               the final element in a sequence of events.</a:documentation>
+            <ref name="mei_data.URI"/>
+         </attribute>
+      </optional>
+   </define>
+   <define name="mei_att.origin.timestamp.musical.attributes">
+      <ref name="mei_att.origin.timestamp.musical.attribute.origin.tstamp"/>
+      <ref name="mei_att.origin.timestamp.musical.attribute.origin.tstamp2"/>
+   </define>
+   <define name="mei_att.origin.timestamp.musical.attribute.origin.tstamp">
+      <optional>
+         <attribute name="origin.tstamp">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">encodes
+               the starting point of musical material in terms of musical time, i.e., a (potentially
+               negative) count of measures plus a beat location.</a:documentation>
+            <ref name="mei_data.MEASUREBEATOFFSET"/>
+         </attribute>
+      </optional>
+   </define>
+   <define name="mei_att.origin.timestamp.musical.attribute.origin.tstamp2">
+      <optional>
+         <attribute name="origin.tstamp2">
+            <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">encodes
+               the ending point of musical material in terms of musical time, i.e., a count of
+               measures plus a beat location. The values are relative to the measure identified by
+               @origin.tstamp.</a:documentation>
+            <ref name="mei_data.MEASUREBEAT"/>
+         </attribute>
+      </optional>
+   </define>
+   <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
+      id="mei-att.origin.timestamp.musical-origin.tstamp2-origin.tstamp2_requires_origin.tstamp-constraint-14">
+      <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+         xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+         xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@origin.tstamp2]">
+         <sch:assert test="@origin.tstamp">When @origin.tstamp2 is used @origin.tstamp must also be
+            present.</sch:assert>
+      </sch:rule>
+   </pattern>
    <define name="mei_att.ornam.log.attributes">
       <ref name="mei_att.controlevent.attributes"/>
       <ref name="mei_att.duration.additive.attributes"/>
@@ -10657,7 +10751,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.plist-plist-check_plistTarget-constraint-14">
+      id="mei-att.plist-plist-check_plistTarget-constraint-15">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@plist">
@@ -10805,7 +10899,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.responsibility-resp-check_respTarget-constraint-15">
+      id="mei-att.responsibility-resp-check_respTarget-constraint-16">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@resp">
@@ -11141,7 +11235,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.staff.log-def-check_defTarget_staff-constraint-16">
+      id="mei-att.staff.log-def-check_defTarget_staff-constraint-17">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="staff/@def">
@@ -11378,7 +11472,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.startendid-endid-check_endidTarget-constraint-17">
+      id="mei-att.startendid-endid-check_endidTarget-constraint-18">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@endid">
@@ -11403,7 +11497,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.startid-startid-check_startidTarget-constraint-18">
+      id="mei-att.startid-startid-check_startidTarget-constraint-19">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@startid">
@@ -11872,7 +11966,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.typed-subtype-When_subtype-constraint-19">
+      id="mei-att.typed-subtype-When_subtype-constraint-20">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@subtype]">
@@ -13540,7 +13634,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-annot-annot_content_constraint-constraint-20">
+            id="mei-annot-annot_content_constraint-constraint-21">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -13631,7 +13725,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             units.</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-barLine-Check_barLinetaktplace-constraint-21">
+            id="mei-barLine-Check_barLinetaktplace-constraint-22">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:barLine[@taktplace]">
@@ -13839,7 +13933,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             as well.</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-clef-Clef_position_lines-constraint-22">
+            id="mei-clef-Clef_position_lines-constraint-23">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -13852,7 +13946,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-clef-Clef_position_nolines-constraint-23">
+            id="mei-clef-Clef_position_nolines-constraint-24">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -14024,7 +14118,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-dir-dir_start-type_attributes_required-constraint-24">
+            id="mei-dir-dir_start-type_attributes_required-constraint-25">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -14186,7 +14280,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-dynam-dynam_start-type_attributes_required-constraint-25">
+            id="mei-dynam-dynam_start-type_attributes_required-constraint-26">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:dynam">
@@ -14195,7 +14289,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-dynam-dynam_end-type_attributes-constraint-26">
+            id="mei-dynam-dynam_end-type_attributes-constraint-27">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:dynam[@val2]">
@@ -14458,7 +14552,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_model.labelLike"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-grpSym-check_grpSym_attributes_scoreDef-constraint-27">
+            id="mei-grpSym-check_grpSym_attributes_scoreDef-constraint-28">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -14468,7 +14562,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-grpSym-check_grpSym_attributes_staffDef-constraint-28">
+            id="mei-grpSym-check_grpSym_attributes_staffDef-constraint-29">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -14619,7 +14713,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             accidental) – Accidental in a key signature.</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-keyAccid-Check_keyAccidPlacement-constraint-29">
+            id="mei-keyAccid-Check_keyAccidPlacement-constraint-30">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:keyAccid">
@@ -14839,7 +14933,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
          <ref name="mei_meiHead"/>
          <ref name="mei_music"/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-mei-Check_staff-constraint-30">
+            id="mei-mei-Check_staff-constraint-31">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@staff]">
@@ -14880,7 +14974,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
                <ref name="mei_model.transcriptionLike"/>
             </choice>
          </zeroOrMore>
-         <pattern xmlns="http://purl.oclc.org/dsdl/schematron" id="mei-name-nameParts-constraint-31">
+         <pattern xmlns="http://purl.oclc.org/dsdl/schematron" id="mei-name-nameParts-constraint-32">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:name">
@@ -15000,7 +15094,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-ornam-ornam_start-type_attributes_required-constraint-32">
+            id="mei-ornam-ornam_start-type_attributes_required-constraint-33">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:ornam">
@@ -15265,7 +15359,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_curve"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-phrase-phrase_start-_and_end-type_attributes_required-constraint-33">
+            id="mei-phrase-phrase_start-_and_end-type_attributes_required-constraint-34">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:phrase">
@@ -15276,7 +15370,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-phrase-phrase_containing_curve-constraint-34">
+            id="mei-phrase-phrase_containing_curve-constraint-35">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15556,7 +15650,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-respStmt-check_respStmt-constraint-35">
+            id="mei-respStmt-check_respStmt-constraint-36">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15585,7 +15679,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-rest-Check_restline-constraint-36">
+            id="mei-rest-Check_restline-constraint-37">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:rest[@line]">
@@ -15746,7 +15840,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-section-Check_sectionexpansion-constraint-37">
+            id="mei-section-Check_sectionexpansion-constraint-38">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:section[mei:expansion]">
@@ -15921,7 +16015,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_staffDefn-constraint-38">
+            id="mei-staffDef-Check_staffDefn-constraint-39">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:staffDef">
@@ -15934,7 +16028,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_ancestor_staff-constraint-39">
+            id="mei-staffDef-Check_ancestor_staff-constraint-40">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15945,7 +16039,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_clef_position_staffDef-constraint-40">
+            id="mei-staffDef-Check_clef_position_staffDef-constraint-41">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15955,7 +16049,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_clef_position_staffDef_nolines-constraint-41">
+            id="mei-staffDef-Check_clef_position_staffDef_nolines-constraint-42">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15968,7 +16062,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_tab_strings_lines-constraint-42">
+            id="mei-staffDef-Check_tab_strings_lines-constraint-43">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -15981,7 +16075,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffDef-Check_tab_strings_nolines-constraint-43">
+            id="mei-staffDef-Check_tab_strings_nolines-constraint-44">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -16074,7 +16168,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_grpSym"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-staffGrp-Check_staffGrp_unique_staff_n_values-constraint-48">
+            id="mei-staffGrp-Check_staffGrp_unique_staff_n_values-constraint-49">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:staffGrp">
@@ -16132,7 +16226,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-tempo-tempo_in_header_disallow_most_attrs-constraint-49">
+            id="mei-tempo-tempo_in_header_disallow_most_attrs-constraint-50">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -16144,7 +16238,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-tempo-tempo_start-type_attributes_required-constraint-50">
+            id="mei-tempo-tempo_start-type_attributes_required-constraint-51">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -16605,7 +16699,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_model.dateLike"/>
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-change-change_requirements-constraint-51">
+            id="mei-change-change_requirements-constraint-52">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:change">
@@ -17039,7 +17133,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             Code.</a:documentation>
          <text/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-incipCode-Check_incipCode_form_mimetype-constraint-52">
+            id="mei-incipCode-Check_incipCode_form_mimetype-constraint-53">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:incipCode">
@@ -18522,7 +18616,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-copyof-When_copyof_element_empty-constraint-53">
+      id="mei-att.common.anl-copyof-When_copyof_element_empty-constraint-54">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:*[@copyof]">
@@ -18531,7 +18625,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </sch:rule>
    </pattern>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-copyof-check_copyofTarget-constraint-54">
+      id="mei-att.common.anl-copyof-check_copyofTarget-constraint-55">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@copyof">
@@ -18557,7 +18651,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-corresp-check_correspTarget-constraint-55">
+      id="mei-att.common.anl-corresp-check_correspTarget-constraint-56">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@corresp">
@@ -18582,7 +18676,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-next-check_nextTarget-constraint-56">
+      id="mei-att.common.anl-next-check_nextTarget-constraint-57">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@next">
@@ -18607,7 +18701,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-prev-check_prevTarget-constraint-57">
+      id="mei-att.common.anl-prev-check_prevTarget-constraint-58">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@prev">
@@ -18633,7 +18727,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-sameas-check_sameasTarget-constraint-58">
+      id="mei-att.common.anl-sameas-check_sameasTarget-constraint-59">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@sameas">
@@ -18658,7 +18752,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.common.anl-synch-check_synchTarget-constraint-59">
+      id="mei-att.common.anl-synch-check_synchTarget-constraint-60">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@synch">
@@ -18813,7 +18907,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.source-source-check_sourceTarget-constraint-60">
+      id="mei-att.source-source-check_sourceTarget-constraint-61">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@source">
@@ -19321,7 +19415,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </attribute>
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-handShift-new-check_newTarget-constraint-61">
+            id="mei-handShift-new-check_newTarget-constraint-63">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@new">
@@ -19342,7 +19436,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </attribute>
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-handShift-old-check_oldTarget-constraint-62">
+            id="mei-handShift-old-check_oldTarget-constraint-64">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@old">
@@ -19580,7 +19674,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.extsym-glyphname-check_glyphnameTarget-constraint-63">
+      id="mei-att.extsym-glyphname-check_glyphnameTarget-constraint-65">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@glyphname">
@@ -19601,7 +19695,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.extsym-glyphnum-check_glyphnum-constraint-64">
+      id="mei-att.extsym-glyphnum-check_glyphnum-constraint-66">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -19628,7 +19722,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.facsimile-facs-check_facsTarget-constraint-65">
+      id="mei-att.facsimile-facs-check_facsTarget-constraint-67">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@facs">
@@ -19792,7 +19886,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-figDesc-figDesc_content_constraint-constraint-66">
+            id="mei-figDesc-figDesc_content_constraint-constraint-68">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -19818,7 +19912,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_zone"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-graphic-graphic_attributes-constraint-67">
+            id="mei-graphic-graphic_attributes-constraint-69">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:zone/mei:graphic">
@@ -19827,7 +19921,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-graphic-graphic_attributes-constraint-68">
+            id="mei-graphic-graphic_attributes-constraint-70">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:symbolDef/mei:graphic">
@@ -19836,7 +19930,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-graphic-graphic_attributes-constraint-69">
+            id="mei-graphic-graphic_attributes-constraint-71">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -20085,7 +20179,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-fing-stack_exclusion-constraint-70">
+            id="mei-fing-stack_exclusion-constraint-72">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:fing">
@@ -20115,7 +20209,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-fingGrp-require_fingeringLike_children-constraint-71">
+            id="mei-fingGrp-require_fingeringLike_children-constraint-73">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:fingGrp">
@@ -20202,7 +20296,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </zeroOrMore>
          </choice>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-componentGrp-checkComponentGrp-constraint-74">
+            id="mei-componentGrp-checkComponentGrp-constraint-76">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:componentGrp">
@@ -20421,7 +20515,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.harm.log-chordref-check_chordrefTarget-constraint-75">
+      id="mei-att.harm.log-chordref-check_chordrefTarget-constraint-77">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@chordref">
@@ -20655,7 +20749,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-harm-harm_start-type_attributes_required-constraint-76">
+            id="mei-harm-harm_start-type_attributes_required-constraint-78">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:harm">
@@ -22040,7 +22134,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.alignment-check_whenTarget-constraint-77">
+      id="mei-att.alignment-check_whenTarget-constraint-79">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@when">
@@ -22060,7 +22154,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_clip"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-avFile-avFile_child_of_clip-constraint-78">
+            id="mei-avFile-avFile_child_of_clip-constraint-80">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:clip/mei:avFile">
@@ -22090,7 +22184,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_when"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-clip-betype_required_when_begin_or_end-constraint-79">
+            id="mei-clip-betype_required_when_begin_or_end-constraint-81">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:clip[@begin or @end]">
@@ -22132,7 +22226,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_clip"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-recording-betype_required_when_begin_or_end-constraint-80">
+            id="mei-recording-betype_required_when_begin_or_end-constraint-82">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22156,7 +22250,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             when element (using the since, interval and inttype attributes).</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-when-check_when_interval-constraint-81">
+            id="mei-when-check_when_interval-constraint-83">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:when[@interval]">
@@ -22171,7 +22265,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-when-check_when_interval-constraint-82">
+            id="mei-when-check_when_interval-constraint-84">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22181,7 +22275,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-when-check_when_interval-constraint-83">
+            id="mei-when-check_when_interval-constraint-85">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22191,7 +22285,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-when-check_when_absolute-constraint-84">
+            id="mei-when-check_when_absolute-constraint-86">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:when[@absolute]">
@@ -22250,7 +22344,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </attribute>
          </optional>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-when-since-check_sinceTarget-constraint-85">
+            id="mei-when-since-check_sinceTarget-constraint-87">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@since">
@@ -22537,7 +22631,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             <ref name="mei_li"/>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-list-list_type_constraint-constraint-86">
+            id="mei-list-list_type_constraint-constraint-88">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:list[@type='gloss']">
@@ -22640,7 +22734,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
       </optional>
    </define>
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-      id="mei-att.altsym-altsym-check_altsymTarget-constraint-87">
+      id="mei-att.altsym-altsym-check_altsymTarget-constraint-89">
       <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="@altsym">
@@ -22698,7 +22792,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             slur.</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-curve-symbolDef_curve_attributes_required-constraint-88">
+            id="mei-curve-symbolDef_curve_attributes_required-constraint-90">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22738,7 +22832,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </choice>
          </zeroOrMore>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-line-line_start-_and_end-type_attributes_required-constraint-89">
+            id="mei-line-line_start-_and_end-type_attributes_required-constraint-91">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22750,7 +22844,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             </sch:rule>
          </pattern>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-line-line_start-_and_end-type_attributes_required-constraint-90">
+            id="mei-line-line_start-_and_end-type_attributes_required-constraint-92">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"
@@ -22826,7 +22920,7 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
             to a previously defined symbol.</a:documentation>
          <empty/>
          <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-            id="mei-symbol-symbolDef_symbol_attributes_required-constraint-91">
+            id="mei-symbol-symbolDef_symbol_attributes_required-constraint-93">
             <sch:rule xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
                xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
                xmlns:sch="http://purl.oclc.org/dsdl/schematron"

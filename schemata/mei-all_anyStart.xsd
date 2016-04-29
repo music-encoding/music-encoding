@@ -7,7 +7,7 @@
   <xs:import namespace="http://www.w3.org/2000/svg" schemaLocation="svg.xsd"/>
   <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
   <!--
-    Schema generated from ODD source 2016-04-28T12:16:37Z. .
+    Schema generated from ODD source 2016-04-29T15:20:19Z. .
     TEI Edition: Version 3.0.0
     TEI Edition Location: http://www.tei-c.org/Vault/P5//
     
@@ -4211,6 +4211,11 @@
   <xs:simpleType name="mei_data.MEASUREBEAT">
     <xs:restriction base="xs:token">
       <xs:pattern value="([0-9]+m\s*\+\s*)?[0-9]+(\.?[0-9]*)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="mei_data.MEASUREBEATOFFSET">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="(\+|-)?[0-9]+m\+[0-9]+(\.[0-9]*)?"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="mei_data.MEASUREMENTABS">
@@ -8869,6 +8874,83 @@
       <xs:annotation>
         <xs:documentation>Indicates whether staves without notes, rests, etc. should be displayed.
           When the value is 'true', empty staves are displayed.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.layerident.attributes">
+    <xs:attributeGroup ref="mei:mei_att.origin.layerident.attribute.origin.layer"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.layerident.attribute.origin.layer">
+    <xs:attribute name="origin.layer">
+      <xs:annotation>
+        <xs:documentation>identifies the layer on which referenced notation
+          occurs.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:simpleType>
+            <xs:list itemType="xs:positiveInteger"/>
+          </xs:simpleType>
+          <xs:minLength value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.staffident.attributes">
+    <xs:attributeGroup ref="mei:mei_att.origin.staffident.attribute.origin.staff"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.staffident.attribute.origin.staff">
+    <xs:attribute name="origin.staff">
+      <xs:annotation>
+        <xs:documentation>signifies the staff on which referenced notation occurs. Defaults to the
+          same value as the local staff. Mandatory when applicable.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:simpleType>
+            <xs:list itemType="xs:positiveInteger"/>
+          </xs:simpleType>
+          <xs:minLength value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.startendid.attributes">
+    <xs:attributeGroup ref="mei:mei_att.origin.startendid.attribute.origin.startid"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.startendid.attribute.origin.endid"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.startendid.attribute.origin.startid">
+    <xs:attribute name="origin.startid" type="mei:mei_data.URI">
+      <xs:annotation>
+        <xs:documentation>indicates the first element in a sequence of events.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.startendid.attribute.origin.endid">
+    <xs:attribute name="origin.endid" type="mei:mei_data.URI">
+      <xs:annotation>
+        <xs:documentation>indicates the final element in a sequence of events.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.timestamp.musical.attributes">
+    <xs:attributeGroup ref="mei:mei_att.origin.timestamp.musical.attribute.origin.tstamp"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.timestamp.musical.attribute.origin.tstamp2"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.timestamp.musical.attribute.origin.tstamp">
+    <xs:attribute name="origin.tstamp" type="mei:mei_data.MEASUREBEATOFFSET">
+      <xs:annotation>
+        <xs:documentation>encodes the starting point of musical material in terms of musical time,
+          i.e., a (potentially negative) count of measures plus a beat location.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.origin.timestamp.musical.attribute.origin.tstamp2">
+    <xs:attribute name="origin.tstamp2" type="mei:mei_data.MEASUREBEAT">
+      <xs:annotation>
+        <xs:documentation>encodes the ending point of musical material in terms of musical time,
+          i.e., a count of measures plus a beat location. The values are relative to the measure
+          identified by @origin.tstamp.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
@@ -16479,6 +16561,7 @@
       <xs:element ref="mei:tie"/>
       <xs:element ref="mei:tupletSpan"/>
       <xs:group ref="mei:mei_model.ornamentLike.cmn"/>
+      <xs:element ref="mei:cpMark"/>
     </xs:choice>
   </xs:group>
   <xs:group name="mei_model.controleventLike.cmn_alternation">
@@ -16496,6 +16579,7 @@
       <xs:element ref="mei:tie"/>
       <xs:element ref="mei:tupletSpan"/>
       <xs:group ref="mei:mei_model.ornamentLike.cmn_alternation"/>
+      <xs:element ref="mei:cpMark"/>
     </xs:choice>
   </xs:group>
   <xs:group name="mei_model.controleventLike.cmn_sequence">
@@ -16513,6 +16597,7 @@
       <xs:element ref="mei:tie"/>
       <xs:element ref="mei:tupletSpan"/>
       <xs:group ref="mei:mei_model.ornamentLike.cmn_sequence"/>
+      <xs:element ref="mei:cpMark"/>
     </xs:sequence>
   </xs:group>
   <xs:group name="mei_model.controleventLike.cmn_sequenceOptional">
@@ -16530,6 +16615,7 @@
       <xs:element minOccurs="0" ref="mei:tie"/>
       <xs:element minOccurs="0" ref="mei:tupletSpan"/>
       <xs:group minOccurs="0" ref="mei:mei_model.ornamentLike.cmn_sequenceOptional"/>
+      <xs:element minOccurs="0" ref="mei:cpMark"/>
     </xs:sequence>
   </xs:group>
   <xs:group name="mei_model.controleventLike.cmn_sequenceOptionalRepeatable">
@@ -16548,6 +16634,7 @@
       <xs:element minOccurs="0" maxOccurs="unbounded" ref="mei:tupletSpan"/>
       <xs:group minOccurs="0" maxOccurs="unbounded"
         ref="mei:mei_model.ornamentLike.cmn_sequenceOptionalRepeatable"/>
+      <xs:element minOccurs="0" maxOccurs="unbounded" ref="mei:cpMark"/>
     </xs:sequence>
   </xs:group>
   <xs:group name="mei_model.controleventLike.cmn_sequenceRepeatable">
@@ -16565,6 +16652,7 @@
       <xs:element maxOccurs="unbounded" ref="mei:tie"/>
       <xs:element maxOccurs="unbounded" ref="mei:tupletSpan"/>
       <xs:group maxOccurs="unbounded" ref="mei:mei_model.ornamentLike.cmn_sequenceRepeatable"/>
+      <xs:element maxOccurs="unbounded" ref="mei:cpMark"/>
     </xs:sequence>
   </xs:group>
   <xs:group name="mei_model.eventLike.cmn">
@@ -18458,6 +18546,32 @@
       </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.cpMark.anl.attributes">
+    <xs:attributeGroup ref="mei:mei_att.common.anl.attributes"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.cpMark.ges.attributes">
+    <xs:attributeGroup ref="mei:mei_att.duration.performed.attributes"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.cpMark.log.attributes">
+    <xs:attributeGroup ref="mei:mei_att.controlevent.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.startendid.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.timestamp2.musical.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.timestamp.musical.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.staffident.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.layerident.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.origin.startendid.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.octavedisplacement.attributes"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="mei_att.cpMark.vis.attributes">
+    <xs:attributeGroup ref="mei:mei_att.altsym.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.color.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.enclosingchars.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.extsym.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.placement.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.typography.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.visualoffset.attributes"/>
+    <xs:attributeGroup ref="mei:mei_att.xy.attributes"/>
+  </xs:attributeGroup>
   <xs:attributeGroup name="mei_att.edit.attributes">
     <xs:attributeGroup ref="mei:mei_att.responsibility.attributes"/>
     <xs:attributeGroup ref="mei:mei_att.source.attributes"/>
@@ -18667,6 +18781,26 @@
       <xs:attributeGroup ref="mei:mei_att.edit.attributes"/>
       <xs:attributeGroup ref="mei:mei_att.lang.attributes"/>
       <xs:attributeGroup ref="mei:mei_att.trans.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.typed.attributes"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="cpMark">
+    <xs:annotation>
+      <xs:documentation>(copy/colla parte mark) – A verbal or graphical indication to copy musical
+        material written elsewhere.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:group ref="mei:mei_model.textphraseLike.limited"/>
+        <xs:element ref="mei:mei_model.editLike"/>
+        <xs:element ref="mei:mei_model.transcriptionLike"/>
+      </xs:choice>
+      <xs:attributeGroup ref="mei:mei_att.common.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.facsimile.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.cpMark.log.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.cpMark.vis.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.cpMark.ges.attributes"/>
+      <xs:attributeGroup ref="mei:mei_att.cpMark.anl.attributes"/>
       <xs:attributeGroup ref="mei:mei_att.typed.attributes"/>
     </xs:complexType>
   </xs:element>
