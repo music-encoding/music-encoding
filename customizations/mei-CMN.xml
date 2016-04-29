@@ -43,19 +43,21 @@
       <divGen type="toc"/>
     </front>
     <body>
-      
+
       <!-- Limit the set of possible start elements -->
       <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
         start="mei meiHead meiCorpus music">
-        
-        <!-- Declare MEI namespace for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron">
+
+        <!-- Declare MEI and XLink namespaces for use in Schematron -->
+        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
           <constraint>
             <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
               uri="http://www.music-encoding.org/ns/mei"/>
+            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="xlink"
+              uri="http://www.w3.org/1999/xlink"/>
           </constraint>
         </constraintSpec>
-        
+
         <!-- Deactivate the mensural and neumes modules -->
         <moduleRef key="MEI"/>
         <moduleRef key="MEI.shared"/>
@@ -85,23 +87,24 @@
         <moduleRef key="MEI.usersymbols"/>
 
         <!-- Include SVG -->
-        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
+        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng"
+          prefix="svg_">
           <content>
             <rng:define name="mei_model.graphicLike" combine="choice">
-              <rng:ref name="svg"/>
+              <rng:ref name="svg_svg"/>
             </rng:define>
           </content>
         </moduleRef>
 
         <!-- Disable mensural- and neume-specific model classes in the shared module -->
         <classSpec ident="model.scorePart.mensuralAndNeumes" module="MEI.shared" type="model"
-          mode="replace"/>
+          mode="delete"/>
         <classSpec ident="model.sectionPart.mensuralAndNeumes" module="MEI.shared" type="model"
-          mode="replace"/>
+          mode="delete"/>
         <classSpec ident="model.staffPart.mensuralAndNeumes" module="MEI.shared" type="model"
-          mode="replace"/>
+          mode="delete"/>
         <classSpec ident="model.layerPart.mensuralAndNeumes" module="MEI.shared" type="model"
-          mode="replace"/>
+          mode="delete"/>
 
       </schemaSpec>
     </body>

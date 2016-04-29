@@ -43,19 +43,21 @@
       <divGen type="toc"/>
     </front>
     <body>
-      
+
       <!-- Limit the set of possible start elements -->
       <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
         start="mei meiHead meiCorpus music">
-        
-        <!-- Declare MEI namespace for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron">
+
+        <!-- Declare MEI and XLink namespaces for use in Schematron -->
+        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
           <constraint>
             <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
               uri="http://www.music-encoding.org/ns/mei"/>
+            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="xlink"
+              uri="http://www.w3.org/1999/xlink"/>
           </constraint>
         </constraintSpec>
-        
+
         <!-- Deactivate the CMN, mensural, cmnOrnaments, and fingering modules -->
         <moduleRef key="MEI"/>
         <moduleRef key="MEI.shared"/>
@@ -87,17 +89,19 @@
         <moduleRef key="MEI.usersymbols"/>
 
         <!-- Include SVG -->
-        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng">
+        <moduleRef url="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng"
+          prefix="svg_">
           <content>
             <rng:define name="mei_model.graphicLike" combine="choice">
-              <rng:ref name="svg"/>
+              <rng:ref name="svg_svg"/>
             </rng:define>
           </content>
         </moduleRef>
 
-        <!-- Remove dur attribute -->
+        <!-- Remove dur attributes -->
         <classSpec ident="att.duration.musical" module="MEI.shared" type="atts" mode="delete"/>
         <classSpec ident="att.duration.additive" module="MEI.shared" type="atts" mode="delete"/>
+        <classSpec ident="att.augmentdots" module="MEI.shared" type="atts" mode="delete"/>
 
         <!-- Disable CMN-specific model classes in the shared module -->
         <classSpec ident="model.sectionPart.cmn" module="MEI.shared" type="model" mode="delete"/>
