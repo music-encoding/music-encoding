@@ -29,9 +29,9 @@
   <p>Every MEI-conformant text not embedded in another XML carrier that provides for capturing
     metadata, such as TEI or METS, must carry a set of descriptions, prefixed to it and encoded as
     described in this chapter. This set is known as the MEI header, tagged <gi scheme="MEI"
-      >meiHead</gi>, and has five major parts:</p>
+      >meiHead</gi>, and has six major parts:</p>
   <list type="ordered">
-    <item>one or more alternative identifiers, tagged with <gi scheme="MEI">altId</gi>, each of
+    <item>zero or more alternative identifiers, tagged with <gi scheme="MEI">altId</gi>, each of
       which provides an identifying name or number associated with the file.</item>
     <item>a <term>file description</term>, tagged <gi scheme="MEI">fileDesc</gi>, containing a full
       bibliographic description of the computer file itself, from which a user of the text could
@@ -42,21 +42,23 @@
       operating system files. The file description also includes information about the source or
       sources from which the electronic document was derived. The MEI elements used to encode the
       file description are described in section <ptr target="#headerFileDescription"/> below.</item>
-    <item>an <term>encoding description</term>, tagged <gi scheme="MEI">encodingDesc</gi>, which
-      describes the relationship between an electronic text and its source or sources. It allows for
-      detailed description of whether (or how) the text was normalized during transcription, how the
-      encoder resolved ambiguities in the source, what levels of encoding or analysis were applied,
-      and similar matters. The MEI elements used to encode the encoding description are described in
-      section <ptr target="#headerEncodingDescription"/> below.</item>
-    <item>a <term>work description</term>, tagged <gi scheme="MEI">workDesc</gi>, containing
-      classification and contextual information about the work, such as its subject matter, the
-      situation in which it was produced, the individuals described by or participating in producing
-      it, and so forth. Such a work profile is of particular use in highly structured composite
-      texts such as corpora or language collections, where it is often highly desirable to enforce a
-      controlled descriptive vocabulary or to perform retrievals from a body of text in terms of
-      text type or origin. The work description may however be of use in any form of automatic text
-      processing. The MEI elements used to encode the <term>work description</term> are described in
-      section <ptr target="#headerWorkDescription"/> below.</item>
+    <item>an optional <term>encoding description</term>, tagged <gi scheme="MEI">encodingDesc</gi>,
+      which describes the relationship between an electronic text and its source or sources. It
+      allows for detailed description of whether (or how) the text was normalized during
+      transcription, how the encoder resolved ambiguities in the source, what levels of encoding or
+      analysis were applied, and similar matters. The MEI elements used to encode the encoding
+      description are described in section <ptr target="#headerEncodingDescription"/> below.</item>
+    <item>an optional <term>work description</term>, tagged <gi scheme="MEI">workDesc</gi>,
+      containing classification and contextual information about the work, such as its subject
+      matter, the situation in which it was produced, the individuals described by or participating
+      in producing it, and so forth. Such a work profile is of particular use in highly structured
+      composite texts such as corpora or language collections, where it is often highly desirable to
+      enforce a controlled descriptive vocabulary or to perform retrievals from a body of text in
+      terms of text type or origin. The work description may however be of use in any form of
+      automatic text processing. The MEI elements used to encode the <term>work description</term>
+      are described in section <ptr target="#headerWorkDescription"/> below.</item>
+    <item>zero or more elements, tagged <gi scheme="MEI">extMeta</gi>, containing non-MEI
+      metadata.</item>
     <item>a <term>revision history</term>, tagged <gi scheme="MEI">revisionDesc</gi>, which allows
       the encoder to provide a history of changes made during the development of the electronic
       text. The revision history is important for <term>version control</term> and for resolving
@@ -94,28 +96,28 @@
       </specList>
     </p>
     <p>A complete file description will resemble the following example:</p>
-    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
 <fileDesc>
-  <titleStmt>
-    <title><!-- title of the resource --></title>
-  </titleStmt>
-  <editionStmt>
-    <!-- information about the edition of the resource -->
-  </editionStmt>
-  <extent><!-- description of the size of the resource --></extent>
-  <pubStmt>
-    <!-- information about the publication and distribution of the resource -->
-  </pubStmt>
-  <seriesStmt>
-    <!-- information about any series to which the resource belongs -->
-  </seriesStmt>
-  <notesStmt>
-    <annot><!-- notes on other aspects of the resource --></annot>
-  </notesStmt>
-  <sourceDesc>
-    <!-- information about the source(s) from which the resource was derived -->
-  </sourceDesc>
-</fileDesc>
+    <titleStmt>
+      <!-- title of the resource -->
+    </titleStmt>
+    <editionStmt>      
+      <!-- information about the edition of the resource -->
+    </editionStmt>
+    <extent><!-- description of the size of the resource --></extent>
+    <pubStmt>
+      <!-- information about the publication and distribution of the resource -->
+    </pubStmt>
+    <seriesStmt>      
+      <!-- information about any series to which the resource belongs -->
+    </seriesStmt>
+    <notesStmt>
+      <!-- notes on other aspects of the resource -->
+    </notesStmt>
+    <sourceDesc>
+      <!-- information about the source(s) from which the resource was derived -->
+    </sourceDesc>
+  </fileDesc>
 </egXML>
     <div xml:id="headerTitleStatement" type="div3">
       <head>Title Statement</head>
@@ -429,12 +431,14 @@
       <p>The use of standard abbreviations for units of quantity is recommended where applicable,
         here as elsewhere (see <ref target="http://physics.nist.gov/cuu/Units/binary.html"
           >http://physics.nist.gov/cuu/Units/binary.html</ref>).</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" valid="false" xml:space="preserve">
-<extent>between 1 MB and 2 MB</extent>
-<extent>4.2 MiB</extent>
-<extent>4532 Mbytes</extent>
-<extent>3200 sentences</extent>
-<extent>5 90-mm high density diskettes</extent>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<physDesc>
+  <extent>between 1 MB and 2 MB</extent>
+  <extent>4.2 MiB</extent>
+  <extent>4532 Mbytes</extent>
+  <extent>3200 sentences</extent>
+  <extent>5 90-mm high density diskettes</extent>
+</physDesc>
 </egXML>
       <p>For ease of processability, the use of the <att>unit</att> attribute is recommended, as in
         the following example:</p>
@@ -478,8 +482,8 @@
           <specDesc key="accessRestrict"/>
           <specDesc key="distributor"/>
           <specDesc key="price"/>
-          <specDesc key="useRestrict"/>
           <specDesc key="sysReq"/>
+          <specDesc key="useRestrict"/>
         </specList>
       </p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
@@ -528,8 +532,8 @@
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <respStmt xmlns="http://www.music-encoding.org/ns/mei">
   <corpName role="publisher">MEI Project</corpName>
-  <corpName role="funder" dbkey="2007744-0" authURI="http://d-nb.info/gnd" authority="GND">German Research Foundation</corpName>
-  <corpName role="funder" dbkey="18183-3" authURI="http://d-nb.info/gnd/18183-3" authority="Deutsche Nationalbibliothek"> National Endowment for the
+  <corpName role="funder" codedval="2007744-0" authURI="http://d-nb.info/gnd" authority="GND">German Research Foundation</corpName>
+  <corpName role="funder" codedval="18183-3" authURI="http://d-nb.info/gnd/18183-3" authority="Deutsche Nationalbibliothek"> National Endowment for the
     Humanities</corpName>
 </respStmt>
 </egXML>
@@ -556,12 +560,12 @@
         specific elements:</p>
       <p>
         <specList>
-          <specDesc key="title"/>
-          <specDesc key="editor"/>
-          <specDesc key="respStmt"/>
-          <specDesc key="identifier"/>
           <specDesc key="contents"/>
+          <specDesc key="editor"/>
+          <specDesc key="identifier"/>
+          <specDesc key="respStmt"/>
           <specDesc key="seriesStmt"/>
+          <specDesc key="title"/>
         </specList>
       </p>
       <p>The <gi scheme="MEI">title</gi>, <gi scheme="MEI">editor</gi> and <gi scheme="MEI"
@@ -780,7 +784,7 @@
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <sourceDesc>
   <source xml:id="header.s1">
-    <identifier>1</identifier>
+    <identifier>s1</identifier>
     <titleStmt>
       <title>Sonata in B-flat major, <identifier>Wq. 62/1 (H.2)</identifier></title>
       <respStmt>
@@ -1150,8 +1154,6 @@
           <specDesc key="incip"/>
           <specDesc key="incipCode"/>
           <specDesc key="incipText"/>
-          <specDesc key="score"/>
-          <specDesc key="graphic"/>
         </specList>
       </p>
       <p>The elements <gi scheme="MEI">incipCode</gi> and <gi scheme="MEI">incipText</gi> are
@@ -1168,23 +1170,44 @@
         </egXML>-->
       <p>Both <gi scheme="MEI">incipCode</gi> and <gi scheme="MEI">incipText</gi> allow reference to
         an external file location via the <att>target</att> attribute and specification of the
-        internet media type of the external file via the <att>mimetype</att> attribute. It is a
-        semantic error not to include one of these attributes.</p>
+        internet media type of the external file via the <att>mimetype</att> attribute.</p>
       <!-- TODO:
        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" >
 <!-\- NEED EXAMPLE HERE! -\->
       </egXML>-->
-      <p>An MEI-encoded incipit may be captured in the <gi scheme="MEI">score</gi> element.</p>
+      <p>An MEI-encoded incipit may be captured in a <gi scheme="MEI">score</gi> sub-element.</p>
       <!-- TODO:
 <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" >
         <!-\- NEED EXAMPLE HERE! -\->
 </egXML>-->
-      <p>In addition, <gi scheme="MEI">graphic</gi> may be used to include an image of an
-        incipit.</p>
+      <p>In addition, <gi scheme="MEI">graphic</gi> may be used as a sub-element of <gi scheme="MEI"
+          >incip</gi> to include an image of an incipit.</p>
       <!-- TODO:
 <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" >
         <!-\- NEED EXAMPLE HERE! -\->
 </egXML>-->
+      <p>To facilitate the capture of metadata associated with an incipit, MEI allows the following
+        sub-elements within <gi scheme="MEI">incip</gi>. The order of their presentation below
+        follows the order in which they must appear in this context.</p>
+      <p>
+        <specList>
+          <specDesc key="tempo"/>
+          <specDesc key="role"/>
+          <specDesc key="clef"/>
+          <specDesc key="clefGrp"/>
+          <specDesc key="perfRes"/>
+          <specDesc key="perfResList"/>
+          <specDesc key="key"/>
+          <specDesc key="meter"/>
+          <specDesc key="mensuration"/>
+          <specDesc key="annot"/>
+        </specList>
+      </p>
+      <p>Usually, the metadata captured in this manner is rendered alongside or in lieu of a coded
+        or graphical incipit. It may or may not serve in a work identification capacity, depending
+        on whether the incipit is intended to represent the entire work or a segment of the work.
+        For example, if an incipit is provided for each aria in an opera, then the metadata pertains
+        only to the aria, not the entire work.</p>
     </div>
     <div xml:id="headerWorkKeyTempoMeter" type="div3">
       <head>Key, Tempo, and Meter</head>
@@ -1230,9 +1253,9 @@
       <p>
         <specList>
           <specDesc key="creation"/>
-          <specDesc key="history"/>
-          <specDesc key="eventList"/>
           <specDesc key="event"/>
+          <specDesc key="eventList"/>
+          <specDesc key="history"/>
         </specList>
       </p>
       <p>The <gi scheme="MEI">creation</gi> element is intended to contain a brief,
@@ -1273,7 +1296,7 @@
         language identifier. This is particularly important if extended language identifiers have
         been used as the value of @xml:lang attributes elsewhere in the document.</p>
       <p>Here is an example of the use of this element:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
 <langUsage>
   <language xml:id="fr-CA">Québecois</language>
   <language xml:id="en-CA">Canadian English</language>
@@ -1291,9 +1314,9 @@
         forces:</p>
       <p>
         <specList>
+          <specDesc key="castList"/>
           <specDesc key="perfMedium"/>
           <specDesc key="perfResList"/>
-          <specDesc key="castList"/>
         </specList>
       </p>
       <p>The <gi scheme="MEI">perfMedium</gi> element provides the possibility of describing a work
@@ -1310,8 +1333,8 @@
         <p>
           <specList>
             <specDesc key="castList"/>
-            <specDesc key="castItem"/>
             <specDesc key="castGrp"/>
+            <specDesc key="castItem"/>
           </specList>
         </p>
         <p>Cast lists often function as identifying metadata and for this reason are permitted
@@ -1501,12 +1524,14 @@
         <p>The <gi scheme="MEI">perfRes</gi> element provides the <att>codedval</att> attribute,
           which can be used to record a coded value that represents the string value stored as the
           element's content. It is recommended that coded values be taken from a standardized list,
-          such as the International Association of Music Libraries' Medium of performance Codes List
-          or the MARC Instruments and Voices Code List.</p>
+          such as the <ref target="http://www.urfm.braidense.it/risorse/searchmedium_en.php"
+            >International Association of Music Libraries' Medium of Performance Codes List</ref> or
+          the <ref target="http://www.loc.gov/standards/valuelist/marcmusperf.html">MARC Instruments
+            and Voices Code List</ref>.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <perfMedium>
   <perfResList>
-    <!-- @code contains values from the MARC Instruments and Voices Code List -->
+    <!-- @codedval contains values from the MARC Instruments and Voices Code List -->
     <perfRes codedval="ba">Horn</perfRes>
     <perfRes codedval="bb">Trumpet</perfRes>
     <perfRes codedval="bd">Trombone</perfRes>
@@ -1525,7 +1550,7 @@
 </perfResList>
 </egXML>
         <p>Music for a single player should, however, never use the <att>solo</att> attribute.</p>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
 <!-- This is an example of what not to do -->
 <perfResList>
   <perfRes solo="true">Piano</perfRes>
@@ -1633,6 +1658,7 @@
       <p>
         <specList>
           <specDesc key="termList"/>
+          <specDesc key="term"/>
           <specDesc key="classCode"/>
         </specList>
       </p>
@@ -1643,8 +1669,9 @@
         minor; in others, the list has an organized substructure of its own. No recommendations are
         made here as to which method is to be preferred. Wherever possible, such terms should be
         taken from a recognized source.</p>
-      <p>The classCode element offers the possibility of capturing a bibliographic citation and/or a
-        URI at which the classification scheme or information about it may be found.</p>
+      <p>The <gi scheme="MEI">classCode</gi> element offers the possibility of capturing a
+        bibliographic citation and/or a URI at which the classification scheme or information about
+        it may be found.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <classCode xml:id="header.LoC_lccoA">Library of Congress subject headings. Prepared by the
   Cataloging Policy and Support Office, Collections Services. Washington, D.C.: Library of
@@ -1705,6 +1732,33 @@
           target="#FRBR"/>.</p>
     </div>
 
+  </div>
+  <div xml:id="headerExtendedMetadata" type="div2">
+    <head>Other Metadata</head>
+    <p>The following element is provided to accommodate non-MEI metadata:</p>
+    <p>
+      <specList>
+        <specDesc key="extMeta"/>
+      </specList>
+    </p>
+    <p>The <gi scheme="MEI">extMeta</gi> element may contain text and any number of well-formed XML
+      fragments, XML comments, and CDATA sections, except for MEI markup, which is prohibited. The
+      document element of each fragment must explicitly declare its namespace.</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<extMeta>
+  <!-- MARC (Machine-Readable Cataloging) title info -->
+  <datafield ind1="1" ind2="0" tag="245" xmlns="http://www.loc.gov/MARC21/slim">
+    <subfield code="a">Simple dreams :</subfield>
+    <subfield code="b">a musical memoir /</subfield>
+    <subfield code="c">Linda Ronstadt.</subfield>
+  </datafield>
+</extMeta>
+    </egXML>
+    <p>An MEI processor is not required to validate or otherwise process any markup within the <gi
+        scheme="MEI">extMeta</gi> element. Therefore, the <gi scheme="MEI">extMeta</gi> element
+      itself is the lowest level at which an association can be created between
+        <soCalled>foreign</soCalled> metadata and other MEI elements as described in section <ptr
+        target="#headerAssociatingMetadataAndData"/>.</p>
   </div>
   <div xml:id="headerRevisionDescription" type="div2">
     <head>Revision Description</head>
@@ -1803,7 +1857,7 @@
     </titleStmt>
     <pubStmt>
       <respStmt>
-        <corpName dbkey="5115204-6" authURI="http://d-nb.info/gnd" authority="GND">Musikwissenschaftliches Seminar &lt;Detmold&gt;</corpName>
+        <corpName codedval="5115204-6" authURI="http://d-nb.info/gnd" authority="GND">Musikwissenschaftliches Seminar &lt;Detmold&gt;</corpName>
       </respStmt>
     </pubStmt>
   </fileDesc>
@@ -1938,46 +1992,46 @@
           especially with respect to bibliographic citations.</item>
       </list>
     </div>
-    <div xml:id="headerBiblAnalog" type="div3">
-      <head>Header Elements and their Relationship to Other Bibliographic Standards</head>
-      <p>Mapping elements from the MEI metadata header to another descriptive system may help a
-        repository harvest selected data from the MEI file to build a basic catalog record. For this
-        purpose, the following attribute is provided on most meiHead elements:</p>
-      <p>
-        <specList>
-          <specDesc key="att.bibl" atts="analog"/>
-        </specList>
-      </p>
-      <p>The encoding system to which fields are mapped must be specified in <att>analog</att>. When
-        possible, subfields as well as fields should be specified, e.g., subfields within MARC
-        fields.</p>
-      <!-- TODO:
+  </div>
+  <div xml:id="headerBiblAnalog" type="div2">
+    <head>Header Elements and their Relationship to Other Bibliographic Standards</head>
+    <p>Mapping elements from the MEI metadata header to another descriptive system may help a
+      repository harvest selected data from the MEI file to build a basic catalog record. For this
+      purpose, the following attribute is provided on most elements occurring within <gi
+        scheme="MEI">meiHead</gi>:</p>
+    <p>
+      <specList>
+        <specDesc key="att.bibl" atts="analog"/>
+      </specList>
+    </p>
+    <p>The encoding system to which fields are mapped must be specified in <att>analog</att>. When
+      possible, subfields as well as fields should be specified, e.g., subfields within MARC
+      fields.</p>
+    <!-- TODO:
 <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" >
         <!-\- NEED EXAMPLE HERE! -\->
 </egXML>-->
-      <!-- TODO: Add reference to #namesDates here? Kristina has covered this, I guess… -->
-    </div>
+    <!-- TODO: Add reference to #namesDates here? Kristina has covered this, I guess… -->
   </div>
   <div xml:id="headerRelatedItemVsFRBR" type="div2">
-
     <head>RelatedItem vs. FRBR</head>
-    <p> MEI offers two related concepts for capturing relations between bibliographic items. The
+    <p>MEI offers two related concepts for capturing relations between bibliographic items. The
       model of <gi scheme="MEI">relatedItem</gi>, as described in chapter <ptr
         target="#sharedRelatedItemDesc"/> of these Guidelines, is derived from MODS v3.4 (see
       documentation <ref
         target="http://www.loc.gov/standards/mods/v3/mods-userguide-elements.html#relateditem"
         >here</ref>). Its purpose in MEI is to encode bibliographic references between mostly
       "secondary" material, like reviews, articles, and so on. It may be used to provide
-      cross-references between information encoded in different places of the header. </p>
+      cross-references between information encoded in different places of the header.</p>
     <!-- TODO: Provide example here… -->
-    <p> However, <gi scheme="MEI">relatedItem</gi> is less ideal for describing the relations
-      between works, differing versions of these works, the sources in which those versions are
-      transmitted, and where applicable the individual copies of a print. For these situations, it
-      is strongly recommended to use the <ref target="#FRBR">FRBR module</ref> instead. This module
-      is based on the Functional Requirements for Bibliographic Records, as <ref
+    <p>However, <gi scheme="MEI">relatedItem</gi> is less ideal for describing the relations between
+      works, differing versions of these works, the sources in which those versions are transmitted,
+      and where applicable the individual copies of a print. For these situations, it is strongly
+      recommended to use the <ref target="#FRBR">FRBR module</ref> instead. This module is based on
+      the Functional Requirements for Bibliographic Records, as <ref
         target="http://www.ifla.org/publications/functional-requirements-for-bibliographic-records"
         >specified</ref> by the <ref target="http://www.ifla.org">IFLA</ref>. It allows a much finer
       description of relationships between such "primary" entities. For compatibility reasons, both
-      models should not be confused or mixed under any circumstances. </p>
+      models should not be confused or mixed under any circumstances.</p>
   </div>
 </div>
