@@ -2369,6 +2369,8 @@
     </macroSpec>
     <macroSpec ident="data.NOTATIONTYPE" module="MEI" type="dt">
       <desc>Notation type and subtype</desc>
+      <!--<valItem ident="neume.heighted"><desc>Heighted neumatic notation</desc></valItem>
+          <valItem ident="neume.unheighted"><desc>Unheighted neumatic notation</desc></valItem>-->
       <content>
         <valList type="closed">
           <valItem ident="cmn">
@@ -2386,8 +2388,6 @@
           <valItem ident="neume">
             <desc>Neumatic notation.</desc>
           </valItem>
-          <!--<valItem ident="neume.heighted"><desc>Heighted neumatic notation</desc></valItem>
-              <valItem ident="neume.unheighted"><desc>Unheighted neumatic notation</desc></valItem>-->
           <valItem ident="tab">
             <desc>Tablature notation.</desc>
           </valItem>
@@ -3185,10 +3185,10 @@
       <desc>Logical domain attributes for annot. Values for the type attribute can be taken from any
         convenient typology of annotation suitable to the work in hand; e.g. annotation, gloss,
         citation, digression, preliminary, temporary, etc.</desc>
+      <!-- Some attributes defined in att.controlevent (att.timestamp.musical, att.timestamp.performed,
+           att.staffident, and att.layerident) are provided here directly instead of making annot a 
+           member of att.controlevent. -->
       <classes>
-        <!-- Some attributes defined in att.controlevent (att.timestamp.musical, att.timestamp.performed,
-              att.staffident, and att.layerident) are provided
-              here directly instead of making annot a member of att.controlevent. -->
         <memberOf key="att.augmentdots"/>
         <memberOf key="att.duration.additive"/>
         <memberOf key="att.layerident"/>
@@ -4939,12 +4939,9 @@
             SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
             <rng:data type="string">
-              <!-- a hexadecimal number in one of two common formats -->
               <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
             </rng:data>
           </datatype>
-          <!-- This rule only checks the length of @glyphnum. More complex constraints are 
-                needed to display a warning when @glyphnum is outside the range defined by SMuFL. -->
           <constraintSpec ident="check_glyphnum" scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:*[starts-with(@glyphnum, 'U+')]">
@@ -6023,10 +6020,9 @@
             <rng:data type="language"/>
           </datatype>
         </attDef>
+        <!--There is no standard list of transliteration schemes.-->
         <attDef ident="translit" usage="opt">
-          <desc>Specifies the transliteration technique used.
-            <!--There is no standard list of transliteration schemes.-->
-          </desc>
+          <desc>Specifies the transliteration technique used.</desc>
           <datatype>
             <rng:data type="NMTOKEN"/>
           </datatype>
@@ -6570,9 +6566,9 @@
     <classSpec ident="att.mensur.ges" module="MEI.mensural" type="atts">
       <desc>Gestural domain attributes.</desc>
     </classSpec>
-    <classSpec ident="att.mensur.log" module="MEI.shared" type="atts">
-      <!-- This class must be in the shared module because mensur (in the mensural module) and
+    <!-- att.mensur.log must be in the shared module because mensur (in the mensural module) and
       mensuration (in the header module) share these attributes. -->
+    <classSpec ident="att.mensur.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
       <classes>
         <memberOf key="att.duration.ratio"/>
@@ -8729,7 +8725,7 @@
             adjacent staff line.</desc>
           <datatype>
             <rng:data type="token">
-              <!-- px and vu are *not* allowed here -->
+              <!-- px and vu are *not* allowed here because they're not real-world units -->
               <rng:param name="pattern">\d+(\.\d+)?(cm|mm|in|pt|pc)</rng:param>
             </rng:data>
           </datatype>
@@ -10101,8 +10097,7 @@
         need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
       <attList>
         <attDef ident="refrain" usage="opt">
-          <desc>Used to indicate a common, usually centered, refrain.
-            <!-- (Mup User's Guide, p. 44) --></desc>
+          <desc>Used to indicate a common, usually centered, refrain.</desc>
           <datatype>
             <rng:ref name="data.BOOLEAN"/>
           </datatype>
@@ -15271,6 +15266,9 @@
         <memberOf key="att.typed"/>
         <memberOf key="model.incipLike"/>
       </classes>
+      <!-- Can XSLT be used within content to "select" an incipit from the already-encoded MEI 
+        transcription in the music element?
+        <rng:ref name="macro.XSLT"/> -->
       <content>
         <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
@@ -15309,10 +15307,6 @@
             <rng:ref name="model.scoreLike"/>
             <rng:ref name="model.graphicLike"/>
             <rng:ref name="annot"/>
-            <!-- 
-              Can XSLT be used here to "select" an incipit from the already-encoded MEI transcription in the music element?
-              <rng:ref name="macro.XSLT"/> 
-            -->
           </rng:choice>
         </rng:zeroOrMore>
       </content>
