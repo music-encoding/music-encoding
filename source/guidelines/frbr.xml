@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2012 by the Music Encoding Initiative (MEI) Council.
+  © 2016 by the Music Encoding Initiative (MEI).
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://www.osedu.org/licenses/ECL-2.0.
+  at http://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -16,8 +16,7 @@
   
   CONTACT: info@music-encoding.org
 -->
-
-<div type="div1" xml:id="FRBR" n="1" xmlns="http://www.tei-c.org/ns/1.0">
+<div xmlns="http://www.tei-c.org/ns/1.0" type="div1" xml:id="FRBR" n="1">
   <head>Functional Requirements for Bibliographic Records (FRBR)</head>
   <p>MEI header information may refer to different levels of description of the encoded work: Some
     information may apply the work in all its various forms and realizations, e.g., the name of its
@@ -30,8 +29,8 @@
     International Federation of Library Associations and Institutions (IFLA) [<ref
       target="http://www.ifla.org/publications/functional-requirements-for-bibliographic-records"
       >http://www.ifla.org/publications/functional-requirements-for-bibliographic-records</ref>].</p>
-  <p> The IFLA’s FRBR model distinguishes four levels of abstraction, or entities: <list
-      type="gloss">
+  <p>The IFLA’s FRBR model distinguishes four levels of abstraction, or entities:</p>
+  <p><list type="gloss">
       <label>Work</label>
       <item>FRBR defines a work as a "distinct intellectual or artistic creation", an abstract
         entity because there is no single material object one can point to as the work.</item>
@@ -51,7 +50,6 @@
         manuscript may be regarded as a manifestation having only one item.</item>
     </list>
   </p>
-
   <div type="div2" xml:id="FRBRentities">
     <head>FRBR Entities in MEI</head>
     <p>When the FRBR module is available, MEI offers four elements corresponding to the FRBR
@@ -74,7 +72,9 @@
     <p>The <gi scheme="MEI">work</gi> element has an optional child element to hold the expression
       elements:</p>
     <p>
-      <specDesc key="expressionList"/>
+      <specList>
+        <specDesc key="expressionList"/>
+      </specList>
     </p>
     <p>As <gi scheme="MEI">expressionList</gi> is a container element for descriptions of different
       expressions of the same work, it may contain only <gi scheme="MEI">expression</gi>
@@ -96,23 +96,23 @@
       no title is provided for an expression, distinguishing characteristics must be provided in
       other elements, such as <gi scheme="MEI">perfMedium</gi>, as in the following example:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<work>
+<work xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Pavane pour une infante défunte</title>
   </titleStmt>
   <expressionList>
     <expression>
       <perfMedium>
-        <instrumentation>
-          <instrVoice>piano</instrVoice>
-        </instrumentation>
+        <perfResList>
+          <perfRes>piano</perfRes>
+        </perfResList>
       </perfMedium>
     </expression>
     <expression>
       <perfMedium>
-        <instrumentation>
-          <ensemble>orchestra</ensemble>
-        </instrumentation>
+        <perfResList>
+          <perfRes>orchestra</perfRes>
+        </perfResList>
       </perfMedium>
     </expression>
   </expressionList>
@@ -125,7 +125,7 @@
       descriptive title to the expression, as illustrated below. The carrier of the manifestation is
       often a good source of this kind of descriptive text.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<work>
+<work xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Pavane pour une infante défunte</title>
   </titleStmt>
@@ -135,9 +135,9 @@
         <title>Version for piano</title>
       </titleStmt>
       <perfMedium>
-        <instrumentation>
-          <instrVoice>piano</instrVoice>
-        </instrumentation>
+        <perfResList>
+          <perfRes>piano</perfRes>
+        </perfResList>
       </perfMedium>
     </expression>
     <expression>
@@ -145,16 +145,16 @@
         <title>Version for orchestra</title>
       </titleStmt>
       <perfMedium>
-        <instrumentation>
-          <ensemble>orchestra</ensemble>
-        </instrumentation>
+        <perfResList>
+          <perfRes>orchestra</perfRes>
+        </perfResList>
       </perfMedium>
     </expression>
   </expressionList>
 </work>
     </egXML>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<work>
+<work xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Sonata No. 2</title>
   </titleStmt>
@@ -172,16 +172,19 @@
   </expressionList>
 </work>
     </egXML>
-    <p>
-      <specDesc key="itemList"/>
-    </p>
     <p>The itemList element provides functionality similar to that of expressionList; that is, it
       can be used to group descriptions of individual items (exemplars) of the parent source. Just
       like <gi scheme="MEI">expressionList</gi>, which can only hold <gi scheme="MEI"
         >expression</gi> sub-components, <gi scheme="MEI">itemList</gi> may only contain <gi
         scheme="MEI">item</gi> elements.</p>
+    <p>
+      <specList>
+        <specDesc key="itemList"/>
+        <specDesc key="item"/>
+      </specList>
+    </p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<source>
+<source xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Trois trios pour le piano-forte violon, et violoncelle</title>
   </titleStmt>
@@ -206,11 +209,13 @@
   </egXML>
   </div>
   <div type="div2" xml:id="FRBRcomponents">
-    <head>Component Parts in MEI</head>
+    <head>Component Parts in FRBR</head>
     <p>Each of the four MEI elements corresponding to FRBR entities may contain a list of
       constituent parts. All four entities utilize the same element:</p>
     <p>
-      <specDesc key="componentGrp"/>
+      <specList>
+        <specDesc key="componentGrp"/>
+      </specList>
     </p>
     <p>However, the child elements of a component group must be the same type as the group's parent.
       This allows for a more detailed description than is possible using the core MEI <gi
@@ -219,7 +224,7 @@
       this way, the <gi scheme="MEI">componentGrp</gi> element may be employed to describe composite
       works, as in the example below:</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<work>
+<work xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Der Ring des Nibelungen</title>
   </titleStmt>
@@ -251,7 +256,7 @@
       physical parts. In the following example, the choral parts were published in four physically
       separate "signatures":</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<source xml:id="source.printed_choral_parts">
+<source xml:id="source.printed_choral_parts" xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Printed choral parts</title>
   </titleStmt>
@@ -304,6 +309,7 @@
     <p>
       <specList>
         <specDesc key="relationList"/>
+        <specDesc key="relation"/>
         <specDesc key="relation" atts="rel"/>
       </specList>
     </p>
@@ -311,29 +317,32 @@
       allows a list of such relationship descriptions as its last child element. <gi scheme="MEI"
         >relationList</gi> provides a container for individual <gi scheme="MEI">relation</gi>
       elements. The nature of the relationship must be specified by the <att>rel</att> attribute and
-      the target of the relationship must be identified by the <att>target</att> attribute.</p>
+      the target of the relationship must be identified by the <att>target</att> attribute. The
+      values allowed by <att>rel</att> follow those defined for FRBR at <ref
+        target="http://www.ifla.org/files/assets/cataloguing/frbr/frbr_2008.pdf"
+        >http://www.ifla.org/files/assets/cataloguing/frbr/frbr_2008.pdf</ref>.</p>
     <p>Since relations are bidirectional, they may be defined on both entities involved, using pairs
       of oppositely-directed relation descriptors. The following FRBR relations are allowed in MEI
-      as values of the relation element’s @rel attribute (shown in pairs for clarity): <list
-        type="simple">
-        <item>hasSuccessor / isSuccessorOf</item>
-        <item>hasSupplement / isSupplementOf</item>
-        <item>hasComplement / isComplementOf</item>
-        <item>hasSummarization / isSummarizationOf</item>
-        <item>hasAdaptation / isAdaptationOf</item>
-        <item>hasTransformation / isTransformationOf</item>
-        <item>hasImitation / isImitationOf</item>
-        <item>hasPart / isPartOf</item>
-        <item>hasReproduction / isReproductionOf</item>
+      as values of the relation element’s <att>rel</att> attribute (shown in pairs for clarity):
+        <list type="simple">
         <item>hasAbridgement / isAbridgementOf</item>
-        <item>hasRevision / isRevisionOf</item>
-        <item>hasTranslation / isTranslationOf</item>
-        <item>hasArrangement / isArrangementOf</item>
+        <item>hasAdaptation / isAdaptationOf</item>
         <item>hasAlternate / isAlternateOf</item>
-        <item>hasReconfiguration / isReconfigurationOf</item>
-        <item>hasRealization / isRealizationOf</item>
+        <item>hasArrangement / isArrangementOf</item>
+        <item>hasComplement / isComplementOf</item>
         <item>hasEmbodiment / isEmbodimentOf</item>
         <item>hasExemplar / isExemplarOf</item>
+        <item>hasImitation / isImitationOf</item>
+        <item>hasPart / isPartOf</item>
+        <item>hasRealization / isRealizationOf</item>
+        <item>hasReconfiguration / isReconfigurationOf</item>
+        <item>hasReproduction / isReproductionOf</item>
+        <item>hasRevision / isRevisionOf</item>
+        <item>hasSuccessor / isSuccessorOf</item>
+        <item>hasSummarization / isSummarizationOf</item>
+        <item>hasSupplement / isSupplementOf</item>
+        <item>hasTransformation / isTransformationOf</item>
+        <item>hasTranslation / isTranslationOf</item>
       </list>
     </p>
     <p>Some of these relationships are already implicitly expressed by the MEI structural model:
@@ -341,15 +350,15 @@
       by the expressionList element’s child relationship to its parent work element, the
       hasRealization/isRealizationOf relation does not need to be explicitly declared. Likewise, it
       is not necessary to specify by means of relation elements that an item is an exemplar of the
-      source described by its parent source element. This resembles the FRBR model, which knows 1:n 
-      relationships both between works and expressions, and manifestations and items.</p> 
-    <p>However, as FRBR allows n:n relations between expressions and manifestations (in MEI: sources),
-      a hierarchical model based on the strucutre of XML is clearly insufficient to express all 
-      possible expression / manifestation combinations. It is therefore required to declare these
-      relations explicitly. In FRBR
-      terms, a manifestation / source is an embodiment of an expression.</p>
+      source described by its parent source element. This resembles the FRBR model, which allows 1:n
+      relationships both between works and expressions, and between manifestations and items.</p>
+    <p>However, as FRBR allows n:n relations between expressions and manifestations (in MEI:
+      sources), a hierarchical model based on the strucutre of XML is clearly insufficient to
+      express all possible expression / manifestation combinations. It is therefore required to
+      declare these relations explicitly. In FRBR terms, a manifestation / source is an embodiment
+      of an expression.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<source>
+<source xmlns="http://www.music-encoding.org/ns/mei">
   <titleStmt>
     <title>Score, first edition</title>
   </titleStmt>
@@ -365,7 +374,7 @@
       defined by encoding order or hierarchy. For instance, the hasReproduction/isReproductionOf
       relationship may be used to indicate that one source is a reprint of another.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<source>
+<source xmlns="http://www.music-encoding.org/ns/mei">
   <pubStmt>
     <publisher>Horneman &amp; Erslev</publisher>
     <pubPlace>Copenhagen</pubPlace>
@@ -382,7 +391,7 @@
       component works in the "Der Ring des Nibelungen" example above could alternatively be encoded
       as sibling work elements to the "Ring" work element.</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<workDesc>
+<workDesc xmlns="http://www.music-encoding.org/ns/mei">
   <work xml:id="theRing">
     <titleStmt>
       <title>Der Ring des Nibelungen</title>
@@ -433,7 +442,7 @@
       pointing to them.</p>
     <p>In the file "ring.xml":</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<workDesc>
+<workDesc xmlns="http://www.music-encoding.org/ns/mei">
   <work>
     <titleStmt>
       <title>Der Ring des Nibelungen</title>
@@ -449,7 +458,7 @@
     </egXML>
     <p>In the file "rheingold.xml":</p>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<workDesc>
+<workDesc xmlns="http://www.music-encoding.org/ns/mei">
   <work>
     <titleStmt>
       <title>Das Rheingold</title>

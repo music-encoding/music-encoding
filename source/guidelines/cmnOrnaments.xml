@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2012 by the Music Encoding Initiative (MEI) Council.
+  © 2016 by the Music Encoding Initiative (MEI).
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://www.osedu.org/licenses/ECL-2.0.
+  at http://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -89,14 +89,14 @@
         considered defaults. Nevertheless, because of the great historical and geographical variance
         in the notation of ornaments, the encoder is given methods to override the default
         resolutions.</p>
-      <p>It is possible, for example, to specify in the <gi scheme="MEI">meiHeader</gi> a new
-        default sounded resolution for an ornament. As discussed in the section <ptr
-          target="#encodingDescription"/>, the element <gi scheme="MEI">encodingDesc</gi> holds a
-        description (optional, but recommended) of the methods and editorial principles which govern
-        the transcription or encoding of the source material. Let us take a trill as an example. The
-        section regarding <ref target="#cmnOrnamentsTrills">trills</ref> does not set a specific
-        number of alternations between the principal and secondary notes; the encoder, however, may
-        specify an exact number in the encoding description.</p>
+      <p>It is possible, for example, to specify in the <gi scheme="MEI">meiHead</gi> a new default
+        sounded resolution for an ornament. As discussed in the section <ptr
+          target="#headerEncodingDescription"/>, the element <gi scheme="MEI">encodingDesc</gi>
+        holds a description (optional, but recommended) of the methods and editorial principles
+        which govern the transcription or encoding of the source material. Let us take a trill as an
+        example. The section regarding <ref target="#cmnOrnamentsTrills">trills</ref> does not set a
+        specific number of alternations between the principal and secondary notes; the encoder,
+        however, may specify an exact number in the encoding description.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <encodingDesc>
   <editorialDecl>
@@ -121,7 +121,9 @@
 
     <p>
       <specList>
-        <specDesc key="mordent" atts="form accidlower accidupper long"/>
+        <specDesc key="mordent"/>
+        <specDesc key="mordent" atts="form long"/>
+        <specDesc key="att.ornamentaccid" atts="accidlower accidupper"/>
       </specList>
     </p>
 
@@ -162,9 +164,9 @@
 </measure>
     </egXML>
 
-    <p>Occasionally, mordents can be longer, employing five notes instead of three. The <gi
-        scheme="MEI">long</gi> attribute can be used to identify mordents of this type. The
-      following example shows the encoding of a long mordent:</p>
+    <p>Occasionally, mordents can be longer, employing five notes instead of three. The
+        <att>long</att> attribute can be used to identify mordents of this type. The following
+      example shows the encoding of a long mordent:</p>
     <figure>
       <head>Example of a long mordent</head>
       <graphic url="Images/modules/cmnOrnaments/ex_mordent_l.png" height="100px"/>
@@ -233,27 +235,29 @@
       <graphic url="Images/modules/cmnOrnaments/ex_trill_wavy.png"/>
     </figure>
     <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<scoreDef>
-  <staffGrp>
-    <staffDef n="1" lines="5" clef.line="2" clef.shape="G" key.sig="2f"/>
-  </staffGrp>
-</scoreDef>
-<section>
-  <measure n="1">
-    <staff n="1">
-      <layer n="1">
-        <note dur="4" oct="4" pname="f" stem.dir="up"/>
-        <note dur="4" oct="5" pname="d" stem.dir="up"/>
-        <note dur="4" oct="5" pname="d" stem.dir="down"/>
-        <note dur="4" oct="5" pname="g" stem.dir="down"/>
-      </layer>
-    </staff>
-    <trill staff="1" place="above" tstamp="1" tstamp2="2"/>
-    <trill staff="1" place="above" tstamp="2" tstamp2="3"/>
-    <trill staff="1" place="above" tstamp="3" tstamp2="4" accidupper="n"/>
-    <trill staff="1" place="above" tstamp="4" tstamp2="5" accidupper="f"/>
-  </measure>
-</section>
+<score>
+  <scoreDef>
+    <staffGrp>
+      <staffDef n="1" lines="5" clef.line="2" clef.shape="G" key.sig="2f"/>
+    </staffGrp>
+  </scoreDef>
+  <section>
+    <measure n="1">
+      <staff n="1">
+        <layer n="1">
+          <note dur="4" oct="4" pname="f" stem.dir="up"/>
+          <note dur="4" oct="5" pname="d" stem.dir="up"/>
+          <note dur="4" oct="5" pname="d" stem.dir="down"/>
+          <note dur="4" oct="5" pname="g" stem.dir="down"/>
+        </layer>
+      </staff>
+      <trill staff="1" place="above" tstamp="1" tstamp2="2"/>
+      <trill staff="1" place="above" tstamp="2" tstamp2="3"/>
+      <trill staff="1" place="above" tstamp="3" tstamp2="4" accidupper="n"/>
+      <trill staff="1" place="above" tstamp="4" tstamp2="5" accidupper="f"/>
+    </measure>
+  </section>
+</score>
     </egXML>
 
     <p>Chromatic alterations of auxiliary notes are occasionally expressed on the staff using small
@@ -381,10 +385,11 @@
         interchangeably in the past. The following example, taken from <title>Klavierbüchlein für
           Wilhelm Friedemann Bach</title> (1720), shows a trill (<q>Trillo</q>) identified by the
         symbol associated with a mordent in modern practice. Nonetheless, J.S. Bach's suggested
-        resolution should be encoded with a variant of the procedure presented above. In the example
-        below, the child elements of <gi scheme="MEI">choice</gi>; that is, <gi scheme="MEI"
-          >orig</gi> and <gi scheme="MEI">reg</gi>, represent non-exclusive options; that is, both
-        may be processed by applications that aim to support both visual and aural renditions.</p>
+        resolution should be encoded with a variant of the procedure presented above.</p>
+      <p>In the example below, the child elements of <gi scheme="MEI">choice</gi>; that is, <gi
+          scheme="MEI">orig</gi> and <gi scheme="MEI">reg</gi>, represent non-exclusive options;
+        that is, both may be processed by applications that aim to support both visual and aural
+        renditions.</p>
       <figure>
         <head>Trill transcribed from J.S. Bach's <title>Klavierbüchlein für Wilhelm Friedemann
             Bach</title> (1720)</head>
@@ -412,6 +417,43 @@
   </choice>
 </measure>
       </egXML>
+
+      <p>Depending on the purpose of the encoding, it may be more convenient to encode the
+        regularized text within the stream of events, along with a corresponding choice with regard
+        to the existence of the trill marking, as in the following example:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <staff>
+    <layer>
+      <choice>
+        <orig>
+          <note dur="4" oct="5" pname="c" stem.dir="down"/>
+        </orig>
+        <reg>
+          <note dur="32" oct="5" pname="d"/>
+          <note dur="32" oct="5" pname="c"/>
+          <note dur="32" oct="5" pname="d"/>
+          <note dur="32" oct="5" pname="c"/>
+          <note dur="32" oct="5" pname="d"/>
+          <note dots="1" dur="16" oct="5" pname="c"/>
+        </reg>
+      </choice>
+    </layer>
+  </staff>
+  <choice>
+    <orig>
+      <trill place="above" staff="1" tstamp="1"/>
+    </orig>
+    <reg/>
+  </choice>
+</measure>
+      </egXML>
+      <p>The <gi scheme="MEI">orig</gi> element contains the single-note-with-trill transcription of
+        the original text, while the <gi scheme="MEI">reg</gi> element represents the
+        realization-without-trill version.</p>
+      <p>This approach facilitates substitution of the realization of the trill for the original
+        written note (as well as the opposite procedure) and is therefore the recommended markup for
+        applications where exchange of this kind is desirable.</p>
     </div>
 
   </div>
@@ -426,7 +468,8 @@
 
     <p>
       <specList>
-        <specDesc key="turn" atts="form delayed accidlower accidupper"/>
+        <specDesc key="turn" atts="form delayed"/>
+        <specDesc key="att.ornamentaccid" atts="accidlower accidupper"/>
       </specList>
     </p>
 
@@ -434,16 +477,18 @@
       typology of the turn.</p>
 
     <p>The attribute <att>form</att> accepts the following values:</p>
-    <list type="gloss">
-      <label>norm</label>
-      <item> - usually corresponding to the symbol: <graphic
-          url="Images/modules/cmnOrnaments/turn.png" width="30px"/>. This turn is commonly performed
-        beginning on a note higher than the principal note.</item>
-      <label>inv</label>
-      <item> - usually corresponding to the symbol: <graphic
-          url="Images/modules/cmnOrnaments/inv_turn.png" width="30px"/>. This turn is commonly
-        performed beginning on a note lower than the principal note.</item>
-    </list>
+    <p>
+      <list type="gloss">
+        <label>norm</label>
+        <item> - usually corresponding to the symbol: <graphic
+            url="Images/modules/cmnOrnaments/turn.png" width="30px"/>. This turn is commonly
+          performed beginning on a note higher than the principal note.</item>
+        <label>inv</label>
+        <item> - usually corresponding to the symbol: <graphic
+            url="Images/modules/cmnOrnaments/inv_turn.png" width="30px"/>. This turn is commonly
+          performed beginning on a note lower than the principal note.</item>
+      </list>
+    </p>
 
     <p>The following example shows the encoding of a simple turn:</p>
     <figure>
@@ -491,6 +536,33 @@
   <turn tstamp="2.75" place="above" staff="1" accidlower="s"/>
 </measure>
     </egXML>
+  </div>
+
+  <div xml:id="cmnOrnamentsOther" type="div2">
+    <head>Other Ornaments</head>
+    <p>CMN ornaments that are not mordents, trills, or turns can be encoded with a generic <gi
+        scheme="MEI">ornam</gi>.</p>
+    <p>This element allows the encoder to represent ornaments as textual strings (e.g. with a
+      Unicode symbol) or with a user defined symbol. Chromatic auxiliaries can be represented with
+        <att>accidlower</att> and <att>accidupper</att>. The <gi scheme="MEI">ornam</gi> element can
+      also be a control element. That is, it can be linked via its attributes to other events. The
+      starting point of the directive may be indicated by either a tstamp, tstamp.ges, tstamp.real
+      or startid attribute, while the ending point may be recorded by either a tstamp2, dur, dur.ges
+      or endid attribute. It is a semantic error not to specify a starting point attribute.</p>
+    <p>For example, Johann Sebastian Bach used non-standard ornaments in the <title>Klavierbüchlein
+        für Wilhelm Friedemann Bach</title>:</p>
+    <figure>
+      <head>Table of ornaments used by Johann Sebastian Bach in the Klavierbüchlein für Wilhelm
+        Friedemann Bach</head>
+      <graphic url="Images/modules/cmnOrnaments/JSBtableofornaments.jpg" height="100px"/>
+    </figure>
+    <p>The ornament for <q>(5) doppelt-cadence</q> could be encoded in the following way, by
+      adopting the Unicode code-points defined by the SMuFL standard:</p>
+    <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<ornament tstamp="1">&amp;#xe5c0;</ornament>
+    </egXML>
+    <p>A resolution, or expansion of the ornament can be provided as discussed in <ptr
+        target="cmnOrnamentsTrillsSpecial"/> below.</p>
   </div>
 
   <div xml:id="cmnOrnamentsMultiple" type="div2">

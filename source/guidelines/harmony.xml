@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2012 by the Music Encoding Initiative (MEI) Council.
+  © 2016 by the Music Encoding Initiative (MEI).
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://www.osedu.org/licenses/ECL-2.0.
+  at http://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -22,56 +22,8 @@
   <p>This chapter describes the encoding of indications of harmony ocurring within a music text,
     e.g., chord names, tablature grids, figured bass, or signs for harmonic analysis, and the
     methods by which these indications can be connected with their interpretations. For
-    encoder-supplied analysis of intervallic content, please see chapter <ptr target="#analysis"/>. </p>
-
-  <div type="div2" xml:id="harmonyOverview">
-    <head>Overview of the Harmony Module</head>
-    <p>The module makes available the following components:</p>
-
-    <div type="div3" xml:id="harmonyElements">
-      <head>Elements</head>
-      <p>The following elements are provided by the harmony module:</p>
-      <p>
-        <specList>
-          <specDesc key="barre"/>
-          <specDesc key="chordDef"/>
-          <specDesc key="chordMember"/>
-          <specDesc key="chordTable"/>
-          <specDesc key="f"/>
-          <specDesc key="fb"/>
-          <specDesc key="harm"/>
-        </specList>
-      </p>
-    </div>
-
-    <div type="div3" xml:id="harmonyAttributeClasses">
-      <head>Attribute Classes</head>
-      <p>The harmony module contains the following attribute classes:</p>
-      <p>
-        <specList>
-          <specDesc key="att.fretlocation"/>
-          <specDesc key="att.harm.anl"/>
-          <specDesc key="att.harm.ges"/>
-          <specDesc key="att.harm.log"/>
-          <specDesc key="att.harm.vis"/>
-        </specList>
-      </p>
-    </div>
-
-    <div type="div3" xml:id="harmonyModelClasses">
-      <head>Model Classes</head>
-      <p>The following model classes are enabled by the harmony module:</p>
-      <p>
-        <specList>
-          <specDesc key="model.chordTableLike"/>
-          <specDesc key="model.controleventLike.harmony"/>
-          <specDesc key="model.figbassLike"/>
-          <specDesc key="model.fLike"/>
-          <specDesc key="model.harmLike"/>
-        </specList>
-      </p>
-    </div>
-  </div>
+    encoder-supplied analysis of intervallic content, please see chapter <ptr target="#analysis"
+    />.</p>
 
   <div type="div2" xml:id="harmonyDetails">
     <head>Indications of Harmony</head>
@@ -83,7 +35,7 @@
       </specList>
     </p>
     <p>Additional information on the use of the <gi scheme="MEI">chord</gi> element is available in
-        <ptr target="#basicEvents"/> and <ptr target="#cmnNotesChords"/>.</p>
+        <ptr target="#sharedBasicEvents"/> and <ptr target="#cmnNotesChords"/>.</p>
     <p>With only this kind of markup, harmonic information is implicit in the notes themselves. The
       elements and attributes of this module, however, provide for the encoding of explicit
       indications of harmony, such as chord symbols, tablature grids, figured bass signs, and the
@@ -102,8 +54,11 @@
       <p>
         <specList>
           <specDesc key="chordTable"/>
+          <specDesc key="chordDef"/>
           <specDesc key="chordDef" atts="pos"/>
+          <specDesc key="chordMember"/>
           <specDesc key="chordMember" atts="inth fing fret"/>
+          <specDesc key="barre"/>
           <specDesc key="barre" atts="fret"/>
         </specList>
       </p>
@@ -124,7 +79,7 @@
         indications found in the musical text. For example, the harmonic label <q>A</q> can be
         equated with a fully spelled-out indication of functional harmony that can be substituted
         for the harmonic label, say, in an aural rendition:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
 <!-- Chord defined in scoreDef -->
 <chordDef xml:id="harmonychordA">
   <chordMember pname="a" oct="2"/>
@@ -198,9 +153,11 @@
       </p>
       <p>The <gi scheme="MEI">harm</gi> element can be used to capture chord labels that consist
         entirely of text:</p>
-      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
-<harm tstamp="1">Cmaj</harm>
-<harm tstamp="2">ii6</harm>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <harm tstamp="1">Cmaj</harm>
+  <harm tstamp="2">ii6</harm>
+</measure>
       </egXML>
       <p>or labels that are chord tablature grids:</p>
       <figure>
@@ -339,19 +296,21 @@
           <head>Figured bass with alternative sign</head>
           <graphic url="Images/modules/harmony/figuredBass06.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
-<harm tstamp="1">
-  <fb>
-    <f>&#x0311;</f>
-    <f extender="true">5</f>
-    <f altsym="combo2plus">2+</f>
-  </fb>
-</harm>
-<harm tstamp="3">
-  <fb>
-    <f>3</f>
-  </fb>
-</harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
+<measure>
+  <harm tstamp="1">
+    <fb>
+      <f>&#x0311;</f>
+      <f extender="true">5</f>
+      <f altsym="combo2plus">2+</f>
+    </fb>
+  </harm>
+  <harm tstamp="3">
+    <fb>
+      <f>3</f>
+    </fb>
+  </harm>
+</measure>
         </egXML>
 
         <p>Because the repertoire of signs is so large, figures which consist entirely of a mark
@@ -379,50 +338,54 @@
           <head>Extenders and repetition</head>
           <graphic url="Images/modules/harmony/figuredBass09.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
-<harm tstamp="3.5">
-  <fb>
-    <f>&#x266D;3</f>
-    <f>6</f>
-    <f>5</f>
-  </fb>
-</harm>
-<harm tstamp="4">
-  <fb>
-    <f>-</f>
-    <f>&#x266F;3</f>
-  </fb>
-</harm>
-<harm tstamp="4.5">
-  <fb>
-    <f>7</f>
-    <f>-</f>
-  </fb>
-</harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <harm tstamp="3.5">
+    <fb>
+      <f>&#x266D;3</f>
+      <f>6</f>
+      <f>5</f>
+    </fb>
+  </harm>
+  <harm tstamp="4">
+    <fb>
+      <f>-</f>
+      <f>&#x266F;3</f>
+    </fb>
+  </harm>
+  <harm tstamp="4.5">
+    <fb>
+      <f>7</f>
+      <f>-</f>
+    </fb>
+  </harm>
+</measure>
         </egXML>
 
         <p>Using <att>extender</att> attributes for this example may make it easier to render the
           figured bass symbol, but it is less explicit with regard to the intended harmony. For
           example, it is difficult to ascertain what harmony should be sounding on beat 4 and its
           after-beat.</p>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
-<harm tstamp="3.5">
-  <fb>
-    <f>&#x266D;3</f>
-    <f extender="true">6</f>
-    <f>5</f>
-  </fb>
-</harm>
-<harm tstamp="4">
-  <fb>
-    <f extender="true">&#x266F;3</f>
-  </fb>
-</harm>
-<harm tstamp="4.5">
-  <fb>
-    <f>7</f>
-  </fb>
-</harm>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<measure>
+  <harm tstamp="3.5">
+    <fb>
+      <f>&#x266D;3</f>
+      <f extender="true">6</f>
+      <f>5</f>
+    </fb>
+  </harm>
+  <harm tstamp="4">
+    <fb>
+      <f extender="true">&#x266F;3</f>
+    </fb>
+  </harm>
+  <harm tstamp="4.5">
+    <fb>
+      <f>7</f>
+    </fb>
+  </harm>
+</measure>
         </egXML>
 
         <p>The primary goal of <gi scheme="MEI">fb</gi> is not the capture all the visual
@@ -436,35 +399,43 @@
           <head>Figured bass with alternative sign</head>
           <graphic url="Images/modules/harmony/figuredBass10.png"/>
         </figure>
-        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="false">
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- Ex. a -->
-<harm tstamp="3">
-  <fb>
-    <f>8</f>
-    <f altsym="#my6_1" facs="#source6_1">6&#x266E;</f>
-    <f>4+</f>
-    <f>2</f>
-  </fb>
-</harm>
-<harm tstamp="4">
-  <fb>
-    <f altsym="#my6_2" facs="#source6_2">6\</f>
-    <f>4</f>
-    <f>3</f>
-  </fb>
-</harm>
+<measure>
+  <harm tstamp="3">
+    <fb>
+      <f>8</f>
+      <f altsym="#my6_1" facs="#source6_1">6&#x266E;</f>
+      <f>4+</f>
+      <f>2</f>
+    </fb>
+  </harm>
+  <harm tstamp="4">
+    <fb>
+      <f altsym="#my6_2" facs="#source6_2">6\</f>
+      <f>4</f>
+      <f>3</f>
+    </fb>
+  </harm>
+</measure>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- Ex. b -->
 <harm tstamp="4.5">
   <fb>
     <f>6\</f>
   </fb>
 </harm>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!--  Ex. c -->
 <harm tstamp="1">
   <fb>
     <f>5/</f>
   </fb>
 </harm>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!--  Ex. d -->
 <harm>
   <fb>

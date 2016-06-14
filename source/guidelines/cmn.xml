@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2012 by the Music Encoding Initiative (MEI) Council.
+  © 2016 by the Music Encoding Initiative (MEI).
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://www.osedu.org/licenses/ECL-2.0.
+  at http://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -91,21 +91,25 @@
         their original order in the document, so they also possess <att>n</att> and <att>def</att>
         attributes for association with the appropriate layer definition.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<staffDef xml:id="cmn_staffDef1" n="3">
+<staffDef>
   <layerDef xml:id="cmn_layerDef1" n="1"/>
 </staffDef>
-<!-- later in the file: -->
-<staff def="#cmn_staffDef1">
-  <layer def="#cmn_layerDef1">
-    <!-- layer content -->
-  </layer>
-</staff>
-<!-- OR: -->
-<staff n="3">
-  <layer n="1">
-    <!-- layer content -->
-  </layer>
-</staff>
+      </egXML>
+      <p>Later in the file:</p>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
+<section xml:id="cmn_staffDef1">
+  <staff def="#cmn_staffDef1">
+    <layer def="#cmn_layerDef1">
+      <!-- layer content -->
+    </layer>
+  </staff>
+  <!-- OR: -->
+  <staff n="3">
+    <layer n="1">
+      <!-- layer content -->
+    </layer>
+  </staff>
+</section>
       </egXML>
     </div>
 
@@ -139,10 +143,12 @@
         text and music:</p>
       <p>
         <specList>
-          <specDesc key="scoreDef" atts="page.width page.height page.leftmar page.topmar
-            page.rightmar page.bottommar system.leftmar system.topmar system.rightmar
+          <specDesc key="scoreDef"
+            atts="page.width page.height page.leftmar page.topmar
+            page.rightmar page.botmar system.leftmar system.topmar system.rightmar
             text.name text.fam text.size music.name music.size lyric.name lyric.fam
-            lyric.size"/>
+            lyric.size"
+          />
         </specList>
       </p>
       <p>There are other attributes that allow the specification of many further details of a score.
@@ -282,13 +288,14 @@
       <div type="div4" xml:id="cmnNotes">
         <head>Notes</head>
         <p>Undoubtedly, the most important element for any music notation representation is the <gi
-            scheme="MEI">note</gi> element, which is defined in section <ptr target="#basicEvents"
-          />. This section describes the usage of <gi scheme="MEI">note</gi> in the CMN repertoire
-          as well as CMN-specific additions to the basic definition in the shared module.</p>
+            scheme="MEI">note</gi> element, which is defined in section <ptr
+            target="#sharedBasicEvents"/>. This section describes the usage of <gi scheme="MEI"
+            >note</gi> in the CMN repertoire as well as CMN-specific additions to the basic
+          definition in the shared module.</p>
         <div type="div5" xml:id="cmnNotesBasic">
           <head>Basic Usage of Notes in CMN</head>
           <p>In CMN, notes are determined by three basic parameters:</p>
-          <list>
+          <list type="bulleted">
             <item>pitch name (using <att>pname</att>)</item>
             <item>octave (using <att>oct</att>)</item>
             <item>duration (using <att>dur</att>)</item>
@@ -303,7 +310,9 @@
               <gi scheme="MEI">chord</gi> parent in the same <gi scheme="MEI">layer</gi>. Only
             information from <att>pname</att>, <att>oct</att> and <att>dur</att> attributes can be
             gathered in this fashion. No other attributes can be treated this way.</p>
-
+          <p>The default values for <att>pname</att> and <att>oct</att> conform to the Acoustical
+            Society of America representation for pitch name; that is, the letters A - G, albeit in
+            lower case, and the numbers 0 - 9.</p>
           <p>The usual CMN-specific values for <att>dur</att> are:</p>
           <list type="gloss">
             <label>1</label>
@@ -332,8 +341,8 @@
           <p>Please note that their mensural counterparts bear different names in order to clearly
             distinguish between repertoires.</p>
           <p>Dotted durational values are accommodated by the <att>dots</att> attribute, which
-            records the number of written augmentation dots. Thus, a dotted quarter note may is
-            represented:</p>
+            records the number of written augmentation dots. Thus, a dotted quarter note is
+            represented as in the following example:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <note pname="c" oct="4" dur="4" dots="1"/>
           </egXML>
@@ -342,7 +351,7 @@
           <head>Grace Notes</head>
           <p>The CMN module adds two optional attributes, <att>grace</att> and
             <att>grace.time</att>, to <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi>.
-            The presence of the <att>grace</att> attribute indicates a grace note.</p>
+            The presence of the <att>grace</att> attribute indicates a grace note or chord.</p>
           <figure>
             <head>Grace notes</head>
             <graphic url="Images/modules/cmn/grace-300.png" width="500px"/>
@@ -383,9 +392,6 @@
         </div>
         <div type="div5" xml:id="cmnNotesStems">
           <head>Stem Modifications</head>
-          <p>The CMN module makes the <ident type="class">att.stemmed.cmn</ident> attribute class
-            available, which adds the optional <att>stem.mod</att> and <att>stem.with</att>
-            attributes to <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi>.</p>
           <p>The <att>stem.mod</att> attribute accommodates various stem modifiers found in the CMN
             repertoire. These symbols are placed on a note or chord's stem and generally indicate
             different types of tremolo and <term>Sprechstimme</term>. The following values are
@@ -415,54 +421,58 @@
             <!-\- NEED EXAMPLE HERE! -\->
           </egXML>-->
 
-          <p>The attribute <att>stem.with</att> allows for the indication of a stem that joins notes
-            on adjacent staves.</p>
+          <p>The CMN module makes the <ident type="class">att.stems.cmn</ident> attribute class
+            available, which adds the optional <att>stem.with</att> attribute to <gi scheme="MEI"
+              >note</gi> and <gi scheme="MEI">chord</gi>. The attribute <att>stem.with</att> allows
+            for the indication of a stem that joins notes on adjacent staves.</p>
           <figure>
             <head>Cross-staff chord</head>
             <graphic url="Images/modules/cmn/xchord-300.png" width="500px"/>
           </figure>
-          <p>The following code snippet demonstrates one method of encoding the first chord in the
-            last measure in the image above. The <att>stem.with</att> attribute must occur on all
-            the notes or chords attached to the cross-staff stem.</p>
+          <p>The following code demonstrates one method of encoding the first chord in the last
+            measure in the image above. The <att>stem.with</att> attribute must occur on all the
+            notes or chords attached to the cross-staff stem.</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<staff n="1">
-  <layer n="1">
-    <note pname="d" oct="4" dur="2" stem.with="below"/>
-  </layer>
-</staff>
-<staff n="2">
-  <layer n="1">
-    <chord dur="2" stem.with="above">
-      <note pname="b" oct="3" accid="n"/>
-      <note pname="f" oct="3"/>
-    </chord>
-  </layer>
-</staff>
+<measure>
+  <staff n="1">
+    <layer n="1">
+      <note pname="d" oct="4" dur="2" stem.with="below"/>
+    </layer>
+  </staff>
+  <staff n="2">
+    <layer n="1">
+      <chord dur="2" stem.with="above">
+        <note pname="b" oct="3" accid="n"/>
+        <note pname="f" oct="3"/>
+      </chord>
+    </layer>
+  </staff>
+</measure>
           </egXML>
           <p>Alternatively, the encoder may choose to treat the notes in the lower staff as
             logically belonging to the top staff and to <soCalled>displace</soCalled> them using the
               <att>staff</att> attribute on <gi scheme="MEI">note</gi>. Some use cases, however, may
             require filling the time that those notes would normally occupy using the <gi
-              scheme="MEI">space</gi> element described in section <ptr target="#noteSpacing"/>.
-            Using this mechanism, the example above could also be encoded like so:</p>
+              scheme="MEI">space</gi> element described in section <ptr target="#sharedNoteSpacing"
+            />. Using this mechanism, the example above could also be encoded like so:</p>
           <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<staff n="1">
-  <layer n="1">
-    <chord dur="2">
-      <note pname="d" oct="4"/>
-      <note pname="b" oct="3" staff="2" accid="n"/>
-      <note pname="f" oct="3" staff="2"/>
-    </chord>
-    <!-- following content -->
-  </layer>
-</staff>
-<staff n="2">
-  <layer n="1">
-    <!-- the time used by the notes on staff 2 filled with non-sounding "space" -->
-    <space dur="2"/>
-    <!-- following content -->
-  </layer>
-</staff>
+<measure>
+  <staff n="1">
+    <layer n="1">
+      <chord dur="2">
+        <note pname="d" oct="4"/>
+        <note pname="b" oct="3" staff="2" accid="n"/>
+        <note pname="f" oct="3" staff="2"/>
+      </chord>
+    </layer>
+  </staff>
+  <staff n="2">
+    <layer n="1">
+      <!-- the time used by the notes on staff 2 filled with non-sounding "space" -->
+      <space dur="2"/>
+    </layer>
+  </staff>
+</measure>
           </egXML>
 
           <p>The choice between these two methods of representing material that crosses staves is
@@ -491,10 +501,10 @@
               <gi scheme="MEI">mRest</gi>. If <att>cutout</att> is set to
               <soCalled>cutout</soCalled> (the only value allowed), then the complete staff
             including the staff lines will not be rendered for this measure.</p>
-          <figure>
+          <!--<figure>
             <head>Measure rest</head>
-            <!-- TODO: Add image here -->
-          </figure>
+            <!-\- TODO: Add image here -\->
+          </figure>-->
           <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <staff>
   <layer>
@@ -561,15 +571,16 @@
         (inherited by <ident type="class">att.controlevent</ident>) and <ident type="class"
           >att.duration.musical</ident>, both from the shared module.</p>
       <p>The <term>timestamp</term> (<att>tstamp</att>) of a musical event is calculated in relation
-        to the meter of the current measure and resembles the so-called <soCalled>beat</soCalled>.
-        In a common time measure with four quarter notes, the timestamp of each quarter equals its
-        beat position in the measure: The first quarter has a timestamp of 1, the second has a
-        timestamp of 2, and so on. MEI defines the value of <att>tstamp</att> as a real number; the
-        second eighth note position in a measure would thus be represented by the value of "1.5".
-        The range of possible values is defined as starting with zero and ending with the number of
-        metrical units in a measure (the <soCalled>numerator</soCalled> in a time signature) + 1.
-        This allows the capture of all graphical positions starting from the left barline ('0') and
-        ending with the right barline of the measure ('5', in the case of 4/4 time).</p>
+        to the meter of the current measure and resembles the so-called <soCalled>beat</soCalled>
+        position. In a common time measure with four quarter notes, the timestamp of each quarter
+        equals its beat position in the measure: The first quarter has a timestamp of 1, the second
+        has a timestamp of 2, and so on. MEI defines the value of <att>tstamp</att> as a real
+        number; the second eighth note position in a measure would thus be represented by the value
+        of "1.5". The range of possible values is defined as starting with zero and ending with the
+        number of metrical units in a measure (the <soCalled>numerator</soCalled> in a time
+        signature) + 1. This allows the capture of all graphical positions starting from the left
+        barline ('0') and ending with the right barline of the measure ('5', in the case of 4/4
+        time).</p>
       <p>For expressing durations, MEI offers the <att>dur</att> attribute. This attribute is
         described in section <ptr target="#cmnNotesBasic"/>.</p>
       <p>For <soCalled>spanning</soCalled> elements like slurs, which are members of the <ident
@@ -577,15 +588,15 @@
         two timestamps – one for the onset of the event and one for its termination. Because the
         termination of the event may be in a succeeding measure, the second timestamp
           (<att>tstamp2</att>) has a slightly different datatype than the one marking the initiation
-        of the event. Its datatype is constrained to values following the formula "<hi rend="italic"
-          >x</hi>m+<hi rend="italic">y</hi>", where <hi rend="italic">x</hi> is the number of full
-        measures that this particular feature lasts (or the number of bar lines crossed) and <hi
-          rend="italic">y</hi> is the timestamp in the target measure where the feature ends. The
-        timestamp is expressed using the same logic as described above. For example, a value of
-        "0m+3" in 4/4 time indicates that the element bearing this attribute, a slur for example,
-        ends on beat 3 of the same measure where it started. A value of "1m+1.5" would indicate an
-        end on the second eighth note of the following measure. In 6/8 time, the value "2m+3" means
-        that the feature ends two measures later on the third eighth note.</p>
+        of the event. Its datatype is constrained to values following the formula "<emph>xm +
+          y</emph>", where <emph>x</emph> is the number of full measures that this particular
+        feature lasts (or the number of bar lines crossed) and <emph>y</emph> is the timestamp in
+        the target measure where the feature ends. The timestamp is expressed using the same logic
+        as described above. For example, a value of "0m+3" in 4/4 time indicates that the element
+        bearing this attribute, a slur for example, ends on beat 3 of the same measure where it
+        started. A value of "1m+1.5" would indicate an end on the second eighth note of the
+        following measure. In 6/8 time, the value "2m+3" means that the feature ends two measures
+        later on the third eighth note.</p>
     </div>
     <!--<div type="div3" xml:id="cmnIMT1to6datatype">
       <head>Spanning Features in Single-pass Encodings</head>
@@ -594,7 +605,7 @@
       </p>
     </div>-->
   </div>
-  <div type="div2" xml:id="additionalMeasureContent">
+  <div type="div2" xml:id="cmnAdditionalMeasureContent">
     <head>Advanced CMN Features</head>
     <p>Over time, in addition to the basic features of note, chord, and rest, many other symbols
       have been added to CMN. The following section describes some of these symbols and introduces
@@ -648,7 +659,7 @@
         example:</p>
       <figure>
         <head>Primary and secondary beams</head>
-        <graphic url="Images/ExampleImages/beam-a-20100510" width="500px"/>
+        <graphic url="Images/ExampleImages/beam-a-20100510.png" width="500px"/>
       </figure>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <layer>
@@ -843,25 +854,27 @@
       <p>One of the most specific features of CMN is the use of <soCalled>curved lines</soCalled>
         which connect notes. These lines are used to indicate various musical features, depending on
         their context.</p>
-      <p>A <term>tie</term> is a curved line connecting <hi rend="bold">two</hi> notes of the <hi
-          rend="bold">same pitch</hi>. The purpose of a tie is to join the durations of both notes,
-        so that the first note sounds for the combined duration. In other words, there is only one
-        onset for both notes.</p>
+      <p>A <term>tie</term> is a curved line connecting <emph>two</emph> notes of the <emph>same
+          pitch</emph>. The purpose of a tie is to join the durations of both notes, so that the
+        first note sounds for the combined duration. In other words, there is only one onset for
+        both notes.</p>
       <p>In MEI, ties can be encoded in different ways, depending on the level of detail that the
         encoder wants to preserve. The simplest solution is to use the <att>tie</att> attribute
         found on <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi>.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<note pname="f" oct="4" dur="2" tie="i"/>
-<note pname="f" oct="4" dur="4" dots="1" tie="t"/>
+<layer>
+  <note pname="f" oct="4" dur="2" tie="i"/>
+  <note pname="f" oct="4" dur="4" dots="1" tie="t"/>
+</layer>
       </egXML>
 
       <p>This attribute allows three values:</p>
       <list type="gloss">
-        <label><emph>i</emph> (initial)</label>
+        <label>i (initial)</label>
         <item> - Marks the start of a tie</item>
-        <label><emph>m</emph> (medial)</label>
+        <label>m (medial)</label>
         <item> - Marks a participant in a tie other than the first or last</item>
-        <label><emph>t</emph> (terminal)</label>
+        <label>t (terminal)</label>
         <item> - Marks the end of a tie</item>
       </list>
 
@@ -1050,8 +1063,8 @@
           <foreign>Phrasierungsbogen</foreign>), whereas the <gi scheme="MEI">slur</gi> element is
         used as a generic element for all curved lines (in German: <foreign>Bogensetzung</foreign>)
         except ties. All three elements have nearly identical models.</p>
-      <p>Aother reason for using elements instead of attributes for ties, slurs, and phrase marks is
-        that only elements may be combined with the functionality provided in chapters <ptr
+      <p>Another reason for using elements instead of attributes for ties, slurs, and phrase marks
+        is that only elements may be combined with the functionality provided in chapters <ptr
           target="#editTrans"/> and <ptr target="#critApp"/> of these Guidelines.</p>
       <p>Although these elements are allowed within a <gi scheme="MEI">layer</gi> to accommodate
         unmeasured notation, by convention in CMN they are normally placed inside <gi scheme="MEI"
@@ -1126,10 +1139,10 @@
       <head>Dynamics in CMN</head>
       <p>Common Music Notation provides two different methodologies for expressing the volume of a
         note, phrase, section, etc. The first is a verbal instruction providing such information in
-        human language, possibly in an abbreviated form. An example is the word <term><hi
-            rend="italic">piano</hi></term>, indicating a quiet volume, often abbreviated as
-            <term><hi rend="italic">p</hi></term>. In MEI, verbal instructions like this are encoded
-        using the <gi scheme="MEI">dynam</gi> element from the Shared module (see chapter <ptr
+        human language, possibly in an abbreviated form. An example is the word
+            <term><emph>piano</emph></term>, indicating a quiet volume, often abbreviated as
+            <term><emph>p</emph></term>. In MEI, verbal instructions like this are encoded using the
+          <gi scheme="MEI">dynam</gi> element from the Shared module (see chapter <ptr
           target="#shared"/>):</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <dynam>p</dynam>
@@ -1150,8 +1163,10 @@
           <att>layer</att> attribute may be used to associate a dynamic marking with a particular
         layer:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<dynam staff="1" layer="1">p</dynam>
-<dynam staff="1" layer="2">mf</dynam>
+<measure>
+  <dynam layer="1" tstamp="1">p</dynam>
+  <dynam layer="2" tstamp="1">mf</dynam>
+</measure>
       </egXML>
 
       <p>A value in the range 0-127 may be assigned to a dynamic marking using the <att>val</att>
@@ -1198,6 +1213,8 @@
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- using the tstamp2 attribute -->
 <dynam staff="2" place="above" tstamp="2.5" tstamp2="1m+1">cresc. poco a poco</dynam>
+      </egXML>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- using the endid attribute -->
 <dynam staff="2" place="above" tstamp="2.5" endid="ID_of_ending_note">cresc. poco a poco</dynam>
       </egXML>
@@ -1205,18 +1222,24 @@
       <p>Any combination of <att>tstamp</att>, <att>startid</att>, <att>tstamp2</att>, and
           <att>endid</att> attributes may be used to define the scope of a dynamic, although the
           <att>tstamp</att> and <att>tstamp2</att> or the <att>startid</att> and <att>endid</att>
-        combinations are the most likely combinations. For example, the following alternatives are
+        combinations are the most logical combinations. For example, the following alternatives are
         all possibilities for encoding up a <term>crescendo</term>. The choice of attributes is
         often task or processor dependent.</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- tstamp attribute indicates starting point, dur attribute marks the end -->
 <dynam staff="2" place="above" tstamp="2.5" tstamp2="1m+1">cresc. poco a poco</dynam>
+      </egXML>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- tstamp attribute indicates starting point, endid attribute marks the end -->
 <dynam staff="2" place="above" tstamp="2.5" endid="ID of last note">cresc. poco a
   poco</dynam>
+      </egXML>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- startid attribute indicates starting point, tstamp2 attribute marks the end -->
 <dynam staff="2" place="above" startid="ID_of_starting_note" tstamp2="1m+1">cresc. poco a
   poco</dynam>
+      </egXML>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- startid attribute indicates starting point, endid attribute marks the end -->
 <dynam staff="2" place="above" startid="ID_of_starting_note" endid="ID_of_ending_note">cresc. poco
   a poco</dynam>
@@ -1226,7 +1249,7 @@
         specified using the <att>plist</att> attribute, which contains <att>xml:id</att> attribute
         value references:</p>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<dynam staff="2" place="above" startid="#note1" endid="#note4" plist="#note1 #note2   #note3 #note4">cresc. poco a poco</dynam>
+<dynam staff="2" place="above" startid="#note1" endid="#note4" plist="#note1 #note2 #note3 #note4">cresc. poco a poco</dynam>
       </egXML>
 
       <p>It is recommended that the list of references in <att>plist</att> include all participants
@@ -1301,7 +1324,7 @@
         replacement for, the bracket. The <att>num.format</att> attribute indicates whether a plain
         number (the value of <att>num</att>) or a ratio (comprised of <att>num</att> and
           <att>numbase</att>, e.g., "3:2") should be displayed and <att>num.visible</att> indicates
-        the general presence of such a number. </p>
+        the general presence of such a number.</p>
       <!--<egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
         <!-\- NEED EXAMPLE HERE! -\->
       </egXML>-->
@@ -1349,13 +1372,13 @@
         following elements are relevant in this context:</p>
       <p>
         <specList>
+          <specDesc key="arpeg"/>
           <specDesc key="bend"/>
           <specDesc key="bTrem"/>
+          <specDesc key="fermata"/>
           <specDesc key="fTrem"/>
           <specDesc key="gliss"/>
-          <specDesc key="arpeg"/>
           <specDesc key="octave"/>
-          <specDesc key="fermata"/>
         </specList>
       </p>
       <div type="div4" xml:id="cmnArpegGliss">
@@ -1392,7 +1415,7 @@
           arrowhead and the direction of the arpeggio are handled separately, however. The
             <att>arrow</att> attribute indicates the presence of an arrowhead in the arpeggiation
           sign, while the <att>order</att> attribute records the preferred sequence of notes.</p>
-        <p>The following example illustrates various ways in which the arrow and order attributes
+        <p>The following examples illustrate various ways in which the arrow and order attributes
           may be employed. The default visual rendition and performance are assumed in the absence
           of both attributes, while the typical downward arpeggio is indicated by the presence of
           both attributes. The last two possibilities occur less frequently, but are sometimes
@@ -1406,10 +1429,16 @@
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- default visualization and performance -->
 <arpeg staff="2" tstamp="3"/>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- downward arpeggio with arrow added to visual symbol -->
 <arpeg staff="2" tstamp="3" order="down" arrow="true"/>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- default rendition with (redundant) arrow added to the top of the visual symbol -->
 <arpeg staff="2" tstamp="3" arrow="true"/>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <!-- downward arpeggio with no visual indication of order -->
 <arpeg staff="2" tstamp="3" order="down"/>
         </egXML>
@@ -1458,8 +1487,8 @@
           of a note. Typically, the performer attacks the note at <soCalled>true</soCalled> pitch,
           changes the intonation, then returns to true pitch. The <gi scheme="MEI">bend</gi> element
           can also be used for so-called scoop, plop, falloff, and doit performance effects. It
-          should <hi rend="bold">not</hi> be used for laissez vibrer (l.v.) indications. As with
-          other control events, the starting point of the bend may be indicated by either a tstamp,
+          should <emph>not</emph> be used for laissez vibrer (l.v.) indications. As with other
+          control events, the starting point of the bend may be indicated by either a tstamp,
           tstamp.ges, tstamp.real or startid attribute. It is a semantic error not to specify a
           starting attribute.</p>
       </div>
@@ -1484,7 +1513,7 @@
             >note</gi> or <gi scheme="MEI">chord</gi> element that is to be repeated.</p>
         <figure>
           <head>Bowed tremolandi</head>
-          <graphic url="Images/ExampleImages/btrem-a-20100510" width="500px"/>
+          <graphic url="Images/ExampleImages/btrem-a-20100510.png" width="500px"/>
         </figure>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <bTrem>
@@ -1554,11 +1583,14 @@
           requires the use of such attributes as <att>staff</att>, <att>layer</att>,
             <att>tstamp</att> and <att>startid</att>, allows specification of the orientation of the
           fermata using its <att>form</att> attribute. In addition, the <att>shape</att> attribute
-          may be used to indicate whether the fermata is rendered as a semicircle ("curved") or
-          semisquare ("square"). If the fermata should be rendered using some other symbol, a
-          user-defined symbol may be referred to using the <att>altsym</att> attribute.</p>
+          may be used to indicate whether the fermata is rendered as a semicircle ("curved"),
+          semisquare ("square"), or triangle ("angular"). If the fermata should be rendered using
+          some other symbol, a user-defined symbol may be referred to using an <att>altsym</att> or
+            <att>extsym</att> attribute.</p>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <fermata staff="2" tstamp="4" form="inv" place="above" shape="square"/>
+        </egXML>
+        <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <fermata staff="2" tstamp="5" place="above" altsym="#myFermata.1"/>
         </egXML>
 
@@ -1569,7 +1601,7 @@
           written pitch is represented by the <gi scheme="MEI">octave</gi> element.</p>
         <figure>
           <head>Octave displacement</head>
-          <graphic url="Images/ExampleImages/octave-a-20100510" width="500px"/>
+          <graphic url="Images/ExampleImages/octave-a-20100510.png" width="500px"/>
         </figure>
         <p>Its <att>dis</att> and <att>dis.place</att> attributes record the amount and direction of
           displacement, respectively. The <att>rend</att> attribute captures the appearance of the
@@ -1591,11 +1623,10 @@
         <head>Breath Marks</head>
         <p>A <term>breath mark</term> indicates a point at which the performer of a wind instrument
           or singer may breathe. It is sometimes also used to indicate a short pause or break for
-          instruments <hi rend="italic">not</hi> requiring breath, which allows it to also serve as
-          a guide to phrasing. In MEI, breath marks are encoded using the <gi scheme="MEI"
-            >breath</gi> element, which is a member of <ident type="class"
-            >model.controleventLike</ident>. It is a semantic error not to specify a starting point
-          attribute.</p>
+          instruments <emph>not</emph> requiring breath, which allows it to also serve as a guide to
+          phrasing. In MEI, breath marks are encoded using the <gi scheme="MEI">breath</gi> element,
+          which is a member of <ident type="class">model.controleventLike</ident>. It is a semantic
+          error not to specify a starting point attribute.</p>
         <!-- TODO: Add schematron rule enforcing tstamp or startid on breath. -->
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <measure>
@@ -1657,9 +1688,9 @@
         <p>The meaning of the mark is captured using the <att>dir</att> attribute, which provides
           the following values:</p>
         <list type="gloss">
-          <label>up</label>
-          <item> - depress the pedal</item>
           <label>down</label>
+          <item> - depress the pedal</item>
+          <label>up</label>
           <item> - release the pedal</item>
           <label>bounce</label>
           <item> - release, then immediately depress the pedal again</item>
@@ -1794,7 +1825,7 @@
         within a square or circle. In MEI, they are encoded using the <gi scheme="MEI">reh</gi>
         element, which holds the textual content of the rehearsal mark. The visual rendition of the
         rehearsal mark, including the surrounding shape, may be captured using the <gi scheme="MEI"
-          >rend</gi> element described in chapter <ptr target="#textRendition"/>.</p>
+          >rend</gi> element described in chapter <ptr target="#sharedTextRendition"/>.</p>
       <p>The following detail from an edition of Hector Berlioz' <title>Symphonie
           Fantastique</title> shows a typical example:</p>
       <figure>
@@ -1840,8 +1871,8 @@
       <div type="div4" xml:id="cmnRepStruct">
         <head>Structural Repetition</head>
         <p>Large-scale structural repetition, utilizing <gi scheme="MEI">section</gi> and <gi
-            scheme="MEI">expansion</gi> elements, is discussed in section <ptr target="#mdivContent"
-          />. This section will focus on repetition within sections.
+            scheme="MEI">expansion</gi> elements, is discussed in section <ptr
+            target="#sharedMdivContent"/>. This section will focus on repetition within sections.
           <!-- TODO: What needs to be handled here:            
             section and ending details 
             measure/@right="rptstart" etc.
@@ -1906,44 +1937,46 @@
           <graphic url="Images/ExampleImages/mrpt-20100510.png" height="100px"/>
         </figure>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<measure>
-  <staff>
-    <layer>
-      <beam>
-        <note pname="f" oct="4" dur="8"/>
-        <note pname="a" dur="16"/>
-        <note pname="c" oct="5"/>
-        <note pname="a" oct="4" dur="8"/>
-      </beam>
-      <beam>
-        <note pname="c" oct="5" dur="8"/>
-        <note pname="a" oct="4"/>
-        <note pname="g"/>
-      </beam>
-    </layer>
-  </staff>
-</measure>
-<measure>
-  <staff>
-    <layer>
-      <mRpt/>
-    </layer>
-  </staff>
-</measure>
-<measure>
-  <staff>
-    <layer>
-      <mRpt/>
-    </layer>
-  </staff>
-</measure>
-<measure>
-  <staff>
-    <layer>
-      <mRpt/>
-    </layer>
-  </staff>
-</measure>
+<section>
+  <measure>
+    <staff>
+      <layer>
+        <beam>
+          <note pname="f" oct="4" dur="8"/>
+          <note pname="a" dur="16"/>
+          <note pname="c" oct="5"/>
+          <note pname="a" oct="4" dur="8"/>
+        </beam>
+        <beam>
+          <note pname="c" oct="5" dur="8"/>
+          <note pname="a" oct="4"/>
+          <note pname="g"/>
+        </beam>
+      </layer>
+    </staff>
+  </measure>
+  <measure>
+    <staff>
+      <layer>
+        <mRpt/>
+      </layer>
+    </staff>
+  </measure>
+  <measure>
+    <staff>
+      <layer>
+        <mRpt/>
+      </layer>
+    </staff>
+  </measure>
+  <measure>
+    <staff>
+      <layer>
+        <mRpt/>
+      </layer>
+    </staff>
+  </measure>
+</section>
         </egXML>
 
         <!-- TODO: Re: the halfmRpt, I have a kind of bad feeling. It seems arbitrary to have that, instead of a generic
@@ -1965,34 +1998,36 @@
           <graphic url="Images/modules/cmn/halfmRpt_beethoven.png" width="418px"/>
         </figure>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
-<measure>
-  <staff n="1"><!-- omitted --></staff>
-  <staff n="2">
-    <layer n="1"><!-- omitted --></layer>
-    <layer n="2">
-      <chord dur="2" stem.mod="1slash">
-        <note pname="g" oct="2"/>
-        <note pname="b" oct="1"/>
-      </chord>
-      <halfmRpt/>
-    </layer>
-  </staff>
-</measure>
-<measure>
-  <staff n="1"><!-- omitted --></staff>
-  <staff n="2">
-    <layer n="2">
-      <halfmRpt/>
-      <halfmRpt/>
-    </layer>
-  </staff>
-</measure>
+<section>
+  <measure>
+    <staff n="1"><!-- omitted --></staff>
+    <staff n="2">
+      <layer n="1"><!-- omitted --></layer>
+      <layer n="2">
+        <chord dur="2" stem.mod="1slash">
+          <note pname="g" oct="2"/>
+          <note pname="b" oct="1"/>
+        </chord>
+        <halfmRpt/>
+      </layer>
+    </staff>
+  </measure>
+  <measure>
+    <staff n="1"><!-- omitted --></staff>
+    <staff n="2">
+      <layer n="2">
+        <halfmRpt/>
+        <halfmRpt/>
+      </layer>
+    </staff>
+  </measure>
+</section>
         </egXML>
 
         <p>As seen in the example above, it is possible to continuously repeat half measures, even
           across barlines.</p>
         <p>The <gi scheme="MEI">mRpt2</gi> and <gi scheme="MEI">multiRpt</gi> elements (like the <gi
-            scheme="MEI">multRest</gi> element) never occur in scores, only in performer parts,
+            scheme="MEI">multiRest</gi> element) never occur in scores, only in performer parts,
           where it is often necessary to abbreviate the notation due to page size limitations.</p>
         <figure>
           <head>Two-measure repetition</head>
@@ -2019,7 +2054,7 @@
       </div>
     </div>
   </div>
-  <!--<div type="div2" xml:id="originalContent">
+  <!--<div type="div2" xml:id="cmnOriginalContent">
     <head>Overview of the CMN Module</head>
     <p>The module described in this chapter makes available the following components:</p>
     <!-\-<div type="div3" xml:id="cmnElements">
