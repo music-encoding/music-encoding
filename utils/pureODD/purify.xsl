@@ -41,6 +41,10 @@
     ]">
     <xsl:copy-of select="."/>
   </xsl:template>
+  
+  <xsl:template match="content[rng:empty]">
+    <content/>
+  </xsl:template>
 
   <xsl:template match="exemplum">
     <xsl:copy-of select="."/>
@@ -147,7 +151,7 @@
     </xsl:choose>
   </xsl:template>
 
-  <xsl:template match="rng:empty"/>
+  <!--<xsl:template match="rng:empty"/>-->
   
   <xsl:template match="rng:list">
     <sequence>

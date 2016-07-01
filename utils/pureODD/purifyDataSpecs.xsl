@@ -77,6 +77,9 @@
                     <dataRef key="{@name}"/>    
                 </xsl:for-each>                
             </xsl:when>
+            <xsl:when test="tei:*">
+                <xsl:sequence select="tei:*"/>
+            </xsl:when>
             <xsl:otherwise>
                 <textNode/>
             </xsl:otherwise>
