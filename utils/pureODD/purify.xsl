@@ -86,9 +86,9 @@
         </macroRef>
       </xsl:when>
       <xsl:when test="starts-with(@name, 'data.')">
-        <macroRef key="{@name}">
+        <dataRef key="{@name}">
           <xsl:call-template name="maxmin"/>
-        </macroRef>
+        </dataRef>
       </xsl:when>
       <xsl:otherwise>
         <elementRef key="{@name}">
