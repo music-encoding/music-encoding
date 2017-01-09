@@ -6965,9 +6965,25 @@
     </classSpec>
     <classSpec ident="att.midiInstrument" module="MEI.midi" type="atts">
       <desc>Attributes that record MIDI instrument information.</desc>
+      <constraintSpec ident="One_of_instrname_or_instrnum" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:*[@midi.instrname]">
+            <sch:assert test="not(@midi.instrnum)">Only one of @midi.instrname and @midi.instrnum
+              allowed.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="One_of_patchname_or_patchnum" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:*[@midi.patchname]">
+            <sch:assert test="not(@midi.patchnum)">Only one of @midi.patchname and @midi.patchnum
+              allowed.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="midi.instrnum" usage="opt">
-          <desc>Sets the MIDI instrument number.</desc>
+          <desc>Captures the General MIDI instrument number.</desc>
           <datatype>
             <rng:ref name="data.MIDIVALUE"/>
           </datatype>
@@ -6981,6 +6997,18 @@
         <attDef ident="midi.pan" usage="opt">
           <desc>Sets the instrument's position in a stereo field. Values of 0 and 1 both pan left,
             127 pans right, and 64 pans to the center.</desc>
+          <datatype>
+            <rng:ref name="data.MIDIVALUE"/>
+          </datatype>
+        </attDef>
+        <attDef ident="midi.patchname" usage="opt">
+          <desc>Records a non-General MIDI patch/instrument name.</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="midi.patchnum" usage="opt">
+          <desc>Records a non-General MIDI patch/instrument number.</desc>
           <datatype>
             <rng:ref name="data.MIDIVALUE"/>
           </datatype>
