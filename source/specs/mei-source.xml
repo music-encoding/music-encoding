@@ -4059,16 +4059,9 @@
       <desc>Attributes common to many elements.</desc>
       <classes>
         <memberOf key="att.commonPart"/>
+        <memberOf key="att.numberName"/>
         <memberOf key="att.typed"/>
       </classes>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>Provides a number-like designation for an element.</desc>
-          <datatype>
-            <rng:ref name="token"/>
-          </datatype>
-        </attDef>
-      </attList>
     </classSpec>
     <classSpec ident="att.commonPart" module="MEI.shared" type="atts">
       <desc>Attributes that form the basis of the att.common class.</desc>
@@ -5746,6 +5739,17 @@
               </sch:rule>
             </constraint>
           </constraintSpec>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.integerName" module="MEI.shared" type="atts">
+      <desc>Attributes used to supply an integer number designation for an element.</desc>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>A non-negative integer value functioning as a "name".</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -7609,9 +7613,12 @@
       <desc>Attributes used to supply a number-like name for an element.</desc>
       <attList>
         <attDef ident="n" usage="opt">
-          <desc>Provides a number-like designation for an element.</desc>
+          <desc>Provides a number-like designation for an element; i.e., one that contains one or
+            more digits.</desc>
           <datatype>
-            <rng:ref name="token"/>
+            <rng:data type="token">
+              <rng:param name="pattern">.*(\d)+.*</rng:param>
+            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -9720,6 +9727,20 @@
             measures plus a beat location.</desc>
           <datatype>
             <rng:ref name="data.MEASUREBEAT"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.tokenName" module="MEI.shared" type="atts">
+      <desc>Attributes used to supply a token-like name for an element.</desc>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>Provides a token-like designation for an element; i.e., one that contains a single
+            token.</desc>
+          <datatype>
+            <rng:data type="token">
+              <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})*</rng:param>
+            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -15635,6 +15656,7 @@
         <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.integerName"/>
         <memberOf key="att.layer.log"/>
         <memberOf key="att.layer.vis"/>
         <memberOf key="att.layer.ges"/>
@@ -15656,14 +15678,6 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>A non-negative integer value functioning as a "name".</desc>
-          <datatype>
-            <rng:data type="nonNegativeInteger"/>
-          </datatype>
-        </attDef>
-      </attList>
       <remarks>
         <p>The term 'layer' is used instead of 'voice' in order to avoid confusion between 'voice'
           and 'voice leading' and 'voicing'. The <att>def</att> attribute may be used to create a
@@ -15680,6 +15694,7 @@
       <classes>
         <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
+        <memberOf key="att.integerName"/>
         <memberOf key="att.layerDef.log"/>
         <memberOf key="att.layerDef.vis"/>
         <memberOf key="att.layerDef.ges"/>
@@ -15695,14 +15710,6 @@
           <rng:ref name="model.instrDefLike"/>
         </rng:zeroOrMore>
       </content>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>A non-negative integer value functioning as a "name".</desc>
-          <datatype>
-            <rng:data type="nonNegativeInteger"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="lb" module="MEI.shared">
       <desc>(line break) – An empty formatting element that forces text to begin on a new
@@ -19373,6 +19380,7 @@
         <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.integerName"/>
         <memberOf key="att.staff.log"/>
         <memberOf key="att.staff.vis"/>
         <memberOf key="att.staff.ges"/>
@@ -19402,26 +19410,18 @@
               </sch:rule>
             </constraint>
           </constraintSpec>-->
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>A non-negative integer value functioning as a "name".</desc>
-          <datatype>
-            <rng:data type="nonNegativeInteger"/>
-          </datatype>
-          <constraintSpec ident="checkStaff_n" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="mei:staff[@n]">
-                <sch:let name="thisstaff" value="@n"/>
-                <sch:assert
-                  test="preceding::mei:staffDef[@n=$thisstaff] or preceding::mei:staff[@n=$thisstaff]/mei:staffDef or mei:staffDef"
-                  >There must be a preceding staffDef with a matching value of @n, a preceding staff
-                  with a matching @n value containing a staffDef, or a staffDef child
-                  element.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
-        </attDef>
-      </attList>
+      <constraintSpec ident="checkStaff_n" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:staff[@n]">
+            <sch:let name="thisstaff" value="@n"/>
+            <sch:assert
+              test="preceding::mei:staffDef[@n=$thisstaff] or preceding::mei:staff[@n=$thisstaff]/mei:staffDef or mei:staffDef"
+              >There must be a preceding staffDef with a matching value of @n, a preceding staff
+              with a matching @n value containing a staffDef, or a staffDef child
+              element.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The <att>def</att> attribute may be used to create a connection with a <gi scheme="MEI"
             >staffDef</gi> element where logical and visual information about the staff is recorded.
@@ -19437,6 +19437,7 @@
       <classes>
         <memberOf key="att.commonPart"/>
         <memberOf key="att.declaring"/>
+        <memberOf key="att.integerName"/>
         <memberOf key="att.staffDef.log"/>
         <memberOf key="att.staffDef.vis"/>
         <memberOf key="att.staffDef.ges"/>
@@ -19574,14 +19575,6 @@
           </sch:pattern>
         </constraint>
       </constraintSpec>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>A non-negative integer value functioning as a "name".</desc>
-          <datatype>
-            <rng:data type="nonNegativeInteger"/>
-          </datatype>
-        </attDef>
-      </attList>
     </elementSpec>
     <elementSpec ident="staffGrp" module="MEI.shared">
       <desc>(staff group) – A group of bracketed or braced staves.</desc>
