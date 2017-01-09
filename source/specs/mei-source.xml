@@ -4121,8 +4121,9 @@
           <constraintSpec ident="When_copyof_element_empty" scheme="isoschematron">
             <constraint>
               <sch:rule context="mei:*[@copyof]">
-                <sch:assert test="count(child::node()) = 0">An element with a copyof attribute
-                  cannot have content.</sch:assert>
+                <sch:assert test="count(child::*[not(comment() or processing-instruction())]) = 0"
+                  >An element with a copyof attribute can only have comment or processing
+                  instruction descendents.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -16492,11 +16493,18 @@
         <memberOf key="model.meterSigLike"/>
       </classes>
       <content>
-        <rng:ref name="meterSig"/>
-        <rng:oneOrMore>
+        <rng:zeroOrMore>
           <rng:ref name="meterSig"/>
-        </rng:oneOrMore>
+        </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="check_meterSigGrpContent" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:meterSigGrp[not(@copyof)]">
+            <sch:assert test="count(mei:meterSig) &gt; 1">meterSigGrp must have at least 2 child
+              meterSig elements.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="midi" module="MEI.midi">
       <desc>Container for elements that contain information useful when generating MIDI
