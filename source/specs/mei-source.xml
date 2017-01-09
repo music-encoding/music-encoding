@@ -16274,7 +16274,6 @@
         <memberOf key="att.commonPart"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.meiVersion"/>
-        <!--<memberOf key="att.numberName"/>-->
         <memberOf key="model.startLike.header"/>
       </classes>
       <content>
@@ -16295,6 +16294,22 @@
           <rng:ref name="revisionDesc"/>
         </rng:optional>
       </content>
+      <constraintSpec ident="check_meiHead_type" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:meiHead[@type eq 'music']">
+            <sch:assert test="ancestor::mei:mei">The meiHead type attribute can have the value
+              'music' only when the document element is "mei".</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:meiHead[@type eq 'corpus']">
+            <sch:assert test="ancestor::mei:meiCorpus">The meiHead type attribute can have the value
+              'corpus' only when the document element is "meiCorpus".</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:meiHead[@type eq 'independent']">
+            <sch:assert test="not(ancestor::mei:*)">The meiHead type attribute can have the value
+              'independent' only when the document element is "meiHead".</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="type" usage="opt">
           <desc>Specifies the kind of document to which the header is attached, for example whether
@@ -16305,6 +16320,10 @@
             </valItem>
             <valItem ident="corpus">
               <desc>Header is attached to a corpus.</desc>
+            </valItem>
+            <valItem ident="independent">
+              <desc>Header is independent; i.e., not attached to either a music or a corpus
+                document.</desc>
             </valItem>
           </valList>
         </attDef>
