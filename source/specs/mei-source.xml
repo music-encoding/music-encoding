@@ -6214,6 +6214,42 @@
     <classSpec ident="att.ligature.vis" module="MEI.mensural" type="atts">
       <desc>Visual domain attributes.</desc>
     </classSpec>
+    <classSpec ident="att.ligatureSpan.anl" module="MEI.cmn" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.ligatureSpan.ges" module="MEI.cmn" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.performed"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.ligatureSpan.log" module="MEI.cmn" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlEvent"/>
+        <memberOf key="att.augmentDots"/>
+        <memberOf key="att.duration.additive"/>
+        <memberOf key="att.startEndId"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.ligatureSpan.vis" module="MEI.cmn" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altSym"/>
+        <memberOf key="att.color"/>
+        <memberOf key="att.extSym"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.visualOffset2"/>
+        <memberOf key="att.xy"/>
+        <memberOf key="att.xy2"/>
+        <memberOf key="att.lineRend"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.line.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
     </classSpec>
@@ -16161,6 +16197,46 @@
           attribute pair. The <gi scheme="MEI">ligature</gi> element should <hi rend="bold">not</hi>
           be used for brackets in modern notation that indicate notes that were part of a ligature
           in the original source.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="ligatureSpan" module="MEI.cmn">
+      <desc>(ligature span) – Indicates the location of a ligature in material transcribed from a
+        mensural notation source.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.ligatureSpan.log"/>
+        <memberOf key="att.ligatureSpan.vis"/>
+        <memberOf key="att.ligatureSpan.ges"/>
+        <memberOf key="att.ligatureSpan.anl"/>
+        <memberOf key="model.controlEventLike.cmn"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="ligaturespan_start-_and_end-type_attributes_required"
+        scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:ligatureSpan">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+            <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
+              attributes: dur, dur.ges, endid, or tstamp2.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <remarks>
+        <p>Accompanying text for this element may be captured in its content. The starting point of
+          the transcribed ligature may be indicated by either a <att>startid</att>,
+            <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+          ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
+            <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify
+          one starting and one ending type of attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="line" module="MEI.usersymbols">
