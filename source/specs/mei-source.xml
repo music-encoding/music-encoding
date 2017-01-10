@@ -1209,23 +1209,23 @@
         </valList>
       </content>
     </macroSpec>
-    <macroSpec ident="data.FRET" module="MEI" type="dt">
-      <desc>In a guitar chord diagram, the fret where the finger should be placed. Since guitar
-        chord diagrams are limited to the range of frets that fall under the hand, the value here is
-        also limited. The pos (position) attribute on the chordDef element must be used to indicate
-        at which fret this range begins.</desc>
-      <content>
-        <rng:data type="positiveInteger">
-          <rng:param name="minInclusive">1</rng:param>
-          <rng:param name="maxInclusive">5</rng:param>
-        </rng:data>
-      </content>
-    </macroSpec>
     <macroSpec ident="data.FRETNUMBER" module="MEI" type="dt">
       <desc>In string tablature, the fret number. The value '0' (zero) indicates the open
         string.</desc>
       <content>
         <rng:data type="nonNegativeInteger"/>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.FRETNUMBER.limited" module="MEI" type="dt">
+      <desc>In a guitar chord diagram, the fret where the finger should be placed. Since guitar
+        chord diagrams are limited to the range of frets that fall under the hand, the values here
+        are a subset of those available in data.FRETNUMBER. The pos (position) attribute on the
+        chordDef element must be used to indicate at which fret this range begins.</desc>
+      <content>
+        <rng:data type="nonNegativeInteger">
+          <rng:param name="minInclusive">0</rng:param>
+          <rng:param name="maxInclusive">5</rng:param>
+        </rng:data>
       </content>
     </macroSpec>
     <macroSpec ident="data.GLISSANDO" module="MEI" type="dt">
@@ -5229,17 +5229,6 @@
               <desc>Combination expressed vertically, as for woodwind instruments or piano.</desc>
             </valItem>
           </valList>
-        </attDef>
-      </attList>
-    </classSpec>
-    <classSpec ident="att.fretLocation" module="MEI.harmony" type="atts">
-      <desc>Attributes that describe a fret location.</desc>
-      <attList>
-        <attDef ident="fret" usage="opt">
-          <desc>Records the location at which a string should be stopped against a fret.</desc>
-          <datatype>
-            <rng:ref name="data.FRET"/>
-          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -12050,15 +12039,27 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="barre" module="MEI.harmony">
-      <desc>An indication of fingering in a chord tablature grid.</desc>
+      <desc>A barre in a chord tablature grid.</desc>
       <classes>
         <memberOf key="att.common"/>
-        <memberOf key="att.fretLocation"/>
         <memberOf key="att.startEndId"/>
       </classes>
       <content>
         <rng:empty/>
       </content>
+      <attList>
+        <attDef ident="fret" usage="opt">
+          <desc>Records the location at which the strings should be stopped against a fret in a
+            fretboard diagram. This may or may not be the same as the actual location on the
+            fretboard of the instrument in performance.</desc>
+          <datatype>
+            <rng:data type="positiveInteger">
+              <rng:param name="minInclusive">1</rng:param>
+              <rng:param name="maxInclusive">5</rng:param>
+            </rng:data>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>The <att>startid</att> and <att>endid</att> attributes are used to indicate the <gi
             scheme="MEI">chordMember</gi> elements on which the barre starts and finishes
