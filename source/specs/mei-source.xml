@@ -2683,11 +2683,29 @@
           <valItem ident="below">
             <desc>Written below staff.</desc>
           </valItem>
+          <valItem ident="between">
+            <desc>Written between adjacent staves.</desc>
+          </valItem>
           <valItem ident="within">
             <desc>Written on staff.</desc>
           </valItem>
         </valList>
       </content>
+      <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:*[@place eq 'between']">
+            <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The
+              @staff attribute must contain 2 values.</sch:assert>
+            <sch:let name="tokenizedStaff" value="tokenize(normalize-space(string(@staff)), '\s+')"/>
+            <sch:let name="maxValue"
+              value="max((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
+            <sch:let name="minValue"
+              value="min((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
+            <sch:assert test="$maxValue - $minValue = 1">Staves <sch:value-of select="$minValue"/>
+              and <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </macroSpec>
     <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt">
       <desc>Stem direction.</desc>
