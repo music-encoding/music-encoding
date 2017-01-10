@@ -3171,6 +3171,33 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.ambNote.anl" module="MEI.shared" type="atts">
+      <desc>Analytical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.ambNote.ges" module="MEI.shared" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.ambNote.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.accidental"/>
+        <memberOf key="att.duration.musical"/>
+        <memberOf key="att.pitched"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.ambNote.vis" module="MEI.shared" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.coloration"/>
+        <memberOf key="att.enclosingChars"/>
+        <memberOf key="att.noteHeads"/>
+        <memberOf key="att.relativeSize"/>
+        <memberOf key="att.staffLoc"/>
+        <memberOf key="att.stems"/>
+        <memberOf key="att.typography"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.annot.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -11530,6 +11557,35 @@
             scheme="MEI">mei</gi> is required when applicable.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="ambitus" module="MEI.shared">
+      <desc>Range of a voice, instrument or piece.</desc>
+      <classes>
+        <memberOf key="att.commonPart"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="att.declaring"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.intervalHarmonic"/>
+      </classes>
+      <content>
+        <rng:ref name="ambNote"/>
+        <rng:ref name="ambNote"/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="ambNote" module="MEI.shared">
+      <desc>Highest or lowest pitch in a score, staff, or layer.</desc>
+      <classes>
+        <memberOf key="att.commonPart"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.ambNote.log"/>
+        <memberOf key="att.ambNote.vis"/>
+        <memberOf key="att.ambNote.ges"/>
+        <memberOf key="att.ambNote.anl"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+    </elementSpec>
     <elementSpec ident="anchoredText" module="MEI.usersymbols">
       <desc>Container for text that is fixed to a particular page location, regardless of changes
         made to the layout of the measures around it.</desc>
@@ -15900,6 +15956,9 @@
         <rng:zeroOrMore>
           <rng:ref name="model.instrDefLike"/>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="ambitus"/>
+        </rng:optional>
       </content>
     </elementSpec>
     <elementSpec ident="lb" module="MEI.shared">
@@ -19060,6 +19119,9 @@
         <rng:zeroOrMore>
           <rng:ref name="grpSym"/>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="ambitus"/>
+        </rng:optional>
       </content>
     </elementSpec>
     <elementSpec ident="scoreFormat" module="MEI.header">
@@ -19662,6 +19724,9 @@
             <rng:ref name="model.staffDefPart"/>
           </rng:choice>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="ambitus"/>
+        </rng:optional>
       </content>
       <constraintSpec ident="Check_staffDefn" scheme="isoschematron">
         <constraint>
@@ -20277,8 +20342,8 @@
           <sch:rule context="mei:tempo[not(ancestor::mei:score or ancestor::mei:part)]">
             <sch:assert
               test="not(@*[name() != 'label' and name() != 'n' and name() != 'xml:base' and name() != 'xml:id' and name() != 'xml:lang'])"
-              >Only label, n, xml:base, xml:id, and xml:lang attributes are allowed when tempo
-              is not a descendant of a score or part.</sch:assert>
+              >Only label, n, xml:base, xml:id, and xml:lang attributes are allowed when tempo is
+              not a descendant of a score or part.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -20286,8 +20351,8 @@
         <constraint>
           <sch:rule
             context="mei:tempo[not(ancestor::mei:syllable) and not(ancestor::mei:work) and not(ancestor::mei:expression) and not(count(ancestor::mei:*) = 0)]">
-            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one
-              of the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
