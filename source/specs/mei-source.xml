@@ -8589,6 +8589,40 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.refrain.anl" module="MEI.lyrics" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.refrain.ges" module="MEI.lyrics" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.refrain.log" module="MEI.lyrics" type="atts">
+      <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers
+        need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+      <attList>
+        <attDef ident="rhythm" usage="opt">
+          <desc>Used to specify a rhythm for the lyric syllables that differs from that of the notes
+            on the staff, e.g. '4,4,4,4' when the rhythm of the notes is '4.,8,4.,8'.</desc>
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.refrain.vis" module="MEI.lyrics" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualOffset.to"/>
+        <memberOf key="att.visualOffset.vo"/>
+        <memberOf key="att.voltaGroupingSym"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.regularized" module="MEI.shared" type="atts">
       <desc>Attributes that hold a controlled value.</desc>
       <attList>
@@ -10341,12 +10375,6 @@
       <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers
         need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
       <attList>
-        <attDef ident="refrain" usage="opt">
-          <desc>Used to indicate a common, usually centered, refrain.</desc>
-          <datatype>
-            <rng:ref name="data.BOOLEAN"/>
-          </datatype>
-        </attDef>
         <attDef ident="rhythm" usage="opt">
           <desc>Used to specify a rhythm for the lyric syllables that differs from that of the notes
             on the staff, e.g. '4,4,4,4' when the rhythm of the notes is '4.,8,4.,8'.</desc>
@@ -10364,6 +10392,7 @@
         <memberOf key="att.typography"/>
         <memberOf key="att.visualOffset.to"/>
         <memberOf key="att.visualOffset.vo"/>
+        <memberOf key="att.voltaGroupingSym"/>
         <memberOf key="att.xy"/>
       </classes>
     </classSpec>
@@ -10506,6 +10535,64 @@
           <datatype>
             <rng:ref name="data.MEASUREMENTREL"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.volta.anl" module="MEI.lyrics" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.volta.ges" module="MEI.lyrics" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.volta.log" module="MEI.lyrics" type="atts">
+      <desc>Logical domain attributes. The n attribute should be used for repetition numbers.
+        Numbers need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+      <attList>
+        <attDef ident="rhythm" usage="opt">
+          <desc>Used to specify a rhythm for the lyric syllables that differs from that of the notes
+            on the staff, e.g. '4,4,4,4' when the rhythm of the notes is '4.,8,4.,8'.</desc>
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.volta.vis" module="MEI.lyrics" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualOffset.to"/>
+        <memberOf key="att.visualOffset.vo"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.voltaGroupingSym" module="MEI.shared" type="atts">
+      <desc>Attributes that describe the symbol used to group volta elements.</desc>
+      <attList>
+        <attDef ident="voltasym" usage="opt">
+          <desc>Specifies the symbol used to group lyrics.</desc>
+          <valList type="closed">
+            <valItem ident="brace">
+              <desc>Curved symbol, i.e., {.</desc>
+            </valItem>
+            <valItem ident="bracket">
+              <desc>Square symbol, i.e., [, but with curved/angled top and bottom segments.</desc>
+            </valItem>
+            <valItem ident="bracketsq">
+              <desc>Square symbol, i.e., [, with horizontal top and bottom segments.</desc>
+            </valItem>
+            <valItem ident="line">
+              <desc>Line symbol, i.e., |, (wide) line without top and bottom curved/horizontal
+                segments.</desc>
+            </valItem>
+            <valItem ident="none">
+              <desc>Grouping symbol missing.</desc>
+            </valItem>
+          </valList>
         </attDef>
       </attList>
     </classSpec>
@@ -18714,6 +18801,45 @@
           standards.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="refrain" module="MEI.lyrics">
+      <desc>Recurring lyrics, especially at the end of each verse or stanza of a poem or song
+        lyrics; a chorus.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.refrain.log"/>
+        <memberOf key="att.refrain.vis"/>
+        <memberOf key="att.refrain.ges"/>
+        <memberOf key="att.refrain.anl"/>
+        <memberOf key="model.verseLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="dir"/>
+            <rng:ref name="dynam"/>
+            <rng:ref name="tempo"/>
+            <rng:ref name="space"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:choice>
+            <rng:ref name="volta"/>
+            <rng:ref name="model.sylLike"/>
+            <rng:ref name="model.appLike"/>
+          </rng:choice>
+        </rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.lbLike"/>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>The <gi scheme="MEI">lb</gi> element is allowed here in order to facilitate karaoke
+          applications. The <att>func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
+          distinguish true line endings from those of line groups for these applications.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="reg" module="MEI.edittrans">
       <desc>(regularization) – Contains material which has been regularized or normalized in some
         sense.</desc>
@@ -21383,7 +21509,8 @@
       </attList>
     </elementSpec>
     <elementSpec ident="verse" module="MEI.lyrics">
-      <desc>Lyric verse.</desc>
+      <desc>Division of a poem or song lyrics, sometimes having a fixed length, meter or rhyme
+        scheme; a stanza.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
@@ -21405,6 +21532,7 @@
         </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:choice>
+            <rng:ref name="volta"/>
             <rng:ref name="model.sylLike"/>
             <rng:ref name="model.appLike"/>
           </rng:choice>
@@ -21418,6 +21546,38 @@
           applications. The <att>func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
           distinguish true line endings from those of line groups for these applications.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="volta" module="MEI.lyrics">
+      <desc/>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.volta.log"/>
+        <memberOf key="att.volta.vis"/>
+        <memberOf key="att.volta.ges"/>
+        <memberOf key="att.volta.anl"/>
+        <memberOf key="model.rdgPart.critapp"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="dir"/>
+            <rng:ref name="dynam"/>
+            <rng:ref name="tempo"/>
+            <rng:ref name="space"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:choice>
+            <rng:ref name="model.sylLike"/>
+            <rng:ref name="model.appLike"/>
+          </rng:choice>
+        </rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.lbLike"/>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="watermark" module="MEI.header">
       <desc>Contains a description of a watermark or similar device.</desc>
