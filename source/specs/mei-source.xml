@@ -4981,7 +4981,7 @@
       </attList>
     </classSpec>
     <classSpec ident="att.extSym" module="MEI.externalsymbols" type="atts">
-      <desc>Attributes used to associated MEI features with corresponding glyphs in an
+      <desc>Attributes used to associate MEI features with corresponding glyphs in an
         externally-defined standard such as SMuFL.</desc>
       <attList>
         <attDef ident="glyphname" usage="opt">
@@ -4989,7 +4989,7 @@
           <datatype>
             <rng:data type="string"/>
           </datatype>
-          <constraintSpec ident="check_glyphnameTarget" scheme="isoschematron">
+          <constraintSpec ident="check_glyphname" scheme="isoschematron">
             <constraint>
               <sch:rule context="@glyphname">
                 <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyphname attribute
@@ -5003,14 +5003,15 @@
             SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
             <rng:data type="string">
-              <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
+              <rng:param name="pattern">(#x|U\+)[A-F0-9]{4}</rng:param>
             </rng:data>
           </datatype>
           <constraintSpec ident="check_glyphnum" scheme="isoschematron">
             <constraint>
-              <sch:rule context="mei:*[starts-with(@glyphnum, 'U+')]">
-                <sch:assert role="warning" test="string-length(@glyphnum) = 6">SMuFL version 1.18
-                  uses the range U+E000 - U+ECBF.</sch:assert>
+              <sch:rule context="@glyphnum">
+                <sch:assert role="warning"
+                  test="matches(., '(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])')"
+                  >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
