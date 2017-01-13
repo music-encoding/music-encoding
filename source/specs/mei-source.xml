@@ -2359,6 +2359,42 @@
         </valList>
       </content>
     </macroSpec>
+    <macroSpec ident="data.MODSRELATIONSHIP" module="MEI" type="dt">
+      <desc>Bibliographic relationship values based on MODS version 3.4.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="preceding">
+            <desc>Temporal predecessor of the resource.</desc>
+          </valItem>
+          <valItem ident="succeeding">
+            <desc>Temporal successor to the resource.</desc>
+          </valItem>
+          <valItem ident="original">
+            <desc>Original form of the resource.</desc>
+          </valItem>
+          <valItem ident="host">
+            <desc>Parent containing the resource.</desc>
+          </valItem>
+          <valItem ident="constituent">
+            <desc>Intellectual or physical component of the resource.</desc>
+          </valItem>
+          <valItem ident="otherVersion">
+            <desc>Version of the resource's intellectual content not changed enough to be a
+              different work.</desc>
+          </valItem>
+          <valItem ident="otherFormat">
+            <desc>Version of the resource in a different physical format.</desc>
+          </valItem>
+          <valItem ident="isReferencedBy">
+            <desc>Published bibliographic description, review, abstract, or index of the resource's
+              content.</desc>
+          </valItem>
+          <valItem ident="references">
+            <desc>Cited or referred to in the resource.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.MODUSMAIOR" module="MEI" type="dt">
       <desc>Maxima-long relationship values.</desc>
       <content>
@@ -2609,6 +2645,16 @@
         <rng:data type="token">
           <rng:param name="pattern">[0-9]+(\.?[0-9]*)?:[0-9]+(\.?[0-9]*)?</rng:param>
         </rng:data>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.RELATIONSHIP" module="MEI" type="dt">
+      <desc>General-purpose relationships</desc>
+      <content>
+        <alternate>
+          <macroRef key="data.FRBRRELATIONSHIP"/>
+          <macroRef key="data.MODSRELATIONSHIP"/>
+          <macroRef key="data.NMTOKEN"/>
+        </alternate>
       </content>
     </macroSpec>
     <macroSpec ident="data.ROTATION" module="MEI" type="dt">
@@ -8725,17 +8771,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.rel" module="MEI.frbr" type="atts">
-      <desc>Attributes specific to bibliographic entity relationships.</desc>
-      <attList>
-        <attDef ident="rel" usage="req">
-          <desc>Describes the relationship between the current entity and the target entity.</desc>
-          <datatype>
-            <rng:ref name="data.FRBRRELATIONSHIP"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.relativeSize" module="MEI.shared" type="atts">
       <desc>Attributes that record relative size.</desc>
       <attList>
@@ -11202,8 +11237,12 @@
     <classSpec ident="model.rdgPart.text" module="MEI.text" type="model">
       <desc>Groups elements that may appear as part of a textual variant.</desc>
     </classSpec>
-    <classSpec ident="model.relationLike" type="model" module="MEI.frbr">
+    <classSpec ident="model.relationLike" type="model" module="MEI.shared">
       <desc>Collects relationLike elements.</desc>
+      <classes>
+        <memberOf key="model.textPhraseLike.limited"/>
+        <!--<memberOf key="model.locrefLike"/>-->
+      </classes>
     </classSpec>
     <classSpec ident="model.rendLike" module="MEI.shared" type="model">
       <desc>Groups elements that mark typographical features.</desc>
@@ -18973,7 +19012,7 @@
       <desc>(related item) – Contains or references another bibliographic item which is related to
         the present one.</desc>
       <classes>
-        <memberOf key="att.dataPointing"/>
+        <memberOf key="att.datapointing"/>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
@@ -18991,70 +19030,117 @@
       </content>
       <attList>
         <attDef ident="rel" usage="req">
-          <desc>Describes the relationship between the &lt;relatedItem&gt; and the resource
-            described in the parent element, i.e., &lt;bibl&gt;, &lt;source&gt; or
-            &lt;relatedItem&gt;. The values are based on MODS version 3.4. The subject of these
-            relations is always the &lt;relatedItem&gt;, and the object is always the parent of the
-            &lt;relatedItem&gt;. "preceding" and "succeeding" indicate temporal order.</desc>
-          <valList type="closed">
-            <valItem ident="preceding">
-              <desc>Predecessor of the resource.</desc>
-            </valItem>
-            <valItem ident="succeeding">
-              <desc>Successor to the resource.</desc>
-            </valItem>
-            <valItem ident="original">
-              <desc>Original form of the resource.</desc>
-            </valItem>
-            <valItem ident="host">
-              <desc>Parent containing the resource.</desc>
-            </valItem>
-            <valItem ident="constituent">
-              <desc>Intellectual or physical component of the resource.</desc>
-            </valItem>
-            <valItem ident="otherVersion">
-              <desc>Version of the resource's intellectual content not changed enough to be a
-                different work.</desc>
-            </valItem>
-            <valItem ident="otherFormat">
-              <desc>Version of the resource in a different physical format.</desc>
-            </valItem>
-            <valItem ident="isReferencedBy">
-              <desc>Published bibliographic description, review, abstract, or index of the
-                resource's content.</desc>
-            </valItem>
-            <valItem ident="references">
-              <desc>Cited or referred to in the resource.</desc>
-            </valItem>
-          </valList>
+          <desc>Describes the relationship between the entity identified by the &lt;relatedItem&gt;
+            element and the resource described in the parent element, i.e., &lt;bibl&gt;,
+            &lt;source&gt; or &lt;relatedItem&gt;.</desc>
+          <datatype>
+            <rng:ref name="data.MODSRELATIONSHIP"/>
+          </datatype>
         </attDef>
       </attList>
     </elementSpec>
-    <elementSpec ident="relation" module="MEI.frbr">
-      <desc>A relation element describes the relationship between its parent and the object
-        referenced by the relation element's target attribute.</desc>
+    <elementSpec ident="relation" module="MEI.shared">
+      <desc>Describes a relationship or linkage amongst entities.</desc>
       <classes>
+        <memberOf key="att.authorized"/>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.edit"/>
+        <memberOf key="att.evidence"/>
+        <memberOf key="att.plist"/>
         <memberOf key="att.pointing"/>
-        <memberOf key="att.rel"/>
+        <memberOf key="att.responsibility"/>
         <memberOf key="att.targetEval"/>
         <memberOf key="model.relationLike"/>
       </classes>
       <content>
         <rng:empty/>
       </content>
+      <constraintSpec ident="FRBR_relation" scheme="isoschematron">
+        <constraint>
+          <!-- See http://vocab.org/frbr/core for more-precise entity-to-entity constraints -->
+          <sch:rule
+            context="mei:relation[../../../mei:work or
+            ../../../mei:expression or
+            ../../../mei:source or
+            ../../../mei:item]">
+            <sch:assert
+              test="matches(@rel, 'hasAbridgement') or
+              matches(@rel, 'hasAbridgement') or
+              matches(@rel, 'isAbridgementOf') or
+              matches(@rel, 'hasAdaptation') or
+              matches(@rel, 'isAdaptationOf') or
+              matches(@rel, 'hasAlternate') or
+              matches(@rel, 'isAlternateOf') or
+              matches(@rel, 'hasArrangement') or
+              matches(@rel, 'isArrangementOf') or
+              matches(@rel, 'hasComplement') or
+              matches(@rel, 'isComplementOf') or
+              matches(@rel, 'hasEmbodiment') or
+              matches(@rel, 'isEmbodimentOf') or
+              matches(@rel, 'hasExemplar') or
+              matches(@rel, 'isExemplarOf') or
+              matches(@rel, 'hasImitation') or
+              matches(@rel, 'isImitationOf') or
+              matches(@rel, 'hasPart') or
+              matches(@rel, 'isPartOf') or
+              matches(@rel, 'hasRealization') or
+              matches(@rel, 'isRealizationOf') or
+              matches(@rel, 'hasReconfiguration') or
+              matches(@rel, 'isReconfigurationOf') or
+              matches(@rel, 'hasReproduction') or
+              matches(@rel, 'isReproductionOf') or
+              matches(@rel, 'hasRevision') or
+              matches(@rel, 'isRevisionOf') or
+              matches(@rel, 'hasSuccessor') or
+              matches(@rel, 'isSuccessorOf') or
+              matches(@rel, 'hasSummarization') or
+              matches(@rel, 'isSummarizationOf') or
+              matches(@rel, 'hasSupplement') or
+              matches(@rel, 'isSupplementOf') or
+              matches(@rel, 'hasTransformation') or
+              matches(@rel, 'isTransformationOf') or
+              matches(@rel, 'hasTranslation') or
+              matches(@rel, 'isTranslationOf')"
+              >Within work, expression, source, or item, the value of the rel attribute must match
+              one of the following: hasAbridgement, isAbridgementOf, hasAdaptation, isAdaptationOf,
+              hasAlternate, isAlternateOf, hasArrangement, isArrangementOf, hasComplement,
+              isComplementOf, hasEmbodiment, isEmbodimentOf, hasExemplar, isExemplarOf,
+              hasImitation, isImitationOf, hasPart, isPartOf, hasRealization, isRealizationOf,
+              hasReconfiguration, isReconfigurationOf, hasReproduction, isReproductionOf,
+              hasRevision, isRevisionOf, hasSuccessor, isSuccessorOf, hasSummarization,
+              isSummarizationOf, hasSupplement, isSupplementOf, hasTransformation,
+              isTransformationOf, hasTranslation, isTranslationOf</sch:assert>
+            <sch:assert test="@target">Within work, expression, source or item, the target attribute
+              must be present.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <attList>
+        <attDef ident="rel" usage="req">
+          <desc>Describes the relationship between the entities identified by the plist and target
+            attributes.</desc>
+          <datatype>
+            <rng:ref name="data.RELATIONSHIP"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
-        <p>The <att>rel</att> attribute describes the nature of the relationship. In this triple,
-          the parent element serves as subject, the referenced object as object. This element is
-          used to implement FRBR-like structures in MEI.</p>
+        <p>The <att>plist</att> and <att>target</att> attributes identify the participants in a
+          relationship, while the <att>rel</att> attribute describes the nature of their
+          relationship. A mutual relationship can be described using only the <att>plist</att>
+          attribute – the <att>target</att> attribute is not necessary. In a non-mutual
+          relationship, <att>plist</att> identifies the entities pointed "from", while
+            <att>target</att> specifies the entities pointed "to". If the <att>target</att>
+          attribute is present, but the <att>plist</att> is not, the relationship is presumed to
+          exist between the parent of the current &lt;relationship&gt; element and the entities
+          identified by <att>target</att>.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="relationList" module="MEI.frbr">
-      <desc>Gathers bibliographic relation elements.</desc>
+    <elementSpec ident="relationList" module="MEI.shared">
+      <desc>Gathers relation elements.</desc>
       <classes>
         <memberOf key="att.common"/>
+        <memberOf key="model.relationLike"/>
       </classes>
       <content>
         <rng:zeroOrMore>
