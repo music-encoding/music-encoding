@@ -11467,8 +11467,9 @@
     <classSpec ident="model.sylLike" module="MEI.lyrics" type="model">
       <desc>Groups elements that contain a lyric syllable.</desc>
       <classes>
-        <memberOf key="model.syllablePart"/>
         <memberOf key="model.rdgPart.critapp"/>
+        <memberOf key="model.syllablePart"/>
+        <memberOf key="model.textPhraseLike.limited"/>
       </classes>
     </classSpec>
     <classSpec ident="model.symbolTableLike" module="MEI.usersymbols" type="model">
@@ -16152,15 +16153,25 @@
         <memberOf key="model.lLike"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.editLike"/>
+              <rng:ref name="model.textPhraseLike"/>
+              <rng:ref name="model.transcriptionLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
+      <constraintSpec ident="line_content_constraint" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:l[mei:syl]">
+            <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
+              when the syl element is used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>Do not confuse this element with the <gi scheme="MEI">line</gi> element, which is used
           for graphical lines that occur in music notation.</p>
@@ -16694,7 +16705,7 @@
       </classes>
       <content>
         <rng:oneOrMore>
-          <rng:ref name="model.verseLike"/>
+          <rng:ref name="model.lgLike"/>
         </rng:oneOrMore>
       </content>
       <remarks>
