@@ -3925,6 +3925,22 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.basic" module="MEI.shared" type="atts">
+      <desc>Attributes that form the basis of the att.common class.</desc>
+      <classes>
+        <memberOf key="att.id"/>
+      </classes>
+      <attList>
+        <!--<attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">-->
+        <attDef ident="xml:base" usage="opt">
+          <desc>Provides a base URI reference with which applications can resolve relative URI
+            references into absolute URI references.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.beam.anl" module="MEI.cmn" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
@@ -4605,32 +4621,11 @@
     <classSpec ident="att.common" module="MEI.shared" type="atts">
       <desc>Attributes common to many elements.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.basic"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nNumberLike"/>
         <memberOf key="att.typed"/>
       </classes>
-    </classSpec>
-    <classSpec ident="att.commonPart" module="MEI.shared" type="atts">
-      <desc>Attributes that form the basis of the att.common class.</desc>
-      <classes>
-        <memberOf key="att.id"/>
-      </classes>
-      <attList>
-        <attDef ident="label" usage="opt">
-          <desc>Provides a name or label for an element. The value may be any string.</desc>
-          <datatype>
-            <rng:data type="string"/>
-          </datatype>
-        </attDef>
-        <!--<attDef ident="base" ns="http://www.w3.org/XML/1998/namespace" usage="opt">-->
-        <attDef ident="xml:base" usage="opt">
-          <desc>Provides a base URI reference with which applications can resolve relative URI
-            references into absolute URI references.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-        </attDef>
-      </attList>
     </classSpec>
     <classSpec ident="att.common.anl" module="MEI.analysis" type="atts">
       <desc>Common analytical attributes. When the MEI.performance module is used, the when
@@ -6304,17 +6299,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.integerName" module="MEI.shared" type="atts">
-      <desc>Attributes used to supply an integer number designation for an element.</desc>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>A non-negative integer value functioning as a "name".</desc>
-          <datatype>
-            <rng:data type="nonNegativeInteger"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.internetMedia" module="MEI.shared" type="atts">
       <desc>Attributes which record the type of an electronic resource.</desc>
       <attList>
@@ -6531,6 +6515,25 @@
           <datatype>
             <rng:ref name="data.BOOLEAN"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.labelled" module="MEI.shared" type="atts">
+      <attList>
+        <attDef ident="label" usage="opt">
+          <desc>Provides a name or label for an element. Should not be used to capture document
+            content.</desc>
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
+          <remarks>
+            <p><att>label</att> is used to provide a display label for an element's contents, for
+              example in the form of a "tool tip" or as the "name" when the element's contents are
+              treated as the "value" in a "name-value pair". Unlike <att>n</att>, <att>label</att>
+              may contain space characters.</p>
+            <p>Don't confuse this attribute with the <gi scheme="MEI">label</gi> element, which
+              records document content.</p>
+          </remarks>
         </attDef>
       </attList>
     </classSpec>
@@ -7991,6 +7994,35 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.nInteger" module="MEI.shared" type="atts">
+      <desc>Attributes used to supply an integer number designation for an element.</desc>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>Provides a numeric designation that indicates an element's position in a sequence of
+            similar elements. Its value must be a non-negative integer.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.nNumberLike" module="MEI.shared" type="atts">
+      <desc>Attributes used to supply a number-like designation for an element.</desc>
+      <attList>
+        <attDef ident="n" usage="opt">
+          <desc>Provides a number-like designation that indicates an element's position in a
+            sequence of similar elements. May not contain space characters.</desc>
+          <datatype>
+            <rng:data type="token">
+              <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})*</rng:param>
+            </rng:data>
+          </datatype>
+          <remarks>
+            <p>Unlike <att>label</att>, <att>n</att> may not contain space characters.</p>
+          </remarks>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.notationStyle" module="MEI.shared" type="atts">
       <desc>Attributes that capture music font name and size.</desc>
       <attList>
@@ -8264,20 +8296,6 @@
           <desc>Records a number or count accompanying a notational feature.</desc>
           <datatype>
             <rng:data type="positiveInteger"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
-    <classSpec ident="att.numberName" module="MEI.shared" type="atts">
-      <desc>Attributes used to supply a number-like name for an element.</desc>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>Provides a number-like designation for an element; i.e., one that contains one or
-            more digits.</desc>
-          <datatype>
-            <rng:data type="token">
-              <rng:param name="pattern">.*(\d)+.*</rng:param>
-            </rng:data>
           </datatype>
         </attDef>
       </attList>
@@ -10541,20 +10559,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.tokenName" module="MEI.shared" type="atts">
-      <desc>Attributes used to supply a token-like name for an element.</desc>
-      <attList>
-        <attDef ident="n" usage="opt">
-          <desc>Provides a token-like designation for an element; i.e., one that contains a single
-            token.</desc>
-          <datatype>
-            <rng:data type="token">
-              <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})*</rng:param>
-            </rng:data>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.trans" module="MEI.edittrans" type="atts">
       <desc>Attributes for elements encoding authorial or scribal intervention when transcribing
         manuscript or similar sources.</desc>
@@ -12218,8 +12222,7 @@
     <elementSpec ident="ambitus" module="MEI.shared">
       <desc>Range of a voice, instrument or piece.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
-        <memberOf key="att.typed"/>
+        <memberOf key="att.common"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.intervalHarmonic"/>
@@ -12232,8 +12235,7 @@
     <elementSpec ident="ambNote" module="MEI.shared">
       <desc>Highest or lowest pitch in a score, staff, or layer.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
-        <memberOf key="att.typed"/>
+        <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.ambNote.log"/>
         <memberOf key="att.ambNote.vis"/>
@@ -13389,11 +13391,10 @@
     <elementSpec ident="chordMember" module="MEI.harmony">
       <desc>An individual pitch in a chord defined by a &lt;chordDef&gt; element.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.common"/>
         <memberOf key="att.accidental.performed"/>
         <memberOf key="att.intervalHarmonic"/>
         <memberOf key="att.pitched"/>
-        <memberOf key="att.typed"/>
       </classes>
       <content>
         <rng:empty/>
@@ -14421,11 +14422,12 @@
       <desc>(division) – Major structural division of text, such as a preface, chapter or
         section.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.nNumberLike"/>
         <memberOf key="model.divLike"/>
       </classes>
       <content>
@@ -16593,7 +16595,8 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="label" module="MEI.shared">
-      <desc>A container for text that identifies the feature to which it is attached.</desc>
+      <desc>A container for document text that identifies the feature to which it is
+        attached.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
@@ -16614,6 +16617,8 @@
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
+        <p>Don't confuse this element, which is used to capture text appearing in the document, with
+          the <att>label</att> attribute, which provides a designation for an element.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="language" module="MEI.header">
@@ -16669,15 +16674,16 @@
     <elementSpec ident="layer" module="MEI.shared">
       <desc>An independent stream of events on a staff.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
-        <memberOf key="att.integerName"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nInteger"/>
+        <memberOf key="att.typed"/>
         <memberOf key="att.layer.log"/>
         <memberOf key="att.layer.vis"/>
         <memberOf key="att.layer.ges"/>
         <memberOf key="att.layer.anl"/>
-        <memberOf key="att.typed"/>
         <memberOf key="model.layerLike"/>
       </classes>
       <content>
@@ -16708,14 +16714,15 @@
     <elementSpec ident="layerDef" module="MEI.shared">
       <desc>(layer definition) – Container for layer meta-information.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.declaring"/>
-        <memberOf key="att.integerName"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nInteger"/>
+        <memberOf key="att.typed"/>
         <memberOf key="att.layerDef.log"/>
         <memberOf key="att.layerDef.vis"/>
         <memberOf key="att.layerDef.ges"/>
         <memberOf key="att.layerDef.anl"/>
-        <memberOf key="att.typed"/>
         <memberOf key="model.layerDefLike"/>
       </classes>
       <content>
@@ -17001,10 +17008,11 @@
       <desc>A formatting element that contains a series of items separated from one another and
         arranged in a linear, often vertical, sequence.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.nNumberLike"/>
         <memberOf key="att.xy"/>
         <memberOf key="model.listLike"/>
       </classes>
@@ -17288,7 +17296,8 @@
         MEI-conformant text.</desc>
       <classes>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.base"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.meiVersion"/>
         <memberOf key="model.startLike.header"/>
@@ -17666,13 +17675,14 @@
     <elementSpec ident="name" module="MEI.shared">
       <desc>Proper noun or noun phrase.</desc>
       <classes>
+        <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.commonPart"/>
         <memberOf key="att.edit"/>
         <memberOf key="att.facsimile"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.name"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.nNumberLike"/>
         <memberOf key="model.eventPart"/>
         <memberOf key="model.nameLike"/>
       </classes>
@@ -19004,8 +19014,9 @@
     <elementSpec ident="propName" module="MEI.usersymbols">
       <desc>(property name) – Name of a property of the symbol.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.basic"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nNumberLike"/>
       </classes>
       <content>
         <rng:text/>
@@ -20582,15 +20593,16 @@
         not actually be rendered on staff lines; that is, both diastematic and non-diastematic
         signs.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.declaring"/>
         <memberOf key="att.facsimile"/>
-        <memberOf key="att.integerName"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nInteger"/>
+        <memberOf key="att.typed"/>
         <memberOf key="att.staff.log"/>
         <memberOf key="att.staff.vis"/>
         <memberOf key="att.staff.ges"/>
         <memberOf key="att.staff.anl"/>
-        <memberOf key="att.typed"/>
         <memberOf key="model.staffLike"/>
       </classes>
       <content>
@@ -20640,14 +20652,15 @@
     <elementSpec ident="staffDef" module="MEI.shared">
       <desc>(staff definition) – Container for staff meta-information.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.declaring"/>
-        <memberOf key="att.integerName"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.nInteger"/>
+        <memberOf key="att.typed"/>
         <memberOf key="att.staffDef.log"/>
         <memberOf key="att.staffDef.vis"/>
         <memberOf key="att.staffDef.ges"/>
         <memberOf key="att.staffDef.anl"/>
-        <memberOf key="att.typed"/>
         <memberOf key="model.staffDefLike"/>
       </classes>
       <content>
@@ -21529,14 +21542,15 @@
     <elementSpec ident="title" module="MEI.shared">
       <desc>Title of a bibliographic entity.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
         <memberOf key="att.authorized"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.canonical"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.filing"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.nNumberLike"/>
         <memberOf key="model.titleLike"/>
       </classes>
       <content>
@@ -21656,14 +21670,15 @@
     <elementSpec ident="titlePart" module="MEI.shared">
       <desc>Contains a subsection or division of the title of a bibliographic entity.</desc>
       <classes>
-        <memberOf key="att.commonPart"/>
         <memberOf key="att.authorized"/>
+        <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.canonical"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.filing"/>
+        <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.numberName"/>
+        <memberOf key="att.nInteger"/>
       </classes>
       <content>
         <rng:zeroOrMore>
