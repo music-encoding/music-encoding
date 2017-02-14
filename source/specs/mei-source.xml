@@ -5747,9 +5747,37 @@
     </classSpec>
     <classSpec ident="att.fTrem.vis" module="MEI.cmn" type="atts">
       <desc>Visual domain attributes.</desc>
-      <classes>
-        <memberOf key="att.slashCount"/>
-      </classes>
+      <attList>
+        <attDef ident="beams" usage="opt">
+          <desc>Indicates the number of beams present.</desc>
+          <datatype>
+            <rng:data type="positiveInteger">
+              <rng:param name="minInclusive">1</rng:param>
+              <rng:param name="maxInclusive">6</rng:param>
+            </rng:data>
+          </datatype>
+        </attDef>
+        <attDef ident="beams.float" usage="opt">
+          <desc>Captures the number of "floating" beams, i.e., those not attached to stems.</desc>
+          <datatype>
+            <rng:data type="nonNegativeInteger"/>
+          </datatype>
+          <constraintSpec ident="check_beams.floating" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:fTrem[@beams and @beams.float]">
+                <sch:assert test="@beams.float &lt;= @beams">The number of floating beams must be
+                  less than or equal to the total number of beams.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+        <attDef ident="float.gap" usage="opt">
+          <desc>Records the amount of separation between floating beams and stems.</desc>
+          <datatype>
+            <rng:ref name="data.MEASUREMENTABS"/>
+          </datatype>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.gliss.anl" module="MEI.cmn" type="atts">
       <desc>Analytical domain attributes.</desc>
