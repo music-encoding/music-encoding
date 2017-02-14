@@ -573,6 +573,16 @@
         </rng:data>
       </content>
     </macroSpec>
+    <macroSpec ident="data.BEAMPLACE" module="MEI" type="dt">
+      <desc>Location of a beam relative to the events it affects.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="above"/>
+          <valItem ident="below"/>
+          <valItem ident="mixed"/>
+        </valList>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.BEAT" module="MEI" type="dt">
       <desc>A beat location, i.e., [0-9]+(\.?[0-9]*)? The value must fall between 0 and the
         numerator of the time signature + 1, where 0 represents the left bar line and the upper
@@ -4077,6 +4087,35 @@
                 the beam.</desc>
             </valItem>
           </valList>
+        </attDef>
+        <attDef ident="place">
+          <desc>Records the placement of the beam relative to the events it affects.</desc>
+          <datatype>
+            <rng:ref name="data.BEAMPLACE"/>
+          </datatype>
+          <constraintSpec ident="check_beam_place" scheme="isoschematron">
+            <constraint>
+              <sch:rule
+                context="mei:beam[@place eq 'mixed' and not(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])]">
+                <sch:assert
+                  test="count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])"
+                  >Stem direction must be specified for all notes and chords under the
+                  beam.</sch:assert>
+                <sch:assert
+                  test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+                  >Opposing stem directions are required for a beam with
+                  @place="mixed".</sch:assert>
+              </sch:rule>
+              <sch:rule
+                context="mei:beam[@place eq 'mixed' and (descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])
+                and count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])]">
+                <sch:assert
+                  test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+                  >Opposing stem directions are required for a beam with
+                  @place="mixed".</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="slope" usage="opt">
           <desc>Records the slope of the beam.</desc>
