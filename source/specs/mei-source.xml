@@ -6537,19 +6537,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.labels.addl" module="MEI.shared" type="atts">
-      <desc>Attributes that record labels for a feature in addition to those found in
-        att.common.</desc>
-      <attList>
-        <attDef ident="label.abbr" usage="opt">
-          <desc>Provides a label for a group of staves on pages after the first page. Usually, this
-            label takes an abbreviated form.</desc>
-          <datatype>
-            <rng:data type="string"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.lang" module="MEI.shared" type="atts">
       <desc>Language attributes common to text elements.</desc>
       <attList>
@@ -6650,7 +6637,6 @@
     <classSpec ident="att.layerDef.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
       <classes>
-        <memberOf key="att.labels.addl"/>
         <memberOf key="att.beaming.vis"/>
         <memberOf key="att.textStyle"/>
         <memberOf key="att.visibility"/>
@@ -9873,7 +9859,6 @@
         <memberOf key="att.cleffing.vis"/>
         <memberOf key="att.distances"/>
         <memberOf key="att.keySigDefault.vis"/>
-        <memberOf key="att.labels.addl"/>
         <memberOf key="att.lyricStyle"/>
         <memberOf key="att.meterSigDefault.vis"/>
         <memberOf key="att.multinumMeasures"/>
@@ -9986,7 +9971,6 @@
     <classSpec ident="att.staffGrp.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
       <classes>
-        <memberOf key="att.labels.addl"/>
         <memberOf key="att.staffGroupingSym"/>
         <memberOf key="att.visibility"/>
       </classes>
@@ -16621,6 +16605,26 @@
           the <att>label</att> attribute, which provides a designation for an element.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="label2" module="MEI.shared">
+      <desc>A label on the pages following the first.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.source"/>
+        <memberOf key="model.labelLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
     <elementSpec ident="language" module="MEI.header">
       <desc>Description of a language used in the document.</desc>
       <classes>
@@ -16727,7 +16731,10 @@
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.labelLike"/>
+          <rng:choice>
+            <rng:ref name="model.labelLike"/>
+            <rng:ref name="labelAbbr"/>
+          </rng:choice>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="model.instrDefLike"/>
@@ -20665,7 +20672,10 @@
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.labelLike"/>
+          <rng:choice>
+            <rng:ref name="model.labelLike"/>
+            <rng:ref name="labelAbbr"/>
+          </rng:choice>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:choice>
@@ -20814,7 +20824,10 @@
           <rng:ref name="grpSym"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="model.labelLike"/>
+          <rng:choice>
+            <rng:ref name="model.labelLike"/>
+            <rng:ref name="labelAbbr"/>
+          </rng:choice>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="model.instrDefLike"/>
