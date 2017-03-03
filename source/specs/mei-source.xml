@@ -10067,6 +10067,33 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.stageDir.anl" module="MEI.shared" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.stageDir.ges" module="MEI.shared" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.stageDir.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlEvent"/>
+        <memberOf key="att.startEndId"/>
+        <memberOf key="att.timestamp2.musical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.stageDir.vis" module="MEI.shared" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.visualOffset2.ho"/>
+        <memberOf key="att.visualOffset2.to"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.startEndId" module="MEI.shared" type="atts">
       <desc>Attributes recording the identifiers of the first and last elements of a sequence of
         elements to which the current element is associated.</desc>
@@ -11869,6 +11896,15 @@
       <desc>Groups elements that are components of a staff in the neume repertoire.</desc>
       <classes>
         <memberOf key="model.staffPart.mensuralAndNeumes"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="model.stageDirLike" module="MEI.shared" type="model">
+      <desc>Groups elements containing stage directions or similar things defined by the module for
+        performance texts.</desc>
+      <classes>
+        <memberOf key="model.controlEventLike"/>
+        <memberOf key="model.textComponentLike"/>
+        <memberOf key="model.paracontentPart"/>
       </classes>
     </classSpec>
     <classSpec ident="model.startLike.corpus" module="MEI.corpus" type="model">
@@ -20905,6 +20941,62 @@
         <p>System is the more proper name for this concept (Read, p. 37-38). Bracketed staff groups
           may contain other bracketed or braced staff groups or single staves. See Read, p. 35-38,
           examples p. 434, 438.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="stageDir" module="MEI.shared">
+      <desc>(stage direction) – Contains any kind of stage direction within a dramatic text or
+        fragment.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.declaring"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.stageDir.anl"/>
+        <memberOf key="att.stageDir.ges"/>
+        <memberOf key="att.stageDir.log"/>
+        <memberOf key="att.stageDir.vis"/>
+        <memberOf key="model.stageDirLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="stageDir_start-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="mei:stageDir[ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff][not(ancestor::mei:sp)]">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="stageDir_start-type_attributes_forbidden" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="mei:stageDir[not(ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff) or ancestor::mei:sp]">
+            <sch:assert
+              test="not(@startid or @endid or @tstamp or @tstamp2 or @tstamp.ges or @tstamp.real or @startho or @endho or @to or 
+              @startto or @endto or @staff or @layer or @place or @plist)"
+              >Must not have any of the attributes: startid, endid, tstamp, tstamp2, tstamp.ges,
+              tstamp.real, startho, endho, to, startto, endto, staff, layer, place, or
+              plist.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <remarks>
+        <p>In a musical context <gi scheme="MEI">stageDir</gi> must have a start-type attribute when
+          it's not a descendant of <gi scheme="MEI">sp</gi>. In a textual content <gi scheme="MEI"
+            >stageDir</gi> must NOT have any musical attributes.</p>
+      </remarks>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="stdVals" module="MEI.header">
