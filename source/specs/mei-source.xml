@@ -12996,7 +12996,7 @@
           <rng:choice>
             <rng:group>
               <rng:optional>
-                <rng:ref name="model.labelLike"/>
+                <rng:ref name="label"/>
               </rng:optional>
               <rng:ref name="model.biblLike"/>
             </rng:group>
@@ -13004,6 +13004,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="checkBiblLabels" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:biblList[mei:label]">
+            <sch:assert role="warning" test="count(mei:label) = count(mei:bibl)">When labels are
+              used, usually each bibliographic item has one.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
@@ -13814,12 +13822,20 @@
           </rng:optional>
           <rng:oneOrMore>
             <rng:optional>
-              <rng:ref name="model.labelLike"/>
+              <rng:ref name="label"/>
             </rng:optional>
             <rng:ref name="contentItem"/>
           </rng:oneOrMore>
         </rng:choice>
       </content>
+      <constraintSpec ident="checkContentsLabels" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:contents[mei:label]">
+            <sch:assert role="warning" test="count(mei:label) = count(mei:contentItem)">When labels
+              are used, usually each content item has one.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <exemplum>
         <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
@@ -16008,11 +16024,19 @@
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:optional>
-            <rng:ref name="model.labelLike"/>
+            <rng:ref name="label"/>
           </rng:optional>
           <rng:ref name="hand"/>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="checkHandListLabels" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:handList[mei:label]">
+            <sch:assert role="warning" test="count(mei:label) = count(mei:hand)">When labels are
+              used, usually each hand has one.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
@@ -17142,14 +17166,14 @@
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:optional>
-            <rng:ref name="model.labelLike"/>
+            <rng:ref name="label"/>
           </rng:optional>
           <rng:ref name="li"/>
         </rng:zeroOrMore>
       </content>
       <constraintSpec ident="list_type_constraint" scheme="isoschematron">
         <constraint>
-          <sch:rule context="mei:list[@type='gloss']">
+          <sch:rule context="mei:list[contains(@type,'gloss')]">
             <sch:assert test="count(mei:label) = count(mei:li)">In a list of type "gloss" all items
               must be immediately preceded by a label.</sch:assert>
           </sch:rule>
@@ -21710,12 +21734,25 @@
           <rng:ref name="model.headLike"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:optional>
-            <rng:ref name="model.labelLike"/>
-          </rng:optional>
-          <rng:ref name="term"/>
+          <rng:choice>
+            <rng:group>
+              <rng:optional>
+                <rng:ref name="label"/>
+              </rng:optional>
+              <rng:ref name="term"/>
+            </rng:group>
+            <rng:ref name="termList"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="checkTermListLabels" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:termList[mei:label]">
+            <sch:assert role="warning" test="count(mei:label) = count(mei:term)">When labels are
+              used, usually each term has one.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="textLang" module="MEI.shared">
       <desc>(text language) – Identifies the languages and writing systems within the work described
