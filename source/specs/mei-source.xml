@@ -5113,8 +5113,9 @@
         elements within the header.</desc>
       <attList>
         <attDef ident="decls" usage="opt">
-          <desc>Identifies one or more metadata elements within the header, which are understood to
-            apply to the element bearing this attribute and its content.</desc>
+          <desc>Identifies one or more metadata elements (other than classification terms) within
+            the header, which are understood to apply to the element bearing this attribute and its
+            content.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
@@ -5127,6 +5128,10 @@
                   test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[ancestor::mei:meiHead]/@xml:id"
                   >Each value in @decls should correspond to the @xml:id attribute of an element
                   within the metadata header.</sch:assert>
+                <sch:assert
+                  test="every $i in tokenize(., '\s+') satisfies not(substring($i,2)=//mei:term/@xml:id)"
+                  >No value in @decls should correspond to the @xml:id attribute of a classification
+                  term. Use @class for this purpose.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
@@ -12379,6 +12384,7 @@
       <classes>
         <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
+        <memberOf key="att.dataPointing"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
         <memberOf key="att.source"/>
@@ -12416,6 +12422,14 @@
               local-name() eq 'relationList' or local-name() eq 'table')])"
               >Unstructured text not allowed when head, lg, p, quote or table elements are
               used.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="Check_annot_dataTarget" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:annot[@data]">
+            <sch:assert test="ancestor::mei:notesStmt">The @data attribute may only occur on an
+              annotation within the notesStmt element.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -21698,6 +21712,7 @@
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.classCodeIdent"/>
+        <memberOf key="att.dataPointing"/>
         <memberOf key="att.lang"/>
       </classes>
       <content>
@@ -21709,6 +21724,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="Check_term_dataTarget" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:term[@data]">
+            <sch:assert test="ancestor::mei:classification">The @data attribute may only occur on a
+              term which is a descendant of a classification element.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <remarks>
         <p>The <att>classcode</att> attribute may be used to link the term to a terminological
           source given in a <gi scheme="MEI">classCode</gi> element. The <gi scheme="MEI">term</gi>
