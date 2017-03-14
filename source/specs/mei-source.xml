@@ -4527,6 +4527,31 @@
         <memberOf key="att.beamSecondary"/>
       </classes>
     </classSpec>
+    <classSpec ident="att.classed" module="MEI.shared" type="atts">
+      <desc>Attributes which can be used to classify features.</desc>
+      <attList>
+        <attDef ident="class" usage="opt">
+          <desc>Contains one or more URIs which denote classification terms that apply to the entity
+            bearing this attribute. A fragment identifier may be employed to point to a
+            classification term recorded in the MEI header.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.URI"/>
+          </datatype>
+          <constraintSpec ident="check_classURI" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@class">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@class attribute
+                  should have content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:term/@xml:id or matches($i, '^([a-z]+://|\.{1,2}/)')"
+                  >The value in @class should correspond to the @xml:id attribute of a term element
+                  or be an external URL.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+      </attList>
+    </classSpec>
     <classSpec ident="att.classCodeIdent" module="MEI.shared" type="atts">
       <attList>
         <attDef ident="classcode" usage="opt">
@@ -10911,21 +10936,20 @@
     </classSpec>
     <classSpec ident="att.typed" module="MEI.shared" type="atts">
       <desc>Attributes which can be used to classify features.</desc>
+      <classes>
+        <memberOf key="att.classed"/>
+      </classes>
       <attList>
         <attDef ident="type" usage="opt">
-          <desc>Characterizes the element in some sense, using any convenient classification scheme
-            or typology that employs single-token labels.</desc>
-          <datatype>
-            <rng:data type="NMTOKENS"/>
+          <desc>Designation which characterizes the element in some sense, using any convenient
+            classification scheme or typology that employs single-token labels.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:data type="NMTOKEN"/>
           </datatype>
         </attDef>
       </attList>
       <remarks>
-        <p>When appropriate, values from an established typology should be used. Alternatively, a
-          typology may be defined in the associated MEI header using the <gi scheme="MEI"
-            >classification</gi> element. If values are to be taken from a project-specific list,
-          this should be defined using the TEI valList element in a project-specific schema
-          description.</p>
+        <p>When appropriate, values from an established typology should be used.</p>
       </remarks>
     </classSpec>
     <classSpec ident="att.typography" module="MEI.shared" type="atts">
@@ -14538,6 +14562,7 @@
         section.</desc>
       <classes>
         <memberOf key="att.basic"/>
+        <memberOf key="att.classed"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
@@ -17167,6 +17192,7 @@
         arranged in a linear, often vertical, sequence.</desc>
       <classes>
         <memberOf key="att.basic"/>
+        <memberOf key="att.classed"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.labelled"/>
         <memberOf key="att.lang"/>
@@ -17835,6 +17861,7 @@
       <classes>
         <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
+        <memberOf key="att.classed"/>
         <memberOf key="att.edit"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.labelled"/>
@@ -21895,6 +21922,7 @@
         <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.canonical"/>
+        <memberOf key="att.classed"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.filing"/>
         <memberOf key="att.labelled"/>
@@ -22023,6 +22051,7 @@
         <memberOf key="att.basic"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.canonical"/>
+        <memberOf key="att.classed"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.filing"/>
         <memberOf key="att.labelled"/>
