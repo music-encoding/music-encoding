@@ -4383,6 +4383,42 @@
         <memberOf key="att.numberPlacement"/>
       </classes>
     </classSpec>
+    <classSpec ident="att.caesura.anl" module="MEI.shared" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.caesura.ges" module="MEI.shared" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.duration.gestural"/>
+        <memberOf key="att.timestamp.gestural"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.caesura.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.layerIdent"/>
+        <memberOf key="att.staffIdent"/>
+        <memberOf key="att.startId"/>
+        <memberOf key="att.timestamp.logical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.caesura.vis" module="MEI.shared" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altSym"/>
+        <memberOf key="att.color"/>
+        <memberOf key="att.extSym"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.staffLoc"/>
+        <memberOf key="att.staffLoc.pitched"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.calendared" module="MEI.shared" type="atts">
       <desc>Attributes that indicate the calendar system of a date or other datable element.</desc>
       <attList>
@@ -13140,7 +13176,7 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="breath" module="MEI.cmn">
-      <desc>(breath mark) – A indication of a point at which the performer on an instrument
+      <desc>(breath mark) – An indication of a point at which the performer on an instrument
         requiring breath (including the voice) may breathe.</desc>
       <classes>
         <memberOf key="att.common"/>
@@ -13164,12 +13200,15 @@
       </constraintSpec>
       <remarks>
         <p>This element may also indicate a short pause or break for instruments *not* requiring
-          breath. Therefore, it often functions as a guide to phrasing. The usual sign for the
-          breath mark is a comma; however, other visual forms of the breath mark may be indicated
-          using the <att>altsym</att> attribute. The starting point of the breath mark may be
-          indicated by either a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or
-            <att>tstamp.real</att> attribute. It is a semantic error not to specify a starting point
-          attribute.</p>
+          breath. In such cases, it functions as a guide to phrasing. The starting point of the
+          breath mark may be indicated by either a <att>startid</att>, <att>tstamp</att>,
+            <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic error not
+          to specify a starting point attribute.</p>
+        <p>Since the breath mark does not disrupt the normal tempo of a performance, it has no
+          directly encode-able duration.</p>
+        <p>The default value for <att>place</att> for a breath mark is "above". Unless indicated by
+          other attributes, a breath mark will be rendered as a comma-like symbol above the top line
+          of the staff.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="bTrem" module="MEI.cmn">
@@ -13209,6 +13248,45 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+    </elementSpec>
+    <elementSpec ident="caesura" module="MEI.shared">
+      <desc>Break, pause, or interruption in the normal tempo of a composition. Typically indicated
+        by "railroad tracks", i.e., two diagonal slashes.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.caesura.anl"/>
+        <memberOf key="att.caesura.ges"/>
+        <memberOf key="att.caesura.log"/>
+        <memberOf key="att.caesura.vis"/>
+        <memberOf key="model.controlEventLike"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+      <constraintSpec ident="caesura_start-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:caesura">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <remarks>
+        <p>The caesura often indicates an abrupt interruption in the performance followed by an
+          equally sudden resumption. Its duration is typically shorter than a grand pause (G.P.) or
+          long pause (L.P.), but longer than that indicated by a <gi scheme="MEI">breath</gi> mark.
+          When combined with a <gi scheme="MEI">fermata</gi> a longer silence is usually implied.
+          The starting point of the caesura may be indicated by either a <att>startid</att>,
+            <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
+          semantic error not to specify a starting point attribute.</p>
+        <p>Unlike the <gi scheme="MEI">breath</gi> mark, a caesura may have a performed duration.
+          Also, while the default value for <att>place</att> on the breath mark is "above", the
+          default value for <att>place</att> for a caesura is "within". Unless indicated by other
+          attributes, a caesura will be rendered as a pair of slanted lines through the top line of
+          the staff.</p>
+        <p/>
+      </remarks>
     </elementSpec>
     <elementSpec ident="caption" module="MEI.shared">
       <desc>A label which accompanies an illustration or a table.</desc>
@@ -15317,13 +15395,14 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The <gi scheme="MEI">fermata</gi> element is a specialized form of, i.e., syntactic sugar
-          for, dir/@type="fermata" with &amp;ferm; or &amp;uferm; as its PCDATA content. The
-            <att>shape</att> attribute may be used to record whether the fermata is curved or
-          square. Other visual forms of a fermata may be indicated via the <att>altsym</att>
-          attribute. The starting point of the fermata may be indicated by either a
-            <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att>
-          attribute. It is a semantic error not to specify a starting point attribute.</p>
+        <p>The <att>shape</att> attribute may be used to record whether the fermata is curved,
+          square, or triangular, while <att>form</att> may be used to capture whether the fermata is
+          "upright", i.e., has the curve or bracket above the dot, or inverted, i.e., has the curve
+          or bracket below the dot. Other visual forms of a fermata may be indicated via the
+            <att>altsym</att> attribute. The starting point of the fermata may be indicated by
+          either a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>, or
+            <att>tstamp.real</att> attribute. It is a semantic error not to specify a starting point
+          attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="fig" module="MEI.figtable">
