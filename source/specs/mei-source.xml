@@ -1889,8 +1889,8 @@
       <desc>Key signature may be indicated by a value showing where the key is in the circle of
         fifths. Mixed key signatures, e.g. those consisting of a mixture of flats and sharps, and
         key signatures with unorthodox placement of the accidentals (Read, p. 143) must be indicated
-        by setting the key.sig attribute to 'mixed' and providing explicit key signature information
-        in the key.sig.mixed attribute.</desc>
+        by setting the keysig attribute to 'mixed' and providing explicit key signature information
+        in the keysig.mixed attribute.</desc>
       <content>
         <rng:data type="token">
           <rng:param name="pattern">mixed|0|([1-9]|1[0-2])[f|s]</rng:param>
@@ -3898,14 +3898,14 @@
     <classSpec ident="att.authorized" module="MEI.shared" type="atts">
       <desc>Attributes that describe the source of a controlled value.</desc>
       <attList>
-        <attDef ident="authority" usage="opt">
+        <attDef ident="auth" usage="opt">
           <desc>A name or label associated with the controlled vocabulary from which the value is
             taken.</desc>
           <datatype>
             <rng:data type="string"/>
           </datatype>
         </attDef>
-        <attDef ident="authURI" usage="opt">
+        <attDef ident="auth.uri" usage="opt">
           <desc>The web-accessible location of the controlled vocabulary from which the value is
             taken.</desc>
           <datatype>
@@ -4442,7 +4442,7 @@
       <attList>
         <attDef ident="codedval" usage="opt">
           <desc>a value that represents or identifies the element content. May serve as a primary
-            key in a web-accessible database identified by the authURI attribute.</desc>
+            key in a web-accessible database identified by the <att>auth.uri</att> attribute.</desc>
           <datatype maxOccurs="unbounded">
             <rng:data type="NMTOKEN"/>
           </datatype>
@@ -5578,21 +5578,21 @@
       <desc>Attributes used to associate MEI features with corresponding glyphs in an
         externally-defined standard such as SMuFL.</desc>
       <attList>
-        <attDef ident="glyphname" usage="opt">
+        <attDef ident="glyph.name" usage="opt">
           <desc>Glyph name.</desc>
           <datatype>
             <rng:data type="string"/>
           </datatype>
-          <constraintSpec ident="check_glyphname" scheme="isoschematron">
+          <constraintSpec ident="check_glyph.name" scheme="isoschematron">
             <constraint>
-              <sch:rule context="@glyphname">
-                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyphname attribute
-                  should have content.</sch:assert>
+              <sch:rule context="@glyph.name">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyph.name
+                  attribute should have content.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
         </attDef>
-        <attDef ident="glyphnum" usage="opt">
+        <attDef ident="glyph.num" usage="opt">
           <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
             SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
@@ -5600,12 +5600,12 @@
               <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
             </rng:data>
           </datatype>
-          <constraintSpec ident="check_glyphnum" scheme="isoschematron">
+          <constraintSpec ident="check_glyph.num" scheme="isoschematron">
             <constraint>
               <sch:rule
-                context="mei:*[@glyphnum and (lower-case(@authority) eq 'smufl' or @authURI eq 'http://www.smufl.org/')]">
+                context="mei:*[@glyph.num and (lower-case(@auth) eq 'smufl' or @auth.uri eq 'http://www.smufl.org/')]">
                 <sch:assert role="warning"
-                  test="matches(normalize-space(@glyphnum), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
+                  test="matches(normalize-space(@glyph.num), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
                   >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
               </sch:rule>
             </constraint>
@@ -6596,12 +6596,12 @@
         <attDef ident="sig.mixed" usage="opt">
           <desc>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read,
             p. 143, ex. 9-39), and key signatures with unorthodox placement of the accidentals
-            (Read, p. 141) must be indicated by setting the key.sig attribute to 'mixed' and
-            providing explicit key signature information in the key.sig.mixed attribute or in the
-              <gi scheme="MEI">keySig</gi> element. It is intended that key.sig.mixed contain a
-            series of tokens with each token containing pitch name, accidental, and octave, such as
-            'a4 c5s e5f' that indicate what key accidentals should be rendered and where they should
-            be placed.</desc>
+            (Read, p. 141) must be indicated by setting the keysig attribute to 'mixed' and
+            providing explicit key signature information in the keysig.mixed attribute or in the <gi
+              scheme="MEI">keySig</gi> element. It is intended that keysig.mixed contain a series of
+            tokens with each token containing pitch name, accidental, and octave, such as 'a4 c5s
+            e5f' that indicate what key accidentals should be rendered and where they should be
+            placed.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.KEYSIGTOKEN"/>
           </datatype>
@@ -6652,21 +6652,21 @@
             <rng:ref name="data.PITCHNAME"/>
           </datatype>
         </attDef>
-        <attDef ident="key.sig" usage="opt">
+        <attDef ident="keysig" usage="opt">
           <desc>Indicates where the key lies in the circle of fifths.</desc>
           <datatype>
             <rng:ref name="data.KEYSIGNATURE"/>
           </datatype>
         </attDef>
-        <attDef ident="key.sig.mixed" usage="opt">
+        <attDef ident="keysig.mixed" usage="opt">
           <desc>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read,
             p. 143, ex. 9-39), and key signatures with unorthodox placement of the accidentals
-            (Read, p. 141) must be indicated by setting the key.sig attribute to 'mixed' and
-            providing explicit key signature information in the key.sig.mixed attribute or in the
-              <gi scheme="MEI">keySig</gi> element. It is intended that key.sig.mixed contain a
-            series of tokens with each token containing pitch name, accidental, and octave, such as
-            'a4 c5s e5f' that indicate what key accidentals should be rendered and where they should
-            be placed.</desc>
+            (Read, p. 141) must be indicated by setting the keysig attribute to 'mixed' and
+            providing explicit key signature information in the keysig.mixed attribute or in the <gi
+              scheme="MEI">keySig</gi> element. It is intended that keysig.mixed contain a series of
+            tokens with each token containing pitch name, accidental, and octave, such as 'a4 c5s
+            e5f' that indicate what key accidentals should be rendered and where they should be
+            placed.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.KEYSIGTOKEN"/>
           </datatype>
@@ -6677,13 +6677,13 @@
       <desc>Used by staffDef and scoreDef to provide default values for attributes in the visual
         domain related to key signatures.</desc>
       <attList>
-        <attDef ident="key.sig.show" usage="opt">
+        <attDef ident="keysig.show" usage="opt">
           <desc>Indicates whether the key signature should be displayed.</desc>
           <datatype>
             <rng:ref name="data.BOOLEAN"/>
           </datatype>
         </attDef>
-        <attDef ident="key.sig.showchange" usage="opt">
+        <attDef ident="keysig.showchange" usage="opt">
           <desc>Determines whether cautionary accidentals should be displayed at a key
             change.</desc>
           <datatype>
@@ -6938,7 +6938,7 @@
             <rng:ref name="data.LINESTARTENDSYMBOL"/>
           </datatype>
         </attDef>
-        <attDef ident="endsymsize" usage="opt">
+        <attDef ident="endsym.size" usage="opt">
           <desc>Holds the relative size of the line-end symbol.</desc>
           <datatype>
             <rng:ref name="data.FONTSIZESCALE"/>
@@ -6957,7 +6957,7 @@
             <rng:ref name="data.LINESTARTENDSYMBOL"/>
           </datatype>
         </attDef>
-        <attDef ident="startsymsize" usage="opt">
+        <attDef ident="startsym.size" usage="opt">
           <desc>Holds the relative size of the line-start symbol.</desc>
           <datatype>
             <rng:ref name="data.FONTSIZESCALE"/>
@@ -6997,7 +6997,7 @@
             <rng:ref name="data.LINESTARTENDSYMBOL"/>
           </datatype>
         </attDef>
-        <attDef ident="lendsymsize" usage="opt">
+        <attDef ident="lendsym.size" usage="opt">
           <desc>Holds the relative size of the line-end symbol.</desc>
           <datatype>
             <rng:ref name="data.FONTSIZESCALE"/>
@@ -7016,7 +7016,7 @@
             <rng:ref name="data.LINESTARTENDSYMBOL"/>
           </datatype>
         </attDef>
-        <attDef ident="lstartsymsize" usage="opt">
+        <attDef ident="lstartsym.size" usage="opt">
           <desc>Holds the relative size of the line-start symbol.</desc>
           <datatype>
             <rng:ref name="data.FONTSIZESCALE"/>
@@ -7879,8 +7879,8 @@
       <attList>
         <attDef ident="form" usage="opt">
           <desc>Records semantic meaning, i.e., intended performance, of the mordent. The
-              <att>altsym</att>, <att>glyphname</att>, or <att>glyphnum</att> attributes may be used
-            to specify the appropriate symbol.</desc>
+              <att>altsym</att>, <att>glyph.name</att>, or <att>glyph.num</att> attributes may be
+            used to specify the appropriate symbol.</desc>
           <valList type="closed">
             <valItem ident="lower">
               <desc>Starts with the written note, followed by its lower neighbor, with a return to
@@ -8249,16 +8249,16 @@
         <memberOf key="att.note.ges.mensural"/>
         <memberOf key="att.note.ges.tablature"/>
       </classes>
-      <constraintSpec ident="extreme_disallows_gestural_pitch" scheme="isoschematron">
+      <constraintSpec ident="extremis_disallows_gestural_pitch" scheme="isoschematron">
         <constraint>
-          <sch:rule context="mei:note[@extreme.ges]">
-            <sch:assert test="not(@pname.ges) and not(@oct.ges)">When the @extreme.ges attribute is
+          <sch:rule context="mei:note[@extremis]">
+            <sch:assert test="not(@pname.ges) and not(@oct.ges)">When the @extremis attribute is
               used, the @pname.ges and @oct.ges attributes are not allowed.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
       <attList>
-        <attDef ident="extreme.ges" usage="opt">
+        <attDef ident="extremis" usage="opt">
           <desc>Indicates an extreme, indefinite performed pitch.</desc>
           <valList type="closed">
             <valItem ident="highest">
@@ -8537,7 +8537,7 @@
     <classSpec ident="att.octaveDefault" module="MEI.shared" type="atts">
       <desc>Attributes that record a default value for octave.</desc>
       <attList>
-        <attDef ident="octave.default" usage="opt">
+        <attDef ident="oct.default" usage="opt">
           <desc>Contains a default octave specification for use when the first note, rest, chord,
             etc. in a measure does not have an octave value specified.</desc>
           <datatype>
@@ -10780,7 +10780,7 @@
     <classSpec ident="att.tremMeasured" module="MEI.cmn" type="atts">
       <desc>Attributes that describe measured tremolandi.</desc>
       <attList>
-        <attDef ident="measperf" usage="opt">
+        <attDef ident="unitdur" usage="opt">
           <desc>The performed duration of an individual note in a measured tremolo.</desc>
           <datatype>
             <rng:ref name="data.DURATION.cmn"/>
@@ -10956,7 +10956,7 @@
         </attDef>
         <attDef ident="form" usage="opt">
           <desc>Records meaning; i.e., intended performance, of the turn. The <att>altsym</att>,
-              <att>glyphname</att>, or <att>glyphnum</att> attributes may be used to specify the
+              <att>glyph.name</att>, or <att>glyph.num</att> attributes may be used to specify the
             appropriate symbol.</desc>
           <valList type="closed">
             <valItem ident="lower">
@@ -13697,8 +13697,8 @@
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>The citation may be provided in the <att>authority</att> attribute or, when additional
-          markup is needed, as textual content of the element.</p>
+        <p>The citation may be provided in the <att>auth</att> attribute or, when additional markup
+          is needed, as textual content of the element.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -14039,7 +14039,7 @@
           religious bodies, churches, conferences, athletic contests, exhibitions, expeditions,
           fairs, and ships. Usually, secondary name parts are encoded in <gi scheme="MEI"
             >corpName</gi> sub-elements. The name of the list from which a controlled value is taken
-          may be recorded using the <att>authority</att> attribute.</p>
+          may be recorded using the <att>auth</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -15879,7 +15879,7 @@
           >settlement</gi>, <gi scheme="MEI">region</gi>, <gi scheme="MEI">country</gi>, and <gi
             scheme="MEI">bloc</gi> sub-elements. The name of the list from which a controlled value
           is taken, such as the Thesaurus of Geographic Names (TGN), may be recorded using the
-            <att>authority</att> attribute.</p>
+            <att>auth</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -16793,7 +16793,7 @@
       </content>
       <remarks>
         <p>This element may be used as an alternative to the key.* attributes (especially
-            <att>key.sig.mixed</att>) on <gi scheme="MEI">scoreDef</gi> and <gi scheme="MEI"
+            <att>keysig.mixed</att>) on <gi scheme="MEI">scoreDef</gi> and <gi scheme="MEI"
             >staffDef</gi>.</p>
       </remarks>
     </elementSpec>
@@ -16910,8 +16910,8 @@
         <p>A textual element may be related to this element by setting its <att>xml:lang</att>
           attribute, which normally takes the form of a code drawn from a coded list, such as
           ISO639-2b, to the same value as this element's codedval attribute. The name and web
-          location of the authorizing list may be encoded in the <att>authority</att> attribute and
-          the <att>authURI</att> attribute, respectively.</p>
+          location of the authorizing list may be encoded in the <att>auth</att> attribute and the
+            <att>auth.uri</att> attribute, respectively.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -18033,8 +18033,8 @@
             <att>enddate</att>, <att>notbefore</att>, <att>notafter</att>, and <att>isodate</att>
           attributes. The name of the list from which a controlled value is taken, such as the
           Thesaurus of Geographic Names (TGN) or Library of Congress Name Authority File (LCNAF),
-          and its electronically-available location may be recorded using the <att>authority</att>
-          and <att>authURI</att> attributes.</p>
+          and its electronically-available location may be recorded using the <att>auth</att> and
+            <att>auth.uri</att> attributes.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -18760,7 +18760,7 @@
       </content>
       <remarks>
         <p>The name of the list from which a controlled value is taken may be recorded using the
-            <att>authority</att> attribute.</p>
+            <att>auth</att> attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="persName" module="MEI.namesdates">
@@ -18790,7 +18790,7 @@
         <p>Parts of a personal name may be captured using <gi scheme="MEI">persName</gi>
           sub-elements. For greater specificity, however, use foreName, famName, genName, addName,
           genName, nameLink, and roleName elements. The name of the list from which a controlled
-          value for persName is taken may be recorded using the <att>authority</att> attribute.</p>
+          value for persName is taken may be recorded using the <att>auth</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -19997,7 +19997,7 @@
       <remarks>
         <p>Sub-units of the holding institution may be marked with <gi scheme="MEI">repository</gi>
           sub-elements. The name of the list from which a controlled value is taken may be recorded
-          using the <att>authority</att> attribute.</p>
+          using the <att>auth</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -20019,7 +20019,7 @@
       </content>
       <remarks>
         <p>The name of the list from which a controlled value is taken may be recorded using the
-            <att>authority</att> attribute.</p>
+            <att>auth</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -21368,7 +21368,7 @@
       <remarks>
         <p>Do not confuse this element with the <gi scheme="MEI">periodName</gi> element. The name
           of the list from which a controlled value is taken may be recorded using the
-            <att>authority</att> attribute.</p>
+            <att>auth</att> attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="subst" module="MEI.edittrans">
@@ -21548,9 +21548,9 @@
           <sch:rule context="mei:symbol[ancestor::mei:symbolDef]">
             <sch:assert test="@startid or (@x and @y)">In the symbolDef context, symbol must have
               either a startid attribute or x and y attributes.</sch:assert>
-            <sch:assert test="@altsym or @glyphname or @glyphnum">In the symbolDef context, symbol
-              must have one of the following attributes: altsym, glyphname, or
-              glyphnum.</sch:assert>
+            <sch:assert test="@altsym or @glyph.name or @glyph.num">In the symbolDef context, symbol
+              must have one of the following attributes: altsym, glyph.name, or
+              glyph.num.</sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -21919,14 +21919,14 @@
         </rng:zeroOrMore>
       </content>
       <attList>
-        <attDef ident="mainLang" usage="opt">
+        <attDef ident="lang.main" usage="opt">
           <desc>(main language) supplies a code which identifies the chief language used in the
             bibliographic work.</desc>
           <datatype>
             <rng:data type="language"/>
           </datatype>
         </attDef>
-        <attDef ident="otherLangs" usage="opt">
+        <attDef ident="lang.other" usage="opt">
           <desc>(other languages) one or more codes identifying any other languages used in the
             bibliographic work.</desc>
           <datatype maxOccurs="unbounded">
@@ -22103,9 +22103,9 @@
           and any parallel titles, may be enclosed within a single <gi scheme="MEI">title</gi>
           element. Title parts may be encoded in <gi scheme="MEI">title</gi> sub-elements. The name
           of the list from which a controlled value is taken may be recorded using the
-            <att>authority</att> attribute. The number of initial characters (such as those
-          constituing an article or preposition) that should not be used for sorting a title or name
-          may be indicated in the <att>nonfiling</att> attribute.</p>
+            <att>auth</att> attribute. The number of initial characters (such as those constituing
+          an article or preposition) that should not be used for sorting a title or name may be
+          indicated in the <att>nonfiling</att> attribute.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
