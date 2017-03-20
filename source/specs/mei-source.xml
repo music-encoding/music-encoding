@@ -5578,6 +5578,13 @@
       <desc>Attributes used to associate MEI features with corresponding glyphs in an
         externally-defined standard such as SMuFL.</desc>
       <attList>
+        <attDef ident="glyph.auth" usage="opt">
+          <desc>A name or label associated with the controlled vocabulary from which the value of
+              <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+          <datatype>
+            <rng:data type="string"/>
+          </datatype>
+        </attDef>
         <attDef ident="glyph.name" usage="opt">
           <desc>Glyph name.</desc>
           <datatype>
@@ -5603,13 +5610,20 @@
           <constraintSpec ident="check_glyph.num" scheme="isoschematron">
             <constraint>
               <sch:rule
-                context="mei:*[@glyph.num and (lower-case(@auth) eq 'smufl' or @auth.uri eq 'http://www.smufl.org/')]">
+                context="mei:*[@glyph.num and (lower-case(@glyphauth) eq 'smufl' or @glyphURI eq 'http://www.smufl.org/')]">
                 <sch:assert role="warning"
                   test="matches(normalize-space(@glyph.num), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
                   >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
+        </attDef>
+        <attDef ident="glyph.uri" usage="opt">
+          <desc>The web-accessible location of the controlled vocabulary from which the value of
+              <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -21527,7 +21541,6 @@
       <desc>A reference to a previously defined symbol.</desc>
       <classes>
         <memberOf key="att.altSym"/>
-        <memberOf key="att.authorized"/>
         <memberOf key="att.color"/>
         <memberOf key="att.common"/>
         <memberOf key="att.common.anl"/>
