@@ -30,6 +30,12 @@
     <moduleSpec ident="MEI.analysis">
       <desc>Analytical component declarations.</desc>
     </moduleSpec>
+    <moduleSpec ident="MEI.analysis.cmn">
+      <desc>Analytical component declarations for Common Music Notation (CMN).</desc>
+    </moduleSpec>
+    <moduleSpec ident="MEI.analysis.mensural">
+      <desc>Analytical component declarations for Mensural notation.</desc>
+    </moduleSpec>
     <moduleSpec ident="MEI.cmn">
       <desc>Common Music Notation (CMN) repertoire component declarations.</desc>
     </moduleSpec>
@@ -4012,17 +4018,6 @@
         <memberOf key="att.beamRend"/>
       </classes>
     </classSpec>
-    <classSpec ident="att.beamed" module="MEI.cmn" type="atts">
-      <desc>Attributes that indicate whether an event lies under a beam.</desc>
-      <attList>
-        <attDef ident="beam" usage="opt">
-          <desc>Indicates that this event is "under a beam".</desc>
-          <datatype maxOccurs="unbounded">
-            <rng:ref name="data.BEAM"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.beamedWith" module="MEI.cmn" type="atts">
       <desc>Attributes indicating cross-staff beaming.</desc>
       <attList>
@@ -4097,6 +4092,17 @@
           <desc>Captures beam slope.</desc>
           <datatype>
             <rng:data type="decimal"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.beamPresent" module="MEI.cmn" type="atts">
+      <desc>Attributes that indicate whether an event lies under a beam.</desc>
+      <attList>
+        <attDef ident="beam" usage="opt">
+          <desc>Indicates that this event is "under a beam".</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.BEAM"/>
           </datatype>
         </attDef>
       </attList>
@@ -4481,7 +4487,20 @@
     <classSpec ident="att.chord.anl" module="MEI.shared" type="atts">
       <desc>Analytical domain attributes.</desc>
       <classes>
+        <memberOf key="att.chord.anl.cmn"/>
         <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.chord.anl.cmn" module="MEI.analysis.cmn" type="atts">
+      <desc>Analytical domain attributes in the CMN repertoire.</desc>
+      <classes>
+        <memberOf key="att.beamPresent"/>
+        <memberOf key="att.fermataPresent"/>
+        <memberOf key="att.lvPresent"/>
+        <memberOf key="att.ornamPresent"/>
+        <memberOf key="att.slurPresent"/>
+        <memberOf key="att.tiePresent"/>
+        <memberOf key="att.tupletPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.chord.ges" module="MEI.shared" type="atts">
@@ -4507,25 +4526,16 @@
         elements corresponding to these attributes or the attributes available in the att.vis.chord
         class should be employed.</desc>
       <classes>
-        <memberOf key="att.event"/>
         <memberOf key="att.articulation"/>
         <memberOf key="att.augmentDots"/>
-        <memberOf key="att.duration.logical"/>
-        <memberOf key="att.fermataPresent"/>
-        <memberOf key="att.sylText"/>
-        <memberOf key="att.slurPresent"/>
-        <memberOf key="att.tiePresent"/>
-        <memberOf key="att.tupletPresent"/>
         <memberOf key="att.chord.log.cmn"/>
+        <memberOf key="att.duration.logical"/>
+        <memberOf key="att.event"/>
+        <memberOf key="att.sylText"/>
       </classes>
     </classSpec>
     <classSpec ident="att.chord.log.cmn" module="MEI.cmn" type="atts">
-      <desc>Logical domain attributes for CMN features.</desc>
-      <classes>
-        <memberOf key="att.beamed"/>
-        <memberOf key="att.lvPresent"/>
-        <memberOf key="att.ornam"/>
-      </classes>
+      <desc>Logical domain attributes in the CMN repertoire.</desc>
     </classSpec>
     <classSpec ident="att.chord.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes for chord. The slur, slur.dir, slur.rend, tie, tie.dir, and
@@ -7069,7 +7079,8 @@
     </classSpec>
     <classSpec ident="att.lvPresent" module="MEI.cmn" type="atts">
       <desc>Attributes that indicate the presence of an l.v. (laissez vibrer) marking attached to a
-        feature.</desc>
+        feature. If visual information about the lv sign needs to be recorded, then an <gi
+          scheme="MEI">lv</gi> element should be employed.</desc>
       <attList>
         <attDef ident="lv" usage="opt">
           <desc>Indicates the attachment of an l.v. (laissez vibrer) sign to this element.</desc>
@@ -7930,9 +7941,10 @@
       </classes>
     </classSpec>
     <classSpec ident="att.mRest.anl" module="MEI.cmn" type="atts">
-      <desc>Analytical domain attributes.</desc>
+      <desc>Analytical domain attributes in the CMN repertoire.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.fermataPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.mRest.ges" module="MEI.cmn" type="atts">
@@ -7948,7 +7960,6 @@
         <memberOf key="att.augmentDots"/>
         <memberOf key="att.duration.logical"/>
         <memberOf key="att.event"/>
-        <memberOf key="att.fermataPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.mRest.vis" module="MEI.cmn" type="atts">
@@ -8016,11 +8027,12 @@
       </classes>
     </classSpec>
     <classSpec ident="att.mSpace.anl" module="MEI.cmn" type="atts">
-      <desc>Analytical domain attributes. Use the n attribute to explicitly encode this measure's
-        position in a string of measures containing only <gi scheme="MEI">mRest</gi>
-        elements.</desc>
+      <desc>Analytical domain attributes in the CMN repertoire. Use the n attribute to explicitly
+        encode this measure's position in a string of measures containing only <gi scheme="MEI"
+          >mRest</gi> elements.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.fermataPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.mSpace.ges" module="MEI.cmn" type="atts">
@@ -8031,12 +8043,11 @@
       </classes>
     </classSpec>
     <classSpec ident="att.mSpace.log" module="MEI.cmn" type="atts">
-      <desc>Logical domain attributes.</desc>
+      <desc>Logical domain attributes in the CMN repertoire.</desc>
       <classes>
         <memberOf key="att.augmentDots"/>
-        <memberOf key="att.event"/>
         <memberOf key="att.duration.logical"/>
-        <memberOf key="att.fermataPresent"/>
+        <memberOf key="att.event"/>
       </classes>
     </classSpec>
     <classSpec ident="att.mSpace.vis" module="MEI.cmn" type="atts">
@@ -8249,9 +8260,36 @@
         <memberOf key="att.harmonicFunction"/>
         <memberOf key="att.intervalMelodic"/>
         <memberOf key="att.melodicFunction"/>
+        <memberOf key="att.note.anl.cmn"/>
+        <memberOf key="att.note.anl.mensural"/>
         <memberOf key="att.pitchClass"/>
         <memberOf key="att.solfa"/>
       </classes>
+    </classSpec>
+    <classSpec ident="att.note.anl.cmn" module="MEI.analysis.cmn" type="atts">
+      <desc>Analytical domain attributes in the CMN repertoire.</desc>
+      <classes>
+        <memberOf key="att.beamPresent"/>
+        <memberOf key="att.fermataPresent"/>
+        <memberOf key="att.lvPresent"/>
+        <memberOf key="att.ornamPresent"/>
+        <memberOf key="att.slurPresent"/>
+        <memberOf key="att.sylText"/>
+        <memberOf key="att.tiePresent"/>
+        <memberOf key="att.tupletPresent"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.note.anl.mensural" module="MEI.analysis.mensural" type="atts">
+      <desc>Analytical domain attributes in the Mensural repertoire.</desc>
+      <attList>
+        <attDef ident="lig" usage="opt">
+          <desc>Indicates this element's participation in a ligature.</desc>
+          <valList type="closed">
+            <valItem ident="recta"/>
+            <valItem ident="obliqua"/>
+          </valList>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.note.ges" module="MEI.shared" type="atts">
       <desc>Gestural domain attributes.</desc>
@@ -8352,40 +8390,21 @@
     <classSpec ident="att.note.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
       <classes>
-        <memberOf key="att.event"/>
         <memberOf key="att.accidental"/>
         <memberOf key="att.articulation"/>
         <memberOf key="att.augmentDots"/>
         <memberOf key="att.duration.logical"/>
-        <memberOf key="att.fermataPresent"/>
-        <memberOf key="att.pitched"/>
-        <memberOf key="att.sylText"/>
-        <memberOf key="att.slurPresent"/>
-        <memberOf key="att.tiePresent"/>
-        <memberOf key="att.tupletPresent"/>
+        <memberOf key="att.event"/>
         <memberOf key="att.note.log.cmn"/>
         <memberOf key="att.note.log.mensural"/>
+        <memberOf key="att.pitched"/>
       </classes>
     </classSpec>
     <classSpec ident="att.note.log.cmn" module="MEI.cmn" type="atts">
       <desc>Logical domain attributes.</desc>
-      <classes>
-        <memberOf key="att.beamed"/>
-        <memberOf key="att.lvPresent"/>
-        <memberOf key="att.ornam"/>
-      </classes>
     </classSpec>
     <classSpec ident="att.note.log.mensural" module="MEI.mensural" type="atts">
-      <desc>Logical domain attributes.</desc>
-      <attList>
-        <attDef ident="lig" usage="opt">
-          <desc>Indicates this element's participation in a ligature.</desc>
-          <valList type="closed">
-            <valItem ident="recta"/>
-            <valItem ident="obliqua"/>
-          </valList>
-        </attDef>
-      </attList>
+      <desc>Logical domain attributes in the Mensural repertoire.</desc>
     </classSpec>
     <classSpec ident="att.note.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
@@ -8681,19 +8700,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.ornam" module="MEI.cmnOrnaments" type="atts">
-      <desc>Attributes for marking the presence of an ornament.</desc>
-      <attList>
-        <attDef ident="ornam" usage="opt">
-          <desc>Indicates that this element has an attached ornament. If visual information about
-            the ornament is needed, then one of the elements that represents an ornament (mordent,
-            trill, or turn) should be employed.</desc>
-          <datatype maxOccurs="unbounded">
-            <rng:ref name="data.ORNAM.cmn"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
     <classSpec ident="att.ornam.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
       <classes>
@@ -8741,6 +8747,19 @@
           <desc>Records the written accidental associated with a lower neighboring note.</desc>
           <datatype>
             <rng:ref name="data.ACCIDENTAL.WRITTEN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.ornamPresent" module="MEI.cmnOrnaments" type="atts">
+      <desc>Attributes for marking the presence of an ornament.</desc>
+      <attList>
+        <attDef ident="ornam" usage="opt">
+          <desc>Indicates that this element has an attached ornament. If visual information about
+            the ornament is needed, then one of the elements that represents an ornament (mordent,
+            trill, or turn) should be employed.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.ORNAM.cmn"/>
           </datatype>
         </attDef>
       </attList>
@@ -9449,6 +9468,15 @@
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.rest.anl.cmn"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.rest.anl.cmn" module="MEI.analysis.cmn" type="atts">
+      <desc>Analytical domain attributes in the CMN repertoire.</desc>
+      <classes>
+        <memberOf key="att.beamPresent"/>
+        <memberOf key="att.fermataPresent"/>
+        <memberOf key="att.tupletPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.rest.ges" module="MEI.shared" type="atts">
@@ -9469,18 +9497,13 @@
       <desc>Logical domain attributes.</desc>
       <classes>
         <memberOf key="att.augmentDots"/>
-        <memberOf key="att.event"/>
         <memberOf key="att.duration.logical"/>
-        <memberOf key="att.fermataPresent"/>
-        <memberOf key="att.tupletPresent"/>
+        <memberOf key="att.event"/>
         <memberOf key="att.rest.log.cmn"/>
       </classes>
     </classSpec>
     <classSpec ident="att.rest.log.cmn" module="MEI.cmn" type="atts">
-      <desc>Logical domain attributes.</desc>
-      <classes>
-        <memberOf key="att.beamed"/>
-      </classes>
+      <desc>Logical domain attributes in the CMN repertoire.</desc>
     </classSpec>
     <classSpec ident="att.rest.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
@@ -9878,6 +9901,15 @@
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
+        <memberOf key="att.space.anl.cmn"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.space.anl.cmn" module="MEI.analysis.cmn" type="atts">
+      <desc>Analytical domain attributes in the CMN repertoire.</desc>
+      <classes>
+        <memberOf key="att.beamPresent"/>
+        <memberOf key="att.fermataPresent"/>
+        <memberOf key="att.tupletPresent"/>
       </classes>
     </classSpec>
     <classSpec ident="att.space.ges" module="MEI.shared" type="atts">
@@ -9890,18 +9922,12 @@
       <desc>Logical domain attributes.</desc>
       <classes>
         <memberOf key="att.augmentDots"/>
-        <memberOf key="att.event"/>
         <memberOf key="att.duration.logical"/>
-        <memberOf key="att.fermataPresent"/>
-        <memberOf key="att.tupletPresent"/>
-        <memberOf key="att.space.log.cmn"/>
+        <memberOf key="att.event"/>
       </classes>
     </classSpec>
     <classSpec ident="att.space.log.cmn" module="MEI.cmn" type="atts">
-      <desc>Logical domain attributes for CMN features.</desc>
-      <classes>
-        <memberOf key="att.beamed"/>
-      </classes>
+      <desc>Logical domain attributes in the CMN repertoire.</desc>
     </classSpec>
     <classSpec ident="att.space.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
