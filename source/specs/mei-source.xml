@@ -11866,15 +11866,6 @@
         <memberOf key="model.textPhraseLike.limited"/>
       </classes>
     </classSpec>
-    <classSpec ident="model.lyricsLike" module="MEI.lyrics" type="model">
-      <desc>Groups elements that represent sung text.</desc>
-      <classes>
-        <memberOf key="model.measurePart"/>
-        <memberOf key="model.layerPart.mensural"/>
-        <memberOf key="model.syllablePart"/>
-        <memberOf key="model.rdgPart.critapp"/>
-      </classes>
-    </classSpec>
     <classSpec ident="model.manifestationLike" type="model" module="MEI.frbr">
       <desc>Collects manifestationLike elements.</desc>
     </classSpec>
@@ -12206,7 +12197,6 @@
       <classes>
         <memberOf key="model.rdgPart.critapp"/>
         <memberOf key="model.syllablePart"/>
-        <memberOf key="model.textPhraseLike.limited"/>
       </classes>
     </classSpec>
     <classSpec ident="model.symbolTableLike" module="MEI.usersymbols" type="model">
@@ -17235,7 +17225,7 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="lg" module="MEI.text">
+    <elementSpec ident="lg" module="MEI.shared">
       <desc>(line group) – May be used for any section of text that is organized as a group of
         lines; however, it is most often used for a group of verse lines functioning as a formal
         unit, e.g. a stanza, refrain, verse paragraph, etc.</desc>
@@ -17243,6 +17233,9 @@
         <memberOf key="att.common"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
+        <memberOf key="att.lyrics.ges"/>
+        <memberOf key="att.lyrics.log"/>
+        <memberOf key="att.lyrics.vis"/>
         <memberOf key="att.metadataPointing"/>
         <memberOf key="att.xy"/>
         <memberOf key="model.lgLike"/>
@@ -17538,32 +17531,6 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
-    </elementSpec>
-    <elementSpec ident="lyrics" module="MEI.lyrics">
-      <desc>Vocally performed 'text' of a musical composition, such as a song or opera.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-        <memberOf key="att.lang"/>
-        <memberOf key="att.lyrics.log"/>
-        <memberOf key="att.lyrics.vis"/>
-        <memberOf key="att.lyrics.ges"/>
-        <memberOf key="att.lyrics.anl"/>
-        <memberOf key="model.lyricsLike"/>
-      </classes>
-      <content>
-        <rng:oneOrMore>
-          <rng:ref name="model.lgLike"/>
-        </rng:oneOrMore>
-      </content>
-      <remarks>
-        <p>The <att>staff</att> attribute gives the staff to which the lyrics are attached. If there
-          is more than one layer on that staff, the <att>layer</att> attribute may be used to
-          indicate the layer from which the rhythm should be taken. Often, automatic text underlay
-          may rely on the notes of the indicated staff. When this is not desirable, however, the
-          rhythm of the lyrics may be recorded in the <att>rhythm</att> attribute of the parent <gi
-            scheme="MEI">verse</gi> element.</p>
-      </remarks>
     </elementSpec>
     <elementSpec ident="mapping" module="MEI.usersymbols">
       <desc>One or more characters which are related to the parent symbol in some respect, as
@@ -20568,6 +20535,31 @@
         <p>This element functions as a container for actual music data. Pointing attributes make it
           possible to connect this element to other internal or external entities, such as media
           objects or annotations.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="seg" module="MEI.text">
+      <desc>(arbitrary segment) represents any segmentation of text below the "text component"
+        level.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.common.anl"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.textPhraseLike.limited"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="segmentation" module="MEI.header">
