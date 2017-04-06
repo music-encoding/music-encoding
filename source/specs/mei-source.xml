@@ -1729,6 +1729,7 @@
       <content>
         <alternate>
           <macroRef key="data.HEADSHAPE.list"/>
+          <macroRef key="data.HEXNUM"/>
           <macroRef key="data.NMTOKEN"/>
         </alternate>
       </content>
@@ -1786,6 +1787,14 @@
             <desc>X (Unicode 1D143).</desc>
           </valItem>
         </valList>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.HEXNUM" module="MEI" type="dt">
+      <desc>Hexadecimal number.</desc>
+      <content>
+        <rng:data type="string">
+          <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
+        </rng:data>
       </content>
     </macroSpec>
     <macroSpec ident="data.HORIZONTALALIGNMENT" module="MEI" type="dt">
@@ -5594,8 +5603,13 @@
           <desc>A name or label associated with the controlled vocabulary from which the value of
               <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
           <datatype>
-            <rng:data type="string"/>
+            <rng:data type="NMTOKEN"/>
           </datatype>
+          <valList type="semi">
+            <valItem ident="smufl">
+              <desc>Standard Music Font Layout.</desc>
+            </valItem>
+          </valList>
         </attDef>
         <attDef ident="glyph.name" usage="opt">
           <desc>Glyph name.</desc>
@@ -5615,9 +5629,7 @@
           <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
             SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
           <datatype>
-            <rng:data type="string">
-              <rng:param name="pattern">(#x|U\+)[A-F0-9]+</rng:param>
-            </rng:data>
+            <rng:ref name="data.HEXNUM"/>
           </datatype>
           <constraintSpec ident="check_glyph.num" scheme="isoschematron">
             <constraint>
@@ -8434,6 +8446,46 @@
     <classSpec ident="att.noteHeads" module="MEI.shared" type="atts">
       <desc>Attributes pertaining to the notehead part of a note.</desc>
       <attList>
+        <attDef ident="head.altsym" usage="opt">
+          <desc>Provides a way of pointing to a user-defined symbol. It must contain a reference to
+            an ID of a <gi scheme="MEI">symbolDef</gi> element elsewhere in the document.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+          <constraintSpec ident="check_head.altsymTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@head.altsym">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@head.altsym
+                  attribute should have content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:symbolDef/@xml:id"
+                  >The value in @head.altsym should correspond to the @xml:id attribute of a
+                  symbolDef element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+        <attDef ident="head.auth" usage="opt">
+          <desc>A name or label associated with the controlled vocabulary from which a numerical
+            value of <att>head.shape</att> is taken.</desc>
+          <datatype>
+            <rng:data type="NMTOKEN"/>
+          </datatype>
+          <constraintSpec ident="check_head.auth" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:*[lower-case(@head.auth) eq 'smufl']">
+                <sch:assert test="matches(@head.shape, '^#x') or matches(@head.shape, '^U+')">When
+                  @head.auth matches 'smufl', @head.shape must contain a numeric glyph reference in
+                  hexadecimal notation, e.g. "#xE000" or "U+E000".</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <valList type="semi">
+            <valItem ident="smufl">
+              <desc>Standard Music Font Layout.</desc>
+            </valItem>
+          </valList>
+        </attDef>
         <attDef ident="head.color" usage="opt">
           <desc>Captures the overall color of a notehead.</desc>
           <datatype>
@@ -8472,6 +8524,16 @@
           <datatype>
             <rng:ref name="data.HEADSHAPE"/>
           </datatype>
+          <constraintSpec ident="check_headshape_num" scheme="isoschematron">
+            <constraint>
+              <sch:rule
+                context="mei:*[(matches(@head.shape, '#x') or matches(@head.shape, 'U+')) and (lower-case(@head.auth) eq 'smufl')]">
+                <sch:assert role="warning"
+                  test="matches(normalize-space(@head.shape), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
+                  >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
         <attDef ident="head.visible" usage="opt">
           <desc>Indicates if a feature should be rendered when the notation is presented graphically
