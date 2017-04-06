@@ -2865,6 +2865,55 @@
         <rng:data type="NMTOKEN"/>
       </content>
     </macroSpec>
+    <macroSpec ident="data.NONSTAFFPLACE" module="MEI" type="dt">
+      <desc>Non-staff location.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="botmar">
+            <desc>At the foot of the page.</desc>
+          </valItem>
+          <valItem ident="topmar">
+            <desc>At the top of the page.</desc>
+          </valItem>
+          <valItem ident="leftmar">
+            <desc>At the left of the page.</desc>
+          </valItem>
+          <valItem ident="rightmar">
+            <desc>At the right of the page.</desc>
+          </valItem>
+          <valItem ident="facing">
+            <desc>On the opposite, i.e. facing, page.</desc>
+          </valItem>
+          <valItem ident="overleaf">
+            <desc>On the other side of the leaf.</desc>
+          </valItem>
+          <valItem ident="end">
+            <desc>At the end of this division; e.g., chapter, volume, etc.</desc>
+          </valItem>
+          <valItem ident="inter">
+            <desc>Within a line text; i.e., an insertion.</desc>
+          </valItem>
+          <valItem ident="intra">
+            <desc>Between the lines of text, less exact than "sub" or "super".</desc>
+          </valItem>
+          <valItem ident="super">
+            <desc>Above a line of text, more exact than "intra(linear)". Do not confuse with
+              superscript rendition.</desc>
+          </valItem>
+          <valItem ident="sub">
+            <desc>Below a line of text, more exact than "intra(linear)". Do not confuse with
+              subscript rendition.</desc>
+          </valItem>
+          <valItem ident="inspace">
+            <desc>In a predefined space; i.e., that left by an earlier scribe.</desc>
+          </valItem>
+          <valItem ident="superimposed">
+            <desc>Obscures original text; e.g., via overstrike, addition of new writing surface
+              material, etc.</desc>
+          </valItem>
+        </valList>
+      </content>
+    </macroSpec>
     <macroSpec ident="data.NOTATIONTYPE" module="MEI" type="dt">
       <desc>Notation type and subtype</desc>
       <!--<valItem ident="neume.heighted"><desc>Heighted neumatic notation</desc></valItem>
@@ -3059,14 +3108,30 @@
         <rng:data type="nonNegativeInteger"/>
       </content>
     </macroSpec>
-    <macroSpec ident="data.PLACE" module="MEI" type="dt">
-      <desc>Location of symbol relative to other notational components.</desc>
+    <macroSpec ident="data.PLACEMENT" module="MEI" type="dt">
+      <desc>Location information.</desc>
       <content>
-        <valList type="closed">
-          <valItem ident="above"/>
-          <valItem ident="below"/>
-        </valList>
+        <alternate>
+          <macroRef key="data.STAFFREL"/>
+          <macroRef key="data.NONSTAFFPLACE"/>
+          <macroRef key="data.NMTOKEN"/>
+        </alternate>
       </content>
+      <constraintSpec ident="constrain_place" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="@place[matches(., 'above') or matches(., 'below') 
+            or matches(., 'between') or matches(., 'within')]">
+            <sch:assert
+              test="matches(normalize-space(.), '^above$') or 
+              matches(normalize-space(.), '^below$') or 
+              matches(normalize-space(.), '^between$') or 
+              matches(normalize-space(.), '^within$')"
+              >Other values not permitted when 'above', 'below', 'between' or 'within' is
+              present.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </macroSpec>
     <macroSpec ident="data.PROLATIO" module="MEI" type="dt">
       <desc>Semibreve-minim relationship values.</desc>
@@ -3178,26 +3243,16 @@
     <macroSpec ident="data.STAFFREL" module="MEI" type="dt">
       <desc>Location of musical material relative to a staff.</desc>
       <content>
-        <valList type="closed">
-          <valItem ident="above">
-            <desc>Written above staff.</desc>
-          </valItem>
-          <valItem ident="below">
-            <desc>Written below staff.</desc>
-          </valItem>
-          <valItem ident="between">
-            <desc>Written between adjacent staves.</desc>
-          </valItem>
-          <valItem ident="within">
-            <desc>Written on staff.</desc>
-          </valItem>
-        </valList>
+        <alternate>
+          <macroRef key="data.STAFFREL.basic"/>
+          <macroRef key="data.STAFFREL.extended"/>
+        </alternate>
       </content>
       <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:*[@place eq 'between']">
             <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The
-              @staff attribute must contain 2 values.</sch:assert>
+              @staff attribute must contain 2 numerically-adjacent integer values.</sch:assert>
             <sch:let name="tokenizedStaff" value="tokenize(normalize-space(string(@staff)), '\s+')"/>
             <sch:let name="maxValue"
               value="max((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
@@ -3208,6 +3263,24 @@
           </sch:rule>
         </constraint>
       </constraintSpec>
+    </macroSpec>
+    <macroSpec ident="data.STAFFREL.basic" module="MEI" type="dt">
+      <desc>Location of symbol relative to a staff.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="above"/>
+          <valItem ident="below"/>
+        </valList>
+      </content>
+    </macroSpec>
+    <macroSpec ident="data.STAFFREL.extended" module="MEI" type="dt">
+      <desc>Location of symbol relative to a staff.</desc>
+      <content>
+        <valList type="closed">
+          <valItem ident="between"/>
+          <valItem ident="within"/>
+        </valList>
+      </content>
     </macroSpec>
     <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt">
       <desc>Stem direction.</desc>
@@ -3737,6 +3810,14 @@
     </classSpec>
     <classSpec ident="att.annot.vis" module="MEI.shared" type="atts">
       <desc>Visual domain attributes.</desc>
+      <attList>
+        <attDef ident="place" usage="opt">
+          <desc>Location of the annotation.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.PLACEMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.arpeg.anl" module="MEI.cmn" type="atts">
       <desc>Analytical domain attributes.</desc>
@@ -3882,6 +3963,22 @@
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.ARTICULATION"/>
           </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.audience" module="MEI.shared" type="atts">
+      <desc>Attributes that describe the intended audience.</desc>
+      <attList>
+        <attDef ident="audience" usage="opt">
+          <desc>The intended audience.</desc>
+          <valList type="closed">
+            <valItem ident="private">
+              <desc>Internal use only.</desc>
+            </valItem>
+            <valItem ident="public">
+              <desc>Available to all audiences.</desc>
+            </valItem>
+          </valList>
         </attDef>
       </attList>
     </classSpec>
@@ -4698,7 +4795,7 @@
         <attDef ident="clef.dis.place" usage="opt">
           <desc>Records the direction of octave displacement to be applied to the clef.</desc>
           <datatype>
-            <rng:ref name="data.PLACE"/>
+            <rng:ref name="data.STAFFREL.basic"/>
           </datatype>
         </attDef>
       </attList>
@@ -5779,7 +5876,7 @@
             the fermata needs to be recorded, then a <gi scheme="MEI">fermata</gi> element should be
             employed instead.</desc>
           <datatype>
-            <rng:ref name="data.PLACE"/>
+            <rng:ref name="data.STAFFREL.basic"/>
           </datatype>
         </attDef>
       </attList>
@@ -8562,7 +8659,7 @@
         <attDef ident="num.place" usage="opt">
           <desc>States where the tuplet number will be placed in relation to the note heads.</desc>
           <datatype>
-            <rng:ref name="data.PLACE"/>
+            <rng:ref name="data.STAFFREL.basic"/>
           </datatype>
         </attDef>
         <attDef ident="num.visible" usage="opt">
@@ -8655,7 +8752,7 @@
         <attDef ident="dis.place" usage="opt">
           <desc>Records the direction of octave displacement.</desc>
           <datatype>
-            <rng:ref name="data.PLACE"/>
+            <rng:ref name="data.STAFFREL.basic"/>
           </datatype>
         </attDef>
       </attList>
@@ -9172,65 +9269,6 @@
           </datatype>
         </attDef>
       </attList>
-    </classSpec>
-    <classSpec ident="att.placementNonStaff" module="MEI.shared" type="atts">
-      <desc>Attributes for describing where a textual item appears.</desc>
-      <attList>
-        <attDef ident="place" usage="rec">
-          <desc>Specifies where this entity is located.</desc>
-          <datatype maxOccurs="unbounded">
-            <rng:data type="NMTOKEN"/>
-          </datatype>
-          <valList type="semi">
-            <valItem ident="super">
-              <desc>Above a line of text, more exact than "intra(linear)". Do not confuse with
-                superscript rendition.</desc>
-            </valItem>
-            <valItem ident="sub">
-              <desc>Below a line of text, more exact than "intra(linear)". Do not confuse with
-                subscript rendition.</desc>
-            </valItem>
-            <valItem ident="botmar">
-              <desc>At the foot of the page.</desc>
-            </valItem>
-            <valItem ident="topmar">
-              <desc>At the top of the page.</desc>
-            </valItem>
-            <valItem ident="leftmar">
-              <desc>At the left of the page.</desc>
-            </valItem>
-            <valItem ident="rightmar">
-              <desc>At the right of the page.</desc>
-            </valItem>
-            <valItem ident="facing">
-              <desc>On the opposite, i.e. facing, page.</desc>
-            </valItem>
-            <valItem ident="overleaf">
-              <desc>On the other side of the leaf.</desc>
-            </valItem>
-            <valItem ident="enddiv">
-              <desc>At the end of this division; e.g., chapter, volume, etc.</desc>
-            </valItem>
-            <valItem ident="inter">
-              <desc>Within a line text; i.e., an insertion.</desc>
-            </valItem>
-            <valItem ident="intra">
-              <desc>Between the lines of text, less exact than "sub" or "super".</desc>
-            </valItem>
-            <valItem ident="inspace">
-              <desc>In a predefined space; i.e., that left by an earlier scribe.</desc>
-            </valItem>
-            <valItem ident="superimposed">
-              <desc>Obscures original text; e.g., via overstrike, addition of new writing surface
-                material, etc.</desc>
-            </valItem>
-          </valList>
-        </attDef>
-      </attList>
-      <remarks>
-        <p>Multiple values record more than one location. For example, "botmar facing" indicates
-          that this item exists in both locations, not at the bottom margin of the facing page.</p>
-      </remarks>
     </classSpec>
     <classSpec ident="att.plist" module="MEI.shared" type="atts">
       <desc>Attributes listing the active participants in a user-defined collection.</desc>
@@ -10967,7 +11005,7 @@
           <desc>Used to state where a tuplet bracket will be placed in relation to the note
             heads.</desc>
           <datatype>
-            <rng:ref name="data.PLACE"/>
+            <rng:ref name="data.STAFFREL.basic"/>
           </datatype>
         </attDef>
         <attDef ident="bracket.visible" usage="opt">
@@ -11506,6 +11544,7 @@
     <classSpec ident="model.annotLike" module="MEI.shared" type="model">
       <desc>Groups annotation-like elements.</desc>
       <classes>
+        <memberOf key="model.controlEventLike"/>
         <memberOf key="model.textPhraseLike.limited"/>
       </classes>
     </classSpec>
@@ -12354,7 +12393,6 @@
         <memberOf key="att.facsimile"/>
         <memberOf key="att.edit"/>
         <memberOf key="att.lang"/>
-        <memberOf key="att.placementNonStaff"/>
         <memberOf key="att.trans"/>
         <memberOf key="model.transcriptionLike"/>
       </classes>
@@ -12379,6 +12417,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <attList>
+        <attDef ident="place">
+          <desc>Location of the addition.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.PLACEMENT"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>The <gi scheme="MEI">add</gi> element contains material inserted by an author, scribe,
           annotator, or corrector. The agent responsible for the addition may be encoded using the
@@ -12561,6 +12607,7 @@
       <desc>(annotation) – Provides a short statement explaining the text or indicating the basis
         for an assertion.</desc>
       <classes>
+        <memberOf key="att.audience"/>
         <memberOf key="att.bibl"/>
         <memberOf key="att.common"/>
         <memberOf key="att.dataPointing"/>
@@ -12604,7 +12651,7 @@
           </sch:rule>
         </constraint>
       </constraintSpec>
-      <constraintSpec ident="Check_annot_dataTarget" scheme="isoschematron">
+      <constraintSpec ident="Check_annot_data" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:annot[@data]">
             <sch:assert test="ancestor::mei:notesStmt">The @data attribute may only occur on an
