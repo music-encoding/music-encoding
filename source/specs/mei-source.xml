@@ -7313,6 +7313,40 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.lv.anl" module="MEI.cmn" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.lv.ges" module="MEI.cmn" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.lv.log" module="MEI.cmn" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlEvent"/>
+        <memberOf key="att.startEndId"/>
+        <memberOf key="att.timestamp2.logical"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.lv.vis" module="MEI.cmn" type="atts">
+      <desc>Visual domain attributes. The vo attribute is the vertical offset (from its normal
+        position) of the entire rendered tie. The startho, startvo, endho, and endvo attributes
+        describe the horizontal and vertical offsets of the start and end points of the sign in
+        terms of staff interline distance; that is, in units of 1/2 the distance between adjacent
+        staff lines. Startto and endto describe the start and end points in terms of time; that is,
+        beats.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.visualOffset2"/>
+        <memberOf key="att.xy"/>
+        <memberOf key="att.xy2"/>
+        <memberOf key="att.curvature"/>
+        <memberOf key="att.curveRend"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.lvPresent" module="MEI.cmn" type="atts">
       <desc>Attributes that indicate the presence of an l.v. (laissez vibrer) marking attached to a
         feature. If visual information about the lv sign needs to be recorded, then an <gi
@@ -17639,6 +17673,53 @@
       <remarks>
         <p>This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding
           Initiative (TEI), and HTML standards.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="lv" module="MEI.cmn">
+      <desc>A "tie-like" indication that a note should ring beyond its written duration.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lv.log"/>
+        <memberOf key="att.lv.vis"/>
+        <memberOf key="att.lv.ges"/>
+        <memberOf key="att.lv.anl"/>
+        <memberOf key="model.controlEventLike.cmn"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="curve"/>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="lv_start-_and_end-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:lv">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+            <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the
+              attributes: dur, dur.ges, endid, or tstamp2.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="lv_containing_curve" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="mei:lv[mei:curve[@bezier or @bulge or @curvedir or @lform or @lwidth or 
+            @ho or @startho or @endho or @to or @startto or @endto or @vo or @startvo or 
+            @endvo or @x or @y or @x2 or @y2]]">
+            <sch:assert
+              test="not(@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or @startho or 
+              @endho or @to or @startto or @endto or @vo or @startvo or @endvo or @x or @y or @x2 or @y2)"
+              role="warning">The visual attributes of the lv element (@bezier, @bulge, @curvedir,
+              @lform, @lwidth, @ho, @startho, @endho, @to, @startto, @endto, @vo, @startvo, @endvo,
+              @x, @y, @x2, and @y2) will be overridden by visual attributes of the contained curve
+              elements.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <remarks>
+        <p>The lv element captures the graphical, "tie-like" symbol. Any associated text, such as
+          "l.v.", must be captured using a <gi scheme="MEI">dir</gi> element.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="lyricist" module="MEI.shared">
