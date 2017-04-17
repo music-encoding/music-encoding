@@ -5806,7 +5806,7 @@
       </attList>
     </classSpec>
     <classSpec ident="att.extent" module="MEI.shared" type="atts">
-      <desc>Provides attributes for describing the logical size of an entity.</desc>
+      <desc>Provides attributes for describing the size of an entity.</desc>
       <classes>
         <memberOf key="att.measurement"/>
       </classes>
@@ -5817,6 +5817,18 @@
           <datatype>
             <rng:data type="string"/>
           </datatype>
+          <constraintSpec ident="check_extent" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@extent[matches(normalize-space(.), '^\d+(\.\d+)?$')]">
+                <sch:assert role="warning" test="../@unit">The @unit attribute is
+                  recommended.</sch:assert>
+              </sch:rule>
+              <sch:rule context="@extent[matches(., '\d+(\.\d+)?\s')]">
+                <sch:assert role="warning" test="../@unit">Separation into value (@extent) and unit
+                  (@unit) is recommended.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
