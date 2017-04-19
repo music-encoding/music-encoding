@@ -20376,17 +20376,24 @@
         <memberOf key="model.respLike"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="resp"/>
-            <rng:ref name="model.nameLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="name"/>
+              <rng:ref name="resp"/>
+              <rng:ref name="model.nameLike.agent"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.respLikePart"/>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
       <constraintSpec ident="check_respStmt" scheme="isoschematron">
         <constraint>
           <sch:rule
-            context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or local-name()='seriesStmt']/mei:respStmt">
+            context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or 
+            local-name()='seriesStmt']/mei:respStmt[mei:corpName or mei:name or mei:persName]">
             <sch:assert role="warning" test="mei:resp or (count(mei:*[@role]) = count(mei:*))">If at
               least one resp element isn't present, all name-like elements should have a @role
               attribute.</sch:assert>
