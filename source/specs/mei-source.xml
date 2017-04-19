@@ -5749,7 +5749,7 @@
         <memberOf key="att.timestamp.logical"/>
       </classes>
     </classSpec>
-    <classSpec ident="att.evidence" module="MEI.edittrans" type="atts">
+    <classSpec ident="att.evidence" module="MEI.shared" type="atts">
       <desc>Attributes describing the support for and the certainty of an assertion.</desc>
       <attList>
         <attDef ident="cert" usage="opt">
@@ -14325,6 +14325,53 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+    </elementSpec>
+    <elementSpec ident="contributor" module="MEI.shared">
+      <desc>The name of an entity responsible for making contributions to the intellectual content
+        of a musical work.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.evidence"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="model.respLikePart"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="check_contributor_role" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:contributor">
+            <sch:assert
+              test="not(matches(normalize-space(lower-case(@role)),
+              '(arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor)'))"
+              >The value of @role must not contain the name of another element available in this
+              context.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <attList>
+        <attDef ident="role" usage="rec">
+          <desc>Used to specify the role played by the contributor.</desc>
+          <datatype>
+            <rng:text/>
+          </datatype>
+          <remarks>
+            <p>When applicable, values from the MARC relator term list (<ref
+                target="http://www.loc.gov/marc/relators/relaterm.html"
+                >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
+                target="http://www.loc.gov/marc/relators/relacode.html"
+                >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
+                <att>role</att>.</p>
+          </remarks>
+        </attDef>
+      </attList>
     </elementSpec>
     <elementSpec ident="corpName" module="MEI.namesdates">
       <desc>(corporate name) – Identifies an organization or group of people that acts as a single
