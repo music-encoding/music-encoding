@@ -4976,6 +4976,18 @@
     <classSpec ident="att.cleffing.log" module="MEI.shared" type="atts">
       <desc>Used by staffDef and scoreDef to provide default values for attributes in the logical
         domain related to clefs.</desc>
+      <constraintSpec ident="clef_shape_requires_clef_line" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:*[matches(@clef.shape, '[FCG]')]">
+            <sch:assert test="@clef.line">An 'F', 'C', or 'G' clef requires that its position be
+              specified.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:*[matches(@clef.shape, '(TAB|perc)')]">
+            <sch:assert test="@lines">A TAB or percussion clef requires that the number of lines be
+              specified.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="clef.shape" usage="opt">
           <desc>Encodes a value for the clef symbol.</desc>
@@ -5040,6 +5052,14 @@
     </classSpec>
     <classSpec ident="att.clefShape" module="MEI.shared" type="atts">
       <desc>Attributes that record the shape of a clef.</desc>
+      <constraintSpec ident="shape_requires_line" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:clef[matches(@shape, '[FCG]')]">
+            <sch:assert test="@line">When @shape is present, @line must also be
+              specified.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
       <attList>
         <attDef ident="shape" usage="opt">
           <desc>Describes a clef's shape.</desc>
