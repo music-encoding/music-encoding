@@ -4390,6 +4390,12 @@
             </constraint>
           </constraintSpec>
         </attDef>
+        <attDef ident="slash" usage="opt">
+          <desc>Indicates presence of slash through the beam.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
         <attDef ident="slope" usage="opt">
           <desc>Records the slope of the beam.</desc>
           <datatype>
@@ -6254,6 +6260,47 @@
           </datatype>
         </attDef>
       </attList>
+    </classSpec>
+    <classSpec ident="att.graceGrp.anl" module="MEI.cmn" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.graceGrp.ges" module="MEI.cmn" type="atts">
+      <desc>Gestural domain attributes.</desc>
+      <classes>
+        <memberOf key="att.graced"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.graceGrp.log" module="MEI.cmn" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.event"/>
+      </classes>
+      <attList>
+        <attDef ident="attach" usage="opt">
+          <desc>Records whether the grace note group is attached to the following event or to the
+            preceding one. The usual name for the latter is "Nachschlag".</desc>
+          <valList type="closed">
+            <valItem ident="pre">
+              <desc>Attached to the preceding event.</desc>
+            </valItem>
+            <valItem ident="post">
+              <desc>Attached to the following event.</desc>
+            </valItem>
+            <valItem ident="unknown">
+              <desc>Attachment is ambiguous.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.graceGrp.vis" module="MEI.cmn" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+      </classes>
     </classSpec>
     <classSpec ident="att.grpSym.anl" module="MEI.analytical" type="atts">
       <desc>Analytical domain attributes.</desc>
@@ -16337,6 +16384,48 @@
             <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att> attribute.
           It is a semantic error not to specify one starting and one ending type of attribute.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="graceGrp" module="MEI.cmn">
+      <desc>A container for a sequence of grace notes.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.graceGrp.log"/>
+        <memberOf key="att.graceGrp.vis"/>
+        <memberOf key="att.graceGrp.ges"/>
+        <memberOf key="att.graceGrp.anl"/>
+        <memberOf key="model.eventLike.cmn"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.eventLike"/>
+            <rng:ref name="model.eventLike.cmn"/>
+            <rng:ref name="model.appLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="When_not_copyof_graceGrp_content" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:graceGrp[not(@copyof)]">
+            <sch:assert
+              test="count(descendant::*[local-name()='note' or local-name()='rest' or
+              local-name()='chord' or local-name()='space']) &gt; 1"
+              >A graceGrp without a copyof attribute must have at least 2 note, rest, chord, or
+              space descendants.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="When_graced" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:graceGrp[@grace]">
+            <sch:assert test="not(descendant::mei:*[@grace])">The grace attribute is not allowed on
+              descendants of a graceGrp with a grace attribute.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="graphic" module="MEI.figtable">
       <desc>Indicates the location of an inline graphic.</desc>
