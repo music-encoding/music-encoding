@@ -1903,12 +1903,8 @@
         <rng:data type="time"/>
       </content>
     </macroSpec>
-    <macroSpec ident="data.KEYSIGNATURE" module="MEI" type="dt">
-      <desc>Key signature may be indicated by a value showing where the key is in the circle of
-        fifths. Mixed key signatures, e.g. those consisting of a mixture of flats and sharps, and
-        key signatures with unorthodox placement of the accidentals (Read, p. 143) must be indicated
-        by setting the keysig attribute to 'mixed' and providing explicit key signature information
-        in the keysig.mixed attribute.</desc>
+    <macroSpec ident="data.KEYFIFTHS" module="MEI" type="dt">
+      <desc>Indicates the location of the tonic in the circle of fifths.</desc>
       <content>
         <rng:data type="token">
           <rng:param name="pattern">mixed|0|([1-9]|1[0-2])[f|s]</rng:param>
@@ -6994,37 +6990,10 @@
       <desc>Analytical domain attributes.</desc>
       <classes>
         <memberOf key="att.common.anl"/>
-      </classes>
-    </classSpec>
-    <classSpec ident="att.keySig.ges" module="MEI.gestural" type="atts">
-      <desc>Gestural domain attributes.</desc>
-    </classSpec>
-    <classSpec ident="att.keySig.log" module="MEI.shared" type="atts">
-      <desc>Logical domain attributes.</desc>
-      <classes>
         <memberOf key="att.accidental"/>
         <memberOf key="att.pitch"/>
       </classes>
       <attList>
-        <attDef ident="sig" usage="opt">
-          <desc>Indicates where the key lies in the circle of fifths.</desc>
-          <datatype>
-            <rng:ref name="data.KEYSIGNATURE"/>
-          </datatype>
-        </attDef>
-        <attDef ident="sig.mixed" usage="opt">
-          <desc>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read,
-            p. 143, ex. 9-39), and key signatures with unorthodox placement of the accidentals
-            (Read, p. 141) must be indicated by setting the keysig attribute to 'mixed' and
-            providing explicit key signature information in the keysig.mixed attribute or in the <gi
-              scheme="MEI">keySig</gi> element. It is intended that keysig.mixed contain a series of
-            tokens with each token containing pitch name, accidental, and octave, such as 'a4 c5s
-            e5f' that indicate what key accidentals should be rendered and where they should be
-            placed.</desc>
-          <datatype maxOccurs="unbounded">
-            <rng:ref name="data.KEYSIGTOKEN"/>
-          </datatype>
-        </attDef>
         <attDef ident="mode" usage="opt">
           <desc>Indicates major, minor, or other tonality.</desc>
           <datatype>
@@ -7032,6 +7001,34 @@
           </datatype>
         </attDef>
       </attList>
+    </classSpec>
+    <classSpec ident="att.keySig.ges" module="MEI.gestural" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.keySig.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <attList>
+        <attDef ident="fifths" usage="opt">
+          <desc>Indicates where the key lies in the circle of fifths.</desc>
+          <datatype>
+            <rng:ref name="data.KEYFIFTHS"/>
+          </datatype>
+        </attDef>
+        <attDef ident="sig" usage="opt">
+          <desc>Written key signature.</desc>
+          <datatype maxOccurs="unbounded">
+            <rng:ref name="data.KEYSIGTOKEN"/>
+          </datatype>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read, p.
+          143, ex. 9-39), and key signatures with unorthodox placement of the accidentals (Read, p.
+          141) can be encoded using the <att>key.sig</att> attribute or the <gi scheme="MEI"
+            >keySig</gi> element. Each token in <att>key.sig</att> contains a pitch name,
+          accidental, and octave, 'e5f' for example, that indicate what key accidentals should be
+          rendered and where they should be placed.</p>
+      </remarks>
     </classSpec>
     <classSpec ident="att.keySig.vis" module="MEI.visual" type="atts">
       <desc>Visual domain attributes.</desc>
@@ -7048,9 +7045,9 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.keySigDefault.log" module="MEI.shared" type="atts">
-      <desc>Used by staffDef and scoreDef to provide default values for attributes in the logical
-        domain related to key signatures.</desc>
+    <classSpec ident="att.keySigDefault.anl" module="MEI.analytical" type="atts">
+      <desc>Used by staffDef and scoreDef to provide default values for attributes in the analytical
+        domain that are related to key signatures.</desc>
       <attList>
         <attDef ident="key.accid" usage="opt">
           <desc>Contains an accidental for the tonic key, if one is required, e.g., if key.pname
@@ -7071,26 +7068,33 @@
             <rng:ref name="data.PITCHNAME"/>
           </datatype>
         </attDef>
-        <attDef ident="keysig" usage="opt">
+      </attList>
+    </classSpec>
+    <classSpec ident="att.keySigDefault.log" module="MEI.shared" type="atts">
+      <desc>Used by staffDef and scoreDef to provide default values for attributes in the logical
+        domain that are related to key signatures.</desc>
+      <attList>
+        <attDef ident="key.fifths" usage="opt">
           <desc>Indicates where the key lies in the circle of fifths.</desc>
           <datatype>
-            <rng:ref name="data.KEYSIGNATURE"/>
+            <rng:ref name="data.KEYFIFTHS"/>
           </datatype>
         </attDef>
-        <attDef ident="keysig.mixed" usage="opt">
-          <desc>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read,
-            p. 143, ex. 9-39), and key signatures with unorthodox placement of the accidentals
-            (Read, p. 141) must be indicated by setting the keysig attribute to 'mixed' and
-            providing explicit key signature information in the keysig.mixed attribute or in the <gi
-              scheme="MEI">keySig</gi> element. It is intended that keysig.mixed contain a series of
-            tokens with each token containing pitch name, accidental, and octave, such as 'a4 c5s
-            e5f' that indicate what key accidentals should be rendered and where they should be
-            placed.</desc>
+        <attDef ident="key.sig" usage="opt">
+          <desc>Written key signature.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.KEYSIGTOKEN"/>
           </datatype>
         </attDef>
       </attList>
+      <remarks>
+        <p>Mixed key signatures, e.g. those consisting of a mixture of flats and sharps (Read, p.
+          143, ex. 9-39), and key signatures with unorthodox placement of the accidentals (Read, p.
+          141) can be encoded using the <att>key.sig</att> attribute or the <gi scheme="MEI"
+            >keySig</gi> element. Each token in <att>key.sig</att> contains a pitch name,
+          accidental, and octave, 'e5f' for example, that indicate what key accidentals should be
+          rendered and where they should be placed.</p>
+      </remarks>
     </classSpec>
     <classSpec ident="att.keySigDefault.vis" module="MEI.visual" type="atts">
       <desc>Used by staffDef and scoreDef to provide default values for attributes in the visual
@@ -10004,6 +10008,9 @@
     </classSpec>
     <classSpec ident="att.scoreDef.anl" module="MEI.analytical" type="atts">
       <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.keySigDefault.anl"/>
+      </classes>
     </classSpec>
     <classSpec ident="att.scoreDef.ges" module="MEI.gestural" type="atts">
       <desc>Gestural domain attributes for scoreDef. The values set in these attributes act as
@@ -10426,6 +10433,9 @@
     </classSpec>
     <classSpec ident="att.staffDef.anl" module="MEI.analytical" type="atts">
       <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.keySigDefault.anl"/>
+      </classes>
     </classSpec>
     <classSpec ident="att.staffDef.ges" module="MEI.gestural" type="atts">
       <desc>Gestural domain attributes for staffDef in the CMN repertoire.</desc>
@@ -17334,14 +17344,23 @@
     <elementSpec ident="key" module="MEI.header">
       <desc>Key captures information about tonal center and mode.</desc>
       <classes>
-        <memberOf key="att.common"/>
+        <memberOf key="att.accidental"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.keySig.log"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.pitch"/>
         <memberOf key="model.workIdent"/>
       </classes>
       <content>
         <rng:text/>
       </content>
+      <attList>
+        <attDef ident="mode" usage="opt">
+          <desc>Indicates major, minor, or other tonality.</desc>
+          <datatype>
+            <rng:ref name="data.MODE"/>
+          </datatype>
+        </attDef>
+      </attList>
       <remarks>
         <p>This element is used exclusively within bibliographic descriptions. Do not confuse this
           element with <gi scheme="MEI">keySig</gi>, which is used within the body of an MEI file to
@@ -17407,11 +17426,6 @@
           <rng:ref name="model.keyAccidLike"/>
         </rng:zeroOrMore>
       </content>
-      <remarks>
-        <p>This element may be used as an alternative to the key.* attributes (especially
-            <att>keysig.mixed</att>) on <gi scheme="MEI">scoreDef</gi> and <gi scheme="MEI"
-            >staffDef</gi>.</p>
-      </remarks>
     </elementSpec>
     <elementSpec ident="l" module="MEI.text">
       <desc>(line of text) – Contains a single line of text within a line group.</desc>
