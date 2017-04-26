@@ -5366,6 +5366,28 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.mNum.anl" module="MEI.cmn" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.common.anl"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.mNum.ges" module="MEI.cmn" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.mNum.log" module="MEI.cmn" type="atts">
+      <desc>Logical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.mNum.vis" module="MEI.cmn" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.color"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.dimensions" module="MEI.shared" type="atts">
       <desc>Attributes that capture the dimensions of an entity.</desc>
       <classes>
@@ -17909,7 +17931,7 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="measure" module="MEI.cmn">
-      <desc>Unit of musical time consisting of a fixed number of note-values of a given type, as
+      <desc>Unit of musical time consisting of a fixed number of note values of a given type, as
         determined by the prevailing meter, and delimited in musical notation by bar lines.</desc>
       <classes>
         <memberOf key="att.alignment"/>
@@ -17925,10 +17947,12 @@
         <memberOf key="model.measureLike"/>
       </classes>
       <content>
+        <rng:optional>
+          <rng:ref name="mNum"/>
+        </rng:optional>
         <rng:zeroOrMore>
           <rng:choice>
             <rng:ref name="model.appLike"/>
-            <rng:ref name="model.divLike"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.staffDefLike"/>
             <rng:ref name="model.annotLike"/>
@@ -18216,6 +18240,33 @@
       <remarks>
         <p>The <att>label</att> attribute can be used to differentiate between multiple MIDI data
           streams, e.g. quantized/unquantized, straight/swing, ornamented/as notated, etc.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="mNum" module="MEI.cmn">
+      <desc>(measure number) – Designation, name, or label for a measure, often but not always
+        consisting of digits. Use this element when the <att>n</att> attribute on <gi scheme="MEI"
+          >measure</gi> does not adaquately capture the appearance or placement of the measure
+        number/label.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.mNum.log"/>
+        <memberOf key="att.mNum.vis"/>
+        <memberOf key="att.mNum.ges"/>
+        <memberOf key="att.mNum.anl"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.lbLike"/>
+            <rng:ref name="model.rendLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <remarks>
+        <p><gi scheme="MEI">mNum</gi> uses a subset of model.textPhraseLike.limited.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="mordent" module="MEI.cmnOrnaments">
