@@ -4857,47 +4857,25 @@
       <attList>
         <attDef ident="class" usage="opt">
           <desc>Contains one or more URIs which denote classification terms that apply to the entity
-            bearing this attribute. A fragment identifier may be employed to point to a
-            classification term recorded in the MEI header.</desc>
+            bearing this attribute.</desc>
           <datatype maxOccurs="unbounded">
             <rng:ref name="data.URI"/>
           </datatype>
           <constraintSpec ident="check_classURI" scheme="isoschematron">
             <constraint>
-              <sch:rule context="@class">
-                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@class attribute
-                  should have content.</sch:assert>
-                <sch:assert role="warning"
-                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:term/@xml:id or matches($i, '^([a-z]+://|\.{1,2}/)')"
-                  >The value in @class should correspond to the @xml:id attribute of a term element
-                  or be an external URL.</sch:assert>
+              <sch:rule context="@class[not(../@xml:base)]">
+                <sch:assert
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:category/@xml:id or matches($i, '^([a-z]+://|\.{1,2}/)')"
+                  >When there's no @xml:base attribute, the value in @class must correspond to the
+                  @xml:id attribute of a category element or be an absolute external
+                  URL.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
-        </attDef>
-      </attList>
-    </classSpec>
-    <classSpec ident="att.classCodeIdent" module="MEI.shared" type="atts">
-      <attList>
-        <attDef ident="classcode" usage="opt">
-          <desc>Contains a reference to the controlled vocabulary from which the term is drawn. The
-            value must match the value of an ID attribute on a classCode element given elsewhere in
-            the document.</desc>
-          <datatype>
-            <rng:ref name="data.URI"/>
-          </datatype>
-          <constraintSpec ident="check_classcodeTarget" scheme="isoschematron">
-            <constraint>
-              <sch:rule context="@classcode">
-                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@classcode attribute
-                  should have content.</sch:assert>
-                <sch:assert role="warning"
-                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:classCode/@xml:id"
-                  >The value in @classcode should correspond to the @xml:id attribute of a classCode
-                  element.</sch:assert>
-              </sch:rule>
-            </constraint>
-          </constraintSpec>
+          <remarks>
+            <p>In the absence of <att>xml:base</att>, a fragment identifier in <att>class</att> must
+              point to a classification category recorded in the MEI header.</p>
+          </remarks>
         </attDef>
       </attList>
     </classSpec>
@@ -13842,6 +13820,79 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="category" module="MEI.header">
+      <desc>Contains an individual descriptive category in a user-defined taxonomy, possibly nested
+        within a superordinate category.</desc>
+      <classes>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.dataPointing"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="label"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="desc"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="catRel"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="category"/>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="category_id" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:category">
+            <sch:assert test="@xml:id" role="warning">To be addressable, the category element must
+              have an xml:id attribute.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+    </elementSpec>
+    <elementSpec ident="catRel" module="MEI.header">
+      <desc>(category relationship) – Contains the name of a related category.</desc>
+      <classes>
+        <memberOf key="att.authorized"/>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.basic"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.linking"/>
+        <memberOf key="att.nNumberLike"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:ref name="label"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="desc"/>
+        </rng:zeroOrMore>
+      </content>
+      <attList>
+        <attDef ident="type" usage="req">
+          <desc>Provides a description of the relationship between the current and the target
+            categories.</desc>
+          <valList type="closed">
+            <valItem ident="broader">
+              <desc>Category to which the current category is hierarchically subordinate.</desc>
+            </valItem>
+            <valItem ident="narrower">
+              <desc>Category which is hierarchially subordinate to the current category.</desc>
+            </valItem>
+            <valItem ident="related">
+              <desc>Category that is associatively but not hierarchically linked to the current
+                category.</desc>
+            </valItem>
+            <valItem ident="usefor">
+              <desc>Non-preferred category; often a synonym or near-synonym for the preferred
+                category label.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+      </attList>
+    </elementSpec>
     <elementSpec ident="cc" module="MEI.midi">
       <desc>(control change) – MIDI parameter/control change.</desc>
       <classes>
@@ -14086,33 +14137,26 @@
           entity containing the look-up table to be shared.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="classCode" module="MEI.header">
-      <desc>(classification code) – Holds a citation to the source of controlled-vocabulary terms
-        used in the <gi scheme="MEI">termList</gi> element; for example, Library of Congress Subject
-        Headings (LCSH), Library of Congress Classification (LCC), Library of Congress Name
-        Authority File (LCNAF), or other thesaurus or ontology.</desc>
+    <elementSpec ident="classDecls" module="MEI.header">
+      <desc>Groups information which describes the nature or topic of an entity.</desc>
       <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.authorized"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.lang"/>
+        <memberOf key="att.common"/>
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.lbLike"/>
-            <rng:ref name="model.rendLike"/>
-          </rng:choice>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="taxonomy"/>
         </rng:zeroOrMore>
       </content>
       <remarks>
-        <p>The citation may be provided in the <att>auth</att> attribute or, when additional markup
-          is needed, as textual content of the element.</p>
-      </remarks>
-      <remarks>
-        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
-          standard.</p>
+        <p>Although the use of names and terms from locally controlled vocabularies is possible,
+          best practice suggests that terms should come from standard national or international
+          vocabularies whenever they are available in order to enable searches in systems that
+          include multiple MEI documents, or MEI documents and bibliographic records from many
+          institutions.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="classification" module="MEI.header">
@@ -14128,7 +14172,6 @@
         </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:choice>
-            <rng:ref name="classCode"/>
             <rng:ref name="termList"/>
           </rng:choice>
         </rng:oneOrMore>
@@ -15430,6 +15473,9 @@
         </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="tagsDecl"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classDecls"/>
         </rng:optional>
       </content>
       <remarks>
@@ -22406,6 +22452,28 @@
           standard.</p>
       </remarks>
     </elementSpec>
+    <elementSpec ident="taxonomy" module="MEI.header">
+      <desc>Defines a typology either implicitly, by means of a bibliographic citation, or
+        explicitly by a structured taxonomy.</desc>
+      <classes>
+        <memberOf key="att.bibl"/>
+        <memberOf key="att.common"/>
+      </classes>
+      <content>
+        <rng:optional>
+          <rng:ref name="model.biblLike"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="desc"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="category"/>
+            <rng:ref name="taxonomy"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+    </elementSpec>
     <elementSpec ident="td" module="MEI.figtable">
       <desc>(table data) – Designates a table cell that contains data as opposed to a cell that
         contains column or row heading information.</desc>
@@ -22488,9 +22556,8 @@
     <elementSpec ident="term" module="MEI.shared">
       <desc>Keyword or phrase which describes a resource.</desc>
       <classes>
-        <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.classCodeIdent"/>
+        <memberOf key="att.common"/>
         <memberOf key="att.dataPointing"/>
         <memberOf key="att.lang"/>
         <memberOf key="model.textPhraseLike.limited"/>
@@ -22512,11 +22579,14 @@
         </constraint>
       </constraintSpec>
       <remarks>
-        <p>The <att>classcode</att> attribute may be used to link the term to a terminological
-          source given in a <gi scheme="MEI">classCode</gi> element. The <gi scheme="MEI">term</gi>
-          element may include other <gi scheme="MEI">term</gi> elements in order to allow the
-          creation of coordinated terms; i.e., terms created from a combination of other,
-          independent terms.</p>
+        <p>The <gi scheme="MEI">term</gi> element may include other <gi scheme="MEI">term</gi>
+          elements in order to allow the creation of coordinated terms; i.e., terms created from a
+          combination of other, independent terms.</p>
+        <p>A term may point to a taxonomy class defined in the MEI metadata header using only the
+            <att>class</att> attribute by using a URI corresponding to the internally-defined
+          category, while a class in an external taxonomy may be referenced using <att>class</att>
+          (absolute URL) or the combination of <att>xml:base</att> (base URL) plus <att>class</att>
+          (fragment identifier).</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
@@ -22526,24 +22596,19 @@
     <elementSpec ident="termList" module="MEI.header">
       <desc>Collection of text phrases which describe a resource.</desc>
       <classes>
-        <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
-        <memberOf key="att.classCodeIdent"/>
+        <memberOf key="att.common"/>
+        <memberOf key="att.pointing"/>
       </classes>
       <content>
         <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:choice>
-            <rng:group>
-              <rng:optional>
-                <rng:ref name="label"/>
-              </rng:optional>
-              <rng:ref name="term"/>
-            </rng:group>
-            <rng:ref name="termList"/>
-          </rng:choice>
+          <rng:optional>
+            <rng:ref name="label"/>
+          </rng:optional>
+          <rng:ref name="term"/>
         </rng:zeroOrMore>
       </content>
       <constraintSpec ident="checkTermListLabels" scheme="isoschematron">
@@ -22554,6 +22619,10 @@
           </sch:rule>
         </constraint>
       </constraintSpec>
+      <remarks>
+        <p>An external taxonomy from which all the descendant <gi scheme="MEI">term</gi> elements
+          are drawn may be referred to using the <att>target</att> attribute.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="textLang" module="MEI.shared">
       <desc>(text language) – Identifies the languages and writing systems within the work described
