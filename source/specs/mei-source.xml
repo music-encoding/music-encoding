@@ -6633,39 +6633,6 @@
         </attDef>
       </attList>
     </classSpec>
-    <classSpec ident="att.ineume.anl" module="MEI.analytical" type="atts">
-      <desc>Analytical domain attributes.</desc>
-    </classSpec>
-    <classSpec ident="att.ineume.ges" module="MEI.gestural" type="atts">
-      <desc>Gestural domain attributes.</desc>
-    </classSpec>
-    <classSpec ident="att.ineume.log" module="MEI.neumes" type="atts">
-      <desc>Logical domain attributes.</desc>
-      <attList>
-        <attDef ident="form" usage="opt">
-          <desc>Provides a subclass or functional label for the neume.</desc>
-          <datatype>
-            <rng:ref name="data.INEUMEFORM"/>
-          </datatype>
-        </attDef>
-        <attDef ident="name" usage="opt">
-          <desc>Records the name of the neume.</desc>
-          <datatype>
-            <rng:ref name="data.INEUMENAME"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
-    <classSpec ident="att.ineume.vis" module="MEI.visual" type="atts">
-      <desc>Visual domain attributes.</desc>
-      <classes>
-        <memberOf key="att.altSym"/>
-        <memberOf key="att.color"/>
-        <memberOf key="att.extSym"/>
-        <memberOf key="att.staffLoc"/>
-        <memberOf key="att.typography"/>
-      </classes>
-    </classSpec>
     <classSpec ident="att.instrumentIdent" module="MEI.midi" type="atts">
       <desc>Attributes which identify a MIDI instrument.</desc>
       <attList>
@@ -6719,11 +6686,20 @@
       <attList>
         <attDef ident="intm" usage="opt">
           <desc>Encodes the melodic interval from the previous pitch. The value may be a general
-            directional indication (u, d, s), an indication of diatonic interval direction, quality,
-            and size, or a precise numeric value in half steps.</desc>
+            directional indication (u, d, s, etc.), an indication of diatonic interval direction,
+            quality, and size, or a precise numeric value in half steps.</desc>
           <datatype>
             <rng:ref name="data.INTERVAL.MELODIC"/>
           </datatype>
+          <constraintSpec ident="check_nc_intm" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:nc[@intm]">
+                <sch:let name="ncPosition" value="count(preceding-sibling::mei:nc) + 1"/>
+                <sch:assert test="not($ncPosition = 1)">The @intm attribute is not allowed on the
+                  first component of a neume.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
         </attDef>
       </attList>
     </classSpec>
@@ -8487,6 +8463,194 @@
                 >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
                 <att>role</att>.</p>
           </remarks>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.nc.anl" module="MEI.analytical" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.harmonicFunction"/>
+        <memberOf key="att.intervalMelodic"/>
+        <memberOf key="att.melodicFunction"/>
+        <memberOf key="att.solfa"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.nc.ges" module="MEI.gestural" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.nc.log" module="MEI.neumes" type="atts">
+      <desc>Logical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.nc.vis" module="MEI.visual" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altSym"/>
+        <memberOf key="att.color"/>
+        <memberOf key="att.extSym"/>
+        <memberOf key="att.staffLoc"/>
+        <memberOf key="att.typography"/>
+      </classes>
+      <attList>
+        <attDef ident="angled" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="con" usage="opt">
+          <desc>Connection to the previous component within the same neume.</desc>
+          <constraintSpec ident="nc_connection" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:nc[@con]">
+                <sch:let name="ncPosition" value="count(preceding-sibling::mei:nc) + 1"/>
+                <sch:assert test="not($ncPosition = 1)">The @con attribute is not allowed on the
+                  first component of a neume.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <valList type="closed">
+            <valItem ident="g">
+              <desc>Gapped; not connected.</desc>
+            </valItem>
+            <valItem ident="l">
+              <desc>Looped.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+        <attDef ident="curved" usage="opt">
+          <desc/>
+          <valList type="closed">
+            <valItem ident="a">
+              <desc>Anti-clockwise curvature.</desc>
+            </valItem>
+            <valItem ident="c">
+              <desc>Clockwise curvature.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+        <attDef ident="diagonalright" usage="opt">
+          <desc/>
+          <valList type="closed">
+            <valItem ident="u">
+              <desc>Up.</desc>
+            </valItem>
+            <valItem ident="d">
+              <desc>Down.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+        <attDef ident="episima" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="extended" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="flat" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="jagged" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="liquescent" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="long" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="oriscus" usage="opt">
+          <desc/>
+          <valList type="closed">
+            <valItem ident="c">
+              <desc>Curved.</desc>
+            </valItem>
+            <valItem ident="f">
+              <desc>Flat.</desc>
+            </valItem>
+            <valItem ident="j">
+              <desc>Jagged.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+        <attDef ident="quilisma" usage="opt">
+          <desc/>
+          <valList type="closed">
+            <valItem ident="2">
+              <desc>2 curves.</desc>
+            </valItem>
+            <valItem ident="3">
+              <desc>3 curves.</desc>
+            </valItem>
+          </valList>
+        </attDef>
+        <attDef ident="wavy" usage="opt">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.neume.anl" module="MEI.analytical" type="atts">
+      <desc>Analytical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.harmonicFunction"/>
+        <memberOf key="att.intervalMelodic"/>
+        <memberOf key="att.melodicFunction"/>
+        <memberOf key="att.solfa"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.neume.ges" module="MEI.gestural" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.neume.log" module="MEI.neumes" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.event"/>
+        <memberOf key="att.sylText"/>
+      </classes>
+    </classSpec>
+    <classSpec ident="att.neume.vis" module="MEI.visual" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.altSym"/>
+        <memberOf key="att.color"/>
+        <memberOf key="att.extSym"/>
+        <memberOf key="att.staffLoc"/>
+        <memberOf key="att.typography"/>
+        <memberOf key="att.visibility"/>
+        <memberOf key="att.visualOffset.ho"/>
+        <memberOf key="att.xy"/>
+      </classes>
+      <attList>
+        <attDef ident="hispanicloop">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+        <attDef ident="significativeletters">
+          <desc/>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
         </attDef>
       </attList>
     </classSpec>
@@ -11332,52 +11496,6 @@
           </datatype>
         </attDef>
       </attList>
-    </classSpec>
-    <classSpec ident="att.uneume.anl" module="MEI.analytical" type="atts">
-      <desc>Analytical domain attributes.</desc>
-      <classes>
-        <memberOf key="att.harmonicFunction"/>
-        <memberOf key="att.intervalMelodic"/>
-        <memberOf key="att.melodicFunction"/>
-        <memberOf key="att.solfa"/>
-      </classes>
-    </classSpec>
-    <classSpec ident="att.uneume.ges" module="MEI.gestural" type="atts">
-      <desc>Gestural domain attributes.</desc>
-    </classSpec>
-    <classSpec ident="att.uneume.log" module="MEI.neumes" type="atts">
-      <desc>Logical domain attributes.</desc>
-      <classes>
-        <memberOf key="att.event"/>
-        <memberOf key="att.sylText"/>
-      </classes>
-      <attList>
-        <attDef ident="form" usage="opt">
-          <desc>Provides a subclass or functional label for the neume.</desc>
-          <datatype>
-            <rng:ref name="data.UNEUMEFORM"/>
-          </datatype>
-        </attDef>
-        <attDef ident="name" usage="opt">
-          <desc>Records the name of the neume.</desc>
-          <datatype>
-            <rng:ref name="data.UNEUMENAME"/>
-          </datatype>
-        </attDef>
-      </attList>
-    </classSpec>
-    <classSpec ident="att.uneume.vis" module="MEI.visual" type="atts">
-      <desc>Visual domain attributes.</desc>
-      <classes>
-        <memberOf key="att.altSym"/>
-        <memberOf key="att.color"/>
-        <memberOf key="att.extSym"/>
-        <memberOf key="att.staffLoc"/>
-        <memberOf key="att.typography"/>
-        <memberOf key="att.visibility"/>
-        <memberOf key="att.visualOffset.ho"/>
-        <memberOf key="att.xy"/>
-      </classes>
     </classSpec>
     <classSpec ident="att.verse.anl" module="MEI.analytical" type="atts">
       <desc>Analytical domain attributes.</desc>
@@ -16989,36 +17107,6 @@
         </rng:zeroOrMore>
       </content>
     </elementSpec>
-    <elementSpec ident="ineume" module="MEI.neumes">
-      <desc>(interrupted neume) – A graphically interrupted neume; that is, a neume which is
-        logically a single entity but is written using multiple signs.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-        <memberOf key="att.ineume.log"/>
-        <memberOf key="att.ineume.vis"/>
-        <memberOf key="att.ineume.ges"/>
-        <memberOf key="att.ineume.anl"/>
-        <memberOf key="model.eventLike.neumes"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="model.eventLike"/>
-            <rng:ref name="model.eventLike.neumes"/>
-            <rng:ref name="macro.neumeModifierLike"/>
-            <rng:ref name="model.appLike"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-            <rng:ref name="model.verseLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <remarks>
-        <p>The constituent signs of the interrupted neume may be encoded using <gi scheme="MEI"
-            >ineume</gi> and <gi scheme="MEI">uneume</gi> sub-elements.</p>
-      </remarks>
-    </elementSpec>
     <elementSpec ident="inscription" module="MEI.header">
       <desc>An inscription added to an item, such as a bookplate, a note designating the item as a
         gift, and/or the author's signature.</desc>
@@ -18565,6 +18653,45 @@
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="nc" module="MEI.neumes">
+      <desc>Sign representing a single pitched event, although the exact pitch may not be
+        known.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.nc.log"/>
+        <memberOf key="att.nc.vis"/>
+        <memberOf key="att.nc.ges"/>
+        <memberOf key="att.nc.anl"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+    </elementSpec>
+    <elementSpec ident="neume" module="MEI.neumes">
+      <desc>Sign representing one or more musical pitches.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.neume.log"/>
+        <memberOf key="att.neume.vis"/>
+        <memberOf key="att.neume.ges"/>
+        <memberOf key="att.neume.anl"/>
+        <memberOf key="model.eventLike.neumes"/>
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="nc"/>
+            <rng:ref name="macro.neumeModifierLike"/>
+            <rng:ref name="model.appLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+            <rng:ref name="model.verseLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
     </elementSpec>
     <elementSpec ident="normalization" module="MEI.header">
       <desc>Indicates the extent of normalization or regularization of the original source carried
@@ -23060,35 +23187,6 @@
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
           standard.</p>
-      </remarks>
-    </elementSpec>
-    <elementSpec ident="uneume" module="MEI.neumes">
-      <desc>(uninterrupted neume) – A graphically-uninterrupted neume sign.</desc>
-      <classes>
-        <memberOf key="att.common"/>
-        <memberOf key="att.facsimile"/>
-        <memberOf key="att.uneume.log"/>
-        <memberOf key="att.uneume.vis"/>
-        <memberOf key="att.uneume.ges"/>
-        <memberOf key="att.uneume.anl"/>
-        <memberOf key="model.eventLike.neumes"/>
-      </classes>
-      <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="model.eventLike"/>
-            <rng:ref name="macro.neumeModifierLike"/>
-            <rng:ref name="model.appLike"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-            <rng:ref name="model.verseLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </content>
-      <remarks>
-        <p>While <gi scheme="MEI">ineume</gi> is allowed as a sub-element of <gi scheme="MEI"
-            >uneume</gi> as part of the model.eventLike.neume class, it is unlikely that an
-          uninterrupted neume containing an interrupted neume is a meaningful construct.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="unpub" module="MEI.header">
