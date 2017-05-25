@@ -4837,19 +4837,14 @@
           </datatype>
           <constraintSpec ident="check_classURI" scheme="isoschematron">
             <constraint>
-              <sch:rule context="@class[not(../@xml:base)]">
+              <sch:rule context="@class">
                 <sch:assert
                   test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:category/@xml:id or matches($i, '^([a-z]+://|\.{1,2}/)')"
-                  >When there's no @xml:base attribute, the value in @class must correspond to the
-                  @xml:id attribute of a category element or be an absolute external
-                  URL.</sch:assert>
+                  >The value in @class must either correspond to the @xml:id attribute of a category
+                  element or be an absolute external URL.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
-          <remarks>
-            <p>In the absence of <att>xml:base</att>, a fragment identifier in <att>class</att> must
-              point to a classification category recorded in the MEI header.</p>
-          </remarks>
         </attDef>
       </attList>
     </classSpec>
@@ -22524,11 +22519,11 @@
         <p>The <gi scheme="MEI">term</gi> element may include other <gi scheme="MEI">term</gi>
           elements in order to allow the creation of coordinated terms; i.e., terms created from a
           combination of other, independent terms.</p>
-        <p>A term may point to a taxonomy class defined in the MEI metadata header using only the
-            <att>class</att> attribute by using a URI corresponding to the internally-defined
-          category, while a class in an external taxonomy may be referenced using <att>class</att>
-          (absolute URL) or the combination of <att>xml:base</att> (base URL) plus <att>class</att>
-          (fragment identifier).</p>
+        <p>To associate a term with a taxonomy category defined in the MEI metadata header, the
+          value of <att>class</att> must contain a fragment identifer corresponding to the
+          appropriate <gi scheme="MEI">term</gi> element. To associate a term with category in an
+          externally-defined taxonomy, <att>class</att> must contain an absolute URI, which may
+          include the fragment identifier of the element containing the category label.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
