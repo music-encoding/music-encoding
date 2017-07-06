@@ -210,6 +210,27 @@
         <rng:empty/>
       </content>
     </macroSpec>
+    <macroSpec ident="macro.struc-unstrucContent" module="MEI.shared" type="pe">
+      <desc>Provides a choice between structured and unstructured/mixed content.</desc>
+      <content>
+        <rng:choice>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.pLike"/>
+            </rng:zeroOrMore>
+          </rng:group>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textPhraseLike.limited"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
+      </content>
+    </macroSpec>
     <macroSpec ident="macro.titlePart" module="MEI.shared" type="pe">
       <desc>Groups elements that may appear as part of a bibliographic title.</desc>
       <content>
@@ -12672,12 +12693,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>May indicate the nature of restrictions or the lack of restrictions. Do not confuse this
@@ -12954,8 +12970,8 @@
       </remarks>
     </elementSpec>
     <elementSpec ident="annot" module="MEI.shared">
-      <desc>(annotation) – Provides a short statement explaining the text or indicating the basis
-        for an assertion.</desc>
+      <desc>(annotation) – Provides a statement explaining the text or indicating the basis for an
+        assertion.</desc>
       <classes>
         <memberOf key="att.audience"/>
         <memberOf key="att.bibl"/>
@@ -12974,33 +12990,25 @@
         <memberOf key="model.annotLike"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.headLike"/>
-            <rng:ref name="model.textComponentLike"/>
-            <rng:ref name="model.textPhraseLike"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.textComponentLike"/>
+            </rng:zeroOrMore>
+          </rng:group>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.editLike"/>
+              <rng:ref name="model.textPhraseLike"/>
+              <rng:ref name="model.transcriptionLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
-      <constraintSpec ident="annot_content_constraint" scheme="isoschematron">
-        <constraint>
-          <sch:rule context="mei:annot[mei:head or mei:lg or mei:p or mei:quote or mei:table]">
-            <sch:assert test="not(mei:head[preceding-sibling::*[not(local-name()='head')]])">Head
-              elements can only occur at the start of annot.</sch:assert>
-            <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed
-              when head, lg, p, quote or table elements are used.</sch:assert>
-            <sch:assert
-              test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList' or local-name() eq 'head' or 
-              local-name() eq 'lg' or local-name() eq 'list' or local-name() eq 'p' or local-name() eq 'quote' or 
-              local-name() eq 'relationList' or local-name() eq 'table')])"
-              >Unstructured text not allowed when head, lg, p, quote or table elements are
-              used.</sch:assert>
-          </sch:rule>
-        </constraint>
-      </constraintSpec>
       <constraintSpec ident="Check_annot_data" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:annot[@data]">
@@ -13223,12 +13231,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="author" module="MEI.shared">
@@ -13841,12 +13844,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="carrierForm" module="MEI.header">
@@ -13863,12 +13861,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="castGrp" module="MEI.shared">
@@ -14479,12 +14472,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -14580,12 +14568,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="contributor" module="MEI.shared">
@@ -14867,16 +14850,31 @@
         <memberOf key="model.biblPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="date"/>
-            <rng:ref name="dedication"/>
-            <rng:ref name="dedicatee"/>
-            <rng:ref name="model.nameLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="model.pLike"/>
+                <rng:ref name="dedicatee"/>
+                <rng:ref name="dedication"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </rng:group>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textPhraseLike.limited"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
+      <remarks>
+        <p>This element uses a variant of the content model provided by
+          macro.struc-unstrucContent.</p>
+      </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI).</p>
       </remarks>
@@ -15042,7 +15040,6 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
-        <memberOf key="model.textPhraseLike.limited"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15063,13 +15060,28 @@
         <memberOf key="model.titlePagePart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:ref name="model.pLike"/>
+            </rng:zeroOrMore>
+          </rng:group>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textPhraseLike.limited"/>
+              <rng:ref name="dedicatee"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
+      <remarks>
+        <p>This element uses a variant of the content model provided by
+          macro.struc-unstrucContent.</p>
+      </remarks>
     </elementSpec>
     <elementSpec ident="del" module="MEI.edittrans">
       <desc>(deletion) – Contains information deleted, marked as deleted, or otherwise indicated as
@@ -15175,19 +15187,37 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-            <rng:ref name="model.dimLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:choice>
+              <rng:zeroOrMore>
+                <rng:ref name="model.dimLike"/>
+              </rng:zeroOrMore>
+              <rng:zeroOrMore>
+                <rng:ref name="model.pLike"/>
+              </rng:zeroOrMore>
+            </rng:choice>
+          </rng:group>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:text/>
+              <rng:ref name="model.textPhraseLike.limited"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:choice>
       </content>
       <remarks>
         <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
             scheme="MEI">depth</gi> are available for circumstances that require the capture of the
           individual dimensions of an object. Do not confuse this element with the <gi scheme="MEI"
             >extent</gi> element, which is used to indicate the quantity of described materials.</p>
+      </remarks>
+      <remarks>
+        <p>This element uses a variant of the content model provided by
+          macro.struc-unstrucContent.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -15768,12 +15798,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -17317,14 +17342,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-            <rng:ref name="model.editLike"/>
-            <rng:ref name="model.transcriptionLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="instrDef" module="MEI.midi">
@@ -17366,6 +17384,9 @@
         <memberOf key="model.editorialDeclPart"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref naem="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="model.pLike"/>
         </rng:oneOrMore>
@@ -19260,12 +19281,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="p" module="MEI.shared">
@@ -19436,12 +19452,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <attList>
         <attDef ident="isodur" usage="opt">
@@ -19940,12 +19951,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>All materials may be described in a single <gi scheme="MEI">physMedium</gi> element or
@@ -19967,12 +19973,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>While it is often called a "plate number", it does not always contain numbers. The
@@ -19990,12 +19991,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="port" module="MEI.midi">
@@ -20064,12 +20060,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <attList>
         <attDef ident="amount" usage="opt">
@@ -20194,9 +20185,14 @@
       </classes>
       <content>
         <rng:choice>
-          <rng:optional>
-            <rng:ref name="eventList"/>
-          </rng:optional>
+          <rng:group>
+            <rng:zeroOrMore>
+              <rng:ref name="model.headLike"/>
+            </rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="eventList"/>
+            </rng:optional>
+          </rng:group>
           <rng:zeroOrMore>
             <rng:choice>
               <rng:text/>
@@ -20205,6 +20201,10 @@
           </rng:zeroOrMore>
         </rng:choice>
       </content>
+      <remarks>
+        <p>This element uses a variant of the content model provided by
+          macro.struc-unstrucContent.</p>
+      </remarks>
       <remarks>
         <p>This element is modelled on elements in the Encoded Archival Description (EAD) and Text
           Encoding Initiative (TEI) standards.</p>
@@ -21238,7 +21238,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:text/>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="section" module="MEI.shared">
@@ -21809,12 +21809,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="sponsor" module="MEI.shared">
@@ -22562,12 +22557,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
     </elementSpec>
     <elementSpec ident="table" module="MEI.figtable">
@@ -23205,12 +23195,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <attList>
         <attDef ident="num" usage="opt">
@@ -23239,12 +23224,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>Treatment history may also comprise details of the treatment process (e.g., chemical
@@ -23265,12 +23245,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -23516,12 +23491,7 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>
@@ -23644,12 +23614,7 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.struc-unstrucContent"/>
       </content>
       <remarks>
         <p>The <att>facs</att> attribute may be used to record the location of the watermark in a
