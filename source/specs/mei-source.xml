@@ -12184,6 +12184,9 @@
     <classSpec ident="model.dimLike" module="MEI.shared" type="model">
       <desc>Groups elements which describe a measurement forming part of the physical dimensions of
         an object.</desc>
+      <classes>
+        <memberOf key="model.textPhraseLike.limited"/>
+      </classes>
     </classSpec>
     <classSpec ident="model.divLike" module="MEI.text" type="model">
       <desc>Groups elements used to represent generic structural divisions of text.</desc>
@@ -15028,31 +15031,17 @@
         <memberOf key="model.biblPart"/>
       </classes>
       <content>
-        <rng:choice>
-          <rng:group>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:zeroOrMore>
-              <rng:choice>
-                <rng:ref name="model.pLike"/>
-                <rng:ref name="dedicatee"/>
-                <rng:ref name="dedication"/>
-              </rng:choice>
-            </rng:zeroOrMore>
-          </rng:group>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:text/>
-              <rng:ref name="model.textPhraseLike.limited"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="dedication"/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
-      <remarks>
-        <p>This element uses a variant of the content model provided by
-          macro.struc-unstrucContent.</p>
-      </remarks>
       <remarks>
         <p>This element is modelled on an element in the Text Encoding Initiative (TEI).</p>
       </remarks>
@@ -15211,6 +15200,7 @@
         <memberOf key="att.bibl"/>
         <memberOf key="att.facsimile"/>
         <memberOf key="att.lang"/>
+        <memberOf key="model.textPhraseLike.limited"/>
       </classes>
       <content>
         <rng:zeroOrMore>
@@ -15220,6 +15210,14 @@
           </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="check_dedicatee" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:dedicatee">
+            <sch:assert test="not(ancestor::mei:dedicatee)">The dedicatee element may not be
+              recursively nested.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="dedication" module="MEI.header">
       <desc>Contains a dedicatory statement.</desc>
@@ -15231,20 +15229,17 @@
         <memberOf key="model.titlePagePart"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:choice>
-          <rng:group>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:zeroOrMore>
-              <rng:ref name="model.pLike"/>
-            </rng:zeroOrMore>
-          </rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.textComponentLike"/>
+          </rng:zeroOrMore>
           <rng:zeroOrMore>
             <rng:choice>
               <rng:text/>
               <rng:ref name="model.textPhraseLike.limited"/>
-              <rng:ref name="dedicatee"/>
             </rng:choice>
           </rng:zeroOrMore>
         </rng:choice>
@@ -15346,7 +15341,7 @@
           standard.</p>
       </remarks>
     </elementSpec>
-    <elementSpec ident="dimensions" module="MEI.header">
+    <elementSpec ident="dimensions" module="MEI.shared">
       <desc>Information about the physical size of a bibliographic source; usually includes
         numerical data.</desc>
       <classes>
@@ -15357,37 +15352,21 @@
         <memberOf key="model.physDescPart"/>
       </classes>
       <content>
-        <rng:choice>
-          <rng:group>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:choice>
-              <rng:zeroOrMore>
-                <rng:ref name="model.dimLike"/>
-              </rng:zeroOrMore>
-              <rng:zeroOrMore>
-                <rng:ref name="model.pLike"/>
-              </rng:zeroOrMore>
-            </rng:choice>
-          </rng:group>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:text/>
-              <rng:ref name="model.textPhraseLike.limited"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <remarks>
         <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
             scheme="MEI">depth</gi> are available for circumstances that require the capture of the
           individual dimensions of an object. Do not confuse this element with the <gi scheme="MEI"
             >extent</gi> element, which is used to indicate the quantity of described materials.</p>
-      </remarks>
-      <remarks>
-        <p>This element uses a variant of the content model provided by
-          macro.struc-unstrucContent.</p>
       </remarks>
       <remarks>
         <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -15720,7 +15699,10 @@
         <rng:oneOrMore>
           <rng:ref name="model.editionLike"/>
           <rng:zeroOrMore>
-            <rng:ref name="respStmt"/>
+            <rng:choice>
+              <rng:ref name="model.respLikePart"/>
+              <rng:ref name="respStmt"/>
+            </rng:choice>
           </rng:zeroOrMore>
         </rng:oneOrMore>
       </content>
@@ -20222,7 +20204,15 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
-        <rng:ref name="macro.struc-unstrucContent"/>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <attList>
         <attDef ident="amount" usage="opt">
@@ -20345,15 +20335,13 @@
         <memberOf key="att.lang"/>
       </classes>
       <content>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
         <rng:choice>
-          <rng:group>
-            <rng:zeroOrMore>
-              <rng:ref name="model.headLike"/>
-            </rng:zeroOrMore>
-            <rng:optional>
-              <rng:ref name="eventList"/>
-            </rng:optional>
-          </rng:group>
+          <rng:optional>
+            <rng:ref name="eventList"/>
+          </rng:optional>
           <rng:zeroOrMore>
             <rng:choice>
               <rng:text/>
@@ -20362,10 +20350,6 @@
           </rng:zeroOrMore>
         </rng:choice>
       </content>
-      <remarks>
-        <p>This element uses a variant of the content model provided by
-          macro.struc-unstrucContent.</p>
-      </remarks>
       <remarks>
         <p>This element is modelled on elements in the Encoded Archival Description (EAD) and Text
           Encoding Initiative (TEI) standards.</p>
@@ -21526,13 +21510,14 @@
       <content>
         <rng:zeroOrMore>
           <rng:choice>
-            <rng:ref name="model.titleLike"/>
-            <rng:ref name="model.locrefLike"/>
-            <rng:ref name="editor"/>
-            <rng:ref name="respStmt"/>
-            <rng:ref name="extent"/>
+            <rng:text/>
             <rng:ref name="model.identifierLike"/>
+            <rng:ref name="model.locrefLike"/>
             <rng:ref name="model.pLike"/>
+            <rng:ref name="model.titleLike"/>
+            <rng:ref name="editor"/>
+            <rng:ref name="extent"/>
+            <rng:ref name="respStmt"/>
           </rng:choice>
         </rng:zeroOrMore>
       </content>
@@ -21557,7 +21542,7 @@
         </rng:oneOrMore>
         <rng:zeroOrMore>
           <rng:choice>
-            <rng:ref name="editor"/>
+            <rng:ref name="model.respLikePart"/>
             <rng:ref name="respStmt"/>
           </rng:choice>
         </rng:zeroOrMore>
