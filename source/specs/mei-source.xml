@@ -12979,6 +12979,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -14860,6 +14861,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -15145,6 +15147,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -15275,6 +15278,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -17655,9 +17659,8 @@
       <constraintSpec ident="Check_keyAccidPlacement" scheme="isoschematron">
         <constraint>
           <sch:rule context="mei:keyAccid">
-            <sch:assert test="(@x and @y) or @pname or @loc">One of the following is
-              required: @x and @y attribute pair, @pname attribute, or @loc attribute.
-            </sch:assert>
+            <sch:assert test="(@x and @y) or @pname or @loc">One of the following is required: @x
+              and @y attribute pair, @pname attribute, or @loc attribute. </sch:assert>
           </sch:rule>
         </constraint>
       </constraintSpec>
@@ -17694,9 +17697,33 @@
       </classes>
       <content>
         <rng:zeroOrMore>
-          <rng:ref name="model.keyAccidLike"/>
+          <rng:choice>
+            <rng:ref name="model.keyAccidLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
         </rng:zeroOrMore>
       </content>
+      <constraintSpec ident="check_keyAccid_oct" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:keySig[mei:keyAccid[@oct]]">
+            <sch:assert test="count(mei:keyAccid[@oct]) = count(mei:keyAccid)">If the @oct attribute
+              appears on any keyAccid element, it must be provided on all keyAccid
+              elements.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_keySig_editorial" scheme="isoschematron">
+        <constraint>
+          <sch:rule
+            context="mei:keySig/mei:*[local-name() eq 'add' or local-name() eq 'corr'
+            or local-name() eq 'damage' or local-name() eq 'del' or local-name() eq 'orig' or 
+            local-name() eq 'reg' or local-name() eq 'restore' or local-name() eq 'sic' or 
+            local-name() eq 'supplied' or local-name() eq 'unclear']">
+            <sch:assert test="count(mei:keyAccid) = count(mei:*)">Only keyAccid elements are allowed
+              here.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
     </elementSpec>
     <elementSpec ident="l" module="MEI.text">
       <desc>(line of text) – Contains a single line of text within a line group.</desc>
@@ -19310,6 +19337,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -20694,6 +20722,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -21124,6 +21153,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -21621,6 +21651,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -22462,6 +22493,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
@@ -23611,6 +23643,7 @@
             <rng:ref name="model.editTransPart"/>
             <rng:ref name="model.fLike"/>
             <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.keyAccidLike"/>
             <rng:ref name="model.layerPart"/>
             <rng:ref name="model.milestoneLike.music"/>
             <rng:ref name="model.sectionPart"/>
