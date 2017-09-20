@@ -21067,9 +21067,8 @@
     </elementSpec>
     <elementSpec ident="respStmt" module="MEI.shared">
       <desc>(responsibility statement) – Names one or more individuals, groups, or in rare cases,
-        mechanical processes, responsible for creation, realization, production, or distribution of
-        the intellectual or artistic content, where the specialized elements for authors, editors,
-        etc. do not suffice or do not apply.</desc>
+        mechanical processes, responsible for creation, realization, production, funding, or
+        distribution of the intellectual or artistic content.</desc>
       <classes>
         <memberOf key="att.common"/>
         <memberOf key="att.bibl"/>
@@ -21081,23 +21080,22 @@
         <rng:zeroOrMore>
           <rng:ref name="model.headLike"/>
         </rng:zeroOrMore>
-        <rng:choice>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="name"/>
-              <rng:ref name="resp"/>
-              <rng:ref name="model.nameLike.agent"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="name"/>
+            <rng:ref name="resp"/>
+            <rng:ref name="model.nameLike.agent"/>
+          </rng:choice>
+        </rng:zeroOrMore>
       </content>
       <constraintSpec ident="check_respStmt" scheme="isoschematron">
         <constraint>
           <sch:rule
             context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or 
             local-name()='seriesStmt']/mei:respStmt[mei:corpName or mei:name or mei:persName]">
-            <sch:assert role="warning" test="mei:resp or (count(mei:*[@role]) = count(mei:*))">If at
-              least one resp element isn't present, all name-like elements should have a @role
+            <sch:assert role="warning"
+              test="mei:resp[node()] or (count(mei:*[@role]) = count(mei:*))">If at least one
+              non-empty resp element isn't present, all name-like elements should have a @role
               attribute.</sch:assert>
           </sch:rule>
         </constraint>
