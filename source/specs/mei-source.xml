@@ -4435,6 +4435,28 @@
             <rng:ref name="data.BARPLACE"/>
           </datatype>
         </attDef>
+        <attDef ident="taktlen" usage="opt">
+          <desc>States the length of a takt barline. Must be greater than 0 and less than or equal
+            to (2 times number of staff lines) + 2, e.g., between 0 and 12 for a 5-line
+            staff.</desc>
+          <datatype>
+            <rng:ref name="data.MEASUREMENTABS"/>
+          </datatype>
+          <constraintSpec ident="check_taktlen" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="@taktlen">
+                <sch:let name="number" value="number(replace(., '[^\d\.]', ''))"/>
+                <sch:assert test="$number &gt; 0">The value of @taktlen must be greater than
+                  0.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <remarks>
+            <p>The value of taktlen must be greater than 0 and less than or equal to (2 times number
+              of staff lines) + 2. For example, on a 5-line staff the value must fall between 0 and
+              12.</p>
+          </remarks>
+        </attDef>
         <attDef ident="taktplace" usage="opt">
           <desc>If takt bar lines are to be used, then the taktplace attribute may be used to denote
             the staff location of the shortened bar line. The location may include staff lines,
