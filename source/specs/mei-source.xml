@@ -4330,6 +4330,53 @@
         </attDef>
       </attList>
     </classSpec>
+    <classSpec ident="att.attacca.anl" module="MEI.analytical" type="atts">
+      <desc>Analytical domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.attacca.ges" module="MEI.gestural" type="atts">
+      <desc>Gestural domain attributes.</desc>
+    </classSpec>
+    <classSpec ident="att.attacca.log" module="MEI.shared" type="atts">
+      <desc>Logical domain attributes.</desc>
+      <classes>
+        <memberOf key="att.controlEvent"/>
+        <memberOf key="att.startEndId"/>
+        <memberOf key="att.timestamp2.logical"/>
+      </classes>
+      <attList>
+        <attDef ident="target" usage="opt">
+          <desc>Indicates the next section or movement to be performed.</desc>
+          <datatype>
+            <rng:ref name="data.URI"/>
+          </datatype>
+          <constraintSpec ident="check_attaccaTarget" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:attacca/@target">
+                <sch:assert role="warning" test="not(normalize-space(.) eq '')">@target attribute
+                  should have content.</sch:assert>
+                <sch:assert role="warning"
+                  test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[local-name() 
+                  eq 'section' or local-name() eq 'mdiv']/@xml:id"
+                  >The value in @target should correspond to the @xml:id attribute of a section or
+                  mdiv element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+      </attList>
+    </classSpec>
+    <classSpec ident="att.attacca.vis" module="MEI.visual" type="atts">
+      <desc>Visual domain attributes.</desc>
+      <classes>
+        <memberOf key="att.extender"/>
+        <memberOf key="att.placement"/>
+        <memberOf key="att.verticalAlignment"/>
+        <memberOf key="att.visualOffset"/>
+        <memberOf key="att.visualOffset2.ho"/>
+        <memberOf key="att.visualOffset2.to"/>
+        <memberOf key="att.xy"/>
+      </classes>
+    </classSpec>
     <classSpec ident="att.audience" module="MEI.shared" type="atts">
       <desc>Attributes that describe the intended audience.</desc>
       <attList>
@@ -5632,6 +5679,15 @@
     </classSpec>
     <classSpec ident="att.mdiv.ges" module="MEI.gestural" type="atts">
       <desc>Gestural domain attributes.</desc>
+      <attList>
+        <attDef ident="attacca">
+          <desc>Indicates that the performance of the next musical division should begin immediately
+            following this one.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.mdiv.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
@@ -10493,6 +10549,15 @@
     </classSpec>
     <classSpec ident="att.section.ges" module="MEI.gestural" type="atts">
       <desc>Gestural domain attributes.</desc>
+      <attList>
+        <attDef ident="attacca">
+          <desc>Indicates that the performance of the next section should begin immediately
+            following this one.</desc>
+          <datatype>
+            <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+        </attDef>
+      </attList>
     </classSpec>
     <classSpec ident="att.section.log" module="MEI.shared" type="atts">
       <desc>Logical domain attributes.</desc>
@@ -13509,6 +13574,49 @@
           the <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi> elements. It may be used
           when specific display info, such as size or color, needs to be recorded for the
           articulation or when multiple articulation marks occur on a single note or chord.</p>
+      </remarks>
+    </elementSpec>
+    <elementSpec ident="attacca" module="MEI.cmn">
+      <desc>An instruction to begin the next section or movement of a composition without
+        pause.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.lang"/>
+        <memberOf key="att.attacca.log"/>
+        <memberOf key="att.attacca.vis"/>
+        <memberOf key="att.attacca.ges"/>
+        <memberOf key="att.attacca.anl"/>
+        <memberOf key="model.controlEventLike.cmn"/>
+        <!--<memberOf key="model.controlEventLike"/>-->
+      </classes>
+      <content>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+            <rng:ref name="model.graphicPrimitiveLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </content>
+      <constraintSpec ident="attacca_start-type_attributes_required" scheme="isoschematron">
+        <constraint>
+          <sch:rule context="mei:attacca[not(ancestor::mei:syllable)]">
+            <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+          </sch:rule>
+        </constraint>
+      </constraintSpec>
+      <remarks>
+        <p>As a specialized directive, <gi scheme="MEI">attacca</gi> is a control element. That is,
+          it can be linked via its attributes to other events. The starting point of the attacca
+          directive may be indicated by either a <att>startid</att>, <att>tstamp</att>,
+            <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the ending point may
+          be recorded by either a <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or
+            <att>tstamp2</att> attribute. It is a semantic error not to specify a starting point
+          attribute.</p>
       </remarks>
     </elementSpec>
     <elementSpec ident="attUsage" module="MEI.header">
