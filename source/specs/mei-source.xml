@@ -14310,6 +14310,47 @@
         </attDef>
       </attList>
     </elementSpec>
+    <elementSpec ident="cb" module="MEI.shared">
+      <desc>(column break) – An empty formatting element that forces text to begin in a new
+        column.</desc>
+      <classes>
+        <memberOf key="att.basic"/>
+        <memberOf key="att.facsimile"/>
+        <memberOf key="att.labelled"/>
+        <memberOf key="att.linking"/>
+        <memberOf key="att.source"/>
+        <memberOf key="att.typed"/>
+        <memberOf key="model.milestoneLike.music"/>
+        <memberOf key="model.milestoneLike.text"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+      <attList>
+        <attDef ident="n" usage="req">
+          <desc>Records the column number.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+          <constraintSpec ident="check_cb" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:cb">
+                <sch:let name="totalColumns" value="preceding::mei:colLayout[1]/@cols"/>
+                <sch:assert test="preceding::mei:colLayout">Column break must be preceded by a
+                  colLayout element.</sch:assert>
+                <sch:assert test="@n &lt;= $totalColumns">The value of @n should be less than or
+                  equal to the value of @cols (<sch:value-of select="$totalColumns"/>) of the
+                  preceding colLayout element.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+        </attDef>
+      </attList>
+      <remarks>
+        <p>This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+      </remarks>
+    </elementSpec>
     <elementSpec ident="cc" module="MEI.midi">
       <desc>(control change) – MIDI parameter/control change.</desc>
       <classes>
@@ -14669,6 +14710,27 @@
         <p>This element is analogous to the <gi scheme="MEI">zone</gi> element in the facsimile
           module.</p>
       </remarks>
+    </elementSpec>
+    <elementSpec ident="colLayout" module="MEI.shared">
+      <desc>(column layout) – An empty formatting element that signals the start of columnar
+        layout.</desc>
+      <classes>
+        <memberOf key="att.common"/>
+        <memberOf key="att.source"/>
+        <memberOf key="model.milestoneLike.music"/>
+        <memberOf key="model.milestoneLike.text"/>
+      </classes>
+      <content>
+        <rng:empty/>
+      </content>
+      <attList>
+        <attDef ident="cols" usage="req">
+          <desc>Records the number of columns.</desc>
+          <datatype>
+            <rng:data type="positiveInteger"/>
+          </datatype>
+        </attDef>
+      </attList>
     </elementSpec>
     <elementSpec ident="componentGrp" module="MEI.frbr">
       <desc>(component group) – Container for components of a bibliographic entity.</desc>
