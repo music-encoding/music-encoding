@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<div xmlns="http://www.tei-c.org/ns/1.0"
+     xmlns:tei="http://www.tei-c.org/ns/1.0"
+     xmlns:xi="http://www.w3.org/2001/XInclude">
+   <specGrp xml:id="module.MEI.lyrics">
+      <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                  ident="MEI.lyrics"
+                  mode="add"
+                  predeclare="false">
+         <desc>Lyrics component declarations.</desc>
+      </moduleSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.lyrics.log"
+                 module="MEI.lyrics"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.staffIdent" mode="add"/>
+            <memberOf key="att.layerIdent" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.refrain.log"
+                 module="MEI.lyrics"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers
+        need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.verse.log"
+                 module="MEI.lyrics"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers
+        need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.volta.log"
+                 module="MEI.lyrics"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes. The n attribute should be used for repetition numbers.
+        Numbers need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="model.verseLike"
+                 module="MEI.lyrics"
+                 type="model"
+                 mode="add"
+                 predeclare="false">
+         <desc>Groups elements that contain a lyric verse.</desc>
+         <classes mode="replace">
+            <memberOf key="model.syllablePart" mode="add"/>
+            <memberOf key="model.rdgPart.music" mode="add"/>
+            <memberOf key="model.editTransPart.music" mode="add"/>
+         </classes>
+      </classSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="refrain"
+                   module="MEI.lyrics"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>Recurring lyrics, especially at the end of each verse or stanza of a poem or song
+        lyrics; a chorus.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.refrain.log" mode="add"/>
+            <memberOf key="att.refrain.vis" mode="add"/>
+            <memberOf key="att.refrain.ges" mode="add"/>
+            <memberOf key="att.refrain.anl" mode="add"/>
+            <memberOf key="model.verseLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="dir"/>
+                  <rng:ref name="dynam"/>
+                  <rng:ref name="tempo"/>
+                  <rng:ref name="space"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+            <rng:oneOrMore>
+               <rng:choice>
+                  <rng:ref name="volta"/>
+                  <rng:ref name="model.sylLike"/>
+                  <rng:ref name="model.appLike"/>
+               </rng:choice>
+            </rng:oneOrMore>
+            <rng:zeroOrMore>
+               <rng:ref name="model.lbLike"/>
+            </rng:zeroOrMore>
+         </content>
+         <remarks>
+            <p part="N">The <gi scheme="MEI">lb</gi> element is allowed here in order to facilitate karaoke
+          applications. The <att scheme="TEI">func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
+          distinguish true line endings from those of line groups for these applications.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="verse"
+                   module="MEI.lyrics"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>Division of a poem or song lyrics, sometimes having a fixed length, meter or rhyme
+        scheme; a stanza.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.verse.log" mode="add"/>
+            <memberOf key="att.verse.vis" mode="add"/>
+            <memberOf key="att.verse.ges" mode="add"/>
+            <memberOf key="att.verse.anl" mode="add"/>
+            <memberOf key="model.verseLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="dir"/>
+                  <rng:ref name="dynam"/>
+                  <rng:ref name="tempo"/>
+                  <rng:ref name="space"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+            <rng:oneOrMore>
+               <rng:choice>
+                  <rng:ref name="volta"/>
+                  <rng:ref name="model.sylLike"/>
+                  <rng:ref name="model.appLike"/>
+               </rng:choice>
+            </rng:oneOrMore>
+            <rng:zeroOrMore>
+               <rng:ref name="model.lbLike"/>
+            </rng:zeroOrMore>
+         </content>
+         <remarks>
+            <p part="N">The <gi scheme="MEI">lb</gi> element is allowed here in order to facilitate karaoke
+          applications. The <att scheme="TEI">func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
+          distinguish true line endings from those of line groups for these applications.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="volta"
+                   module="MEI.lyrics"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc/>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.volta.log" mode="add"/>
+            <memberOf key="att.volta.vis" mode="add"/>
+            <memberOf key="att.volta.ges" mode="add"/>
+            <memberOf key="att.volta.anl" mode="add"/>
+            <memberOf key="model.rdgPart.music" mode="add"/>
+            <memberOf key="model.editTransPart.music" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="dir"/>
+                  <rng:ref name="dynam"/>
+                  <rng:ref name="tempo"/>
+                  <rng:ref name="space"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+            <rng:oneOrMore>
+               <rng:choice>
+                  <rng:ref name="model.sylLike"/>
+                  <rng:ref name="model.appLike"/>
+               </rng:choice>
+            </rng:oneOrMore>
+            <rng:zeroOrMore>
+               <rng:ref name="model.lbLike"/>
+            </rng:zeroOrMore>
+         </content>
+      </elementSpec>
+   </specGrp>
+</div>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<div xmlns="http://www.tei-c.org/ns/1.0"
+     xmlns:tei="http://www.tei-c.org/ns/1.0"
+     xmlns:xi="http://www.w3.org/2001/XInclude">
+   <specGrp xml:id="module.MEI.fingering">
+      <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                  ident="MEI.fingering"
+                  mode="add"
+                  predeclare="false">
+         <desc>Fingering component declarations.</desc>
+      </moduleSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.fing.log"
+                 module="MEI.fingering"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.controlEvent" mode="add"/>
+            <memberOf key="att.duration.additive" mode="add"/>
+            <memberOf key="att.startEndId" mode="add"/>
+            <memberOf key="att.timestamp2.logical" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.fingGrp.log"
+                 module="MEI.fingering"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.controlEvent" mode="add"/>
+            <memberOf key="att.duration.additive" mode="add"/>
+            <memberOf key="att.startEndId" mode="add"/>
+            <memberOf key="att.timestamp2.logical" mode="add"/>
+         </classes>
+         <attList org="group">
+            <attDef ident="form"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <valList type="closed" mode="add">
+                  <valItem ident="alter" mode="add">
+                     <desc>alternation of fingers.</desc>
+                  </valItem>
+                  <valItem ident="combi" mode="add">
+                     <desc>combination of fingers.</desc>
+                  </valItem>
+                  <valItem ident="subst" mode="add">
+                     <desc>substitution of fingers.</desc>
+                  </valItem>
+               </valList>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="model.fingeringLike"
+                 module="MEI.fingering"
+                 type="model"
+                 mode="add"
+                 predeclare="false">
+         <desc>Groups elements that capture performance instructions regarding the use of the fingers
+        of the hand (or a subset of them).</desc>
+         <classes mode="replace">
+            <memberOf key="model.controlEventLike" mode="add"/>
+         </classes>
+      </classSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="fing"
+                   module="MEI.fingering"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>finger – An individual finger in a fingering indication.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.fing.anl" mode="add"/>
+            <memberOf key="att.fing.ges" mode="add"/>
+            <memberOf key="att.fing.log" mode="add"/>
+            <memberOf key="att.fing.vis" mode="add"/>
+            <memberOf key="model.fingeringLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:text/>
+                  <rng:ref name="model.textPhraseLike.limited"/>
+                  <rng:ref name="model.editLike"/>
+                  <rng:ref name="model.transcriptionLike"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+         </content>
+         <constraintSpec ident="fing_start-type_attributes_required"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:fing[not(ancestor::mei:fingGrp)]">
+                  <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <constraintSpec ident="stack_exclusion"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+        <!-- Exclusion implemented using Schematron -->
+            <constraint>
+               <sch:rule context="mei:fing">
+                  <sch:assert test="not(descendant::mei:stack)">The stack element is not allowed as a
+              descendant of fing.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="fingGrp"
+                   module="MEI.fingering"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(finger group)– A group of individual fingers in a fingering indication.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.fingGrp.anl" mode="add"/>
+            <memberOf key="att.fingGrp.ges" mode="add"/>
+            <memberOf key="att.fingGrp.log" mode="add"/>
+            <memberOf key="att.fingGrp.vis" mode="add"/>
+            <memberOf key="model.fingeringLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="model.fingeringLike"/>
+                  <rng:ref name="model.editLike"/>
+                  <rng:ref name="model.transcriptionLike"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+         </content>
+         <constraintSpec ident="require_fingeringLike_children"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:fingGrp">
+                  <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or
+              fingGrp elements are required.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <constraintSpec ident="check_fingGrp_start-type_attributes"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:pattern>
+                  <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
+                     <sch:assert test="not(child::mei:*[@tstamp or @startid])">When @tstamp or @startid is
+                present on fingGrp, its child elements cannot have a @tstamp or @startid
+                attribute.</sch:assert>
+                  </sch:rule>
+                  <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][not(@tstamp or @startid)]">
+                     <sch:assert test="count(descendant::mei:*[@tstamp or @startid]) = count(child::mei:*[local-name()='fing' or local-name()='fingGrp'])">When @tstamp or @startid is not present on fingGrp, each of its child elements must
+                have a @tstamp or @startid attribute.</sch:assert>
+                  </sch:rule>
+               </sch:pattern>
+            </constraint>
+         </constraintSpec>
+      </elementSpec>
+   </specGrp>
+</div>

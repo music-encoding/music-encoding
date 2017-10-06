@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<div xmlns="http://www.tei-c.org/ns/1.0"
+     xmlns:tei="http://www.tei-c.org/ns/1.0"
+     xmlns:xi="http://www.w3.org/2001/XInclude">
+   <specGrp xml:id="module.MEI.drama">
+      <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                  ident="MEI.drama"
+                  mode="add"
+                  predeclare="false">
+         <desc>Dramatic text component declarations.</desc>
+      </moduleSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.sp.log"
+                 module="MEI.drama"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.controlEvent" mode="add"/>
+            <memberOf key="att.startEndId" mode="add"/>
+            <memberOf key="att.timestamp2.logical" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.stageDir.log"
+                 module="MEI.drama"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.controlEvent" mode="add"/>
+            <memberOf key="att.startEndId" mode="add"/>
+            <memberOf key="att.timestamp2.logical" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="model.stageDirLike"
+                 module="MEI.drama"
+                 type="model"
+                 mode="add"
+                 predeclare="false">
+         <desc>Groups elements containing stage directions in performance texts.</desc>
+         <classes mode="replace">
+            <memberOf key="model.controlEventLike" mode="add"/>
+            <memberOf key="model.paracontentPart" mode="add"/>
+         </classes>
+      </classSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="sp"
+                   module="MEI.drama"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(speech) – Contains an individual speech in a performance text.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.sp.anl" mode="add"/>
+            <memberOf key="att.sp.ges" mode="add"/>
+            <memberOf key="att.sp.log" mode="add"/>
+            <memberOf key="att.sp.vis" mode="add"/>
+            <memberOf key="model.controlEventLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="model.annotLike"/>
+                  <rng:ref name="model.appLike"/>
+                  <rng:ref name="model.figLike"/>
+                  <rng:ref name="model.milestoneLike.text"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+               <rng:ref name="speaker"/>
+               <rng:zeroOrMore>
+                  <rng:choice>
+                     <rng:ref name="model.annotLike"/>
+                     <rng:ref name="model.appLike"/>
+                     <rng:ref name="model.figLike"/>
+                     <rng:ref name="model.milestoneLike.text"/>
+                  </rng:choice>
+               </rng:zeroOrMore>
+            </rng:zeroOrMore>
+            <rng:oneOrMore>
+               <rng:choice>
+                  <rng:ref name="model.lgLike"/>
+                  <rng:ref name="model.lLike"/>
+                  <rng:ref name="model.pLike"/>
+                  <rng:ref name="model.quoteLike"/>
+                  <rng:ref name="model.stageDirLike"/>
+                  <rng:ref name="list"/>
+               </rng:choice>
+            </rng:oneOrMore>
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="model.annotLike"/>
+                  <rng:ref name="model.appLike"/>
+                  <rng:ref name="model.figLike"/>
+                  <rng:ref name="model.milestoneLike.text"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+         </content>
+         <constraintSpec ident="sp_start-type_attributes_required"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:sp[ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff][not(ancestor::mei:sp)]">
+                  <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <constraintSpec ident="sp_start-type_attributes_forbidden"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:sp[not(ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff)]">
+                  <sch:assert test="not(@startid or @endid or @tstamp or @tstamp2 or @tstamp.ges or @tstamp.real or                @startho or @endho or @to or @startto or @endto or @staff or @layer or @place or @plist)">Must not have any of the attributes: startid, endid, tstamp, tstamp2, tstamp.ges,
+              tstamp.real, startho, endho, to, startto, endto, staff, layer, place, or
+              plist.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <remarks>
+            <p part="N">In a musical context <gi scheme="MEI">sp</gi> must have a start-type attribute when it's
+          not a descendant of <gi scheme="MEI">sp</gi>. In a textual content <gi scheme="MEI">sp</gi> must NOT have any musical attributes.</p>
+         </remarks>
+         <remarks>
+            <p part="N">This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="stageDir"
+                   module="MEI.drama"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(stage direction) – Contains any kind of stage direction within a dramatic text or
+        fragment.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.facsimile" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.stageDir.anl" mode="add"/>
+            <memberOf key="att.stageDir.ges" mode="add"/>
+            <memberOf key="att.stageDir.log" mode="add"/>
+            <memberOf key="att.stageDir.vis" mode="add"/>
+            <memberOf key="model.stageDirLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:text/>
+                  <rng:ref name="model.textPhraseLike.limited"/>
+                  <rng:ref name="model.editLike"/>
+                  <rng:ref name="model.transcriptionLike"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+         </content>
+         <constraintSpec ident="stageDir_start-type_attributes_required"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:stageDir[ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff][not(ancestor::mei:sp)]">
+                  <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+              the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <constraintSpec ident="stageDir_start-type_attributes_forbidden"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:stageDir[not(ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff) or ancestor::mei:sp]">
+                  <sch:assert test="not(@startid or @endid or @tstamp or @tstamp2 or @tstamp.ges or @tstamp.real or @startho or @endho or @to or                @startto or @endto or @staff or @layer or @place or @plist)">Must not have any of the attributes: startid, endid, tstamp, tstamp2, tstamp.ges,
+              tstamp.real, startho, endho, to, startto, endto, staff, layer, place, or
+              plist.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <remarks>
+            <p part="N">In a musical context <gi scheme="MEI">stageDir</gi> must have a start-type attribute when
+          it's not a descendant of <gi scheme="MEI">sp</gi>. In a textual content <gi scheme="MEI">stageDir</gi> must NOT have any musical attributes.</p>
+         </remarks>
+         <remarks>
+            <p part="N">This element is modelled on an element in the Text Encoding Initiative (TEI)
+          standard.</p>
+         </remarks>
+      </elementSpec>
+   </specGrp>
+</div>
