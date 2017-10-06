@@ -1,100 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<div xmlns="http://www.tei-c.org/ns/1.0"
-     xmlns:tei="http://www.tei-c.org/ns/1.0"
-     xmlns:xi="http://www.w3.org/2001/XInclude">
-   <specGrp xml:id="module.MEI.externalsymbols">
-      <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-                  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-                  ident="MEI.externalsymbols"
-                  mode="add"
-                  predeclare="false">
-         <desc>External symbols component declarations.</desc>
-      </moduleSpec>
-      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
-                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-                 ident="att.extSym"
-                 module="MEI.externalsymbols"
-                 type="atts"
-                 mode="add"
-                 predeclare="false">
-         <desc>Attributes used to associate MEI features with corresponding glyphs in an
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0"
+         xmlns:tei="http://www.tei-c.org/ns/1.0"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xml:id="module.MEI.externalsymbols">
+   <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+               xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+               xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+               ident="MEI.externalsymbols">
+      <desc>External symbols component declarations.</desc>
+    </moduleSpec>
+   <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+              xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+              xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+              ident="att.extSym"
+              module="MEI.externalsymbols"
+              type="atts">
+      <desc>Attributes used to associate MEI features with corresponding glyphs in an
         externally-defined standard such as SMuFL.</desc>
-         <attList org="group">
-            <attDef ident="glyph.auth"
-                    usage="opt"
-                    mode="add"
-                    predeclare="false"
-                    ns="http://www.tei-c.org/ns/1.0">
-               <desc>A name or label associated with the controlled vocabulary from which the value of
-              <att scheme="TEI">glyph.name</att> or <att scheme="TEI">glyph.num</att> is taken.</desc>
-               <datatype minOccurs="1" maxOccurs="1">
-                  <rng:data type="NMTOKEN"/>
-               </datatype>
-               <valList type="semi" mode="add">
-                  <valItem ident="smufl" mode="add">
-                     <desc>Standard Music Font Layout.</desc>
-                  </valItem>
-               </valList>
-            </attDef>
-            <attDef ident="glyph.name"
-                    usage="opt"
-                    mode="add"
-                    predeclare="false"
-                    ns="http://www.tei-c.org/ns/1.0">
-               <desc>Glyph name.</desc>
-               <datatype minOccurs="1" maxOccurs="1">
-                  <rng:data type="string"/>
-               </datatype>
-               <constraintSpec ident="check_glyph.name"
-                               scheme="isoschematron"
-                               mode="add"
-                               predeclare="false">
-                  <constraint>
-                     <sch:rule context="@glyph.name">
-                        <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyph.name
+      <attList>
+        <attDef ident="glyph.auth" usage="opt">
+            <desc>A name or label associated with the controlled vocabulary from which the value of
+              <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+            <datatype>
+               <rng:data type="NMTOKEN"/>
+            </datatype>
+            <valList type="semi">
+               <valItem ident="smufl">
+                  <desc>Standard Music Font Layout.</desc>
+               </valItem>
+            </valList>
+        </attDef>
+        <attDef ident="glyph.name" usage="opt">
+            <desc>Glyph name.</desc>
+            <datatype>
+               <rng:data type="string"/>
+            </datatype>
+            <constraintSpec ident="check_glyph.name" scheme="isoschematron">
+               <constraint>
+                  <sch:rule context="@glyph.name">
+                     <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyph.name
                   attribute should have content.</sch:assert>
-                     </sch:rule>
-                  </constraint>
-               </constraintSpec>
-            </attDef>
-            <attDef ident="glyph.num"
-                    usage="opt"
-                    mode="add"
-                    predeclare="false"
-                    ns="http://www.tei-c.org/ns/1.0">
-               <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+        </attDef>
+        <attDef ident="glyph.num" usage="opt">
+            <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B.
             SMuFL version 1.18 uses the range U+E000 - U+ECBF.</desc>
-               <datatype minOccurs="1" maxOccurs="1">
-                  <rng:ref name="data.HEXNUM"/>
-               </datatype>
-               <constraintSpec ident="check_glyph.num"
-                               scheme="isoschematron"
-                               mode="add"
-                               predeclare="false">
-                  <constraint>
-                     <sch:rule context="mei:*[@glyph.num and (lower-case(@glyph.auth) eq 'smufl' or @glyph.uri eq 'http://www.smufl.org/')]">
-                        <sch:assert role="warning"
-                                    test="matches(normalize-space(@glyph.num), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')">SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
-                     </sch:rule>
-                  </constraint>
-               </constraintSpec>
-            </attDef>
-            <attDef ident="glyph.uri"
-                    usage="opt"
-                    mode="add"
-                    predeclare="false"
-                    ns="http://www.tei-c.org/ns/1.0">
-               <desc>The web-accessible location of the controlled vocabulary from which the value of
-              <att scheme="TEI">glyph.name</att> or <att scheme="TEI">glyph.num</att> is taken.</desc>
-               <datatype minOccurs="1" maxOccurs="1">
-                  <rng:ref name="data.URI"/>
-               </datatype>
-            </attDef>
-         </attList>
-      </classSpec>
-   </specGrp>
-</div>
+            <datatype>
+               <rng:ref name="data.HEXNUM"/>
+            </datatype>
+            <constraintSpec ident="check_glyph.num" scheme="isoschematron">
+               <constraint>
+                  <sch:rule context="mei:*[@glyph.num and (lower-case(@glyph.auth) eq 'smufl' or @glyph.uri eq 'http://www.smufl.org/')]">
+                     <sch:assert role="warning"
+                                 test="matches(normalize-space(@glyph.num), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')">SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+        </attDef>
+        <attDef ident="glyph.uri" usage="opt">
+            <desc>The web-accessible location of the controlled vocabulary from which the value of
+              <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+            <datatype>
+               <rng:ref name="data.URI"/>
+            </datatype>
+        </attDef>
+      </attList>
+    </classSpec>
+</specGrp>
