@@ -12,6 +12,11 @@ DOCS_DIRECTORY="docs"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
 
 echo "Running documentation build"
+openssl aes-256-cbc -K $encrypted_73e61484bb4d_key -iv $encrypted_73e61484bb4d_iv -in deploy_key.enc -out deploy_key -d
+chmod 600 deploy_key
+eval `ssh-agent -s`
+ssh-add deploy_key
+
 SHA=`git rev-parse --verify HEAD`
 
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
@@ -31,10 +36,7 @@ ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
 ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
 ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
 ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-openssl aes-256-cbc -K $encrypted_73e61484bb4d_key -iv $encrypted_73e61484bb4d_iv -in deploy_key.enc -out deploy_key -d
-chmod 600 deploy_key
-eval `ssh-agent -s`
-ssh-add deploy_key
+
 
 # Now that we're all set up, we can push.
 git push ${DOCS_REPOSITORY} ${DOCS_BRANCH}
