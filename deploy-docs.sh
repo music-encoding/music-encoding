@@ -12,7 +12,12 @@ DOCS_DIRECTORY="docs"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
 
 echo "Running documentation build"
-openssl aes-256-cbc -K $encrypted_73e61484bb4d_key -iv $encrypted_73e61484bb4d_iv -in deploy_key.enc -out deploy_key -d
+ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
+ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
+ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
+ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+
+openssl aes-256-cbc -K $encrypted_20063e125f98_key -iv $encrypted_20063e125f98_iv -in deploy_key.enc -out deploy_key -d
 chmod 600 deploy_key
 eval `ssh-agent -s`
 ssh-add deploy_key
@@ -32,10 +37,6 @@ git config user.email "${COMMIT_AUTHOR_EMAIL}"
 git add -A .
 git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
 
 
 # Now that we're all set up, we can push.
