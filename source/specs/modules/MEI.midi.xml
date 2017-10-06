@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<div xmlns="http://www.tei-c.org/ns/1.0"
+     xmlns:tei="http://www.tei-c.org/ns/1.0"
+     xmlns:xi="http://www.w3.org/2001/XInclude">
+   <specGrp xml:id="module.MEI.midi">
+      <moduleSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                  ident="MEI.midi"
+                  mode="add"
+                  predeclare="false">
+         <desc>MIDI component declarations.</desc>
+      </moduleSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.channelized"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record MIDI channel information.</desc>
+         <attList org="group">
+            <attDef ident="midi.channel"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Records a MIDI channel value.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDICHANNEL"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.duty"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Specifies the 'on' part of the duty cycle as a percentage of a note's
+            duration.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.PERCENT"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.port"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Sets the MIDI port value.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.track"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Sets the MIDI track.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:data type="positiveInteger"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.instrDef.log"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.instrumentIdent"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes which identify a MIDI instrument.</desc>
+         <attList org="group">
+            <attDef ident="instr"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Provides a way of pointing to a MIDI instrument definition. It must contain the ID
+            of an <gi scheme="MEI">instrDef</gi> element elsewhere in the document.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.URI"/>
+               </datatype>
+               <constraintSpec ident="check_instrTarget"
+                               scheme="isoschematron"
+                               mode="add"
+                               predeclare="false">
+                  <constraint>
+                     <sch:rule context="@instr">
+                        <sch:assert role="warning" test="not(normalize-space(.) eq '')">@instr attribute
+                  should have content.</sch:assert>
+                        <sch:assert role="warning"
+                                    test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:instrDef/@xml:id">The value in @instr should correspond to the @xml:id attribute of an instrDef
+                  element.</sch:assert>
+                     </sch:rule>
+                  </constraint>
+               </constraintSpec>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midi.event"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes common to MIDI events.</desc>
+         <classes mode="replace">
+            <memberOf key="att.staffIdent" mode="add"/>
+            <memberOf key="att.layerIdent" mode="add"/>
+            <memberOf key="att.timestamp.logical" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midi.log"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Logical domain attributes.</desc>
+         <classes mode="replace">
+            <memberOf key="att.staffIdent" mode="add"/>
+            <memberOf key="att.layerIdent" mode="add"/>
+         </classes>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiInstrument"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record MIDI instrument information.</desc>
+         <constraintSpec ident="One_of_instrname_or_instrnum"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:*[@midi.instrname]">
+                  <sch:assert test="not(@midi.instrnum)">Only one of @midi.instrname and @midi.instrnum
+              allowed.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <constraintSpec ident="One_of_patchname_or_patchnum"
+                         scheme="isoschematron"
+                         mode="add"
+                         predeclare="false">
+            <constraint>
+               <sch:rule context="mei:*[@midi.patchname]">
+                  <sch:assert test="not(@midi.patchnum)">Only one of @midi.patchname and @midi.patchnum
+              allowed.</sch:assert>
+               </sch:rule>
+            </constraint>
+         </constraintSpec>
+         <attList org="group">
+            <attDef ident="midi.instrnum"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Captures the General MIDI instrument number.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.instrname"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Provides a General MIDI label for the MIDI instrument.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDINAMES"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.pan"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Sets the instrument's position in a stereo field. Values of 0 and 1 both pan left,
+            127 pans right, and 64 pans to the center.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.patchname"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Records a non-General MIDI patch/instrument name.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:data type="NMTOKEN"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.patchnum"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Records a non-General MIDI patch/instrument number.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.volume"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Sets the instrument's volume.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiNumber"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record MIDI numbers.</desc>
+         <attList org="group">
+            <attDef ident="num"
+                    usage="req"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>MIDI number in the range set by data.MIDIVALUE.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiTempo"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record MIDI tempo information.</desc>
+         <attList org="group">
+            <attDef ident="midi.bpm"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Captures the number of *quarter notes* per minute. In MIDI, a beat is always defined
+            as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIBPM"/>
+               </datatype>
+            </attDef>
+            <attDef ident="midi.mspb"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Records the number of microseconds per *quarter note*. In MIDI, a beat is always
+            defined as a quarter note, *not the numerator of the time signature or the metronomic
+            indication*. At 120 quarter notes per minute, each quarter note will last 500,000
+            microseconds.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIMSPB"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiValue"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record MIDI values.</desc>
+         <attList org="group">
+            <attDef ident="val"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>MIDI number.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiValue2"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record terminal MIDI values.</desc>
+         <attList org="group">
+            <attDef ident="val2"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>MIDI number.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.midiVelocity"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>MIDI attributes pertaining to key velocity.</desc>
+         <attList org="group">
+            <attDef ident="vel"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>MIDI Note-on/off velocity.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDIVALUE"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="att.timeBase"
+                 module="MEI.midi"
+                 type="atts"
+                 mode="add"
+                 predeclare="false">
+         <desc>Attributes that record time-base information.</desc>
+         <attList org="group">
+            <attDef ident="ppq"
+                    usage="opt"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Indicates the number of pulses (sometimes referred to as ticks or divisions) per
+            quarter note. Unlike MIDI, MEI permits different values for a score and individual
+            staves.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:data type="positiveInteger"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </classSpec>
+      <classSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                 xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                 xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                 ident="model.midiLike"
+                 module="MEI.midi"
+                 type="model"
+                 mode="add"
+                 predeclare="false">
+         <desc>Groups elements which group MIDI-like elements.</desc>
+         <classes mode="replace">
+            <memberOf key="model.layerPart.mensuralAndNeumes" mode="add"/>
+            <memberOf key="model.measurePart" mode="add"/>
+            <memberOf key="model.syllablePart" mode="add"/>
+         </classes>
+      </classSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="cc"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(control change) – MIDI parameter/control change.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+            <memberOf key="att.midiValue" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <remarks>
+            <p part="N">The <att scheme="TEI">num</att> attribute specifies a MIDI parameter number, while <att scheme="TEI">val</att>
+          contains the parameter value. Each must fall in the range 0-127.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="chan"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(channel) – MIDI channel assignment.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <attList org="group">
+            <attDef ident="num"
+                    usage="req"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>MIDI number in the range set by data.MIDICHANNEL.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:ref name="data.MIDICHANNEL"/>
+               </datatype>
+            </attDef>
+         </attList>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="chanPr"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(channel pressure) – MIDI channel pressure/after touch.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <remarks>
+            <p part="N">The value of the <att scheme="TEI">num</att> attribute must be in the range 0-127.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="cue"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI cue point.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:text/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="hex"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>Arbitrary MIDI data in hexadecimal form.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:text/>
+         </content>
+         <remarks>
+            <p part="N">The element's content must be wrapped in a CDATA section to avoid parsing errors.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="instrDef"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(instrument definition) – MIDI instrument declaration.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.instrDef.anl" mode="add"/>
+            <memberOf key="att.instrDef.ges" mode="add"/>
+            <memberOf key="att.instrDef.log" mode="add"/>
+            <memberOf key="att.instrDef.vis" mode="add"/>
+            <memberOf key="model.instrDefLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <remarks>
+            <p part="N">This element provides a starting or default instrument declaration for a staff, a group
+          of staves, or a layer. Following scoreDef, staffDef, layerDef, or MIDI prog elements may
+          then change the instrument as necessary.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="instrGrp"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(instrument group) – Collects MIDI instrument definitions.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:oneOrMore>
+               <rng:ref name="model.instrDefLike"/>
+            </rng:oneOrMore>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="marker"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI marker meta-event.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:text/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="metaText"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI text meta-event.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:text/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="midi"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>Container for elements that contain information useful when generating MIDI
+        output.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.log" mode="add"/>
+            <memberOf key="att.midi.vis" mode="add"/>
+            <memberOf key="att.midi.ges" mode="add"/>
+            <memberOf key="att.midi.anl" mode="add"/>
+            <memberOf key="model.midiLike" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:zeroOrMore>
+               <rng:choice>
+                  <rng:ref name="cc"/>
+                  <rng:ref name="chan"/>
+                  <rng:ref name="chanPr"/>
+                  <rng:ref name="cue"/>
+                  <rng:ref name="hex"/>
+                  <rng:ref name="mei_marker"/>
+                  <rng:ref name="metaText"/>
+                  <rng:ref name="noteOff"/>
+                  <rng:ref name="noteOn"/>
+                  <rng:ref name="port"/>
+                  <rng:ref name="prog"/>
+                  <rng:ref name="seqNum"/>
+                  <rng:ref name="trkName"/>
+                  <rng:ref name="vel"/>
+               </rng:choice>
+            </rng:zeroOrMore>
+         </content>
+         <remarks>
+            <p part="N">The <att scheme="TEI">label</att> attribute can be used to differentiate between multiple MIDI data
+          streams, e.g. quantized/unquantized, straight/swing, ornamented/as notated, etc.</p>
+         </remarks>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="noteOff"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI note-off event.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="noteOn"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI note-on event.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="port"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>MIDI port.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="prog"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(program) – MIDI program change.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="seqNum"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(sequence number) – MIDI sequence number.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <attList org="group">
+            <attDef ident="num"
+                    usage="req"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Number in the range 0-65535.</desc>
+               <datatype minOccurs="1" maxOccurs="1">
+                  <rng:data type="nonNegativeInteger">
+                     <rng:param name="maxInclusive">65535</rng:param>
+                  </rng:data>
+               </datatype>
+            </attDef>
+         </attList>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="trkName"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(track name) – MIDI track/sequence name.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.lang" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:text/>
+         </content>
+      </elementSpec>
+      <elementSpec xmlns:rng="http://relaxng.org/ns/structure/1.0"
+                   xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+                   xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
+                   ident="vel"
+                   module="MEI.midi"
+                   mode="add"
+                   predeclare="false"
+                   ns="http://www.tei-c.org/ns/1.0">
+         <desc>(velocity) – MIDI Note-on/off velocity.</desc>
+         <classes mode="replace">
+            <memberOf key="att.common" mode="add"/>
+            <memberOf key="att.midi.event" mode="add"/>
+            <memberOf key="att.midiNumber" mode="add"/>
+         </classes>
+         <content autoPrefix="true">
+            <rng:empty/>
+         </content>
+         <attList org="group">
+            <attDef ident="form"
+                    usage="req"
+                    mode="add"
+                    predeclare="false"
+                    ns="http://www.tei-c.org/ns/1.0">
+               <desc>Indicates whether this is note-on or note-off velocity data.</desc>
+               <valList type="closed" mode="add">
+                  <valItem ident="on" mode="add">
+                     <desc>Note-on velocity.</desc>
+                  </valItem>
+                  <valItem ident="off" mode="add">
+                     <desc>Note-off velocity.</desc>
+                  </valItem>
+               </valList>
+            </attDef>
+         </attList>
+      </elementSpec>
+   </specGrp>
+</div>
