@@ -233,6 +233,7 @@
       <memberOf key="att.alignment"/>
       <memberOf key="att.duration.additive"/>
       <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.staffIdent"/>
       <memberOf key="att.startEndId"/>
       <memberOf key="att.timestamp.logical"/>
@@ -440,6 +441,7 @@
     <desc>Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.staffIdent"/>
       <memberOf key="att.startId"/>
       <memberOf key="att.timestamp.logical"/>
@@ -637,12 +639,13 @@
       control event.</desc>
     <classes>
       <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.plist"/>
+      <memberOf key="att.staffIdent"/>
       <memberOf key="att.targetEval"/>
       <memberOf key="att.timestamp.logical"/>
       <memberOf key="att.timestamp.gestural"/>
-      <memberOf key="att.staffIdent"/>
-      <memberOf key="att.layerIdent"/>
     </classes>
   </classSpec>
   <classSpec ident="att.coordinated" module="MEI.shared" type="atts">
@@ -2355,6 +2358,47 @@
   </classSpec>
   <classSpec ident="att.part.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.partIdent" module="MEI.shared" type="atts">
+    <desc>Attributes for identifying the part in which the current feature appears.</desc>
+    <attList>
+      <attDef ident="part" usage="opt">
+        <desc>Indicates the part in which the current feature should appear. Use '%all' when the
+          feature should occur in every part.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="token">
+            <rng:param name="pattern">(%all|#[\i][\c]+)</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_part_attr_all" scheme="isoschematron">
+          <constraint>
+            <sch:rule
+              context="@part[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
+              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
+                values.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+      <attDef ident="partstaff" usage="rec">
+        <desc>Signifies the part staff on which a notated feature occurs. Use '%all' when the
+          feature should occur on every staff.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="token">
+            <rng:param name="pattern">(%all|\d+(-\d+)?(,\d+(-\d+)?)*)</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_partstaff_attr_all" scheme="isoschematron">
+          <constraint>
+            <sch:rule
+              context="@partstaff[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
+              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
+                values.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.parts.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
