@@ -1108,6 +1108,7 @@
     <desc>Provides attributes for describing the size of an entity.</desc>
     <classes>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
     </classes>
     <attList>
       <attDef ident="extent" usage="opt">
@@ -2547,16 +2548,64 @@
     <desc>Attributes that specify a measurement in numerical terms.</desc>
     <classes>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
     </classes>
     <attList>
       <attDef ident="quantity" usage="opt">
         <desc>Numeric value capturing a measurement or count. Can only be interpreted in combination
-          with the unit or currency attribute.</desc>
+          with the unit attribute.</desc>
         <datatype>
           <rng:data type="decimal">
             <rng:param name="minInclusive">0</rng:param>
           </rng:data>
         </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ranging" module="MEI.shared" type="atts">
+    <desc>Groups attributes that describe a numerical range.</desc>
+    <attList>
+      <attDef ident="atleast" usage="opt">
+        <desc>Gives a minimum estimated value for an approximate measurement.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="atmost" usage="opt">
+        <desc>Gives a maximum estimated value for an approximate measurement.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="min" usage="opt">
+        <desc>Where the measurement summarizes more than one observation or a range of values,
+          supplies the minimum value observed.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="max" usage="opt">
+        <desc>Where the measurement summarizes more than one observation or a range of values,
+          supplies the maximum value observed.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="confidence" usage="opt">
+        <desc>Specifies the degree of statistical confidence (between zero and one) that a value
+          falls within the range specified by min and max, or the proportion of observed values that
+          fall within that range.</desc>
+        <datatype>
+          <rng:ref name="data.CONFIDENCE"/>
+        </datatype>
+        <constraintSpec ident="check_confidence" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:*[@confidence]">
+              <sch:assert test="@min and @max">The attributes @min and @max are required when
+                @confidence is present.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
     </attList>
   </classSpec>
@@ -6150,6 +6199,7 @@
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
       <memberOf key="model.numLike"/>
     </classes>
     <content>
