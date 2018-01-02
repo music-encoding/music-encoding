@@ -1680,11 +1680,20 @@
           <valItem ident="cm">
             <desc>Centimeter.</desc>
           </valItem>
+          <valItem ident="deg">
+            <desc>Degree.</desc>
+          </valItem>
           <valItem ident="in">
             <desc>Inch.</desc>
           </valItem>
           <valItem ident="issue">
             <desc>Serial issue.</desc>
+          </valItem>
+          <valItem ident="ft">
+            <desc>Foot.</desc>
+          </valItem>
+          <valItem ident="m">
+            <desc>Meter.</desc>
           </valItem>
           <valItem ident="mm">
             <desc>Millimeter.</desc>
@@ -1700,6 +1709,9 @@
           </valItem>
           <valItem ident="px">
             <desc>Pixel.</desc>
+          </valItem>
+          <valItem ident="rad">
+            <desc>Radian.</desc>
           </valItem>
           <valItem ident="record">
             <desc>Record.</desc>
@@ -4917,9 +4929,80 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="dimensions" module="MEI.shared">
-    <desc>Information about the physical size of a bibliographic source; usually includes numerical
-      data.</desc>
+  <elementSpec ident="dim" module="MEI.shared">
+    <desc>(dimension) – Any single dimensional specification.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.quantity"/>
+      <memberOf key="model.dimLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="form" usage="req">
+        <desc>Aspect of the object being measured.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="alt">
+            <desc>Altitude. Refers to the distance above a given level, commonly mean sea
+              level.</desc>
+          </valItem>
+          <valItem ident="angle">
+            <desc>Angle. Amount of rotation needed to bring one line or plane into coincidence with
+              another.</desc>
+          </valItem>
+          <valItem ident="circum">
+            <desc>Circumference of a circular area.</desc>
+          </valItem>
+          <valItem ident="depth">
+            <desc>Dimension taken through an object or body of material, usually downward from an
+              upper surface, horizontally inward from an outer surface, or from top to bottom of
+              something regarded as one of several layers.</desc>
+          </valItem>
+          <valItem ident="diameter">
+            <desc>Length of a straight line passing through the center of a circle or sphere and
+              meeting the circumference or surface at each end.</desc>
+          </valItem>
+          <valItem ident="elevation">
+            <desc>Distance to which something has been raised or uplifted above a level, e.g. a
+              hill's elevation above the surrounding country.</desc>
+          </valItem>
+          <valItem ident="height">
+            <desc>Denotes extent upward (as from foot to head) as well as any measurable distance
+              above a given level.</desc>
+          </valItem>
+          <valItem ident="length">
+            <desc>Measure of the greatest dimension of a plane or solid figure.</desc>
+          </valItem>
+          <valItem ident="radius">
+            <desc>Half the diameter of a circular, spherical, or cylindrical object.</desc>
+          </valItem>
+          <valItem ident="relief">
+            <desc>Projection of a figure or part from the plane on which it is formed.</desc>
+          </valItem>
+          <valItem ident="width">
+            <desc>Extent from side to side; breadth.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>The <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi scheme="MEI"
+          >depth</gi> elements are preferred when appropriate.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="dimensions" module="MEI.shared" mode="replace">
+    <desc>Information about the physical size of an entity; usually includes numerical data.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -4931,11 +5014,24 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
+    <constraintSpec ident="check_dimensions" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:physDesc/mei:dimensions">
+          <sch:assert test="not(count(mei:depth) &gt; 1)">The depth element may only appear
+            once.</sch:assert>
+          <sch:assert test="not(count(mei:height) &gt; 1)">The height element may only appear
+            once.</sch:assert>
+          <sch:assert test="not(count(mei:width) &gt; 1)">The width element may only appear
+            once.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks>
-      <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
-          scheme="MEI">depth</gi> are available for circumstances that require the capture of the
-        individual dimensions of an object. Do not confuse this element with the <gi scheme="MEI"
-          >extent</gi> element, which is used to indicate the quantity of described materials.</p>
+      <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, <gi scheme="MEI"
+          >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require
+        the capture of the individual dimensions of an object. Do not confuse this element with the
+          <gi scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
+        materials.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
