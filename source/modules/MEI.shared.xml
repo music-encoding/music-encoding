@@ -7010,9 +7010,9 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="respStmt" module="MEI.shared">
-    <desc>(responsibility statement) – Names one or more individuals, groups, or in rare cases,
-      mechanical processes, responsible for creation, realization, production, funding, or
-      distribution of the intellectual or artistic content.</desc>
+    <desc>(responsibility statement) – Transcription of text that names one or more individuals,
+      groups, or in rare cases, mechanical processes, responsible for creation, realization,
+      production, funding, or distribution of the intellectual or artistic content.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -7034,11 +7034,10 @@
     </content>
     <constraintSpec ident="check_respStmt" scheme="isoschematron">
       <constraint>
-        <sch:rule
-          context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or              local-name()='seriesStmt']/mei:respStmt[mei:corpName or mei:name or mei:persName]">
-          <sch:assert role="warning" test="mei:resp[node()] or (count(mei:*[@role]) = count(mei:*))"
-            >If at least one non-empty resp element isn't present, all name-like elements should
-            have a @role attribute.</sch:assert>
+        <sch:rule context="mei:respStmt">
+          <sch:assert test="mei:resp">At least one resp element is required.</sch:assert>
+          <sch:assert test="mei:corpName or mei:name or mei:persName">At least one corpName, name,
+            or persName element is required.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -7981,7 +7980,6 @@
           <rng:ref name="model.textComponentLike"/>
           <rng:ref name="model.titlePagePart"/>
           <rng:ref name="model.transcriptionLike"/>
-          <rng:ref name="titleStmt"/>
         </rng:choice>
       </rng:oneOrMore>
     </content>
