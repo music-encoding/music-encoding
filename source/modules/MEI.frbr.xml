@@ -147,8 +147,8 @@
   <classSpec ident="model.manifestationLike" type="model" module="MEI.frbr">
     <desc>Collects FRBR manifestation-like elements.</desc>
   </classSpec>
-  <elementSpec ident="componentGrp" module="MEI.frbr">
-    <desc>(component group) – Container for components of a bibliographic entity.</desc>
+  <elementSpec ident="componentList" module="MEI.header">
+    <desc>Container for intellectual or physical component parts of a bibliographic entity.</desc>
     <classes>
       <memberOf key="att.common"/>
     </classes>
@@ -157,37 +157,55 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:choice>
-        <rng:zeroOrMore>
-          <rng:ref name="model.workLike"/>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
-          <rng:ref name="model.expressionLike"/>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
-          <rng:ref name="model.manifestationLike"/>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
-          <rng:ref name="model.itemLike"/>
-        </rng:zeroOrMore>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="model.workLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.expressionLike"/>
+          </rng:zeroOrMore>
+        </rng:choice>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="model.manifestationLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.itemLike"/>
+          </rng:zeroOrMore>
+        </rng:choice>
       </rng:choice>
     </content>
-    <constraintSpec ident="checkComponentGrp" scheme="isoschematron">
+    <constraintSpec ident="checkComponentList" scheme="isoschematron">
       <constraint>
-        <sch:rule context="mei:componentGrp">
+        <sch:rule context="mei:componentList">
           <sch:assert
-            test="every $i in ./child::mei:*[not(local-name()='head')] satisfies $i/local-name() eq ./parent::mei:*/local-name()"
-            >Only child elements of the same name as the parent of the componentGrp are
+            test="every $i in ./child::mei:*[not(local-name()='head')] satisfies 
+            $i/local-name() eq ./parent::mei:*/local-name()"
+            >Only child elements of the same name as the parent of the componentList are
             allowed.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
+    <constraintSpec ident="checkComponents" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:componentList[mei:*[@comptype]]">
+          <sch:assert role="warning"
+            test="count(mei:*[@comptype]) = count(mei:*[local-name() ne 'head'])">When any child
+            element has a comptype attribute, it is recommended that comptype appear on all child
+            elements.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks>
-      <p>The child elements of this element are treated as parts of the bibliographic entity
-        containing the <gi scheme="MEI">componentGrp</gi>. Although this is an implicit way of
-        expressing FRBR's hasPart / isPartOf-relationships, it avoids this terminology in order to
-        prevent confusion with musical terminology. All children of a component must be the same
-        type as its parent: only <gi scheme="MEI">work</gi> children are allowed within <gi
-          scheme="MEI">work</gi>, <gi scheme="MEI">item</gi> in <gi scheme="MEI">item</gi>, etc.</p>
+      <p>The child elements of this element are treated as components of the bibliographic entity
+        containing the <gi scheme="MEI">componentList</gi>. Although this is an implicit way of
+        expressing FRBR's hasPart and isPartOf relationships, it avoids this terminology in order to
+        prevent confusion with musical terminology. Work, expression, and item components must be
+        the same type as the parent of componentList: <gi scheme="MEI">work</gi> children are
+        allowed within <gi scheme="MEI">work</gi>, etc. Manifestations; i.e., sources, may have
+        either <gi scheme="MEI">source</gi> or <gi scheme="MEI">item</gi>components as required to
+        accommodate composite sources (those containing multiple sources) or multi-part sources
+        (those made up of several physical items.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="expression" module="MEI.frbr">
@@ -255,7 +273,7 @@
         <rng:ref name="classification"/>
       </rng:optional>
       <rng:optional>
-        <rng:ref name="componentGrp"/>
+        <rng:ref name="componentList"/>
       </rng:optional>
       <rng:optional>
         <rng:ref name="relationList"/>
@@ -321,7 +339,7 @@
         <rng:ref name="classification"/>
       </rng:optional>
       <rng:optional>
-        <rng:ref name="componentGrp"/>
+        <rng:ref name="componentList"/>
       </rng:optional>
       <rng:optional>
         <rng:ref name="relationList"/>
