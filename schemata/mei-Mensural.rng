@@ -4,7 +4,7 @@
   datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
   ns="http://www.music-encoding.org/ns/mei">
   <!--
-Schema generated from ODD source 2018-03-03T19:26:02Z. .
+Schema generated from ODD source 2018-03-05T15:43:39Z. .
 TEI Edition: Version 4.0.0
 TEI Edition Location: http://www.tei-c.org/Vault/P5//
   
@@ -11840,14 +11840,16 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         <ref name="mei_model.dateLike"/>
       </optional>
       <pattern xmlns="http://purl.oclc.org/dsdl/schematron"
-        id="mei-change-change_requirements-constraint-rule-34">
+        id="mei-change-check_change-constraint-rule-34">
         <sch:rule xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.tei-c.org/ns/1.0"
           xmlns:rng="http://relaxng.org/ns/structure/1.0"
           xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:change">
           <sch:assert test="@isodate or mei:date">The date of the change must be recorded in an
             isodate attribute or date element.</sch:assert>
-          <sch:assert test="@resp or mei:respStmt">The agent responsible for the change must be
-            recorded in a resp attribute or respStmt element.</sch:assert>
+          <sch:assert test="@resp or mei:respStmt[mei:name or mei:corpName or mei:persName]"
+            role="warning">It is recommended that the agent responsible for the change be recorded
+            in a resp attribute or in a name, corpName, or persName element in the respStmt
+            element.</sch:assert>
         </sch:rule>
       </pattern>
       <ref name="mei_att.common.attributes"/>
@@ -24412,10 +24414,12 @@ TEI Edition Location: http://www.tei-c.org/Vault/P5//
         id="mei-respStmt-check_respStmt-constraint-rule-115">
         <sch:rule xmlns:xi="http://www.w3.org/2001/XInclude" xmlns="http://www.tei-c.org/ns/1.0"
           xmlns:rng="http://relaxng.org/ns/structure/1.0"
-          xmlns:sch="http://purl.oclc.org/dsdl/schematron" context="mei:respStmt">
-          <sch:assert test="mei:resp">At least one resp element is required.</sch:assert>
-          <sch:assert test="mei:corpName or mei:name or mei:persName">At least one corpName, name,
-            or persName element is required.</sch:assert>
+          xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+          context="mei:respStmt[not(ancestor::mei:change)]">
+          <sch:assert
+            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or              count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
+            >A resp element and a name-like element are required. Alternatively, each name-like
+            element may have a @role attribute.</sch:assert>
         </sch:rule>
       </pattern>
       <ref name="mei_att.common.attributes"/>
