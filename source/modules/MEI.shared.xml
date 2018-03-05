@@ -7075,11 +7075,12 @@
     </content>
     <constraintSpec ident="check_respStmt" scheme="isoschematron">
       <constraint>
-        <sch:rule context="mei:respStmt">
-          <sch:assert test="mei:resp">At least one resp element is required.</sch:assert>
-          <sch:assert test="mei:corpName or mei:name or mei:persName">At least one corpName, name,
-            or persName element is required.</sch:assert>
-        </sch:rule>
+        <sch:rule context="mei:respStmt[not(ancestor::mei:change)]">
+          <sch:assert
+            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or 
+            count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
+            >A resp element and a name-like element are required. Alternatively, each name-like
+            element may have a @role attribute.</sch:assert></sch:rule>
       </constraint>
     </constraintSpec>
     <remarks>
