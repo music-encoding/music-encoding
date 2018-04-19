@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.fingering">
+  <moduleSpec ident="MEI.fingering">
+    <desc>Fingering component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
+    </classes>
+    <attList>
+      <attDef ident="form" usage="opt">
+        <valList type="closed">
+          <valItem ident="alter">
+            <desc>alternation of fingers.</desc>
+          </valItem>
+          <valItem ident="combi">
+            <desc>combination of fingers.</desc>
+          </valItem>
+          <valItem ident="subst">
+            <desc>substitution of fingers.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.fingeringLike" module="MEI.fingering" type="model">
+    <desc>Groups elements that capture performance instructions regarding the use of the fingers of
+      the hand (or a subset of them).</desc>
+    <classes>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="fing" module="MEI.fingering">
+    <desc>finger – An individual finger in a fingering indication.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.fing.anl"/>
+      <memberOf key="att.fing.ges"/>
+      <memberOf key="att.fing.log"/>
+      <memberOf key="att.fing.vis"/>
+      <memberOf key="model.fingeringLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="fing_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:fing[not(ancestor::mei:fingGrp)]">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="stack_exclusion" scheme="isoschematron">
+      <!-- Exclusion implemented using Schematron -->
+      <constraint>
+        <sch:rule context="mei:fing">
+          <sch:assert test="not(descendant::mei:stack)">The stack element is not allowed as a
+            descendant of fing.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="fingGrp" module="MEI.fingering">
+    <desc>(finger group)– A group of individual fingers in a fingering indication.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.fingGrp.anl"/>
+      <memberOf key="att.fingGrp.ges"/>
+      <memberOf key="att.fingGrp.log"/>
+      <memberOf key="att.fingGrp.vis"/>
+      <memberOf key="model.fingeringLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.fingeringLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="require_fingeringLike_children" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:fingGrp">
+          <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or fingGrp
+            elements are required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="isoschematron">
+      <constraint>
+        <sch:pattern>
+          <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
+            <sch:assert test="not(child::mei:*[@tstamp or @startid])">When @tstamp or @startid is
+              present on fingGrp, its child elements cannot have a @tstamp or @startid
+              attribute.</sch:assert>
+          </sch:rule>
+          <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][not(@tstamp or @startid)]">
+            <sch:assert
+              test="count(descendant::mei:*[@tstamp or @startid]) = count(child::mei:*[local-name()='fing' or local-name()='fingGrp'])"
+              >When @tstamp or @startid is not present on fingGrp, each of its child elements must
+              have a @tstamp or @startid attribute.</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+</specGrp>

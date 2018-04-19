@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.figtable">
+  <moduleSpec ident="MEI.figtable">
+    <desc>Figures and tables component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.tabular" module="MEI.figtable" type="atts">
+    <desc>Attributes shared by table cells.</desc>
+    <attList>
+      <attDef ident="colspan" usage="opt">
+        <desc>The number of columns spanned by this cell.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+      <attDef ident="rowspan" usage="opt">
+        <desc>The number of rows spanned by this cell.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.figDescLike" module="MEI.figtable" type="model">
+    <desc>Groups elements that provide a brief prose description of the appearance or content of a
+      graphic figure.</desc>
+  </classSpec>
+  <classSpec ident="model.figureLike" module="MEI.figtable" type="model">
+    <desc>Groups elements representing or containing graphic information such as an illustration or
+      figure.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.graphicLike" module="MEI.figtable" type="model">
+    <desc>Groups elements that indicate the location of an inline graphic, illustration, or
+      figure.</desc>
+  </classSpec>
+  <classSpec ident="model.tableLike" module="MEI.figtable" type="model">
+    <desc>Groups table-like elements.</desc>
+    <classes>
+      <memberOf key="model.paracontentPart"/>
+      <memberOf key="model.textComponentLike"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="fig" module="MEI.figtable">
+    <desc>(figure) – Groups elements representing or containing graphic information such as an
+      illustration or figure.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.horizontalAlign"/>
+      <memberOf key="att.verticalAlign"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="model.figureLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="figDesc"/>
+          <rng:ref name="model.captionLike"/>
+          <rng:ref name="model.graphicLike"/>
+          <rng:ref name="model.scoreLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on the figure element in the Text Encoding Initiative (TEI)
+        standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="figDesc" module="MEI.figtable">
+    <desc>(figure description) – Contains a brief prose description of the appearance or content of
+      a graphic figure, for use when documenting an image without displaying it.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.figDescLike"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.textComponentLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>Best practice suggests the use of controlled vocabulary for figure descriptions. Don't
+        confuse this entity with a figure caption. A caption is text primarily intended for display
+        with an illustration. It may or may not function as a description of the illustration.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="graphic" module="MEI.figtable">
+    <desc>Indicates the location of an inline graphic.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.dimensions"/>
+      <memberOf key="att.internetMedia"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.startId"/>
+      <memberOf key="att.visualOffset"/>
+      <memberOf key="model.graphicLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="zone"/>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="graphic_attributes" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:zone/mei:graphic">
+          <sch:assert role="warning" test="count(mei:*) = 0">Graphic child of zone should not have
+            children.</sch:assert>
+        </sch:rule>
+        <sch:rule context="mei:symbolDef/mei:graphic">
+          <sch:assert role="warning" test="@startid or (@ulx and @uly)">Graphic should have either a
+            startid attribute or ulx and uly attributes.</sch:assert>
+        </sch:rule>
+        <sch:rule context="mei:graphic[not(ancestor::mei:symbolDef or ancestor::mei:zone)]">
+          <sch:assert role="warning" test="not(@ulx or @uly)">Graphic should not have @ulx or @uly
+            attributes.</sch:assert>
+          <sch:assert role="warning" test="not(@ho or @vo)">Graphic should not have @ho or @vo
+            attributes.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="ulx" usage="opt">
+        <desc>Indicates the upper-left corner x coordinate.</desc>
+        <datatype>
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+      </attDef>
+      <attDef ident="uly" usage="opt">
+        <desc>Indicates the upper-left corner y coordinate.</desc>
+        <datatype>
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="table" module="MEI.figtable">
+    <desc>Contains text displayed in tabular form.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="model.tableLike"/>
+    </classes>
+    <content>
+      <rng:optional>
+        <rng:ref name="model.captionLike"/>
+      </rng:optional>
+      <rng:oneOrMore>
+        <rng:ref name="tr"/>
+      </rng:oneOrMore>
+      <rng:optional>
+        <rng:ref name="model.captionLike"/>
+      </rng:optional>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Encoded Archival Description (EAD), Text
+        Encoding Initiative (TEI), and HTML standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="td" module="MEI.figtable">
+    <desc>(table data) – Designates a table cell that contains data as opposed to a cell that
+      contains column or row heading information.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="att.tabular"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textComponentLike"/>
+          <rng:ref name="model.textPhraseLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <att>colspan</att> and <att>rowspan</att> attributes record tabular display rendering
+        information.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the HTML standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="th" module="MEI.figtable">
+    <desc>(table header) – Designates a table cell containing column or row heading information as
+      opposed to one containing data.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="att.tabular"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textComponentLike"/>
+          <rng:ref name="model.textPhraseLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <att>colspan</att> and <att>rowspan</att> attributes record tabular display rendering
+        information.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the HTML standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="tr" module="MEI.figtable">
+    <desc>(table row) – A formatting element that contains one or more cells (intersection of a row
+      and a column) in a <gi scheme="MEI">table</gi>.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="th"/>
+          <rng:ref name="td"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>More precise rendition of the table and its cells can be specified in a style sheet.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the HTML standard.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>

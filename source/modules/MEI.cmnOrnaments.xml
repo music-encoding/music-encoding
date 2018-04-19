@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.cmnOrnaments">
+  <moduleSpec ident="MEI.cmnOrnaments">
+    <desc>CMN ornament component declarations.</desc>
+  </moduleSpec>
+  <macroSpec ident="data.ORNAM.cmn" module="MEI.cmnOrnaments" type="dt">
+    <desc>CMN ornam attribute values: A = appogiatura (upper neighbor); a = acciaccatura (lower
+      neighbor); b = bebung; I = ascending slide; i = descending slide; k = delayed turn; K = 5-note
+      turn; m = mordent (alternation with lower neighbor); M = inverted mordent (alternation with
+      upper neighbor); N = Nachschlag (upper neighbor); n = Nachschlag (lower neighbor); S = turn; s
+      = inverted turn; t = trill commencing on auxiliary note; T = trill commencing on principal
+      note; O = generic / unspecified ornament.</desc>
+    <content>
+      <rng:data type="token">
+        <rng:param name="pattern"
+          >[A|a|b|I|i|K|k|M|m|N|n|S|s|T|t|O]|(A|a|S|s|K|k)?(T|t|M|m)(I|i|S|s)?</rng:param>
+      </rng:data>
+    </content>
+  </macroSpec>
+  <classSpec ident="att.mordent.log" module="MEI.cmnOrnaments" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.ornamentAccid"/>
+    </classes>
+    <attList>
+      <attDef ident="form" usage="opt">
+        <desc>Records semantic meaning, i.e., intended performance, of the mordent. The
+            <att>altsym</att>, <att>glyph.name</att>, or <att>glyph.num</att> attributes may be used
+          to specify the appropriate symbol.</desc>
+        <valList type="closed">
+          <valItem ident="lower">
+            <desc>Starts with the written note, followed by its lower neighbor, with a return to the
+              written note. In modern practice, this is called an "inverted mordent" and indicated
+              by a short wavy line with a vertical line through it.</desc>
+          </valItem>
+          <valItem ident="upper">
+            <desc>Starts with the written note, followed by its upper neighbor, with a return to the
+              principal note. In modern practice, the symbol lacks the vertical line used for the
+              inverted form.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="long" usage="opt">
+        <desc>When set to 'true', a double or long mordent, sometimes called a "pincé double",
+          consisting of 5 notes, is indicated.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ornamentAccid" module="MEI.cmnOrnaments" type="atts">
+    <desc>Accidentals associated with ornaments.</desc>
+    <attList>
+      <attDef ident="accidupper" usage="opt">
+        <desc>Records the written accidental associated with an upper neighboring note.</desc>
+        <datatype>
+          <rng:ref name="data.ACCIDENTAL.WRITTEN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="accidlower" usage="opt">
+        <desc>Records the written accidental associated with a lower neighboring note.</desc>
+        <datatype>
+          <rng:ref name="data.ACCIDENTAL.WRITTEN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ornamPresent" module="MEI.cmnOrnaments" type="atts">
+    <desc>Attributes for marking the presence of an ornament.</desc>
+    <attList>
+      <attDef ident="ornam" usage="opt">
+        <desc>Indicates that this element has an attached ornament. If visual information about the
+          ornament is needed, then one of the elements that represents an ornament (mordent, trill,
+          or turn) should be employed.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.ORNAM.cmn"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.trill.log" module="MEI.cmnOrnaments" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.ornamentAccid"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.turn.log" module="MEI.cmnOrnaments" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.ornamentAccid"/>
+      <memberOf key="att.startId"/>
+    </classes>
+    <attList>
+      <attDef ident="delayed" usage="opt">
+        <desc>When set to 'true', the turn begins on the second half of the beat.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="form" usage="opt">
+        <desc>Records meaning; i.e., intended performance, of the turn. The <att>altsym</att>,
+            <att>glyph.name</att>, or <att>glyph.num</att> attributes may be used to specify the
+          appropriate symbol.</desc>
+        <valList type="closed">
+          <valItem ident="lower">
+            <desc>Begins on the note below the written note.</desc>
+          </valItem>
+          <valItem ident="upper">
+            <desc>Begins on the note above the written note.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.ornamentLike.cmn" module="MEI.cmnOrnaments" type="model">
+    <desc>Groups CMN ornament elements.</desc>
+    <classes>
+      <memberOf key="model.controlEventLike.cmn"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="mordent" module="MEI.cmnOrnaments">
+    <desc>An ornament indicating rapid alternation of the main note with a secondary note, usually a
+      step below, but sometimes a step above. <!--See Read, p. 245-246.-->
+    </desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.mordent.log"/>
+      <memberOf key="att.mordent.vis"/>
+      <memberOf key="att.mordent.ges"/>
+      <memberOf key="att.mordent.anl"/>
+      <memberOf key="model.ornamentLike.cmn"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <constraintSpec ident="mordent_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:mordent">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>The starting point of the mordent may be indicated by either a <att>startid</att>,
+          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
+        semantic error not to specify one of these attributes.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="trill" module="MEI.cmnOrnaments">
+    <desc>Rapid alternation of a note with another (usually at the interval of a second
+      above).</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.trill.log"/>
+      <memberOf key="att.trill.vis"/>
+      <memberOf key="att.trill.ges"/>
+      <memberOf key="att.trill.anl"/>
+      <memberOf key="model.ornamentLike.cmn"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <constraintSpec ident="trill_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:trill">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>The interval between the main and auxiliary notes is usually understood to be diatonic
+        unless altered by an accidental. The starting note of the trill; i.e., the written one or
+        the ornamenting one, and the speed of alternation depends on performance practice. The
+        starting point of the trill may be indicated by either a <att>startid</att>,
+          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+        ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
+          <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify a
+        starting point attribute.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="turn" module="MEI.cmnOrnaments">
+    <desc>An ornament consisting of four notes — the upper neighbor of the written note, the written
+      note, the lower neighbor, and the written note.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.turn.log"/>
+      <memberOf key="att.turn.vis"/>
+      <memberOf key="att.turn.ges"/>
+      <memberOf key="att.turn.anl"/>
+      <memberOf key="model.ornamentLike.cmn"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <constraintSpec ident="turn_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:turn">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>See Read, p. 246-247. Whether the turn is accented or unaccented may be inferred from the
+        timestamp — accented turns occur directly on the affected beat, unaccented ones do not.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>

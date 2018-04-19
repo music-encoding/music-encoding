@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.externalsymbols">
+  <moduleSpec ident="MEI.externalsymbols">
+    <desc>External symbols component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.extSym" module="MEI.externalsymbols" type="atts">
+    <desc>Attributes used to associate MEI features with corresponding glyphs in an
+      externally-defined standard such as SMuFL.</desc>
+    <attList>
+      <attDef ident="glyph.auth" usage="opt">
+        <desc>A name or label associated with the controlled vocabulary from which the value of
+            <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="smufl">
+            <desc>Standard Music Font Layout.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="glyph.name" usage="opt">
+        <desc>Glyph name.</desc>
+        <datatype>
+          <rng:data type="string"/>
+        </datatype>
+        <constraintSpec ident="check_glyph.name" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@glyph.name">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyph.name attribute
+                should have content.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+      <attDef ident="glyph.num" usage="opt">
+        <desc>Numeric glyph reference in hexadecimal notation, e.g. "#xE000" or "U+E000". N.B. SMuFL
+          version 1.18 uses the range U+E000 - U+ECBF.</desc>
+        <datatype>
+          <rng:ref name="data.HEXNUM"/>
+        </datatype>
+        <constraintSpec ident="check_glyph.num" scheme="isoschematron">
+          <constraint>
+            <sch:rule
+              context="mei:*[@glyph.num and (lower-case(@glyph.auth) eq 'smufl' or @glyph.uri eq 'http://www.smufl.org/')]">
+              <sch:assert role="warning"
+                test="matches(normalize-space(@glyph.num), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
+                >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+      <attDef ident="glyph.uri" usage="opt">
+        <desc>The web-accessible location of the controlled vocabulary from which the value of
+            <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+</specGrp>
