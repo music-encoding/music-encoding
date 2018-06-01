@@ -1484,10 +1484,29 @@
         </datatype>
       </attDef>
       <!-- @llength not necessary:
-          @llength implies we know the direction of the vector which we 
-          can't know without establishing an end point, which in turn makes
-          @llength redundant.
-        -->
+            @llength implies we know the direction of the vector which we 
+            can't know without establishing an end point, which in turn makes
+            @llength redundant. -->
+      <attDef ident="lsegs" usage="opt">
+        <desc>Describes the number of segments into which a dashed, dotted, or wavy line may be
+          divided; a pair of space-separated values (minimum and maximum, respectively) provides a
+          range between which a rendering system-supplied value may fall, while a single value
+          indicates a fixed amount of space; that is, the minimum and maximum values are
+          equal.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">2</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_lsegs" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@lsegs">
+              <sch:assert test="matches(../@lform, '(dashed|dotted|wavy)')">@lform attribute
+                matching "dashed", "dotted", or "wavy" required.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="lwidth" usage="opt">
         <desc>Width of a line.</desc>
         <datatype>
