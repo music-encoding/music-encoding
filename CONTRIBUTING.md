@@ -12,7 +12,7 @@ The Technical Team co-leaders will, from time to time, designate and appoint sen
 
 ## How to contribute
 
-We use GitHub as our main development platform. GitHub features a "Pull Request" mechanism for proposing contributions to the schema from our community. A brief overview of this process:
+We use GitHub as our main development platform. If you just want to propose a change in English (as opposed to proposing exactly how the schema should be changed), you can add a new Issue describing it. If you want to propose specific changes to the schema, GitHub features a "Pull Request" mechanism for this. A brief overview of this process:
 
  1. Fork the `music-encoding/music-encoding` repository into your own account (e.g., `username/music-encoding`.
  2. Create a dedicated branch for your fix on your repository. For example, you might create a `fix-duration-attribute` branch if you're proposing a fix for the duration attribute.
@@ -21,7 +21,7 @@ We use GitHub as our main development platform. GitHub features a "Pull Request"
  5. Members of the MEI Technical Team will then review your submission. If you are asked to make changes, you can push these changes to your original branch and the pull request will be automatically updated.
  6. Once the changes have gone through our review process, a Core Contributor will merge your changes into the MEI source repository. You may then delete your dedicated branch.
 
-## Checklist for a contribution
+## Checklist for a Significant Pull Request
 
 Pull requests containing contributions of any significant changes should be accompanied by the following supporting changes:
 
