@@ -233,10 +233,10 @@
       <memberOf key="att.alignment"/>
       <memberOf key="att.duration.additive"/>
       <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.staffIdent"/>
       <memberOf key="att.startEndId"/>
       <memberOf key="att.timestamp.logical"/>
-      <memberOf key="att.timestamp.gestural"/>
       <memberOf key="att.timestamp2.logical"/>
     </classes>
   </classSpec>
@@ -309,7 +309,7 @@
     <desc>Attributes that record the number of dots of augmentation.</desc>
     <attList>
       <attDef ident="dots" usage="opt">
-        <desc>Records the number of augmentation dots required by a dotted duration.</desc>
+        <desc>Records the number of augmentation dots required by a written dotted duration.</desc>
         <datatype>
           <rng:ref name="data.AUGMENTDOT"/>
         </datatype>
@@ -440,6 +440,7 @@
     <desc>Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.staffIdent"/>
       <memberOf key="att.startId"/>
       <memberOf key="att.timestamp.logical"/>
@@ -637,12 +638,13 @@
       control event.</desc>
     <classes>
       <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
       <memberOf key="att.plist"/>
+      <memberOf key="att.staffIdent"/>
       <memberOf key="att.targetEval"/>
       <memberOf key="att.timestamp.logical"/>
       <memberOf key="att.timestamp.gestural"/>
-      <memberOf key="att.staffIdent"/>
-      <memberOf key="att.layerIdent"/>
     </classes>
   </classSpec>
   <classSpec ident="att.coordinated" module="MEI.shared" type="atts">
@@ -1105,6 +1107,7 @@
     <desc>Provides attributes for describing the size of an entity.</desc>
     <classes>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
     </classes>
     <attList>
       <attDef ident="extent" usage="opt">
@@ -1481,10 +1484,29 @@
         </datatype>
       </attDef>
       <!-- @llength not necessary:
-          @llength implies we know the direction of the vector which we 
-          can't know without establishing an end point, which in turn makes
-          @llength redundant.
-        -->
+            @llength implies we know the direction of the vector which we 
+            can't know without establishing an end point, which in turn makes
+            @llength redundant. -->
+      <attDef ident="lsegs" usage="opt">
+        <desc>Describes the number of segments into which a dashed, dotted, or wavy line may be
+          divided; a pair of space-separated values (minimum and maximum, respectively) provides a
+          range between which a rendering system-supplied value may fall, while a single value
+          indicates a fixed amount of space; that is, the minimum and maximum values are
+          equal.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">2</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_lsegs" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@lsegs">
+              <sch:assert test="matches(../@lform, '(dashed|dotted|wavy)')">@lform attribute
+                matching "dashed", "dotted", or "wavy" required.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="lwidth" usage="opt">
         <desc>Width of a line.</desc>
         <datatype>
@@ -1676,11 +1698,20 @@
           <valItem ident="cm">
             <desc>Centimeter.</desc>
           </valItem>
+          <valItem ident="deg">
+            <desc>Degree.</desc>
+          </valItem>
           <valItem ident="in">
             <desc>Inch.</desc>
           </valItem>
           <valItem ident="issue">
             <desc>Serial issue.</desc>
+          </valItem>
+          <valItem ident="ft">
+            <desc>Foot.</desc>
+          </valItem>
+          <valItem ident="m">
+            <desc>Meter.</desc>
           </valItem>
           <valItem ident="mm">
             <desc>Millimeter.</desc>
@@ -1696,6 +1727,9 @@
           </valItem>
           <valItem ident="px">
             <desc>Pixel.</desc>
+          </valItem>
+          <valItem ident="rad">
+            <desc>Radian.</desc>
           </valItem>
           <valItem ident="record">
             <desc>Record.</desc>
@@ -1999,13 +2033,8 @@
         <desc>Provides a number-like designation that indicates an element's position in a sequence
           of similar elements. May not contain space characters.</desc>
         <datatype>
-          <rng:data type="token">
-            <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})*</rng:param>
-          </rng:data>
+          <rng:ref name="data.WORD"/>
         </datatype>
-        <remarks>
-          <p>Unlike <att>label</att>, <att>n</att> may not contain space characters.</p>
-        </remarks>
       </attDef>
     </attList>
   </classSpec>
@@ -2356,6 +2385,47 @@
   <classSpec ident="att.part.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
   </classSpec>
+  <classSpec ident="att.partIdent" module="MEI.shared" type="atts">
+    <desc>Attributes for identifying the part in which the current feature appears.</desc>
+    <attList>
+      <attDef ident="part" usage="opt">
+        <desc>Indicates the part in which the current feature should appear. Use '%all' when the
+          feature should occur in every part.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="token">
+            <rng:param name="pattern">(%all|#[\i][\c]+)</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_part_attr_all" scheme="isoschematron">
+          <constraint>
+            <sch:rule
+              context="@part[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
+              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
+                values.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+      <attDef ident="partstaff" usage="rec">
+        <desc>Signifies the part staff on which a notated feature occurs. Use '%all' when the
+          feature should occur on every staff.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="token">
+            <rng:param name="pattern">(%all|\d+(-\d+)?(,\d+(-\d+)?)*)</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_partstaff_attr_all" scheme="isoschematron">
+          <constraint>
+            <sch:rule
+              context="@partstaff[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
+              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
+                values.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.parts.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
   </classSpec>
@@ -2508,16 +2578,64 @@
     <desc>Attributes that specify a measurement in numerical terms.</desc>
     <classes>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
     </classes>
     <attList>
       <attDef ident="quantity" usage="opt">
         <desc>Numeric value capturing a measurement or count. Can only be interpreted in combination
-          with the unit or currency attribute.</desc>
+          with the unit attribute.</desc>
         <datatype>
           <rng:data type="decimal">
             <rng:param name="minInclusive">0</rng:param>
           </rng:data>
         </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ranging" module="MEI.shared" type="atts">
+    <desc>Groups attributes that describe a numerical range.</desc>
+    <attList>
+      <attDef ident="atleast" usage="opt">
+        <desc>Gives a minimum estimated value for an approximate measurement.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="atmost" usage="opt">
+        <desc>Gives a maximum estimated value for an approximate measurement.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="min" usage="opt">
+        <desc>Where the measurement summarizes more than one observation or a range of values,
+          supplies the minimum value observed.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="max" usage="opt">
+        <desc>Where the measurement summarizes more than one observation or a range of values,
+          supplies the maximum value observed.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+      <attDef ident="confidence" usage="opt">
+        <desc>Specifies the degree of statistical confidence (between zero and one) that a value
+          falls within the range specified by min and max, or the proportion of observed values that
+          fall within that range.</desc>
+        <datatype>
+          <rng:ref name="data.CONFIDENCE"/>
+        </datatype>
+        <constraintSpec ident="check_confidence" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:*[@confidence]">
+              <sch:assert test="@min and @max">The attributes @min and @max are required when
+                @confidence is present.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
     </attList>
   </classSpec>
@@ -3168,8 +3286,8 @@
       part].</desc>
     <attList>
       <attDef ident="tstamp" usage="opt">
-        <desc>Encodes the onset time in terms of musical time, i.e.,
-          beats[.fractional_beat_part].</desc>
+        <desc>Encodes the onset time in terms of musical time, i.e., beats[.fractional beat part],
+          as expressed in the written time signature.</desc>
         <datatype>
           <rng:ref name="data.BEAT"/>
         </datatype>
@@ -3181,8 +3299,8 @@
       time.</desc>
     <attList>
       <attDef ident="tstamp2" usage="opt">
-        <desc>Encodes the ending point of an event in terms of musical time, i.e., a count of
-          measures plus a beat location.</desc>
+        <desc>Encodes the ending point of an event, i.e., a count of measures plus a beat location
+          in the ending measure.</desc>
         <datatype>
           <rng:ref name="data.MEASUREBEAT"/>
         </datatype>
@@ -3292,12 +3410,13 @@
       </attDef>
     </attList>
   </classSpec>
-  <classSpec ident="att.verticalAlignment" module="MEI.shared" type="atts">
-    <desc>Attributes that describe visual alignment in the vertical dimension.</desc>
+  <classSpec ident="att.verticalGroup" module="MEI.shared" type="atts">
+    <desc>Attributes that record grouping of vertically aligned elements.</desc>
     <attList>
       <attDef ident="vgrp" usage="opt">
+        <desc>Provides a label for members of a vertically aligned group.</desc>
         <datatype>
-          <rng:data type="integer"/>
+          <rng:data type="positiveInteger"/>
         </datatype>
       </attDef>
     </attList>
@@ -4544,7 +4663,6 @@
       <memberOf key="att.clef.ges"/>
       <memberOf key="att.clef.log"/>
       <memberOf key="att.clef.vis"/>
-      <memberOf key="att.visibility"/>
       <memberOf key="model.eventLike"/>
       <memberOf key="model.staffDefPart"/>
     </classes>
@@ -4694,6 +4812,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
       <memberOf key="model.biblPart"/>
@@ -4830,20 +4949,16 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="dimensions" module="MEI.shared">
-    <desc>Information about the physical size of a bibliographic source; usually includes numerical
-      data.</desc>
+  <elementSpec ident="dim" module="MEI.shared">
+    <desc>(dimension) – Any single dimensional specification.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="att.measurement"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="att.quantity"/>
+      <memberOf key="model.dimLike"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
       <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
@@ -4851,11 +4966,93 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
+    <attList>
+      <attDef ident="form" usage="req">
+        <desc>Aspect of the object being measured.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="alt">
+            <desc>Altitude. Refers to the distance above a given level, commonly mean sea
+              level.</desc>
+          </valItem>
+          <valItem ident="angle">
+            <desc>Angle. Amount of rotation needed to bring one line or plane into coincidence with
+              another.</desc>
+          </valItem>
+          <valItem ident="circum">
+            <desc>Circumference of a circular area.</desc>
+          </valItem>
+          <valItem ident="depth">
+            <desc>Dimension taken through an object or body of material, usually downward from an
+              upper surface, horizontally inward from an outer surface, or from top to bottom of
+              something regarded as one of several layers.</desc>
+          </valItem>
+          <valItem ident="diameter">
+            <desc>Length of a straight line passing through the center of a circle or sphere and
+              meeting the circumference or surface at each end.</desc>
+          </valItem>
+          <valItem ident="elevation">
+            <desc>Distance to which something has been raised or uplifted above a level, e.g. a
+              hill's elevation above the surrounding country.</desc>
+          </valItem>
+          <valItem ident="height">
+            <desc>Denotes extent upward (as from foot to head) as well as any measurable distance
+              above a given level.</desc>
+          </valItem>
+          <valItem ident="length">
+            <desc>Measure of the greatest dimension of a plane or solid figure.</desc>
+          </valItem>
+          <valItem ident="radius">
+            <desc>Half the diameter of a circular, spherical, or cylindrical object.</desc>
+          </valItem>
+          <valItem ident="relief">
+            <desc>Projection of a figure or part from the plane on which it is formed.</desc>
+          </valItem>
+          <valItem ident="width">
+            <desc>Extent from side to side; breadth.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
     <remarks>
-      <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi
-          scheme="MEI">depth</gi> are available for circumstances that require the capture of the
-        individual dimensions of an object. Do not confuse this element with the <gi scheme="MEI"
-          >extent</gi> element, which is used to indicate the quantity of described materials.</p>
+      <p>The <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi scheme="MEI"
+          >depth</gi> elements are preferred when appropriate.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="dimensions" module="MEI.shared">
+    <desc>Information about the physical size of an entity; usually includes numerical data.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <constraintSpec ident="check_dimensions" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:physDesc/mei:dimensions">
+          <sch:assert test="not(count(mei:depth) &gt; 1)">The depth element may only appear
+            once.</sch:assert>
+          <sch:assert test="not(count(mei:height) &gt; 1)">The height element may only appear
+            once.</sch:assert>
+          <sch:assert test="not(count(mei:width) &gt; 1)">The width element may only appear
+            once.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, <gi scheme="MEI"
+          >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require
+        the capture of the individual dimensions of an object. Do not confuse this element with the
+          <gi scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
+        materials.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -5308,8 +5505,8 @@
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.quantity"/>
-      <memberOf key="model.biblPart"/>
       <memberOf key="model.physDescPart"/>
+      <memberOf key="model.textPhraseLike.limited"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -6119,6 +6316,7 @@
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.measurement"/>
+      <memberOf key="att.ranging"/>
       <memberOf key="model.numLike"/>
     </classes>
     <content>
@@ -6566,7 +6764,7 @@
         </rng:group>
       </rng:zeroOrMore>
       <rng:optional>
-        <rng:ref name="provenance"/>
+        <rng:ref name="history"/>
       </rng:optional>
     </content>
     <remarks>
@@ -6672,9 +6870,10 @@
   <elementSpec ident="relation" module="MEI.shared">
     <desc>Describes a relationship or linkage amongst entities.</desc>
     <classes>
-      <memberOf key="att.authorized"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
       <memberOf key="att.evidence"/>
       <memberOf key="att.plist"/>
       <memberOf key="att.pointing"/>
@@ -6689,9 +6888,46 @@
       <constraint>
         <!-- See http://vocab.org/frbr/core for more-precise entity-to-entity constraints -->
         <sch:rule
-          context="mei:relation[../../../mei:work or             ../../../mei:expression or             ../../../mei:source or             ../../../mei:item]">
+          context="mei:relationList/mei:relation[parent::mei:work or parent::mei:expression or             
+          parent::mei:source or parent::mei:item]">
           <sch:assert
-            test="matches(@rel, 'hasAbridgement') or               matches(@rel, 'hasAbridgement') or               matches(@rel, 'isAbridgementOf') or               matches(@rel, 'hasAdaptation') or               matches(@rel, 'isAdaptationOf') or               matches(@rel, 'hasAlternate') or               matches(@rel, 'isAlternateOf') or               matches(@rel, 'hasArrangement') or               matches(@rel, 'isArrangementOf') or               matches(@rel, 'hasComplement') or               matches(@rel, 'isComplementOf') or               matches(@rel, 'hasEmbodiment') or               matches(@rel, 'isEmbodimentOf') or               matches(@rel, 'hasExemplar') or               matches(@rel, 'isExemplarOf') or               matches(@rel, 'hasImitation') or               matches(@rel, 'isImitationOf') or               matches(@rel, 'hasPart') or               matches(@rel, 'isPartOf') or               matches(@rel, 'hasRealization') or               matches(@rel, 'isRealizationOf') or               matches(@rel, 'hasReconfiguration') or               matches(@rel, 'isReconfigurationOf') or               matches(@rel, 'hasReproduction') or               matches(@rel, 'isReproductionOf') or               matches(@rel, 'hasRevision') or               matches(@rel, 'isRevisionOf') or               matches(@rel, 'hasSuccessor') or               matches(@rel, 'isSuccessorOf') or               matches(@rel, 'hasSummarization') or               matches(@rel, 'isSummarizationOf') or               matches(@rel, 'hasSupplement') or               matches(@rel, 'isSupplementOf') or               matches(@rel, 'hasTransformation') or               matches(@rel, 'isTransformationOf') or               matches(@rel, 'hasTranslation') or               matches(@rel, 'isTranslationOf')"
+            test="matches(@rel, 'hasAbridgement') or
+            matches(@rel, 'hasAbridgement') or
+            matches(@rel, 'isAbridgementOf') or
+            matches(@rel, 'hasAdaptation') or
+            matches(@rel, 'isAdaptationOf') or
+            matches(@rel, 'hasAlternate') or
+            matches(@rel, 'isAlternateOf') or
+            matches(@rel, 'hasArrangement') or
+            matches(@rel, 'isArrangementOf') or
+            matches(@rel, 'hasComplement') or
+            matches(@rel, 'isComplementOf') or
+            matches(@rel, 'hasEmbodiment') or
+            matches(@rel, 'isEmbodimentOf') or
+            matches(@rel, 'hasExemplar') or
+            matches(@rel, 'isExemplarOf') or
+            matches(@rel, 'hasImitation') or
+            matches(@rel, 'isImitationOf') or
+            matches(@rel, 'hasPart') or
+            matches(@rel, 'isPartOf') or
+            matches(@rel, 'hasRealization') or
+            matches(@rel, 'isRealizationOf') or
+            matches(@rel, 'hasReconfiguration') or
+            matches(@rel, 'isReconfigurationOf') or
+            matches(@rel, 'hasReproduction') or
+            matches(@rel, 'isReproductionOf') or
+            matches(@rel, 'hasRevision') or
+            matches(@rel, 'isRevisionOf') or
+            matches(@rel, 'hasSuccessor') or
+            matches(@rel, 'isSuccessorOf') or
+            matches(@rel, 'hasSummarization') or
+            matches(@rel, 'isSummarizationOf') or
+            matches(@rel, 'hasSupplement') or
+            matches(@rel, 'isSupplementOf') or
+            matches(@rel, 'hasTransformation') or
+            matches(@rel, 'isTransformationOf') or
+            matches(@rel, 'hasTranslation') or
+            matches(@rel, 'isTranslationOf')"
             >Within work, expression, source, or item, the value of the rel attribute must match one
             of the following: hasAbridgement, isAbridgementOf, hasAdaptation, isAdaptationOf,
             hasAlternate, isAlternateOf, hasArrangement, isArrangementOf, hasComplement,
@@ -6723,7 +6959,7 @@
           <att>plist</att> identifies the entities pointed "from", while <att>target</att> specifies
         the entities pointed "to". If the <att>target</att> attribute is present, but the
           <att>plist</att> is not, the relationship is presumed to exist between the parent of the
-        current &lt;relationship&gt; element and the entities identified by <att>target</att>.</p>
+        current relation element and the entities identified by <att>target</att>.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="relationList" module="MEI.shared">
@@ -6813,6 +7049,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
     </classes>
@@ -6833,9 +7070,9 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="respStmt" module="MEI.shared">
-    <desc>(responsibility statement) – Names one or more individuals, groups, or in rare cases,
-      mechanical processes, responsible for creation, realization, production, funding, or
-      distribution of the intellectual or artistic content.</desc>
+    <desc>(responsibility statement) – Transcription of text that names one or more individuals,
+      groups, or in rare cases, mechanical processes, responsible for creation, realization,
+      production, funding, or distribution of the intellectual or artistic content.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -6857,12 +7094,13 @@
     </content>
     <constraintSpec ident="check_respStmt" scheme="isoschematron">
       <constraint>
-        <sch:rule
-          context="mei:*[local-name()='titleStmt' or local-name()='pubStmt' or              local-name()='seriesStmt']/mei:respStmt[mei:corpName or mei:name or mei:persName]">
-          <sch:assert role="warning" test="mei:resp[node()] or (count(mei:*[@role]) = count(mei:*))"
-            >If at least one non-empty resp element isn't present, all name-like elements should
-            have a @role attribute.</sch:assert>
-        </sch:rule>
+        <sch:rule context="mei:respStmt[not(ancestor::mei:change)]">
+          <sch:assert
+            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or 
+            count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
+            role="warning">At least one element pair (a resp element and a name-like element) is
+            recommended. Alternatively, each name-like element may have a @role
+            attribute.</sch:assert></sch:rule>
       </constraint>
     </constraintSpec>
     <remarks>
@@ -7718,6 +7956,18 @@
             <desc>Analyzed component, such as an article or chapter, within a larger bibliographic
               entity.</desc>
           </valItem>
+          <valItem ident="c">
+            <desc>Collection. A group of items that were not originally published, distributed, or
+              produced together.</desc>
+          </valItem>
+          <valItem ident="d">
+            <desc>Subunit of a collection, e.g. item, folder, box, archival series, subgroup, or
+              subcollection.</desc>
+          </valItem>
+          <valItem ident="i">
+            <desc>Integrating resource, such as a continuously updated loose-leaf service or Web
+              site.</desc>
+          </valItem>
           <valItem ident="m">
             <desc>Monograph.</desc>
           </valItem>
@@ -7768,15 +8018,16 @@
       <p>The <att>type</att> attribute may be used to classify the title according to some
         convenient typology. Sample values include: main (main title), subordinate (subtitle, title
         of part), abbreviated (abbreviated form of title), alternative (alternate title by which the
-        work is also known), translated (translated form of title), uniform (collective title). The
-          <att>type</att> attribute is provided for convenience in analysing titles and processing
-        them according to their type; where such specialized processing is not necessary, there is
-        no need for such analysis, and the entire title, including subtitles and any parallel
-        titles, may be enclosed within a single <gi scheme="MEI">title</gi> element. Title parts may
-        be encoded in <gi scheme="MEI">title</gi> sub-elements. The name of the list from which a
-        controlled value is taken may be recorded using the <att>auth</att> attribute. The number of
-        initial characters (such as those constituting an article or preposition) that should not be
-        used for sorting a title or name may be indicated in the <att>nonfiling</att> attribute.</p>
+        work is also known), translated (translated form of title), uniform (collective title), and
+        desc (descriptive title). The <att>type</att> attribute is provided for convenience in
+        analysing titles and processing them according to their type; where such specialized
+        processing is not necessary, there is no need for such analysis, and the entire title,
+        including subtitles and any parallel titles, may be enclosed within a single <gi
+          scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
+          >titlePart</gi> sub-elements. The name of the list from which a controlled value is taken
+        may be recorded using the <att>auth</att> attribute. The number of initial characters (such
+        as those constituting an article or preposition) that should not be used for sorting a title
+        or name may be indicated in the <att>nonfiling</att> attribute.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -7804,7 +8055,6 @@
           <rng:ref name="model.textComponentLike"/>
           <rng:ref name="model.titlePagePart"/>
           <rng:ref name="model.transcriptionLike"/>
-          <rng:ref name="titleStmt"/>
         </rng:choice>
       </rng:oneOrMore>
     </content>

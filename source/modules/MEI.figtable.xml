@@ -52,6 +52,8 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
+      <memberOf key="att.horizontalAlign"/>
+      <memberOf key="att.verticalAlign"/>
       <memberOf key="att.xy"/>
       <memberOf key="model.figureLike"/>
     </classes>
@@ -79,26 +81,20 @@
       <memberOf key="model.figDescLike"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textComponentLike"/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.textComponentLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
-    <constraintSpec ident="figDesc_content_constraint" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:figDesc[mei:lg or mei:p or mei:quote or mei:table]">
-          <sch:assert test="not(*[../text()[normalize-space()]])">Mixed content is not allowed when
-            lg, p, quote, or table is used.</sch:assert>
-          <sch:assert
-            test="not(*[not(local-name() eq 'biblList' or local-name() eq 'castList' or                local-name() eq 'lg' or local-name() eq 'list' or local-name() eq 'p' or                local-name() eq 'quote' or local-name() eq 'table')])"
-            >Unstructured text not allowed when lg, p, quote, or table elements are
-            used.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks>
       <p>Best practice suggests the use of controlled vocabulary for figure descriptions. Don't
         confuse this entity with a figure caption. A caption is text primarily intended for display

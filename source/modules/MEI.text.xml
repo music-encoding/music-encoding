@@ -39,6 +39,12 @@
   <classSpec ident="model.lLike" module="MEI.text" type="model">
     <desc>Groups elements representing metrical components such as verse lines.</desc>
   </classSpec>
+  <classSpec ident="model.qLike" module="MEI.text" type="model">
+    <desc>Groups elements related to highlighting which can appear at the phrase-level.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+  </classSpec>
   <classSpec ident="model.quoteLike" module="MEI.text" type="model">
     <desc>Groups elements used to directly contain quotations.</desc>
     <classes>
@@ -331,9 +337,78 @@
         Initiative (TEI), and HTML standards.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="q" module="MEI.text">
+    <desc>(quoted) – Contains material which is distinguished from the surrounding phrase-level text
+      using quotation marks or a similar method. Use <gi scheme="MEI">quote</gi> for block-level
+      quotations.</desc>
+    <classes>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="model.qLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="type" usage="opt">
+        <datatype maxOccurs="unbounded">
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="spoken">
+            <desc>Representation of speech.</desc>
+          </valItem>
+          <valItem ident="thought">
+            <desc>Representation of thought, e.g. internal monologue.</desc>
+          </valItem>
+          <valItem ident="written">
+            <desc>Quotation from a written source.</desc>
+          </valItem>
+          <valItem ident="soCalled">
+            <desc>Authorial distance.</desc>
+          </valItem>
+          <valItem ident="foreign">
+            <desc>Linguistically distinct.</desc>
+          </valItem>
+          <valItem ident="distinct">
+            <desc>Linguistically distinct.</desc>
+          </valItem>
+          <valItem ident="term">
+            <desc>Technical term.</desc>
+          </valItem>
+          <valItem ident="emph">
+            <desc>Rhetorically emphasized.</desc>
+          </valItem>
+          <valItem ident="mentioned">
+            <desc>Refering to itself, not its normal referent.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element may be used for a variety of reasons including, but not limited to: direct
+        speech or thought, technical terms or jargon, authorial distance, quotations from elsewhere,
+        and passages that are mentioned but not used.</p>
+      <p>Do not confuse this element, used to capture phrase-level quotations, and <gi scheme="MEI"
+          >quote</gi>, intended for block quotations.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on elements found in HTML, TEI, and EAD standards.</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="quote" module="MEI.text">
-    <desc>(quoted material) – Contains text attributed to an external source, normally set off from
-      the text by spacing or other typographic distinction.</desc>
+    <desc>(quoted material) – Contains a paragraph-like block of text attributed to an external
+      source, normally set off from the surrounding text by spacing or other typographic
+      distinction.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -351,25 +426,10 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="block">
-        <desc>Indicates if the quotation is integrated into the flow of the text or interrupts
-          it.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks>
-      <p>The source for the quote may be included in the optional <gi scheme="MEI">bibl</gi>
-        sub-element. Use <gi scheme="MEI">rend</gi> to indicate whether the quoted material is
-        enclosed in quotation marks.</p>
-      <p>Unless the <att>block</att> attribute indicates otherwise, a quotation appearing as a
-        descendant of a text component (<gi scheme="MEI">fig</gi>, <gi scheme="MEI">lg</gi>, <gi
-          scheme="MEI">list</gi>, <gi scheme="MEI">p</gi>, <gi scheme="MEI">quote</gi>, or <gi
-          scheme="MEI">table</gi>) should be rendered as in-line text, while a quotation occurring
-        within a div; that is, when it is a text component itself, should display as a block-level
-        element.</p>
+      <p>The source for the quote may be included in a <gi scheme="MEI">bibl</gi> sub-element.</p>
+      <p>Do not confuse this element, used to capture block-level quotations, and <gi scheme="MEI"
+          >q</gi>, intended for inline quotations.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on elements found in HTML, TEI, and EAD standards.</p>

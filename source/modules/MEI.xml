@@ -470,6 +470,16 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.CONFIDENCE" module="MEI" type="dt">
+    <desc>Confidence is expressed as a real number between 0 and 1; 0 representing certainly false
+      and 1 representing certainly true.</desc>
+    <content>
+      <rng:data type="decimal">
+        <rng:param name="minInclusive">0</rng:param>
+        <rng:param name="maxInclusive">1</rng:param>
+      </rng:data>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.COLORNAMES" module="MEI" type="dt">
     <desc>List of SVG-recognized color keyword names described at
       https://www.w3.org/TR/SVG/types.html#ColorKeywords.</desc>
@@ -983,28 +993,11 @@
       </rng:choice>
     </content>
   </macroSpec>
-  <macroSpec ident="data.DURATION.gestural.prop" module="MEI" type="dt">
-    <desc>Beat proportion representation equivalent to Humdrum **recip.</desc>
-    <content>
-      <rng:data type="token">
-        <rng:param name="pattern">[0-9]+(\.)*r</rng:param>
-      </rng:data>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.DURATION.gestural.pat" module="MEI" type="dt">
-    <desc>Pattern for ppq, beats, seconds, etc.</desc>
-    <content>
-      <rng:data type="token">
-        <rng:param name="pattern">[0-9]+(p|(\.[0-9]+)?(b|s))</rng:param>
-      </rng:data>
-    </content>
-  </macroSpec>
   <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
     <desc>Performed duration attribute values.</desc>
     <content>
       <alternate>
-        <macroRef key="data.DURATION.gestural.prop"/>
-        <macroRef key="data.DURATION.gestural.pat"/>
+        <macroRef key="data.DURATION.cmn"/>
         <macroRef key="data.DURATION.mensural"/>
       </alternate>
     </content>
@@ -1501,13 +1494,13 @@
             lines).</desc>
         </valItem>
         <valItem ident="arrow">
-          <desc>Filled, triangular arrowhead (similar to SMuFL U+EB78).</desc>
+          <desc>Filled, triangular arrowhead (similar to Unicode U+25C0 or SMuFL U+EB78).</desc>
         </valItem>
         <valItem ident="arrowopen">
-          <desc>Open triangular arrowhead (similar to SMuFL U+EB8A).</desc>
+          <desc>Open triangular arrowhead (similar to Unicode U+02C3 or SMuFL U+EB8A).</desc>
         </valItem>
         <valItem ident="arrowwhite">
-          <desc>Unfilled, triangular arrowhead (similar to SMuFL U+EB82).</desc>
+          <desc>Unfilled, triangular arrowhead (similar to Unicode U+25C1 or SMuFL U+EB82).</desc>
         </valItem>
         <valItem ident="harpoonleft">
           <desc>Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode
@@ -1516,6 +1509,36 @@
         <valItem ident="harpoonright">
           <desc>Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode
             U+21BC).</desc>
+        </valItem>
+        <valItem ident="H">
+          <desc>Hauptstimme (Unicode U+1D1A6 or SMuFL U+E860).</desc>
+        </valItem>
+        <valItem ident="N">
+          <desc>Nebenstimme (Unicode U+1D1A7 or SMuFL U+E861).</desc>
+        </valItem>
+        <valItem ident="Th">
+          <desc>Theme (SMuFL U+E864).</desc>
+        </valItem>
+        <valItem ident="ThRetro">
+          <desc>Theme, retrograde (SMuFL U+E865).</desc>
+        </valItem>
+        <valItem ident="ThRetroInv">
+          <desc>Theme, retrograde inversion (SMuFL U+E866).</desc>
+        </valItem>
+        <valItem ident="ThInv">
+          <desc>Theme, inverted (SMuFL U+E867).</desc>
+        </valItem>
+        <valItem ident="T">
+          <desc>Theme (SMuFL U+E868).</desc>
+        </valItem>
+        <valItem ident="TInv">
+          <desc>Theme, inverted (SMuFL U+E869).</desc>
+        </valItem>
+        <valItem ident="CH">
+          <desc>Choralemelodie (SMuFL U+E86A).</desc>
+        </valItem>
+        <valItem ident="RH">
+          <desc>Hauptrhythmus (SMuFL U+E86B).</desc>
         </valItem>
         <valItem ident="none">
           <desc>No start/end symbol.</desc>
@@ -1722,10 +1745,10 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.MIDICHANNEL" module="MEI" type="dt">
-    <desc>MIDI channel numbers.</desc>
+    <desc>MIDI channel number. One-based values must be followed by a lower-case letter "o".</desc>
     <content>
-      <rng:data type="positiveInteger">
-        <rng:param name="maxInclusive">16</rng:param>
+      <rng:data type="token">
+        <rng:param name="pattern">0|([1-9]|1[0-5])o?|16o</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -2410,11 +2433,29 @@
     </remarks>
   </macroSpec>
   <macroSpec ident="data.MIDIVALUE" module="MEI" type="dt">
-    <desc>MIDI values in the following range.</desc>
+    <desc>Generic MIDI value. One-based values must be followed by a lower-case letter "o".</desc>
     <content>
-      <rng:data type="nonNegativeInteger">
-        <rng:param name="maxInclusive">127</rng:param>
+      <rng:data type="token">
+        <rng:param name="pattern">0|([1-9]|[1-9][0-9]|1([0-1][0-9]|2[0-7]))o?|128o</rng:param>
       </rng:data>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.MIDIVALUE_NAME" module="MEI" type="dt">
+    <desc>data.MIDIVALUE or data.NCName values.</desc>
+    <content>
+      <alternate>
+        <macroRef key="data.MIDIVALUE"/>
+        <macroRef key="data.NCNAME"/>
+      </alternate>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.MIDIVALUE_PAN" module="MEI" type="dt">
+    <desc>data.MIDIVALUE or data.PERCENT.LIMITED values.</desc>
+    <content>
+      <alternate>
+        <macroRef key="data.MIDIVALUE"/>
+        <macroRef key="data.PERCENT.LIMITED.SIGNED"/>
+      </alternate>
     </content>
   </macroSpec>
   <macroSpec ident="data.MODE" module="MEI" type="dt">
@@ -2506,6 +2547,13 @@
     <desc>Music font family.</desc>
     <content>
       <rng:data type="token"/>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.NCNAME" module="MEI" type="dt">
+    <desc>"Convenience" datatype that permits combining enumerated values with a user-supplied
+      name.</desc>
+    <content>
+      <rng:data type="NCName"/>
     </content>
   </macroSpec>
   <macroSpec ident="data.NMTOKEN" module="MEI" type="dt">
@@ -2711,6 +2759,22 @@
     <content>
       <rng:data type="token">
         <rng:param name="pattern">[0-9]+(\.?[0-9]*)?%</rng:param>
+      </rng:data>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.PERCENT.LIMITED" module="MEI" type="dt">
+    <desc>Positive decimal number between 0 and 100, followed by a percent sign "%".</desc>
+    <content>
+      <rng:data type="token">
+        <rng:param name="pattern">(([0-9]|[1-9][0-9])(\.[0-9]+)?|100)%</rng:param>
+      </rng:data>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.PERCENT.LIMITED.SIGNED" module="MEI" type="dt">
+    <desc>Positive decimal number between -100 and 100, followed by a percent sign "%".</desc>
+    <content>
+      <rng:data type="token">
+        <rng:param name="pattern">(\+|-)?(([0-9]|[1-9][0-9])(\.[0-9]+)?|100)%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -3319,6 +3383,15 @@
           <desc>Baseline aligned.</desc>
         </valItem>
       </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.WORD" module="MEI" type="dt">
+    <desc>A single "word" that contains only letters, digits, punctuation characters, or symbols. It
+      cannot contain whitespace.</desc>
+    <content>
+      <rng:data type="token">
+        <rng:param name="pattern">(\p{L}|\p{N}|\p{P}|\p{S})*</rng:param>
+      </rng:data>
     </content>
   </macroSpec>
   <classSpec ident="att.notationType" module="MEI" type="atts">
