@@ -15,7 +15,7 @@ SAMPLES_DIR="samples"
 UTILS_DIR="utils"
 
 SCHEMATRON_FILES=${UTILS_DIR}"/schematron"
-DRIVER_FILE=${SOURCE_DIR}"/driver.xml"
+DRIVER_FILE=${SOURCE_DIR}"/mei-source.xml"
 
 SCHEMATRON_EXTRACT=${SCHEMATRON_FILES}"/ExtractSchFromRNG-2.xsl"
 SCHEMATRON_PREPROCESS=${SCHEMATRON_FILES}"/iso_dsdl_include.xsl"
@@ -231,7 +231,7 @@ usage()
 SKIP=0
 while getopts "h:t:" OPT; do
     case $OPT in
-        h) 
+        h)
             usage;;
         t)
             SKIP=$(($SKIP + 2));;
