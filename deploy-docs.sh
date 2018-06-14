@@ -65,7 +65,7 @@ git checkout ${DOCS_BRANCH}
 
 cd tools
 
-exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../${CANONICALIZED_SCHEMA}
+exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../../${CANONICALIZED_SCHEMA}
 
 git config user.name "Documentation Builder"
 git config user.email "${COMMIT_AUTHOR_EMAIL}"
