@@ -30,18 +30,20 @@ fi
 
 if [ "${TRAVIS_BRANCH}" == "develop" ]; then
     OUTPUT_FOLDER="dev"
+    DOCS_BRANCH="master"
 elif [ "${TRAVIS_BRANCH}" == "master" ]; then
     OUTPUT_FOLDER=${MEI_VERSION}
-elif [ "${TRAVIS_BRANCH}" == "feature-travis" ]; then  # to be removed when merged to develop.
+    DOCS_BRANCH="master"
+elif [ "${TRAVIS_BRANCH}" == "feature-build-with-travis" ]; then  # to be removed when merged to develop.
     OUTPUT_FOLDER="test"
+    DOCS_BRANCH="develop"
 else
     echo "Will not build docs for branch ${TRAVIS_BRANCH}"
     exit 0
 fi
 
 DOCS_REPOSITORY="https://${GH_USERNAME}:${GH_TOKEN}@github.com/music-encoding/guidelines"
-DOCS_BRANCH="master"
-DOCS_DIRECTORY="docs"
+DOCS_DIRECTORY="guidelines"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
 BUILD_DIR="build"
 CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
@@ -54,18 +56,20 @@ SHA=`git rev-parse --verify HEAD`
 # Clone the docs repo.
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
 
-mkdir "${DEV_DOCS}"
-touch "${DEV_DOCS}/.keep"
+git checkout ${DOCS_BRANCH}
+
+#mkdir "${DEV_DOCS}"
+#touch "${DEV_DOCS}/.keep"
 
 cd ${DOCS_DIRECTORY}
+
+exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:tools/extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ${CANONICALIZED_SCHEMA}
 
 git config user.name "Documentation Builder"
 git config user.email "${COMMIT_AUTHOR_EMAIL}"
 
 git add -A .
 git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
-# Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
-
 
 # Now that we're all set up, we can push.
 git push ${DOCS_REPOSITORY} ${DOCS_BRANCH}
