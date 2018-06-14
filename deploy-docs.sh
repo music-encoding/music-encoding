@@ -56,12 +56,12 @@ SHA=`git rev-parse --verify HEAD`
 # Clone the docs repo.
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
 
-git checkout ${DOCS_BRANCH}
-
 #mkdir "${DEV_DOCS}"
 #touch "${DEV_DOCS}/.keep"
 
 cd ${DOCS_DIRECTORY}
+
+git checkout ${DOCS_BRANCH}
 
 exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:tools/extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ${CANONICALIZED_SCHEMA}
 
