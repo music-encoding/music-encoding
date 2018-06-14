@@ -35,7 +35,7 @@ elif [ "${TRAVIS_BRANCH}" == "master" ]; then
     OUTPUT_FOLDER=${MEI_VERSION}
     DOCS_BRANCH="master"
 elif [ "${TRAVIS_BRANCH}" == "feature-build-with-travis" ]; then  # to be removed when merged to develop.
-    OUTPUT_FOLDER="test"
+    OUTPUT_FOLDER="dev"
     DOCS_BRANCH="develop"
 else
     echo "Will not build docs for branch ${TRAVIS_BRANCH}"
