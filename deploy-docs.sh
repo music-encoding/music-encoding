@@ -63,9 +63,13 @@ cd ${DOCS_DIRECTORY}
 
 git checkout ${DOCS_BRANCH}
 
+# cd to tools since the xslt is configured to write relative to this directory
 cd tools
 
 exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../../${CANONICALIZED_SCHEMA}
+
+# change back to root of guidelines to commit.
+cd ..
 
 git config user.name "Documentation Builder"
 git config user.email "${COMMIT_AUTHOR_EMAIL}"
@@ -73,5 +77,9 @@ git config user.email "${COMMIT_AUTHOR_EMAIL}"
 git add -A .
 git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
 
+echo "Syncing from origin..."
+git pull
+
+echo "Pushing commits"
 # Now that we're all set up, we can push.
 git push ${DOCS_REPOSITORY} ${DOCS_BRANCH}
