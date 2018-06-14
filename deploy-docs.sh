@@ -23,7 +23,6 @@
 set -e # Exit with nonzero exit code if anything fails
 MEI_VERSION="v3"
 
-
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
     echo "Will not build docs for pull requests. Skipping deploy."
     exit 0
@@ -40,24 +39,14 @@ else
     exit 0
 fi
 
-DOCS_REPOSITORY="git@github.com:music-encoding/guidelines"
+DOCS_REPOSITORY="https://${GH_USERNAME}:${GH_TOKEN}@github.com/music-encoding/guidelines"
 DOCS_BRANCH="master"
 DOCS_DIRECTORY="docs"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
+BUILD_DIR="build"
+CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
 
 echo "Running documentation build"
-
-# Ensure the private key is available to the build service. This will fetch it
-# from the secure key in the travis environment and unencrypt it.
-ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
-ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
-
-openssl aes-256-cbc -K $encrypted_20063e125f98_key -iv $encrypted_20063e125f98_iv -in deploy_key.enc -out deploy_key -d
-chmod 600 deploy_key
-eval `ssh-agent -s`
-ssh-add deploy_key
 
 # Get the music-encoding revision
 SHA=`git rev-parse --verify HEAD`
