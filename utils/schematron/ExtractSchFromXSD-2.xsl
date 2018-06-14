@@ -5,7 +5,7 @@
         2001/06/27      er: changed XMl Schema prefix from xsd: to xs: and changed to the Rec namespace
         2010/04/14    	rj: Update for ISO Schematron using xslt2
 -->
-<xsl:transform version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+<xsl:transform version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:xs="http://www.w3.org/2001/XMLSchema">
         <!-- Set the output to be XML with an XML declaration and use indentation -->
         <xsl:output method="xml" omit-xml-declaration="no" indent="yes" standalone="yes"/>
