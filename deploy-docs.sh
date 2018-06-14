@@ -83,7 +83,7 @@ git config user.email "${COMMIT_AUTHOR_EMAIL}"
 
 git status
 
-git add -A .
+git add -A
 git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
 
 echo "Syncing from origin..."
