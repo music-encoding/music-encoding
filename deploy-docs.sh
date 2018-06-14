@@ -43,7 +43,7 @@ else
 fi
 
 DOCS_REPOSITORY="https://${GH_USERNAME}:${GH_TOKEN}@github.com/music-encoding/guidelines"
-DOCS_DIRECTORY="guidelines"
+DOCS_DIRECTORY="guidelines-repo"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
 BUILD_DIR="build"
 CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
