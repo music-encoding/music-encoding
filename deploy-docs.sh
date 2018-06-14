@@ -42,6 +42,9 @@ else
     exit 0
 fi
 
+# Get the music-encoding revision
+SHA=`git rev-parse --verify HEAD`
+
 DOCS_REPOSITORY="https://${GH_USERNAME}:${GH_TOKEN}@github.com/music-encoding/guidelines"
 DOCS_DIRECTORY="guidelines-repo"
 DEV_DOCS="${DOCS_DIRECTORY}/dev"
@@ -50,10 +53,8 @@ CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
 
 echo "Running documentation build"
 
-# Get the music-encoding revision
-SHA=`git rev-parse --verify HEAD`
-
 # Clone the docs repo.
+echo "Cloning ${DOCS_REPOSITORY}"
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
 
 #mkdir "${DEV_DOCS}"
@@ -61,18 +62,25 @@ git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
 
 cd ${DOCS_DIRECTORY}
 
+echo "Checking out ${DOCS_BRANCH} branch"
 git checkout ${DOCS_BRANCH}
 
 # cd to tools since the xslt is configured to write relative to this directory
 cd tools
 
+echo "Building docs"
 exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../../${CANONICALIZED_SCHEMA}
 
 # change back to root of guidelines to commit.
 cd ..
 
+ls -alh
+
+echo "Configuring git push"
 git config user.name "Documentation Builder"
 git config user.email "${COMMIT_AUTHOR_EMAIL}"
+
+git status
 
 git add -A .
 git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
