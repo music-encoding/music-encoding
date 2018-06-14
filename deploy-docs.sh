@@ -69,7 +69,8 @@ git checkout ${DOCS_BRANCH}
 cd tools
 
 echo "Building docs"
-exec java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../../${CANONICALIZED_SCHEMA}
+
+java  -jar ${PATH_TO_SAXON_JAR} -xsl:extractGuidelines.xsl guidelines.version=${OUTPUT_FOLDER} ../../${CANONICALIZED_SCHEMA}
 
 # change back to root of guidelines to commit.
 cd ..
