@@ -1,23 +1,36 @@
-language: java
-sudo: false
+language: generic # don't install any environment
+sudo: required
 addons:
-    apt:
-        packages:
-            - ant
-            - jing
+  apt:
+    packages:
+      - libxml2-utils
+      - ant
+      - jing
+
+git:
+  depth:
+    3
 
 env:
- - PATH_TO_SAXON_JAR=Saxon-HE-9.6.0-7.jar PATH_TO_JING=/usr/bin/jing PATH_TO_TEI_STYLESHEETS=$TRAVIS_BUILD_DIR/Stylesheets
-
+  global:
+    - PATH_TO_SAXON_JAR: $TRAVIS_BUILD_DIR/Saxon-HE-9.8.0-5.jar
+    - PATH_TO_JING: /usr/bin/jing
+    - PATH_TO_XMLLINT: /usr/bin/xmllint
+    - PATH_TO_TEI_STYLESHEETS: $TRAVIS_BUILD_DIR/Stylesheets
+    - ENCRYPTION_LABEL: "20063e125f98"
+    - COMMIT_AUTHOR_EMAIL: "andrew.hankinson@gmail.com"
 # Pin the stylesheets to v7.41.0 (commit c3e4...)
 before_install:
-    - git clone https://github.com/TEIC/Stylesheets.git
-    - cd Stylesheets && git checkout c3e4130ccb4f93700fda004c8e7fb037379ba268 && git reset --hard
-    - cd ../
-    - curl -O http://central.maven.org/maven2/net/sf/saxon/Saxon-HE/9.6.0-7/Saxon-HE-9.6.0-7.jar
+  - git clone https://github.com/TEIC/Stylesheets.git
+  - cd Stylesheets && git checkout c5d26c36f5beb01688c75591e8cc1c9c7e34b039 && git reset --hard
+  - cd ../
+  - curl -O http://central.maven.org/maven2/net/sf/saxon/Saxon-HE/9.8.0-5/Saxon-HE-9.8.0-5.jar
 
 before_script:
-    - ./build.sh build
+ - ./build.sh build
 
 script:
-    - ./build.sh test
+ - ./build.sh test
+
+after_success:
+ - ./deploy-docs.sh

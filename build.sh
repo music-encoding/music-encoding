@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # If these environment variables are not set, set some defaults
 : ${PATH_TO_TEI_STYLESHEETS?"Need to set TEI Stylesheets."}
@@ -95,7 +96,7 @@ validate_with_schematron()
     rm -r $tempdir
 }
 
-build()
+buildMei()
 {
     if [ ! -f $TEI_TO_RELAXNG_BIN ]; then
         echo $TEI_TO_RELAXNG_BIN
@@ -110,6 +111,9 @@ build()
     fi
 
     mkdir -p ${BUILD_DIR}
+
+    echo -e "${PURPLE}Canonicalizing the ODD file"$NORM
+    $PATH_TO_XMLLINT -xinclude ${DRIVER_FILE} -o ${BUILD_DIR}/mei-canonicalized.xml
 
     SAVEIFS=$IFS
     IFS=$(echo -en "\n\b")
@@ -130,92 +134,96 @@ build()
         # build the schematron rules for this schema
         echo -e "${PURPLE} Building Schematron Rules for ${file}${NORM}"
         build_schematron $BUILD_DIR/$(basename ${file%%.*}).rng
-
     done
 
     IFS=$SAVEIFS
 }
 
-test()
+testMei()
 {
-    echo -e "\nValidating samples directory against built customizations\n"
-
-    SAVEIFS=$IFS
-    IFS=$(echo -en "\n\b")
-
-    TOTAL_TESTS=0
-    PASSED_TESTS=0
-
-    for file in $(find ${BUILD_DIR} -name '*.rng');
-    do
-        echo -e "${PURPLE} Testing: ${NORM}" $file
-        # this gets the name of a possible testing directory from the name of the customization
-        testdir=`echo $file | sed -n 's/build\/\(.*\)\.rng/\1/p'`
-        if [ -d tests/${testdir} ]; then
-            echo -e "${PURPLE} Found ${NORM} $testdir"
-            for tfile in $(find tests/${testdir} -name '*.mei');
-            do
-                SUCCESS=true
-                TOTAL_TESTS=$((TOTAL_TESTS + 1))
-
-                echo -e "${PURPLE} Testing Against: ${NORM}" $tfile
-
-                $PATH_TO_JING $file "${tfile}"
-
-                if [ $? = 1 ]; then
-                    IFS=$SAVEIFS
-                    echo -e "${RED}\tTests failed on" $tfile$NORM
-                    SUCCESS=false
-                else
-                    echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
-                fi
-
-                validate_with_schematron $file $tfile
-
-                if [[ "$SUCCESS" = true && "$SCHEMATRON_PASS" = true ]]; then
-                    PASSED_TESTS=$((PASSED_TESTS + 1))
-
-                    echo -e "\n${GREEN} ***********************************************${NORM}"
-                    echo -e "${GREEN} $file passed validation tests${NORM}"
-                    echo -e "${GREEN} ***********************************************${NORM}\n"
-                else
-                    echo -e "\n${RED} FAILURE ${NORM}"
-                fi
-            done
-        fi
-    done
-
-    # REMOVE SOON
-    # Until we get the test set up and running we'll still validate the whole sample collection against
-    # mei-all. This testing scheme should be removed after the tests are ready.
-    # for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
-    # do
-    #     echo -e "${PURPLE} Testing: ${NORM}" $file
-
-    #     if $USE_XMLLINT; then
-    #         $PATH_TO_XMLLINT --noout --relaxng $BUILD_DIR/mei-all.rng "${file}"
-    #     else
-    #         $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
-    #     fi
-
-    #     if [ $? = 1 ]; then
-    #         IFS=$SAVEIFS
-    #         echo -e "${RED}\tTests failed on" $file$NORM
-    #         exit 1
-    #     else
-    #         echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
-    #     fi
-    # done
-
-    IFS=$SAVEIFS
-    echo -e "\n${GREEN} PASSED TESTS: $PASSED_TESTS${NORM}"
-    echo -e "${PURPLE} TOTAL TESTS: $TOTAL_TESTS${NORM}"
-
-    if [ $PASSED_TESTS != $TOTAL_TESTS ]; then
-        echo -e "\n${RED} $((TOTAL_TESTS - PASSED_TESTS)) TESTS FAILED ${NORM}"
-        exit 1
-    fi
+    exit 0
 }
+
+#test()
+#{
+#    echo -e "\nValidating samples directory against built customizations\n"
+#
+#    SAVEIFS=$IFS
+#    IFS=$(echo -en "\n\b")
+#
+#    TOTAL_TESTS=0
+#    PASSED_TESTS=0
+#
+#    for file in $(find ${BUILD_DIR} -name '*.rng');
+#    do
+#        echo -e "${PURPLE} Testing: ${NORM}" $file
+#        # this gets the name of a possible testing directory from the name of the customization
+#        testdir=`echo $file | sed -n 's/build\/\(.*\)\.rng/\1/p'`
+#        if [ -d tests/${testdir} ]; then
+#            echo -e "${PURPLE} Found ${NORM} $testdir"
+#            for tfile in $(find tests/${testdir} -name '*.mei');
+#            do
+#                SUCCESS=true
+#                TOTAL_TESTS=$((TOTAL_TESTS + 1))
+#
+#                echo -e "${PURPLE} Testing Against: ${NORM}" $tfile
+#
+#                $PATH_TO_JING $file "${tfile}"
+#
+#                if [ $? = 1 ]; then
+#                    IFS=$SAVEIFS
+#                    echo -e "${RED}\tTests failed on" $tfile$NORM
+#                    SUCCESS=false
+#                else
+#                    echo -e $GREEN '\t' $tfile "is valid against $file ${NORM}"
+#                fi
+#
+#                validate_with_schematron $file $tfile
+#
+#                if [[ "$SUCCESS" = true && "$SCHEMATRON_PASS" = true ]]; then
+#                    PASSED_TESTS=$((PASSED_TESTS + 1))
+#
+#                    echo -e "\n${GREEN} ***********************************************${NORM}"
+#                    echo -e "${GREEN} $file passed validation tests${NORM}"
+#                    echo -e "${GREEN} ***********************************************${NORM}\n"
+#                else
+#                    echo -e "\n${RED} FAILURE ${NORM}"
+#                fi
+#            done
+#        fi
+#    done
+#
+#    # REMOVE SOON
+#    # Until we get the test set up and running we'll still validate the whole sample collection against
+#    # mei-all. This testing scheme should be removed after the tests are ready.
+#    # for file in $(find ${SAMPLES_DIR}/MEI2013 -name '*.mei');
+#    # do
+#    #     echo -e "${PURPLE} Testing: ${NORM}" $file
+#
+#    #     if $USE_XMLLINT; then
+#    #         $PATH_TO_XMLLINT --noout --relaxng $BUILD_DIR/mei-all.rng "${file}"
+#    #     else
+#    #         $PATH_TO_JING $BUILD_DIR/mei-all.rng "${file}"
+#    #     fi
+#
+#    #     if [ $? = 1 ]; then
+#    #         IFS=$SAVEIFS
+#    #         echo -e "${RED}\tTests failed on" $file$NORM
+#    #         exit 1
+#    #     else
+#    #         echo -e $GREEN '\t' $file "is valid against mei-all.rng${NORM}"
+#    #     fi
+#    # done
+#
+#    IFS=$SAVEIFS
+#    echo -e "\n${GREEN} PASSED TESTS: $PASSED_TESTS${NORM}"
+#    echo -e "${PURPLE} TOTAL TESTS: $TOTAL_TESTS${NORM}"
+#
+#    if [ $PASSED_TESTS != $TOTAL_TESTS ]; then
+#        echo -e "\n${RED} $((TOTAL_TESTS - PASSED_TESTS)) TESTS FAILED ${NORM}"
+#        exit 1
+#    fi
+#}
 
 usage()
 {
@@ -242,7 +250,7 @@ args=("$@")
 TYPE=${args[$SKIP]}
 
 case $TYPE in
-    "build" ) build;;
-    "test" ) test;;
+    "build" ) buildMei;;
+    "test" ) testMei;;
     * ) usage;;
 esac
