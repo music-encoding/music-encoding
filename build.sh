@@ -239,7 +239,7 @@ usage()
 SKIP=0
 while getopts "h:t:" OPT; do
     case $OPT in
-        h) 
+        h)
             usage;;
         t)
             SKIP=$(($SKIP + 2));;
