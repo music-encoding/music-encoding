@@ -71,7 +71,7 @@ git config user.email "${COMMIT_AUTHOR_EMAIL}"
 git status
 
 git add -A
-git commit -m "Auto-commit of documentation build for music-encoding@${SHA}"
+git commit -m "Auto-commit of documentation build for music-encoding/music-encoding@${SHA}"
 
 echo "Syncing from origin..."
 git pull
