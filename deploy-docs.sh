@@ -31,21 +31,20 @@ fi
 
 # Get the music-encoding revision
 SHA=`git rev-parse --verify HEAD`
+SHORT_SHA=`git rev-parse --verify --short HEAD`
 
 DOCS_REPOSITORY="https://${GH_USERNAME}:${GH_TOKEN}@github.com/music-encoding/guidelines"
 DOCS_DIRECTORY="guidelines-repo"
-DEV_DOCS="${DOCS_DIRECTORY}/dev"
+DOCS_VERSION_BUILD_FILE="${DOCS_DIRECTORY}/_includes/${OUTPUT_FOLDER}/build.txt"
 BUILD_DIR="build"
 CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
 
 echo "Running documentation build"
+echo "<a href='https://github.com/music-encoding/music-encoding/commit/${SHA}'>Version ${SHORT_SHA}</a>" > ${DOCS_VERSION_BUILD_FILE}
 
 # Clone the docs repo.
 echo "Cloning ${DOCS_REPOSITORY}"
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
-
-#mkdir "${DEV_DOCS}"
-#touch "${DEV_DOCS}/.keep"
 
 cd ${DOCS_DIRECTORY}
 
