@@ -23,7 +23,6 @@ Or, the same command using `jing`.
 This repository contains all the source code of the core MEI Schema. This includes:
 
  * customizations: TEI ODD files that allow you to build customized MEI schemas.
- * guidelines: PDF documentation of the MEI Schema
  * schemata: pre-built MEI schemas
  * source: Contains the source code to the MEI schema, expressed in TEI ODD. This includes the source code for the MEI Guidelines, and MEI Core.
  * tests: Unit tests for the MEI Schemas
