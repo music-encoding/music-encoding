@@ -366,39 +366,50 @@
       </attDef>
     </attList>
   </classSpec>
-  <classSpec ident="att.barPlacement" module="MEI.shared" type="atts">
+  <classSpec ident="att.barring" module="MEI.shared" type="atts">
     <desc>Attributes that capture the placement of bar lines.</desc>
     <attList>
-      <attDef ident="barlinelen" usage="opt">
-        <desc>States the length of a barline. Must be greater than 0 and less than or equal to (2
-          times number of staff lines) + 2, e.g., between 0 and 12 for a 5-line staff.</desc>
+      <attDef ident="bar.len" usage="opt">
+        <desc>States the length of barlines in virtual units. The value must be greater than 0 and
+          is typically equal to 2 times (the number of staff lines - 1); e.g., a value of '8' for a
+          5-line staff.</desc>
         <datatype>
           <rng:data type="decimal">
             <rng:param name="minExclusive">0</rng:param>
           </rng:data>
         </datatype>
         <remarks>
-          <p>The value of barlinelen must be greater than 0 and less than or equal to (2 times
-            number of staff lines) + 2; e.g., 12 on a 5-line staff.</p>
+          <p>This attribute is ignored if the value of the bar.style attribute is "mensur".</p>
         </remarks>
       </attDef>
-      <attDef ident="barplace" usage="opt">
-        <desc>Records the location of a bar line.</desc>
+      <attDef ident="bar.method" usage="opt">
+        <desc>Records the method of barring.</desc>
         <datatype>
-          <rng:ref name="data.BARPLACE"/>
+          <rng:ref name="data.BARMETHOD"/>
         </datatype>
+        <constraintSpec ident="check_barmethod" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@bar.method[parent::*[matches(local-name(), '(staffDef|measure)')]]">
+              <sch:assert test="not(. eq 'mensur')">"mensur" not allowed in this
+                context.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
-      <attDef ident="taktplace" usage="opt">
-        <desc>If takt bar lines are to be used, then the taktplace attribute may be used to denote
-          the staff location of the shortened bar line. The location may include staff lines,
-          spaces, and the spaces directly above and below the staff. The value ranges between 0
-          (just below the staff) to 2 * number of staff lines (directly above the staff). For
-          example, on a 5-line staff the lines would be numbered 1,3,5,7, and 9 while the spaces
-          would be numbered 0,2,4,6,8,10. For example, a value of '9' puts the bar line through the
-          top line of a 5-line staff.</desc>
+      <attDef ident="bar.place" usage="opt">
+        <desc>Denotes the staff location of bar lines, if the length is non-standard; that is, not
+          equal to 2 times (the number of staff lines - 1).</desc>
         <datatype>
           <rng:ref name="data.STAFFLOC"/>
         </datatype>
+        <remarks>
+          <p>The location may include staff lines, the spaces between the lines, and the spaces
+            directly above and below the staff. The value ranges between 0 (just below the staff) to
+            2 * number of staff lines (directly above the staff). For example, on a 5-line staff the
+            lines would be numbered 1, 3, 5, 7, and 9 while the spaces would be numbered 0, 2, 4, 6,
+            8, and 10. So, a value of '9' puts the bar line through the top line of the staff.</p>
+          <p>This attribute is ignored if the value of the bar.style attribute is "mensur".</p>
+        </remarks>
       </attDef>
     </attList>
   </classSpec>
