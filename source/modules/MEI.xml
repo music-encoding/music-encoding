@@ -246,12 +246,12 @@
         <sch:rule context="@artic">
           <sch:assert role="warning"
             test="not(contains(., 'marc-stacc')) and not(contains(., 'ten-stacc'))">"<sch:value-of
-              select="."/>" contains a deprecated value.</sch:assert>
+            select="."/>" contains a deprecated value.</sch:assert>
         </sch:rule>
         <sch:rule context="@artic.ges">
           <sch:assert role="warning"
             test="not(contains(., 'marc-stacc')) and not(contains(., 'ten-stacc'))">"<sch:value-of
-              select="."/>" contains a deprecated value.</sch:assert>
+            select="."/>" contains a deprecated value.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -1364,23 +1364,28 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
-    <desc>A token indicating direction of the interval but not its precise value, an indication of
-      diatonic interval quality and size, or a decimal value in half steps. Decimal values are
-      permitted to accommodate micro-tuning.</desc>
+    <desc>A token indicating direction of the interval but not its precise value, a diatonic
+      interval (with optional direction and quality), or a decimal value in half steps. Decimal
+      values are permitted to accommodate micro-tuning.</desc>
     <content>
       <rng:choice>
-        <rng:data type="decimal"/>
         <rng:data type="token">
-          <rng:param name="pattern">u|d|s|n|sh|sl</rng:param>
+          <rng:param name="pattern">u|d|s|n|sd|su</rng:param>
         </rng:data>
         <rng:data type="token">
-          <rng:param name="pattern">(\+|\-)?[AdMmP][0-9]+</rng:param>
+          <rng:param name="pattern">(\+|\-)?([AdMmP])?[0-9]+</rng:param>
+        </rng:data>
+        <rng:data type="token">
+          <rng:param name="pattern">(\+|\-)?\d+(\.\d+)?hs</rng:param>
         </rng:data>
       </rng:choice>
     </content>
     <remarks>
-      <p>u = up, d = down, s = same, n = neutral/unknown, sh = same or higher (but not lower), sl =
-        same or lower (but not higher)</p>
+      <p>Interval direction only: u = up/higher, d = down/lower, s = same, n = neutral/unknown, sd =
+        same or lower (but not higher), su = same or higher (but not lower)</p>
+      <p>Interval direction, quality, and size: optionally signed integer value, where A =
+        augmented, d = diminished, M = major, m = minor, P = perfect</p>
+      <p>Interval in half steps: optionally signed decimal value</p>
     </remarks>
   </macroSpec>
   <macroSpec ident="data.ISODATE" module="MEI" type="dt">
@@ -2426,8 +2431,8 @@
     </content>
     <remarks>
       <p>Instrument names are taken from the list at <ref
-          target="http://www.midi.org/techspecs/gm1sound.php"
-          >http://www.midi.org/techspecs/gm1sound.php</ref>. </p>
+        target="http://www.midi.org/techspecs/gm1sound.php"
+        >http://www.midi.org/techspecs/gm1sound.php</ref>. </p>
       <p>MEI uses 0-based program numbers.</p>
       <p>Percussion sounds are available when the MIDI channel is set to "10".</p>
     </remarks>
@@ -3014,7 +3019,7 @@
           <sch:let name="minValue"
             value="min((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
           <sch:assert test="$maxValue - $minValue = 1">Staves <sch:value-of select="$minValue"/> and
-              <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
+            <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
