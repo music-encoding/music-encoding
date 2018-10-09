@@ -476,7 +476,7 @@
       <attDef ident="codedval" usage="opt">
         <desc>A value that represents or identifies other data. Often, it is a primary key in the
           database or a unique value in the coded list identified by the <att>auth</att> or
-            <att>auth.uri</att> attributes.</desc>
+          <att>auth.uri</att> attributes.</desc>
         <datatype maxOccurs="unbounded">
           <rng:data type="NMTOKEN"/>
         </datatype>
@@ -1187,7 +1187,7 @@
     <attList>
       <attDef ident="hand" usage="opt">
         <desc>Signifies the hand responsible for an action. The value must be the ID of a <gi
-            scheme="MEI">hand</gi> element declared in the header.</desc>
+          scheme="MEI">hand</gi> element declared in the header.</desc>
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
@@ -1332,8 +1332,7 @@
           <rng:data type="string"/>
         </datatype>
         <remarks>
-          <p>
-            <att>label</att> is used to provide a display label for an element's contents, for
+          <p> <att>label</att> is used to provide a display label for an element's contents, for
             example in the form of a "tool tip" or as the "name" when the element's contents are
             treated as the "value" in a "name-value pair". Unlike <att>n</att>, <att>label</att> may
             contain space characters.</p>
@@ -1368,12 +1367,12 @@
     </attList>
     <remarks>
       <p>BCP 47 is described at <ref target="https://tools.ietf.org/html/bcp47"
-          >https://tools.ietf.org/html/bcp47</ref>. The IANA Subtag Registry, from which BCP 47
+        >https://tools.ietf.org/html/bcp47</ref>. The IANA Subtag Registry, from which BCP 47
         language tags are constructed, may be found at <ref
-          target="www.iana.org/assignments/language-subtag-registry"
-          >www.iana.org/assignments/language-subtag-registry</ref>. A tool for locating subtags and
+        target="www.iana.org/assignments/language-subtag-registry"
+        >www.iana.org/assignments/language-subtag-registry</ref>. A tool for locating subtags and
         validating language tags is available at <ref target="https://r12a.github.io/apps/subtags"
-          >https://r12a.github.io/apps/subtags</ref>.</p>
+        >https://r12a.github.io/apps/subtags</ref>.</p>
     </remarks>
   </classSpec>
   <classSpec ident="att.layer.log" module="MEI.shared" type="atts">
@@ -1525,7 +1524,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="When_copyof_element_empty" scheme="isoschematron">
+        <constraintSpec ident="When_copyof_element_empty" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@copyof]">
               <sch:assert test="count(child::*[not(comment() or processing-instruction())]) = 0">An
@@ -1534,7 +1533,7 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="check_copyofTarget" scheme="isoschematron">
+        <constraintSpec ident="check_copyofTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@copyof">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@copyof attribute
@@ -1553,7 +1552,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_correspTarget" scheme="isoschematron">
+        <constraintSpec ident="check_correspTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@corresp">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@corresp attribute
@@ -1566,12 +1565,31 @@
           </constraint>
         </constraintSpec>
       </attDef>
+      <attDef ident="follows" usage="opt">
+        <desc>points to one or more events in a user-defined collection that are known to be
+          predecessors of the current element.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_followsTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@follows">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@follows attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id">Each
+                value in @follows must correspond to the @xml:id attribute of an
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="next" usage="opt">
         <desc>Used to point to the next event(s) in a user-defined collection.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_nextTarget" scheme="isoschematron">
+        <constraintSpec ident="check_nextTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@next">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@next attribute should
@@ -1584,12 +1602,31 @@
           </constraint>
         </constraintSpec>
       </attDef>
+      <attDef ident="precedes" usage="opt">
+        <desc>Points to one or more events in a user-defined collection that are known to be
+          successors of the current element.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_precedesTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@precedes">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@precedes attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id">Each
+                value in @precedes must correspond to the @xml:id attribute of an
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="prev" usage="opt">
         <desc>Points to the previous event(s) in a user-defined collection.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_prevTarget" scheme="isoschematron">
+        <constraintSpec ident="check_prevTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@prev">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@prev attribute should
@@ -1608,7 +1645,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_sameasTarget" scheme="isoschematron">
+        <constraintSpec ident="check_sameasTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@sameas">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@sameas attribute
@@ -1626,7 +1663,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_synchTarget" scheme="isoschematron">
+        <constraintSpec ident="check_synchTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@synch">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@synch attribute
@@ -1867,7 +1904,7 @@
         <desc>Indicates whether or not a bar line is "controlling"; that is, if it indicates a point
           of alignment across all the parts. Bar lines within a score are usually controlling; that
           is, they "line up". Bar lines within parts may or may not be controlling. When applied to
-            <gi scheme="MEI">measure</gi>, this attribute indicates the nature of the right barline
+          <gi scheme="MEI">measure</gi>, this attribute indicates the nature of the right barline
           but not the left.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
@@ -2007,11 +2044,11 @@
         </datatype>
         <remarks>
           <p>When applicable, values from the MARC relator term list (<ref
-              target="http://www.loc.gov/marc/relators/relaterm.html"
-              >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
-              target="http://www.loc.gov/marc/relators/relacode.html"
-              >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
-              <att>role</att>.</p>
+            target="http://www.loc.gov/marc/relators/relaterm.html"
+            >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
+            target="http://www.loc.gov/marc/relators/relacode.html"
+            >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
+            <att>role</att>.</p>
         </remarks>
       </attDef>
     </attList>
@@ -2297,7 +2334,7 @@
       <attDef ident="origin.tstamp2" usage="rec">
         <desc>encodes the ending point of musical material in terms of musical time, i.e., a count
           of measures plus a beat location. The values are relative to the measure identified by
-            <att>origin.tstamp</att>.</desc>
+          <att>origin.tstamp</att>.</desc>
         <datatype>
           <rng:ref name="data.MEASUREBEAT"/>
         </datatype>
@@ -2657,8 +2694,8 @@
       creation, transcription, editing, or encoding.</desc>
     <attList>
       <attDef ident="resp" usage="opt">
-        <desc>Indicates the agent(s) responsible for some aspect of the text's transcription, 
-          editing, or encoding. Its value must point to one or more identifiers declared in the 
+        <desc>Indicates the agent(s) responsible for some aspect of the text's transcription,
+          editing, or encoding. Its value must point to one or more identifiers declared in the
           document header.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
@@ -4037,10 +4074,10 @@
     <remarks>
       <p>An accidental may raise a pitch by one or two semitones or it may cancel a previous
         accidental or part of a key signature. This element provides an alternative to the
-          <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI">note</gi>
+        <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI">note</gi>
         element. The element may be used when specific display info, such as size or color, needs to
         be recorded for the accidental or when multiple accidentals occur on a single note. The
-          <att>func</att> attribute can be used to differentiate between the accidental's functions,
+        <att>func</att> attribute can be used to differentiate between the accidental's functions,
         such as 'cautionary' or 'editorial'.</p>
     </remarks>
   </elementSpec>
@@ -4107,9 +4144,8 @@
       </rng:zeroOrMore>
     </content>
     <remarks>
-      <p>
-        <gi scheme="MEI">addrLine</gi> may be repeated as many times as necessary to enter all lines
-        of an address.</p>
+      <p> <gi scheme="MEI">addrLine</gi> may be repeated as many times as necessary to enter all
+        lines of an address.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) and Encoded
@@ -4199,13 +4235,13 @@
         annotations of the musical text. It provides a way to group participating *events* and/or
         *control events*, for example, the notes that form a descending bass line, and provide a
         label for and comment regarding the group. Participating entities may be identified in the
-          <att>plist</att> attribute. An editorial or analytical comment or observation may be
+        <att>plist</att> attribute. An editorial or analytical comment or observation may be
         included directly within the <gi scheme="MEI">annot</gi> element. The starting point of the
         annotation may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
-          <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
+        <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
         recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. The
-          <att>resp</att> attribute records the editor(s) responsible for identifying or creating
-        the annotation.</p>
+        <att>resp</att> attribute records the editor(s) responsible for identifying or creating the
+        annotation.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="arranger" module="MEI.shared">
@@ -4351,12 +4387,11 @@
             </rng:zeroOrMore>
            </content> -->
     <remarks>
-      <p>
-        <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such as <gi
-          scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI">persName</gi>,
+      <p> <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such as
+        <gi scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI">persName</gi>,
         and <gi scheme="MEI">corpName</gi>. This element may also function as a hypertext reference
         to an external electronic resource. Do not confuse this element with <gi scheme="MEI"
-          >ref</gi>, which does not provide special bibliographic sub-elements.</p>
+        >ref</gi>, which does not provide special bibliographic sub-elements.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -4455,7 +4490,7 @@
     <remarks>
       <p>When the music can be broken into high-level, discrete, linear segments, such as movements
         of a symphony, there may be multiple <gi scheme="MEI">mdiv</gi> elements within <gi
-          scheme="MEI">body</gi>. This is the highest level indication of the structure of the
+        scheme="MEI">body</gi>. This is the highest level indication of the structure of the
         music.</p>
       <p>The content model of <gi scheme="MEI">body</gi> also allows blocks of text and music
         notation to be interleaved. This permits the encoding of a wide range of musical documents,
@@ -4492,7 +4527,7 @@
         long pause (L.P.), but longer than that indicated by a <gi scheme="MEI">breath</gi> mark.
         When combined with a <gi scheme="MEI">fermata</gi> a longer silence is usually implied. The
         starting point of the caesura may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
         semantic error not to specify a starting point attribute.</p>
       <p>Unlike the <gi scheme="MEI">breath</gi> mark, a caesura may have a performed duration.
         Also, while the default value for <att>place</att> on the breath mark is "above", the
@@ -4798,11 +4833,11 @@
         </datatype>
         <remarks>
           <p>When applicable, values from the MARC relator term list (<ref
-              target="http://www.loc.gov/marc/relators/relaterm.html"
-              >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
-              target="http://www.loc.gov/marc/relators/relacode.html"
-              >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
-              <att>role</att>.</p>
+            target="http://www.loc.gov/marc/relators/relaterm.html"
+            >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
+            target="http://www.loc.gov/marc/relators/relacode.html"
+            >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
+            <att>role</att>.</p>
         </remarks>
       </attDef>
     </attList>
@@ -4854,7 +4889,7 @@
     <remarks>
       <p>The most common visual form is a sign resembling a mordent. Other graphical forms may be
         indicated by the <att>altsym</att> attribute. Together the <att>pname</att> and
-          <att>oct</att> attributes identify the location where the custos appears.</p>
+        <att>oct</att> attributes identify the location where the custos appears.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="date" module="MEI.shared">
@@ -5020,7 +5055,7 @@
     </attList>
     <remarks>
       <p>The <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi scheme="MEI"
-          >depth</gi> elements are preferred when appropriate.</p>
+        >depth</gi> elements are preferred when appropriate.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="dimensions" module="MEI.shared">
@@ -5051,9 +5086,9 @@
     </constraintSpec>
     <remarks>
       <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, <gi scheme="MEI"
-          >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require
-        the capture of the individual dimensions of an object. Do not confuse this element with the
-          <gi scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
+        >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require the
+        capture of the individual dimensions of an object. Do not confuse this element with the <gi
+        scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
         materials.</p>
     </remarks>
     <remarks>
@@ -5065,7 +5100,7 @@
     <desc>(directive) – An instruction expressed as a combination of text and symbols — such as
       segno and coda symbols, fermatas over a bar line, etc., typically above, below, or between
       staves, but not on the staff — that is not encoded elsewhere in more specific elements, like
-        <gi scheme="MEI">tempo</gi> or <gi scheme="MEI">dynam</gi>.</desc>
+      <gi scheme="MEI">tempo</gi> or <gi scheme="MEI">dynam</gi>.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -5101,8 +5136,8 @@
         they can be linked via their attributes to other events. The starting point of the directive
         may be indicated by either a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>,
         or <att>tstamp.real</att> attribute, while the ending point may be recorded by either a
-          <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att> attribute. It
-        is a semantic error not to specify a starting point attribute.</p>
+        <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att> attribute. It is
+        a semantic error not to specify a starting point attribute.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="distributor" module="MEI.shared">
@@ -5240,9 +5275,9 @@
     </content>
     <remarks>
       <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
-          >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific
-        display info, such as size or color, needs to be recorded for the dot. This element may also
-        be used for dots of division in the mensural repertoire.</p>
+        >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific display
+        info, such as size or color, needs to be recorded for the dot. This element may also be used
+        for dots of division in the mensural repertoire.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="dynam" module="MEI.shared">
@@ -5288,9 +5323,9 @@
         e.g. 'p', 'mf', or 'cresc. poco a poco'. The <gi scheme="MEI">hairpin</gi> element should be
         used for <emph>graphical</emph>, i.e., crescendo and diminuendo, dynamic markings. The
         starting point of the dynamic marking may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
         ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
-          <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify a
+        <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify a
         starting point attribute. MIDI values associated with the graphical dynamic sign may be
         recorded in the <att>val</att> and <att>val2</att> attributes.</p>
     </remarks>
@@ -5472,8 +5507,8 @@
         event took place. An <gi scheme="MEI">eventList</gi> describes events associated with a work
         when it appears in the <gi scheme="MEI">workDesc</gi> element or events associated with the
         custodial history of a given copy of a source for the encoding when it appears within the
-          <gi scheme="MEI">source</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
-          <att>type</att> attribute may be used to distinguish between event lists with different
+        <gi scheme="MEI">source</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
+        <att>type</att> attribute may be used to distinguish between event lists with different
         functions, such as a list of events in the compositional process and a list of performance
         dates.</p>
     </remarks>
@@ -5492,10 +5527,10 @@
     </content>
     <remarks>
       <p>The <att>plist</att> attribute contains an ordered list of identifiers of descendant <gi
-          scheme="MEI">section</gi>, <gi scheme="MEI">ending</gi>, <gi scheme="MEI">lem</gi>, or <gi
-          scheme="MEI">rdg</gi> elements. For example, the sequence "#A #End1 #A #End2" indicates
-        that the section labelled 'A' comes first, then the ending labelled 'End1', followed by the
-        'A' section again, and finally the ending labelled 'End2'.</p>
+        scheme="MEI">section</gi>, <gi scheme="MEI">ending</gi>, <gi scheme="MEI">lem</gi>, or <gi
+        scheme="MEI">rdg</gi> elements. For example, the sequence "#A #End1 #A #End2" indicates that
+        the section labelled 'A' comes first, then the ending labelled 'End1', followed by the 'A'
+        section again, and finally the ending labelled 'End2'.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="extent" module="MEI.shared">
@@ -5520,7 +5555,7 @@
     </content>
     <remarks>
       <p>Use the <gi scheme="MEI">dimensions</gi> element when it is necessary to specify the <hi
-          rend="bold">physical</hi> size of materials being described, for example, height and
+        rend="bold">physical</hi> size of materials being described, for example, height and
         width.</p>
     </remarks>
     <remarks>
@@ -5635,7 +5670,7 @@
     </constraintSpec>
     <remarks>
       <p>This element provides an alternative to the <gi scheme="MEI">staffGrp</gi> element's
-          <att>symbol</att> attribute. It may be used when exact placement or editorial details for
+        <att>symbol</att> attribute. It may be used when exact placement or editorial details for
         the grouping symbol must be recorded.</p>
     </remarks>
   </elementSpec>
@@ -5790,7 +5825,7 @@
     </content>
     <remarks>
       <p>The <gi scheme="MEI">incipText</gi> element may be used to capture a text incipit, while
-          <gi scheme="MEI">score</gi> is available to provide an MEI-encoded musical incipit. Images
+        <gi scheme="MEI">score</gi> is available to provide an MEI-encoded musical incipit. Images
         of an incipit may be referenced using the <gi scheme="MEI">graphic</gi> element. An incipit
         encoded in a text format other than MEI may be placed in the <gi scheme="MEI">incipCode</gi>
         element.</p>
@@ -5834,8 +5869,8 @@
     </attList>
     <remarks>
       <p>It is a semantic error not to provide one of the following: the <att>x</att> and
-          <att>y</att> pair of attributes, the <att>pname</att> and <att>oct</att> pair of
-        attributes, or the <att>loc</att> attribute.</p>
+        <att>y</att> pair of attributes, the <att>pname</att> and <att>oct</att> pair of attributes,
+        or the <att>loc</att> attribute.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="keySig" module="MEI.shared">
@@ -5959,7 +5994,7 @@
         connection with a <gi scheme="MEI">layerDef</gi> element where logical and visual
         information about the layer is recorded. Alternatively, the <att>n</att> attribute may be
         used as a reference to a <gi scheme="MEI">layerDef</gi> element with the same value in its
-          <att>n</att> attribute. If neither <att>def</att> nor <att>n</att> attributes are present,
+        <att>n</att> attribute. If neither <att>def</att> nor <att>n</att> attributes are present,
         then encoding order of the layers is presumed to match the encoding order of the layer
         definitions.</p>
     </remarks>
@@ -6119,12 +6154,12 @@
         music. The score view is the traditional full and open score while the parts view contains
         each performer's view of the score; that is, his part. These 2 views are necessary because
         it is not always possible or desirable to generate one from the other. The <gi scheme="MEI"
-          >score</gi> and <gi scheme="MEI">parts</gi> elements are placed here and not directly
-        within the <gi scheme="MEI">body</gi> element because score and part characteristics may
-        change from <gi scheme="MEI">mdiv</gi> to <gi scheme="MEI">mdiv</gi>. For example, the 2nd
-        movement of a symphony may require different performing forces (and therefore different
-        score and part layout) than the other movements. The <gi scheme="MEI">mdiv</gi> element may
-        be recursively nested in order to represent music which exhibits this kind of structure. For
+        >score</gi> and <gi scheme="MEI">parts</gi> elements are placed here and not directly within
+        the <gi scheme="MEI">body</gi> element because score and part characteristics may change
+        from <gi scheme="MEI">mdiv</gi> to <gi scheme="MEI">mdiv</gi>. For example, the 2nd movement
+        of a symphony may require different performing forces (and therefore different score and
+        part layout) than the other movements. The <gi scheme="MEI">mdiv</gi> element may be
+        recursively nested in order to represent music which exhibits this kind of structure. For
         example, an opera is normally divided into acts, which are in turn divided into scenes.</p>
     </remarks>
   </elementSpec>
@@ -6238,23 +6273,23 @@
     <remarks>
       <p>Contains the name of an entity that is difficult to tag more specifically, for example, as
         a <gi scheme="MEI">corpName</gi>, <gi scheme="MEI">geogName</gi>, <gi scheme="MEI"
-          >persName</gi>, or <gi scheme="MEI">title</gi>. The <gi scheme="MEI">name</gi> element may
+        >persName</gi>, or <gi scheme="MEI">title</gi>. The <gi scheme="MEI">name</gi> element may
         be used in place of the more specific elements when it is not known what kind of name is
         being described or when a high degree of precision is not necessary. For example, the <gi
-          scheme="MEI">name</gi> element might be used when it is not clear whether the name "Bach"
+        scheme="MEI">name</gi> element might be used when it is not clear whether the name "Bach"
         refers to a person or a geographic feature. The <gi scheme="MEI">name</gi> element may be
         used for an individual, such as 'Henry VIII, King of England'; a corporate body, such as
         'The Beatles'; a geographical place; an expanse of time, such as 'The Romantic Era'; or a
         mechanical (often generative) process. When name parts are needed, <gi scheme="MEI"
-          >name</gi> sub-elements are recommended. The recommended values for the <att>type</att>
+        >name</gi> sub-elements are recommended. The recommended values for the <att>type</att>
         attribute are: person, corporation, location, period, and process. Dates associated with
-          <emph>the name</emph> (not necessarily the same as those pertaining to the <emph>entity
-          described by the name</emph>) may be recorded using <att>startdate</att>,
-          <att>enddate</att>, <att>notbefore</att>, <att>notafter</att>, and <att>isodate</att>
+        <emph>the name</emph> (not necessarily the same as those pertaining to the <emph>entity
+        described by the name</emph>) may be recorded using <att>startdate</att>,
+        <att>enddate</att>, <att>notbefore</att>, <att>notafter</att>, and <att>isodate</att>
         attributes. The name of the list from which a controlled value is taken, such as the
         Thesaurus of Geographic Names (TGN) or Library of Congress Name Authority File (LCNAF), and
         its electronically-available location may be recorded using the <att>auth</att> and
-          <att>auth.uri</att> attributes.</p>
+        <att>auth.uri</att> attributes.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -6262,8 +6297,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="note" module="MEI.shared">
-    <desc>A single pitched event. <!-- (Read, p. 63) -->
-    </desc>
+    <desc>A single pitched event. <!-- (Read, p. 63) --> </desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -6291,7 +6325,7 @@
         instead of the note element's attributes when accid and artic represent first-class objects,
         e.g., when they require attributes, such as <att>x</att> and <att>y</att> location
         attributes. Similarly, the <gi scheme="MEI">syl</gi> sub-element may be used instead of the
-          <att>syl</att> attribute. The verse sub-element may be used to group text syllables by
+        <att>syl</att> attribute. The verse sub-element may be used to group text syllables by
         verse. The <att>colored</att> attribute may be used to indicate coloration. In the mensural
         repertoire, coloration is a temporary change in the underlying mensuration from perfect to
         imperfect. In the CMN repertoire, coloration is an inversion of the note head's normal
@@ -6367,7 +6401,7 @@
       <p>The glyph of the ornament may be indicated with the <att>altsym</att> attribute, and it is
         recommended to provide an expansion of the ornament on the staff content. The starting point
         of the ornament may be indicated by either a <att>startid</att>, <att>tstamp</att>,
-          <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic error not to
+        <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic error not to
         specify one of these attributes.</p>
     </remarks>
   </elementSpec>
@@ -6441,10 +6475,9 @@
       </rng:zeroOrMore>
     </content>
     <remarks>
-      <p>
-        <gi scheme="MEI">part</gi> elements are not used in MEI to indicate voice leading.
-          <att>next</att> attributes on event elements should be used for this purpose. <gi
-          scheme="MEI">part</gi> elements are useful for encoding individual parts when there is no
+      <p> <gi scheme="MEI">part</gi> elements are not used in MEI to indicate voice leading.
+        <att>next</att> attributes on event elements should be used for this purpose. <gi
+        scheme="MEI">part</gi> elements are useful for encoding individual parts when there is no
         score, such as early music part books, when the music has non-aligning bar lines, when
         different layout, such as page turns, are needed for the score and parts, or for
         accommodating software that requires part-by-part encoding. When assembly of the parts into
@@ -6556,9 +6589,9 @@
         printed music. It may also be used for similarly formatted material in manuscripts. When
         used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
         page footers established by the use of <gi scheme="MEI">pgFoot</gi> within a previous <gi
-          scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
+        scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="pgFoot2" module="MEI.shared">
@@ -6632,9 +6665,9 @@
         printed music. It may also be used for similarly formatted material in manuscripts. When
         used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
         page headers established by the use of <gi scheme="MEI">pgHead</gi> within a previous <gi
-          scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
+        scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="pgHead2" module="MEI.shared">
@@ -6671,7 +6704,7 @@
         second and succeeding pages of printed music. It may also be used for similarly formatted
         material in manuscripts. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="phrase" module="MEI.shared">
@@ -6721,15 +6754,15 @@
         distinction for historical reasons may do so. If the user does not want to maintain the
         distinction, then the more generic <gi scheme="MEI">slur</gi> element should be employed.
         The starting point of the phrase/slur may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
         ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
-          <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify
-        one starting and one ending type of attribute. Either <att>place</att>, <att>bulge</att>, or
-          <att>bezier</att> attributes may be used to record the curvature of the phrase/slur. The
-          <gi scheme="MEI">slur</gi> and <gi scheme="MEI">tie</gi> elements may be used instead of
-        the slur.* and tie.* attributes provided on <gi scheme="MEI">chord</gi> and <gi scheme="MEI"
-          >note</gi> elements when 1) they are required by software, or 2) multiple, alternative
-        slurs are needed.</p>
+        <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify one
+        starting and one ending type of attribute. Either <att>place</att>, <att>bulge</att>, or
+        <att>bezier</att> attributes may be used to record the curvature of the phrase/slur. The <gi
+        scheme="MEI">slur</gi> and <gi scheme="MEI">tie</gi> elements may be used instead of the
+        slur.* and tie.* attributes provided on <gi scheme="MEI">chord</gi> and <gi scheme="MEI"
+        >note</gi> elements when 1) they are required by software, or 2) multiple, alternative slurs
+        are needed.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="physLoc" module="MEI.shared">
@@ -6849,9 +6882,9 @@
     <attList>
       <attDef ident="rel" usage="req">
         <desc>Describes the relationship between the entity identified by the <gi scheme="MEI"
-            >relatedItem</gi> element and the resource described in the parent element, i.e., <gi
-            scheme="MEI">bibl</gi>, <gi scheme="MEI">source</gi> or <gi scheme="MEI"
-            >relatedItem</gi>.</desc>
+          >relatedItem</gi> element and the resource described in the parent element, i.e., <gi
+          scheme="MEI">bibl</gi>, <gi scheme="MEI">source</gi> or <gi scheme="MEI"
+          >relatedItem</gi>.</desc>
         <datatype>
           <rng:ref name="data.MODSRELATIONSHIP"/>
         </datatype>
@@ -6946,11 +6979,11 @@
       <p>The <att>plist</att> and <att>target</att> attributes identify the participants in a
         relationship, while the <att>rel</att> attribute describes the nature of their relationship.
         A mutual relationship can be described using only the <att>plist</att> attribute – the
-          <att>target</att> attribute is not necessary. In a non-mutual relationship,
-          <att>plist</att> identifies the entities pointed "from", while <att>target</att> specifies
-        the entities pointed "to". If the <att>target</att> attribute is present, but the
-          <att>plist</att> is not, the relationship is presumed to exist between the parent of the
-        current relation element and the entities identified by <att>target</att>.</p>
+        <att>target</att> attribute is not necessary. In a non-mutual relationship, <att>plist</att>
+        identifies the entities pointed "from", while <att>target</att> specifies the entities
+        pointed "to". If the <att>target</att> attribute is present, but the <att>plist</att> is
+        not, the relationship is presumed to exist between the parent of the current relation
+        element and the entities identified by <att>target</att>.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="relationList" module="MEI.shared">
@@ -7054,7 +7087,7 @@
     </content>
     <remarks>
       <p>The name of the list from which a controlled value is taken may be recorded using the
-          <att>auth</att> attribute.</p>
+        <att>auth</att> attribute.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -7091,7 +7124,8 @@
             count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
             role="warning">At least one element pair (a resp element and a name-like element) is
             recommended. Alternatively, each name-like element may have a @role
-            attribute.</sch:assert></sch:rule>
+            attribute.</sch:assert>
+        </sch:rule>
       </constraint>
     </constraintSpec>
     <remarks>
@@ -7522,9 +7556,9 @@
     </constraintSpec>
     <remarks>
       <p>The <att>def</att> attribute may be used to create a connection with a <gi scheme="MEI"
-          >staffDef</gi> element where logical and visual information about the staff is recorded.
+        >staffDef</gi> element where logical and visual information about the staff is recorded.
         Alternatively, the <att>n</att> attribute may be used as a reference to a <gi scheme="MEI"
-          >staffDef</gi> element with the same value in its <att>n</att> attribute or the staff may
+        >staffDef</gi> element with the same value in its <att>n</att> attribute or the staff may
         contain a staffDef element that defines it. If neither <att>def</att> nor <att>n</att>
         attributes are present, then the encoding order of the staves is presumed to match the
         encoding order of the staff definitions.</p>
@@ -7870,7 +7904,7 @@
         combination of other, independent terms.</p>
       <p>To associate a term with a taxonomy category defined in the MEI metadata header, the value
         of <att>class</att> must contain a fragment identifier corresponding to the appropriate <gi
-          scheme="MEI">term</gi> element. To associate a term with category in an externally-defined
+        scheme="MEI">term</gi> element. To associate a term with category in an externally-defined
         taxonomy, <att>class</att> must contain an absolute URI, which may include the fragment
         identifier of the element containing the category label.</p>
     </remarks>
@@ -8014,8 +8048,8 @@
         analysing titles and processing them according to their type; where such specialized
         processing is not necessary, there is no need for such analysis, and the entire title,
         including subtitles and any parallel titles, may be enclosed within a single <gi
-          scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
-          >titlePart</gi> sub-elements. The name of the list from which a controlled value is taken
+        scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
+        >titlePart</gi> sub-elements. The name of the list from which a controlled value is taken
         may be recorded using the <att>auth</att> attribute. The number of initial characters (such
         as those constituting an article or preposition) that should not be used for sorting a title
         or name may be indicated in the <att>nonfiling</att> attribute.</p>

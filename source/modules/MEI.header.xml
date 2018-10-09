@@ -54,6 +54,59 @@
       </rng:zeroOrMore>
     </content>
   </macroSpec>
+  <classSpec ident="att.bifoliumSurfaces" module="MEI.header" type="atts">
+    <desc>Attributes that link a bifolium element with a <gi scheme="MEI">surface</gi>
+      element.</desc>
+    <attList>
+      <attDef ident="outer.recto" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the outer recto
+          side of a (folded) sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+      <attDef ident="inner.verso" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the inner verso
+          side of a (folded) sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+      <attDef ident="inner.recto" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the inner recto
+          side of a (folded) sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+      <attDef ident="outer.verso" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the outer verso
+          side of a (folded) sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.foliumSurfaces" module="MEI.header" type="atts">
+    <desc>Attributes that link a folium element with a <gi scheme="MEI">surface</gi> element.</desc>
+    <attList>
+      <attDef ident="recto" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the recto side of
+          the sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+      <attDef ident="verso" usage="opt">
+        <desc>A reference to a <gi scheme="MEI">surface</gi> element positioned on the verso side of
+          the sheet.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.recordType" type="atts" module="MEI.header">
     <desc>Attributes that define the characteristics and components of the bibliographic
       description.</desc>
@@ -190,6 +243,9 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="model.bifoliumLike" type="model" module="MEI.header">
+    <desc>Collects bifoliumlike elements.</desc>
+  </classSpec>
   <classSpec ident="model.editorialDeclPart" module="MEI.header" type="model">
     <desc>Groups elements that may appear as part of a description of the editorial process applied
       to the encoding of notation.</desc>
@@ -200,12 +256,18 @@
   <classSpec ident="model.eventPart" type="model" module="MEI.header">
     <desc>Groups elements that may be used to provide a structured description of an event.</desc>
   </classSpec>
+  <classSpec ident="model.foliumLike" type="model" module="MEI.header">
+    <desc>Collects foliumlike elements.</desc>
+  </classSpec>
   <classSpec ident="model.frontAndBackPart" module="MEI.header" type="model">
     <desc>Groups elements that may appear as part of auxiliary material preceding or following the
       text proper.</desc>
   </classSpec>
   <classSpec ident="model.headerPart" module="MEI.header" type="model">
     <desc>Groups elements that may appear as part of the MEI metadata header.</desc>
+  </classSpec>
+  <classSpec ident="model.paperModLike" type="model" module="MEI.header">
+    <desc>Groups elements dealing with modifications of document pages.</desc>
   </classSpec>
   <classSpec ident="model.physDescPart" module="MEI.header" type="model">
     <desc>Groups elements that may appear as part of the physical description of a bibliographic
@@ -408,6 +470,31 @@
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
         Archival Description (EAD) standards.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="bifolium" module="MEI.header">
+    <desc>Describes a folded sheet of paper.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.common.anl"/>
+      <memberOf key="att.dimensions"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.bifoliumSurfaces"/>
+      <memberOf key="model.bifoliumLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.foliumLike"/>
+          <rng:ref name="model.bifoliumLike"/>
+          <rng:ref name="model.paperModLike"/>
+          <rng:ref name="del"/>
+          <rng:ref name="add"/>
+          <rng:ref name="damage"/>
+          <rng:ref name="gap"/>
+          <rng:ref name="restore"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
   </elementSpec>
   <elementSpec ident="byline" module="MEI.header">
     <desc>Contains the primary statement of responsibility given for a work on its title
@@ -797,6 +884,84 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="cutout" module="MEI.header">
+    <desc>A cutout is a section of a document sheet that has been removed and is now missing.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="att.dimensions"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.trans"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="model.paperModLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.foliumLike"/>
+          <rng:ref name="model.bifoliumLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="removed.from" usage="req">
+        <desc>Describes the position of the cutout on the parent folium / bifolium.</desc>
+        <valList type="closed">
+          <valItem ident="outer.recto">
+            <desc>removed from outer recto side of bifolium.</desc>
+          </valItem>
+          <valItem ident="inner.verso">
+            <desc>removed from inner verso side of bifolium.</desc>
+          </valItem>
+          <valItem ident="inner.recto">
+            <desc>removed from inner recto side of bifolium.</desc>
+          </valItem>
+          <valItem ident="outer.verso">
+            <desc>removed from outer verso side of bifolium.</desc>
+          </valItem>
+          <valItem ident="recto">
+            <desc>removed from recto side of folium.</desc>
+          </valItem>
+          <valItem ident="verso">
+            <desc>removed from verso side of folium.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="removed.by" usage="opt">
+        <desc>Describes the method of removing the cutout.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="cut">
+            <desc>section is cleanly cut by a knife, scissor or other sharp blade.</desc>
+          </valItem>
+          <valItem ident="rip">
+            <desc>section is ripped off the page, leaving a rough edge.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>The dimensions (@width, @height) of the parent element (e.g. <gi scheme="MEI">folium</gi>)
+        indicate the size of the bounding box of the remaining part of the page. That is, if the
+        complete lower half of a page has been cut, the @width and @height attributes describe the
+        remaining upper half. If, in contrast, only the lower right quarter of the page has been
+        cut, these attributes still indicate the size of the full page (assuming that the removed
+        section was a regular rectangle).</p>
+    </remarks>
+    <remarks>
+      <p>The dimensions (@width, @height) on <gi scheme="MEI">cutout</gi> itself are only to be used
+        when there is a "gap" in the manuscript that allows to specify the dimensions of that
+        missing part. In this case, the bounding box dimensions are given, together with @x and @y
+        to indicate the upper left point on the original page. If, however, the removed section is
+        available by itself, then a corresponding <gi scheme="MEI">folium</gi> (or <gi scheme="MEI"
+        >bifolium</gi>) should be placed inside the <gi scheme="MEI">cutout</gi> element, and should
+        provide it's own dimensions using @width and @height there. In this case, @width and @height
+        on <gi scheme="MEI">cutout</gi> is expendable.</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="dedication" module="MEI.header">
     <desc>Contains a dedicatory statement.</desc>
     <classes>
@@ -1048,6 +1213,55 @@
     <content>
       <rng:text/>
     </content>
+  </elementSpec>
+  <elementSpec ident="foliaDesc" module="MEI.header">
+    <desc>Describes the order of folia and bifolia making up the text block of a manuscript or
+      print.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.foliumLike"/>
+          <rng:ref name="model.bifoliumLike"/>
+          <rng:ref name="del"/>
+          <rng:ref name="add"/>
+          <rng:ref name="damage"/>
+          <rng:ref name="gap"/>
+          <rng:ref name="restore"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The purpose of <gi scheme="MEI">foliaDesc</gi> is to transcribe the addition and removal of
+        pages as part of physical modifications to a document. Missing pages may be indicated using
+        the <gi scheme="MEI">gap</gi> element. The <gi scheme="MEI">folium</gi> and <gi scheme="MEI"
+        >bifolium</gi> children describe the physical order of <gi scheme="MEI">surface</gi>
+        elements provided elsewhere.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="folium" module="MEI.header">
+    <desc>Describes a single leaf of paper.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.common.anl"/>
+      <memberOf key="att.dimensions"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.foliumSurfaces"/>
+      <memberOf key="model.foliumLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.paperModLike"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>When the exact folium setup can't be identified, it is advised to use <gi scheme="MEI"
+        >folium</gi> elements only (and not guess about the presence of <gi scheme="MEI"
+        >bifolium</gi>s in the document).</p>
+    </remarks>
   </elementSpec>
   <elementSpec ident="hand" module="MEI.header">
     <desc>Defines a distinct scribe or handwriting style.</desc>
@@ -1523,6 +1737,96 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
+  </elementSpec>
+  <elementSpec ident="patch" module="MEI.header">
+    <desc>Describes a physical writing surface attached to the original document.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.trans"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="model.paperModLike"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:ref name="model.foliumLike"/>
+        <rng:ref name="model.bifoliumLike"/>
+      </rng:choice>
+    </content>
+    <constraintSpec ident="check_attached_position" scheme="schematron" mode="add">
+      <constraint>
+        <sch:rule context="mei:patch">
+          <sch:assert
+            test="(parent::mei:folium and @attached.to = ('recto','verso')) or 
+            (parent::mei:bifolium and @attached.to = ('outer.recto','inner.verso','inner.recto','outer.verso'))"
+            >The allowed positions of a patch depend on its parent element.</sch:assert>
+          <sch:assert test="count(child::node()) gt 0">A patch element must contain either a folium
+            or a bifolium element.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="attached.to" usage="req">
+        <desc>Describes the position of the patch on the parent folium / bifolium.</desc>
+        <valList type="closed">
+          <valItem ident="outer.recto">
+            <desc>patch attached to outer recto side of bifolium.</desc>
+          </valItem>
+          <valItem ident="inner.verso">
+            <desc>patch attached to inner verso side of bifolium.</desc>
+          </valItem>
+          <valItem ident="inner.recto">
+            <desc>patch attached to inner recto side of bifolium.</desc>
+          </valItem>
+          <valItem ident="outer.verso">
+            <desc>patch attached to outer verso side of bifolium.</desc>
+          </valItem>
+          <valItem ident="recto">
+            <desc>patch attached to recto side of folium.</desc>
+          </valItem>
+          <valItem ident="verso">
+            <desc>patch attached to verso side of folium.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="attached.by" usage="opt">
+        <desc>Describes the method of attachment of the patch.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="glue">
+            <desc>patch is glued on surface beneath.</desc>
+          </valItem>
+          <valItem ident="thread">
+            <desc>patch is sewn on surface beneath.</desc>
+          </valItem>
+          <valItem ident="needle">
+            <desc>patch is pinned to the surface beneath.</desc>
+          </valItem>
+          <valItem ident="tape">
+            <desc>patch is taped on surface beneath using an adhesive strip.</desc>
+          </valItem>
+          <valItem ident="staple">
+            <desc>patch is attached on surface beneath using a staple.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>A patch must always contain a <gi scheme="MEI">folium</gi> or <gi scheme="MEI"
+        >bifolium</gi> element. The @x and @y attributes are used to position the patch on its
+        parent surface by indicating the upper left corner of the patch. The size of the patch is
+        encoded using the @height and @width attributes on the child folium (or bifolium).</p>
+    </remarks>
+    <!--<remarks>
+            <p>TODO: It remains unclear how to specify which part of the patch is attached to the
+              underlying surface. Right now, the assumption is that it is always attached with the
+              patch's verso (or outer.verso) side, but what about patches that can be folded up or
+              down?</p>
+          </remarks>-->
   </elementSpec>
   <elementSpec ident="perfDuration" module="MEI.header">
     <desc>(performance duration) – Used to express the duration of performance of printed or
