@@ -1552,7 +1552,10 @@
         <rng:ref name="encodingDesc"/>
       </rng:optional>
       <rng:optional>
-        <rng:ref name="workDesc"/>
+        <rng:ref name="workList"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="manifestationList"/>
       </rng:optional>
       <rng:zeroOrMore>
         <rng:ref name="extMeta"/>
@@ -1561,7 +1564,7 @@
         <rng:ref name="revisionDesc"/>
       </rng:optional>
     </content>
-    <constraintSpec ident="check_meiHead_type" scheme="isoschematron">
+    <constraintSpec ident="check_meiHead_type" scheme="schematron">
       <constraint>
         <sch:rule context="mei:meiHead[@type eq 'music']">
           <sch:assert test="ancestor::mei:mei">The meiHead type attribute can have the value 'music'
@@ -1601,7 +1604,7 @@
         information is often essential in a machine-readable environment. Five sub-elements must be
         encoded in the following order: <gi scheme="MEI">altId</gi>(optional), <gi scheme="MEI"
         >fileDesc</gi>(required), <gi scheme="MEI">encodingDesc</gi>(optional), <gi scheme="MEI"
-        >workDesc</gi>(optional), and <gi scheme="MEI">revisionDesc</gi>(optional). These elements
+        >workList</gi>(optional), and <gi scheme="MEI">revisionDesc</gi>(optional). These elements
         and their sub-elements provide: a unique identifier for the MEI file, bibliographic
         information about the MEI file and its sources, information about the encoding process,
         information about the creation of the work being encoded, and statements regarding
@@ -2315,8 +2318,8 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="source" module="MEI.header">
-    <desc>A bibliographic description of a source used in the creation of the electronic file or the
-      physical embodiment of an expression of a work.</desc>
+    <desc>A bibliographic description of a source used in the creation of the electronic
+      file.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -2326,7 +2329,6 @@
       <memberOf key="att.pointing"/>
       <memberOf key="att.recordType"/>
       <memberOf key="att.targetEval"/>
-      <memberOf key="model.manifestationLike"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -2339,47 +2341,12 @@
         </rng:choice>
       </rng:zeroOrMore>
       <rng:zeroOrMore>
-        <rng:ref name="model.identifierLike"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="titleStmt"/>
-      </rng:optional>
-      <rng:ref name="macro.bibldescPart"/>
-      <rng:optional>
-        <rng:ref name="creation"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="history"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="langUsage"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="contents"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="biblList"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="notesStmt"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="classification"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="itemList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="componentList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="relationList"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="extMeta"/>
+        <rng:choice>
+          <rng:ref name="model.biblLike"/>
+        </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_source_target" scheme="isoschematron">
+    <constraintSpec ident="check_source_target" scheme="schematron">
       <constraint>
         <sch:rule context="mei:source/@target">
           <sch:assert role="warning" test="not(normalize-space(.) eq '')">@target attribute should
@@ -2393,11 +2360,10 @@
       </constraint>
     </constraintSpec>
     <remarks>
-      <p>In the file description context, this element contains, or references via its
-        <att>target</att> attribute, a description of a source used in the creation of the
-        electronic file. In the context of a work or expression description, it contains, or
-        references, a description of a physical embodiment of an expression of a work; i.e., a
-        manifestation.</p>
+      <p>This element contains, or references via its <att>target</att> attribute, a description of
+        a source used in the creation of the electronic file. For description of a physical
+        embodiment of an expression of a work use the <gi scheme="MEI">manifestation</gi>
+        element.</p>
       <p>The <att>data</att> attribute may be used to reference one or more musical features found
         in the content of this particular source.</p>
     </remarks>
@@ -2841,9 +2807,9 @@
         of the work.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="workDesc" module="MEI.header">
-    <desc>(work description) – Grouping mechanism for information describing non-bibliographic
-      aspects of a text.</desc>
+  <elementSpec ident="workList" module="MEI.header">
+    <desc>(work list) – Grouping mechanism for information describing non-bibliographic aspects of a
+      text.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="model.headerPart"/>

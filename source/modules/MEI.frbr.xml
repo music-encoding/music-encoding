@@ -363,4 +363,99 @@
       </rng:zeroOrMore>
     </content>
   </elementSpec>
+  <elementSpec ident="manifestation" module="MEI.frbr">
+    <desc>A bibliographic description of a physical embodiment of an expression of a work.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.componentType"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+      <memberOf key="model.manifestationLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="locus"/>
+          <rng:ref name="locusGrp"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="model.identifierLike"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="titleStmt"/>
+      </rng:optional>
+      <rng:ref name="macro.bibldescPart"/>
+      <rng:optional>
+        <rng:ref name="creation"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="history"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="langUsage"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="contents"/>
+      </rng:optional>
+      <rng:zeroOrMore>
+        <rng:ref name="biblList"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="notesStmt"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="classification"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="itemList"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="componentList"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="relationList"/>
+      </rng:optional>
+      <rng:zeroOrMore>
+        <rng:ref name="extMeta"/>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="check_singleton" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:manifestation[@singleton eq 'true']">
+          <sch:assert test="not(mei:itemList)">Item children are not permitted when @singleton
+            equals "true".</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="singleton">
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </elementSpec>
+  <elementSpec ident="manifestationList" module="MEI.frbr">
+    <desc>A container for the descriptions of physical embodiments of an expression of a
+      work.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:oneOrMore>
+        <rng:ref name="model.manifestationLike"/>
+      </rng:oneOrMore>
+    </content>
+  </elementSpec>
 </specGrp>

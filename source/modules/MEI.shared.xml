@@ -2810,20 +2810,20 @@
     <attList>
       <attDef ident="source" usage="opt">
         <desc>Contains a list of one or more pointers indicating the sources which attest to a given
-          reading. Each value should correspond to the ID of a <gi scheme="MEI">source</gi> element
-          located in the document header.</desc>
+          reading. Each value should correspond to the ID of a <gi scheme="MEI">source</gi> or <gi
+          scheme="MEI">manifestation</gi>element located in the document header.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_sourceTarget" scheme="isoschematron">
+        <constraintSpec ident="check_sourceTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@source">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@source attribute
                 should have content.</sch:assert>
               <sch:assert role="warning"
-                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:source/@xml:id"
-                >Each value in @source should correspond to the @xml:id attribute of a source
-                element.</sch:assert>
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[local-name() eq 'source' or local-name() eq 'manifestation']/@xml:id"
+                >Each value in @source should correspond to the @xml:id attribute of a source or
+                manifestation element.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -4211,6 +4211,34 @@
       <rng:empty/>
     </content>
   </elementSpec>
+  <elementSpec ident="analytic" module="MEI.shared">
+    <desc>(analytic level) – Contains bibliographic elements describing an item (e.g. an article or
+      poem) published within a monograph or journal and not as an independent publication.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.componentType"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.respLikePart"/>
+          <rng:ref name="respStmt"/>
+          <rng:ref name="title"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="biblScope"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="identifier"/>
+      </rng:optional>
+    </content>
+  </elementSpec>
   <elementSpec ident="annot" module="MEI.shared">
     <desc>(annotation) – Provides a statement explaining the text or indicating the basis for an
       assertion.</desc>
@@ -4499,6 +4527,40 @@
         values provided in the element content.</p>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="biblStruct" module="MEI.shared">
+    <desc>(structured bibliographic citation) – Contains a bibliographic citation in which
+      bibliographic sub-elements must appear in a specified order.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+      <memberOf key="model.biblLike"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="analytic"/>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:ref name="monogr"/>
+          <rng:zeroOrMore>
+            <rng:ref name="series"/>
+          </rng:zeroOrMore>
+        </rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="identifier"/>
+            <rng:ref name="relatedItem"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
   </elementSpec>
   <elementSpec ident="body" module="MEI.shared">
     <desc>Contains the whole of a single musical text, excluding any front or back matter.</desc>
@@ -5535,9 +5597,9 @@
       <p>An <gi scheme="MEI">eventList</gi> contains <gi scheme="MEI">event</gi> elements that
         capture a brief description of the associated event, including dates and locations where the
         event took place. An <gi scheme="MEI">eventList</gi> describes events associated with a work
-        when it appears in the <gi scheme="MEI">workDesc</gi> element or events associated with the
+        when it appears in the <gi scheme="MEI">workList</gi> element or events associated with the
         custodial history of a given copy of a source for the encoding when it appears within the
-        <gi scheme="MEI">source</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
+        <gi scheme="MEI">sourceDesc</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
         <att>type</att> attribute may be used to distinguish between event lists with different
         functions, such as a list of events in the compositional process and a list of performance
         dates.</p>
@@ -6223,6 +6285,84 @@
         The name of this element should not be changed by any customization in order to assure an
         absolute minimum level of MEI compliance.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="monogr" module="MEI.shared">
+    <desc>(monograph level) – Contains bibliographic elements describing an item, for example, a
+      published book or journal, score, recording, or an unpublished manuscript.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:optional>
+          <rng:choice>
+            <rng:group>
+              <rng:choice>
+                <rng:ref name="model.respLikePart"/>
+                <rng:ref name="respStmt"/>
+              </rng:choice>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="model.respLikePart"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+              <rng:oneOrMore>
+                <rng:ref name="model.titleLike"/>
+              </rng:oneOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="editor"/>
+                  <rng:ref name="model.identifierLike"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:group>
+            <rng:group>
+              <rng:oneOrMore>
+                <rng:ref name="model.titleLike"/>
+              </rng:oneOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="model.respLikePart"/>
+                  <rng:ref name="model.identifierLike"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:group>
+          </rng:choice>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="corpName"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.editionLike"/>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="editor"/>
+              <rng:ref name="respStmt"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:zeroOrMore>
+        <rng:ref name="imprint"/>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="imprint"/>
+            <rng:ref name="extent"/>
+            <rng:ref name="biblScope"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
   </elementSpec>
   <elementSpec ident="music" module="MEI.shared">
     <desc>Contains a single musical text of any kind, whether unitary or composite, for example, an
