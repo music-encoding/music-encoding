@@ -454,6 +454,40 @@
       <memberOf key="att.lineRend"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.episema.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <!-- Use @tilt here instead of @form? -->
+      <attDef ident="form" usage="rec">
+        <valList type="closed">
+          <valItem ident="h">
+            <desc>Horizontal stroke.</desc>
+          </valItem>
+          <valItem ident="v">
+            <desc>Vertical stroke.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="place" usage="rec">
+        <desc>Captures the placement of the episema with respect to the neume or neume component
+          with which it is associated.</desc>
+        <datatype>
+          <rng:ref name="data.EVENTREL"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.f.vis" module="MEI.visual" type="atts">
     <desc>Visual domain attributes.</desc>
     <classes>
@@ -682,6 +716,35 @@
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.hispanTick.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <attDef ident="place" usage="rec">
+        <desc>Captures the placement of the tick mark with respect to the neume or neume component
+          with which it is associated.</desc>
+        <datatype>
+          <rng:ref name="data.EVENTREL"/>
+        </datatype>
+      </attDef>
+      <attDef ident="tilt" usage="rec">
+        <desc>Direction toward which the mark points.</desc>
+        <datatype>
+          <rng:ref name="data.COMPASSDIRECTION"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.instrDef.vis" module="MEI.visual" type="atts">
     <desc>Visual domain attributes.</desc>
   </classSpec>
@@ -818,6 +881,39 @@
             </datatype>
           </attDef>
         -->
+    </attList>
+  </classSpec>
+  <classSpec ident="att.liquescent.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <attDef ident="curve" usage="opt">
+        <desc>Records direction of curvature.</desc>
+        <valList type="closed">
+          <valItem ident="a">
+            <desc>Anti-clockwise curvature.</desc>
+          </valItem>
+          <valItem ident="c">
+            <desc>Clockwise curvature.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="loop" usage="opt">
+        <desc>Indicates whether curve is closed.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
     </attList>
   </classSpec>
   <classSpec ident="att.lv.vis" module="MEI.visual" type="atts">
@@ -1075,132 +1171,31 @@
       <memberOf key="att.altSym"/>
       <memberOf key="att.color"/>
       <memberOf key="att.extSym"/>
+      <memberOf key="att.ncForm"/>
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
     </classes>
-    <attList>
-      <attDef ident="angled" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="con" usage="opt">
-        <desc>Connection to the previous component within the same neume.</desc>
-        <constraintSpec ident="nc_connection" scheme="isoschematron">
-          <constraint>
-            <sch:rule context="mei:nc[@con]">
-              <sch:let name="ncPosition" value="count(preceding-sibling::mei:nc) + 1"/>
-              <sch:assert test="not($ncPosition = 1)">The @con attribute is not allowed on the first
-                component of a neume.</sch:assert>
-            </sch:rule>
-          </constraint>
-        </constraintSpec>
-        <valList type="closed">
-          <valItem ident="g">
-            <desc>Gapped; not connected.</desc>
-          </valItem>
-          <valItem ident="l">
-            <desc>Looped.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-      <attDef ident="curved" usage="opt">
-        <desc/>
-        <valList type="closed">
-          <valItem ident="a">
-            <desc>Anti-clockwise curvature.</desc>
-          </valItem>
-          <valItem ident="c">
-            <desc>Clockwise curvature.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-      <attDef ident="diagonalright" usage="opt">
-        <desc/>
-        <valList type="closed">
-          <valItem ident="u">
-            <desc>Up.</desc>
-          </valItem>
-          <valItem ident="d">
-            <desc>Down.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-      <attDef ident="episema" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="extended" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="flat" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="jagged" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="liquescent" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="long" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="oriscus" usage="opt">
-        <desc/>
-        <valList type="closed">
-          <valItem ident="c">
-            <desc>Curved.</desc>
-          </valItem>
-          <valItem ident="f">
-            <desc>Flat.</desc>
-          </valItem>
-          <valItem ident="j">
-            <desc>Jagged.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-      <attDef ident="quilisma" usage="opt">
-        <desc/>
-        <valList type="closed">
-          <valItem ident="2">
-            <desc>2 curves.</desc>
-          </valItem>
-          <valItem ident="3">
-            <desc>3 curves.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-      <attDef ident="wavy" usage="opt">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
+  </classSpec>
+  <classSpec ident="att.ncGrp.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.color"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
   </classSpec>
   <classSpec ident="att.neume.vis" module="MEI.visual" type="atts">
     <desc>Visual domain attributes.</desc>
     <classes>
       <memberOf key="att.altSym"/>
       <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.typography"/>
@@ -1208,20 +1203,6 @@
       <memberOf key="att.visualOffset.ho"/>
       <memberOf key="att.xy"/>
     </classes>
-    <attList>
-      <attDef ident="hispanicloop">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="significativeletters">
-        <desc/>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.note.vis" module="MEI.visual" type="atts">
     <desc>Visual domain attributes.</desc>
@@ -1249,6 +1230,20 @@
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2.ho"/>
       <memberOf key="att.visualOffset2.to"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.oriscus.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
@@ -1348,6 +1343,31 @@
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.typography"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.quilisma.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <attDef ident="waves" usage="opt">
+        <desc>Number of "crests" of a wavy line.</desc>
+        <datatype>
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">2</rng:param>
+            <rng:param name="maxInclusive">4</rng:param>
+          </rng:data>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.rdg.vis" module="MEI.visual" type="atts">
     <desc>Visual domain attributes.</desc>
@@ -1455,6 +1475,29 @@
         <desc>Indicates that staves begin again with this section.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.signifLet.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <attDef ident="place" usage="rec">
+        <desc>Captures the placement of the sequence of characters with respect to the neume or
+          neume component with which it is associated.</desc>
+        <datatype>
+          <rng:ref name="data.EVENTREL"/>
         </datatype>
       </attDef>
     </attList>
@@ -1589,6 +1632,20 @@
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2.ho"/>
       <memberOf key="att.visualOffset2.to"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.strophicus.vis" module="MEI.visual" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.enclosingChars"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.staffLoc"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
