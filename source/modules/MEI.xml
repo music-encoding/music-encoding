@@ -2951,14 +2951,10 @@
     </content>
     <constraintSpec ident="constrain_place" scheme="isoschematron">
       <constraint>
-        <sch:rule
-          context="@place[matches(., 'above') or matches(., 'below')
-          or matches(., 'between') or matches(., 'within')]">
+        <sch:rule context="@place">
           <sch:assert
-            test="matches(normalize-space(.), '^above$') or
-            matches(normalize-space(.), '^below$') or
-            matches(normalize-space(.), '^between$') or
-            matches(normalize-space(.), '^within$')"
+            test="not((some $token in tokenize(normalize-space(.),' ') satisfies 
+            $token =('below','above','between','within')) and count(tokenize(normalize-space(.),' ')) gt 1)"
             >Other values not permitted when 'above', 'below', 'between' or 'within' is
             present.</sch:assert>
         </sch:rule>
