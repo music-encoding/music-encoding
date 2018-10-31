@@ -39,12 +39,12 @@ DOCS_VERSION_BUILD_FILE="${DOCS_DIRECTORY}/_includes/${OUTPUT_FOLDER}/build.txt"
 BUILD_DIR="build"
 CANONICALIZED_SCHEMA="${BUILD_DIR}/mei-canonicalized.xml"
 
-echo "Running documentation build"
-echo "<a href='https://github.com/music-encoding/music-encoding/commit/${SHA}'>Version ${SHORT_SHA}</a>" > ${DOCS_VERSION_BUILD_FILE}
-
 # Clone the docs repo.
 echo "Cloning ${DOCS_REPOSITORY}"
 git clone ${DOCS_REPOSITORY} ${DOCS_DIRECTORY}
+
+echo "Running documentation build"
+echo "<a href='https://github.com/music-encoding/music-encoding/commit/${SHA}'>Version ${SHORT_SHA}</a>" > ${DOCS_VERSION_BUILD_FILE}
 
 cd ${DOCS_DIRECTORY}
 
