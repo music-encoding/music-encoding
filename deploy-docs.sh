@@ -8,22 +8,19 @@
 # Changes to the major version of MEI should be reflected by updating the MEI_VERSION variable.
 
 set -e # Exit with nonzero exit code if anything fails
-MEI_VERSION="v3"
+MEI_VERSION="v4"
 
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
     echo "Will not build docs for pull requests. Skipping deploy."
     exit 0
 fi
 
-if [ "${TRAVIS_BRANCH}" == "develop" ]; then
-    OUTPUT_FOLDER="dev"
-    DOCS_BRANCH="master"
-elif [ "${TRAVIS_BRANCH}" == "master" ]; then
+# if [ "${TRAVIS_BRANCH}" == "develop" ]; then
+#     OUTPUT_FOLDER="dev"
+#     DOCS_BRANCH="master"
+if [ "${TRAVIS_BRANCH}" == "master" ]; then
     OUTPUT_FOLDER=${MEI_VERSION}
     DOCS_BRANCH="master"
-#elif [ "${TRAVIS_BRANCH}" == "feature-build-with-travis" ]; then  # to be removed when merged to develop.
-#    OUTPUT_FOLDER="dev"
-#    DOCS_BRANCH="develop"
 else
     echo "Will not build docs for branch ${TRAVIS_BRANCH}"
     exit 0
