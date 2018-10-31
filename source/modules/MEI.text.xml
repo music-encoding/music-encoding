@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.text">
+  <moduleSpec ident="MEI.text">
+    <desc>Text component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="model.backLike" module="MEI.text" type="model">
+    <desc>Groups elements that may contain back matter.</desc>
+    <classes>
+      <memberOf key="model.musicPart"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.divLike" module="MEI.text" type="model">
+    <desc>Groups elements used to represent generic structural divisions of text.</desc>
+  </classSpec>
+  <classSpec ident="model.frontLike" module="MEI.text" type="model">
+    <desc>Groups elements that may contain front matter.</desc>
+    <classes>
+      <memberOf key="model.musicPart"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.lgLike" module="MEI.text" type="model">
+    <desc>Groups elements that have a line-grouping function.</desc>
+    <classes>
+      <memberOf key="model.paracontentPart"/>
+      <memberOf key="model.textComponentLike"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.listLike" module="MEI.text" type="model">
+    <desc>Groups list-like elements.</desc>
+    <classes>
+      <memberOf key="model.paracontentPart"/>
+      <memberOf key="model.textComponentLike"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.lLike" module="MEI.text" type="model">
+    <desc>Groups elements representing metrical components such as verse lines.</desc>
+  </classSpec>
+  <classSpec ident="model.qLike" module="MEI.text" type="model">
+    <desc>Groups elements related to highlighting which can appear at the phrase-level.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.quoteLike" module="MEI.text" type="model">
+    <desc>Groups elements used to directly contain quotations.</desc>
+    <classes>
+      <memberOf key="model.paracontentPart"/>
+      <memberOf key="model.textComponentLike"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="argument" module="MEI.text">
+    <desc>Contains a formal list or prose description of topics addressed.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.titlePagePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.headLike"/>
+          <rng:ref name="model.milestoneLike.text"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.figureLike"/>
+          <rng:ref name="model.textComponentLike"/>
+          <rng:ref name="sp"/>
+        </rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="model.milestoneLike.text"/>
+        </rng:zeroOrMore>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="back" module="MEI.text">
+    <desc>(back matter) – Contains any appendixes, advertisements, indexes, etc. following the main
+      body of a musical text.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.backLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.divLike"/>
+          <rng:ref name="model.frontAndBackPart"/>
+          <rng:ref name="model.milestoneLike.text"/>
+          <rng:ref name="model.relationLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
+        Archival Description (EAD) standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="epigraph" module="MEI.text">
+    <desc>Contains a quotation, anonymous or attributed, appearing on a title page.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.titlePagePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.paracontentPart"/>
+          <rng:ref name="p"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="front" module="MEI.text">
+    <desc>(front matter) – Bundles prefatory text found before the start of the musical text.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.frontLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.divLike"/>
+          <rng:ref name="model.frontAndBackPart"/>
+          <rng:ref name="model.milestoneLike.text"/>
+          <rng:ref name="model.relationLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p> <gi scheme="MEI">titlePage</gi> may be used to transcribe the item's title page. Other
+        front matter structures, such as a preface, dedication, or table of contents, may be encoded
+        as textual divisions; that is, as <gi scheme="MEI">div</gi> elements, with an optional <gi
+        scheme="MEI">head</gi> sub-element describing the nature of the division. The <gi
+        scheme="MEI">pb</gi> element is allowed here in order to accommodate page images, e.g.
+        cover, endpapers, etc. before and after the actual textual matter.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
+        Archival Description (EAD) standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="imprimatur" module="MEI.text">
+    <desc>Contains a formal statement authorizing the publication of a work, sometimes required to
+      appear on a title page or its verso.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.titlePagePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.paracontentPart"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="l" module="MEI.text">
+    <desc>(line of text) – Contains a single line of text within a line group.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.lLike"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.sylLike"/>
+            <rng:ref name="model.textPhraseLike"/>
+            <rng:ref name="model.transcriptionLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <attList>
+      <attDef ident="rhythm" usage="opt">
+        <desc>Used to specify a rhythm for the lyric syllables that differs from that of the notes
+          on the staff, e.g., '4,4,4,4' when the rhythm of the notes is '4.,8,4.,8'.</desc>
+        <datatype>
+          <rng:data type="string"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>Do not confuse this element with the <gi scheme="MEI">line</gi> element, which is used for
+        graphical lines that occur in music notation.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="li" module="MEI.text">
+    <desc>(list item) – Single item in a <gi scheme="MEI">list</gi>.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textComponentLike"/>
+          <rng:ref name="model.textPhraseLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on elements in the Encoded Archival Description (EAD), Text
+        Encoding Initiative (TEI), and HTML standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="list" module="MEI.text">
+    <desc>A formatting element that contains a series of items separated from one another and
+      arranged in a linear, often vertical, sequence.</desc>
+    <classes>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.classed"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="model.listLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
+        <rng:ref name="li"/>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="list_type_constraint" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:list[contains(@type,'gloss')]">
+          <sch:assert test="count(mei:label) = count(mei:li)">In a list of type "gloss" all items
+            must be immediately preceded by a label.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="form" usage="opt">
+        <desc>Used to indicate the format of a list. In a "simple" list, <gi scheme="MEI">li</gi>
+          elements are not numbered or bulleted. In a "marked" list, the sequence of the list items
+          is not critical, and a bullet, box, dash, or other character is displayed at the start of
+          each <gi scheme="MEI">item</gi>. In an "ordered" list, the sequence of the items is
+          important, and each <gi scheme="MEI">li</gi> is lettered or numbered. Style sheet
+          functions should be used to specify the mark or numeration system for each <gi
+          scheme="MEI">li</gi>.</desc>
+        <valList type="closed">
+          <valItem ident="simple">
+            <desc>Items are not numbered or bulleted.</desc>
+          </valItem>
+          <valItem ident="marked">
+            <desc>Bullet, box, dash, or other character is displayed before each item.</desc>
+          </valItem>
+          <valItem ident="ordered">
+            <desc>Each item is numbered or lettered.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="type" usage="opt">
+        <desc>Captures the nature of the content of a list.</desc>
+        <datatype>
+          <rng:data type="NMTOKENS"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="gloss">
+            <desc>Each list item glosses some term or concept, which is given by a label element
+              preceding the list item.</desc>
+          </valItem>
+          <valItem ident="index">
+            <desc>Each list item is an entry in an index such as the alphabetical topical index at
+              the back of a print volume.</desc>
+          </valItem>
+          <valItem ident="instructions">
+            <desc>Each list item is a step in a sequence of instructions, as in a recipe.</desc>
+          </valItem>
+          <valItem ident="litany">
+            <desc>Each list item is one of a sequence of petitions, supplications or invocations,
+              typically in a religious ritual.</desc>
+          </valItem>
+          <valItem ident="syllogism">
+            <desc>Each list item is part of an argument consisting of two or more propositions and a
+              final conclusion derived from them.</desc>
+          </valItem>
+        </valList>
+        <remarks>
+          <p>In a list of type "gloss" it is a semantic error not to precede each list item with a
+            label.</p>
+        </remarks>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on elements in Encoded Archival Description (EAD), Text Encoding
+        Initiative (TEI), and HTML standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="q" module="MEI.text">
+    <desc>(quoted) – Contains material which is distinguished from the surrounding phrase-level text
+      using quotation marks or a similar method. Use <gi scheme="MEI">quote</gi> for block-level
+      quotations.</desc>
+    <classes>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.classed"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="model.qLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="type" usage="opt">
+        <datatype maxOccurs="unbounded">
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="spoken">
+            <desc>Representation of speech.</desc>
+          </valItem>
+          <valItem ident="thought">
+            <desc>Representation of thought, e.g. internal monologue.</desc>
+          </valItem>
+          <valItem ident="written">
+            <desc>Quotation from a written source.</desc>
+          </valItem>
+          <valItem ident="soCalled">
+            <desc>Authorial distance.</desc>
+          </valItem>
+          <valItem ident="foreign">
+            <desc>Linguistically distinct.</desc>
+          </valItem>
+          <valItem ident="distinct">
+            <desc>Linguistically distinct.</desc>
+          </valItem>
+          <valItem ident="term">
+            <desc>Technical term.</desc>
+          </valItem>
+          <valItem ident="emph">
+            <desc>Rhetorically emphasized.</desc>
+          </valItem>
+          <valItem ident="mentioned">
+            <desc>Refering to itself, not its normal referent.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element may be used for a variety of reasons including, but not limited to: direct
+        speech or thought, technical terms or jargon, authorial distance, quotations from elsewhere,
+        and passages that are mentioned but not used.</p>
+      <p>Do not confuse this element, used to capture phrase-level quotations, and <gi scheme="MEI"
+        >quote</gi>, intended for block quotations.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on elements found in HTML, TEI, and EAD standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="quote" module="MEI.text">
+    <desc>(quoted material) – Contains a paragraph-like block of text attributed to an external
+      source, normally set off from the surrounding text by spacing or other typographic
+      distinction.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.xy"/>
+      <memberOf key="model.quoteLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.paracontentPart"/>
+          <rng:ref name="model.pLike"/>
+          <rng:ref name="sp"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The source for the quote may be included in a <gi scheme="MEI">bibl</gi> sub-element.</p>
+      <p>Do not confuse this element, used to capture block-level quotations, and <gi scheme="MEI"
+        >q</gi>, intended for inline quotations.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on elements found in HTML, TEI, and EAD standards.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="seg" module="MEI.text">
+    <desc>(arbitrary segment) represents any segmentation of text below the "text component"
+      level.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.sylLike"/>
+          <rng:ref name="model.textPhraseLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>

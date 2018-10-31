@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.critapp">
+  <moduleSpec ident="MEI.critapp">
+    <desc>Critical apparatus component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.crit" module="MEI.critapp" type="atts">
+    <desc>Attributes common to all elements representing variant readings.</desc>
+    <classes>
+      <memberOf key="att.handIdent"/>
+      <memberOf key="att.sequence"/>
+      <memberOf key="att.source"/>
+    </classes>
+    <attList>
+      <attDef ident="cause" usage="opt">
+        <desc>Classifies the cause for the variant reading, according to any appropriate typology of
+          possible origins.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.rdg.log" module="MEI.critapp" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="model.appLike" module="MEI.critapp" type="model">
+    <desc>Groups elements that contain a critical apparatus entry.</desc>
+  </classSpec>
+  <classSpec ident="model.rdgPart" module="MEI.critapp" type="model">
+    <desc>Groups elements that may appear as part of a textual or musical variant.</desc>
+  </classSpec>
+  <classSpec ident="model.rdgPart.music" module="MEI.critapp" type="model">
+    <desc>Groups elements that may appear as part of a musical variant.</desc>
+    <classes>
+      <memberOf key="model.rdgPart"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.rdgPart.text" module="MEI.critapp" type="model">
+    <desc>Groups elements that may appear as part of a textual variant.</desc>
+    <classes>
+      <memberOf key="model.rdgPart"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="app" module="MEI.critapp">
+    <desc>(apparatus) – Contains one or more alternative encodings.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="model.appLike"/>
+    </classes>
+    <content>
+      <rng:optional>
+        <rng:ref name="lem"/>
+      </rng:optional>
+      <rng:ref name="rdg"/>
+      <rng:zeroOrMore>
+        <rng:ref name="rdg"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The alternatives provided in <gi scheme="MEI">lem</gi> and/or <gi scheme="MEI">rdg</gi>
+        sub-elements may be thought of as exclusive or as parallel. The <att>type</att> attribute
+        may contain any convenient descriptive word, describing the extent of the variation (e.g.
+        note, phrase, measure, etc.), its text-critical significance (e.g. significant, accidental,
+        unclear), or the nature of the variation or the principles required to understand it (e.g.
+        lectio difficilior, usus auctoris, etc.).</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="lem" module="MEI.critapp">
+    <desc>(lemma) – Contains the lemma, or base text, of a textual variation.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.crit"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.rdg.anl"/>
+      <memberOf key="att.rdg.ges"/>
+      <memberOf key="att.rdg.log"/>
+      <memberOf key="att.rdg.vis"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.divLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.fLike"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.layerPart"/>
+          <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
+          <rng:ref name="model.rdgPart"/>
+          <rng:ref name="model.sectionPart"/>
+          <rng:ref name="model.staffGrpLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="expansion"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <gi scheme="MEI">lem</gi> element may also be used, under some circumstances, to record
+        the base text of the source edition, to mark the readings of a base witness, to indicate the
+        preference of an editor or encoder for a particular reading, or to make clear, in cases of
+        ambiguity, precisely which portion of the main text the variation applies to. Those who
+        prefer to work without the notion of a base text may prefer not to use it at all. An integer
+        indicating the position of this reading in a sequence, when there is reason to presume a
+        sequence of the variant readings, may be captured in the <att>seq</att> attribute.</p>
+      <p>In no case should <gi scheme="MEI">lem</gi> contain elements that would not otherwise be
+        permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
+        example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI">lem</gi>
+        should only contain those elements allowed within <gi scheme="MEI">verse</gi>.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="rdg" module="MEI.critapp">
+    <desc>(reading) – Contains a single reading within a textual variation.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.crit"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.rdg.anl"/>
+      <memberOf key="att.rdg.ges"/>
+      <memberOf key="att.rdg.log"/>
+      <memberOf key="att.rdg.vis"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.divLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.fLike"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.layerPart"/>
+          <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
+          <rng:ref name="model.rdgPart"/>
+          <rng:ref name="model.sectionPart"/>
+          <rng:ref name="model.staffGrpLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="expansion"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>Since a reading can be a multi-measure section, the <gi scheme="MEI">scoreDef</gi> element
+        is allowed so that a reading may have its own meta-data without incurring the overhead of
+        child <gi scheme="MEI">section</gi> elements. The <gi scheme="MEI">app</gi> sub-element is
+        permitted in order to allow nested sub-variants.</p>
+    </remarks>
+    <remarks>
+      <p>In no case should <gi scheme="MEI">rdg</gi> contain elements that would not otherwise be
+        permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
+        example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI">rdg</gi>
+        should only contain those elements allowed within <gi scheme="MEI">verse</gi>.</p>
+    </remarks>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>

@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.msDesc">
+  <moduleSpec ident="MEI.msDesc">
+    <desc>Manuscript description component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.componentType" type="atts" module="MEI.msDesc">
+    <desc>Attributes that express the relationship between a component and its host.</desc>
+    <attList>
+      <attDef ident="comptype" usage="opt">
+        <constraintSpec ident="checkComponentType" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="mei:*[@comptype]">
+              <sch:let name="elementName" value="local-name()"/>
+              <sch:assert test="ancestor::mei:componentList">The comptype attribute may occur on
+                <sch:value-of select="$elementName"/> only when it is a descendant of a
+                componentList.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <valList type="closed">
+          <valItem ident="constituent">
+            <desc>A physical and logical part of entity.</desc>
+          </valItem>
+          <valItem ident="boundwith">
+            <desc>A physical, but not logical component of the entity, usually included as part of
+              the binding process.</desc>
+          </valItem>
+          <valItem ident="separated">
+            <desc>A logical component of the entity physically held elsewhere.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.msInline" type="model" module="MEI.msDesc">
+    <desc>Groups elements that may appear inline when the msdesc module is active.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="accMat" module="MEI.msDesc">
+    <desc>Holds a description of any additional material bound with an item, such as
+      non-contemporaneous documents or fragments.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="addDesc" module="MEI.msDesc">
+    <desc>(addition description) – Provides a description of significant additions found within an
+      item, such as marginalia or other annotations.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="binding" module="MEI.msDesc">
+    <desc>(binding) – Contains a description of one binding, i.e. type of covering, boards, etc.
+      applied to an item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="head"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="condition"/>
+          <rng:ref name="decoNote"/>
+          <rng:ref name="dimensions"/>
+          <rng:ref name="p"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="contemporary" usage="opt">
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="bindingDesc" module="MEI.msDesc">
+    <desc>(binding description) – Describes the present and former bindings of an item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="head"/>
+      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="binding"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="condition"/>
+              <rng:ref name="decoNote"/>
+              <rng:ref name="p"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="catchwords" module="MEI.msDesc">
+    <desc>Describes the system used to ensure correct ordering of the quires making up an item,
+      typically by means of annotations at the foot of the page.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="collation" module="MEI.msDesc">
+    <desc>Records a description of how the leaves or bifolia of an item are physically
+      arranged.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="colophon" module="MEI.msDesc">
+    <desc>Contains a statement providing information regarding the date, place, agency, or reason
+      for production of the item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="decoDesc" module="MEI.msDesc">
+    <desc>(decoration description) – Contains a description of the decoration of an item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="condition"/>
+              <rng:ref name="decoNote"/>
+              <rng:ref name="p"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="decoNote" module="MEI.msDesc">
+    <desc>(decoration note) – Contains a description of one or more decorative features of an
+      item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="condition"/>
+              <rng:ref name="decoNote"/>
+              <rng:ref name="p"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="explicit" module="MEI.msDesc">
+    <desc>Contains the explicit of a manuscript item; that is, the closing words of the text proper,
+      exclusive of any rubric or colophon which might follow it.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="foliation" module="MEI.msDesc">
+    <desc>Describes the numbering system or systems used to count the leaves or pages in a
+      codex.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="heraldry" module="MEI.msDesc">
+    <desc>Contains a heraldic formula or phrase, typically found as part of a blazon, coat of arms,
+      etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="layout" module="MEI.msDesc">
+    <desc>Describes how text is laid out on the page, including information about any ruling,
+      pricking, or other evidence of page-preparation techniques.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <attList>
+      <attDef ident="cols" usage="opt">
+        <desc>Specifies the number of columns per page.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks>
+          <p>A single number indicates that all pages have this number of columns. Two numbers mean
+            that the number of columns per page varies between the values supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="ruledlines" usage="opt">
+        <desc>Specifies the number of ruled text lines per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks>
+          <p> A single number indicates that all columns have this number of ruled lines. Two
+            numbers mean that the number of text lines per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="writtenlines" usage="opt">
+        <desc>Specifies the number of written text lines per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks>
+          <p>A single number indicates that all columns have this number of written text lines. Two
+            numbers mean that the number of text lines per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="ruledstaves" usage="opt">
+        <desc>Specifies the number of ruled staves per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks>
+          <p>A single number indicates that all columns have this number of ruled staves. Two
+            numbers mean that the number of ruled staves per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="writtenstaves" usage="opt">
+        <desc>Specifies the number of written staves per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks>
+          <p>A single number indicates that all columns have this number of written staves. Two
+            numbers mean that the number of written staves per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="layoutDesc" module="MEI.msDesc">
+    <desc>(layout description) – Collects layout descriptions.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="p"/>
+              <rng:ref name="layout"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="locus" module="MEI.msDesc">
+    <desc>Defines a location within a manuscript or manuscript component, usually as a (possibly
+      discontinuous) sequence of folio references.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="locus"/>
+          <rng:ref name="rend"/>
+          <rng:ref name="symbol"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="scheme" usage="opt">
+        <desc>Identifies the foliation scheme in terms of which the location is being specified by
+          pointing to some foliation element defining it, or to some other equivalent
+          resource.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+      <attDef ident="from" usage="opt">
+        <desc>Specifies the starting point of the location in a normalized form.</desc>
+        <datatype>
+          <rng:ref name="data.WORD"/>
+        </datatype>
+      </attDef>
+      <attDef ident="to" usage="opt">
+        <desc>Specifies the end-point of the location in a normalized form.</desc>
+        <datatype>
+          <rng:ref name="data.WORD"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="locusGrp" module="MEI.msDesc">
+    <desc>(locus group) – Groups locations which together form a distinct but discontinuous item
+      within a manuscript or manuscript part, according to a specific foliation.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="locus"/>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="scheme" usage="opt">
+        <desc>Identifies the foliation scheme in terms of which the location is being specified by
+          pointing to some foliation element defining it, or to some other equivalent
+          resource.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="rubric" module="MEI.msDesc">
+    <desc>Contains a string of words through which a manuscript signals the beginning or end of a
+      text division, often with an assertion as to its author and title, which is in some way set
+      off from the text itself, usually in red ink, or by use of different size or type of script,
+      or some other such visual device.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <attList>
+      <attDef ident="func">
+        <valList type="closed">
+          <valItem ident="initial">
+            <desc>Signals beginning of a text division.</desc>
+          </valItem>
+          <valItem ident="final">
+            <desc>Makrs the end of a text division.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="scriptDesc" module="MEI.msDesc">
+    <desc>(script description) – Contains a description of the letters or characters used in an
+      autographic item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="p"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="scriptNote"/>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="scriptNote" module="MEI.msDesc">
+    <desc>(script note) – Describes a particular script distinguished within the description of an
+      autographic item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="seal" module="MEI.msDesc">
+    <desc>A single seal or similar attachment.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="condition"/>
+              <rng:ref name="decoNote"/>
+              <rng:ref name="p"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <attList>
+      <attDef ident="contemporary">
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="sealDesc" module="MEI.msDesc">
+    <desc>(seal description) – Describes the seals or similar external attachments applied to an
+      item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="seal"/>
+            </rng:zeroOrMore>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <rng:ref name="condition"/>
+                <rng:ref name="decoNote"/>
+                <rng:ref name="p"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </rng:choice>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="secFolio" module="MEI.msDesc">
+    <desc>(second folio) – Marks the word or words taken from a fixed point in a codex (typically
+      the beginning of the second leaf) in order to provide a unique identifier for the item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="signatures" module="MEI.msDesc">
+    <desc>Provides a description of the leaf or quire signatures found within a codex.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="stamp" module="MEI.msDesc">
+    <desc>Contains a word or phrase describing an official mark indicating ownership, genuineness,
+      validity, etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.msInline"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="support" module="MEI.msDesc">
+    <desc>Provides a description of the physical support material of a written item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="head"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="condition"/>
+          <rng:ref name="decoNote"/>
+          <rng:ref name="dimensions"/>
+          <rng:ref name="p"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="supportDesc" module="MEI.msDesc">
+    <desc>(support description) – Groups elements describing the physical support material of an
+      item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="p"/>
+            </rng:zeroOrMore>
+            <rng:group>
+              <rng:optional>
+                <rng:ref name="support"/>
+              </rng:optional>
+              <rng:optional>
+                <rng:ref name="foliation"/>
+              </rng:optional>
+              <rng:optional>
+                <rng:ref name="collation"/>
+              </rng:optional>
+              <rng:optional>
+                <rng:ref name="condition"/>
+              </rng:optional>
+            </rng:group>
+          </rng:choice>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <attList>
+      <attDef ident="material" usage="opt">
+        <desc>Short, project-defined name for the material composing the majority of the
+          support.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="paper">
+            <desc>Paper.</desc>
+          </valItem>
+          <valItem ident="parch">
+            <desc>Parchment.</desc>
+          </valItem>
+          <valItem ident="mixed">
+            <desc>Mixed materials.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="typeDesc" module="MEI.msDesc">
+    <desc>(type description) – Contains a description of the typefaces or other aspects of the
+      printing of a printed source.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="head"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="p"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="typeNote"/>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="typeNote" module="MEI.msDesc">
+    <desc>(type note) – Describes a particular font or other significant typographic feature of a
+      printed resource.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks>
+      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <constraintSpec ident="check_msDesc_inline" module="MEI.msDesc" scheme="isoschematron">
+    <constraint>
+      <sch:rule
+        context="mei:catchwords | mei:fingerprint | mei:heraldry | mei:secFolio | 
+        mei:signatures | mei:watermark">
+        <sch:assert test="ancestor::mei:physDesc">The <sch:name/> element may only appear as a
+          descendant of the physDesc element.</sch:assert>
+      </sch:rule>
+    </constraint>
+  </constraintSpec>
+  <constraintSpec ident="check_locus_inline" module="MEI.msDesc" scheme="isoschematron">
+    <constraint>
+      <sch:rule context="mei:locus | mei:locusGrp">
+        <sch:assert
+          test="ancestor::mei:physDesc or parent::mei:contentItem or 
+          ancestor::mei:source[ancestor::mei:componentList[ancestor::mei:sourceDesc or 
+          ancestor::mei:sourceList or ancestor::mei:workList]]"
+          >The <sch:name/> element may only appear as a descendant of a physDesc element, a
+          contentItem element, or a source element that is a component of another source or
+          work.</sch:assert>
+      </sch:rule>
+    </constraint>
+  </constraintSpec>
+</specGrp>

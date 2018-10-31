@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.midi">
+  <moduleSpec ident="MEI.midi">
+    <desc>MIDI component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.channelized" module="MEI.midi" type="atts">
+    <desc>Attributes that record MIDI channel information.</desc>
+    <attList>
+      <attDef ident="midi.channel" usage="opt">
+        <desc>Records a MIDI channel value.</desc>
+        <datatype>
+          <rng:ref name="data.MIDICHANNEL"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.duty" usage="opt">
+        <desc>Specifies the 'on' part of the duty cycle as a percentage of a note's duration.</desc>
+        <datatype>
+          <rng:ref name="data.PERCENT.LIMITED"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.port" usage="opt">
+        <desc>Sets the MIDI port value.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE_NAME"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.track" usage="opt">
+        <desc>Sets the MIDI track.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.instrDef.log" module="MEI.midi" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.instrumentIdent" module="MEI.midi" type="atts">
+    <desc>Attributes which identify a MIDI instrument.</desc>
+    <attList>
+      <attDef ident="instr" usage="opt">
+        <desc>Provides a way of pointing to a MIDI instrument definition. It must contain the ID of
+          an <gi scheme="MEI">instrDef</gi> element elsewhere in the document.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_instrTarget" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@instr">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@instr attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:instrDef/@xml:id"
+                >The value in @instr should correspond to the @xml:id attribute of an instrDef
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midi.event" module="MEI.midi" type="atts">
+    <desc>Attributes common to MIDI events.</desc>
+    <classes>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.timestamp.logical"/>
+      <memberOf key="att.timestamp.gestural"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.midi.log" module="MEI.midi" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.staffIdent"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.midiInstrument" module="MEI.midi" type="atts">
+    <desc>Attributes that record MIDI instrument information.</desc>
+    <constraintSpec ident="One_of_instrname_or_instrnum" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:*[@midi.instrname]">
+          <sch:assert test="not(@midi.instrnum)">Only one of @midi.instrname and @midi.instrnum
+            allowed.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="One_of_patchname_or_patchnum" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:*[@midi.patchname]">
+          <sch:assert test="not(@midi.patchnum)">Only one of @midi.patchname and @midi.patchnum
+            allowed.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="midi.instrnum" usage="opt">
+        <desc>Captures the General MIDI instrument number. Use an integer for a 0-based value. An
+          integer preceded by "in" indicates a 1-based value.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.instrname" usage="opt">
+        <desc>Provides a General MIDI label for the MIDI instrument.</desc>
+        <datatype>
+          <rng:ref name="data.MIDINAMES"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.pan" usage="opt">
+        <desc>Sets the instrument's position in a stereo field. MIDI values of 0 and 1 both pan
+          left, 127 or 128 pans right, and 63 or 64 pans to the center. Positve percentage values
+          pan to the right, negative ones to the left. 0% is centered.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE_PAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.patchname" usage="opt">
+        <desc>Records a non-General MIDI patch/instrument name.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.patchnum" usage="opt">
+        <desc>Records a non-General MIDI patch/instrument number.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.volume" usage="opt">
+        <desc>Sets the instrument's volume.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE_PERCENT"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midiNumber" module="MEI.midi" type="atts">
+    <desc>Attributes that record MIDI numbers.</desc>
+    <attList>
+      <attDef ident="num" usage="req">
+        <desc>MIDI number in the range set by data.MIDIVALUE.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midiTempo" module="MEI.midi" type="atts">
+    <desc>Attributes that record MIDI tempo information.</desc>
+    <attList>
+      <attDef ident="midi.bpm" usage="opt">
+        <desc>Captures the number of *quarter notes* per minute. In MIDI, a beat is always defined
+          as a quarter note, *not the numerator of the time signature or the metronomic
+          indication*.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIBPM"/>
+        </datatype>
+      </attDef>
+      <attDef ident="midi.mspb" usage="opt">
+        <desc>Records the number of microseconds per *quarter note*. In MIDI, a beat is always
+          defined as a quarter note, *not the numerator of the time signature or the metronomic
+          indication*. At 120 quarter notes per minute, each quarter note will last 500,000
+          microseconds.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIMSPB"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midiValue" module="MEI.midi" type="atts">
+    <desc>Attributes that record MIDI values.</desc>
+    <attList>
+      <attDef ident="val" usage="opt">
+        <desc>MIDI number.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midiValue2" module="MEI.midi" type="atts">
+    <desc>Attributes that record terminal MIDI values.</desc>
+    <attList>
+      <attDef ident="val2" usage="opt">
+        <desc>MIDI number.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.midiVelocity" module="MEI.midi" type="atts">
+    <desc>MIDI attributes pertaining to key velocity.</desc>
+    <attList>
+      <attDef ident="vel" usage="opt">
+        <desc>MIDI Note-on/off velocity.</desc>
+        <datatype>
+          <rng:ref name="data.MIDIVALUE"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.timeBase" module="MEI.midi" type="atts">
+    <desc>Attributes that record time-base information.</desc>
+    <attList>
+      <attDef ident="ppq" usage="opt">
+        <desc>Indicates the number of pulses (sometimes referred to as ticks or divisions) per
+          quarter note. Unlike MIDI, MEI permits different values for a score and individual
+          staves.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.midiLike" module="MEI.midi" type="model">
+    <desc>Groups elements which group MIDI-like elements.</desc>
+    <classes>
+      <memberOf key="model.layerPart.mensuralAndNeumes"/>
+      <memberOf key="model.measurePart"/>
+      <memberOf key="model.syllablePart"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="cc" module="MEI.midi">
+    <desc>(control change) – MIDI parameter/control change.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+      <memberOf key="att.midiValue"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <remarks>
+      <p>The <att>num</att> attribute specifies a MIDI parameter number, while <att>val</att>
+        contains the parameter value. Each must fall in the range 0-127.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="chan" module="MEI.midi">
+    <desc>(channel) – MIDI channel assignment.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <attList>
+      <attDef ident="num" usage="req">
+        <desc>MIDI number in the range set by data.MIDICHANNEL.</desc>
+        <datatype>
+          <rng:ref name="data.MIDICHANNEL"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </elementSpec>
+  <elementSpec ident="chanPr" module="MEI.midi">
+    <desc>(channel pressure) – MIDI channel pressure/after touch.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <remarks>
+      <p>The value of the <att>num</att> attribute must be in the range 0-127.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="cue" module="MEI.midi">
+    <desc>MIDI cue point.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:text/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="hex" module="MEI.midi">
+    <desc>Arbitrary MIDI data in hexadecimal form.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:text/>
+    </content>
+    <remarks>
+      <p>The element's content must be wrapped in a CDATA section to avoid parsing errors.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="instrDef" module="MEI.midi">
+    <desc>(instrument definition) – MIDI instrument declaration.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.instrDef.anl"/>
+      <memberOf key="att.instrDef.ges"/>
+      <memberOf key="att.instrDef.log"/>
+      <memberOf key="att.instrDef.vis"/>
+      <memberOf key="model.instrDefLike"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <remarks>
+      <p>This element provides a starting or default instrument declaration for a staff, a group of
+        staves, or a layer. Following scoreDef, staffDef, layerDef, or MIDI prog elements may then
+        change the instrument as necessary.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="instrGrp" module="MEI.midi">
+    <desc>(instrument group) – Collects MIDI instrument definitions.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+    </classes>
+    <content>
+      <rng:oneOrMore>
+        <rng:ref name="model.instrDefLike"/>
+      </rng:oneOrMore>
+    </content>
+  </elementSpec>
+  <elementSpec ident="marker" module="MEI.midi">
+    <desc>MIDI marker meta-event.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:text/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="metaText" module="MEI.midi">
+    <desc>MIDI text meta-event.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:text/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="midi" module="MEI.midi">
+    <desc>Container for elements that contain information useful when generating MIDI output.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.log"/>
+      <memberOf key="att.midi.vis"/>
+      <memberOf key="att.midi.ges"/>
+      <memberOf key="att.midi.anl"/>
+      <memberOf key="model.midiLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="cc"/>
+          <rng:ref name="chan"/>
+          <rng:ref name="chanPr"/>
+          <rng:ref name="cue"/>
+          <rng:ref name="hex"/>
+          <rng:ref name="mei_marker"/>
+          <rng:ref name="metaText"/>
+          <rng:ref name="noteOff"/>
+          <rng:ref name="noteOn"/>
+          <rng:ref name="port"/>
+          <rng:ref name="prog"/>
+          <rng:ref name="seqNum"/>
+          <rng:ref name="trkName"/>
+          <rng:ref name="vel"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <att>label</att> attribute can be used to differentiate between multiple MIDI data
+        streams, e.g. quantized/unquantized, straight/swing, ornamented/as notated, etc.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="noteOff" module="MEI.midi">
+    <desc>MIDI note-off event.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="noteOn" module="MEI.midi">
+    <desc>MIDI note-on event.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="port" module="MEI.midi">
+    <desc>MIDI port.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="prog" module="MEI.midi">
+    <desc>(program) – MIDI program change.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="seqNum" module="MEI.midi">
+    <desc>(sequence number) – MIDI sequence number.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <attList>
+      <attDef ident="num" usage="req">
+        <desc>Number in the range 0-65535.</desc>
+        <datatype>
+          <rng:data type="nonNegativeInteger">
+            <rng:param name="maxInclusive">65535</rng:param>
+          </rng:data>
+        </datatype>
+      </attDef>
+    </attList>
+  </elementSpec>
+  <elementSpec ident="trkName" module="MEI.midi">
+    <desc>(track name) – MIDI track/sequence name.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.midi.event"/>
+    </classes>
+    <content>
+      <rng:text/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="vel" module="MEI.midi">
+    <desc>(velocity) – MIDI Note-on/off velocity.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.midi.event"/>
+      <memberOf key="att.midiNumber"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <attList>
+      <attDef ident="form" usage="req">
+        <desc>Indicates whether this is note-on or note-off velocity data.</desc>
+        <valList type="closed">
+          <valItem ident="on">
+            <desc>Note-on velocity.</desc>
+          </valItem>
+          <valItem ident="off">
+            <desc>Note-off velocity.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+</specGrp>

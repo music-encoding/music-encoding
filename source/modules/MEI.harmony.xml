@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.harmony">
+  <moduleSpec ident="MEI.harmony">
+    <desc>Harmony component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.chordDef.log" module="MEI.harmony" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.stringtab.position"/>
+      <memberOf key="att.stringtab.tuning"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.chordMember.log" module="MEI.harmony" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.pitched"/>
+      <memberOf key="att.stringtab"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.f.log" module="MEI.harmony" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.harm.log" module="MEI.harmony" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
+    </classes>
+    <attList>
+      <attDef ident="chordref" usage="opt">
+        <desc>Contains a reference to a <gi scheme="MEI">chordDef</gi> element elsewhere in the
+          document.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_chordrefTarget" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@chordref">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@chordref attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:chordDef/@xml:id"
+                >The value in @chordref should correspond to the @xml:id attribute of a chordDef
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="model.chordTableLike" module="MEI.harmony" type="model">
+    <desc>Groups elements that group playable chord definitions.</desc>
+  </classSpec>
+  <classSpec ident="model.controlEventLike.harmony" module="MEI.harmony" type="model">
+    <desc>Groups harmonic elements that function as control events; that is, those events that
+      modify or otherwise depend on the existence of notated events.</desc>
+    <classes>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.figbassLike" module="MEI.harmony" type="model">
+    <desc>Groups elements that record figured bass.</desc>
+  </classSpec>
+  <classSpec ident="model.fLike" module="MEI.harmony" type="model">
+    <desc>Groups elements that represent single figured bass elements.</desc>
+  </classSpec>
+  <classSpec ident="model.harmLike" module="MEI.harmony" type="model">
+    <desc>Groups elements that record indications of harmony.</desc>
+    <classes>
+      <memberOf key="model.controlEventLike.harmony"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="chordDef" module="MEI.harmony">
+    <desc>(chord definition) – Chord tablature definition.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.chordDef.anl"/>
+      <memberOf key="att.chordDef.ges"/>
+      <memberOf key="att.chordDef.log"/>
+      <memberOf key="att.chordDef.vis"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="chordMember"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="barre"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>An <att>xml:id</att> attribute, while not required by the schema, is needed so that <gi
+        scheme="MEI">harm</gi> elements can reference a particular chord definition. The
+        <att>pos</att> (position) attribute is provided in order to create displayable chord
+        tablature grids. <gi scheme="MEI">chordMember</gi> sub-elements record the individual
+        pitches of the chord. <gi scheme="MEI">barre</gi> sub-elements may be used when a single
+        finger is used to stop multiple strings.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="chordMember" module="MEI.harmony">
+    <desc>An individual pitch in a chord defined by a <gi scheme="MEI">chordDef</gi> element.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.chordMember.anl"/>
+      <memberOf key="att.chordMember.ges"/>
+      <memberOf key="att.chordMember.log"/>
+      <memberOf key="att.chordMember.vis"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <remarks>
+      <p>The <att>string</att>, <att>fret</att>, and <att>fing</att> attributes are provided in
+        order to create displayable chord tablature grids. The <att>inth</att> (harmonic interval)
+        attribute may be used to facilitate automated performance of a chord. It gives the number of
+        1/2 steps above the bass. Of course, for the bass note itself, <att>inth</att> should be set
+        to '0'.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="chordTable" module="MEI.harmony">
+    <desc>Chord/tablature look-up table.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="model.chordTableLike"/>
+    </classes>
+    <content>
+      <rng:oneOrMore>
+        <rng:ref name="chordDef"/>
+      </rng:oneOrMore>
+    </content>
+    <remarks>
+      <p>A chordTable may be shared between MEI instances through the use of an external parsed
+        entity containing the look-up table to be shared.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="f" module="MEI.harmony">
+    <desc>(figure) – Single element of a figured bass indication.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.f.anl"/>
+      <memberOf key="att.f.ges"/>
+      <memberOf key="att.f.log"/>
+      <memberOf key="att.f.vis"/>
+      <memberOf key="model.fLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+  <elementSpec ident="fb" module="MEI.harmony">
+    <desc>(figured bass) – Symbols added to a bass line that indicate harmony. Used to improvise a
+      chordal accompaniment. Sometimes called Generalbass, thoroughbass, or basso continuo.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="model.figbassLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.fLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+  <elementSpec ident="harm" module="MEI.harmony">
+    <desc>(harmony) – An indication of harmony, e.g., chord names, tablature grids, harmonic
+      analysis, figured bass.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.harm.log"/>
+      <memberOf key="att.harm.vis"/>
+      <memberOf key="att.harm.ges"/>
+      <memberOf key="att.harm.anl"/>
+      <memberOf key="model.harmLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="model.figbassLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="harm_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:harm">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+</specGrp>

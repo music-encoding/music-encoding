@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.neumes">
+  <moduleSpec ident="MEI.neumes">
+    <desc>Neume repertoire component declarations.</desc>
+  </moduleSpec>
+  <macroSpec ident="data.STAFFITEM.neumes" module="MEI.neumes" type="dt">
+    <desc>Items in the Neume repertoire that may be printed near a staff.</desc>
+  </macroSpec>
+  <classSpec ident="att.episema.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.controlEvent class expanded here in order to disallow att.timestamp.* -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.plist"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.hispanTick.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.controlEvent class expanded here in order to disallow att.timestamp.* -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.plist"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.liquescent.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.nc.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.event restricted -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.staffIdent"/>
+    </classes>
+    <attList>
+      <!-- pname and oct are re-defined locally to allow indefinite pitch -->
+      <attDef ident="oct" usage="opt">
+        <desc>Captures written octave information.</desc>
+        <datatype>
+          <rng:choice>
+            <rng:data type="nonNegativeInteger">
+              <rng:param name="maxInclusive">9</rng:param>
+            </rng:data>
+            <rng:data type="token">
+              <rng:param name="pattern">unknown</rng:param>
+            </rng:data>
+          </rng:choice>
+        </datatype>
+      </attDef>
+      <attDef ident="pname" usage="opt">
+        <desc>Contains a written pitch name.</desc>
+        <datatype>
+          <rng:data type="token">
+            <rng:param name="pattern">[a-g]|unknown</rng:param>
+          </rng:data>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ncForm" module="MEI.neumes" type="atts">
+    <desc>Attributes that record visual details of neume notation.</desc>
+    <attList>
+      <attDef ident="angled" usage="opt">
+        <desc/>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="con" usage="opt">
+        <desc>Connection to the previous component within the same neume; this attribute should not
+          be used for the first component of a neume.</desc>
+        <valList type="closed">
+          <valItem ident="g">
+            <desc>Gapped; not connected.</desc>
+          </valItem>
+          <valItem ident="l">
+            <desc>Looped.</desc>
+          </valItem>
+          <valItem ident="e">
+            <desc>Extended.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="curve" usage="opt">
+        <desc>Records direction of curvature.</desc>
+        <valList type="closed">
+          <valItem ident="a">
+            <desc>Anti-clockwise curvature.</desc>
+          </valItem>
+          <valItem ident="c">
+            <desc>Clockwise curvature.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="hooked" usage="opt">
+        <desc>Pen stroke has an extension; specific to Hispanic notation.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="ligated" usage="opt">
+        <desc>Indicates participation in a ligature.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="rellen" usage="opt">
+        <desc>Length of the pen stroke relative to the previous component within the same neume;
+          this attribute should not be used for the first component of a neume.</desc>
+        <valList type="closed">
+          <valItem ident="l">
+            <desc>Longer.</desc>
+          </valItem>
+          <valItem ident="s">
+            <desc>Shorter.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="s-shape" usage="opt">
+        <desc>Direction of the initial direction for an s-shaped pen stroke; i.e., "w" for the
+          standard letter S, "e" for its mirror image, "s" for the letter S turned 90-degrees
+          anti-clockwise, and "n" for its mirror image.</desc>
+        <datatype>
+          <rng:ref name="data.COMPASSDIRECTION.basic"/>
+        </datatype>
+      </attDef>
+      <attDef ident="tilt" usage="opt">
+        <desc>Direction of the pen stroke.</desc>
+        <datatype>
+          <rng:ref name="data.COMPASSDIRECTION"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.ncGrp.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.event restricted -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.sylText"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.neume.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.event restricted -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.sylText"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.oriscus.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.quilisma.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.signifLet.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <!-- att.controlEvent class expanded here in order to disallow att.timestamp.* -->
+      <memberOf key="att.alignment"/>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.plist"/>
+      <memberOf key="att.staffIdent"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.strophicus.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.syllable.log" module="MEI.neumes" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.alignment"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.eventLike.neumes" module="MEI.neumes" type="model">
+    <desc>Groups event elements that occur in the neume repertoire.</desc>
+    <classes>
+      <memberOf key="model.layerPart.neumes"/>
+      <memberOf key="model.syllablePart"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.layerPart.neumes" module="MEI.neumes" type="model">
+    <desc>Groups notated events that may appear at the layer level in the neume repertoire.</desc>
+    <classes>
+      <memberOf key="model.layerPart.mensuralAndNeumes"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.neumeComponentModifierLike" module="MEI.neumes" type="model">
+    <desc>Groups elements that modify neume components.</desc>
+  </classSpec>
+  <classSpec ident="model.neumeModifierLike" module="MEI.neumes" type="model">
+    <desc>Groups elements that modify neume-like features.</desc>
+  </classSpec>
+  <classSpec ident="model.neumePart" module="MEI.neumes" type="model">
+    <desc>Groups elements that may occur within a neume.</desc>
+  </classSpec>
+  <classSpec ident="model.scorePart.neumes" module="MEI.neumes" type="model">
+    <desc>Groups elements that may appear as part of a score in the neume repertoire.</desc>
+  </classSpec>
+  <classSpec ident="model.sectionPart.neumes" module="MEI.neumes" type="model">
+    <desc>Groups elements that may appear as part of a section in the neume repertoire.</desc>
+    <classes>
+      <memberOf key="model.sectionPart.mensuralAndNeumes"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.staffPart.neumes" module="MEI.neumes" type="model">
+    <desc>Groups elements that are components of a staff in the neume repertoire.</desc>
+    <classes>
+      <memberOf key="model.staffPart.mensuralAndNeumes"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.syllableLike" module="MEI.neumes" type="model">
+    <desc>Groups elements that accommodate neumed text.</desc>
+    <classes>
+      <memberOf key="model.layerPart.neumes"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.syllablePart" module="MEI.neumes" type="model">
+    <desc>Groups elements that may appear as part of the content of a syllable.</desc>
+  </classSpec>
+  <elementSpec ident="episema" module="MEI.neumes">
+    <desc>Episema.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.episema.anl"/>
+      <memberOf key="att.episema.ges"/>
+      <memberOf key="att.episema.log"/>
+      <memberOf key="att.episema.vis"/>
+      <memberOf key="model.neumeModifierLike"/>
+    </classes>
+  </elementSpec>
+  <elementSpec ident="hispanTick" module="MEI.neumes">
+    <desc>Hispanic tick.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.hispanTick.anl"/>
+      <memberOf key="att.hispanTick.ges"/>
+      <memberOf key="att.hispanTick.log"/>
+      <memberOf key="att.hispanTick.vis"/>
+      <memberOf key="model.neumeModifierLike"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="liquescent" module="MEI.neumes">
+    <desc>Liquescent.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.liquescent.anl"/>
+      <memberOf key="att.liquescent.ges"/>
+      <memberOf key="att.liquescent.log"/>
+      <memberOf key="att.liquescent.vis"/>
+      <memberOf key="model.neumeComponentModifierLike"/>
+    </classes>
+  </elementSpec>
+  <elementSpec ident="nc" module="MEI.neumes">
+    <desc>Sign representing a single pitched event, although the exact pitch may not be
+      known.</desc>
+    <classes>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.classed"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.nc.anl"/>
+      <memberOf key="att.nc.ges"/>
+      <memberOf key="att.nc.log"/>
+      <memberOf key="att.nc.vis"/>
+      <memberOf key="model.neumePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="type" usage="opt">
+        <desc>Designation which characterizes the element in some sense, using any convenient
+          classification scheme or typology that employs single-token labels.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="apostropha"/>
+          <valItem ident="bistropha"/>
+          <valItem ident="climacus"/>
+          <valItem ident="clivis"/>
+          <valItem ident="oriscus"/>
+          <valItem ident="pes"/>
+          <valItem ident="pessubpunctis"/>
+          <valItem ident="porrectus"/>
+          <valItem ident="porrectusflexus"/>
+          <valItem ident="pressusmaior"/>
+          <valItem ident="pressusmaior"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="punctum"/>
+          <valItem ident="quilisma"/>
+          <valItem ident="scandicus"/>
+          <valItem ident="strophicus"/>
+          <valItem ident="torculus"/>
+          <valItem ident="torculusresupinus"/>
+          <valItem ident="tristropha"/>
+          <valItem ident="virga"/>
+          <valItem ident="virgastrata"/>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+  <elementSpec ident="ncGrp" module="MEI.neumes">
+    <desc>Collection of one or more neume components.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.ncGrp.anl"/>
+      <memberOf key="att.ncGrp.ges"/>
+      <memberOf key="att.ncGrp.log"/>
+      <memberOf key="att.ncGrp.vis"/>
+      <memberOf key="model.neumePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="nc"/>
+          <rng:ref name="ncGrp"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+  <elementSpec ident="neume" module="MEI.neumes">
+    <desc>Sign representing one or more musical pitches.</desc>
+    <classes>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.classed"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.neume.anl"/>
+      <memberOf key="att.neume.ges"/>
+      <memberOf key="att.neume.log"/>
+      <memberOf key="att.neume.vis"/>
+      <memberOf key="model.eventLike.neumes"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="type" usage="opt">
+        <desc>Designation which characterizes the element in some sense, using any convenient
+          classification scheme or typology that employs single-token labels.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="apostropha"/>
+          <valItem ident="bistropha"/>
+          <valItem ident="climacus"/>
+          <valItem ident="clivis"/>
+          <valItem ident="oriscus"/>
+          <valItem ident="pes"/>
+          <valItem ident="pessubpunctis"/>
+          <valItem ident="porrectus"/>
+          <valItem ident="porrectusflexus"/>
+          <valItem ident="pressusmaior"/>
+          <valItem ident="pressusmaior"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="pressusminor"/>
+          <valItem ident="punctum"/>
+          <valItem ident="quilisma"/>
+          <valItem ident="scandicus"/>
+          <valItem ident="strophicus"/>
+          <valItem ident="torculus"/>
+          <valItem ident="torculusresupinus"/>
+          <valItem ident="tristropha"/>
+          <valItem ident="virga"/>
+          <valItem ident="virgastrata"/>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+  <elementSpec ident="oriscus" module="MEI.neumes">
+    <desc>Oriscus.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.oriscus.anl"/>
+      <memberOf key="att.oriscus.ges"/>
+      <memberOf key="att.oriscus.log"/>
+      <memberOf key="att.oriscus.vis"/>
+      <memberOf key="model.neumeComponentModifierLike"/>
+    </classes>
+  </elementSpec>
+  <elementSpec ident="quilisma" module="MEI.neumes">
+    <desc>Quilisma.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.quilisma.anl"/>
+      <memberOf key="att.quilisma.ges"/>
+      <memberOf key="att.quilisma.log"/>
+      <memberOf key="att.quilisma.vis"/>
+      <memberOf key="model.neumeComponentModifierLike"/>
+    </classes>
+  </elementSpec>
+  <elementSpec ident="signifLet" module="MEI.neumes">
+    <desc>Significantive letter(s).</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.signifLet.anl"/>
+      <memberOf key="att.signifLet.ges"/>
+      <memberOf key="att.signifLet.log"/>
+      <memberOf key="att.signifLet.vis"/>
+      <memberOf key="model.neumeModifierLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+  <elementSpec ident="strophicus" module="MEI.neumes">
+    <desc>Strophicus.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.strophicus.anl"/>
+      <memberOf key="att.strophicus.ges"/>
+      <memberOf key="att.strophicus.log"/>
+      <memberOf key="att.strophicus.vis"/>
+      <memberOf key="model.neumeComponentModifierLike"/>
+    </classes>
+  </elementSpec>
+  <elementSpec ident="syllable" module="MEI.neumes">
+    <desc>Neume notation can be thought of as "neumed text". Therefore, the syllable element
+      provides high-level organization in this repertoire.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.syllable.anl"/>
+      <memberOf key="att.syllable.ges"/>
+      <memberOf key="att.syllable.log"/>
+      <memberOf key="att.syllable.vis"/>
+      <memberOf key="model.syllableLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.annotLike"/>
+          <rng:ref name="model.appLike"/>
+          <rng:ref name="model.divLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.scoreDefLike"/>
+          <rng:ref name="model.staffDefLike"/>
+          <rng:ref name="model.staffGrpLike"/>
+          <rng:ref name="model.syllablePart"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+</specGrp>

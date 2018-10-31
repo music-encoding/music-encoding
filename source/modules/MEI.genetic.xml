@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.genetic">
+  <moduleSpec ident="MEI.genetic">
+    <desc>Genetic encoding component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.geneticState" module="MEI.genetic" type="atts">
+    <desc>Attributes that pertain to a genetic state.</desc>
+    <constraintSpec ident="check_changeState.targets" scheme="schematron">
+      <constraint>
+        <sch:rule context="@state">
+          <sch:assert role="warning" test="not(normalize-space(.) eq '')">@state attribute should
+            have content.</sch:assert>
+          <sch:assert role="warning"
+            test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:genState/@xml:id"
+            >The value in @state should correspond to the @xml:id attribute of a genState
+            element.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="instant">
+        <desc>The @instant attribute is syntactic sugar for classifying a scribal intervention as an
+          ad-hoc modification; that is, one which does not interrupt the writing process.</desc>
+        <datatype>
+          <rng:choice>
+            <rng:ref name="data.BOOLEAN"/>
+            <rng:value>unknown</rng:value>
+          </rng:choice>
+        </datatype>
+      </attDef>
+      <attDef ident="state">
+        <desc>Points to the genetic state that results from this modification.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <elementSpec ident="genDesc" module="MEI.genetic">
+    <desc>(genetic description) - Bundles information about the textual development of a
+      work.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="model.resourceLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="genDesc"/>
+          <rng:ref name="genState"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="ordered">
+        <desc>When set to "true" the child elements are known to be in chronological order. When set
+          to "false" or when not provided, the order of child elements is unknown.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>The development of a work can be traced in one or more sources.</p>
+      <p>When the <gi scheme="MEI">genDesc</gi> element is nested, the inner element describes a
+        group of processes with unknown chronological order inside a larger set of processes with
+        known order, or vice versa.</p>
+      <p>The <att>decls</att> attribute may be used to link the genetic description with a
+        particular work described in the header.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="genState" module="MEI.genetic">
+    <desc>Describes a distinctive state in the textual development of a work.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.metadataPointing"/>
+      <memberOf key="att.pointing"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="desc"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="respStmt"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="model.dateLike"/>
+      </rng:optional>
+    </content>
+    <remarks>
+      <p>Any scribal modifications encoded with elements, such as <gi scheme="MEI">add</gi>, <gi
+        scheme="MEI">del</gi>, etc., which refer to a genState element, are regarded as the
+        operations that need to be implemented to reach this state; that is, they precede this
+        state.</p>
+      <p>When nested inside a <gi scheme="MEI">genDesc</gi> element with <att>ordered</att> set to
+        "false", information regarding the chronological order of states may be provided using the
+        <att>next</att>, <att>prev</att>, <att>follows</att> and <att>precedes</att> attributes.</p>
+      <p>The <gi scheme="MEI">date</gi> can be used to identify when the current state was
+        achieved.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>

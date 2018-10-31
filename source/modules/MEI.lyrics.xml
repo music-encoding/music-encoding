@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.lyrics">
+  <moduleSpec ident="MEI.lyrics">
+    <desc>Lyrics component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.lyrics.log" module="MEI.lyrics" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+      <memberOf key="att.staffIdent"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.refrain.log" module="MEI.lyrics" type="atts">
+    <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers need
+      not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+  </classSpec>
+  <classSpec ident="att.verse.log" module="MEI.lyrics" type="atts">
+    <desc>Logical domain attributes. The n attribute should be used for verse numbers. Numbers need
+      not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+  </classSpec>
+  <classSpec ident="att.volta.log" module="MEI.lyrics" type="atts">
+    <desc>Logical domain attributes. The n attribute should be used for repetition numbers. Numbers
+      need not be consecutive; they may also be expressed as ranges, e.g. 2-3,6.</desc>
+  </classSpec>
+  <classSpec ident="model.verseLike" module="MEI.lyrics" type="model">
+    <desc>Groups elements that contain a lyric verse.</desc>
+    <classes>
+      <memberOf key="model.syllablePart"/>
+      <memberOf key="model.rdgPart.music"/>
+      <memberOf key="model.editTransPart.music"/>
+    </classes>
+  </classSpec>
+  <elementSpec ident="refrain" module="MEI.lyrics">
+    <desc>Recurring lyrics, especially at the end of each verse or stanza of a poem or song lyrics;
+      a chorus.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.refrain.log"/>
+      <memberOf key="att.refrain.vis"/>
+      <memberOf key="att.refrain.ges"/>
+      <memberOf key="att.refrain.anl"/>
+      <memberOf key="model.verseLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="dir"/>
+          <rng:ref name="dynam"/>
+          <rng:ref name="tempo"/>
+          <rng:ref name="space"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:oneOrMore>
+        <rng:choice>
+          <rng:ref name="volta"/>
+          <rng:ref name="model.sylLike"/>
+          <rng:ref name="model.appLike"/>
+        </rng:choice>
+      </rng:oneOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="model.lbLike"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <gi scheme="MEI">lb</gi> element is allowed here in order to facilitate karaoke
+        applications. The <att>func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
+        distinguish true line endings from those of line groups for these applications.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="verse" module="MEI.lyrics">
+    <desc>Division of a poem or song lyrics, sometimes having a fixed length, meter or rhyme scheme;
+      a stanza.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.verse.log"/>
+      <memberOf key="att.verse.vis"/>
+      <memberOf key="att.verse.ges"/>
+      <memberOf key="att.verse.anl"/>
+      <memberOf key="model.verseLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="label"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="labelAbbr"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="dir"/>
+          <rng:ref name="dynam"/>
+          <rng:ref name="tempo"/>
+          <rng:ref name="space"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:oneOrMore>
+        <rng:choice>
+          <rng:ref name="volta"/>
+          <rng:ref name="model.sylLike"/>
+          <rng:ref name="model.appLike"/>
+        </rng:choice>
+      </rng:oneOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="model.lbLike"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The <gi scheme="MEI">lb</gi> element is allowed here in order to facilitate karaoke
+        applications. The <att>func</att> attribute on <gi scheme="MEI">lb</gi> may be used to
+        distinguish true line endings from those of line groups for these applications.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="volta" module="MEI.lyrics">
+    <desc>Sung text for a specific iteration of a repeated section of music.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.volta.log"/>
+      <memberOf key="att.volta.vis"/>
+      <memberOf key="att.volta.ges"/>
+      <memberOf key="att.volta.anl"/>
+      <memberOf key="model.rdgPart.music"/>
+      <memberOf key="model.editTransPart.music"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="dir"/>
+          <rng:ref name="dynam"/>
+          <rng:ref name="tempo"/>
+          <rng:ref name="space"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:oneOrMore>
+        <rng:choice>
+          <rng:ref name="model.sylLike"/>
+          <rng:ref name="model.appLike"/>
+        </rng:choice>
+      </rng:oneOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="model.lbLike"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>The volta element is intended for those cases where the musical notation is repeated, but
+        the accompanying lyrics are not.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>
