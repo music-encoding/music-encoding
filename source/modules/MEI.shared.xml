@@ -3115,6 +3115,27 @@
           <rng:ref name="data.STEMPOSITION"/>
         </datatype>
       </attDef>
+    	<attDef ident="stem.sameas" usage="opt">
+    		<desc>Points to a note element in a different layer whose stem is shared. 
+    			The linked notes should be rendered like a chord though they are part of different layers.
+    		</desc>
+    		<datatype maxOccurs="1">
+    			<rng:ref name="data.URI"/>
+    		</datatype>
+    		<constraintSpec ident="check_stem.sameasTarget" scheme="isoschematron">
+    			<constraint>
+    				<sch:rule context="@stem.sameas">
+    					<sch:let name="layer.n" value="self::node()/ancestor::mei:layer/@n"/>
+    					<sch:assert role="warning" test="not(normalize-space(.) eq '')">@stem.sameas attribute
+    						should have content.</sch:assert>
+    					<sch:assert role="warning"
+    						test="substring(.,2)=//mei:note[not(ancestor::mei:layer/@n=$layer.n)]/@xml:id">The value in @stem.sameas should 
+    						correspond to the @xml:id attribute of the linked note
+    						element of a different layer.</sch:assert>
+    				</sch:rule>
+    			</constraint>
+    		</constraintSpec>
+    	</attDef>
       <attDef ident="stem.visible" usage="opt">
         <desc>Determines whether a stem should be displayed.</desc>
         <datatype>
