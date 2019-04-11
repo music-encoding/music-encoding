@@ -3109,12 +3109,16 @@
     			<constraint>
     				<sch:rule context="@stem.sameas">
     					<sch:let name="layer.n" value="self::node()/ancestor::mei:layer/@n"/>
+    					<sch:let name="ref.id" value="substring(.,2)"/>
     					<sch:assert role="warning" test="not(normalize-space(.) eq '')">@stem.sameas attribute
     						should have content.</sch:assert>
     					<sch:assert role="warning"
     						test="substring(.,2)=//mei:note[not(ancestor::mei:layer/@n=$layer.n)]/@xml:id">The value in @stem.sameas should 
     						correspond to the @xml:id attribute of the linked note
     						element of a different layer.</sch:assert>
+    					<sch:assert role="warning"
+    						test="../@dur=//mei:note[@xml:id=$ref.id]/@dur">The linked notes by @stem.sameas should have the same @dur values.
+    					</sch:assert>
     				</sch:rule>
     			</constraint>
     		</constraintSpec>
