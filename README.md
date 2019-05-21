@@ -23,7 +23,6 @@ Or, the same command using `jing`.
 This repository contains all the source code of the core MEI Schema. This includes:
 
  * customizations: TEI ODD files that allow you to build customized MEI schemas.
- * guidelines: PDF documentation of the MEI Schema
  * schemata: pre-built MEI schemas
  * source: Contains the source code to the MEI schema, expressed in TEI ODD. This includes the source code for the MEI Guidelines, and MEI Core.
  * tests: Unit tests for the MEI Schemas
@@ -59,6 +58,6 @@ Building MEI requires the [TEI Stylesheets](https://github.com/TEIC/Stylesheets/
 
 To build the CMN customization, for example, you can use the `teitorelaxng` command in the TEI Stylesheets. Let's assume that your stylesheets are in /opt/TEI, and your MEI source is in /opt/MEI:
 
-    $> /opt/TEI/bin/teitorelaxng --localsource=/opt/MEI/source/driver.xml /opt/MEI/customizations/mei-CMN.xml
+    $> /opt/TEI/bin/teitorelaxng --localsource=/opt/MEI/source/mei-source.xml /opt/MEI/customizations/mei-CMN.xml mei-cmn.rng
 
-This will generate a RelaxNG schema for the CMN Customization, which can then be used to validate CMN-encoded MEI files.
+This will generate a RelaxNG schema called `mei-cmn.rng` for the CMN Customization, which can then be used to validate CMN-encoded MEI files.

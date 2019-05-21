@@ -345,7 +345,9 @@
       </attDef>
       <attDef ident="auth.uri" usage="opt">
         <desc>A web-accessible location of the controlled vocabulary or other authoritative source
-          for this element or its content.</desc>
+          of identification or definition for this element or its content. This attribute may
+          contain a complete URI or a partial URI which is completed by the value of the codedval
+          attribute.</desc>
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
@@ -366,39 +368,50 @@
       </attDef>
     </attList>
   </classSpec>
-  <classSpec ident="att.barPlacement" module="MEI.shared" type="atts">
+  <classSpec ident="att.barring" module="MEI.shared" type="atts">
     <desc>Attributes that capture the placement of bar lines.</desc>
     <attList>
-      <attDef ident="barlinelen" usage="opt">
-        <desc>States the length of a barline. Must be greater than 0 and less than or equal to (2
-          times number of staff lines) + 2, e.g., between 0 and 12 for a 5-line staff.</desc>
+      <attDef ident="bar.len" usage="opt">
+        <desc>States the length of barlines in virtual units. The value must be greater than 0 and
+          is typically equal to 2 times (the number of staff lines - 1); e.g., a value of '8' for a
+          5-line staff.</desc>
         <datatype>
           <rng:data type="decimal">
             <rng:param name="minExclusive">0</rng:param>
           </rng:data>
         </datatype>
         <remarks>
-          <p>The value of barlinelen must be greater than 0 and less than or equal to (2 times
-            number of staff lines) + 2; e.g., 12 on a 5-line staff.</p>
+          <p>This attribute is ignored if the value of the bar.style attribute is "mensur".</p>
         </remarks>
       </attDef>
-      <attDef ident="barplace" usage="opt">
-        <desc>Records the location of a bar line.</desc>
+      <attDef ident="bar.method" usage="opt">
+        <desc>Records the method of barring.</desc>
         <datatype>
-          <rng:ref name="data.BARPLACE"/>
+          <rng:ref name="data.BARMETHOD"/>
         </datatype>
+        <constraintSpec ident="check_barmethod" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@bar.method[parent::*[matches(local-name(), '(staffDef|measure)')]]">
+              <sch:assert test="not(. eq 'mensur')">"mensur" not allowed in this
+                context.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
-      <attDef ident="taktplace" usage="opt">
-        <desc>If takt bar lines are to be used, then the taktplace attribute may be used to denote
-          the staff location of the shortened bar line. The location may include staff lines,
-          spaces, and the spaces directly above and below the staff. The value ranges between 0
-          (just below the staff) to 2 * number of staff lines (directly above the staff). For
-          example, on a 5-line staff the lines would be numbered 1,3,5,7, and 9 while the spaces
-          would be numbered 0,2,4,6,8,10. For example, a value of '9' puts the bar line through the
-          top line of a 5-line staff.</desc>
+      <attDef ident="bar.place" usage="opt">
+        <desc>Denotes the staff location of bar lines, if the length is non-standard; that is, not
+          equal to 2 times (the number of staff lines - 1).</desc>
         <datatype>
           <rng:ref name="data.STAFFLOC"/>
         </datatype>
+        <remarks>
+          <p>The location may include staff lines, the spaces between the lines, and the spaces
+            directly above and below the staff. The value ranges between 0 (just below the staff) to
+            2 * number of staff lines (directly above the staff). For example, on a 5-line staff the
+            lines would be numbered 1, 3, 5, 7, and 9 while the spaces would be numbered 0, 2, 4, 6,
+            8, and 10. So, a value of '9' puts the bar line through the top line of the staff.</p>
+          <p>This attribute is ignored if the value of the bar.style attribute is "mensur".</p>
+        </remarks>
       </attDef>
     </attList>
   </classSpec>
@@ -465,7 +478,7 @@
       <attDef ident="codedval" usage="opt">
         <desc>A value that represents or identifies other data. Often, it is a primary key in the
           database or a unique value in the coded list identified by the <att>auth</att> or
-            <att>auth.uri</att> attributes.</desc>
+          <att>auth.uri</att> attributes.</desc>
         <datatype maxOccurs="unbounded">
           <rng:data type="NMTOKEN"/>
         </datatype>
@@ -504,7 +517,7 @@
               <sch:assert
                 test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:category/@xml:id or matches($i, '^([a-z]+://|\.{1,2}/)')"
                 >The value in @class must either correspond to the @xml:id attribute of a category
-                element or be an absolute external URL.</sch:assert>
+                element or be an external URL.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -629,6 +642,7 @@
       <memberOf key="att.labelled"/>
       <memberOf key="att.linking"/>
       <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.typed"/>
     </classes>
   </classSpec>
@@ -1176,7 +1190,7 @@
     <attList>
       <attDef ident="hand" usage="opt">
         <desc>Signifies the hand responsible for an action. The value must be the ID of a <gi
-            scheme="MEI">hand</gi> element declared in the header.</desc>
+          scheme="MEI">hand</gi> element declared in the header.</desc>
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
@@ -1321,8 +1335,7 @@
           <rng:data type="string"/>
         </datatype>
         <remarks>
-          <p>
-            <att>label</att> is used to provide a display label for an element's contents, for
+          <p> <att>label</att> is used to provide a display label for an element's contents, for
             example in the form of a "tool tip" or as the "name" when the element's contents are
             treated as the "value" in a "name-value pair". Unlike <att>n</att>, <att>label</att> may
             contain space characters.</p>
@@ -1357,12 +1370,12 @@
     </attList>
     <remarks>
       <p>BCP 47 is described at <ref target="https://tools.ietf.org/html/bcp47"
-          >https://tools.ietf.org/html/bcp47</ref>. The IANA Subtag Registry, from which BCP 47
+        >https://tools.ietf.org/html/bcp47</ref>. The IANA Subtag Registry, from which BCP 47
         language tags are constructed, may be found at <ref
-          target="www.iana.org/assignments/language-subtag-registry"
-          >www.iana.org/assignments/language-subtag-registry</ref>. A tool for locating subtags and
+        target="www.iana.org/assignments/language-subtag-registry"
+        >www.iana.org/assignments/language-subtag-registry</ref>. A tool for locating subtags and
         validating language tags is available at <ref target="https://r12a.github.io/apps/subtags"
-          >https://r12a.github.io/apps/subtags</ref>.</p>
+        >https://r12a.github.io/apps/subtags</ref>.</p>
     </remarks>
   </classSpec>
   <classSpec ident="att.layer.log" module="MEI.shared" type="atts">
@@ -1443,15 +1456,6 @@
           <rng:ref name="data.FONTSIZESCALE"/>
         </datatype>
       </attDef>
-      <!-- Possible addition:
-          <attDef ident="lsegments" usage="opt">
-            <desc>Stores the number of segments used to render a dashed, dotted, or wavy
-              line.</desc>
-            <datatype>
-              <rng:data type="positiveInteger"/>
-            </datatype>
-          </attDef>
-        -->
       <attDef ident="lstartsym" usage="opt">
         <desc>Symbol rendered at start of line.</desc>
         <datatype>
@@ -1464,14 +1468,6 @@
           <rng:ref name="data.FONTSIZESCALE"/>
         </datatype>
       </attDef>
-      <!-- Possible addition:
-          <attDef ident="lwaveheight" usage="opt">
-            <desc>Captures the wave height of a wavy line.</desc>
-            <datatype>
-              <rng:ref name="data.MEASUREMENT"/>
-            </datatype>
-          </attDef>
-        -->
     </attList>
   </classSpec>
   <classSpec ident="att.lineRend.base" module="MEI.shared" type="atts">
@@ -1484,16 +1480,43 @@
         </datatype>
       </attDef>
       <!-- @llength not necessary:
-          @llength implies we know the direction of the vector which we 
-          can't know without establishing an end point, which in turn makes
-          @llength redundant.
-        -->
+            @llength implies we know the direction of the vector which we 
+            can't know without establishing an end point, which in turn makes
+            @llength redundant. -->
+      <attDef ident="lsegs" usage="opt">
+        <desc>Describes the number of segments into which a dashed or dotted line may be divided, or
+          the number of "peaks" of a wavy line; a pair of space-separated values (minimum and
+          maximum, respectively) provides a range between which a rendering system-supplied value
+          may fall, while a single value indicates a fixed amount of space; that is, the minimum and
+          maximum values are equal.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">2</rng:param>
+          </rng:data>
+        </datatype>
+        <constraintSpec ident="check_lsegs" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@lsegs">
+              <sch:assert test="matches(../@lform, '(dashed|dotted|wavy)')">@lform attribute
+                matching "dashed", "dotted", or "wavy" required.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="lwidth" usage="opt">
         <desc>Width of a line.</desc>
         <datatype>
           <rng:ref name="data.LINEWIDTH"/>
         </datatype>
       </attDef>
+      <!-- Possible addition:
+          <attDef ident="lwaveheight" usage="opt">
+            <desc>Captures the height of peaks of a wavy line.</desc>
+            <datatype>
+              <rng:ref name="data.MEASUREMENT"/>
+            </datatype>
+          </attDef>
+        -->
     </attList>
   </classSpec>
   <classSpec ident="att.linking" module="MEI.shared" type="atts">
@@ -1504,7 +1527,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="When_copyof_element_empty" scheme="isoschematron">
+        <constraintSpec ident="When_copyof_element_empty" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@copyof]">
               <sch:assert test="count(child::*[not(comment() or processing-instruction())]) = 0">An
@@ -1513,7 +1536,7 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-        <constraintSpec ident="check_copyofTarget" scheme="isoschematron">
+        <constraintSpec ident="check_copyofTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@copyof">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@copyof attribute
@@ -1532,7 +1555,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_correspTarget" scheme="isoschematron">
+        <constraintSpec ident="check_correspTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@corresp">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@corresp attribute
@@ -1545,12 +1568,31 @@
           </constraint>
         </constraintSpec>
       </attDef>
+      <attDef ident="follows" usage="opt">
+        <desc>points to one or more events in a user-defined collection that are known to be
+          predecessors of the current element.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_followsTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@follows">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@follows attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id">Each
+                value in @follows must correspond to the @xml:id attribute of an
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="next" usage="opt">
         <desc>Used to point to the next event(s) in a user-defined collection.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_nextTarget" scheme="isoschematron">
+        <constraintSpec ident="check_nextTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@next">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@next attribute should
@@ -1563,12 +1605,31 @@
           </constraint>
         </constraintSpec>
       </attDef>
+      <attDef ident="precedes" usage="opt">
+        <desc>Points to one or more events in a user-defined collection that are known to be
+          successors of the current element.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_precedesTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@precedes">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@precedes attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*/@xml:id">Each
+                value in @precedes must correspond to the @xml:id attribute of an
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="prev" usage="opt">
         <desc>Points to the previous event(s) in a user-defined collection.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_prevTarget" scheme="isoschematron">
+        <constraintSpec ident="check_prevTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@prev">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@prev attribute should
@@ -1587,7 +1648,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_sameasTarget" scheme="isoschematron">
+        <constraintSpec ident="check_sameasTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@sameas">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@sameas attribute
@@ -1605,7 +1666,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_synchTarget" scheme="isoschematron">
+        <constraintSpec ident="check_synchTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@synch">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@synch attribute
@@ -1779,10 +1840,13 @@
     <attList>
       <attDef ident="meiversion" usage="opt">
         <desc>Specifies a generic MEI version label.</desc>
-        <defaultVal>4.0.0</defaultVal>
+        <defaultVal>4.0.1</defaultVal>
         <valList type="closed">
           <valItem ident="4.0.0">
-            <desc>This version of MEI.</desc>
+            <desc>First release of MEI 4</desc>
+          </valItem>
+          <valItem ident="4.0.1">
+            <desc>Bugfix Release 4.0.1</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1846,7 +1910,7 @@
         <desc>Indicates whether or not a bar line is "controlling"; that is, if it indicates a point
           of alignment across all the parts. Bar lines within a score are usually controlling; that
           is, they "line up". Bar lines within parts may or may not be controlling. When applied to
-            <gi scheme="MEI">measure</gi>, this attribute indicates the nature of the right barline
+          <gi scheme="MEI">measure</gi>, this attribute indicates the nature of the right barline
           but not the left.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
@@ -1986,11 +2050,11 @@
         </datatype>
         <remarks>
           <p>When applicable, values from the MARC relator term list (<ref
-              target="http://www.loc.gov/marc/relators/relaterm.html"
-              >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
-              target="http://www.loc.gov/marc/relators/relacode.html"
-              >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
-              <att>role</att>.</p>
+            target="http://www.loc.gov/marc/relators/relaterm.html"
+            >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
+            target="http://www.loc.gov/marc/relators/relacode.html"
+            >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
+            <att>role</att>.</p>
         </remarks>
       </attDef>
     </attList>
@@ -2276,7 +2340,7 @@
       <attDef ident="origin.tstamp2" usage="rec">
         <desc>encodes the ending point of musical material in terms of musical time, i.e., a count
           of measures plus a beat location. The values are relative to the measure identified by
-            <att>origin.tstamp</att>.</desc>
+          <att>origin.tstamp</att>.</desc>
         <datatype>
           <rng:ref name="data.MEASUREBEAT"/>
         </datatype>
@@ -2377,7 +2441,7 @@
             <rng:param name="pattern">(%all|#[\i][\c]+)</rng:param>
           </rng:data>
         </datatype>
-        <constraintSpec ident="check_part_attr_all" scheme="isoschematron">
+        <constraintSpec ident="check_part_attr_all" scheme="schematron">
           <constraint>
             <sch:rule
               context="@part[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
@@ -2387,15 +2451,15 @@
           </constraint>
         </constraintSpec>
       </attDef>
-      <attDef ident="partstaff" usage="rec">
+      <attDef ident="partstaff" usage="opt">
         <desc>Signifies the part staff on which a notated feature occurs. Use '%all' when the
           feature should occur on every staff.</desc>
         <datatype maxOccurs="unbounded">
           <rng:data type="token">
-            <rng:param name="pattern">(%all|\d+(-\d+)?(,\d+(-\d+)?)*)</rng:param>
+            <rng:param name="pattern">(%all|\d+(-\d+)?)</rng:param>
           </rng:data>
         </datatype>
-        <constraintSpec ident="check_partstaff_attr_all" scheme="isoschematron">
+        <constraintSpec ident="check_partstaff_attr_all" scheme="schematron">
           <constraint>
             <sch:rule
               context="@partstaff[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
@@ -2636,9 +2700,9 @@
       creation, transcription, editing, or encoding.</desc>
     <attList>
       <attDef ident="resp" usage="opt">
-        <desc>Indicates the agent(s) responsible for some aspect of the text's creation,
-          transcription, editing, or encoding. Its value must point to one or more identifiers
-          declared in the document header.</desc>
+        <desc>Indicates the agent(s) responsible for some aspect of the text's transcription,
+          editing, or encoding. Its value must point to one or more identifiers declared in the
+          document header.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
@@ -2741,6 +2805,31 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.SLUR"/>
         </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.source" module="MEI.shared" type="atts">
+    <desc>Attributes common to elements that may refer to a source.</desc>
+    <attList>
+      <attDef ident="source" usage="opt">
+        <desc>Contains a list of one or more pointers indicating the sources which attest to a given
+          reading. Each value should correspond to the ID of a <gi scheme="MEI">source</gi> or <gi
+          scheme="MEI">manifestation</gi>element located in the document header.</desc>
+        <datatype maxOccurs="unbounded">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_sourceTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@source">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@source attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:*[local-name() eq 'source' or local-name() eq 'manifestation']/@xml:id"
+                >Each value in @source should correspond to the @xml:id attribute of a source or
+                manifestation element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
     </attList>
   </classSpec>
@@ -3747,6 +3836,7 @@
   <classSpec ident="model.incipLike" module="MEI.shared" type="model">
     <desc>Groups elements used to represent a textual or musical incipit.</desc>
     <classes>
+      <memberOf key="model.physDescPart"/>
       <memberOf key="model.workIdent"/>
     </classes>
   </classSpec>
@@ -3788,7 +3878,7 @@
     </classes>
   </classSpec>
   <classSpec ident="model.lbLike" module="MEI.shared" type="model">
-    <desc>Groups elements that function like line breaks.</desc>
+    <desc>Groups elements that function like line beginnings.</desc>
     <classes>
       <memberOf key="model.milestoneLike.text"/>
       <memberOf key="model.textPhraseLike.limited"/>
@@ -3825,7 +3915,8 @@
   <classSpec ident="model.noteModifierLike" module="MEI.shared" type="model">
     <desc>Groups elements that modify note-like features.</desc>
     <classes>
-      <memberOf key="model.layerPart.mensuralAndNeumes"/>
+      <!--<memberOf key="model.layerPart.mensuralAndNeumes"/>-->
+      <memberOf key="model.layerPart.mensural"/>
     </classes>
   </classSpec>
   <classSpec ident="model.numLike" module="MEI.shared" type="model">
@@ -3845,7 +3936,7 @@
     <desc>Groups elements that collect separate performer parts.</desc>
   </classSpec>
   <classSpec ident="model.pbLike" module="MEI.shared" type="model">
-    <desc>Groups page break-like elements.</desc>
+    <desc>Groups page beginning-like elements.</desc>
     <classes>
       <memberOf key="model.milestoneLike.music"/>
       <memberOf key="model.milestoneLike.text"/>
@@ -4016,10 +4107,10 @@
     <remarks>
       <p>An accidental may raise a pitch by one or two semitones or it may cancel a previous
         accidental or part of a key signature. This element provides an alternative to the
-          <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI">note</gi>
+        <att>accid</att> and <att>accid.ges</att> attributes on the <gi scheme="MEI">note</gi>
         element. The element may be used when specific display info, such as size or color, needs to
         be recorded for the accidental or when multiple accidentals occur on a single note. The
-          <att>func</att> attribute can be used to differentiate between the accidental's functions,
+        <att>func</att> attribute can be used to differentiate between the accidental's functions,
         such as 'cautionary' or 'editorial'.</p>
     </remarks>
   </elementSpec>
@@ -4086,9 +4177,8 @@
       </rng:zeroOrMore>
     </content>
     <remarks>
-      <p>
-        <gi scheme="MEI">addrLine</gi> may be repeated as many times as necessary to enter all lines
-        of an address.</p>
+      <p> <gi scheme="MEI">addrLine</gi> may be repeated as many times as necessary to enter all
+        lines of an address.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) and Encoded
@@ -4125,23 +4215,50 @@
       <rng:empty/>
     </content>
   </elementSpec>
+  <elementSpec ident="analytic" module="MEI.shared">
+    <desc>(analytic level) – Contains bibliographic elements describing an item (e.g. an article or
+      poem) published within a monograph or journal and not as an independent publication.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.componentType"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.respLikePart"/>
+          <rng:ref name="respStmt"/>
+          <rng:ref name="title"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="biblScope"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="identifier"/>
+      </rng:optional>
+    </content>
+  </elementSpec>
   <elementSpec ident="annot" module="MEI.shared">
     <desc>(annotation) – Provides a statement explaining the text or indicating the basis for an
       assertion.</desc>
     <classes>
-      <memberOf key="att.audience"/>
-      <memberOf key="att.bibl"/>
       <memberOf key="att.common"/>
-      <memberOf key="att.dataPointing"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="att.source"/>
       <memberOf key="att.annot.log"/>
       <memberOf key="att.annot.vis"/>
       <memberOf key="att.annot.ges"/>
       <memberOf key="att.annot.anl"/>
+      <memberOf key="att.audience"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
       <memberOf key="att.plist"/>
-      <memberOf key="att.responsibility"/>
+      <memberOf key="att.source"/>
       <memberOf key="att.targetEval"/>
       <memberOf key="model.annotLike"/>
     </classes>
@@ -4178,13 +4295,13 @@
         annotations of the musical text. It provides a way to group participating *events* and/or
         *control events*, for example, the notes that form a descending bass line, and provide a
         label for and comment regarding the group. Participating entities may be identified in the
-          <att>plist</att> attribute. An editorial or analytical comment or observation may be
+        <att>plist</att> attribute. An editorial or analytical comment or observation may be
         included directly within the <gi scheme="MEI">annot</gi> element. The starting point of the
         annotation may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
-          <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
+        <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
         recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. The
-          <att>resp</att> attribute records the editor(s) responsible for identifying or creating
-        the annotation.</p>
+        <att>resp</att> attribute records the editor(s) responsible for identifying or creating the
+        annotation.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="arranger" module="MEI.shared">
@@ -4330,12 +4447,11 @@
             </rng:zeroOrMore>
            </content> -->
     <remarks>
-      <p>
-        <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such as <gi
-          scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI">persName</gi>,
+      <p> <gi scheme="MEI">bibl</gi> may contain a mix of text and more specific elements such as
+        <gi scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI">persName</gi>,
         and <gi scheme="MEI">corpName</gi>. This element may also function as a hypertext reference
         to an external electronic resource. Do not confuse this element with <gi scheme="MEI"
-          >ref</gi>, which does not provide special bibliographic sub-elements.</p>
+        >ref</gi>, which does not provide special bibliographic sub-elements.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
@@ -4386,8 +4502,8 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
       <memberOf key="att.extent"/>
+      <memberOf key="att.lang"/>
       <memberOf key="model.biblPart"/>
     </classes>
     <content>
@@ -4416,6 +4532,40 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="biblStruct" module="MEI.shared">
+    <desc>(structured bibliographic citation) – Contains a bibliographic citation in which
+      bibliographic sub-elements must appear in a specified order.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+      <memberOf key="model.biblLike"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="analytic"/>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:ref name="monogr"/>
+          <rng:zeroOrMore>
+            <rng:ref name="series"/>
+          </rng:zeroOrMore>
+        </rng:oneOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="identifier"/>
+            <rng:ref name="relatedItem"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+  </elementSpec>
   <elementSpec ident="body" module="MEI.shared">
     <desc>Contains the whole of a single musical text, excluding any front or back matter.</desc>
     <classes>
@@ -4434,7 +4584,7 @@
     <remarks>
       <p>When the music can be broken into high-level, discrete, linear segments, such as movements
         of a symphony, there may be multiple <gi scheme="MEI">mdiv</gi> elements within <gi
-          scheme="MEI">body</gi>. This is the highest level indication of the structure of the
+        scheme="MEI">body</gi>. This is the highest level indication of the structure of the
         music.</p>
       <p>The content model of <gi scheme="MEI">body</gi> also allows blocks of text and music
         notation to be interleaved. This permits the encoding of a wide range of musical documents,
@@ -4471,7 +4621,7 @@
         long pause (L.P.), but longer than that indicated by a <gi scheme="MEI">breath</gi> mark.
         When combined with a <gi scheme="MEI">fermata</gi> a longer silence is usually implied. The
         starting point of the caesura may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a
         semantic error not to specify a starting point attribute.</p>
       <p>Unlike the <gi scheme="MEI">breath</gi> mark, a caesura may have a performed duration.
         Also, while the default value for <att>place</att> on the breath mark is "above", the
@@ -4569,13 +4719,14 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="cb" module="MEI.shared">
-    <desc>(column break) – An empty formatting element that forces text to begin in a new
+    <desc>(column beginning) – An empty formatting element that forces text to begin in a new
       column.</desc>
     <classes>
       <memberOf key="att.basic"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.labelled"/>
       <memberOf key="att.linking"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.source"/>
       <memberOf key="att.typed"/>
       <memberOf key="model.milestoneLike.music"/>
@@ -4594,7 +4745,7 @@
           <constraint>
             <sch:rule context="mei:cb">
               <sch:let name="totalColumns" value="preceding::mei:colLayout[1]/@cols"/>
-              <sch:assert test="preceding::mei:colLayout">Column break must be preceded by a
+              <sch:assert test="preceding::mei:colLayout">Column beginning must be preceded by a
                 colLayout element.</sch:assert>
               <sch:assert test="@n &lt;= $totalColumns">The value of @n should be less than or equal
                 to the value of @cols (<sch:value-of select="$totalColumns"/>) of the preceding
@@ -4777,11 +4928,11 @@
         </datatype>
         <remarks>
           <p>When applicable, values from the MARC relator term list (<ref
-              target="http://www.loc.gov/marc/relators/relaterm.html"
-              >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
-              target="http://www.loc.gov/marc/relators/relacode.html"
-              >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
-              <att>role</att>.</p>
+            target="http://www.loc.gov/marc/relators/relaterm.html"
+            >http://www.loc.gov/marc/relators/relaterm.html</ref>) or code list (<ref
+            target="http://www.loc.gov/marc/relators/relacode.html"
+            >http://www.loc.gov/marc/relators/relacode.html</ref>) are recommended for
+            <att>role</att>.</p>
         </remarks>
       </attDef>
     </attList>
@@ -4833,15 +4984,15 @@
     <remarks>
       <p>The most common visual form is a sign resembling a mordent. Other graphical forms may be
         indicated by the <att>altsym</att> attribute. Together the <att>pname</att> and
-          <att>oct</att> attributes identify the location where the custos appears.</p>
+        <att>oct</att> attributes identify the location where the custos appears.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="date" module="MEI.shared">
     <desc>A string identifying a point in time or the time period between two such points.</desc>
     <classes>
+      <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.calendared"/>
-      <memberOf key="att.common"/>
       <memberOf key="att.datable"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.facsimile"/>
@@ -4999,7 +5150,7 @@
     </attList>
     <remarks>
       <p>The <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, and <gi scheme="MEI"
-          >depth</gi> elements are preferred when appropriate.</p>
+        >depth</gi> elements are preferred when appropriate.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="dimensions" module="MEI.shared">
@@ -5030,9 +5181,9 @@
     </constraintSpec>
     <remarks>
       <p>The elements <gi scheme="MEI">height</gi>, <gi scheme="MEI">width</gi>, <gi scheme="MEI"
-          >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require
-        the capture of the individual dimensions of an object. Do not confuse this element with the
-          <gi scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
+        >depth</gi>, and <gi scheme="MEI">dim</gi> are available for circumstances that require the
+        capture of the individual dimensions of an object. Do not confuse this element with the <gi
+        scheme="MEI">extent</gi> element, which is used to indicate the quantity of described
         materials.</p>
     </remarks>
     <remarks>
@@ -5044,7 +5195,7 @@
     <desc>(directive) – An instruction expressed as a combination of text and symbols — such as
       segno and coda symbols, fermatas over a bar line, etc., typically above, below, or between
       staves, but not on the staff — that is not encoded elsewhere in more specific elements, like
-        <gi scheme="MEI">tempo</gi> or <gi scheme="MEI">dynam</gi>.</desc>
+      <gi scheme="MEI">tempo</gi> or <gi scheme="MEI">dynam</gi>.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -5080,8 +5231,8 @@
         they can be linked via their attributes to other events. The starting point of the directive
         may be indicated by either a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>,
         or <att>tstamp.real</att> attribute, while the ending point may be recorded by either a
-          <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att> attribute. It
-        is a semantic error not to specify a starting point attribute.</p>
+        <att>dur</att>, <att>dur.ges</att>, <att>endid</att>, or <att>tstamp2</att> attribute. It is
+        a semantic error not to specify a starting point attribute.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="distributor" module="MEI.shared">
@@ -5119,6 +5270,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="model.divLike"/>
     </classes>
     <content>
@@ -5219,9 +5371,9 @@
     </content>
     <remarks>
       <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
-          >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific
-        display info, such as size or color, needs to be recorded for the dot. This element may also
-        be used for dots of division in the mensural repertoire.</p>
+        >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific display
+        info, such as size or color, needs to be recorded for the dot. This element may also be used
+        for dots of division in the mensural repertoire.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="dynam" module="MEI.shared">
@@ -5267,9 +5419,9 @@
         e.g. 'p', 'mf', or 'cresc. poco a poco'. The <gi scheme="MEI">hairpin</gi> element should be
         used for <emph>graphical</emph>, i.e., crescendo and diminuendo, dynamic markings. The
         starting point of the dynamic marking may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
         ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
-          <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify a
+        <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify a
         starting point attribute. MIDI values associated with the graphical dynamic sign may be
         recorded in the <att>val</att> and <att>val2</att> attributes.</p>
     </remarks>
@@ -5371,9 +5523,9 @@
   <elementSpec ident="event" module="MEI.shared">
     <desc>Contains a free-text event description.</desc>
     <classes>
+      <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.calendared"/>
-      <memberOf key="att.common"/>
       <memberOf key="att.datable"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.facsimile"/>
@@ -5412,8 +5564,8 @@
   <elementSpec ident="eventList" module="MEI.shared">
     <desc>Contains historical information given as a sequence of significant past events.</desc>
     <classes>
-      <memberOf key="att.bibl"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="model.listLike"/>
     </classes>
@@ -5449,10 +5601,10 @@
       <p>An <gi scheme="MEI">eventList</gi> contains <gi scheme="MEI">event</gi> elements that
         capture a brief description of the associated event, including dates and locations where the
         event took place. An <gi scheme="MEI">eventList</gi> describes events associated with a work
-        when it appears in the <gi scheme="MEI">workDesc</gi> element or events associated with the
+        when it appears in the <gi scheme="MEI">workList</gi> element or events associated with the
         custodial history of a given copy of a source for the encoding when it appears within the
-          <gi scheme="MEI">source</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
-          <att>type</att> attribute may be used to distinguish between event lists with different
+        <gi scheme="MEI">sourceDesc</gi> or <gi scheme="MEI">relatedItem</gi> elements. The
+        <att>type</att> attribute may be used to distinguish between event lists with different
         functions, such as a list of events in the compositional process and a list of performance
         dates.</p>
     </remarks>
@@ -5471,10 +5623,10 @@
     </content>
     <remarks>
       <p>The <att>plist</att> attribute contains an ordered list of identifiers of descendant <gi
-          scheme="MEI">section</gi>, <gi scheme="MEI">ending</gi>, <gi scheme="MEI">lem</gi>, or <gi
-          scheme="MEI">rdg</gi> elements. For example, the sequence "#A #End1 #A #End2" indicates
-        that the section labelled 'A' comes first, then the ending labelled 'End1', followed by the
-        'A' section again, and finally the ending labelled 'End2'.</p>
+        scheme="MEI">section</gi>, <gi scheme="MEI">ending</gi>, <gi scheme="MEI">lem</gi>, or <gi
+        scheme="MEI">rdg</gi> elements. For example, the sequence "#A #End1 #A #End2" indicates that
+        the section labelled 'A' comes first, then the ending labelled 'End1', followed by the 'A'
+        section again, and finally the ending labelled 'End2'.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="extent" module="MEI.shared">
@@ -5499,7 +5651,7 @@
     </content>
     <remarks>
       <p>Use the <gi scheme="MEI">dimensions</gi> element when it is necessary to specify the <hi
-          rend="bold">physical</hi> size of materials being described, for example, height and
+        rend="bold">physical</hi> size of materials being described, for example, height and
         width.</p>
     </remarks>
     <remarks>
@@ -5614,7 +5766,7 @@
     </constraintSpec>
     <remarks>
       <p>This element provides an alternative to the <gi scheme="MEI">staffGrp</gi> element's
-          <att>symbol</att> attribute. It may be used when exact placement or editorial details for
+        <att>symbol</att> attribute. It may be used when exact placement or editorial details for
         the grouping symbol must be recorded.</p>
     </remarks>
   </elementSpec>
@@ -5668,9 +5820,9 @@
   <elementSpec ident="identifier" module="MEI.shared">
     <desc>An alpha-numeric string that establishes the identity of the described material.</desc>
     <classes>
+      <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
-      <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="model.identifierLike"/>
     </classes>
@@ -5717,7 +5869,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="incip" module="MEI.shared">
-    <desc>(incipit) – The opening music and/or words of a composition.</desc>
+    <desc>(incipit) – The opening music and/or words of a musical or textual work.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -5769,7 +5921,7 @@
     </content>
     <remarks>
       <p>The <gi scheme="MEI">incipText</gi> element may be used to capture a text incipit, while
-          <gi scheme="MEI">score</gi> is available to provide an MEI-encoded musical incipit. Images
+        <gi scheme="MEI">score</gi> is available to provide an MEI-encoded musical incipit. Images
         of an incipit may be referenced using the <gi scheme="MEI">graphic</gi> element. An incipit
         encoded in a text format other than MEI may be placed in the <gi scheme="MEI">incipCode</gi>
         element.</p>
@@ -5813,8 +5965,8 @@
     </attList>
     <remarks>
       <p>It is a semantic error not to provide one of the following: the <att>x</att> and
-          <att>y</att> pair of attributes, the <att>pname</att> and <att>oct</att> pair of
-        attributes, or the <att>loc</att> attribute.</p>
+        <att>y</att> pair of attributes, the <att>pname</att> and <att>oct</att> pair of attributes,
+        or the <att>loc</att> attribute.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="keySig" module="MEI.shared">
@@ -5912,6 +6064,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.typed"/>
       <memberOf key="att.layer.log"/>
       <memberOf key="att.layer.vis"/>
@@ -5938,7 +6091,7 @@
         connection with a <gi scheme="MEI">layerDef</gi> element where logical and visual
         information about the layer is recorded. Alternatively, the <att>n</att> attribute may be
         used as a reference to a <gi scheme="MEI">layerDef</gi> element with the same value in its
-          <att>n</att> attribute. If neither <att>def</att> nor <att>n</att> attributes are present,
+        <att>n</att> attribute. If neither <att>def</att> nor <att>n</att> attributes are present,
         then encoding order of the layers is presumed to match the encoding order of the layer
         definitions.</p>
     </remarks>
@@ -5951,6 +6104,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.typed"/>
       <memberOf key="att.layerDef.log"/>
       <memberOf key="att.layerDef.vis"/>
@@ -5973,7 +6127,8 @@
     </content>
   </elementSpec>
   <elementSpec ident="lb" module="MEI.shared">
-    <desc>(line break) – An empty formatting element that forces text to begin on a new line.</desc>
+    <desc>(line beginning) – An empty formatting element that forces text to begin on a new
+      line.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -5983,19 +6138,6 @@
     <content>
       <rng:empty/>
     </content>
-    <attList>
-      <attDef ident="func" usage="opt">
-        <desc>States whether the line break follows a single line or a line group.</desc>
-        <valList type="closed">
-          <valItem ident="line">
-            <desc>Follows a verse line.</desc>
-          </valItem>
-          <valItem ident="group">
-            <desc>Follows a group of verse lines.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
     <remarks>
       <p>The <att>n</att> attribute should be used to record a number associated with this textual
         line. See comment on <gi scheme="MEI">verse</gi> element for description of <att>func</att>
@@ -6110,12 +6252,12 @@
         music. The score view is the traditional full and open score while the parts view contains
         each performer's view of the score; that is, his part. These 2 views are necessary because
         it is not always possible or desirable to generate one from the other. The <gi scheme="MEI"
-          >score</gi> and <gi scheme="MEI">parts</gi> elements are placed here and not directly
-        within the <gi scheme="MEI">body</gi> element because score and part characteristics may
-        change from <gi scheme="MEI">mdiv</gi> to <gi scheme="MEI">mdiv</gi>. For example, the 2nd
-        movement of a symphony may require different performing forces (and therefore different
-        score and part layout) than the other movements. The <gi scheme="MEI">mdiv</gi> element may
-        be recursively nested in order to represent music which exhibits this kind of structure. For
+        >score</gi> and <gi scheme="MEI">parts</gi> elements are placed here and not directly within
+        the <gi scheme="MEI">body</gi> element because score and part characteristics may change
+        from <gi scheme="MEI">mdiv</gi> to <gi scheme="MEI">mdiv</gi>. For example, the 2nd movement
+        of a symphony may require different performing forces (and therefore different score and
+        part layout) than the other movements. The <gi scheme="MEI">mdiv</gi> element may be
+        recursively nested in order to represent music which exhibits this kind of structure. For
         example, an opera is normally divided into acts, which are in turn divided into scenes.</p>
     </remarks>
   </elementSpec>
@@ -6123,8 +6265,9 @@
     <desc>Contains a single MEI-conformant document, consisting of an MEI header and a musical text,
       either in isolation or as part of an meiCorpus element.</desc>
     <classes>
-      <memberOf key="att.meiVersion"/>
       <memberOf key="att.id"/>
+      <memberOf key="att.meiVersion"/>
+      <memberOf key="att.responsibility"/>
     </classes>
     <content>
       <rng:ref name="meiHead"/>
@@ -6146,6 +6289,84 @@
         The name of this element should not be changed by any customization in order to assure an
         absolute minimum level of MEI compliance.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="monogr" module="MEI.shared">
+    <desc>(monograph level) – Contains bibliographic elements describing an item, for example, a
+      published book or journal, score, recording, or an unpublished manuscript.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.recordType"/>
+      <memberOf key="att.targetEval"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:optional>
+          <rng:choice>
+            <rng:group>
+              <rng:choice>
+                <rng:ref name="model.respLikePart"/>
+                <rng:ref name="respStmt"/>
+              </rng:choice>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="model.respLikePart"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+              <rng:oneOrMore>
+                <rng:ref name="model.titleLike"/>
+              </rng:oneOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="editor"/>
+                  <rng:ref name="model.identifierLike"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:group>
+            <rng:group>
+              <rng:oneOrMore>
+                <rng:ref name="model.titleLike"/>
+              </rng:oneOrMore>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <rng:ref name="model.respLikePart"/>
+                  <rng:ref name="model.identifierLike"/>
+                  <rng:ref name="respStmt"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </rng:group>
+          </rng:choice>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="corpName"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.editionLike"/>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="editor"/>
+              <rng:ref name="respStmt"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:zeroOrMore>
+        <rng:ref name="imprint"/>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="imprint"/>
+            <rng:ref name="extent"/>
+            <rng:ref name="biblScope"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
   </elementSpec>
   <elementSpec ident="music" module="MEI.shared">
     <desc>Contains a single musical text of any kind, whether unitary or composite, for example, an
@@ -6175,6 +6396,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.name"/>
       <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="model.eventPart"/>
       <memberOf key="model.nameLike"/>
     </classes>
@@ -6229,23 +6451,23 @@
     <remarks>
       <p>Contains the name of an entity that is difficult to tag more specifically, for example, as
         a <gi scheme="MEI">corpName</gi>, <gi scheme="MEI">geogName</gi>, <gi scheme="MEI"
-          >persName</gi>, or <gi scheme="MEI">title</gi>. The <gi scheme="MEI">name</gi> element may
+        >persName</gi>, or <gi scheme="MEI">title</gi>. The <gi scheme="MEI">name</gi> element may
         be used in place of the more specific elements when it is not known what kind of name is
         being described or when a high degree of precision is not necessary. For example, the <gi
-          scheme="MEI">name</gi> element might be used when it is not clear whether the name "Bach"
+        scheme="MEI">name</gi> element might be used when it is not clear whether the name "Bach"
         refers to a person or a geographic feature. The <gi scheme="MEI">name</gi> element may be
         used for an individual, such as 'Henry VIII, King of England'; a corporate body, such as
         'The Beatles'; a geographical place; an expanse of time, such as 'The Romantic Era'; or a
         mechanical (often generative) process. When name parts are needed, <gi scheme="MEI"
-          >name</gi> sub-elements are recommended. The recommended values for the <att>type</att>
+        >name</gi> sub-elements are recommended. The recommended values for the <att>type</att>
         attribute are: person, corporation, location, period, and process. Dates associated with
-          <emph>the name</emph> (not necessarily the same as those pertaining to the <emph>entity
-          described by the name</emph>) may be recorded using <att>startdate</att>,
-          <att>enddate</att>, <att>notbefore</att>, <att>notafter</att>, and <att>isodate</att>
+        <emph>the name</emph> (not necessarily the same as those pertaining to the <emph>entity
+        described by the name</emph>) may be recorded using <att>startdate</att>,
+        <att>enddate</att>, <att>notbefore</att>, <att>notafter</att>, and <att>isodate</att>
         attributes. The name of the list from which a controlled value is taken, such as the
         Thesaurus of Geographic Names (TGN) or Library of Congress Name Authority File (LCNAF), and
         its electronically-available location may be recorded using the <att>auth</att> and
-          <att>auth.uri</att> attributes.</p>
+        <att>auth.uri</att> attributes.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Encoded Archival Description (EAD)
@@ -6253,8 +6475,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="note" module="MEI.shared">
-    <desc>A single pitched event. <!-- (Read, p. 63) -->
-    </desc>
+    <desc>A single pitched event. <!-- (Read, p. 63) --> </desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -6282,7 +6503,7 @@
         instead of the note element's attributes when accid and artic represent first-class objects,
         e.g., when they require attributes, such as <att>x</att> and <att>y</att> location
         attributes. Similarly, the <gi scheme="MEI">syl</gi> sub-element may be used instead of the
-          <att>syl</att> attribute. The verse sub-element may be used to group text syllables by
+        <att>syl</att> attribute. The verse sub-element may be used to group text syllables by
         verse. The <att>colored</att> attribute may be used to indicate coloration. In the mensural
         repertoire, coloration is a temporary change in the underlying mensuration from perfect to
         imperfect. In the CMN repertoire, coloration is an inversion of the note head's normal
@@ -6355,11 +6576,11 @@
       </constraint>
     </constraintSpec>
     <remarks>
-      <p>The glyph of the ornament may be indicated with the <att>altsym</att> attribute, and it is
-        recommended to provide an expansion of the ornament on the staff content. The starting point
-        of the ornament may be indicated by either a <att>startid</att>, <att>tstamp</att>,
-          <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic error not to
-        specify one of these attributes.</p>
+      <p>If it is not textual, the glyph of the ornament may be indicated with the <att>altsym</att>
+        attribute, and it is recommended to provide an expansion of the ornament on the staff content.
+        The starting point of the ornament may be indicated by either a <att>startid</att>,
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute. It is a semantic
+        error not to specify one of these attributes.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="p" module="MEI.shared">
@@ -6432,10 +6653,9 @@
       </rng:zeroOrMore>
     </content>
     <remarks>
-      <p>
-        <gi scheme="MEI">part</gi> elements are not used in MEI to indicate voice leading.
-          <att>next</att> attributes on event elements should be used for this purpose. <gi
-          scheme="MEI">part</gi> elements are useful for encoding individual parts when there is no
+      <p> <gi scheme="MEI">part</gi> elements are not used in MEI to indicate voice leading.
+        <att>next</att> attributes on event elements should be used for this purpose. <gi
+        scheme="MEI">part</gi> elements are useful for encoding individual parts when there is no
         score, such as early music part books, when the music has non-aligning bar lines, when
         different layout, such as page turns, are needed for the score and parts, or for
         accommodating software that requires part-by-part encoding. When assembly of the parts into
@@ -6462,7 +6682,8 @@
     </content>
   </elementSpec>
   <elementSpec ident="pb" module="MEI.shared">
-    <desc>(page break) – An empty formatting element that forces text to begin on a new page.</desc>
+    <desc>(page beginning) – An empty formatting element that forces text to begin on a new
+      page.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -6481,7 +6702,7 @@
       <p>The <att>n</att> attribute should be used to record the page number displayed in the
         source. It need not be an integer, e.g., 'iv', or 'p17-3'. The logical page number can be
         calculated by counting previous <gi scheme="MEI">pb</gi> ancestor elements. When used in a
-        score context, a page break implies an accompanying system break.</p>
+        score context, a page beginning implies an accompanying system beginning.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -6546,9 +6767,9 @@
         printed music. It may also be used for similarly formatted material in manuscripts. When
         used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
         page footers established by the use of <gi scheme="MEI">pgFoot</gi> within a previous <gi
-          scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
+        scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="pgFoot2" module="MEI.shared">
@@ -6622,9 +6843,9 @@
         printed music. It may also be used for similarly formatted material in manuscripts. When
         used within <gi scheme="MEI">pb</gi>, it records a temporary suspension of the pattern of
         page headers established by the use of <gi scheme="MEI">pgHead</gi> within a previous <gi
-          scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
+        scheme="MEI">scoreDef</gi>. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="pgHead2" module="MEI.shared">
@@ -6661,7 +6882,7 @@
         second and succeeding pages of printed music. It may also be used for similarly formatted
         material in manuscripts. Auto-generated page numbers may be indicated with a processing
         instruction. The pgHead, pgHead2, pgFoot, and pgFoot2 elements should <hi rend="bold"
-          >*not*</hi> be used to encode textual notes/annotations.</p>
+        >*not*</hi> be used to encode textual notes/annotations.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="phrase" module="MEI.shared">
@@ -6711,15 +6932,15 @@
         distinction for historical reasons may do so. If the user does not want to maintain the
         distinction, then the more generic <gi scheme="MEI">slur</gi> element should be employed.
         The starting point of the phrase/slur may be indicated by either a <att>startid</att>,
-          <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
+        <att>tstamp</att>, <att>tstamp.ges</att>, or <att>tstamp.real</att> attribute, while the
         ending point may be recorded by either a <att>dur</att>, <att>dur.ges</att>,
-          <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify
-        one starting and one ending type of attribute. Either <att>place</att>, <att>bulge</att>, or
-          <att>bezier</att> attributes may be used to record the curvature of the phrase/slur. The
-          <gi scheme="MEI">slur</gi> and <gi scheme="MEI">tie</gi> elements may be used instead of
-        the slur.* and tie.* attributes provided on <gi scheme="MEI">chord</gi> and <gi scheme="MEI"
-          >note</gi> elements when 1) they are required by software, or 2) multiple, alternative
-        slurs are needed.</p>
+        <att>endid</att>, or <att>tstamp2</att> attribute. It is a semantic error not to specify one
+        starting and one ending type of attribute. Either <att>place</att>, <att>bulge</att>, or
+        <att>bezier</att> attributes may be used to record the curvature of the phrase/slur. The <gi
+        scheme="MEI">slur</gi> and <gi scheme="MEI">tie</gi> elements may be used instead of the
+        slur.* and tie.* attributes provided on <gi scheme="MEI">chord</gi> and <gi scheme="MEI"
+        >note</gi> elements when 1) they are required by software, or 2) multiple, alternative slurs
+        are needed.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="physLoc" module="MEI.shared">
@@ -6820,9 +7041,9 @@
     <desc>(related item) – Contains or references another bibliographic item which is related to the
       present one.</desc>
     <classes>
-      <memberOf key="att.dataPointing"/>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.dataPointing"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.pointing"/>
       <memberOf key="att.targetEval"/>
@@ -6839,9 +7060,9 @@
     <attList>
       <attDef ident="rel" usage="req">
         <desc>Describes the relationship between the entity identified by the <gi scheme="MEI"
-            >relatedItem</gi> element and the resource described in the parent element, i.e., <gi
-            scheme="MEI">bibl</gi>, <gi scheme="MEI">source</gi> or <gi scheme="MEI"
-            >relatedItem</gi>.</desc>
+          >relatedItem</gi> element and the resource described in the parent element, i.e., <gi
+          scheme="MEI">bibl</gi>, <gi scheme="MEI">source</gi> or <gi scheme="MEI"
+          >relatedItem</gi>.</desc>
         <datatype>
           <rng:ref name="data.MODSRELATIONSHIP"/>
         </datatype>
@@ -6858,7 +7079,6 @@
       <memberOf key="att.evidence"/>
       <memberOf key="att.plist"/>
       <memberOf key="att.pointing"/>
-      <memberOf key="att.responsibility"/>
       <memberOf key="att.targetEval"/>
       <memberOf key="model.relationLike"/>
     </classes>
@@ -6936,11 +7156,11 @@
       <p>The <att>plist</att> and <att>target</att> attributes identify the participants in a
         relationship, while the <att>rel</att> attribute describes the nature of their relationship.
         A mutual relationship can be described using only the <att>plist</att> attribute – the
-          <att>target</att> attribute is not necessary. In a non-mutual relationship,
-          <att>plist</att> identifies the entities pointed "from", while <att>target</att> specifies
-        the entities pointed "to". If the <att>target</att> attribute is present, but the
-          <att>plist</att> is not, the relationship is presumed to exist between the parent of the
-        current relation element and the entities identified by <att>target</att>.</p>
+        <att>target</att> attribute is not necessary. In a non-mutual relationship, <att>plist</att>
+        identifies the entities pointed "from", while <att>target</att> specifies the entities
+        pointed "to". If the <att>target</att> attribute is present, but the <att>plist</att> is
+        not, the relationship is presumed to exist between the parent of the current relation
+        element and the entities identified by <att>target</att>.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="relationList" module="MEI.shared">
@@ -6999,8 +7219,8 @@
   <elementSpec ident="repository" module="MEI.shared">
     <desc>Institution, agency, or individual which holds a bibliographic item.</desc>
     <classes>
-      <memberOf key="att.bibl"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.name"/>
@@ -7044,7 +7264,7 @@
     </content>
     <remarks>
       <p>The name of the list from which a controlled value is taken may be recorded using the
-          <att>auth</att> attribute.</p>
+        <att>auth</att> attribute.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -7081,7 +7301,8 @@
             count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
             role="warning">At least one element pair (a resp element and a name-like element) is
             recommended. Alternatively, each name-like element may have a @role
-            attribute.</sch:assert></sch:rule>
+            attribute.</sch:assert>
+        </sch:rule>
       </constraint>
     </constraintSpec>
     <remarks>
@@ -7164,8 +7385,8 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="sb" module="MEI.shared">
-    <desc>(system break) – An empty formatting element that forces musical notation to begin on a
-      new line.</desc>
+    <desc>(system beginning) – An empty formatting element that forces musical notation to begin on
+      a new line.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -7216,8 +7437,8 @@
     </content>
     <remarks>
       <p>Since the <gi scheme="MEI">measure</gi> element is optional, a score may consist entirely
-        of page breaks, each of which points to a page image. <gi scheme="MEI">div</gi> elements are
-        allowed preceding and following sections of music data in order to accommodate blocks of
+        of page beginnings, each of which points to a page image. <gi scheme="MEI">div</gi> elements
+        are allowed preceding and following sections of music data in order to accommodate blocks of
         explanatory text.</p>
     </remarks>
   </elementSpec>
@@ -7467,6 +7688,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.typed"/>
       <memberOf key="att.staff.log"/>
       <memberOf key="att.staff.vis"/>
@@ -7512,9 +7734,9 @@
     </constraintSpec>
     <remarks>
       <p>The <att>def</att> attribute may be used to create a connection with a <gi scheme="MEI"
-          >staffDef</gi> element where logical and visual information about the staff is recorded.
+        >staffDef</gi> element where logical and visual information about the staff is recorded.
         Alternatively, the <att>n</att> attribute may be used as a reference to a <gi scheme="MEI"
-          >staffDef</gi> element with the same value in its <att>n</att> attribute or the staff may
+        >staffDef</gi> element with the same value in its <att>n</att> attribute or the staff may
         contain a staffDef element that defines it. If neither <att>def</att> nor <att>n</att>
         attributes are present, then the encoding order of the staves is presumed to match the
         encoding order of the staff definitions.</p>
@@ -7528,6 +7750,7 @@
       <memberOf key="att.linking"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="att.typed"/>
       <memberOf key="att.staffDef.log"/>
       <memberOf key="att.staffDef.vis"/>
@@ -7832,8 +8055,8 @@
   <elementSpec ident="term" module="MEI.shared">
     <desc>Keyword or phrase which describes a resource.</desc>
     <classes>
-      <memberOf key="att.bibl"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
       <memberOf key="att.lang"/>
       <memberOf key="model.textPhraseLike.limited"/>
@@ -7860,7 +8083,7 @@
         combination of other, independent terms.</p>
       <p>To associate a term with a taxonomy category defined in the MEI metadata header, the value
         of <att>class</att> must contain a fragment identifier corresponding to the appropriate <gi
-          scheme="MEI">term</gi> element. To associate a term with category in an externally-defined
+        scheme="MEI">term</gi> element. To associate a term with category in an externally-defined
         taxonomy, <att>class</att> must contain an absolute URI, which may include the fragment
         identifier of the element containing the category label.</p>
     </remarks>
@@ -7916,6 +8139,7 @@
       <memberOf key="att.lang"/>
       <memberOf key="att.linking"/>
       <memberOf key="att.nNumberLike"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="model.titleLike"/>
     </classes>
     <content>
@@ -8004,8 +8228,8 @@
         analysing titles and processing them according to their type; where such specialized
         processing is not necessary, there is no need for such analysis, and the entire title,
         including subtitles and any parallel titles, may be enclosed within a single <gi
-          scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
-          >titlePart</gi> sub-elements. The name of the list from which a controlled value is taken
+        scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI"
+        >titlePart</gi> sub-elements. The name of the list from which a controlled value is taken
         may be recorded using the <att>auth</att> attribute. The number of initial characters (such
         as those constituting an article or preposition) that should not be used for sorting a title
         or name may be indicated in the <att>nonfiling</att> attribute.</p>
@@ -8060,6 +8284,7 @@
       <memberOf key="att.lang"/>
       <memberOf key="att.linking"/>
       <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>

@@ -36,9 +36,33 @@
     <desc>Attributes describing the nature of an encoded scholarly intervention or
       interpretation.</desc>
     <classes>
-      <memberOf key="att.responsibility"/>
       <memberOf key="att.source"/>
       <memberOf key="att.evidence"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.metaMark.anl" module="MEI.edittrans" type="atts">
+    <desc>Analytical domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.metaMark.ges" module="MEI.edittrans" type="atts">
+    <desc>Gestural domain attributes.</desc>
+    <classes>
+      <memberOf key="att.duration.gestural"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.metaMark.log" module="MEI.edittrans" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.gestural"/>
+      <memberOf key="att.edit"/>
+      <memberOf key="att.trans"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.metaMark.vis" module="MEI.edittrans" type="atts">
+    <desc>Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.placement"/>
     </classes>
   </classSpec>
   <classSpec ident="att.reasonIdent" module="MEI.edittrans" type="atts">
@@ -57,7 +81,9 @@
     <desc>Attributes for elements encoding authorial or scribal intervention when transcribing
       manuscript or similar sources.</desc>
     <classes>
+      <memberOf key="att.geneticState"/>
       <memberOf key="att.handIdent"/>
+      <memberOf key="att.metadataPointing"/>
       <memberOf key="att.sequence"/>
     </classes>
   </classSpec>
@@ -117,6 +143,9 @@
           <rng:ref name="model.graphicPrimitiveLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -135,7 +164,7 @@
       <p>In no case should <gi scheme="MEI">abbr</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >abbr</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >abbr</gi> should only contain those elements allowed within <gi scheme="MEI"
         >verse</gi>.</p>
     </remarks>
     <remarks>
@@ -183,7 +212,7 @@
     <remarks>
       <p>The <gi scheme="MEI">add</gi> element contains material inserted by an author, scribe,
         annotator, or corrector. The agent responsible for the addition may be encoded using the
-          <att>hand</att> attribute, while the <att>resp</att> attribute records the editor or
+        <att>hand</att> attribute, while the <att>resp</att> attribute records the editor or
         transcriber responsible for identifying the hand of the addition. The <att>cert</att>
         attribute signifies the degree of certainty ascribed to the identification of the hand of
         the addition. The editor(s) responsible for asserting this particular reading may be
@@ -245,6 +274,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -253,15 +285,15 @@
     </content>
     <remarks>
       <p>The <att>cert</att> attribute signifies the degree of certainty ascribed to correction. The
-          <att>resp</att> attribute contains an ID reference to an element containing the name of
-        the editor or transcriber responsible for suggesting the correction held as the content of
-        the <gi scheme="MEI">corr</gi> element. If the correction was made in the source, resp
-        should be used to identify the hand of the corrector. The value of resp must point to one or
-        more identifiers declared in the document header.</p>
+        <att>resp</att> attribute contains an ID reference to an element containing the name of the
+        editor or transcriber responsible for suggesting the correction held as the content of the
+        <gi scheme="MEI">corr</gi> element. If the correction was made in the source, resp should be
+        used to identify the hand of the corrector. The value of resp must point to one or more
+        identifiers declared in the document header.</p>
       <p>In no case should <gi scheme="MEI">corr</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >corr</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >corr</gi> should only contain those elements allowed within <gi scheme="MEI"
         >verse</gi>.</p>
     </remarks>
     <remarks>
@@ -320,17 +352,16 @@
         other indications intended to result in filling gaps in the score with material written
         elsewhere. It is recommended to capture the position of the indication itself with the
         attributes <att>tstamp</att> and <att>staff</att>. The area to be filled should contain <gi
-          scheme="MEI">space</gi> or <gi scheme="MEI">mSpace</gi> elements. The material to be used
-        to fill the gap can be identified by the attributes <att>origin.tstamp</att>,
-          <att>origin.tstamp2</att>, <att>origin.staff</att>, and <att>origin.layer</att>. If
-          <att>origin.tstamp2</att> is not provided, a duration similar to that of the local
-        omission (as encoded in the combination of <att>tstamp</att> and <att>tstamp2</att>) is
-        assumed. Any missing @origin.* attributes are assumed to take the same values as information
-        associated with the cpMark. For example, when only the <att>origin.staff</att> attribute is
-        provided, it is assumed that the referenced part comes from a different staff in the same
-        measure. If a different measure is provided by <att>origin.tstamp</att>, but no
-          <att>origin.staff</att> is given, then it is assumed that the material is to be taken from
-        the same staff.</p>
+        scheme="MEI">space</gi> or <gi scheme="MEI">mSpace</gi> elements. The material to be used to
+        fill the gap can be identified by the attributes <att>origin.tstamp</att>,
+        <att>origin.tstamp2</att>, <att>origin.staff</att>, and <att>origin.layer</att>. If
+        <att>origin.tstamp2</att> is not provided, a duration similar to that of the local omission
+        (as encoded in the combination of <att>tstamp</att> and <att>tstamp2</att>) is assumed. Any
+        missing @origin.* attributes are assumed to take the same values as information associated
+        with the cpMark. For example, when only the <att>origin.staff</att> attribute is provided,
+        it is assumed that the referenced part comes from a different staff in the same measure. If
+        a different measure is provided by <att>origin.tstamp</att>, but no <att>origin.staff</att>
+        is given, then it is assumed that the material is to be taken from the same staff.</p>
       <p>Textual instructions are encoded as text content of the cpMark, while graphical
         instructions may use the <att>altsym</att>, <att>facs</att>, or <att>extsym</att>
         attributes.</p>
@@ -339,8 +370,8 @@
   <elementSpec ident="damage" module="MEI.edittrans">
     <desc>Contains an area of damage to the physical medium.</desc>
     <classes>
-      <memberOf key="att.agentIdent"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.agentIdent"/>
       <memberOf key="att.extent"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.handIdent"/>
@@ -359,6 +390,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -377,7 +411,7 @@
       <p>In no case should <gi scheme="MEI">damage</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >damage</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >damage</gi> should only contain those elements allowed within <gi scheme="MEI"
         >verse</gi>.</p>
     </remarks>
     <remarks>
@@ -409,6 +443,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -418,7 +455,7 @@
     <remarks>
       <p>The <att>resp</att> attribute contains an ID reference to an element containing the name of
         the editor or transcriber responsible for identifying the hand of the deletion. The
-          <att>cert</att> attribute signifies the degree of certainty ascribed to the identification
+        <att>cert</att> attribute signifies the degree of certainty ascribed to the identification
         of the hand of the deletion. The hand of the agent which made the deletion should be pointed
         to using the <att>hand</att> attribute. The <att>rend</att> attribute may be used to record
         the method used to make the deletion (overstrike, strike[through], etc.).</p>
@@ -454,6 +491,9 @@
           <rng:ref name="model.graphicPrimitiveLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -472,7 +512,7 @@
       <p>In no case should <gi scheme="MEI">expan</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >expan</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >expan</gi> should only contain those elements allowed within <gi scheme="MEI"
         >verse</gi>.</p>
     </remarks>
     <remarks>
@@ -496,21 +536,20 @@
     </content>
     <remarks>
       <p>When material is omitted because it is illegible or inaudible, <gi scheme="MEI"
-          >unclear</gi> should be used instead. Similarly, use <gi scheme="MEI">damage</gi> if the
+        >unclear</gi> should be used instead. Similarly, use <gi scheme="MEI">damage</gi> if the
         omission is due to damage and <gi scheme="MEI">del</gi> if the omission is because the
         material is marked as deleted, or otherwise indicated as superfluous or spurious in the copy
         text by an author, scribe, annotator, or corrector. An indication of how much material has
         been omitted from the transcription may be recorded in the <att>extent</att> attribute. The
-          <att>unit</att> attribute names the unit used for describing the extent of the gap. The
-          <att>reason</att> attribute gives the reason for omission. Sample values include
-        'sampling', 'irrelevant', 'cancelled'. The <att>resp</att> attribute contains an ID
-        reference to an element containing the name of the editor, transcriber or encoder
-        responsible for the decision not to provide any transcription of the material and hence the
-        application of the <gi scheme="MEI">gap</gi> tag. The <att>hand</att> attribute signifies
-        the hand which made the deletion in the case of text omitted from the transcription because
-        of deliberate deletion by an identifiable hand. The <att>cert</att> attribute signifies the
-        degree of certainty ascribed to the identification of the extent of the missing
-        material.</p>
+        <att>unit</att> attribute names the unit used for describing the extent of the gap. The
+        <att>reason</att> attribute gives the reason for omission. Sample values include 'sampling',
+        'irrelevant', 'cancelled'. The <att>resp</att> attribute contains an ID reference to an
+        element containing the name of the editor, transcriber or encoder responsible for the
+        decision not to provide any transcription of the material and hence the application of the
+        <gi scheme="MEI">gap</gi> tag. The <att>hand</att> attribute signifies the hand which made
+        the deletion in the case of text omitted from the transcription because of deliberate
+        deletion by an identifiable hand. The <att>cert</att> attribute signifies the degree of
+        certainty ascribed to the identification of the extent of the missing material.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -581,13 +620,94 @@
         of the tint or type of ink, e.g. 'brown' or the writing medium, e.g. 'pencil', may be placed
         in the <att>medium</att> attribute. The new hand may be identified using the <att>new</att>
         attribute, while the previous hand may be recorded in the <att>old</att> attribute. The
-          <att>resp</att> attribute contains an ID reference to an element containing the name of
-        the editor or transcriber responsible for identifying the change of hand. The
-          <att>cert</att> attribute signifies the degree of certainty ascribed to the identification
-        of the new hand.</p>
+        <att>resp</att> attribute contains an ID reference to an element containing the name of the
+        editor or transcriber responsible for identifying the change of hand. The <att>cert</att>
+        attribute signifies the degree of certainty ascribed to the identification of the new
+        hand.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="metaMark" module="MEI.edittrans">
+    <desc>A graphical or textual statement with additional / explanatory information about the
+      musical text. The textual consequences of this intervention are encoded independently via
+      other means; that is, with elements such as &lt;add&gt;, &lt;del&gt;, etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.metaMark.log"/>
+      <memberOf key="att.metaMark.vis"/>
+      <memberOf key="att.metaMark.ges"/>
+      <memberOf key="att.metaMark.anl"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.sectionLike"/>
+          <rng:ref name="model.textphraseLike.limited"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="metaMark_start-type_attributes_required" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:metaMark">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="function">
+        <desc>Describes the purpose of the metaMark.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="confirmation">
+            <desc>confirmation of a previous textual decision; i.e., cancellation of a deleted
+              passage in a different writing medium.</desc>
+          </valItem>
+          <valItem ident="addition">
+            <desc>denoted material is to be inserted in the musical text.</desc>
+          </valItem>
+          <valItem ident="deletion">
+            <desc>denoted material is no longer part of the musical text.</desc>
+          </valItem>
+          <valItem ident="substitution">
+            <desc>denoted material is replaced, either by the musical text pointed at with the
+              @target attribute or the musical content of the metaMark element itself.</desc>
+          </valItem>
+          <valItem ident="clarification">
+            <desc>attempt to clarify a potentially illegible or otherwise unclear part of the
+              musical text.</desc>
+          </valItem>
+          <valItem ident="question">
+            <desc>marks a section of the musical text which is to be considered further.</desc>
+          </valItem>
+          <valItem ident="investigation">
+            <desc>marks a section of the musical text as an investigation of the consequences of
+              certain compositional decisions or potential alternatives.</desc>
+          </valItem>
+          <valItem ident="restoration">
+            <desc>declares a formerly cancelled part of the musical text as valid again.</desc>
+          </valItem>
+          <valItem ident="navigation">
+            <desc>clarification of the reading order of the musical text.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>This element is used to encode <ref
+        target="http://beethovens-werkstatt.de/glossary/metatext/">explicit metatexts</ref> as
+        defined by the Beethovens Werkstatt project.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="orig" module="MEI.edittrans">
@@ -614,6 +734,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -623,13 +746,13 @@
     <remarks>
       <p>This element will often be combined with a regularized form within a choice element. The
         editor(s) responsible for asserting that the material is original may be recorded in the
-          <att>resp</att> attribute. The value of resp must point to one or more identifiers
-        declared in the document header. The <att>cert</att> attribute signifies the degree of
-        certainty ascribed to the transcription of the original text.</p>
+        <att>resp</att> attribute. The value of resp must point to one or more identifiers declared
+        in the document header. The <att>cert</att> attribute signifies the degree of certainty
+        ascribed to the transcription of the original text.</p>
       <p>In no case should <gi scheme="MEI">orig</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >orig</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >orig</gi> should only contain those elements allowed within <gi scheme="MEI"
         >verse</gi>.</p>
     </remarks>
     <remarks>
@@ -660,6 +783,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -706,6 +832,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -725,8 +854,8 @@
       <p>In no case should <gi scheme="MEI">restore</gi> contain elements that would not otherwise
         be permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >restore</gi> should only contain those elements allowed within <gi scheme="MEI"
-          >verse</gi>.</p>
+        >restore</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >verse</gi>.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -755,6 +884,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -763,7 +895,7 @@
     </content>
     <remarks>
       <p>A correction for the apparent error may be given in an accompanying child or sibling <gi
-          scheme="MEI">corr</gi> element.</p>
+        scheme="MEI">corr</gi> element.</p>
       <p>In no case should <gi scheme="MEI">sic</gi> contain elements that would not otherwise be
         permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI">sic</gi>
@@ -795,8 +927,8 @@
   <elementSpec ident="supplied" module="MEI.edittrans">
     <desc>Contains material supplied by the transcriber or editor for any reason.</desc>
     <classes>
-      <memberOf key="att.agentIdent"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.agentIdent"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.extent"/>
       <memberOf key="att.facsimile"/>
@@ -816,6 +948,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -828,16 +963,16 @@
         assignable to an identifiable hand, the <att>hand</att> attribute signifies the hand
         responsible for the action. The <att>reason</att> attribute indicates why the text has to be
         supplied, e.g. 'overbinding', 'faded ink', 'lost folio', 'omitted in original', etc. The
-          <att>source</att> attribute contains the source of the supplied text. The editor(s)
+        <att>source</att> attribute contains the source of the supplied text. The editor(s)
         responsible for supplied material may be recorded in the <att>resp</att> attribute. The
         value of resp must point to one or more identifiers declared in the document header. The
-          <att>cert</att> attribute signifies the degree of certainty ascribed to the supplied
+        <att>cert</att> attribute signifies the degree of certainty ascribed to the supplied
         material.</p>
       <p>In no case should <gi scheme="MEI">supplied</gi> contain elements that would not otherwise
         be permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >supplied</gi> should only contain those elements allowed within <gi scheme="MEI"
-          >verse</gi>.</p>
+        >supplied</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >verse</gi>.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
@@ -847,8 +982,8 @@
     <desc>Contains material that cannot be transcribed with certainty because it is illegible or
       inaudible in the source.</desc>
     <classes>
-      <memberOf key="att.agentIdent"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.agentIdent"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.extent"/>
       <memberOf key="att.facsimile"/>
@@ -870,6 +1005,9 @@
           <rng:ref name="model.keyAccidLike"/>
           <rng:ref name="model.layerPart"/>
           <rng:ref name="model.milestoneLike.music"/>
+          <rng:ref name="model.neumeComponentModifierLike"/>
+          <rng:ref name="model.neumeModifierLike"/>
+          <rng:ref name="model.neumePart"/>
           <rng:ref name="model.sectionPart"/>
           <rng:ref name="model.staffGrpLike"/>
           <rng:ref name="model.transcriptionLike"/>
@@ -878,7 +1016,7 @@
     </content>
     <remarks>
       <p>Where the difficulty in transcription arises from an identifiable cause, the
-          <att>agent</att> attribute signifies the causative agent. The <att>cert</att> attribute
+        <att>agent</att> attribute signifies the causative agent. The <att>cert</att> attribute
         signifies the degree of certainty ascribed to the transcription of the text contained within
         the <gi scheme="MEI">unclear</gi> element. Where the difficulty in transcription arises from
         action (partial deletion, etc.) assignable to an identifiable hand, the <att>hand</att>
@@ -890,8 +1028,8 @@
       <p>In no case should <gi scheme="MEI">unclear</gi> contain elements that would not otherwise
         be permitted to occur within the parent of its own <gi scheme="MEI">app</gi> ancestor. For
         example, when used as a descendent of <gi scheme="MEI">verse</gi>, <gi scheme="MEI"
-          >unclear</gi> should only contain those elements allowed within <gi scheme="MEI"
-          >verse</gi>.</p>
+        >unclear</gi> should only contain those elements allowed within <gi scheme="MEI"
+        >verse</gi>.</p>
     </remarks>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>

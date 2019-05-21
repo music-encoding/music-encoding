@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.stringtab">
+  <moduleSpec ident="MEI.stringtab">
+    <desc>Tablature component declarations.</desc>
+  </moduleSpec>
+  <classSpec ident="att.stringtab" module="MEI.stringtab" type="atts">
+    <desc>String tablature string and fret information.</desc>
+    <attList>
+      <attDef ident="tab.fing" usage="opt">
+        <desc>Indicates which finger, if any, should be used to play an individual string. The
+          index, middle, ring, and little fingers are represented by the values 1-4, while 't' is
+          for the thumb. The values 'x' and 'o' indicate muffled and open strings,
+          respectively.</desc>
+        <datatype>
+          <rng:ref name="data.FINGER.FRET"/>
+        </datatype>
+      </attDef>
+      <attDef ident="tab.fret" usage="opt">
+        <desc>Records the location at which a string should be stopped against a fret.</desc>
+        <datatype>
+          <rng:ref name="data.FRETNUMBER"/>
+        </datatype>
+      </attDef>
+      <attDef ident="tab.string" usage="opt">
+        <desc>Records which string is to be played.</desc>
+        <datatype>
+          <rng:ref name="data.STRINGNUMBER"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.stringtab.position" module="MEI.stringtab" type="atts">
+    <desc>String tablature position information.</desc>
+    <attList>
+      <attDef ident="tab.pos" usage="opt">
+        <desc>Records fret position.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.stringtab.tuning" module="MEI.stringtab" type="atts">
+    <desc>String tablature tuning information.</desc>
+    <attList>
+      <attDef ident="tab.strings" usage="opt">
+        <desc>Provides a *written* pitch and octave for each open string or course of
+          strings.</desc>
+        <datatype>
+          <rng:list>
+            <rng:oneOrMore>
+              <rng:data type="token">
+                <rng:param name="pattern"
+                  >[a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
+              </rng:data>
+            </rng:oneOrMore>
+          </rng:list>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <elementSpec ident="barre" module="MEI.stringtab">
+    <desc>A barre in a chord tablature grid.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.startEndId"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <attList>
+      <attDef ident="fret" usage="opt">
+        <desc>Records the location at which the strings should be stopped against a fret in a
+          fretboard diagram. This may or may not be the same as the actual location on the fretboard
+          of the instrument in performance.</desc>
+        <datatype>
+          <rng:data type="positiveInteger">
+            <rng:param name="minInclusive">1</rng:param>
+            <rng:param name="maxInclusive">5</rng:param>
+          </rng:data>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks>
+      <p>The <att>startid</att> and <att>endid</att> attributes are used to indicate the <gi
+        scheme="MEI">chordMember</gi> elements on which the barre starts and finishes respectively.
+        The fret at which the barre should be created is recorded by the <att>fret</att>
+        attribute.</p>
+    </remarks>
+  </elementSpec>
+</specGrp>
