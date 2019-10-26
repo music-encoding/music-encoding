@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<TEI  xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
     xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <teiHeader>
         <fileDesc>
@@ -27,12 +27,15 @@
             <change n="1" when="2019-04-04" who="#JK">
                 <desc>Initial setup of the ODD.</desc>
             </change>
+            <change n="2" when="2019-10-26" who="#JK">
+                <desc>Revisions following the discussions on GitHub, and at the Nashville Hackathon.</desc>
+            </change>
         </revisionDesc>
     </teiHeader>
     <text>
         <body>
             <schemaSpec ident="mei" start="mei" prefix="mei_" ns="http://www.music-encoding.org/ns/mei">
-                
+
                 <!-- Declare MEI and XLink namespaces for use in Schematron -->
                 <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
                     <constraint>
@@ -42,9 +45,10 @@
                             uri="http://www.w3.org/1999/xlink"/>
                     </constraint>
                 </constraintSpec>
-                
+
                 <moduleRef key="MEI"/>
-                <moduleRef key="MEI.cmn" except="beamSpan bend bracketSpan meterSig meterSigGrp mSpace oLayer ossia oStaff tupletSpan"/>
+                <moduleRef key="MEI.cmn"
+                    except="beamSpan bend bracketSpan meterSig meterSigGrp mSpace oLayer ossia oStaff tupletSpan"/>
                 <moduleRef key="MEI.cmnOrnaments"/>
                 <moduleRef key="MEI.figtable"/>
                 <moduleRef key="MEI.fingering"/>
@@ -53,14 +57,16 @@
                 <moduleRef key="MEI.harmony"/>
                 <moduleRef key="MEI.header"/>
                 <moduleRef key="MEI.lyrics"/>
-                <moduleRef key="MEI.midi"/>
                 <moduleRef key="MEI.msDesc"/>
                 <moduleRef key="MEI.namesdates"/>
-                <moduleRef key="MEI.shared" except="barLine cb colLayout div group part parts relation relationList"/>
+                <moduleRef key="MEI.shared" except="barLine cb colLayout div group keySig part parts relation relationList"/>
                 <moduleRef key="MEI.stringtab"/>
                 <moduleRef key="MEI.text" except="front back"/>
                 <moduleRef key="MEI.visual"/>
-                
+
+                <classSpec type="atts" ident="att.notationType" module="MEI" mode="delete"/>
+
+                <classSpec type="atts" ident="att.beamedWith" module="MEI.cmn" mode="delete"/>
                 <classSpec type="atts" ident="att.beaming.log" module="MEI.cmn" mode="delete"/>
                 <classSpec type="atts" ident="att.beamPresent" module="MEI.cmn" mode="delete"/>
                 <classSpec type="atts" ident="att.beamRend" module="MEI.cmn" mode="delete"/>
@@ -69,7 +75,7 @@
                 <classSpec type="atts" ident="att.measure.vis" module="MEI.cmn" mode="delete"/>
                 <classSpec type="atts" ident="att.slurRend" module="MEI.cmn" mode="delete"/>
                 <classSpec type="atts" ident="att.tieRend" module="MEI.cmn" mode="delete"/>
-                
+
                 <classSpec type="atts" ident="att.articulation.gestural" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.mdiv.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.dir.ges" module="MEI.gestural" mode="delete"/>
@@ -79,19 +85,43 @@
                 <classSpec type="atts" ident="att.ending.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.halfmRpt.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.harm.ges" module="MEI.gestural" mode="delete"/>
+                <classSpec type="atts" ident="att.scoreDef.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.timestamp.gestural" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.timestamp2.gestural" module="MEI.gestural" mode="delete"/>
-
+                
+                <classSpec type="atts" ident="att.barring" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.classed" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.color" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.coloration" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.curveRend" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.distances" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.duration.default" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.enclosingChars" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.endings" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.extender" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.fermataPresent" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.layer-log" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.linking" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.lyricStyle" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.metadataPointing" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.notationStyle" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.noteHeads" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.octaveDefault" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.pages" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.partIdent" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.pointing" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.spacing" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.staff.log" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.staffItems" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.staffLoc" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.staffLoc.pitched" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.systems" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.targetEval" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.textStyle" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.tiePresent" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.tupletPresent" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.typography" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.verticalGroup" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.visibility" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.visualOffset" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.visualOffset.ho" module="MEI.shared" mode="delete"/>
@@ -103,8 +133,79 @@
                 <classSpec type="atts" ident="att.visualOffset2.vo" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.xy" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.xy2" module="MEI.shared" mode="delete"/>
-                
-                <classSpec ident="att.common" module="MEI.shared" type="atts" mode="change" >
+
+                <classSpec type="atts" ident="att.accid.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.ambNote.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.beaming.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.barLine.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.chord.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.cleffing.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.fermata.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.fingGrp.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.fTrem.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.harm.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.keysigDefault.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.meterSigDefault.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.scoreDef.vis" module="MEI.visual" mode="delete"/>
+                <classSpec type="atts" ident="att.staffDef.vis" module="MEI.visual" mode="delete"/>
+
+                <!--<classSpec type="atts" ident="att.arpeg.vis" module="MEI.visual" mode="change">
+                    <desc>Visual domain attributes.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.altSym" mode="add"></memberOf>
+                        <memberOf key="att.color" mode="add"></memberOf>
+                        <memberOf key="att.extSym" mode="add"></memberOf>
+                        <memberOf key="att.typography" mode="add"></memberOf>
+                        <memberOf key="att.visualOffset" mode="add"></memberOf>
+                        <memberOf key="att.xy" mode="add"></memberOf>
+                    </classes>
+                    <attList org="group">
+                        <attDef ident="arrow" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Indicates if an arrowhead is to be drawn as part of the arpeggiation symbol.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.BOOLEAN"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <!-\-<attDef ident="arrow.shape" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Symbol rendered at end of the line.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.LINESTARTENDSYMBOL"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <attDef ident="arrow.size" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Holds the relative size of the arrow symbol.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.FONTSIZESCALE"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <attDef ident="arrow.color" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Captures the overall color of the arrow.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.COLOR"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <attDef ident="arrow.fillcolor" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Captures the fill color of the arrow if different from the line color.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.COLOR"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <attDef ident="line.form" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Visual form of the line.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.LINEFORM"></rng:ref>
+                            </datatype>
+                        </attDef>
+                        <attDef ident="line.width" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Width of the line.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.LINEWIDTH"></rng:ref>
+                            </datatype>
+                        </attDef>-\->
+                    </attList>
+                </classSpec>-->
+
+                <classSpec type="atts" ident="att.common" module="MEI.shared" mode="change">
                     <desc>Attributes common to many elements.</desc>
                     <classes mode="replace">
                         <memberOf key="att.basic" mode="add"/>
@@ -115,7 +216,56 @@
                         <!--<memberOf key="att.typed" mode="add"/>-->
                     </classes>
                 </classSpec>
-                
+
+                <classSpec type="atts" ident="att.curvature" module="MEI.shared" mode="change">
+                    <desc>Attributes that describe curvature.</desc>
+                    <attList org="group">
+                        <!--<attDef ident="bezier" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Records the placement of Bezier control points as a series of pairs of space-separated
+                                values; e.g., 19 45 -32 118.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:list>
+                                    <rng:oneOrMore>
+                                        <rng:data type="decimal"></rng:data>
+                                        <rng:data type="decimal"></rng:data>
+                                    </rng:oneOrMore>
+                                </rng:list>
+                            </datatype>
+                        </attDef>-->
+                        <!--<attDef ident="bulge" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Describes a curve as one or more pairs of values with respect to an imaginary line
+                                connecting the starting and ending points of the curve. The first value captures a
+                                distance to the left (positive value) or right (negative value) of the line, expressed in
+                                virtual units. The second value of each pair represents a point along the line, expressed
+                                as a percentage of the line's length. N.B. An MEI virtual unit (VU) is half the distance
+                                between adjacent staff lines.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:list>
+                                    <rng:oneOrMore>
+                                        <rng:data type="decimal"></rng:data>
+                                        <rng:ref name="data.PERCENT"></rng:ref>
+                                    </rng:oneOrMore>
+                                </rng:list>
+                            </datatype>
+                        </attDef>-->
+                        <attDef ident="curvedir" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false"
+                            usage="opt">
+                            <desc>Describes a curve with a generic term indicating the direction of curvature.</desc>
+                            <valList mode="add" type="closed">
+                                <valItem ident="above" mode="add">
+                                    <desc>Upward curve.</desc>
+                                </valItem>
+                                <valItem ident="below" mode="add">
+                                    <desc>Downward curve.</desc>
+                                </valItem>
+                                <valItem ident="mixed" mode="add">
+                                    <desc>A "meandering" curve, both above and below the items it pertains to.</desc>
+                                </valItem>
+                            </valList>
+                        </attDef>
+                    </attList>
+                </classSpec>
+
                 <classSpec ident="att.event" module="MEI.shared" type="atts" mode="change">
                     <desc>Attributes that apply to all written events, e.g., note, chord, rest, etc.</desc>
                     <classes mode="replace">
@@ -126,10 +276,9 @@
                         <!--<memberOf key="att.timestamp.logical" mode="add"/>-->
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.stems" module="MEI.shared" type="atts" mode="replace">
-                    <desc>Attributes that describe the properties of stemmed features; that is, chords and
-                        notes.</desc>
+                    <desc>Attributes that describe the properties of stemmed features; that is, chords and notes.</desc>
                     <classes mode="replace">
                         <!--<memberOf key="att.stems.cmn" mode="add"/>-->
                     </classes>
@@ -179,7 +328,7 @@
                         </attDef>-->
                     </attList>
                 </classSpec>
-                
+
                 <classSpec ident="att.meterConformance.bar" module="MEI.shared" type="atts" mode="replace">
                     <desc>Attributes that provide information about a measure's conformance to the prevailing
                         meter.</desc>
@@ -203,14 +352,14 @@
                         </attDef>-->
                     </attList>
                 </classSpec>
-                
+
                 <classSpec ident="att.basic" module="MEI.shared" type="atts" mode="replace">
                     <desc>Attributes that form the basis of the att.common class.</desc>
                     <classes>
                         <memberOf key="att.id"/>
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.note.ges" module="MEI.gestural" type="atts" mode="replace">
                     <desc>Gestural domain attributes.</desc>
                     <classes>
@@ -222,7 +371,7 @@
                         <memberOf key="att.note.ges.mensural"/>
                         <memberOf key="att.stringtab"/>
                     </classes>
-                    
+
                     <attList>
                         <attDef ident="oct.ges" usage="opt">
                             <desc>Records performed octave information that differs from the written value.</desc>
@@ -238,7 +387,7 @@
                         </attDef>
                     </attList>
                 </classSpec>
-                
+
                 <classSpec ident="att.rest.vis" module="MEI.visual" type="atts" mode="change">
                     <desc>Visual domain attributes.</desc>
                     <classes mode="replace">
@@ -254,7 +403,7 @@
                         <memberOf key="att.xy"/>
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.rest.ges" module="MEI.gestural" type="atts" mode="change">
                     <desc>Gestural domain attributes.</desc>
                     <classes mode="replace">
@@ -263,14 +412,14 @@
                         <!--<memberOf key="att.rest.ges.mensural"/>-->
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.chord.log" module="MEI.shared" type="atts" mode="change">
-                    <desc>Logical domain attributes for chord. The artic, dots, and dur attributes encode the
-                        written articulations, augmentation dots, and duration values. The beam, fermata, lv, slur,
-                        syl, tie, and tuplet attributes may be used to indicate the attachment of these things to this
-                        chord. If visual information about these things needs to be recorded, then either the elements
-                        corresponding to these attributes or the attributes available in the att.vis.chord class
-                        should be employed.</desc>
+                    <desc>Logical domain attributes for chord. The artic, dots, and dur attributes encode the written
+                        articulations, augmentation dots, and duration values. The beam, fermata, lv, slur, syl, tie,
+                        and tuplet attributes may be used to indicate the attachment of these things to this chord. If
+                        visual information about these things needs to be recorded, then either the elements
+                        corresponding to these attributes or the attributes available in the att.vis.chord class should
+                        be employed.</desc>
                     <classes mode="replace">
                         <!--<memberOf key="att.articulation"/>-->
                         <memberOf key="att.augmentDots"/>
@@ -281,12 +430,12 @@
                         <!--<memberOf key="att.sylText"/>-->
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.chord.vis" module="MEI.visual" type="atts" mode="replace">
-                    <desc>Visual domain attributes for chord. The slur, slur.dir, slur.rend, tie, tie.dir, and
-                        tie.rend attributes here are syntactic sugar for these attributes on each of the chord's
-                        individual notes. The values here apply to all the notes in the chord. If some notes are
-                        slurred or tied while others aren't, then the individual note attributes must be used.</desc>
+                    <desc>Visual domain attributes for chord. The slur, slur.dir, slur.rend, tie, tie.dir, and tie.rend
+                        attributes here are syntactic sugar for these attributes on each of the chord's individual
+                        notes. The values here apply to all the notes in the chord. If some notes are slurred or tied
+                        while others aren't, then the individual note attributes must be used.</desc>
                     <classes>
                         <memberOf key="att.altSym"/>
                         <memberOf key="att.color"/>
@@ -301,7 +450,7 @@
                         <memberOf key="att.chord.vis.cmn"/>
                     </classes>
                 </classSpec>
-                
+
                 <classSpec ident="att.curvature" module="MEI.shared" type="atts" mode="replace">
                     <desc>Attributes that describe curvature.</desc>
                     <attList>
@@ -321,7 +470,83 @@
                         </attDef>
                     </attList>
                 </classSpec>
-                
+
+                <classSpec ident="att.lang" module="MEI.shared" type="atts" mode="replace">
+                    <desc>Language attributes common to text elements.</desc>
+                    <attList org="group">
+
+                        <attDef ident="xml:lang" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false"
+                            usage="opt">
+                            <desc>Identifies the language of the element's content. The values for this attribute are
+                                language 'tags' as defined in BCP 47. All language tags that make use of private use
+                                sub-tags must be documented in a corresponding language element in the MEI header whose
+                                id attribute is the same as the language tag's value.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:data type="language"/>
+                            </datatype>
+                        </attDef>
+                        <!--<attDef ident="translit" mode="add" ns="http://www.tei-c.org/ns/1.0" predeclare="false" usage="opt">
+                            <desc>Specifies the transliteration technique used.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:data type="NMTOKEN"></rng:data>
+                            </datatype>
+                            <remarks>
+                                <p part="N">There is no standard list of transliteration schemes.</p>
+                            </remarks>
+                        </attDef>-->
+                    </attList>
+                    <remarks>
+                        <p part="N">BCP 47 is described at <ref target="https://tools.ietf.org/html/bcp47"
+                                >https://tools.ietf.org/html/bcp47</ref>. The IANA Subtag Registry, from which BCP 47
+                            language tags are constructed, may be found at <ref
+                                target="www.iana.org/assignments/language-subtag-registry"
+                                >www.iana.org/assignments/language-subtag-registry</ref>. A tool for locating subtags
+                            and validating language tags is available at <ref
+                                target="https://r12a.github.io/apps/subtags"
+                            >https://r12a.github.io/apps/subtags</ref>.</p>
+                    </remarks>
+                </classSpec>
+
+                <!-- re-allow @place on fermata -->
+                <elementSpec ident="fermata" module="MEI.cmn" mode="change">
+                    <desc>An indication placed over a note or rest to indicate that it should be held longer than its
+                        written value. May also occur over a bar line to indicate the end of a phrase or section.
+                        Sometimes called a 'hold' or 'pause'.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.common"/>
+                        <memberOf key="att.facsimile"/>
+                        <memberOf key="att.fermata.log"/>
+                        <memberOf key="att.fermata.vis"/>
+                        <memberOf key="att.fermata.ges"/>
+                        <memberOf key="att.fermata.anl"/>
+                        <memberOf key="model.controlEventLike.cmn"/>
+                        <memberOf key="att.placement" mode="add"/>
+                    </classes>
+                    <content autoPrefix="true">
+                        <rng:empty/>
+                    </content>
+                    <constraintSpec ident="fermata_start-type_attributes_required" scheme="isoschematron">
+                        <constraint>
+                            <sch:rule context="mei:fermata">
+                                <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of
+                                    the attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+                            </sch:rule>
+                        </constraint>
+                    </constraintSpec>
+                    <remarks>
+                        <p part="N">The <att scheme="TEI">shape</att> attribute may be used to record whether the
+                            fermata is curved, square, or triangular, while <att scheme="TEI">form</att> may be used to
+                            capture whether the fermata is "upright", i.e., has the curve or bracket above the dot, or
+                            inverted, i.e., has the curve or bracket below the dot. Other visual forms of a fermata may
+                            be indicated via the <att scheme="TEI">altsym</att> attribute. The starting point of the
+                            fermata may be indicated by either a <att scheme="TEI">startid</att>, <att scheme="TEI"
+                                >tstamp</att>, <att scheme="TEI">tstamp.ges</att>, or <att scheme="TEI"
+                                >tstamp.real</att> attribute. It is a semantic error not to specify a starting point
+                            attribute.</p>
+                    </remarks>
+                </elementSpec>
+
+                <!-- re-allow @n on selected elements -->
                 <elementSpec ident="measure" module="MEI.cmn" mode="change">
                     <desc>Unit of musical time consisting of a fixed number of note values of a given type, as
                         determined by the prevailing meter, and delimited in musical notation by bar lines.</desc>
@@ -370,9 +595,8 @@
                     <attList>
                         <attDef ident="meiversion" usage="req">
                             <desc>Specifies a generic MEI version label.</desc>
-                            <defaultVal>4.0.0-alpha.1+basic</defaultVal>
                             <valList type="closed">
-                                <valItem ident="4.0.0-alpha.1+basic">
+                                <valItem ident="4.0.0-beta.1+basic">
                                     <desc>This version of MEI.</desc>
                                 </valItem>
                             </valList>
@@ -380,17 +604,122 @@
                     </attList>
                 </classSpec>
                 
+                <!-- allow @meiversion on mei element only -->
+                <elementSpec ident="meiHead" module="MEI.header" mode="change">
+                    <desc>(MEI header) – Supplies the descriptive and declarative metadata prefixed to every
+                        MEI-conformant text.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.basic"/>
+                        <memberOf key="att.bibl"/>
+                        <memberOf key="att.labelled"/>
+                        <memberOf key="att.lang"/>
+                        <!--<memberOf key="att.meiVersion"/>-->
+                        <memberOf key="att.responsibility"/>
+                        <memberOf key="model.startLike.header"/>
+                    </classes>
+                    <content>
+                        <rng:zeroOrMore>
+                            <rng:ref name="altId"/>
+                        </rng:zeroOrMore>
+                        <rng:ref name="fileDesc"/>
+                        <rng:optional>
+                            <rng:ref name="encodingDesc"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="workList"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="manifestationList"/>
+                        </rng:optional>
+                        <rng:zeroOrMore>
+                            <rng:ref name="extMeta"/>
+                        </rng:zeroOrMore>
+                        <rng:optional>
+                            <rng:ref name="revisionDesc"/>
+                        </rng:optional>
+                    </content>
+                    <constraintSpec ident="check_meiHead_type" scheme="schematron">
+                        <constraint>
+                            <sch:rule context="mei:meiHead[@type eq 'music']">
+                                <sch:assert test="ancestor::mei:mei">The meiHead type attribute can have the value
+                                    'music' only when the document element is "mei".</sch:assert>
+                            </sch:rule>
+                            <sch:rule context="mei:meiHead[@type eq 'corpus']">
+                                <sch:assert test="ancestor::mei:meiCorpus">The meiHead type attribute can have the value
+                                    'corpus' only when the document element is "meiCorpus".</sch:assert>
+                            </sch:rule>
+                            <sch:rule context="mei:meiHead[@type eq 'independent']">
+                                <sch:assert test="not(ancestor::mei:*)">The meiHead type attribute can have the value
+                                    'independent' only when the document element is "meiHead".</sch:assert>
+                            </sch:rule>
+                        </constraint>
+                    </constraintSpec>
+                    <attList org="group">
+                        <attDef ident="type" usage="opt" mode="replace">
+                            <desc>Specifies the kind of document to which the header is attached, for example whether it
+                                is a corpus or individual text.</desc>
+                            <valList type="closed">
+                                <valItem ident="music">
+                                    <desc>Header is attached to a music document.</desc>
+                                </valItem>
+                                <valItem ident="corpus">
+                                    <desc>Header is attached to a corpus.</desc>
+                                </valItem>
+                                <valItem ident="independent">
+                                    <desc>Header is independent; i.e., not attached to either a music or a corpus
+                                        document.</desc>
+                                </valItem>
+                            </valList>
+                        </attDef>
+                    </attList>
+                    <remarks>
+                        <p part="N">In order to encourage uniformity in the provision of metadata across document types,
+                            this element is modelled on an element in the Text Encoding Initiative (TEI) standard. This
+                            information is often essential in a machine-readable environment. Five sub-elements must be
+                            encoded in the following order: <gi scheme="MEI">altId</gi> (optional), <gi scheme="MEI"
+                                >fileDesc</gi> (required), <gi scheme="MEI">encodingDesc</gi> (optional), <gi
+                                scheme="MEI">workList</gi> (optional), and <gi scheme="MEI">revisionDesc</gi>
+                            (optional). These elements and their sub-elements provide: a unique identifier for the MEI
+                            file, bibliographic information about the MEI file and its sources, information about the
+                            encoding process, information about the creation of the work being encoded, and statements
+                            regarding significant revisions of the file. The <att scheme="TEI">xml:lang</att> attribute
+                            may be used to indicate the language in which the metadata content of the header is
+                            provided.</p>
+                    </remarks>
+                </elementSpec>
+                <elementSpec ident="music" module="MEI.shared" mode="change">
+                    <desc>Contains a single musical text of any kind, whether unitary or composite, for example, an etude, opera, song cycle, symphony, or anthology of piano solos.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.common"/>
+                        <!--<memberOf key="att.meiVersion"/>-->
+                        <memberOf key="att.metadataPointing"/>
+                    </classes>
+                    <content>
+                        <rng:zeroOrMore>
+                            <rng:ref name="model.resourceLike" />
+                        </rng:zeroOrMore>
+                        <rng:ref name="macro.musicPart" />
+                    </content>
+                    <constraintSpec ident="check_controlEventLinking" scheme="schematron">
+                        <constraint>
+                            <sch:rule context="mei:*[@tstamp]">
+                                <sch:assert test="not(@startid)">An element with @tstamp may not have @startid as well (and vice versa).</sch:assert>
+                            </sch:rule>
+                            <sch:rule context="mei:*[@tstamp2]">
+                                <sch:assert test="not(@endid)">An element with @tstamp2 may not have @endid as well (and vice versa).</sch:assert>
+                            </sch:rule>
+                        </constraint>
+                    </constraintSpec>
+                </elementSpec>
+                
+
                 <!-- taken from CMN customization -->
                 <!-- Disable mensural- and neume-specific model classes in the shared module -->
-                <classSpec ident="model.scorePart.mensuralAndNeumes" module="MEI.shared" type="model"
-                    mode="delete"/>
-                <classSpec ident="model.sectionPart.mensuralAndNeumes" module="MEI.shared" type="model"
-                    mode="delete"/>
-                <classSpec ident="model.staffPart.mensuralAndNeumes" module="MEI.shared" type="model"
-                    mode="delete"/>
-                <classSpec ident="model.layerPart.mensuralAndNeumes" module="MEI.shared" type="model"
-                    mode="delete"/>
-                
+                <classSpec ident="model.scorePart.mensuralAndNeumes" module="MEI.shared" type="model" mode="delete"/>
+                <classSpec ident="model.sectionPart.mensuralAndNeumes" module="MEI.shared" type="model" mode="delete"/>
+                <classSpec ident="model.staffPart.mensuralAndNeumes" module="MEI.shared" type="model" mode="delete"/>
+                <classSpec ident="model.layerPart.mensuralAndNeumes" module="MEI.shared" type="model" mode="delete"/>
+
                 <!-- Move model.noteModifierLike from layerPart.mensuralAndNeumes to editTransPart.music -->
                 <classSpec ident="model.noteModifierLike" module="MEI.shared" type="model" mode="replace">
                     <desc>Groups elements that modify note-like features.</desc>
@@ -398,7 +727,7 @@
                         <memberOf key="model.editTransPart.music"/>
                     </classes>
                 </classSpec>
-                
+
             </schemaSpec>
         </body>
     </text>
