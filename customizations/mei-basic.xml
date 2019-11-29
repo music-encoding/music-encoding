@@ -48,18 +48,18 @@
 
                 <moduleRef key="MEI"/>
                 <moduleRef key="MEI.cmn"
-                    except="beamSpan bend bracketSpan meterSig meterSigGrp mSpace oLayer ossia oStaff tupletSpan"/>
+                    except="attacca beamSpan bend bracketSpan meterSig meterSigGrp mRpt2 mSpace oLayer ossia oStaff tupletSpan"/>
                 <moduleRef key="MEI.cmnOrnaments"/>
                 <moduleRef key="MEI.figtable"/>
                 <moduleRef key="MEI.fingering"/>
                 <moduleRef key="MEI.frbr"/>
                 <moduleRef key="MEI.gestural"/>
                 <moduleRef key="MEI.harmony"/>
-                <moduleRef key="MEI.header"/>
+                <moduleRef key="MEI.header" include="meiHead fileDesc titleStmt title pubStmt publisher pubPlace date availability composer lyricist arranger"/>
                 <moduleRef key="MEI.lyrics"/>
                 <moduleRef key="MEI.msDesc"/>
                 <moduleRef key="MEI.namesdates"/>
-                <moduleRef key="MEI.shared" except="barLine cb colLayout div group keySig part parts relation relationList"/>
+                <moduleRef key="MEI.shared" except="annot barLine cb colLayout custos div group keySig pad part parts relation relationList"/>
                 <moduleRef key="MEI.stringtab"/>
                 <moduleRef key="MEI.text" except="front back"/>
                 <moduleRef key="MEI.visual"/>
@@ -77,7 +77,6 @@
                 <classSpec type="atts" ident="att.tieRend" module="MEI.cmn" mode="delete"/>
 
                 <classSpec type="atts" ident="att.articulation.gestural" module="MEI.gestural" mode="delete"/>
-                <classSpec type="atts" ident="att.mdiv.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.dir.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.dot.ges" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.duration.gestural" module="MEI.gestural" mode="delete"/>
@@ -89,7 +88,9 @@
                 <classSpec type="atts" ident="att.timestamp.gestural" module="MEI.gestural" mode="delete"/>
                 <classSpec type="atts" ident="att.timestamp2.gestural" module="MEI.gestural" mode="delete"/>
                 
+                <classSpec type="atts" ident="att.authorized" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.barring" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.bibl" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.classed" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.color" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.coloration" module="MEI.shared" mode="delete"/>
@@ -98,9 +99,12 @@
                 <classSpec type="atts" ident="att.duration.default" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.enclosingChars" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.endings" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.evidence" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.extender" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.fermataPresent" module="MEI.shared" mode="delete"/>
-                <classSpec type="atts" ident="att.layer-log" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.filing" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.labelled" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.layer.log" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.linking" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.lyricStyle" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.metadataPointing" module="MEI.shared" mode="delete"/>
@@ -110,6 +114,8 @@
                 <classSpec type="atts" ident="att.pages" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.partIdent" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.pointing" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.responsibility" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.source" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.spacing" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.staff.log" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.staffItems" module="MEI.shared" mode="delete"/>
@@ -120,6 +126,7 @@
                 <classSpec type="atts" ident="att.textStyle" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.tiePresent" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.tupletPresent" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.typed" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.typography" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.verticalGroup" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.visibility" module="MEI.shared" mode="delete"/>
@@ -576,7 +583,7 @@
                                 <rng:ref name="model.measurePart"/>
                                 <rng:ref name="model.milestoneLike.music"/>
                                 <rng:ref name="model.relationLike"/>
-                                <rng:ref name="model.staffDefLike"/>
+                                <!--<rng:ref name="model.staffDefLike"/>-->
                                 <rng:ref name="model.transcriptionLike"/>
                             </rng:choice>
                         </rng:zeroOrMore>
@@ -596,7 +603,7 @@
                         <attDef ident="meiversion" usage="req">
                             <desc>Specifies a generic MEI version label.</desc>
                             <valList type="closed">
-                                <valItem ident="4.0.0-beta.1+basic">
+                                <valItem ident="4.0.0-beta.2+basic">
                                     <desc>This version of MEI.</desc>
                                 </valItem>
                             </valList>
@@ -618,73 +625,10 @@
                         <memberOf key="model.startLike.header"/>
                     </classes>
                     <content>
-                        <rng:zeroOrMore>
-                            <rng:ref name="altId"/>
-                        </rng:zeroOrMore>
                         <rng:ref name="fileDesc"/>
-                        <rng:optional>
-                            <rng:ref name="encodingDesc"/>
-                        </rng:optional>
-                        <rng:optional>
-                            <rng:ref name="workList"/>
-                        </rng:optional>
-                        <rng:optional>
-                            <rng:ref name="manifestationList"/>
-                        </rng:optional>
-                        <rng:zeroOrMore>
-                            <rng:ref name="extMeta"/>
-                        </rng:zeroOrMore>
-                        <rng:optional>
-                            <rng:ref name="revisionDesc"/>
-                        </rng:optional>
                     </content>
-                    <constraintSpec ident="check_meiHead_type" scheme="schematron">
-                        <constraint>
-                            <sch:rule context="mei:meiHead[@type eq 'music']">
-                                <sch:assert test="ancestor::mei:mei">The meiHead type attribute can have the value
-                                    'music' only when the document element is "mei".</sch:assert>
-                            </sch:rule>
-                            <sch:rule context="mei:meiHead[@type eq 'corpus']">
-                                <sch:assert test="ancestor::mei:meiCorpus">The meiHead type attribute can have the value
-                                    'corpus' only when the document element is "meiCorpus".</sch:assert>
-                            </sch:rule>
-                            <sch:rule context="mei:meiHead[@type eq 'independent']">
-                                <sch:assert test="not(ancestor::mei:*)">The meiHead type attribute can have the value
-                                    'independent' only when the document element is "meiHead".</sch:assert>
-                            </sch:rule>
-                        </constraint>
-                    </constraintSpec>
-                    <attList org="group">
-                        <attDef ident="type" usage="opt" mode="replace">
-                            <desc>Specifies the kind of document to which the header is attached, for example whether it
-                                is a corpus or individual text.</desc>
-                            <valList type="closed">
-                                <valItem ident="music">
-                                    <desc>Header is attached to a music document.</desc>
-                                </valItem>
-                                <valItem ident="corpus">
-                                    <desc>Header is attached to a corpus.</desc>
-                                </valItem>
-                                <valItem ident="independent">
-                                    <desc>Header is independent; i.e., not attached to either a music or a corpus
-                                        document.</desc>
-                                </valItem>
-                            </valList>
-                        </attDef>
-                    </attList>
                     <remarks>
-                        <p part="N">In order to encourage uniformity in the provision of metadata across document types,
-                            this element is modelled on an element in the Text Encoding Initiative (TEI) standard. This
-                            information is often essential in a machine-readable environment. Five sub-elements must be
-                            encoded in the following order: <gi scheme="MEI">altId</gi> (optional), <gi scheme="MEI"
-                                >fileDesc</gi> (required), <gi scheme="MEI">encodingDesc</gi> (optional), <gi
-                                scheme="MEI">workList</gi> (optional), and <gi scheme="MEI">revisionDesc</gi>
-                            (optional). These elements and their sub-elements provide: a unique identifier for the MEI
-                            file, bibliographic information about the MEI file and its sources, information about the
-                            encoding process, information about the creation of the work being encoded, and statements
-                            regarding significant revisions of the file. The <att scheme="TEI">xml:lang</att> attribute
-                            may be used to indicate the language in which the metadata content of the header is
-                            provided.</p>
+                        <p part="N">For MEI Basic, an MEI header may contain a fileDesc element only.</p>
                     </remarks>
                 </elementSpec>
                 <elementSpec ident="music" module="MEI.shared" mode="change">
@@ -712,7 +656,144 @@
                     </constraintSpec>
                 </elementSpec>
                 
-
+                <!-- re-introduce @corresp on fileDesc to allow pointing to more complete MEI files -->
+                <elementSpec ident="fileDesc" module="MEI.header" mode="change">
+                    <desc>(file description) – Contains a full bibliographic description of the MEI file.</desc>
+                    <classes>
+                        <memberOf key="att.common"/>
+                        <memberOf key="att.bibl"/>
+                    </classes>
+                    <content>
+                        <rng:ref name="titleStmt"/>
+                        <rng:ref name="pubStmt" />
+                    </content>
+                    <attList org="group">
+                        <attDef ident="corresp" usage="opt" mode="add">
+                            <desc>Used to point to other elements that correspond to this one in a generic fashion.</desc>
+                            <datatype maxOccurs="unbounded" minOccurs="1">
+                                <rng:ref name="data.URI" />
+                            </datatype>
+                            <constraintSpec ident="check_correspTarget" scheme="schematron">
+                                <constraint>
+                                    <sch:rule context="@corresp">
+                                        <sch:assert role="warning" test="not(normalize-space(.) eq '')">@corresp attribute should have content.</sch:assert>
+                                    </sch:rule>
+                                </constraint>
+                            </constraintSpec>
+                        </attDef>
+                    </attList>
+                    <remarks>
+                        <p part="N">The @corresp attribute on fileDesc may point to a more complete version of this content in a less restricted version of MEI.</p>
+                    </remarks>
+                    <remarks>
+                        <p part="N">This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded Archival Description (EAD) standards.</p>
+                    </remarks>
+                </elementSpec>
+                
+                <!-- dis-allow date element everywhere (will be allowed specifically only inside pubStmt) -->
+                <elementSpec ident="date" module="MEI.shared" mode="change">
+                    <desc>A string identifying a point in time or the time period between two such points.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.common"/>
+                        <memberOf key="att.bibl"/>
+                        <memberOf key="att.calendared"/>
+                        <memberOf key="att.datable"/>
+                        <memberOf key="att.edit"/>
+                        <memberOf key="att.facsimile"/>
+                        <memberOf key="att.lang"/>
+                        <!--<memberOf key="model.dateLike"/>-->
+                    </classes>
+                    <content>
+                        <rng:zeroOrMore>
+                            <rng:choice>
+                                <rng:text/>
+                                <rng:ref name="model.textPhraseLike" />
+                            </rng:choice>
+                        </rng:zeroOrMore>
+                    </content>
+                    <remarks>
+                        <p part="N">This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded Archival Description (EAD) standards.</p>
+                    </remarks>
+                </elementSpec>
+                
+                <!-- restrict content on pubStmt -->
+                <elementSpec ident="pubStmt" module="MEI.header" mode="change">
+                    <desc>(publication statement) – Container for information regarding the publication or distribution of a bibliographic item, including the publisher's name and address, the date of publication, and other relevant details.</desc>
+                    <classes>
+                        <memberOf key="att.common"/>
+                        <memberOf key="att.bibl"/>
+                    </classes>
+                    <content>
+                        <rng:optional>
+                            <rng:ref name="publisher"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="pubPlace"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="date"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="availability"/>
+                        </rng:optional>
+                    </content>
+                    <remarks>
+                        <p part="N">This element is modelled on an element in the Text Encoding Initiative (TEI) standard. 
+                            In MEI Basic, it may contain only publisher, publishing place, date and availability information, in that order.</p>
+                    </remarks>
+                </elementSpec>
+                
+                <!-- re-allow @n on mdiv -->
+                <elementSpec ident="mdiv" module="MEI.shared" mode="change">
+                    <desc>(musical division) – Contains a subdivision of the body of a musical text.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.common"/>
+                        <!--<memberOf key="att.facsimile"/>-->
+                        <!--<memberOf key="att.metadataPointing"/>-->
+                        <!--<memberOf key="att.mdiv.anl"/>-->
+                        <memberOf key="att.mdiv.ges"/>
+                        <!--<memberOf key="att.mdiv.log"/>-->
+                        <!--<memberOf key="att.mdiv.vis"/>-->
+                        <memberOf key="model.mdivLike"/>
+                    </classes>
+                    <content>
+                        <rng:choice>
+                            <rng:ref name="model.scoreLike" />
+                            <rng:zeroOrMore>
+                                <rng:ref name="model.mdivLike" />
+                            </rng:zeroOrMore>
+                        </rng:choice>
+                    </content>
+                    <attList org="group">
+                        <attDef ident="n" usage="opt">
+                            <desc>Provides a number-like designation that indicates an element's position in a sequence of similar elements. May not contain space characters.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:ref name="data.WORD" />
+                            </datatype>
+                        </attDef>
+                        <attDef ident="label" usage="opt">
+                            <desc>Captures text to be used to generate a label for the element to which it's attached, a "tool tip" or prefatory text, for example. Should not be used to record document content.</desc>
+                            <datatype maxOccurs="1" minOccurs="1">
+                                <rng:data type="string"/>
+                            </datatype>
+                            <remarks>
+                                <p part="N">
+                                    <att scheme="TEI">label</att> is used to provide a display label for an element's contents,
+                                    for example in the form of a "tool tip" or as the "name" when the element's contents are 
+                                    treated as the "value" in a "name-value pair". Unlike <att scheme="TEI">n</att>,
+                                    <att scheme="TEI">label</att> may contain space characters.</p>
+                                <p part="N">Don't confuse this attribute with the <gi scheme="MEI">label</gi>
+                                    element, which records document content.</p>
+                            </remarks>
+                        </attDef>
+                    </attList>
+                    <remarks>
+                        <p part="N">The <gi scheme="MEI">mdiv</gi> element may be recursively nested in
+                            order to represent music which exhibits this kind of structure. For example, 
+                            an opera is normally divided into acts, which are in turn divided into scenes.</p>
+                    </remarks>
+                </elementSpec>
+                
                 <!-- taken from CMN customization -->
                 <!-- Disable mensural- and neume-specific model classes in the shared module -->
                 <classSpec ident="model.scorePart.mensuralAndNeumes" module="MEI.shared" type="model" mode="delete"/>
