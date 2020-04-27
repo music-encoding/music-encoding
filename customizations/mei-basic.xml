@@ -47,6 +47,7 @@
                 </constraintSpec>
 
                 <moduleRef key="MEI"/>
+                <moduleRef key="MEI.analytical" include="att.keySigDefault.anl"/>
                 <moduleRef key="MEI.cmn"
                     except="attacca beamSpan bend bracketSpan meterSig meterSigGrp mRpt2 mSpace oLayer ossia oStaff tupletSpan"/>
                 <moduleRef key="MEI.cmnOrnaments"/>
@@ -115,6 +116,7 @@
                 <classSpec type="atts" ident="att.partIdent" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.pointing" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.responsibility" module="MEI.shared" mode="delete"/>
+                <classSpec type="atts" ident="att.scoreDef.log" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.source" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.spacing" module="MEI.shared" mode="delete"/>
                 <classSpec type="atts" ident="att.staff.log" module="MEI.shared" mode="delete"/>
@@ -603,7 +605,7 @@
                         <attDef ident="meiversion" usage="req">
                             <desc>Specifies a generic MEI version label.</desc>
                             <valList type="closed">
-                                <valItem ident="4.0.0-beta.2+basic">
+                                <valItem ident="4.0.0-rc1+basic">
                                     <desc>This version of MEI.</desc>
                                 </valItem>
                             </valList>
@@ -791,6 +793,115 @@
                         <p part="N">The <gi scheme="MEI">mdiv</gi> element may be recursively nested in
                             order to represent music which exhibits this kind of structure. For example, 
                             an opera is normally divided into acts, which are in turn divided into scenes.</p>
+                    </remarks>
+                </elementSpec>
+                
+                <!-- re-allow @key.sig and @meter.*, remove some childs -->
+                <elementSpec ident="scoreDef" module="MEI.shared" mode="change">
+                    <desc>(score definition) – Container for score meta-information.</desc>
+                    <classes mode="replace">
+                        <memberOf key="att.common"/>
+                        <!--<memberOf key="att.scoreDef.log"/>-->
+                        <!--<memberOf key="att.scoreDef.vis"/>-->
+                        <!--<memberOf key="att.scoreDef.ges"/>-->
+                        <memberOf key="att.scoreDef.anl"/>
+                        <memberOf key="model.scoreDefLike"/>
+                        
+                        <memberOf key="att.keySigDefault.log" mode="add"/>
+                        <memberOf key="att.meterSigDefault.log" mode="add"/>
+                    </classes>
+                    <content>
+                        <!--<rng:optional>
+                            <rng:ref name="model.chordTableLike"/>
+                        </rng:optional>-->
+                        <rng:optional>
+                            <rng:ref name="model.symbolTableLike"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="model.keySigLike"/>
+                        </rng:optional>
+                        <rng:optional>
+                            <rng:ref name="model.meterSigLike"/>
+                        </rng:optional>
+                        <!--<rng:optional>
+                            <rng:ref name="pgHead"/>
+                        </rng:optional>-->
+                        <!--<rng:optional>
+                            <rng:ref name="pgHead2"/>
+                        </rng:optional>-->
+                        <!--<rng:optional>
+                            <rng:ref name="pgFoot"/>
+                        </rng:optional>-->
+                        <!--<rng:optional>
+                            <rng:ref name="pgFoot2"/>
+                        </rng:optional>-->
+                        <rng:optional>
+                            <rng:ref name="instrGrp"/>
+                        </rng:optional>
+                        <rng:choice>
+                            <rng:optional>
+                                <rng:ref name="model.staffGrpLike"/>
+                            </rng:optional>
+                        </rng:choice>
+                        <!--<rng:zeroOrMore>
+                            <rng:ref name="grpSym"/>
+                        </rng:zeroOrMore>-->
+                        <!--<rng:optional>
+                            <rng:ref name="ambitus"/>
+                        </rng:optional>-->
+                    </content>
+                </elementSpec>
+                
+                <!-- disallow grpSym children -->
+                <elementSpec ident="staffGrp" module="MEI.shared" mode="change">
+                    <desc>(staff group) – A group of bracketed or braced staves.</desc>
+                    <classes>
+                        <memberOf key="att.common"/>
+                        <memberOf key="att.facsimile"/>
+                        <memberOf key="att.metadataPointing"/>
+                        <memberOf key="att.staffGrp.log"/>
+                        <memberOf key="att.staffGrp.vis"/>
+                        <memberOf key="att.staffGrp.ges"/>
+                        <memberOf key="att.staffGrp.anl"/>
+                        <memberOf key="model.staffGrpLike"/>
+                    </classes>
+                    <content>
+                        <!--<rng:zeroOrMore>
+                            <rng:ref name="grpSym"/>
+                        </rng:zeroOrMore>-->
+                        <rng:zeroOrMore>
+                            <rng:choice>
+                                <rng:ref name="model.labelLike"/>
+                            </rng:choice>
+                        </rng:zeroOrMore>
+                        <rng:zeroOrMore>
+                            <rng:ref name="model.instrDefLike"/>
+                        </rng:zeroOrMore>
+                        <rng:oneOrMore>
+                            <rng:choice>
+                                <rng:ref name="model.staffGrpLike"/>
+                                <rng:ref name="model.staffDefLike"/>
+                            </rng:choice>
+                        </rng:oneOrMore>
+                        <!--<rng:zeroOrMore>
+                            <rng:ref name="grpSym"/>
+                        </rng:zeroOrMore>-->
+                    </content>
+                    <constraintSpec ident="Check_staffGrp_unique_staff_n_values" scheme="isoschematron">
+                        <constraint>
+                            <sch:rule context="mei:staffGrp">
+                                <sch:let name="countstaves" value="count(descendant::mei:staffDef)"/>
+                                <sch:let name="countuniqstaves"
+                                    value="count(distinct-values(descendant::mei:staffDef/@n))"/>
+                                <sch:assert test="$countstaves eq $countuniqstaves">Each staffDef must have a unique value
+                                    for the n attribute.</sch:assert>
+                            </sch:rule>
+                        </constraint>
+                    </constraintSpec>
+                    <remarks>
+                        <p>System is the more proper name for this concept (Read, p. 37-38). Bracketed staff groups
+                            may contain other bracketed or braced staff groups or single staves. See Read, p. 35-38,
+                            examples p. 434, 438.</p>
                     </remarks>
                 </elementSpec>
                 
