@@ -63,12 +63,78 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.FLAGFORM.mensural" module="MEI.mensural" type="dt">
+    <desc>Form of the flag.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="straight">
+          <desc>Flag is a straight horizontal line.</desc>
+        </valItem>
+        <valItem ident="angled">
+          <desc>Flag is a straight line at an angle.</desc>
+        </valItem>
+        <valItem ident="curled">
+          <desc>Flag is curled.</desc>
+        </valItem>
+        <valItem ident="flared">
+          <desc>Flag is flared.</desc>
+        </valItem>
+        <valItem ident="extended">
+          <desc>Flag looks extended.</desc>
+        </valItem>
+        <valItem ident="hooked">
+          <desc>Flag is hooked-form.</desc>
+        </valItem>
+      </valList>
+    </content>
+    <remarks>
+        <p>
+            <!-- TODO: Add samples for all values here  -->
+            <!--<graphic url="ExampleImages/accid-20100510.png" height="50%" width="50%"/>-->
+        </p>
+    </remarks>
+  </macroSpec>
+  <macroSpec ident="data.FLAGPOS.mensural" module="MEI.mensural" type="dt">
+    <desc>Position of the flag relative to the stem.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="left">
+          <desc>Flag lies at the left side of the stem.</desc>
+        </valItem>
+        <valItem ident="right">
+          <desc>Flag lies at the right side of the stem.</desc>
+        </valItem>
+        <valItem ident="center">
+          <desc>Flag is centered in the stem.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.STAFFITEM.mensural" module="MEI.mensural" type="dt">
     <desc>Items in the Mensural repertoire that may be printed near a staff.</desc>
     <content>
       <valList type="closed">
         <valItem ident="ligature">
           <desc>Ligatures.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.STEMFORM.mensural" module="MEI.mensural" type="dt">
+    <desc>Form of the stem attached to the note.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="circle">
+          <desc>Stem has a circular form.</desc>
+        </valItem>
+        <valItem ident="oblique">
+          <desc>Stem has an oblique form.</desc>
+        </valItem>
+        <valItem ident="swallowtail">
+          <desc>Stem has a swallowtail form.</desc>
+        </valItem>
+        <valItem ident="virgula">
+          <desc>Stem has a virgula-like form.</desc>
         </valItem>
       </valList>
     </content>
@@ -243,6 +309,61 @@
       <memberOf key="att.mensural.vis"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.STEMPROPERTIES.mensural" module="MEI.mensural" type="atts">
+    <desc>Attributes that describe the properties of stems in the mensural repertoire.</desc>
+    <classes>
+        <memberOf key="att.xy"/>
+    </classes>
+    <attList>
+      <attDef ident="pos" usage="opt">
+        <desc>Records the position of the stem in relation to the note head(s).</desc>
+        <datatype>
+          <rng:ref name="data.STEMPOSITION"/>
+        </datatype>
+      </attDef>
+      <attDef ident="length" usage="opt">
+        <desc>Encodes the stem length.</desc>
+        <datatype>
+          <rng:ref name="data.MEASUREMENTABS"/>
+        </datatype>
+      </attDef>
+      <attDef ident="form" usage="opt">
+        <desc>Encodes the form of the stem using the values provided by the data.STEMFORM.mensural datatype.</desc>
+        <datatype>
+          <rng:ref name="data.STEMFORM.mensural"/>
+        </datatype>
+      </attDef>
+      <attDef ident="dir" usage="opt">
+        <desc>Describes the direction of a stem.</desc>
+        <datatype>
+          <rng:ref name="data.STEMDIRECTION"/>
+        </datatype>
+      </attDef>
+      <attDef ident="flag.pos" usage="opt">
+        <desc>Records the position of the flag using the values provided by the data.FLAGPOS.mensural datatype.</desc>
+        <datatype>
+          <rng:ref name="data.FLAGPOS.mensural"/>
+        </datatype>
+      </attDef>
+      <attDef ident="flag.form" usage="opt">
+        <desc>Encodes the form of the flag using the values provided by the data.FLAGFORM.mensural datatype.</desc>
+        <datatype>
+          <rng:ref name="data.FLAGFORM.mensural"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.stems.mensural" module="MEI.mensural" type="atts">
+      <desc>Attributes that describe the properties of stemmed features specific to mensural repertoires.</desc>
+      <attList>
+          <attDef ident="stem.form" usage="opt">
+              <desc>Records the form of the stem.</desc>
+              <datatype maxOccurs="1" minOccurs="1">
+                  <rng:ref name="data.STEMFORM.mensural"/>
+              </datatype>
+          </attDef>
+      </attList>
+  </classSpec>
   <classSpec ident="model.eventLike.mensural" module="MEI.mensural" type="model">
     <desc>Groups event elements that occur in the mensural repertoire.</desc>
     <classes>
@@ -351,6 +472,31 @@
         description of note durations as arithmetic ratios. While mensuration refers to the normal
         relationships between note durations, proportion affects the relations of the note durations
         to the tactus.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="stem" module="MEI.mensural">
+    <desc>A stem element.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.STEMPROPERTIES.mensural"/>
+      <memberOf key="model.noteModifierLike"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <constraintSpec ident="Check_stem" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:stem">
+          <sch:assert test="not(ancestor::mei:note/@*[starts-with(local-name(),'stem.')])">A note with nested stem elements must not have @stem.* attributes.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>Mensural notes can have multiple stems and these may have various forms, directions, and types of flags.
+        Multiple stem elements can be encoded as children of a single note. The attributes <att>pos</att>,
+        <att>length</att>, <att>form</att>, and <att>dir</att> allow to encode different positions, lengths,
+        forms, and directions for each these stems. The attributes <att>flag.pos</att> and <att>flag.form</att> 
+        also allow to encode different types of flags for each of the stems.</p>
     </remarks>
   </elementSpec>
 </specGrp>
