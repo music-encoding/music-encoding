@@ -15,10 +15,10 @@ if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
     exit 0
 fi
 
-# if [ "${TRAVIS_BRANCH}" == "develop" ]; then
-#     OUTPUT_FOLDER="dev"
-#     DOCS_BRANCH="master"
-if [ "${TRAVIS_BRANCH}" == "master" ]; then
+if [ "${TRAVIS_BRANCH}" == "develop" ]; then
+     OUTPUT_FOLDER="dev"
+     DOCS_BRANCH="master"
+elif [ "${TRAVIS_BRANCH}" == "master" ]; then
     OUTPUT_FOLDER=${MEI_VERSION}
     DOCS_BRANCH="master"
 else
