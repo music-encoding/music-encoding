@@ -142,10 +142,6 @@
         <valItem ident="marc">
           <desc>Marcato (Unicode 1D17F).</desc>
         </valItem>
-        <valItem ident="marc-stacc" validUntil="2018-05-31">
-          <desc>Marcato + staccato (Unicode 1D180). DEPRECATED; Scheduled for removal after
-            2018-05-31. Use individual "marc" and "stacc" values.</desc>
-        </valItem>
         <valItem ident="spicc">
           <desc>Spiccato.</desc>
         </valItem>
@@ -199,10 +195,6 @@
         <valItem ident="fingernail">
           <desc>Fingernail (Unicode 1D1B3).</desc>
         </valItem>
-        <valItem ident="ten-stacc" validUntil="2018-05-31">
-          <desc>Tenuto + staccato (Unicode 1D182). DEPRECATED; Scheduled for removal after
-            2018-05-31. Use individual "ten" and "stacc" values.</desc>
-        </valItem>
         <valItem ident="damp">
           <desc>Stop harp string from sounding (Unicode 1D1B4).</desc>
         </valItem>
@@ -246,12 +238,12 @@
         <sch:rule context="@artic">
           <sch:assert role="warning"
             test="not(contains(., 'marc-stacc')) and not(contains(., 'ten-stacc'))">"<sch:value-of
-              select="."/>" contains a deprecated value.</sch:assert>
+            select="."/>" contains a deprecated value.</sch:assert>
         </sch:rule>
         <sch:rule context="@artic.ges">
           <sch:assert role="warning"
             test="not(contains(., 'marc-stacc')) and not(contains(., 'ten-stacc'))">"<sch:value-of
-              select="."/>" contains a deprecated value.</sch:assert>
+            select="."/>" contains a deprecated value.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -264,9 +256,9 @@
       </rng:data>
     </content>
   </macroSpec>
-  <macroSpec ident="data.BARPLACE" module="MEI" type="dt">
-    <desc>Placement of bar lines. The value 'staff' describes the traditional placement of bar
-      lines.</desc>
+  <macroSpec ident="data.BARMETHOD" module="MEI" type="dt">
+    <desc>Records where bar lines are drawn. The value 'staff' describes the traditional placement
+      of bar lines.</desc>
     <content>
       <valList type="closed">
         <valItem ident="mensur">
@@ -276,7 +268,7 @@
           <desc>Between and across staves as necessary.</desc>
         </valItem>
         <valItem ident="takt">
-          <desc>Short line above staff or through top line.</desc>
+          <desc>Short bar line through a subset of staff lines.</desc>
         </valItem>
       </valList>
     </content>
@@ -335,13 +327,13 @@
     <content>
       <valList type="closed">
         <valItem ident="above">
-          <desc>The beam is above the material it affects.</desc>
+          <desc>The beam is above the events it affects.</desc>
         </valItem>
         <valItem ident="below">
-          <desc>The beam is below the material it affects.</desc>
+          <desc>The beam is below the events it affects.</desc>
         </valItem>
         <valItem ident="mixed">
-          <desc>The below is above and below the material it affects.</desc>
+          <desc>The beam is above and below the events it affects.</desc>
         </valItem>
       </valList>
     </content>
@@ -481,8 +473,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.COLORNAMES" module="MEI" type="dt">
-    <desc>List of SVG-recognized color keyword names described at
-      https://www.w3.org/TR/SVG/types.html#ColorKeywords.</desc>
+    <desc>List of named colors from CSS Color Module Level 4.</desc>
     <content>
       <valList type="closed">
         <valItem ident="aliceblue">
@@ -842,6 +833,9 @@
         <valItem ident="purple">
           <desc>Hex: #800080 / RGB: 128,0,128</desc>
         </valItem>
+        <valItem ident="rebeccapurple">
+          <desc>Hex: #663399 / RGB: 102,51,153</desc>
+        </valItem>
         <valItem ident="red">
           <desc>Hex: #ff0000 / RGB: 255,0,0</desc>
         </valItem>
@@ -928,6 +922,12 @@
         </valItem>
       </valList>
     </content>
+    <remarks>
+      <p>Color names are taken from the list at <ref
+        target="https://www.w3.org/TR/css-color-4/"
+        >https://www.w3.org/TR/css-color-4/</ref>. </p>
+      <p>All of these keywords are case-insensitive.</p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.COLORVALUES" module="MEI" type="dt">
     <desc>Parameterized color values</desc>
@@ -968,10 +968,57 @@
     <desc>A value in one of the following forms is expected: 1) hexadecimal RRGGBB, 2) hexadecimal
       AARRGGBB, 3) CSS RGB, 4) CSS RGBA, 5) HSL, 6) HSLA, or 7) HTML 4.01 color name.</desc>
     <content>
+      <rng:choice>
+        <rng:ref name="data.COLORNAMES"/>
+        <rng:ref name="data.COLORVALUES"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.COMPASSDIRECTION" module="MEI" type="dt">
+    <desc>Description of direction with respect to an imaginary compass.</desc>
+    <content>
       <alternate>
-        <macroRef key="data.COLORNAMES"/>
-        <macroRef key="data.COLORVALUES"/>
+        <macroRef key="data.COMPASSDIRECTION.basic"/>
+        <macroRef key="data.COMPASSDIRECTION.extended"/>
       </alternate>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.COMPASSDIRECTION.basic" module="MEI" type="dt">
+    <desc>Basic compass directions.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="n">
+          <desc>In a northern direction.</desc>
+        </valItem>
+        <valItem ident="e">
+          <desc>In an eastern direction.</desc>
+        </valItem>
+        <valItem ident="s">
+          <desc>In a southern direction.</desc>
+        </valItem>
+        <valItem ident="w">
+          <desc>In a western direction.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.COMPASSDIRECTION.extended" module="MEI" type="dt">
+    <desc>Additional compass directions.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="ne">
+          <desc>In a north-eastern direction.</desc>
+        </valItem>
+        <valItem ident="nw">
+          <desc>In a north-western direction.</desc>
+        </valItem>
+        <valItem ident="se">
+          <desc>In a south-eastern direction.</desc>
+        </valItem>
+        <valItem ident="sw">
+          <desc>In a south-western direction.</desc>
+        </valItem>
+      </valList>
     </content>
   </macroSpec>
   <macroSpec ident="data.DEGREES" module="MEI" type="dt">
@@ -984,6 +1031,34 @@
       </rng:data>
     </content>
   </macroSpec>
+  <macroSpec ident="data.DIVISIO" module="MEI" type="dt">
+    <desc>Divisio values.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="ternaria">
+          <desc>Divisio ternaria. Three semibreves in a breve.</desc>
+        </valItem>
+        <valItem ident="quaternaria">
+          <desc>Divisio quaternaria. Foursemibreves in a breve.</desc>
+        </valItem>
+        <valItem ident="senariaimperf">
+          <desc>Divisio senaria imperfecta. Six semibreves in a breve (breve is divided into two, then into three). Aka senaria gallica.</desc>
+        </valItem>
+        <valItem ident="senariaperf">
+          <desc>Divisio senaria perfecta. Six semibreves in a breve (breve is divided into three, then into two). Aka senaria italica.</desc>
+        </valItem>
+        <valItem ident="octonaria">
+          <desc>Divisio octonaria. Eight semibreves in a breve.</desc>
+        </valItem>
+        <valItem ident="novenaria">
+          <desc>Divisio novenaria. Nine semibreves in a breve.</desc>
+        </valItem>
+        <valItem ident="duodenaria">
+          <desc>Divisio duodenaria. Twelve semibreves in a breve.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.DURATION" module="MEI" type="dt">
     <desc>Logical, that is, written, duration attribute values.</desc>
     <content>
@@ -993,13 +1068,22 @@
       </rng:choice>
     </content>
   </macroSpec>
+  <macroSpec ident="data.DURATIONRESTS" module="MEI" type="dt">
+    <desc>Logical, that is, written, duration attribute values for rests.</desc>
+    <content>
+      <rng:choice>
+        <rng:ref name="data.DURATION.cmn"/>
+        <rng:ref name="data.DURATIONRESTS.mensural"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
     <desc>Performed duration attribute values.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.DURATION.cmn"/>
-        <macroRef key="data.DURATION.mensural"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.DURATION.cmn"/>
+        <rng:ref name="data.DURATION.mensural"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.ENCLOSURE" module="MEI" type="dt">
@@ -1011,6 +1095,53 @@
         </valItem>
         <valItem ident="brack">
           <desc>Square brackets: [ and ].</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.EVENTREL" module="MEI" type="dt">
+    <desc>Location of musical material relative to a symbol on a staff instead of the staff.</desc>
+    <content>
+      <alternate>
+        <macroRef key="data.EVENTREL.basic"/>
+        <macroRef key="data.EVENTREL.extended"/>
+      </alternate>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.EVENTREL.basic" module="MEI" type="dt">
+    <desc>Location of musical material relative to a symbol other than a staff.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="above">
+          <desc>Above.</desc>
+        </valItem>
+        <valItem ident="below">
+          <desc>Below.</desc>
+        </valItem>
+        <valItem ident="left">
+          <desc>Left.</desc>
+        </valItem>
+        <valItem ident="right">
+          <desc>Right.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.EVENTREL.extended" module="MEI" type="dt">
+    <desc>Location of musical material relative to a symbol other than a staff.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="above-left">
+          <desc>Above and left; north-west.</desc>
+        </valItem>
+        <valItem ident="above-right">
+          <desc>Above and right; north-east.</desc>
+        </valItem>
+        <valItem ident="below-left">
+          <desc>Below and left; south-west.</desc>
+        </valItem>
+        <valItem ident="below-right">
+          <desc>Below and right; south-east.</desc>
         </valItem>
       </valList>
     </content>
@@ -1074,11 +1205,11 @@
   <macroSpec ident="data.FONTSIZE" module="MEI" type="dt">
     <desc>Font size expressions.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.FONTSIZENUMERIC"/>
-        <macroRef key="data.FONTSIZETERM"/>
-        <macroRef key="data.PERCENT"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.FONTSIZENUMERIC"/>
+        <rng:ref name="data.FONTSIZETERM"/>
+        <rng:ref name="data.PERCENT"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.FONTSIZENUMERIC" module="MEI" type="dt">
@@ -1232,11 +1363,11 @@
   <macroSpec ident="data.HEADSHAPE" module="MEI" type="dt">
     <desc>Note head shapes.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.HEADSHAPE.list"/>
-        <macroRef key="data.HEXNUM"/>
-        <macroRef key="data.NMTOKEN"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.HEADSHAPE.list"/>
+        <rng:ref name="data.HEXNUM"/>
+        <rng:ref name="data.NMTOKEN"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.HEADSHAPE.list" module="MEI" type="dt">
@@ -1364,23 +1495,59 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
-    <desc>A token indicating direction of the interval but not its precise value, an indication of
-      diatonic interval quality and size, or a decimal value in half steps. Decimal values are
-      permitted to accommodate micro-tuning.</desc>
+    <desc>A token indicating direction of the interval but not its precise value, a diatonic
+      interval (with optional direction and quality), or a decimal value in half steps. Decimal
+      values are permitted to accommodate micro-tuning.</desc>
     <content>
       <rng:choice>
-        <rng:data type="decimal"/>
         <rng:data type="token">
-          <rng:param name="pattern">u|d|s|n|sh|sl</rng:param>
+          <rng:param name="pattern">u|d|s|n|sd|su</rng:param>
         </rng:data>
         <rng:data type="token">
-          <rng:param name="pattern">(\+|\-)?[AdMmP][0-9]+</rng:param>
+          <rng:param name="pattern">(\+|\-)?([AdMmP])?[0-9]+</rng:param>
+        </rng:data>
+        <rng:data type="token">
+          <rng:param name="pattern">(\+|\-)?\d+(\.\d+)?hs</rng:param>
         </rng:data>
       </rng:choice>
     </content>
     <remarks>
-      <p>u = up, d = down, s = same, n = neutral/unknown, sh = same or higher (but not lower), sl =
-        same or lower (but not higher)</p>
+      <p>
+        <list>
+          <head>Interval direction only:</head>
+          <item>u = up/higher,</item>
+          <item>d = down/lower,</item>
+          <item>s = same,</item>
+          <item>n = neutral/unknown,</item>
+          <item>sd = same or lower (but not higher),</item>
+          <item>su = same or higher (but not lower)</item>
+        </list>
+      </p>
+      <p>
+        <list>
+          <head>Interval direction, quality, and size:</head>
+          <item>optional sign,</item>
+          <item>
+            <list>
+              <head>optional quality indicator:</head>
+              <item>A = augmented,</item>
+              <item>d = diminished,</item>
+              <item>M = major,</item>
+              <item>m = minor,</item>
+              <item>P = perfect</item>
+            </list>
+          </item>
+          <item>integer value</item>
+        </list>
+      </p>
+      <p>
+        <list>
+          <head>Interval in half steps:</head>
+          <item>optional sign,</item>
+          <item>decimal value</item>
+          <item>"hs"</item>
+        </list>
+      </p>
     </remarks>
   </macroSpec>
   <macroSpec ident="data.ISODATE" module="MEI" type="dt">
@@ -1549,10 +1716,10 @@
   <macroSpec ident="data.LINEWIDTH" module="MEI" type="dt">
     <desc>Datatype of line width measurements.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.LINEWIDTHTERM"/>
-        <macroRef key="data.MEASUREMENTABS"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.LINEWIDTHTERM"/>
+        <rng:ref name="data.MEASUREMENTABS"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.LINEWIDTHTERM" module="MEI" type="dt">
@@ -1719,14 +1886,72 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.MENSURATIONSIGN" module="MEI" type="dt">
-    <desc>Mensuration attribute values.</desc>
+    <desc>Mensuration signs attribute values.</desc>
     <content>
       <valList type="closed">
         <valItem ident="C">
-          <desc>Tempus imperfectum.</desc>
+          <desc>Sign for tempus imperfectum.</desc>
         </valItem>
         <valItem ident="O">
-          <desc>Tempus perfectum.</desc>
+          <desc>Sign for tempus perfectum.</desc>
+        </valItem>
+        <valItem ident="t">
+          <desc>Sign for divisio ternaria.</desc>
+        </valItem>
+        <valItem ident="q">
+          <desc>Sign for divisio quaternaria.</desc>
+        </valItem>
+        <valItem ident="si">
+          <desc>Sign for divisio senaria imperfecta.</desc>
+        </valItem>
+        <valItem ident="i">
+          <desc>Sign for divisio senaria imperfecta.</desc>
+        </valItem>
+        <valItem ident="sg">
+          <desc>Sign for divisio senaria gallica.</desc>
+        </valItem>
+        <valItem ident="g">
+          <desc>Sign for divisio senaria gallica.</desc>
+        </valItem>
+        <valItem ident="sp">
+          <desc>Sign for divisio senaria perfecta.</desc>
+        </valItem>
+        <valItem ident="p">
+          <desc>Sign for divisio senaria perfecta.</desc>
+        </valItem>
+        <valItem ident="sy">
+          <desc>Sign for divisio senaria ytalica.</desc>
+        </valItem>
+        <valItem ident="y">
+          <desc>Sign for divisio senaria ytalica.</desc>
+        </valItem>
+        <valItem ident="n">
+          <desc>Sign for divisio novenaria.</desc>
+        </valItem>
+        <valItem ident="oc">
+          <desc>Sign for divisio octonaria.</desc>
+        </valItem>
+        <valItem ident="d">
+          <desc>Sign for divisio duodenaria.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.METERFORM" module="MEI" type="dt">
+    <desc>Contains an indication of how a meter signature should be rendered.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="num">
+          <desc>Show only the number of beats.</desc>
+        </valItem>
+        <valItem ident="denomsym">
+          <desc>The lower number in the meter signature is replaced by a note symbol.</desc>
+        </valItem>
+        <valItem ident="norm">
+          <desc>Meter signature rendered using traditional numeric values.</desc>
+        </valItem>
+        <valItem ident="invis">
+          <desc>Meter signature not rendered.</desc>
         </valItem>
       </valList>
     </content>
@@ -2426,8 +2651,8 @@
     </content>
     <remarks>
       <p>Instrument names are taken from the list at <ref
-          target="http://www.midi.org/techspecs/gm1sound.php"
-          >http://www.midi.org/techspecs/gm1sound.php</ref>. </p>
+        target="https://www.midi.org/specifications/item/gm-level-1-sound-set"
+        >https://www.midi.org/specifications/item/gm-level-1-sound-set</ref>. </p>
       <p>MEI uses 0-based program numbers.</p>
       <p>Percussion sounds are available when the MIDI channel is set to "10".</p>
     </remarks>
@@ -2443,19 +2668,28 @@
   <macroSpec ident="data.MIDIVALUE_NAME" module="MEI" type="dt">
     <desc>data.MIDIVALUE or data.NCName values.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.MIDIVALUE"/>
-        <macroRef key="data.NCNAME"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.MIDIVALUE"/>
+        <rng:ref name="data.NCNAME"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.MIDIVALUE_PAN" module="MEI" type="dt">
+    <desc>data.MIDIVALUE or data.PERCENT.LIMITED.SIGNED values.</desc>
+    <content>
+      <rng:choice>
+        <rng:ref name="data.MIDIVALUE"/>
+        <rng:ref name="data.PERCENT.LIMITED.SIGNED"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.MIDIVALUE_PERCENT" module="MEI" type="dt">
     <desc>data.MIDIVALUE or data.PERCENT.LIMITED values.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.MIDIVALUE"/>
-        <macroRef key="data.PERCENT.LIMITED.SIGNED"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.MIDIVALUE"/>
+        <rng:ref name="data.PERCENT.LIMITED"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.MODE" module="MEI" type="dt">
@@ -2649,10 +2883,10 @@
     <desc>Captures any notehead "modifiers"; that is, symbols added to the notehead, such as
       slashes, lines, text, and enclosures, etc.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.NOTEHEADMODIFIER.list"/>
-        <macroRef key="data.NOTEHEADMODIFIER.pat"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.NOTEHEADMODIFIER.list"/>
+        <rng:ref name="data.NOTEHEADMODIFIER.pat"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.NOTEHEADMODIFIER.list" module="MEI" type="dt">
@@ -2821,18 +3055,18 @@
   <macroSpec ident="data.PLACEMENT" module="MEI" type="dt">
     <desc>Location information.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.STAFFREL"/>
-        <macroRef key="data.NONSTAFFPLACE"/>
-        <macroRef key="data.NMTOKEN"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.STAFFREL"/>
+        <rng:ref name="data.NONSTAFFPLACE"/>
+        <rng:ref name="data.NMTOKEN"/>
+      </rng:choice>
     </content>
     <constraintSpec ident="constrain_place" scheme="isoschematron">
       <constraint>
-        <sch:rule
-          context="@place[matches(., 'above') or matches(., 'below')              or matches(., 'between') or matches(., 'within')]">
+        <sch:rule context="@place">
           <sch:assert
-            test="matches(normalize-space(.), '^above$') or                matches(normalize-space(.), '^below$') or                matches(normalize-space(.), '^between$') or                matches(normalize-space(.), '^within$')"
+            test="not((some $token in tokenize(normalize-space(.),' ') satisfies 
+            $token =('below','above','between','within')) and count(tokenize(normalize-space(.),' ')) gt 1)"
             >Other values not permitted when 'above', 'below', 'between' or 'within' is
             present.</sch:assert>
         </sch:rule>
@@ -2859,20 +3093,20 @@
   <macroSpec ident="data.RELATIONSHIP" module="MEI" type="dt">
     <desc>General-purpose relationships</desc>
     <content>
-      <alternate>
-        <macroRef key="data.FRBRRELATIONSHIP"/>
-        <macroRef key="data.MODSRELATIONSHIP"/>
-        <macroRef key="data.NMTOKEN"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.FRBRRELATIONSHIP"/>
+        <rng:ref name="data.MODSRELATIONSHIP"/>
+        <rng:ref name="data.NMTOKEN"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.ROTATION" module="MEI" type="dt">
     <desc>Rotation.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.DEGREES"/>
-        <macroRef key="data.ROTATIONDIRECTION"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.DEGREES"/>
+        <rng:ref name="data.ROTATIONDIRECTION"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.ROTATIONDIRECTION" module="MEI" type="dt">
@@ -2939,12 +3173,12 @@
   <macroSpec ident="data.STAFFITEM" module="MEI" type="dt">
     <desc>Items that may be printed above, below, or between staves.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.STAFFITEM.basic"/>
-        <macroRef key="data.STAFFITEM.cmn"/>
-        <macroRef key="data.STAFFITEM.mensural"/>
-        <macroRef key="data.STAFFITEM.neumes"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.STAFFITEM.basic"/>
+        <rng:ref name="data.STAFFITEM.cmn"/>
+        <rng:ref name="data.STAFFITEM.mensural"/>
+        <rng:ref name="data.STAFFITEM.neumes"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.STAFFITEM.basic" module="MEI" type="dt">
@@ -2998,10 +3232,10 @@
   <macroSpec ident="data.STAFFREL" module="MEI" type="dt">
     <desc>Location of musical material relative to a staff.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.STAFFREL.basic"/>
-        <macroRef key="data.STAFFREL.extended"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.STAFFREL.basic"/>
+        <rng:ref name="data.STAFFREL.extended"/>
+      </rng:choice>
     </content>
     <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
       <constraint>
@@ -3014,7 +3248,7 @@
           <sch:let name="minValue"
             value="min((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
           <sch:assert test="$maxValue - $minValue = 1">Staves <sch:value-of select="$minValue"/> and
-              <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
+            <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -3048,10 +3282,10 @@
   <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt">
     <desc>Stem direction.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.STEMDIRECTION.basic"/>
-        <macroRef key="data.STEMDIRECTION.extended"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.STEMDIRECTION.basic"/>
+        <rng:ref name="data.STEMDIRECTION.extended"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.STEMDIRECTION.basic" module="MEI" type="dt">
@@ -3297,10 +3531,10 @@
   <macroSpec ident="data.TEXTRENDITION" module="MEI" type="dt">
     <desc>Text rendition values.</desc>
     <content>
-      <alternate>
-        <macroRef key="data.TEXTRENDITIONLIST"/>
-        <macroRef key="data.TEXTRENDITIONPAR"/>
-      </alternate>
+      <rng:choice>
+        <rng:ref name="data.TEXTRENDITIONLIST"/>
+        <rng:ref name="data.TEXTRENDITIONPAR"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.TIE" module="MEI" type="dt">
