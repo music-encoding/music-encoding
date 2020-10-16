@@ -105,6 +105,71 @@
         <classSpec ident="model.sectionPart.cmn" module="MEI.shared" type="model" mode="delete"/>
         <classSpec ident="model.layerPart.cmn" module="MEI.shared" type="model" mode="delete"/>
 
+        <!-- Change the availability of dots -->
+        <!-- Remove them as children of <note> -->
+        <elementSpec ident="dot" module="MEI.shared" mode="change">
+          <desc>Dot of augmentation or division.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.dot.log"/>
+            <memberOf key="att.dot.vis"/>
+            <memberOf key="att.dot.ges"/>
+            <memberOf key="att.dot.anl"/>
+            <memberOf key="model.noteModifierLike" mode="delete"/>
+            <memberOf key="model.eventLike.mensural"/>
+          </classes>
+          <content>
+            <rng:empty/>
+          </content>
+          <remarks>
+            <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
+              >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific display
+              info, such as size or color, needs to be recorded for the dot. This element may also be used
+              for dots of division in the mensural repertoire.</p>
+          </remarks>
+        </elementSpec>
+        <!-- Remove them as children of <rest> -->
+        <elementSpec ident="rest" module="MEI.shared" mode="replace">
+          <desc>A non-sounding event found in the source being transcribed.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.rest.log"/>
+            <memberOf key="att.rest.vis"/>
+            <memberOf key="att.rest.ges"/>
+            <memberOf key="att.rest.anl"/>
+            <memberOf key="model.eventLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <!--<rng:ref name="dot"/>-->
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="Check_restline" scheme="isoschematron">
+            <constraint>
+              <sch:rule context="mei:rest[@line]">
+                <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
+                <sch:assert
+                  test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
+                  >The value of @line must be less than or equal to the number of lines on the
+                  staff.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <remarks>
+            <p>See (Read, p. 96-102). Do not confuse this element with the <gi scheme="MEI">space</gi>
+              element, which is used as an aid for visual alignment.</p>
+          </remarks>
+        </elementSpec>
+        <!-- Remove them as attributes of <note> and <rest> -->
+        <classSpec ident="att.augmentDots" module="MEI.shared" type="atts" mode="delete"/>
+
       </schemaSpec>
     </body>
   </text>
