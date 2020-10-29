@@ -62,7 +62,7 @@ Do **not** simply reference another issue or pull request by number in the summa
 
 The details of the commit go in the body. Specifically, the body should include the motivation for the change.  For commits that fix bugs you should contrast behavior before the commit with behavior after the commit.
 
-### Message Summary
+### Message Footer
 
 If the commit closes an issue by fixing the bug, implementing a feature, or rendering it obsolete, or if it references an issue without closing it, that should be indicated in the message footer.
 
