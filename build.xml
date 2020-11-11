@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="music-encoding" default="help">
+    <property name="dir.build" value="schemata"/>
+    <property name="dir.dist" value="dist"/>
+    <property name="saxon-path" value="${basedir}/lib/saxon/saxon9he.jar"/>
+    <target name="help">
+        <echo>================================================</echo>
+        <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
+        <echo>================================================</echo>
+        <echo/>
+        <echo>This is the default build target with some usage information.</echo>
+        <echo>You can also call this via 'ant help'</echo>
+        <echo/>
+        <echo>To build the rng call:</echo>
+        <echo>ant init</echo>
+        <echo>ant -lib lib/saxon/saxon9he.jar build-rng</echo>
+        <echo/>
+        <echo>run 'ant -projecthelp' or 'ant -p' to get more information on the available build targets</echo>
+        <echo/>
+        <echo>The following buildproperties are configured in your environment:</echo>
+        <echo/>
+    </target>
+    
+    <target name="echo-properties" description="Outputs ">
+        <echoproperties/>
+    </target>
+    
+    <target name="init" description="initializes the build, e.g. downloads saxon">
+        <antcall target="saxon-prepare"/>
+        <echo>initialized</echo>
+    </target>
+    
+    <target name="saxon-download">
+        <mkdir dir="temp"/>
+        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/9.9/SaxonHE9-9-1-7J.zip/download" dest="temp/"/>
+    </target>
+    
+    <target name="saxon-prepare" depends="saxon-unzip">
+        <delete dir="temp/"/>
+    </target>
+    
+    <target name="saxon-unzip" depends="saxon-download">
+        <mkdir dir="lib"/>
+        <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
+    </target>
+    
+    <target name="build-compiled-odd">
+        <basename property="odd.basename" file="customizations/${customization.path}" suffix=".xml"/>
+        <echo>${odd.basename}</echo>
+        <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
+            <property name="inputFile" value="${basedir}/${customization.path}"/>
+            <property name="outputFile" value="${basedir}/${dir.dist}/${odd.basename}_compiled.odd"/>
+            <property name="defaultSource" value="${basedir}/source/mei-source.xml"/>
+            <property name="verbose">true</property>
+            <property name="summaryDoc" value="false"/>
+            <property name="suppressTEIexamples" value="true"/>
+        </ant>
+    </target>
+    
+    <target name="build-rng">
+        <basename property="odd.basename" file="customizations/${customization.path}" suffix=".xml"/>
+        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="${dir.dist}" usenativebasedir="true">
+            <property name="inputFile" value="${basedir}/${customization.path}"/>
+            <property name="outputFile" value="${basedir}/${dir.build}/${odd.basename}.rng"/>
+            <property name="defaultSource" value="${basedir}/source/mei-source.xml"/>
+            <property name="verbose">true</property>
+        </ant>
+    </target>
+    
+</project>
