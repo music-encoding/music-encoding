@@ -3,6 +3,7 @@
     <property name="dir.build" value="schemata"/>
     <property name="dir.dist" value="dist"/>
     <property name="saxon-path" value="${basedir}/lib/saxon/saxon9he.jar"/>
+    <property name="java.class.path" value="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar"></property>
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
@@ -44,6 +45,11 @@
         <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
     </target>
     
+    <target name="xerces-download">
+        <mkdir dir="lib/xerces/"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/>
+    </target>
+    
     <target name="build-compiled-odd">
         <basename property="odd.basename" file="customizations/${customization.path}" suffix=".xml"/>
         <echo>${odd.basename}</echo>
@@ -54,16 +60,19 @@
             <property name="verbose">true</property>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
+            <property name="selectedSchema" value="${odd.basename}"/>
         </ant>
     </target>
     
     <target name="build-rng">
         <basename property="odd.basename" file="customizations/${customization.path}" suffix=".xml"/>
-        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="${dir.dist}" usenativebasedir="true">
+        <echo>${odd.basename}</echo>
+        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="${dir.dist}" usenativebasedir="true" inheritall="true">
             <property name="inputFile" value="${basedir}/${customization.path}"/>
             <property name="outputFile" value="${basedir}/${dir.build}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${basedir}/source/mei-source.xml"/>
+            <property name="defaultSource" value="${basedir}/${dir.dist}/mei-source_canonicalized.xml"/>
             <property name="verbose">true</property>
+            <property name="selectedSchema" value="${odd.basename}"/>
         </ant>
     </target>
     
@@ -84,6 +93,27 @@
             <param name="customization.path" value="customizations/mei-Mensural.xml"/>
         </antcall>
         <antcall target="build-rng">
+            <param name="customization.path" value="customizations/mei-Neumes.xml"/>
+        </antcall>
+    </target>
+    
+    <target name="build-compiled-odds">
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="customizations/mei-all.xml"/>
+        </antcall>
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="customizations/mei-all_anyStart.xml"/>
+        </antcall>
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="customizations/mei-basic.xml"/>
+        </antcall>
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="customizations/mei-CMN.xml"/>
+        </antcall>
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="customizations/mei-Mensural.xml"/>
+        </antcall>
+        <antcall target="build-compiled-odd">
             <param name="customization.path" value="customizations/mei-Neumes.xml"/>
         </antcall>
     </target>
