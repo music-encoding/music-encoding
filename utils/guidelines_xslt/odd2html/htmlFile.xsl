@@ -24,29 +24,40 @@
             <xd:p>This is a skeleton for an HTML file</xd:p>
         </xd:desc>
         <xd:param name="contents">Everything that is supposed to be inserted into the file</xd:param>
+        <xd:param name="media">The medium for which this file is intended</xd:param>
     </xd:doc>
     <xsl:template name="getSinglePage">
         <xsl:param name="contents" as="node()*"/>
+        <xsl:param name="media" as="xs:string"/>
         
         <html xml:lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <xsl:comment>THIS FILE IS GENERATED FROM AN XML MASTER. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
-                <meta name="author" content="Perry D. Roland, Johannes Kepper" />
+                <meta name="author" content="Johannes Kepper" />
+                <meta name="author" content="Perry D. Roland" />
                 <meta name="subject" content="Documentation for the Music Encoding Initiative (MEI) Data Model" />
-                <meta name="keywords" content="Music Encoding, MEI, Digital Humanities, Music, Musicology, Music Librarianship, Music Information Retrieval" />
+                <meta name="keywords" content="Music Encoding, MEI, Digital Humanities, Musicology, Music Librarianship, Music Information Retrieval" />
                 <meta name="date" content="{substring(string(current-date()),1,10)}" />
                 <meta name="generator" content="MEI XSLT stylesheets" />
                 <meta name="DC.Title" content="Music Encoding Initiative Guidelines" />
                 <meta name="DC.Type" content="Text" />
                 <meta name="DC.Format" content="text/html" />
-                <link rel="stylesheet" media="print" type="text/css"
-                    href="css/mei-print.css" />
-                <link rel="stylesheet" media="print" type="text/css"
-                    href="css/mei.css" 
-                     />
-                
+                <xsl:choose>
+                    <xsl:when test="$media = 'print'">
+                        <link rel="stylesheet" media="print" type="text/css"
+                            href="css/mei-print.css" />
+                        <link rel="stylesheet" media="print" type="text/css"
+                            href="css/mei.css" />
+                    </xsl:when>
+                    <xsl:when test="$media = 'screen'">
+                        <link rel="stylesheet" media="screen" type="text/css"
+                            href="../css/mei-screen.css" />
+                    </xsl:when>
+                    
+                    
+                </xsl:choose>
             </head>
             <body class="simple" id="TOP">
                 <xsl:sequence select="$contents"/>

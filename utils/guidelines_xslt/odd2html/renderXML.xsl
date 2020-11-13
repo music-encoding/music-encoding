@@ -31,7 +31,20 @@
     <xsl:function name="tools:xml2html" as="node()*">
         <xsl:param name="input" as="xs:string"/>
         
-        <xsl:variable name="wrapped" select="'&lt;WRAPPER&gt;' || $input || '&lt;/WRAPPER&gt;'" as="xs:string"/>
+        <xsl:variable name="relevantExcerpt" as="xs:string">
+            <xsl:variable name="pi.start" select="'&lt;?edit-start?&gt;'" as="xs:string"/>
+            <xsl:variable name="pi.end" select="'&lt;?edit-end?&gt;'" as="xs:string"/>
+            <xsl:choose>
+                <xsl:when test="contains($input, $pi.start) and contains($input, $pi.end) and index-of($input, $pi.start) lt index-of($input, $pi.end)">
+                    <xsl:sequence select="substring-before(substring-after($input, $pi.start), $pi.end)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="$input"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:variable name="wrapped" select="'&lt;WRAPPER&gt;' || $relevantExcerpt || '&lt;/WRAPPER&gt;'" as="xs:string"/>
         <xsl:variable name="output">
             <xsl:try>
                 <xsl:variable name="xml" select="parse-xml($wrapped)/WRAPPER/child::node()" as="node()*"/>
@@ -63,38 +76,38 @@
         
         <xsl:choose>
             <xsl:when test="local-name() = 'param' and @name = 'pattern' and string-length(text()) gt $indent.threshold * 1">
-                <div class="indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/>&gt;</span>
+                <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/>&gt;</span>
                     <xsl:choose>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 8">
-                            <div class="indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 6 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 8 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 6 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 8 + 1,$indent.threshold * 2)"/></div>
                         </xsl:when>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 6">
-                            <div class="indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 6 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 6 + 1,$indent.threshold * 2)"/></div>
                         </xsl:when>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 4">
-                            <div class="indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 4 + 1,$indent.threshold * 2)"/></div>
                         </xsl:when>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 2">
-                            <div class="indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
-                            <div class="indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),$indent.threshold * 0 + 1,$indent.threshold * 2)"/></div>
+                            <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
                         </xsl:when>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 1">
-                            <div class="indent{$indent.level + 1}"><xsl:value-of select="substring(text(),1,100)"/></div>        
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),1,100)"/></div>        
                         </xsl:when>
                     </xsl:choose>
                     <span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></div>
             </xsl:when>
             <xsl:otherwise>
-                <div class="indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/><xsl:if test="not($element/node())">/</xsl:if>&gt;</span><xsl:apply-templates select="$element/node()" mode="#current"><xsl:with-param name="indent" select="$indent.level + 1" as="xs:integer"/></xsl:apply-templates><xsl:if test="$element/node()"><span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></xsl:if></div>
+                <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/><xsl:if test="not($element/node())">/</xsl:if>&gt;</span><xsl:apply-templates select="$element/node()" mode="#current"><xsl:with-param name="indent" select="$indent.level + 1" as="xs:integer"/></xsl:apply-templates><xsl:if test="$element/node()"><span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></xsl:if></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -109,7 +122,7 @@
         <xsl:param name="indent" as="xs:integer?"/>
         <xsl:variable name="indent.level" select="if($indent) then($indent) else(1)" as="xs:integer"/>
         <xsl:variable name="element" select="." as="node()"/>
-        <div class="indent{$indent.level}"><span data-indentation="{$indent.level}" class="comment">&lt;!--<xsl:value-of select="."/>--&gt;</span></div>   
+        <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="comment">&lt;!--<xsl:value-of select="."/>--&gt;</span></div>   
     </xsl:template>
     
     <xd:doc>

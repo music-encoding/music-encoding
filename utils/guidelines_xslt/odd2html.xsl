@@ -47,6 +47,39 @@
                     <xd:b>odd2html/htmlFile.xsl</xd:b>: 
                     This file holds a skeleton for an HTML file.
                 </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/genericSpecFunctions.xsl</xd:b>: 
+                    Here, most functions for generating the spec pages are stored. This is where parent and child elements
+                    are identified, plus more. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/moduleSpecs.xsl</xd:b>: 
+                    This is where moduleSpecs are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/elementSpecs.xsl</xd:b>: 
+                    This is where elementSpecs are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/modelClassSpecs.xsl</xd:b>: 
+                    This is where model classes are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/macroGroupSpecs.xsl</xd:b>: 
+                    This is where macro groups are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/attClassSpecs.xsl</xd:b>: 
+                    This is where attribute classes are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/specs/dataTypeSpecs.xsl</xd:b>: 
+                    This is where data types are handled. 
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/generateWebsite.xsl</xd:b>: 
+                    This holds code for extracting the website version from a single HTML page. 
+                </xd:li>
             </xd:ul></xd:p>
         </xd:desc>
     </xd:doc>
@@ -79,7 +112,14 @@
     <xsl:include href="odd2html/htmlFile.xsl"/>
     
     <xsl:include href="odd2html/specs/genericSpecFunctions.xsl"/>
+    <xsl:include href="odd2html/specs/moduleSpecs.xsl"/>
     <xsl:include href="odd2html/specs/elementSpecs.xsl"/>
+    <xsl:include href="odd2html/specs/modelClassSpecs.xsl"/>
+    <xsl:include href="odd2html/specs/macroGroupSpecs.xsl"/>
+    <xsl:include href="odd2html/specs/attClassSpecs.xsl"/>
+    <xsl:include href="odd2html/specs/dataTypeSpecs.xsl"/>
+    
+    <xsl:include href="odd2html/generateWebsite.xsl"/>
     
     <xd:doc>
         <xd:desc>
@@ -103,7 +143,12 @@
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
             </main>
         </xsl:variable>
+        <xsl:variable name="moduleSpecs" select="tools:getModuleSpecs()" as="node()"/>
         <xsl:variable name="elementSpecs" select="tools:getElementSpecs()" as="node()"/>
+        <xsl:variable name="modelClassSpecs" select="tools:getModelClassSpecs()" as="node()"/>
+        <xsl:variable name="macroGroupSpecs" select="tools:getMacroGroupSpecs()" as="node()"/>
+        <xsl:variable name="attClassSpecs" select="tools:getAttClassSpecs()" as="node()"/>
+        <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
             
         
         
@@ -111,13 +156,31 @@
             <xsl:sequence select="$preface"/>
             <xsl:sequence select="$toc"/>
             <xsl:sequence select="$guidelines"/>
+            
+            <xsl:sequence select="$moduleSpecs"/>
             <xsl:sequence select="$elementSpecs"/>
+            <xsl:sequence select="$modelClassSpecs"/>
+            <xsl:sequence select="$macroGroupSpecs"/>
+            <xsl:sequence select="$attClassSpecs"/>
+            <xsl:sequence select="$dataTypeSpecs"/>
         </xsl:variable>
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+        <!-- generate a single-page HTML version of the Guidelines -->
+        <xsl:variable name="singlePage" as="node()+">
             <xsl:call-template name="getSinglePage">
                 <xsl:with-param name="contents" select="$contents" as="node()*"/>
+                <xsl:with-param name="media" select="'print'"/>
             </xsl:call-template>
+        </xsl:variable>
+        
+        <!-- retrieve multiple HTML files for online publication -->
+        <xsl:call-template name="generateWebsite">
+            <xsl:with-param name="input" select="$singlePage"/>
+        </xsl:call-template>
+        
+        
+        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+            <xsl:sequence select="$singlePage"/>
         </xsl:result-document>
         
     </xsl:template>
@@ -132,7 +195,7 @@
     <xsl:template match="tei:*" mode="#all">
         <xsl:message select="'DEBUG: processing tei:' || local-name()"/>
         <span class="{local-name()}">
-            <xsl:apply-templates select="node()" mode="#current"/>
+            <xsl:apply-templates select="child::node()" mode="#current"/>
         </span>
     </xsl:template>
     

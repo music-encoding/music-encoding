@@ -104,7 +104,9 @@
                 <li class="toc">
                     <span class="sectionHeading">MEI Specification</span>
                     <ul class="toc">
-                        <!-- TODO: Shouldn't we include a section on the MEI modules, even though there is very little to display? -->
+                        <li class="toc toc_2">
+                            <a class="toc toc_2" href="#moduleSpecs">Modules in MEI</a>
+                        </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#elementSpecs">Element Specifications</a>
                         </li>
@@ -112,14 +114,15 @@
                             <a class="toc toc_2" href="#modelClassSpecs">Model Class Specifications</a>
                         </li>
                         <li class="toc toc_2">
+                            <a class="toc toc_2" href="#macroGroupSpecs">Macro Group Specifications</a>
+                        </li>
+                        <li class="toc toc_2">
                             <a class="toc toc_2" href="#attClassSpecs">Attribute Class Specifications</a>
                         </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#dataTypeSpecs">Data Type Specifications</a>
                         </li>
-                        <li class="toc toc_2">
-                            <a class="toc toc_2" href="#macroGroupSpecs">Macro Group Specifications</a>
-                        </li>
+                        
                     </ul>
                 </li>
                 <li class="toc">
@@ -132,14 +135,14 @@
                             <a class="toc toc_2" href="#modelClassIndex">Index of Model Classes</a>
                         </li>
                         <li class="toc toc_2">
+                            <a class="toc toc_2" href="#macroGroupIndex">Index of Macro Groups</a>
+                        </li>
+                        <li class="toc toc_2">
                             <a class="toc toc_2" href="#attClassIndex">Index of Attribute Classes</a>
                         </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#dataTypeIndex">Index of Data Types</a>
-                        </li>
-                        <li class="toc toc_2">
-                            <a class="toc toc_2" href="#macroGroupIndex">Index of Macro Groups</a>
-                        </li>
+                        </li>                        
                     </ul>
                 </li>
             </ul>

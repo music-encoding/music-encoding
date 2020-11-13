@@ -63,6 +63,18 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>A list of all modules in MEI</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="modules" as="node()*">
+        <xsl:for-each select="$mei.source//tei:moduleSpec">
+            <xsl:sort select="@ident" data-type="text"/>
+            <xsl:sequence select="."/>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>A list of all elements in MEI</xd:p>
         </xd:desc>
     </xd:doc>

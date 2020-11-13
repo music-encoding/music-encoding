@@ -73,15 +73,20 @@
         
         <section class="specPage elementSpec">
             <h2 id="{$element/@ident}">&lt;<xsl:value-of select="$element/@ident"/>&gt;</h2>
-            <xsl:sequence select="$refs"/>
-            <xsl:sequence select="$moduleFacet"/>
-            <xsl:sequence select="$attributesFacet"/>
-            <xsl:sequence select="$memberOfFacet"/>
-            <xsl:sequence select="$containedByFacet"/>
-            <xsl:sequence select="$mayContainFacet"/>
-            <xsl:sequence select="$remarksFacet"/>
-            <xsl:sequence select="$constraintsFacet"/>
-            <xsl:sequence select="$declarationFacet"/>
+            <div class="specs">
+                <div class="desc">
+                    <xsl:apply-templates select="$element/tei:desc/node()" mode="guidelines"/>
+                    <xsl:sequence select="$refs"/>
+                </div>
+                <xsl:sequence select="$moduleFacet"/>
+                <xsl:sequence select="$attributesFacet"/>
+                <xsl:sequence select="$memberOfFacet"/>
+                <xsl:sequence select="$containedByFacet"/>
+                <xsl:sequence select="$mayContainFacet"/>
+                <xsl:sequence select="$remarksFacet"/>
+                <xsl:sequence select="$constraintsFacet"/>
+                <xsl:sequence select="$declarationFacet"/>
+            </div>
         </section>
     </xsl:function>
     

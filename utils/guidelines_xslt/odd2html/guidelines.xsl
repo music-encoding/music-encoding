@@ -250,7 +250,7 @@
                 <span class="wrong_ptr"><xsl:value-of select="@target"/></span>
             </xsl:when>
             <xsl:otherwise>
-                <a class="link_ptr" title="{$tocInfo/@head}" href="#{$chapter.id}"><xsl:value-of select="$tocInfo/@number || ' ' || $tocInfo/@head"/></a>
+                <a class="link_ptr chapterLink" title="{$tocInfo/@head}" href="#{$chapter.id}"><xsl:value-of select="$tocInfo/@number || ' ' || $tocInfo/@head"/></a>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -267,7 +267,7 @@
                 <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?"/>
                 <xsl:choose>
                     <xsl:when test="exists($tocInfo)">
-                        <a class="link_ref" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></a>                        
+                        <a class="link_ref chapterLink" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></a>                        
                     </xsl:when>
                     <xsl:otherwise>
                         <span class="wrong_ref" data-target="{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></span>

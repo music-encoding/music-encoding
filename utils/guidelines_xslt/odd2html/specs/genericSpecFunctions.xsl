@@ -130,6 +130,290 @@
         </div>
     </xsl:function>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Gets a list with members of a model class or macro group</xd:p>
+        </xd:desc>
+        <xd:param name="object">the model class</xd:param>
+        <xd:return>the resulting div</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getMembersFacet" as="node()">
+        <xsl:param name="object" as="node()"/>
+        
+        <xsl:variable name="element.members" select="$elements/self::tei:elementSpec[.//tei:memberOf/@key = $object/@ident]" as="node()*"/>
+        <xsl:variable name="class.members" select="$model.classes/self::tei:classSpec[.//tei:memberOf/@key = $object/@ident]" as="node()*"/>
+        <xsl:variable name="members" select="$element.members | $class.members" as="node()*"/>
+        
+        <xsl:choose>
+            <xsl:when test="count($members) gt 0">
+                <!--<xsl:variable name="members.compact" as="node()*">
+                    <xsl:for-each select="$members/self::tei:elementSpec">
+                        <xsl:sort select="@ident" data-type="text"/>
+                        <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
+                        <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string"/>
+                        <xsl:if test="position() gt 1">
+                            <xsl:value-of select="', '"/>
+                        </xsl:if>
+                        <span class="ident element" title="{$desc}">
+                            <a class="link_odd_elementSpec" href="{tools:linkToElement($current.elem)}"><xsl:value-of select="$current.elem"/></a>
+                        </span>
+                    </xsl:for-each>
+                </xsl:variable>-->
+                <xsl:variable name="members.by.module" as="node()*">
+                    <xsl:for-each select="distinct-values($members/self::tei:elementSpec/@module)">
+                        <xsl:sort select="." data-type="text"/>
+                        <xsl:variable name="current.module" select="." as="xs:string"/>
+                        <xsl:variable name="relevant.element.names" select="distinct-values($members/self::tei:elementSpec[@module = $current.module]/@ident)" as="xs:string*"/>
+                        
+                        <xsl:variable name="ident" select="$current.module" as="xs:string"/>
+                        <xsl:variable name="desc" select="normalize-space(string-join($mei.source//tei:moduleSpec[@ident = $current.module]/tei:desc/text(),' '))" as="xs:string"/>
+                        <xsl:variable name="content" as="node()*">
+                            <xsl:for-each select="$relevant.element.names">
+                                <xsl:sort select="." data-type="text"/>
+                                <xsl:variable name="current.elem" select="." as="xs:string"/>
+                                
+                                <div class="elementRef">
+                                    <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a>        
+                                    <span class="elementDesc">
+                                        <xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $current.elem]/tei:desc" mode="guidelines"/>
+                                    </span>
+                                </div>
+                            </xsl:for-each>
+                        </xsl:variable>
+                        
+                        <xsl:sequence select="tools:getClassBox($ident,$desc,$content,'')"/>
+                        
+                    </xsl:for-each>
+                </xsl:variable>
+                
+                <!--<xsl:variable name="contents" as="node()+">
+                    <tab id="compact" label="compact"><xsl:sequence select="$members.compact"/></tab>
+                    <tab id="module" label="by module"><xsl:sequence select="$members.by.module"/></tab>
+                </xsl:variable>
+                
+                <xsl:sequence select="tools:getTabbedFacet('members','Members',$contents)"/>   -->     
+                
+                <div class="facet members">
+                    <div class="label">Members</div>
+                    <div class="statement classes">
+                        <xsl:sequence select="$members.by.module"/>
+                    </div>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="facet members">
+                    <div class="label">Members</div>
+                    <div class="statement text">
+                        – <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> has no members</em>)</span>
+                    </div>
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
+        
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Gets all elements that have access to a given att class</xd:p>
+        </xd:desc>
+        <xd:param name="object"></xd:param>
+        <xd:return></xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getElementsWithAttClassFacet" as="node()">
+        <xsl:param name="object" as="node()"/>
+        
+        <xsl:variable name="content.by.class" as="node()*">
+            <xsl:sequence select="tools:getAncestorsOfAttributeClass($object)"/>
+        </xsl:variable>
+        <xsl:variable name="content.by.module">
+            <xsl:for-each select="distinct-values($content.by.class//@data-module)">
+                <xsl:sort select="lower-case(.)" data-type="text"/>
+                <xsl:variable name="current.module" select="." as="xs:string"/>
+                <xsl:variable name="relevant.elements" select="$content.by.class/descendant-or-self::div[@data-module = $current.module]" as="node()*"/>
+                
+                <xsl:sequence select="tools:getClassBox($current.module,'',$relevant.elements,'')"/>
+                
+            </xsl:for-each>
+        </xsl:variable>
+        <!--<xsl:variable name="content.compact" as="node()*">
+            <xsl:for-each select="distinct-values($content.by.class/descendant-or-self::a[@class = 'link_odd_elementSpec']/text())">
+                <xsl:sort select="lower-case(.)" data-type="text"/>
+                <xsl:variable name="current.elem" select="." as="xs:string"/>
+                <xsl:variable name="elementSpec" select="$elements/self::tei:elementSpec[@ident = $current.elem]" as="node()"/>
+                <xsl:variable name="desc" select="normalize-space(string-join($elementSpec/tei:desc/text(),' '))" as="xs:string"/>
+                <xsl:if test="position() gt 1">
+                    <xsl:value-of select="', '"/>
+                </xsl:if>
+                <span class="ident element" title="{$desc}">
+                    <a class="link_odd_elementSpec" href="{tools:linkToElement($current.elem)}"><xsl:value-of select="$current.elem"/></a>
+                </span>
+            </xsl:for-each>
+            
+        </xsl:variable>-->
+        
+        <!--<xsl:variable name="contents" as="node()+">
+            <tab id="compact" label="compact"><xsl:sequence select="$content.compact"/></tab>
+            <tab id="class" label="by class"><xsl:sequence select="$content.by.class"/></tab>
+            <tab id="module" label="by module"><xsl:sequence select="$content.by.module"/></tab>
+        </xsl:variable>
+        
+        <xsl:sequence select="tools:getTabbedFacet('availableAt','Available at',$contents)"/>-->
+        
+        <div class="facet availableAt">
+            <div class="label">Available at</div>
+            <div class="statement classes">
+                <xsl:sequence select="$content.by.class"/>
+            </div>
+        </div>
+        
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Gets the ancestors of an attribtue class</xd:p>
+        </xd:desc>
+        <xd:param name="object"></xd:param>
+        <xd:return></xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getAncestorsOfAttributeClass" as="node()*">
+        <xsl:param name="object" as="node()"/>
+        
+        <xsl:variable name="direct.members" select="$elements/self::tei:elementSpec[.//tei:memberOf/@key = $object/@ident]" as="node()*"/>
+        <xsl:variable name="class.members" select="$att.classes/self::tei:classSpec[.//tei:memberOf/@key = $object/@ident]" as="node()*"/>
+        
+        <xsl:variable name="contents" as="node()*">
+            <xsl:for-each select="$direct.members">
+                <xsl:sort select="lower-case(@ident)" data-type="text"/>
+                <xsl:variable name="current.elem" select="." as="node()"/>
+                <xsl:variable name="ident" select="@ident" as="xs:string"/>
+                
+                <div class="elementRef" data-module="{$current.elem/@module}">
+                    <a class="{tools:getLinkClasses($ident)}" href="#{$ident}"><xsl:value-of select="$ident"/></a>
+                    <span class="elementDesc">
+                        <xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $ident]/tei:desc" mode="guidelines"/>
+                    </span>
+                </div>
+            </xsl:for-each>
+            
+            <!--<xsl:if test="$object/@ident = 'att.augmentDots'">
+                <xsl:message select="'In here – ' || string-join($class.members/@ident,', ')"/>
+                <xsl:for-each select="$class.members">
+                    <xsl:variable name="member.class" select="." as="node()"/>
+                    <xsl:sequence select="tools:getAncestorsOfAttributeClass($member.class)"/>
+                </xsl:for-each>
+            </xsl:if>-->
+            
+            <xsl:for-each select="$class.members">
+                <xsl:variable name="member.class" select="." as="node()"/>
+                <xsl:sequence select="tools:getAncestorsOfAttributeClass($member.class)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        
+        <xsl:sequence select="tools:getClassBox($object/@ident,'',$contents,'')"/>
+        
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Gets the users of a data type</xd:p>
+        </xd:desc>
+        <xd:param name="object">the datat type</xd:param>
+        <xd:return>the resulting div</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getDatatypeUsersFacet" as="node()">
+        
+        <xsl:param name="object" as="node()"/>
+        
+        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:macroSpec[.//tei:macroRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        <xsl:variable name="referencing.att.classes" select="$att.classes/self::tei:classSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        <xsl:variable name="referencing.elements" select="$elements/self::tei:elementSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        
+        <xsl:variable name="data.type.links" as="node()*">
+            <xsl:for-each select="$referencing.data.types">
+                <xsl:variable name="ref" select="." as="node()"/>
+                <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                <span class="ident datatype" data-ident="{$ref/@ident}" data-module="{$ref/@module}" title="{$desc}">
+                    <a class="{tools:getLinkClasses($ref/@ident)}" href="#{$ref/@ident}"><xsl:value-of select="$ref/@ident"/></a>
+                </span>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="att.class.links" as="node()*">
+            <xsl:for-each select="$referencing.att.classes">
+                <xsl:variable name="current.class" select="." as="node()"/>
+                <xsl:variable name="class.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                <xsl:variable name="attributes" select="$current.class//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                <xsl:for-each select="$attributes">
+                    <xsl:variable name="current.attribute" select="." as="node()"/>
+                    <xsl:variable name="attribute.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                    <span class="ident attclass" data-ident="{$current.class/@ident}" data-module="{$current.class/@module}">
+                        <a class="{tools:getLinkClasses($current.class/@ident)}" title="{$class.desc}" href="#{$current.class/@ident}"><xsl:value-of select="$current.class/@ident"/></a>/<span title="{$attribute.desc}">@<xsl:value-of select="$current.attribute/@ident"/></span>
+                    </span>
+                </xsl:for-each>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="element.links" as="node()*">
+            <xsl:for-each select="$referencing.elements">
+                <xsl:variable name="current.element" select="." as="node()"/>
+                <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                <span class="ident element" data-ident="{$current.element/@ident}" data-module="{$current.element/@module}" title="{$desc}">
+                    <a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}">&lt;<xsl:value-of select="$current.element/@ident"/>&gt;</a>
+                </span>
+            </xsl:for-each>
+        </xsl:variable>
+        
+        <div class="facet usedBy" id="usedBy">
+            <div class="label">Used by</div>
+            <div class="statement list">
+                <xsl:choose>
+                    <xsl:when test="count($data.type.links) = 0 and count($att.class.links) = 0 and count($element.links) = 0">
+                        – <span class="emptyStatement">(<em>&lt;<xsl:value-of select="$object/@ident"/>/&gt; is not used on any attribute</em>)</span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:if test="count($element.links) gt 0">
+                            <xsl:sequence select="tools:getClassBox('Elements','These local attributes use ' || $object/@ident,$element.links,'dtBox')"/>
+                        </xsl:if>
+                        <xsl:if test="count($att.class.links) gt 0">
+                            <xsl:sequence select="tools:getClassBox('Attribute Classes','These class-based attributes use ' || $object/@ident,$att.class.links,'dtBox')"/>
+                        </xsl:if>
+                        <xsl:if test="count($data.type.links) gt 0">
+                            <xsl:sequence select="tools:getClassBox('Data Types','These other Data Types reference ' || $object/@ident,$data.type.links,'dtBox')"/>
+                        </xsl:if>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </div>
+        </div>
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Retreives the allowed values of an attribute</xd:p>
+        </xd:desc>
+        <xd:param name="object"></xd:param>
+        <xd:return></xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getAllowedValuesFacet" as="node()?">
+        <xsl:param name="object" as="node()"/>
+        
+        <xsl:variable name="values" select="$object//tei:valList/tei:valItem" as="node()*"/>
+        
+        <xsl:if test="count($values) gt 0">
+            <div class="facet allowedValues" id="allowedValues">
+                <div class="label">Allowed Values</div>
+                <div class="statement list">
+                    <xsl:for-each select="$values">
+                        <div class="dataValueBox" id="{@ident}">
+                            <span class="dataValue ident">
+                                <xsl:value-of select="@ident"/>
+                            </span>
+                            <span class="dataValue desc">
+                                <xsl:apply-templates select="tei:desc" mode="guidelines"/>
+                            </span>
+                        </div>
+                    </xsl:for-each>
+                </div>
+            </div>
+        </xsl:if>
+    </xsl:function>
     
     <xd:doc>
         <xd:desc>
@@ -188,7 +472,7 @@
         <div class="facet attributes">
             <div class="label">Attributes</div>
             <div class="statement classes">
-                <xsl:sequence select="$attributes.full"/>
+                <xsl:sequence select="$attributes.by.class"/>
             </div>
         </div>
         
@@ -257,7 +541,7 @@
         <xsl:param name="module" as="xs:string"/>
         <xsl:variable name="usage" select="if($current.att/@usage = 'opt') then('optional') else if($current.att/@usage = 'req') then('required') else if($current.att/@usage = 'rec') then('recommended') else($current.att/@usage)" as="xs:string?"/>
         <xsl:variable name="desc" as="node()*">
-            <xsl:apply-templates select="$current.att/tei:desc/node()" mode="parse.odd"/>
+            <xsl:apply-templates select="$current.att/tei:desc/node()" mode="guidelines"/>
         </xsl:variable>
         
         <div class="attributeDef def" data-module="{$module}">
@@ -597,7 +881,7 @@
                         <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a>
                     </span>
                     <span class="elementDesc desc">
-                        <xsl:apply-templates select="./tei:desc" mode="parse.odd"/>
+                        <xsl:apply-templates select="./tei:desc/node()" mode="guidelines"/>
                     </span>
                 </div>
             </xsl:for-each>
@@ -617,8 +901,9 @@
         
         <xsl:if test="$is.element">
             <xsl:variable name="class.parents" select="$model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key]" as="node()*"/>
-            <xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
-            <xsl:variable name="ancestor.models" select="$class.parents | $macro.parents" as="node()*"/>
+            <!-- The following creates recursive loops -->
+            <!--<xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>-->
+            <xsl:variable name="ancestor.models" select="$class.parents" as="node()*"/>
             <xsl:for-each select="$ancestor.models">
                 <xsl:sequence select="tools:getParentsByModel(.)"/>    
             </xsl:for-each>    
@@ -842,7 +1127,7 @@
                             <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a>
                         </span>
                         <span class="elementDesc desc">
-                            <xsl:apply-templates select="./tei:desc" mode="parse.odd"/>
+                            <xsl:apply-templates select="./tei:desc/node()" mode="guidelines"/>
                         </span>
                     </div>
                 </xsl:for-each>
@@ -998,7 +1283,7 @@
             <xd:p>Deals with descriptions in specs</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="tei:desc" mode="parse.odd">
+    <xsl:template match="tei:desc" mode="parse.odd guidelines">
         <span class="desc"><xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
