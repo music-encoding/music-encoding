@@ -82,7 +82,7 @@
         <xsl:for-each select="$elements">
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
-            <a class="link_odd_elementSpec {substring($name,1,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+            <a class="{tools:getLinkClasses($name)} {substring($name,1,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     
@@ -107,7 +107,7 @@
         <xsl:for-each select="$att.classes">
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
-            <a class="link_odd {substring($name,5,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+            <a class="{tools:getLinkClasses($name)} {substring($name,5,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     
@@ -132,7 +132,7 @@
         <xsl:for-each select="$model.classes">
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
-            <a class="link_odd_classSpec {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+            <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     
@@ -156,7 +156,7 @@
     <xsl:variable name="data.types.links" as="node()*">
         <xsl:for-each select="$data.types">
             <xsl:variable name="name" select="@ident"/>
-            <a class="link_odd {substring($name,6,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+            <a class="{tools:getLinkClasses($name)} {substring($name,6,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     
@@ -180,7 +180,7 @@
     <xsl:variable name="macro.groups.links" as="node()*">
         <xsl:for-each select="$data.types">
             <xsl:variable name="name" select="@ident"/>
-            <a class="link_odd {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+            <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     

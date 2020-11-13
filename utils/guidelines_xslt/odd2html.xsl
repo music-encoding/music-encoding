@@ -20,7 +20,34 @@
                 on the MEI website, which requires a separation into multiple files.</xd:p>
             <xd:p>TODO: We should consider to have additional data dictionaries (just the specs part)
                 as separate files for each MEI customization.</xd:p>
-            <xd:p>It is based on older XSLT that were built for similar tasks.</xd:p>
+            <xd:p>It is based on older XSLTs that were built for similar tasks.</xd:p>
+            <xd:p>This file holds the main templates and drives the conversion process. Several other files are 
+                included which focus on specific tasks:
+            <xd:ul>
+                <xd:li>
+                    <xd:b>odd2html/globalVariables.xsl</xd:b>: 
+                    This file holds preprocessed variables, like all elements, which are made available throughout 
+                    the XSLT
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/functions.xsl</xd:b>: 
+                    Loaded from globalVariables.xsl, this file holds generic functions which will adjust image paths
+                    and do similar generic tasks.
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/guidelines.xsl</xd:b>: 
+                    This file holds holds templates that will translate TEI ODD into HTML. This is where the chapters
+                    of the Guidelines are translated.
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/renderXML.xsl</xd:b>: 
+                    This file holds templates to render XML snippets into HTML examples.
+                </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/htmlFile.xsl</xd:b>: 
+                    This file holds a skeleton for an HTML file.
+                </xd:li>
+            </xd:ul></xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:output indent="yes" method="xhtml"/>
@@ -48,6 +75,11 @@
     
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
+    <xsl:include href="odd2html/renderXML.xsl"/>
+    <xsl:include href="odd2html/htmlFile.xsl"/>
+    
+    <xsl:include href="odd2html/specs/genericSpecFunctions.xsl"/>
+    <xsl:include href="odd2html/specs/elementSpecs.xsl"/>
     
     <xd:doc>
         <xd:desc>
@@ -56,12 +88,12 @@
     </xd:doc>
     <xsl:template match="/">
         <xsl:message select="'Processing MEI v' || $version || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
-        <xsl:message select="'  chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
-        <xsl:message select="'  elements: ' || count($elements)"/>
-        <xsl:message select="'  model classes: ' || count($model.classes)"/>
-        <xsl:message select="'  attribute classes: ' || count($att.classes)"/>
-        <xsl:message select="'  data types: ' || count($data.types)"/>
-        <xsl:message select="'  macro groups: ' || count($macro.groups)"/>
+        <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
+        <xsl:message select="'.   elements: ' || count($elements)"/>
+        <xsl:message select="'.   model classes: ' || count($model.classes)"/>
+        <xsl:message select="'.   attribute classes: ' || count($att.classes)"/>
+        <xsl:message select="'.   data types: ' || count($data.types)"/>
+        <xsl:message select="'.   macro groups: ' || count($macro.groups)"/>
         
         <xsl:variable name="intro"/>
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
@@ -71,16 +103,56 @@
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
             </main>
         </xsl:variable>
+        <xsl:variable name="elementSpecs" select="tools:getElementSpecs()" as="node()"/>
+            
         
-        <temporaryWrapper>
+        
+        <xsl:variable name="contents" as="node()*">
             <xsl:sequence select="$preface"/>
             <xsl:sequence select="$toc"/>
             <xsl:sequence select="$guidelines"/>
-        </temporaryWrapper>
+            <xsl:sequence select="$elementSpecs"/>
+        </xsl:variable>
         
+        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$contents" as="node()*"/>
+            </xsl:call-template>
+        </xsl:result-document>
         
     </xsl:template>
     
+    <!-- Generic templates down here -->
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Arbitrary tei-Elements</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:*" mode="#all">
+        <xsl:message select="'DEBUG: processing tei:' || local-name()"/>
+        <span class="{local-name()}">
+            <xsl:apply-templates select="node()" mode="#current"/>
+        </span>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Arbitrary rng-Elements</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="rng:*" mode="#all">
+        <xsl:message select="'DEBUG: processing rng:' || local-name()"/>
+        <span class="{local-name()}">
+            <xsl:apply-templates select="node()" mode="#current"/>
+        </span>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Generic copy template</xd:p>
+        </xd:desc>
+    </xd:doc>
     <xsl:template match="node() | @*" mode="#all">
         <xsl:copy>
             <xsl:apply-templates select="node() | @*" mode="#current"/>

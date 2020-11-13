@@ -29,7 +29,24 @@
     </xd:doc>
     <xsl:function name="tools:adjustImageUrl" as="xs:string">
         <xsl:param name="url" as="xs:string"/>
-        <xsl:sequence select="$url"/>
+        
+        <xsl:variable name="out" as="xs:string">
+            <xsl:choose>
+                <xsl:when test="starts-with($url,'../images')">
+                    <xsl:value-of select="substring($url,4)"/>
+                </xsl:when>
+                <xsl:when test="starts-with($url, 'http://')">
+                    <xsl:sequence select="$url"/>
+                </xsl:when>
+                <xsl:when test="starts-with($url, 'https://')">
+                    <xsl:sequence select="$url"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="$url"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:sequence select="$out"/>
     </xsl:function>
     
     <xd:doc>
@@ -150,6 +167,88 @@
                 </ul>
             </xsl:if>
         </li>
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Creates consistent css classes for links into the specs</xd:p>
+        </xd:desc>
+        <xd:param name="target">The ID of the things that need to be linked</xd:param>
+        <xd:return>The classes string</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getLinkClasses" as="xs:string">
+        <xsl:param name="target" as="xs:string"/>
+        <xsl:choose>
+            <xsl:when test="starts-with($target,'att.') and $target = $att.classes/@ident">
+                <xsl:value-of select="'link_odd link_odd_attClass'"/>
+            </xsl:when>
+            <xsl:when test="starts-with($target,'model.') and $target = $model.classes/@ident">
+                <xsl:value-of select="'link_odd link_odd_modelClass'"/>
+            </xsl:when>
+            <xsl:when test="starts-with($target,'data.') and $target = $data.types/@ident">
+                <xsl:value-of select="'link_odd link_odd_dataType'"/>
+            </xsl:when>
+            <xsl:when test="starts-with($target,'macro.') and $target = $macro.groups/@ident">
+                <xsl:value-of select="'link_odd link_odd_macroGroup'"/>
+            </xsl:when>
+            <xsl:when test="$target = $elements/@ident">
+                <xsl:value-of select="'link_odd link_odd_elementSpec'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message select="'ERROR: Unable to resolve link to ' || $target"/>
+                <xsl:value-of select="'link_odd broken'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:function>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Creates links to chapters that reference a given object</xd:p>
+        </xd:desc>
+        <xd:param name="ident">the identifier of the sought object</xd:param>
+        <xd:param name="type">the type of the object</xd:param>
+        <xd:return>an array of links, if any</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:getReferencingChapters" as="node()*">
+        <xsl:param name="ident" as="xs:string"/>
+        <xsl:param name="type" as="xs:string"/>
+        
+        <xsl:choose>
+            <xsl:when test="$type = 'element'">
+                <xsl:for-each select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapters//tei:gi[text() = $ident]/ancestor::tei:div[1]/@xml:id or @xml:id = $chapters//tei:specDesc[@key = $ident]/ancestor::tei:div[1]/@xml:id]">
+                    <xsl:variable name="chapter" select="." as="node()"/>
+                    <xsl:variable name="hasSpecDesc" select="exists($chapter//tei:specDesc[@key = $ident])" as="xs:boolean"/>
+                    <xsl:variable name="class" select="'chapterLink' || (if($hasSpecDesc) then(' desc') else(''))" as="xs:string"/>
+                    <a class="{$class}" href="#{$chapter/@xml:id}" title="{$chapter/@number || ' ' || $chapter/@head}"><xsl:value-of select="$chapter/@number || ' ' || $chapter/@head"/></a>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="$type = 'attClass'">
+                <xsl:for-each select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapters//tei:ident[text() = $ident]/ancestor::tei:div[1]/@xml:id or @xml:id = $chapters//tei:specDesc[@key = $ident]/ancestor::tei:div[1]/@xml:id]">
+                    <xsl:variable name="chapter" select="." as="node()"/>
+                    <xsl:variable name="hasSpecDesc" select="exists($chapter//tei:specDesc[@key = $ident])" as="xs:boolean"/>
+                    <xsl:variable name="class" select="'chapterLink' || (if($hasSpecDesc) then(' desc') else(''))" as="xs:string"/>
+                    <a class="{$class}" href="#{$chapter/@xml:id}" title="{$chapter/@number || ' ' || $chapter/@head}"><xsl:value-of select="$chapter/@number || ' ' || $chapter/@head"/></a>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="$type = 'modelClass'">
+                <xsl:for-each select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapters//tei:ident[text() = $ident]/ancestor::tei:div[1]/@xml:id or @xml:id = $chapters//tei:specDesc[@key = $ident]/ancestor::tei:div[1]/@xml:id]">
+                    <xsl:variable name="chapter" select="." as="node()"/>
+                    <xsl:variable name="hasSpecDesc" select="exists($chapter//tei:specDesc[@key = $ident])" as="xs:boolean"/>
+                    <xsl:variable name="class" select="'chapterLink' || (if($hasSpecDesc) then(' desc') else(''))" as="xs:string"/>
+                    <a class="{$class}" href="#{$chapter/@xml:id}" title="{$chapter/@number || ' ' || $chapter/@head}"><xsl:value-of select="$chapter/@number || ' ' || $chapter/@head"/></a>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:when test="$type = 'dataType'">
+                <!-- dunno how to reference data types, so nothing given back here yet -->
+            </xsl:when>
+            <xsl:when test="$type = 'macroGroup'">
+                <!-- dunno how to reference macro groups, so nothing given back here yet -->
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message select="'ERROR: tools:retrieveMentions does not understand how to resolve $type=' || $type || ' yet. Please fix…'"/>
+            </xsl:otherwise>
+        </xsl:choose>
+        
     </xsl:function>
     
 </xsl:stylesheet>
