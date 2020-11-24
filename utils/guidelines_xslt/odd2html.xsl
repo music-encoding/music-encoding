@@ -80,6 +80,10 @@
                     <xd:b>odd2html/generateWebsite.xsl</xd:b>: 
                     This holds code for extracting the website version from a single HTML page. 
                 </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/preparePDF.xsl</xd:b>: 
+                    This holds code for polishing the HTML output for PDF publication. 
+                </xd:li>
             </xd:ul></xd:p>
         </xd:desc>
     </xd:doc>
@@ -120,6 +124,7 @@
     <xsl:include href="odd2html/specs/dataTypeSpecs.xsl"/>
     
     <xsl:include href="odd2html/generateWebsite.xsl"/>
+    <xsl:include href="odd2html/preparePDF.xsl"/>
     
     <xd:doc>
         <xd:desc>
@@ -179,8 +184,12 @@
         </xsl:call-template>
         
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}_raw.html">
             <xsl:sequence select="$singlePage"/>
+        </xsl:result-document>
+        
+        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+            <xsl:apply-templates select="$singlePage" mode="preparePDF"/>
         </xsl:result-document>
         
     </xsl:template>
