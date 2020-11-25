@@ -53,6 +53,8 @@
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
+                            href="../css/mei-website.css" />
+                        <link rel="stylesheet" media="screen" type="text/css"
                             href="../css/mei-screen.css" />                        
                     </xsl:when>
                     
@@ -60,6 +62,9 @@
                 </xsl:choose>
             </head>
             <body class="simple" id="TOP">
+                <xsl:if test="$media = 'screen'">
+                    <xsl:sequence select="$websiteMenu"/>    
+                </xsl:if>
                 <xsl:sequence select="$contents"/>
                 <xsl:if test="$media = 'screen'">
                     <script type="text/javascript">

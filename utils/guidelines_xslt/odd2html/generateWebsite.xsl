@@ -176,6 +176,162 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Retrieves the current menu structure from music-encoding.org and builds a menu</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="websiteMenu" as="node()">
+        
+        <xsl:variable name="url" as="xs:string?">
+            <xsl:choose>
+                <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml')">
+                    <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml'"/>
+                </xsl:when>
+                <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml')">
+                    <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml'"/>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:choose>
+            <xsl:when test="not($url)">
+                <xsl:comment>Error: Unable to retrieve _config.yml from music-encoding.github.io repo.</xsl:comment>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:variable name="config.yml.raw" select="unparsed-text-lines($url)" as="xs:string*"/>
+                <xsl:variable name="menu.start" select="index-of($config.yml.raw,'menu:')" as="xs:integer"/>
+                <xsl:variable name="menu.end" select="min(index-of($config.yml.raw,'')[. gt $menu.start])" as="xs:integer"/>
+                <xsl:variable name="menu.lines" select="$config.yml.raw[position() gt $menu.start][position() lt $menu.end]" as="xs:string*"/>
+                
+                <xsl:variable name="tick" as="xs:string">'</xsl:variable>
+                
+                <xsl:variable name="menu" as="node()*">
+                    <xsl:for-each select="$menu.lines">
+                        <xsl:variable name="pos" select="position()" as="xs:integer"/>
+                        <xsl:if test="starts-with(.,'    - id:')">
+                            <xsl:variable name="id" select="substring-after(.,'id: ')" as="xs:string"/>
+                            <xsl:variable name="label" select="replace(substring-after($menu.lines[position() gt $pos][starts-with(., '      label:')][1],' label: '),$tick,'')" as="xs:string"/>
+                            <xsl:variable name="url" select="replace(substring-after($menu.lines[position() gt $pos][starts-with(., '      url:')][1],' url: '),$tick,'')" as="xs:string"/>
+                            
+                            <xsl:variable name="next.page" select="$menu.lines[position() gt $pos][starts-with(.,'    - id:')]" as="xs:string*"/>
+                            <xsl:variable name="next.page.pos" select="if(count($next.page) eq 0) then(-1) else(index-of($menu.lines,$next.page[1]))" as="xs:integer"/>
+                            <xsl:variable name="next.submenu" select="$menu.lines[position() gt $pos][starts-with(.,'      submenu:')]" as="xs:string*"/>
+                            <xsl:variable name="next.submenu.pos" select="if(count($next.submenu) eq 0) then(-1) else(index-of($menu.lines,$next.submenu[1])[. gt $pos][1])" as="xs:integer"/>
+                            
+                            <xsl:message select="'  page ' || $id || ' (' || $pos || ') has submenu starting at ' || $next.submenu.pos || ', while next page starts at ' || $next.page.pos"/>
+                            
+                            <page id="{$id}" level="1" label="{$label}" url="{$url}">
+                                <xsl:choose>
+                                    <xsl:when test="$next.submenu.pos eq -1"/>
+                                    <xsl:when test="$next.page.pos eq -1 and $next.submenu.pos gt -1">
+                                        <xsl:variable name="submenu.lines" select="$menu.lines[position() gt $next.submenu.pos]" as="xs:string+"/>
+                                        <xsl:for-each select="$submenu.lines">
+                                            <xsl:variable name="pos" select="position()" as="xs:integer"/>
+                                            <xsl:if test="starts-with(.,'          - id:')">
+                                                <xsl:variable name="id" select="substring-after(.,'id: ')" as="xs:string"/>
+                                                <xsl:variable name="label" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            label:')][1],' label: '),$tick,'')" as="xs:string"/>
+                                                <xsl:variable name="url" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            url:')][1],' url: '),$tick,'')" as="xs:string"/>
+                                                <page id="{$id}" level="2" label="{$label}" url="{$url}"/>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                    </xsl:when>
+                                    <xsl:when test="$next.submenu.pos lt $next.page.pos">
+                                        <xsl:variable name="submenu.lines" select="$menu.lines[position() gt $next.submenu.pos][position() lt $next.page.pos]" as="xs:string+"/>
+                                        <xsl:for-each select="$submenu.lines">
+                                            <xsl:variable name="pos" select="position()" as="xs:integer"/>
+                                            <xsl:if test="starts-with(.,'          - id:')">
+                                                <xsl:variable name="id" select="substring-after(.,'id: ')" as="xs:string"/>
+                                                <xsl:variable name="label" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            label:')][1],' label: '),$tick,'')" as="xs:string"/>
+                                                <xsl:variable name="url" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            url:')][1],' url: '),$tick,'')" as="xs:string"/>
+                                                <page id="{$id}" level="2" label="{$label}" url="{$url}"/>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                    </xsl:when>
+                                </xsl:choose>                                       
+                            </page>
+                        </xsl:if>                        
+                    </xsl:for-each>
+                </xsl:variable>
+                
+                <header class="navbar">
+                    <div class="navbar-section">
+                        <a class="navbar-brand" href="http://music-encoding.org">
+                            <img src="http://music-encoding.org/pix/meilogo-inverted.png" alt="MEI logo"/>
+                        </a>
+                        <div class="hide-lg">
+                            <xsl:for-each select="$menu/self::page">
+                                <div class="dropdown dropdownCustomMenuToggle">                                    
+                                    <a href="{if(child::page) then('#') else('https://music-encoding.org' || @url)}" class="btn btn-link dropdown-toggle top-menu-link" tabindex="{position()}">
+                                        <xsl:value-of select="@label"/> <xsl:if test="child::page"> <i class="icon icon-caret"></i></xsl:if>
+                                    </a>
+                                    <xsl:if test="child::page">
+                                        <ul class="menu">
+                                            <xsl:for-each select="child::page">
+                                                <li class="menu-item">
+                                                    <a href="https://music-encoding.org{@url}" class="btn btn-link text-left menu-link">
+                                                        <xsl:value-of select="@label"/>
+                                                    </a>
+                                                </li>
+                                            </xsl:for-each>
+                                        </ul>
+                                    </xsl:if>
+                                </div>
+                            </xsl:for-each>    
+                        </div>
+                    </div>
+                    <div class="navbar-section" id="socialLinks">
+                        <a class="twitterLink" target="_blank" href="https://twitter.com/MusicEncoding">
+                            <img src="http://music-encoding.org/pix/twitter.png" alt="Twitter" class="logo"/>
+                        </a>
+                        <a class="githubLink" target="_blank" href="https://github.com/music-encoding">
+                            <img src="http://music-encoding.org/pix/github.png" alt="GitHub" class="logo"/>
+                        </a>
+                        <a class="slackLink" target="_blank" href="https://music-encoding.slack.com/">
+                            <img src="http://music-encoding.org/pix/slack.png" alt="Slack" class="logo"/>
+                        </a>
+                    </div>
+                    <div id="menu-accordion" class="accordion-container dropdown-toggle show-lg column col-12">
+                        <div class="accordion">
+                            <input id="accordion-toggle" type="checkbox" name="accordion-checkbox" hidden=""/>
+                            <label class="accordion-header c-hand" for="accordion-toggle">
+                                <i class="icon icon-menu"></i>
+                            </label>
+                            
+                            <div class="accordion-body">
+                                <ul class="menu menu-nav">
+                                    <xsl:for-each select="$menu/self::page">
+                                        <li class="menu-item">
+                                            <div class="accordion menu">
+                                                <input id="accordion-About" type="checkbox" name="accordion-checkbox" hidden=""/>
+                                                <label class="accordion-header c-hand" for="accordion-About">
+                                                    <xsl:choose>
+                                                        <xsl:when test="child::page"><xsl:value-of select="@label"/></xsl:when>
+                                                        <xsl:otherwise><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></xsl:otherwise>
+                                                    </xsl:choose>
+                                                    
+                                                </label>
+                                                <xsl:if test="child::page">
+                                                    <div class="accordion-body">
+                                                        <ul class="menu menu-nav">
+                                                            <xsl:for-each select="child::page">
+                                                                <li class="menu-item"><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></li>
+                                                            </xsl:for-each>
+                                                        </ul>
+                                                    </div>
+                                                </xsl:if>
+                                            </div>
+                                        </li>
+                                    </xsl:for-each>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </header>                
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>For tabbed facets, it's necessary to have IDs</xd:p>
         </xd:desc>
     </xd:doc>
@@ -409,12 +565,13 @@
                 <xsl:variable name="end" select="'@' || $current.item/@ident" as="xs:string">
                     
                 </xsl:variable>
-                <div class="classItem">
+                <div class="classItem attributeDef">
                     <div class="desc"><xsl:apply-templates select="$current.item/desc/node()" mode="get.website"/></div>
                     <div class="breadcrumb">
-                        <span class="step start"><xsl:value-of select="$start"/></span>
+                        <span class="step start">&lt;<xsl:value-of select="$start"/>&gt;</span>
                         <xsl:for-each select="$current.item/ancestor::group/link">
-                            <span class="step"><xsl:apply-templates select="node()" mode="get.website"/></span>
+                            <span class="step">
+                                <xsl:apply-templates select="node()" mode="get.website"/></span>
                         </xsl:for-each>
                         <span class="step end"><xsl:value-of select="$end"/></span>
                     </div>
