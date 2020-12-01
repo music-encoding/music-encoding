@@ -29,6 +29,9 @@
     <xsl:template name="getSinglePage">
         <xsl:param name="contents" as="node()*"/>
         <xsl:param name="media" as="xs:string"/>
+        <xsl:param name="reducedLevels" as="xs:boolean?"/>
+        
+        <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
         
         <html xml:lang="en">
             <head>
@@ -53,87 +56,225 @@
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="../css/mei-website.css" />
+                            href="{$cssPath}css/tipuesearch.css" />                        
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="../css/mei-screen.css" />                        
+                            href="{$cssPath}css/mei-website.css" />
+                        <link rel="stylesheet" media="screen" type="text/css"
+                            href="{$cssPath}css/mei-screen.css" />
                     </xsl:when>
                     
                     
                 </xsl:choose>
             </head>
             <body class="simple" id="TOP">
-                <xsl:if test="$media = 'screen'">
-                    <xsl:sequence select="$websiteMenu"/>    
-                </xsl:if>
-                <xsl:sequence select="$contents"/>
-                <xsl:if test="$media = 'screen'">
-                    <script type="text/javascript">
-                        const tabbedFacets = document.querySelectorAll('.facet ul.tab');
+                
+                <xsl:choose>
+                    <!-- a lot of adjustments is necessary for website generation -->
+                    <xsl:when test="$media = 'screen'">
                         
-                        const tabClick = function(e) {
-                            const style = e.target.getAttribute('data-display');
-                            const facetId = e.target.parentNode.parentNode.parentNode.parentNode.id;
-                            console.log('clicked at ' + facetId + ' with style ' + style)
-                            setTabs(facetId,style)
-                        }
-                        
-                        console.log('Javascript is working…')
-                        
-                        for(let facetUl of tabbedFacets) {
-                            const facetElem = facetUl.parentNode.parentNode;
-                            const facetId = facetElem.id;
-                            const storageName = 'meiSpecs_' + facetId + '_display';
-                            const defaultValue = facetUl.children[0].children[0].getAttribute('data-display');
+                        <xsl:variable name="pageMenu" as="node()?">
+                            <xsl:if test="$contents/@class='div1'">
+                                <!-- generate pageMenu only when on a guidelines chapter, but not for spec pages -->
+                                <p class="sectionToc sticky">
+                                    <xsl:for-each select="$contents//(h2 | h3)">
+                                        <xsl:variable name="title" select="string-join(.//text(), ' ')" as="xs:string"/>
+                                        <xsl:variable name="level" select="if(local-name() = 'h2') then('level-2') else('level-3')" as="xs:string"/>
+                                        <a class="{$level}" href="#{@id}"><xsl:value-of select="$title"/></a>
+                                    </xsl:for-each>
+                                </p>
+                            </xsl:if>
                             
-                            if(localStorage.getItem(storageName) === null) {
-                                setTabs(facetElem.id,defaultValue);
-                            } else {
-                                setTabs(facetElem.id,localStorage.getItem(storageName));
+                        </xsl:variable>
+                        
+                        
+                        <xsl:sequence select="$websiteMenu"/>
+                        <div class="container-fluid content">
+                            <div class="columns specsLayout">
+                                <div class="top-navigation column col-md-12 show-md">
+                                    <div class="top-navigation-header columns">
+                                        <div class="buttonbox">
+                                            <button class="btn btn-action btn-sm btn-primary" id="topNavigationShow"><i class="icon icon-menu"></i></button>
+                                        </div>
+                                        
+                                        <div class="searchbox">
+                                            <form action="/guidelines/dev/content/metadata.html"><!-- TODO: fix that link??? -->
+                                                <div class="tipue_search_group">
+                                                    <input name="q" id="tipue_search_input" pattern=".{{3,}}" title="At least 3 characters" required="" type="text"></input><button type="submit" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="column col-8 col-md-12">
+                                    <div id="tipue-search-content"></div>
+                                    <xsl:sequence select="$contents"/>    
+                                </div>
+                                <div class="column col-4 col-hide-md">
+                                    <form action="/guidelines/dev/content/metadata.html">
+                                        <div class="tipue_search_group">
+                                            <input name="q" id="tipue_search_input" pattern=".{{3,}}" title="At least 3 characters" required="" type="text"></input><button type="submit" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
+                                        </div>
+                                    </form>
+                                    <ul class="nav"> 
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}content/index.html">Guidelines</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}modules.html">Modules</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}elements.html">Elements</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{$cssPath}data-types.html">Data Types</a>
+                                        </li>                                        
+                                    </ul> 
+                                    <div class="divider"></div>
+                                    <xsl:sequence select="$pageMenu"/>                    
+                                </div>        
+                            </div>
+                            <div class="modal" id="toc-modal">
+                                <a href="#close" id="toc-modal-outer-close" class="modal-overlay" aria-label="Close"></a>
+                                <div class="modal-container">
+                                    <div class="modal-header">
+                                        <a href="#close" id="toc-modal-inner-close" class="btn btn-clear float-right" aria-label="Close"></a>
+                                        <div class="modal-title h5">Table of Contents</div>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="content">
+                                            <ul class="nav"> 
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}content/index.html">Guidelines</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}modules.html">Modules</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}elements.html">Elements</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{$cssPath}data-types.html">Data Types</a>
+                                                </li>                   
+                                            </ul> 
+                                            <div class="divider"></div>
+                                            <xsl:sequence select="$pageMenu"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                $(document).ready(function() {
+                                    $('#tipue_search_input').tipuesearch({
+                                        showURL: false,
+                                        descriptiveWords: 25
+                                    });
+                                    document.getElementById('topNavigationShow').addEventListener('click',function(e) {
+                                        var elem = document.getElementById('toc-modal');
+                                        elem.classList.toggle('active');
+                                    })
+                                    document.getElementById('toc-modal-outer-close').addEventListener('click',function(e) {
+                                        var elem = document.getElementById('toc-modal');
+                                        elem.classList.toggle('active');
+                                    })
+                                    document.getElementById('toc-modal-inner-close').addEventListener('click',function(e) {
+                                        var elem = document.getElementById('toc-modal');
+                                        elem.classList.toggle('active');
+                                    })
+                                });
+                            </script>
+                        </div>
+                        
+                        <script type="text/javascript">
+                            const tabbedFacets = document.querySelectorAll('.facet ul.tab');
+                            
+                            const tabClick = function(e) {
+                                const style = e.target.getAttribute('data-display');
+                                const facetId = e.target.parentNode.parentNode.parentNode.parentNode.id;
+                                //console.log('clicked at ' + facetId + ' with style ' + style)
+                                setTabs(facetId,style)
                             }
                             
-                            const tabs = facetUl.querySelectorAll('.tab-item a');
+                            console.log('Javascript is working…')
                             
-                            for(let tab of tabs) {
-                                tab.addEventListener('click',tabClick);
-                            }                            
-                        }
-                        
-                        function setTabs(facetId, style) {                            
-                            const storageName = 'meiSpecs_' + facetId + '_display';
-                            localStorage.setItem(storageName,style);
+                            for(let facetUl of tabbedFacets) {
+                                const facetElem = facetUl.parentNode.parentNode;
+                                const facetId = facetElem.id;
+                                const storageName = 'meiSpecs_' + facetId + '_display';
+                                const defaultValue = facetUl.children[0].children[0].getAttribute('data-display');
+                                
+                                if(localStorage.getItem(storageName) === null) {
+                                    setTabs(facetElem.id,defaultValue);
+                                } else {
+                                    setTabs(facetElem.id,localStorage.getItem(storageName));
+                                }
+                                
+                                const tabs = facetUl.querySelectorAll('.tab-item a');
+                                
+                                for(let tab of tabs) {
+                                    tab.addEventListener('click',tabClick);
+                                }                            
+                            }
                             
-                            console.log('setting tabs, storageName: ' + storageName + ', facetId: ' + facetId + ', style: ' + style)
-                            
-                            const facetElem = document.getElementById(facetId);
-                            
-                            console.log(facetElem)
-                            
-                            const oldTab = facetElem.querySelector('.displayTab.active');
-                            oldTab.classList.remove('active');
-                            
-                            console.log('trying to find newTab: "' + style + '_tab"');
-                            
-                            const newTab = document.getElementById(style + '_tab');
-                            newTab.classList.add('active');
-                            
-                            console.log('\noldTab / newTab:')
-                            console.log(oldTab)
-                            console.log(newTab)
-                            
-                            const oldBox = facetElem.querySelector('.active.facetTabbedContent');
-                            oldBox.classList.remove('active');
-                            oldBox.style.display = 'none';
-                            
-                            const newBox = document.getElementById(style);
-                            newBox.classList.add('active');
-                            newBox.style.display = 'block';      
-                            
-                            console.log('\noldBox / newBox:')
-                            console.log(oldBox)
-                            console.log(newBox)
-                        }
-                    </script>
-                </xsl:if>
+                            function setTabs(facetId, style) {                            
+                                const storageName = 'meiSpecs_' + facetId + '_display';
+                                localStorage.setItem(storageName,style);
+                                
+                                //console.log('setting tabs, storageName: ' + storageName + ', facetId: ' + facetId + ', style: ' + style)
+                                
+                                const facetElem = document.getElementById(facetId);
+                                
+                                //console.log(facetElem)
+                                
+                                const oldTab = facetElem.querySelector('.displayTab.active');
+                                oldTab.classList.remove('active');
+                                
+                                //console.log('trying to find newTab: "' + style + '_tab"');
+                                
+                                const newTab = document.getElementById(style + '_tab');
+                                newTab.classList.add('active');
+                                
+                                //console.log('\noldTab / newTab:')
+                                //console.log(oldTab)
+                                //console.log(newTab)
+                                
+                                const oldBox = facetElem.querySelector('.active.facetTabbedContent');
+                                oldBox.classList.remove('active');
+                                oldBox.style.display = 'none';
+                                
+                                const newBox = document.getElementById(style);
+                                newBox.classList.add('active');
+                                newBox.style.display = 'block';      
+                                
+                                //console.log('\noldBox / newBox:')
+                                //console.log(oldBox)
+                                //console.log(newBox)
+                            }
+                        </script>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <!-- for PDF, things are pretty simple… -->
+                        <xsl:sequence select="$contents"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </body>
         </html>
     </xsl:template>

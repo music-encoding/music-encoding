@@ -286,7 +286,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:figure" mode="guidelines">
-        <figure class="figure">
+        <figure class="figure{if(child::egx:egXML) then(' specPage') else()}">
             <xsl:apply-templates select="tei:graphic | egx:egXML" mode="#current"/>
             <xsl:apply-templates select="tei:head" mode="#current"/>
         </figure>
@@ -489,11 +489,18 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="egx:egXML" mode="guidelines">
-        <div xml:space="preserve" class="pre egXML_{if(@valid='false') then('invalid') else if(@valid='true') then('valid') else('feasible')}">
-            <xsl:choose>
-                <xsl:when test="@rend and 'text' = tokenize(normalize-space(@rend),' ')"></xsl:when>
-            </xsl:choose>
-            <xsl:sequence select="tools:xml2html(node())"/>
+        <div xml:space="preserve" class="pre code egXML_{if(@valid='false') then('invalid') else if(@valid='true') then('valid') else('feasible')}">
+            <code>
+                <xsl:choose>
+                    <xsl:when test="@rend and 'text' = tokenize(normalize-space(@rend),' ')">
+                        <!-- todo: render non-xml examples properly -->
+                        <xsl:copy-of select="node()"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:sequence select="tools:xml2html(node())"/>
+                    </xsl:otherwise>
+               </xsl:choose>            
+            </code>
         </div>
     </xsl:template>
     

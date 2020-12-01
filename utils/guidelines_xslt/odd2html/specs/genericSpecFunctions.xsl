@@ -210,7 +210,7 @@
                                 <xsl:sort select="." data-type="text"/>
                                 <xsl:variable name="current.elem" select="." as="xs:string"/>
                                 <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                                    <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
+                                    <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a></link>
                                     <desc><xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $current.elem]/tei:desc" mode="guidelines"/></desc>
                                 </item>
                             </xsl:for-each>
@@ -329,7 +329,7 @@
                     </span>
                 </div>-->
                 <item class="element" ident="{$ident}" module="{$elements/self::tei:elementSpec[@ident = $ident]/@module}">
-                    <link><a class="{tools:getLinkClasses($ident)}" href="#{$ident}">&lt;<xsl:value-of select="$ident"/>&gt;</a></link>
+                    <link><a class="{tools:getLinkClasses($ident)}" href="#{$ident}"><xsl:value-of select="$ident"/></a></link>
                     <desc><xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $ident]/tei:desc" mode="guidelines"/></desc>
                 </item>
             </xsl:for-each>
@@ -405,11 +405,11 @@
                 <xsl:variable name="current.element" select="." as="node()"/>
                 <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
                 <item class="element" ident="{$current.element/@ident}" module="{$current.element/@module}">
-                    <link><a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}">&lt;<xsl:value-of select="$current.element/@ident"/>&gt;</a></link>
+                    <link><a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a></link>
                     <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
                 </item>
                 <!--<span class="ident element" data-ident="{$current.element/@ident}" data-module="{$current.element/@module}" title="{$desc}">
-                    <a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}">&lt;<xsl:value-of select="$current.element/@ident"/>&gt;</a>
+                    <a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a>
                 </span>-->
             </xsl:for-each>
         </xsl:variable>
@@ -419,7 +419,7 @@
             <div class="statement classes">
                 <xsl:choose>
                     <xsl:when test="count($data.type.links) = 0 and count($att.class.links) = 0 and count($element.links) = 0">
-                        <!--– <span class="emptyStatement">(<em>&lt;<xsl:value-of select="$object/@ident"/>/&gt; is not used on any attribute</em>)</span>-->
+                        <!--– <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>-->
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:if test="count($element.links) gt 0">
@@ -1000,8 +1000,8 @@
     <xsl:function name="tools:getContainedByFacet" as="node()">
         <xsl:param name="object" as="node()"/>
         
-        <!--<xsl:variable name="direct.parents" select="$elements/self::tei:elementSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
-        <xsl:variable name="class.parents" select="tools:getParents($model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key])" as="node()*"/>
+        <!--<xsl:variable name="direct.parents" select="$elements/self::tei:elementSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>-->
+        <!--<xsl:variable name="class.parents" select="tools:getParents($model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key])" as="node()*"/>
         <xsl:variable name="macro.parents" select="tools:getParents($macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]])" as="node()*"/>
         <xsl:variable name="parents" select="$direct.parents | $class.parents | $macro.parents" as="node()*"/>
         
@@ -1075,6 +1075,7 @@
     <xsl:function name="tools:getParentsByModel" as="node()*">
         <xsl:param name="object" as="node()"/>
         <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
+        <xsl:variable name="is.macroGroup" select="local-name($object) = 'macroSpec' and $object/@type = 'pe'" as="xs:boolean"/>
         
         <xsl:variable name="direct.parents" select="$elements/self::tei:elementSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
         
@@ -1094,14 +1095,14 @@
                     </span>
                 </div>-->
                 <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                    <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
+                    <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a></link>
                     <desc><xsl:apply-templates select="tei:desc/node()" mode="guidelines"/></desc>
                 </item>
             </xsl:for-each>
-            <xsl:if test="not($is.element)">
+            <xsl:if test="not($is.element) and not($is.macroGroup)">
                 <xsl:variable name="class.parents" select="$model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key]" as="node()*"/>
-                <xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
-                <xsl:variable name="ancestor.models" select="$class.parents | $macro.parents" as="node()*"/>
+                <!--<xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>-->
+                <xsl:variable name="ancestor.models" select="$class.parents" as="node()*"/>
                 <xsl:for-each select="$ancestor.models">
                     <xsl:sequence select="tools:getParentsByModel(.)"/>    
                 </xsl:for-each>    
@@ -1337,7 +1338,7 @@
                     <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
                     <xsl:variable name="desc" select="normalize-space(string-join(./tei:desc//text(),' '))" as="xs:string"/>
                     <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                        <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
+                        <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a></link>
                         <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
                     </item>
                     <!--<div class="elementDef def">

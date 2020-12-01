@@ -52,6 +52,21 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <xsl:result-document href="{$web.output}content/index.html">
+            <xsl:variable name="chapter.overview" as="node()*">
+                <h1>MEI Guidelines (<xsl:value-of select="$version"/>)</h1>
+                <xsl:for-each select="$input//section[@class='div1']/h1[1]">
+                    <p class="mainToc">
+                        <a href="{@id}.html"><xsl:value-of select="normalize-space(string-join(.//text(),' '))"/></a>
+                    </p>
+                </xsl:for-each>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$chapter.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+            </xsl:call-template>
+        </xsl:result-document>
+        
         <xsl:for-each select="$input//section[@class='specPage moduleSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -71,6 +86,24 @@
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
+        
+        <xsl:result-document href="{$web.output}modules.html">
+            <xsl:variable name="modules.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>MEI Modules</h2>
+                    <xsl:for-each select="$input//section[@class='specPage moduleSpec']/h2[1]">
+                        <xsl:sort select="@id"/>
+                        <p class="mainToc">
+                            <a href="./modules/{@id}.html" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}"><xsl:value-of select="normalize-space(string-join(.//text(),' '))"/></a>
+                        </p>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$modules.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+            </xsl:call-template>
+        </xsl:result-document>
         
         <xsl:for-each select="$input//section[@class='specPage elementSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
@@ -92,6 +125,49 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <xsl:result-document href="{$web.output}elements.html">
+            
+            <xsl:variable name="elementSpecs" select="$input//section[@class='specPage elementSpec']/h2[1]" as="node()*"/>
+            <xsl:variable name="starting.letters" select="distinct-values($elementSpecs/substring(@id,1,1))" as="xs:string*"/>
+            
+            <xsl:message select="count($starting.letters) || ' starting letters of elements: ' || string-join($starting.letters,', ')"/>
+            
+            <xsl:variable name="elements.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>Elements</h2>
+                    <div class="letterSelection">
+                        <ul class="pagination">
+                            <xsl:for-each select="$starting.letters">
+                                <xsl:sort select="."/>
+                                <xsl:variable select="." name="current.letter" as="xs:string"/>
+                                <li class="page-item">
+                                    <a href="#letterFacet_{$current.letter}"><xsl:value-of select="$current.letter"/></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                    <xsl:for-each select="$starting.letters">
+                        <xsl:sort select="."/>
+                        <xsl:variable name="current.letter" select="." as="xs:string"/>
+                        <div id="letterFacet_{$current.letter}" class="letter facet overview">
+                            <div class="label"><xsl:value-of select="$current.letter"/></div>
+                            <div class="statement compact list">
+                                <xsl:for-each select="$elementSpecs[starts-with(@id, $current.letter)]">
+                                    <xsl:sort select="@id"/>
+                                    <a class="overviewLink element" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./elements/{@id}.html"><xsl:value-of select="@id"/></a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$elements.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
+            </xsl:call-template>
+        </xsl:result-document>
+        
         <xsl:for-each select="$input//section[@class='specPage modelClassSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -111,6 +187,46 @@
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
+        
+        <xsl:result-document href="{$web.output}model-classes.html">
+            
+            <xsl:variable name="modelSpecs" select="$input//section[@class='specPage modelClassSpec']/h2[1]" as="node()*"/>
+            <xsl:variable name="starting.letters" select="distinct-values($modelSpecs/substring(@id,7,1))" as="xs:string*"/>
+            
+            <xsl:variable name="models.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>Model Classes</h2>
+                    <div class="letterSelection">
+                        <ul class="pagination">
+                            <xsl:for-each select="$starting.letters">
+                                <xsl:sort select="."/>
+                                <li class="page-item">
+                                    <a href="#letterFacet_{.}"><xsl:value-of select="."/></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                    <xsl:for-each select="$starting.letters">
+                        <xsl:sort select="."/>
+                        <xsl:variable name="current.letter" select="." as="xs:string"/>
+                        <div id="letterFacet_{$current.letter}" class="letter facet overview">
+                            <div class="label"><xsl:value-of select="$current.letter"/></div>
+                            <div class="statement compact list">
+                                <xsl:for-each select="$modelSpecs[starts-with(@id, 'model.' || $current.letter)]">
+                                    <xsl:sort select="@id"/>
+                                    <a class="overviewLink model" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./model-classes/{@id}.html"><xsl:value-of select="@id"/></a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$models.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
+            </xsl:call-template>
+        </xsl:result-document>
         
         <xsl:for-each select="$input//section[@class='specPage macroGroupSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
@@ -132,6 +248,46 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <xsl:result-document href="{$web.output}macro-groups.html">
+            
+            <xsl:variable name="macroGroupSpecs" select="$input//section[@class='specPage macroGroupSpec']/h2[1]" as="node()*"/>
+            <xsl:variable name="starting.letters" select="distinct-values($macroGroupSpecs/substring(@id,7,1))" as="xs:string*"/>
+            
+            <xsl:variable name="macroGroups.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>Macro Groups</h2>
+                    <div class="letterSelection">
+                        <ul class="pagination">
+                            <xsl:for-each select="$starting.letters">
+                                <xsl:sort select="."/>
+                                <li class="page-item">
+                                    <a href="#letterFacet_{.}"><xsl:value-of select="."/></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                    <xsl:for-each select="$starting.letters">
+                        <xsl:sort select="."/>
+                        <xsl:variable name="current.letter" select="." as="xs:string"/>
+                        <div id="letterFacet_{$current.letter}" class="letter facet overview">
+                            <div class="label"><xsl:value-of select="$current.letter"/></div>
+                            <div class="statement compact list">
+                                <xsl:for-each select="$macroGroupSpecs[starts-with(@id, 'macro.' || $current.letter)]">
+                                    <xsl:sort select="@id"/>
+                                    <a class="overviewLink macro" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./macro-groups/{@id}.html"><xsl:value-of select="@id"/></a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$macroGroups.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
+            </xsl:call-template>
+        </xsl:result-document>
+        
         <xsl:for-each select="$input//section[@class='specPage attClassSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -139,7 +295,7 @@
                 <xsl:apply-templates select="$current.page" mode="get.website"/>
             </xsl:variable>
             
-            <xsl:variable name="path" select="$web.output || 'att-classes/' || $id || '.html'" as="xs:string"/>
+            <xsl:variable name="path" select="$web.output || 'attribute-classes/' || $id || '.html'" as="xs:string"/>
             <xsl:variable name="content" as="node()+">
                 <xsl:call-template name="getSinglePage">
                     <xsl:with-param name="contents" select="$html" as="node()*"/>
@@ -151,6 +307,46 @@
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
+        
+        <xsl:result-document href="{$web.output}attribute-classes.html">
+            
+            <xsl:variable name="attClassSpecs" select="$input//section[@class='specPage attClassSpec']/h2[1]" as="node()*"/>
+            <xsl:variable name="starting.letters" select="distinct-values($attClassSpecs/substring(@id,5,1))" as="xs:string*"/>
+            
+            <xsl:variable name="attClasses.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>Attribute Classes</h2>
+                    <div class="letterSelection">
+                        <ul class="pagination">
+                            <xsl:for-each select="$starting.letters">
+                                <xsl:sort select="."/>
+                                <li class="page-item">
+                                    <a href="#letterFacet_{.}"><xsl:value-of select="."/></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                    <xsl:for-each select="$starting.letters">
+                        <xsl:sort select="."/>
+                        <xsl:variable name="current.letter" select="." as="xs:string"/>
+                        <div id="letterFacet_{$current.letter}" class="letter facet overview">
+                            <div class="label"><xsl:value-of select="$current.letter"/></div>
+                            <div class="statement compact list">
+                                <xsl:for-each select="$attClassSpecs[starts-with(@id, 'att.' || $current.letter)]">
+                                    <xsl:sort select="@id"/>
+                                    <a class="overviewLink attribute" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./attribute-classes/{@id}.html"><xsl:value-of select="@id"/></a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$attClasses.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
+            </xsl:call-template>
+        </xsl:result-document>
         
         <xsl:for-each select="$input//section[@class='specPage dataTypeSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
@@ -171,6 +367,46 @@
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
+        
+        <xsl:result-document href="{$web.output}data-types.html">
+            
+            <xsl:variable name="dataTypeSpecs" select="$input//section[@class='specPage dataTypeSpec']/h2[1]" as="node()*"/>
+            <xsl:variable name="starting.letters" select="distinct-values($dataTypeSpecs/substring(@id,6,1))" as="xs:string*"/>
+            
+            <xsl:variable name="dataTypes.overview" as="node()*">
+                <div class="specPage overview">
+                    <h2>Data Types</h2>
+                    <div class="letterSelection">
+                        <ul class="pagination">
+                            <xsl:for-each select="$starting.letters">
+                                <xsl:sort select="."/>
+                                <li class="page-item">
+                                    <a href="#letterFacet_{.}"><xsl:value-of select="."/></a>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                    </div>
+                    <xsl:for-each select="$starting.letters">
+                        <xsl:sort select="."/>
+                        <xsl:variable name="current.letter" select="." as="xs:string"/>
+                        <div id="letterFacet_{$current.letter}" class="letter facet overview">
+                            <div class="label"><xsl:value-of select="$current.letter"/></div>
+                            <div class="statement compact list">
+                                <xsl:for-each select="$dataTypeSpecs[starts-with(@id, 'data.' || $current.letter)]">
+                                    <xsl:sort select="@id"/>
+                                    <a class="overviewLink datatype" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./data-types/{@id}.html"><xsl:value-of select="@id"/></a>
+                                </xsl:for-each>
+                            </div>
+                        </div>
+                    </xsl:for-each>    
+                </div>
+            </xsl:variable>
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$dataTypes.overview" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
+            </xsl:call-template>
+        </xsl:result-document>
         
     </xsl:template>
     
@@ -217,7 +453,7 @@
                             <xsl:variable name="next.submenu" select="$menu.lines[position() gt $pos][starts-with(.,'      submenu:')]" as="xs:string*"/>
                             <xsl:variable name="next.submenu.pos" select="if(count($next.submenu) eq 0) then(-1) else(index-of($menu.lines,$next.submenu[1])[. gt $pos][1])" as="xs:integer"/>
                             
-                            <xsl:message select="'  page ' || $id || ' (' || $pos || ') has submenu starting at ' || $next.submenu.pos || ', while next page starts at ' || $next.page.pos"/>
+                            <!--<xsl:message select="'  page ' || $id || ' (' || $pos || ') has submenu starting at ' || $next.submenu.pos || ', while next page starts at ' || $next.page.pos"/>-->
                             
                             <page id="{$id}" level="1" label="{$label}" url="{$url}">
                                 <xsl:choose>
@@ -228,6 +464,7 @@
                                             <xsl:variable name="pos" select="position()" as="xs:integer"/>
                                             <xsl:if test="starts-with(.,'          - id:')">
                                                 <xsl:variable name="id" select="substring-after(.,'id: ')" as="xs:string"/>
+                                                <!-- attention: white space is important in the following two lines!!! -->
                                                 <xsl:variable name="label" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            label:')][1],' label: '),$tick,'')" as="xs:string"/>
                                                 <xsl:variable name="url" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            url:')][1],' url: '),$tick,'')" as="xs:string"/>
                                                 <page id="{$id}" level="2" label="{$label}" url="{$url}"/>
@@ -240,6 +477,7 @@
                                             <xsl:variable name="pos" select="position()" as="xs:integer"/>
                                             <xsl:if test="starts-with(.,'          - id:')">
                                                 <xsl:variable name="id" select="substring-after(.,'id: ')" as="xs:string"/>
+                                                <!-- attention: white space is important in the following two lines!!! -->
                                                 <xsl:variable name="label" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            label:')][1],' label: '),$tick,'')" as="xs:string"/>
                                                 <xsl:variable name="url" select="replace(substring-after($submenu.lines[position() gt $pos][starts-with(., '            url:')][1],' url: '),$tick,'')" as="xs:string"/>
                                                 <page id="{$id}" level="2" label="{$label}" url="{$url}"/>
@@ -432,10 +670,10 @@
         <div id="{$facet.type}_compact" class="facetTabbedContent compact" data-label="compact">
             <xsl:choose>
                 <xsl:when test="$facet.type = 'attributes'">
-                    <xsl:for-each select="$div//item/desc/span['ident' = tokenize(@class,' ')]"><xsl:if test="position() gt 1">, </xsl:if><xsl:sequence select="."/></xsl:for-each>
+                    <xsl:for-each select="$div//item/desc/span['ident' = tokenize(@class,' ')]"><xsl:sort select="text()"/><xsl:if test="position() gt 1">, </xsl:if><xsl:sequence select="."/></xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:for-each select="$div//item/link/node()"><xsl:if test="position() gt 1">, </xsl:if><xsl:copy>
+                    <xsl:for-each select="$div//item/link/node()"><xsl:sort select="text()"/><xsl:if test="position() gt 1">, </xsl:if><xsl:copy>
                             <xsl:apply-templates select="@*" mode="get.website"/>
                             <xsl:attribute name="title" select="normalize-space(string-join(ancestor::item[1]/desc//text(),' '))"/>
                             <xsl:apply-templates select="node()" mode="get.website"/>
@@ -536,6 +774,7 @@
                     </div>
                     <div class="classContent">
                         <xsl:for-each select="$current.items">
+                            <xsl:sort select="@ident"/>
                             <xsl:apply-templates select="." mode="get.website.classTab"/>
                         </xsl:for-each>                        
                     </div>

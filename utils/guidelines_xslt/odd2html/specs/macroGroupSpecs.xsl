@@ -76,7 +76,7 @@
                 </div>
                 <xsl:sequence select="$moduleFacet"/>
                 <!-- TODO: fix this: apparently recursive calls -->
-                <!--<xsl:sequence select="$containedByFacet"/>-->                
+                <xsl:sequence select="$containedByFacet"/>                
                 <xsl:sequence select="$mayContainFacet"/>
                 <xsl:sequence select="$declarationFacet"/>
             </div>
