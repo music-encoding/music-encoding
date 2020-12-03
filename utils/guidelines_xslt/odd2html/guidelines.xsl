@@ -205,7 +205,7 @@
                                 <xsl:variable name="current.att" select="." as="xs:string"/>
                                 <tr>
                                     <td class="Attribute">
-                                        <span class="att"><a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$current.att"/></a></span>
+                                        <span class="att"><xsl:value-of select="$current.att"/></span> (<a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a>)
                                     </td>
                                     <td>
                                         <xsl:choose>
@@ -215,7 +215,6 @@
                                             <xsl:otherwise>
                                                 <xsl:message select="'ERROR: I need to resolve attributes:'"/>
                                                 <xsl:message select="$specDesc"/>
-                                                TODO
                                                 <!-- TODO -->
                                                 <!--<xsl:variable name="attributes" select="local:getAttributes($spec)" as="node()*"/>
                                                 <xsl:apply-templates select="$attributes/descendant-or-self::div[span[@class='attribute']/text() = '@' || $current.att]/span[@class='attributeDesc']/node()" mode="#current"/>-->

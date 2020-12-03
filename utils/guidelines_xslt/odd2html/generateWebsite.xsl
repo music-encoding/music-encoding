@@ -130,8 +130,6 @@
             <xsl:variable name="elementSpecs" select="$input//section[@class='specPage elementSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($elementSpecs/substring(@id,1,1))" as="xs:string*"/>
             
-            <xsl:message select="count($starting.letters) || ' starting letters of elements: ' || string-join($starting.letters,', ')"/>
-            
             <xsl:variable name="elements.overview" as="node()*">
                 <div class="specPage overview">
                     <h2>Elements</h2>
@@ -868,6 +866,119 @@
             </xsl:choose>    
         </xsl:variable>
         <xsl:attribute name="href" select="$target"/>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Adjusts specLists in the Guidelines to Spectre tiles</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="ul[@class='specList']" mode="get.website">
+        <!-- 
+            <li class="specDesc">
+                <span class="specList-elementSpec">
+                    <a class="link_odd link_odd_elementSpec" href="../elements/app.html">app</a>
+                </span>(apparatus) – Contains one or more alternative encodings.
+            </li> -->
+        <!-- 
+            <li class="specDesc">
+              <table class="specDesc">
+                 <tbody>
+                    <tr>
+                       <td class="Attribute"><span class="att"><a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
+                       <td>Signifies the degree of certainty or precision associated with a feature.</td>
+                    </tr>
+                 </tbody>
+              </table>
+           </li>
+        -->
+        <xsl:for-each select="li[@class='specDesc']">
+            
+            <xsl:choose>
+                <xsl:when test="span/@class='specList-elementSpec'">
+                    
+                    <div class="tile tile-centered">
+                        <div class="tile-icon">
+                            <div class="example-tile-icon">
+                                <i class="icon icon-resize-horiz centered"></i>
+                            </div>
+                        </div>
+                        <div class="tile-content">
+                            <div class="tile-title">
+                                <xsl:apply-templates select=".//span[@class='specList-elementSpec']" mode="#current"/>
+                            </div>
+                            <div class="tile-subtitle text-gray">
+                                <xsl:apply-templates select="text()"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </xsl:when>
+                <xsl:when test=".//@class='Attribute'">
+                    <xsl:for-each select=".//tr">
+                        <div class="tile tile-centered">
+                            <div class="tile-icon">
+                                <div class="example-tile-icon">
+                                    <span class="font-icon centered">@</span>
+                                </div>
+                            </div>
+                            <div class="tile-content">
+                                <div class="tile-title">
+                                    <xsl:apply-templates select="td[1]/node()" mode="#current"/>
+                                </div>
+                                <div class="tile-subtitle text-gray">
+                                    <xsl:apply-templates select="td[2]/node()" mode="#current"/>
+                                </div>
+                            </div>
+                        </div>
+                    </xsl:for-each>
+                    
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- some other reference, treated similarly to elements for now -->
+                    <xsl:message select="'better have an eye on this:'"/>
+                    <xsl:message select="."/>
+                    <div class="tile tile-centered">
+                        <div class="tile-icon">
+                            <div class="example-tile-icon">
+                                <i class="icon icon-link centered"></i>
+                            </div>
+                        </div>
+                        <div class="tile-content">
+                            <div class="tile-title">
+                                <xsl:apply-templates select=".//a" mode="#current"/>
+                            </div>
+                            <div class="tile-subtitle text-gray">
+                                <xsl:apply-templates select="text()"/>
+                            </div>
+                        </div>
+                    </div>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Adjusts definition lists / gloss lists for the website</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="dl" mode="get.website">
+        <xsl:for-each select="dt">
+            <p class="gloss">
+                <strong><xsl:apply-templates select="node()" mode="#current"/></strong>:
+                <xsl:apply-templates select="following-sibling::dd[1]/node()" mode="#current"/>
+            </p>
+        </xsl:for-each>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Adjusts image links for website output</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="img/@src" mode="get.website">
+        <xsl:attribute name="src" select="'../' || ."/>
     </xsl:template>
     
 </xsl:stylesheet>
