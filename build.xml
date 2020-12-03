@@ -40,7 +40,7 @@
     
     <target name="saxon-download">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/9.9/SaxonHE9-9-1-7J.zip/download" dest="temp/"/>
+        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/9.9/SaxonHE9-9-1-7J.zip/download" dest="temp/"/><!-- TODO check for newer releases-->
     </target>
     
     <target name="saxon-prepare" depends="saxon-unzip">
@@ -54,7 +54,7 @@
     
     <target name="xerces-download">
         <mkdir dir="lib/xerces/"/>
-        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/><!--TODO update to latest version -->
     </target>
     
     <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml">
@@ -94,7 +94,7 @@
     <target name="build-rng" depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${odd.basename} from ${customization.path}</echo>
-        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true">
+        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${basedir}/${customization.path}"/>
             <property name="outputFile" value="${basedir}/${dir.build}/${odd.basename}.rng"/>
             <property name="defaultSource" value="${basedir}/${dir.dist}/mei-source_canonicalized.xml"/>
@@ -159,7 +159,7 @@
         </antcall>
     </target>
     
-    <target name="dist" depends="init">
+    <target name="dist" depends="init"><!-- TODO does not work with depends="init" only works if init run before --> <!-- TODO if depends init works add to all other targets and introduce global initialized param so that init will only be reexecuted if init not run before -->
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
     </target>
