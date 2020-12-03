@@ -111,6 +111,11 @@
                                     <xsl:sequence select="$contents"/>    
                                 </div>
                                 <div class="column col-4 col-hide-md">
+                                    <div id="guidelinesVersion">
+                                        <span class="versionLabel">MEI Version: </span>
+                                        <span id="versionID"><xsl:value-of select="$version"/></span>
+                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer"><xsl:value-of select="$hash"/></a>)</span>   
+                                    </div>
                                     <form action="/guidelines/dev/content/metadata.html">
                                         <div class="tipue_search_group">
                                             <input name="q" id="tipue_search_input" pattern=".{{3,}}" title="At least 3 characters" required="" type="text"></input><button type="submit" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
@@ -182,11 +187,11 @@
                                 </div>
                             </div>
                             <script>
-                                $(document).ready(function() {
-                                    $('#tipue_search_input').tipuesearch({
+                                window.addEventListener("load", function(event) {
+                                    /*$('#tipue_search_input').tipuesearch({
                                         showURL: false,
                                         descriptiveWords: 25
-                                    });
+                                    });*/
                                     document.getElementById('topNavigationShow').addEventListener('click',function(e) {
                                         var elem = document.getElementById('toc-modal');
                                         elem.classList.toggle('active');
@@ -199,6 +204,29 @@
                                         var elem = document.getElementById('toc-modal');
                                         elem.classList.toggle('active');
                                     })
+                                    
+                                    function getMenu() {
+                                        const fullVersion = '<xsl:value-of select="$version"/>'
+                                        const version = 'v' + fullVersion.split('.')[0];
+                                        console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')'); 
+                                        
+                                        const url = 'https://music-encoding.org/menus/' + version + '/menu.html';
+                                        
+                                        fetch(url)
+                                            .then(function(response) { return response.text()})
+                                            .then(function(doc) {
+                                                let headerBar = document.querySelector('.headerBar');
+                                                const parser = new DOMParser();
+                                                const htmlDoc = parser.parseFromString(doc, 'text/html');
+                                                const menu = htmlDoc.querySelector('.headerBar')
+                                                console.log('good so far')
+                                                console.log(menu)
+                                                headerBar.parentNode.replaceChild(menu, headerBar)
+                                                console.log('done')
+                                            });
+                                    };
+                                    getMenu();
+                                        
                                 });
                             </script>
                         </div>
