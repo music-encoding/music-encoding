@@ -9,20 +9,72 @@ on:
 #  pull_request:
 #    branches: [ develop ]
 
+env:
+  # schema
+  SCHEMA_REPO: ${{ github.repository_owner }}/schema # works from rism-ch and from forks
+  SCHEMA_BRANCH: develop
+
+  # temporary directories
+  SCHEMA_DIR: schema-dir
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Checkout submodules
-      uses: textbook/git-checkout-submodule-action@master
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
-    - name: Build with Ant
-      run: |
-        ant -noinput -buildfile build.xml init
-        ant -noinput -buildfile build.xml -lib lib/saxon/saxon9he.jar
+      - name: Checkout main repo
+        uses: actions/checkout@v2
+
+      - name: Checkout submodules
+        uses: textbook/git-checkout-submodule-action@master
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      - name: Build with Ant
+        run: |
+          ant -noinput -buildfile build.xml init
+          ant -noinput -buildfile build.xml -lib lib/saxon/saxon9he.jar
+
+      - name: Checkout SCHEMA_REPO into SCHEMA_DIR
+        uses: actions/checkout@v2
+        with:
+          # repository to check out
+          repository: ${{ env.SCHEMA_REPO }}
+          # Deploy key as secret for accessing <owner>/<SCHEMA_REPO>;
+          # cf. explanation in https://github.com/rism-ch/verovio/pull/1751
+          ssh-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY_SCHEMA }}
+          # ref (branch, tag or SHA) to check out
+          ref: ${{ env.SCHEMA_BRANCH }}
+          # relative path under $GITHUB_WORKSPACE to place the repository
+          path: ${{ env.SCHEMA_DIR }}
+
+      - name: Copy build schema to SCHEMA_DIR
+          run: cp dist/schemata/dev $SCHEMA_DIR/
+
+      - name: Check git status before commit
+          working-directory: ${{ env.SCHEMA_DIR }}
+          run: |
+            git config --get remote.origin.url
+            git status
+
+      - name: Configure git
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: |
+          echo "Configuring git..."
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Commit files
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: |
+          echo "Running git commit..."
+          git add .
+          git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
+
+      - name: Push changes to SCHEMA
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: git push origin HEAD:$SCHEMA_BRANCH
