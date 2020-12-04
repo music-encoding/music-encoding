@@ -14,6 +14,10 @@ env:
   SCHEMA_REPO: ${{ github.repository_owner }}/schema # works from rism-ch and from forks
   SCHEMA_BRANCH: feature_local-build
 
+  # guidelines
+  GUIDELINES_REPO: ${{ github.repository_owner }}/guidelines # works from rism-ch and from forks
+  GUIDELINES_BRANCH: feature_local-build
+
   # temporary directories
   SCHEMA_DIR: schema-dir
 
@@ -23,6 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
         uses: actions/checkout@v2
 
@@ -39,6 +44,7 @@ jobs:
           ant -noinput -buildfile build.xml init
           ant -noinput -buildfile build.xml -lib lib/saxon/saxon9he.jar
 
+      ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
         uses: actions/checkout@v2
         with:
@@ -52,7 +58,7 @@ jobs:
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.SCHEMA_DIR }}
 
-      - name: Copy build schema to SCHEMA_DIR
+      - name: Copy built schema to SCHEMA_DIR
         run: cp -r dist/schemata/dev $SCHEMA_DIR/
 
       - name: Check git status before commit
@@ -78,3 +84,44 @@ jobs:
       - name: Push changes to SCHEMA
         working-directory: ${{ env.SCHEMA_DIR }}
         run: git push origin HEAD:$SCHEMA_BRANCH
+
+      ### PUBLISHING THE GUIDELINES ###
+      - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
+        uses: actions/checkout@v2
+        with:
+          # repository to check out
+          repository: ${{ env.GUIDELINES_REPO }}
+          # Deploy key as secret for accessing <owner>/<GUIDELINES_REPO>;
+          # cf. explanation in https://github.com/rism-ch/verovio/pull/1751
+          ssh-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY_GUIDELINES }}
+          # ref (branch, tag or SHA) to check out
+          ref: ${{ env.GUIDELINES_BRANCH }}
+          # relative path under $GITHUB_WORKSPACE to place the repository
+          path: ${{ env.GUIDELINES_DIR }}
+
+      - name: Copy built guidelines to GUIDELINES_DIR
+        run: cp -r dist/guidelines/dev $GUIDELINES_DIR/
+
+      - name: Check git status before commit
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          git config --get remote.origin.url
+          git status
+
+      - name: Configure git
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          echo "Configuring git..."
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Commit files
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          echo "Running git commit..."
+          git add .
+          git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
+
+      - name: Push changes to GUIDELINES
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: git push origin HEAD:$GUIDELINES_BRANCH
