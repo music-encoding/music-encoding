@@ -102,6 +102,7 @@
             <xsl:call-template name="getSinglePage">
                 <xsl:with-param name="contents" select="$modules.overview" as="node()*"/>
                 <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
             </xsl:call-template>
         </xsl:result-document>
         
