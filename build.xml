@@ -62,12 +62,11 @@
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/><!--TODO update to latest version -->
     </target>
     
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml">
-        <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar">
-            <!--<arg value="-t" />--> 
+    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath">
             <arg value="-s:${basedir}/source/mei-source.xml" />
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl" />
-            <arg value="-o:${basedir}/${dir.dist}/mei-source_canonicalized.xml" />
+            <arg value="-o:${dir.dist.schemata}/mei-source_canonicalized.xml" />
             <arg value="-xi:on" />
         </java>
     </target>
@@ -88,8 +87,8 @@
         <echo>${odd.basename}</echo>
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${basedir}/${customization.path}"/>
-            <property name="outputFile" value="${basedir}/${dir.dist}/${odd.basename}_compiled.odd"/>
-            <property name="defaultSource" value="${basedir}/${dir.dist}/mei-source_canonicalized.xml"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
+            <property name="defaultSource" value="${dir.dist.schemata}/mei-source_canonicalized.xml"/>
             <property name="verbose">true</property>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
@@ -101,18 +100,17 @@
         <echo>building rng ${odd.basename} from ${customization.path}</echo>
         <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${basedir}/${customization.path}"/>
-            <property name="outputFile" value="${basedir}/${dir.build}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${basedir}/${dir.dist}/mei-source_canonicalized.xml"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
+            <property name="defaultSource" value="${dir.dist.schemata}/mei-source_canonicalized.xml"/>
             <property name="verbose">true</property>
         </ant>
     </target>
 
     <target name="build-guidelines-html" depends="canonicalize-source"><!-- TODO check dependency try with mei-source.xml -->
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <property name="dir.dist.guidelines" value="${basedir}/source/web/}"/> <!-- value="${basedir}/${dir.dist}/guidelines/"/>-->
         <echo>building HTML guidelines for ${odd.basename} from ${customization.path}</echo>
         <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar">
-            <arg value="-s:${basedir}/${dir.dist}/mei-source_canonicalized.xml" />
+            <arg value="-s:${dir.dist.schemata}/mei-source_canonicalized.xml" />
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl" />
             <arg value="-o:${dir.dist.guidelines}" />
             <arg value="-xi:on"/>
@@ -120,6 +118,7 @@
             <arg value="git.sha=git.sha"/>
             <arg value="branch=develop"/>
         </java>
+        <copydir src="source/web/css/" dest="${dir.dist.guidelines}/web/css"/>
     </target>
 
     <target name="build-customizations">
@@ -165,8 +164,10 @@
     </target>
     
     <target name="dist" depends="init"><!-- TODO does not work with depends="init" only works if init run before --> <!-- TODO if depends init works add to all other targets and introduce global initialized param so that init will only be reexecuted if init not run before -->
+        <classfileset refid="mei.classpath"/>
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
+        <antcall target="build-guidelines-html"/>
     </target>
     
 </project>
