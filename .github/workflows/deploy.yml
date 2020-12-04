@@ -1,26 +1,26 @@
-# This workflow will build a Java project with Ant
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
+# This workflow will perform the following steps for pushes the the develop branch
+# * build the Schema and the Guidelines with Ant
+# * publish the Schema to music-encoding/schema under ./dev
+# * publish the Guidelines to music-encoding/guidelines under ./dev
 
-name: Java CI
+name: Deploy Schema and Guidelines
 
 on:
   push:
-    branches: [ feature_local-build ]
-#  pull_request:
-#    branches: [ develop ]
+    branches: [ develop ]
 
 env:
   # schema
-  SCHEMA_REPO: ${{ github.repository_owner }}/schema # works from rism-ch and from forks
+  SCHEMA_REPO: ${{ github.repository_owner }}/schema
   SCHEMA_BRANCH: feature_local-build
 
   # guidelines
-  GUIDELINES_REPO: ${{ github.repository_owner }}/guidelines # works from rism-ch and from forks
-  GUIDELINES_BRANCH: feature_local-build
+  GUIDELINES_REPO: ${{ github.repository_owner }}/guidelines
+  GUIDELINES_BRANCH: master
 
   # temporary directories
   SCHEMA_DIR: schema-dir
-  GUIDELINES_DIR: guidelines-dir
+  GUIDELINES_DIR: master
 
 jobs:
   build:
@@ -41,6 +41,7 @@ jobs:
           java-version: 1.8
 
       - name: Build with Ant
+        # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
         run: |
           ant -noinput -buildfile build.xml init
           ant -noinput -buildfile build.xml -lib lib/saxon/saxon9he.jar
