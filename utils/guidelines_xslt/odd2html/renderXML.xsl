@@ -44,16 +44,16 @@
             </xsl:choose>
         </xsl:variable>
         
+        <xsl:variable name="q" as="xs:string">"</xsl:variable>
         <xsl:variable name="wrapped" select="'&lt;WRAPPER&gt;' || $relevantExcerpt || '&lt;/WRAPPER&gt;'" as="xs:string"/>
         <xsl:variable name="output">
             <xsl:try>
                 <xsl:variable name="xml" select="parse-xml($wrapped)/WRAPPER/child::node()" as="node()*"/>
-                
                 <xsl:apply-templates select="$xml" mode="preserveSpace"/>        
                 <xsl:catch>
                     <xsl:message select="'ERROR: Unable to parse the following XML snippet, which is apparently not well-formed:'"/>
                     <xsl:message select="$input"/>
-                    <xsl:sequence select="$input"/>
+                    <xsl:copy-of select="$input"/>
                 </xsl:catch>
             </xsl:try>    
         </xsl:variable>
@@ -139,6 +139,27 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="@*" mode="preserveSpace" priority="1"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="name()"/>=</span><span class="attributevalue">"<xsl:value-of select="string(.)"/>"</span></xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Drop @xml:base when requested</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@xml:base" mode="preserveSpace" priority="2">
+        <xsl:if test="not(contains(ancestor::egx:egXML/@rend,'noBase'))">
+            <xsl:next-match/>
+        </xsl:if>
+    </xsl:template>
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Drop @xml:lang when requested</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="@xml:lang" mode="preserveSpace" priority="2">
+        <xsl:if test="not(contains(ancestor::egx:egXML/@rend,'noLang'))">
+            <xsl:next-match/>
+        </xsl:if>
+    </xsl:template>
     
     <xd:doc>
         <xd:desc>

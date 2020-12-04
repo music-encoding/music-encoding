@@ -129,6 +129,9 @@
     <xsl:template match="tei:gi" mode="guidelines">
         <xsl:variable name="text" select="string(text())" as="xs:string"/>
         <xsl:choose>
+            <xsl:when test="@scheme = 'TEI' and doc-available('https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-' || $text || '.html')">
+                <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">tei:<xsl:value-of select="$text"/></a>
+            </xsl:when>
             <xsl:when test="$text = $elements/@ident">
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
             </xsl:when>
@@ -493,7 +496,10 @@
                 <xsl:choose>
                     <xsl:when test="@rend and 'text' = tokenize(normalize-space(@rend),' ')">
                         <!-- todo: render non-xml examples properly -->
-                        <xsl:copy-of select="node()"/>
+                        <xsl:copy-of select="node()" xml:space="preserve"/>
+                    </xsl:when>
+                    <xsl:when test="child::element()">
+                        <xsl:apply-templates select="child::node()" mode="preserveSpace"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:sequence select="tools:xml2html(node())"/>
