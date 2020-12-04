@@ -102,6 +102,7 @@
             <xsl:call-template name="getSinglePage">
                 <xsl:with-param name="contents" select="$modules.overview" as="node()*"/>
                 <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="true()"/>
             </xsl:call-template>
         </xsl:result-document>
         
@@ -488,80 +489,89 @@
                     </xsl:for-each>
                 </xsl:variable>
                 
-                <header class="navbar">
-                    <div class="navbar-section">
-                        <a class="navbar-brand" href="http://music-encoding.org">
-                            <img src="http://music-encoding.org/pix/meilogo-inverted.png" alt="MEI logo"/>
-                        </a>
-                        <div class="hide-lg">
-                            <xsl:for-each select="$menu/self::page">
-                                <div class="dropdown dropdownCustomMenuToggle">                                    
-                                    <a href="{if(child::page) then('#') else('https://music-encoding.org' || @url)}" class="btn btn-link dropdown-toggle top-menu-link" tabindex="{position()}">
-                                        <xsl:value-of select="@label"/> <xsl:if test="child::page"> <i class="icon icon-caret"></i></xsl:if>
-                                    </a>
-                                    <xsl:if test="child::page">
-                                        <ul class="menu">
-                                            <xsl:for-each select="child::page">
-                                                <li class="menu-item">
-                                                    <a href="https://music-encoding.org{@url}" class="btn btn-link text-left menu-link">
-                                                        <xsl:value-of select="@label"/>
-                                                    </a>
-                                                </li>
-                                            </xsl:for-each>
-                                        </ul>
-                                    </xsl:if>
-                                </div>
-                            </xsl:for-each>    
-                        </div>
-                    </div>
-                    <div class="navbar-section" id="socialLinks">
-                        <a class="twitterLink" target="_blank" href="https://twitter.com/MusicEncoding">
-                            <img src="http://music-encoding.org/pix/twitter.png" alt="Twitter" class="logo"/>
-                        </a>
-                        <a class="githubLink" target="_blank" href="https://github.com/music-encoding">
-                            <img src="http://music-encoding.org/pix/github.png" alt="GitHub" class="logo"/>
-                        </a>
-                        <a class="slackLink" target="_blank" href="https://music-encoding.slack.com/">
-                            <img src="http://music-encoding.org/pix/slack.png" alt="Slack" class="logo"/>
-                        </a>
-                    </div>
-                    <div id="menu-accordion" class="accordion-container dropdown-toggle show-lg column col-12">
-                        <div class="accordion">
-                            <input id="accordion-toggle" type="checkbox" name="accordion-checkbox" hidden=""/>
-                            <label class="accordion-header c-hand" for="accordion-toggle">
-                                <i class="icon icon-menu"></i>
-                            </label>
-                            
-                            <div class="accordion-body">
-                                <ul class="menu menu-nav">
-                                    <xsl:for-each select="$menu/self::page">
-                                        <li class="menu-item">
-                                            <div class="accordion menu">
-                                                <input id="accordion-About" type="checkbox" name="accordion-checkbox" hidden=""/>
-                                                <label class="accordion-header c-hand" for="accordion-About">
-                                                    <xsl:choose>
-                                                        <xsl:when test="child::page"><xsl:value-of select="@label"/></xsl:when>
-                                                        <xsl:otherwise><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></xsl:otherwise>
-                                                    </xsl:choose>
-                                                    
-                                                </label>
-                                                <xsl:if test="child::page">
-                                                    <div class="accordion-body">
-                                                        <ul class="menu menu-nav">
-                                                            <xsl:for-each select="child::page">
-                                                                <li class="menu-item"><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></li>
-                                                            </xsl:for-each>
-                                                        </ul>
-                                                    </div>
-                                                </xsl:if>
-                                            </div>
-                                        </li>
-                                    </xsl:for-each>
-                                </ul>
+                <div class="headerBar">
+                    <!--
+                    <header class="navbar">
+                        <div class="navbar-section">
+                            <a class="navbar-brand" href="http://music-encoding.org">
+                                <img src="http://music-encoding.org/pix/meilogo-inverted.png" alt="MEI logo"/>
+                            </a>
+                            <div class="hide-lg">
+                                <xsl:for-each select="$menu/self::page">
+                                    <div class="dropdown dropdownCustomMenuToggle">                                    
+                                        <a href="{if(child::page) then('#') else('https://music-encoding.org' || @url)}" class="btn btn-link dropdown-toggle top-menu-link" tabindex="{position()}">
+                                            <xsl:value-of select="@label"/> <xsl:if test="child::page"> <i class="icon icon-caret"></i></xsl:if>
+                                        </a>
+                                        <xsl:if test="child::page">
+                                            <ul class="menu">
+                                                <xsl:for-each select="child::page">
+                                                    <li class="menu-item">
+                                                        <a href="https://music-encoding.org{@url}" class="btn btn-link text-left menu-link">
+                                                            <xsl:value-of select="@label"/>
+                                                        </a>
+                                                    </li>
+                                                </xsl:for-each>
+                                            </ul>
+                                        </xsl:if>
+                                    </div>
+                                </xsl:for-each>    
                             </div>
                         </div>
+                        <div class="navbar-section" id="socialLinks">
+                            <a class="twitterLink" target="_blank" href="https://twitter.com/MusicEncoding">
+                                <img src="http://music-encoding.org/pix/twitter.png" alt="Twitter" class="logo"/>
+                            </a>
+                            <a class="githubLink" target="_blank" href="https://github.com/music-encoding">
+                                <img src="http://music-encoding.org/pix/github.png" alt="GitHub" class="logo"/>
+                            </a>
+                            <a class="slackLink" target="_blank" href="https://music-encoding.slack.com/">
+                                <img src="http://music-encoding.org/pix/slack.png" alt="Slack" class="logo"/>
+                            </a>
+                        </div>
+                        <div id="menu-accordion" class="accordion-container dropdown-toggle show-lg column col-12">
+                            <div class="accordion">
+                                <input id="accordion-toggle" type="checkbox" name="accordion-checkbox" hidden=""/>
+                                <label class="accordion-header c-hand" for="accordion-toggle">
+                                    <i class="icon icon-menu"></i>
+                                </label>
+                                
+                                <div class="accordion-body">
+                                    <ul class="menu menu-nav">
+                                        <xsl:for-each select="$menu/self::page">
+                                            <li class="menu-item">
+                                                <div class="accordion menu">
+                                                    <input id="accordion-About" type="checkbox" name="accordion-checkbox" hidden=""/>
+                                                    <label class="accordion-header c-hand" for="accordion-About">
+                                                        <xsl:choose>
+                                                            <xsl:when test="child::page"><xsl:value-of select="@label"/></xsl:when>
+                                                            <xsl:otherwise><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></xsl:otherwise>
+                                                        </xsl:choose>
+                                                        
+                                                    </label>
+                                                    <xsl:if test="child::page">
+                                                        <div class="accordion-body">
+                                                            <ul class="menu menu-nav">
+                                                                <xsl:for-each select="child::page">
+                                                                    <li class="menu-item"><a href="https://music-encoding.org{@url}"><xsl:value-of select="@label"/></a></li>
+                                                                </xsl:for-each>
+                                                            </ul>
+                                                        </div>
+                                                    </xsl:if>
+                                                </div>
+                                            </li>
+                                        </xsl:for-each>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div id="versionWarning" class="p-sticky">
+                        This is version $outdated$ of the MEI Guidelines. Switch to current release <a href="$current-link$">$current$</a>. 
+                        <!-\- This is the development version of the MEI Guidelines. Switch to current release <a href="$current-link$">$current$</a>.  -\->
                     </div>
-                </header>                
+                    -->
+                </div>
+                                
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
