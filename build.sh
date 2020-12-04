@@ -123,7 +123,7 @@ buildMei()
         echo -e "${PURPLE} Processing" "${file}"$NORM
         echo -e $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
-        $TEI_TO_RELAXNG_BIN --localsource=$DRIVER_FILE $file $BUILD_DIR/$(basename ${file%%.*}).rng
+        $TEI_TO_RELAXNG_BIN --localsource=${BUILD_DIR}/mei-canonicalized.xml $file $BUILD_DIR/$(basename ${file%%.*}).rng
 
         if [ $? = 1 ]; then
             IFS=$SAVEIFS
