@@ -38,26 +38,28 @@
     </target>
     
     <target name="init" description="initializes the build, e.g. downloads saxon">
+        <available property="xerces-available" file="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
+        <available property="saxon-available" file="${basedir}/lib/saxon/saxon9he.jar"/>
         <antcall target="saxon-prepare"/>
         <antcall target="xerces-download"/>
         <echo>initialized</echo>
     </target>
     
-    <target name="saxon-download">
+    <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
         <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/9.9/SaxonHE9-9-1-7J.zip/download" dest="temp/"/><!-- TODO check for newer releases-->
     </target>
     
-    <target name="saxon-prepare" depends="saxon-unzip">
+    <target name="saxon-prepare" depends="saxon-unzip" unless="${saxon-available}">
         <delete dir="temp/"/>
     </target>
     
-    <target name="saxon-unzip" depends="saxon-download">
+    <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
         <mkdir dir="lib"/>
         <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
     </target>
     
-    <target name="xerces-download">
+    <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="lib/xerces/"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/><!--TODO update to latest version -->
     </target>
