@@ -2,7 +2,7 @@
 <project name="music-encoding" default="dist">
     <property name="version" value="dev"/>
     <property name="dir.dist" value="dist"/>
-   <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/> 
+    <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/> 
     <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
     <path id="mei.classpath">
         <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
@@ -73,7 +73,7 @@
         </java>
     </target>
     
-<!--    <target name="canonicalize-guidelines">
+    <!--    <target name="canonicalize-guidelines">
         <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar">
             <arg value="-s:${basedir}/source/mei-source.xml" />
             <arg value="-xsl:submodules/Stylesheets/odds/odd2odd.xsl" />
@@ -107,7 +107,7 @@
             <property name="verbose">true</property>
         </ant>
     </target>
-
+    
     <target name="build-guidelines-html" depends="canonicalize-source"><!-- TODO check dependency try with mei-source.xml -->
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building HTML guidelines for ${odd.basename} from ${customization.path}</echo>
@@ -120,9 +120,13 @@
             <arg value="git.sha=git.sha"/>
             <arg value="branch=develop"/>
         </java>
-        <copydir src="source/web/css/" dest="${dir.dist.guidelines}/web/css"/>
+        <copy todir="${dir.dist.guidelines}/web/css">
+            <fileset dir="source/web/css/">
+                <include name="*.css"/>
+            </fileset>
+        </copy>
     </target>
-
+    
     <target name="build-customizations">
         <antcall target="build-rng">
             <param name="customization.path" value="customizations/mei-all.xml"/>
