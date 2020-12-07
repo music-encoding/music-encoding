@@ -132,7 +132,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
-        <xsl:message select="'Processing MEI v' || $version || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        <xsl:message select="'Processing MEI v' || $version || ' at revision ' || $hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
