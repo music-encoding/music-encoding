@@ -125,16 +125,23 @@
         </ant>
     </target>
     
-    <target name="build-guidelines-html" depends="canonicalize-source"><!-- TODO check dependency try with mei-source.xml -->
+    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha"><!-- TODO check dependency try with mei-source.xml -->
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building HTML guidelines for ${odd.basename} from ${customization.path}</echo>
+        <echo>github.sha:       ${github.sha}</echo>
+        <echo>github.sha.local: ${github.sha.local}</echo>
+        <condition property="hash" value="${github.sha}" else="${github.sha.local}">
+            <not>
+                <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
+            </not>
+        </condition>
         <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar">
             <arg value="-s:${dir.dist.schemata}/mei-source_canonicalized.xml" />
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl" />
             <arg value="-o:${dir.dist.guidelines}" />
             <arg value="-xi:on"/>
             <arg value="output.folder=${dir.dist.guidelines}/"/>
-            <arg value="hash=${github.sha}"/>
+            <arg value="hash=${hash}"/>
             <arg value="branch=develop"/>
         </java>
         <copy todir="${dir.dist.guidelines}/web/css">
