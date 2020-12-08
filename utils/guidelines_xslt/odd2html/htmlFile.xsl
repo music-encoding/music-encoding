@@ -32,7 +32,7 @@
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
         
         <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
-        
+        <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
         <html xml:lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

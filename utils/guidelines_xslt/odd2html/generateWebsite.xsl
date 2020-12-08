@@ -32,6 +32,19 @@
         
         <xsl:variable name="web.output" select="$output.folder || 'web/'" as="xs:string"/>
         
+        <!-- index page -->
+        <xsl:result-document href="{$web.output}index.html">
+            <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+            <html lang="en">
+                <head>
+                    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+                    <meta http-equiv="refresh" content="0;url=./content/index.html" />
+                </head>
+                <body>
+                </body>
+            </html>
+        </xsl:result-document>
+        
         <xsl:for-each select="$input//section[@class='div1']">
             <xsl:variable name="current.chapter" select="." as="node()"/>
             <xsl:variable name="id" select="$current.chapter/h1[1]/@id" as="xs:string"/>
