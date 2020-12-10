@@ -65,6 +65,35 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <xsl:variable name="search.index" as="node()*">
+            <map xmlns="http://www.w3.org/2005/xpath-functions">
+                <array key="pages">
+                    <xsl:for-each select="$input//*[matches(@class,'^div\d$')]">
+                        <xsl:variable name="text" select="normalize-space(string-join(child::*[not(local-name() = ('h1','h2','h3','h4','h5','h6')) and not(@class and matches(@class,'^div\d$'))]//text(),' '))" as="xs:string?"/>
+                        <xsl:variable name="h" select="child::*[local-name() = ('h1','h2','h3','h4','h5','h6')]" as="node()"/>
+                        <xsl:variable name="id" select="$h/@id" as="xs:string"/>
+                        <xsl:variable name="title" select="$h/span[@class='head']/text()" as="xs:string"/>
+                        <xsl:variable name="path" select="$h/ancestor::section[@class='div1']/h1/@id" as="xs:string"/>
+                        <xsl:variable name="hash" select="if($path eq $id) then() else('#' || $id)" as="xs:string?"/>
+                        <xsl:variable name="url" select="'/content/' || $path || '.html' || $hash" as="xs:string"/>
+                        <map>
+                            <string key="text"><xsl:value-of select="$text"/></string>
+                            <string key="title"><xsl:value-of select="$title"/></string>
+                            <string key="url"><xsl:value-of select="$url"/></string>
+                            <string key="tags"><xsl:value-of select="''"/></string>
+                        </map>
+                        <!-- ./tipuesearch/search_content.js -->
+                    </xsl:for-each>
+                </array>
+            </map>
+        </xsl:variable>
+        <xsl:variable name="json.string" select="replace(xml-to-json($search.index),'\\/','/')" as="xs:string"/>
+        
+        <xsl:message select="$search.index"></xsl:message>
+        <xsl:result-document href="{$web.output}tipuesearch/search_content.js" method="text" indent="yes">
+            var tipuesearch = <xsl:value-of select="$json.string"/>;
+        </xsl:result-document>
+        
         <xsl:result-document href="{$web.output}content/index.html">
             <xsl:variable name="chapter.overview" as="node()*">
                 <h1>MEI Guidelines (<xsl:value-of select="$version"/>)</h1>
