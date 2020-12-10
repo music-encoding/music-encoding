@@ -32,7 +32,6 @@
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
         
         <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
-        <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
         <html xml:lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -113,8 +112,8 @@
                                 <div class="column col-4 col-hide-md">
                                     <div id="guidelinesVersion">
                                         <span class="versionLabel">MEI Version: </span>
-                                        <span id="versionID"><xsl:value-of select="$version"/></span>
-                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer"><xsl:value-of select="$hash"/></a>)</span>   
+                                        <span id="versionID"><xsl:value-of select="$version"/> </span>
+                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
                                     </div>
                                     <form action="/guidelines/dev/content/metadata.html">
                                         <div class="tipue_search_group">
@@ -207,7 +206,7 @@
                                     
                                     function getMenu() {
                                         const fullVersion = '<xsl:value-of select="$version"/>'
-                                        const version = 'v' + fullVersion.split('.')[0];
+                                        const version = (fullVersion.includes('-dev')) ? 'dev' : 'v' + fullVersion.split('.')[0];
                                         console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')'); 
                                         
                                         const url = 'https://music-encoding.org/menus/' + version + '/menu.html';
@@ -218,11 +217,8 @@
                                                 let headerBar = document.querySelector('.headerBar');
                                                 const parser = new DOMParser();
                                                 const htmlDoc = parser.parseFromString(doc, 'text/html');
-                                                const menu = htmlDoc.querySelector('.headerBar')
-                                                console.log('good so far')
-                                                console.log(menu)
-                                                headerBar.parentNode.replaceChild(menu, headerBar)
-                                                console.log('done')
+                                                const menu = htmlDoc.querySelector('.headerBar');
+                                                headerBar.parentNode.replaceChild(menu, headerBar);
                                             });
                                     };
                                     getMenu();
