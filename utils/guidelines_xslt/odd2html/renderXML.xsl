@@ -75,6 +75,9 @@
         <xsl:variable name="indent.threshold" select="30" as="xs:integer"/>
         
         <xsl:choose>
+            <xsl:when test="local-name() = ('att', 'gi','hi','emph','foreign','ref','graphic') and ancestor::tei:p">
+                <span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/>&gt;</span><xsl:value-of select="$element/child::text()"/><span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span>
+            </xsl:when>
             <xsl:when test="local-name() = 'param' and @name = 'pattern' and string-length(text()) gt $indent.threshold * 1">
                 <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/>&gt;</span>
                     <xsl:choose>
@@ -230,7 +233,7 @@
         </xd:desc>
         <xd:param name="getODD"></xd:param>
     </xd:doc>
-    <xsl:template match="tei:macroSpec//@ns | tei:macroSpec//@predeclare | tei:macroSpec//@status | tei:macroSpec//@autoPrefix" mode="preserveSpace" priority="2">
+    <xsl:template match="tei:macroSpec//@ns | tei:macroSpec//@predeclare | tei:macroSpec//@status | tei:macroSpec//@autoPrefix | tei:p/@part | tei:att/@scheme" mode="preserveSpace" priority="2">
         <xsl:param name="getODD" tunnel="yes" as="xs:boolean?"/>
         <!--<xsl:if test="not($getODD) or $getODD = false()">
             <xsl:next-match/>
