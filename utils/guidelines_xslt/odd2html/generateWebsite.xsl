@@ -887,7 +887,7 @@
         <xsl:variable name="classes" select="tokenize(normalize-space(parent::a/@class),' ')" as="xs:string*"/>
         <xsl:variable name="target" as="xs:string">
             <xsl:choose>
-                <xsl:when test="'link_odd_elementSpec' = $classes">
+                <xsl:when test="'link_odd_elementSpec' = $classes and not(matches(.,'https?://'))">
                     <xsl:value-of select="replace(.,'#','../elements/') || '.html'"/>
                 </xsl:when>
                 <xsl:when test="'link_odd_modelClass' = $classes">
