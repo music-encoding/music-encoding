@@ -87,10 +87,11 @@
                 </array>
             </map>
         </xsl:variable>
-        <xsl:variable name="json.string" select="replace(xml-to-json($search.index),'\\/','/')" as="xs:string"/>
+        <xsl:variable name="newline" as="xs:string"><xsl:text>&#xa;</xsl:text></xsl:variable>
+        <xsl:variable name="quot" as="xs:string">"</xsl:variable>
+        <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
-        <xsl:message select="$search.index"></xsl:message>
-        <xsl:result-document href="{$web.output}tipuesearch/search_content.js" method="text" indent="yes">
+        <xsl:result-document href="{$web.output}tipuesearch/search_content.js" method="text" indent="yes" omit-xml-declaration="yes" >
             var tipuesearch = <xsl:value-of select="$json.string"/>;
         </xsl:result-document>
         
