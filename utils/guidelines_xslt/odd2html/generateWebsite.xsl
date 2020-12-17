@@ -724,6 +724,10 @@
                     <xsl:for-each select="$div//item/desc/span['ident' = tokenize(@class,' ')]"><xsl:sort select="text()"/><xsl:if test="position() gt 1">, </xsl:if><xsl:sequence select="."/></xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>
+                    <xsl:if test="$div/descendant-or-self::div[@class='textualContent']">
+                        <span class="textualContent" title="textual content">textual content, </span>
+                    </xsl:if>
+                    
                     <xsl:for-each select="$div//item/link/node()"><xsl:sort select="text()"/><xsl:if test="position() gt 1">, </xsl:if><xsl:copy>
                             <xsl:apply-templates select="@*" mode="get.website"/>
                             <xsl:attribute name="title" select="normalize-space(string-join(ancestor::item[1]/desc//text(),' '))"/>
@@ -808,6 +812,10 @@
             
             <xsl:variable name="modules.used" select="distinct-values($div//item/@module)" as="xs:string*"/>
             
+            <xsl:if test="$div/descendant-or-self::div[@class='textualContent']">
+                <div class="textualContent" title="textual content">textual content</div>
+            </xsl:if>
+            
             <xsl:for-each select="$modules.used">
                 <xsl:sort select="." data-type="text"/>
                 <xsl:variable name="current.module.ident" select="." as="xs:string"/>
@@ -845,6 +853,10 @@
     <xsl:function name="tools:getFullDefinitionTab" as="node()">
         <xsl:param name="div" as="node()"/>
         <xsl:param name="facet.type" as="xs:string"/>
+        
+        <xsl:if test="$div/descendant-or-self::div[@class='textualContent']">
+            <div class="textualContent" title="textual content">textual content</div>
+        </xsl:if>
         
         <div id="{$facet.type}_full" class="facetTabbedContent full" data-label="full definition">
             <xsl:for-each select="$div//item">
