@@ -10,7 +10,7 @@
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Nov 12, 2020</xd:p>
-            <xd:p><xd:b>Author:</xd:b> bwb</xd:p>
+            <xd:p><xd:b>Author:</xd:b> Benjamin W. Bohl @bwbohl</xd:p>
             <xd:p></xd:p>
         </xd:desc>
     </xd:doc>
