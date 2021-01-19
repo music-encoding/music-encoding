@@ -11,7 +11,7 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Nov 12, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Benjamin W. Bohl @bwbohl</xd:p>
-            <xd:p></xd:p>
+            <xd:p>This XSLT is used in the Apache ANT based building process to create a canonicalized source.</xd:p>
         </xd:desc>
     </xd:doc>
     
