@@ -1,7 +1,7 @@
 # The Music Encoding Initiative
 
-| Branch        | Status  |
-| ------------- |:-------------:|
+| Branch        | Continuous Integration Status  |
+| ------------- |:------------------------------:|
 | Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop) |
 | Master | [![Build Status](https://travis-ci.org/music-encoding/music-encoding.svg?branch=master)](https://travis-ci.org/music-encoding/music-encoding) |
 
