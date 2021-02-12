@@ -220,15 +220,15 @@
         <desc>Captures whether a beam is "feathered" and in which direction.</desc>
         <valList type="closed">
           <valItem ident="acc">
-            <desc>(accelerando) indicates that the secondary beams get progressively closer together
+            <desc>(accelerando) means that the secondary beams become progressively more distant
               toward the end of the beam.</desc>
           </valItem>
           <valItem ident="mixed">
             <desc>(mixed acc and rit) for beams that are "feathered" in both directions.</desc>
           </valItem>
           <valItem ident="rit">
-            <desc>(ritardando) means that the secondary beams become progressively more distant
-              toward the end of the beam.</desc>
+            <desc>(ritardando) indicates that the secondary beams get progressively closer together
+            toward the end of the beam.</desc>
           </valItem>
           <valItem ident="norm">
             <desc>(normal) indicates that the secondary beams are equidistant along the course of
@@ -823,7 +823,6 @@
     <desc>Analytical domain attributes in the CMN repertoire.</desc>
     <classes>
       <memberOf key="att.beamPresent"/>
-      <memberOf key="att.fermataPresent"/>
       <memberOf key="att.glissPresent"/>
       <memberOf key="att.lvPresent"/>
       <memberOf key="att.ornamPresent"/>
@@ -1665,8 +1664,8 @@
       <constraint>
         <sch:rule context="mei:graceGrp[not(@copyof)]">
           <sch:assert
-            test="count(descendant::*[local-name()='note' or local-name()='rest' or               local-name()='chord' or local-name()='space']) &gt; 1"
-            >A graceGrp without a copyof attribute must have at least 2 note, rest, chord, or space
+            test="count(descendant::*[local-name()='note' or local-name()='rest' or               local-name()='chord' or local-name()='space']) &gt; 0"
+            >A graceGrp without a copyof attribute must have at least 1 note, rest, chord, or space
             descendants.</sch:assert>
         </sch:rule>
       </constraint>
@@ -1762,7 +1761,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="lv" module="MEI.cmn">
-    <desc>A "tie-like" indication that a note should ring beyond its written duration.</desc>
+    <desc>(laissez vibrer) – A "tie-like" indication that a note should ring beyond its written duration.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -1782,8 +1781,6 @@
         <sch:rule context="mei:lv">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
             attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
-          <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">Must have one of the attributes:
-            dur, dur.ges, endid, or tstamp2.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -2115,22 +2112,22 @@
     </classes>
     <content>
       <rng:choice>
-        <rng:group>
+        <rng:interleave>
           <rng:oneOrMore>
             <rng:ref name="oStaff"/>
           </rng:oneOrMore>
           <rng:oneOrMore>
             <rng:ref name="model.staffLike"/>
           </rng:oneOrMore>
-        </rng:group>
-        <rng:group>
+        </rng:interleave>
+        <rng:interleave>
           <rng:oneOrMore>
             <rng:ref name="oLayer"/>
           </rng:oneOrMore>
           <rng:oneOrMore>
             <rng:ref name="model.layerLike"/>
           </rng:oneOrMore>
-        </rng:group>
+        </rng:interleave>
       </rng:choice>
     </content>
     <constraintSpec ident="Check_ossia" scheme="isoschematron">
@@ -2371,16 +2368,6 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="When_not_copyof_tuplet_content" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:tuplet[not(@copyof)]">
-          <sch:assert
-            test="count(descendant::*[local-name()='note' or local-name()='rest' or               local-name()='chord']) &gt; 1"
-            >A tuplet without a copyof attribute must have at least 2 note, rest, or chord
-            descendants.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks>
       <p>The <gi scheme="MEI">beam</gi> sub-element is allowed so that custom beaming may be
         indicated, e.g., a septuplet may be divided into a group of three plus a group of four

@@ -1,6 +1,9 @@
 # The Music Encoding Initiative
 
-[![Build Status](https://travis-ci.org/music-encoding/music-encoding.svg?branch=develop)](https://travis-ci.org/music-encoding/music-encoding)
+| Branch        | Continuous Integration Status  |
+| ------------- |:------------------------------:|
+| Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop) |
+| Master | [![Build Status](https://travis-ci.org/music-encoding/music-encoding.svg?branch=master)](https://travis-ci.org/music-encoding/music-encoding) |
 
 The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI schema, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed as an eXtensible Markup Language (XML) schema. It is complemented by the MEI Guidelines, which provide detailed explanations of the components of the MEI model and best practices suggestions.
 

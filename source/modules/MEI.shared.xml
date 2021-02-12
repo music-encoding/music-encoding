@@ -227,7 +227,7 @@
       convenient typology of annotation suitable to the work in hand; e.g. annotation, gloss,
       citation, digression, preliminary, temporary, etc.</desc>
     <!-- Some attributes defined in att.controlEvent (att.timestamp.logical, att.timestamp.gestural,
-          att.staffIdent, and att.layerIdent) are provided here directly instead of making annot a 
+          att.staffIdent, and att.layerIdent) are provided here directly instead of making annot a
           member of att.controlEvent. -->
     <classes>
       <memberOf key="att.alignment"/>
@@ -689,6 +689,20 @@
           <rng:data type="nonNegativeInteger"/>
         </datatype>
       </attDef>
+      <attDef ident="rotate">
+        <desc>
+          Indicates the amount by which the contents of this element have been rotated clockwise or, if applicable, how the orientation of
+          the element self should be interpreted, with respect to the normal orientation of the parent surface.
+          The orientation is expressed in arc degrees.
+        </desc>
+        <datatype minOccurs="1" maxOccurs="1">
+          <rng:ref name="data.DEGREES"/>
+        </datatype>
+        <defaultVal>0</defaultVal>
+        <remarks>
+          <p>This attribute is based on the TEI attribute of the same name.</p>
+        </remarks>
+      </attDef>
     </attList>
   </classSpec>
   <classSpec ident="att.cue" module="MEI.shared" type="atts">
@@ -768,6 +782,7 @@
   <classSpec ident="att.custos.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
     <classes>
+      <memberOf key="att.accidental"/>
       <memberOf key="att.pitched"/>
     </classes>
     <attList>
@@ -1480,7 +1495,7 @@
         </datatype>
       </attDef>
       <!-- @llength not necessary:
-            @llength implies we know the direction of the vector which we 
+            @llength implies we know the direction of the vector which we
             can't know without establishing an end point, which in turn makes
             @llength redundant. -->
       <attDef ident="lsegs" usage="opt">
@@ -1840,13 +1855,10 @@
     <attList>
       <attDef ident="meiversion" usage="opt">
         <desc>Specifies a generic MEI version label.</desc>
-        <defaultVal>4.0.1</defaultVal>
+        <defaultVal>5.0.0-dev</defaultVal>
         <valList type="closed">
-          <valItem ident="4.0.0">
-            <desc>First release of MEI 4</desc>
-          </valItem>
-          <valItem ident="4.0.1">
-            <desc>Bugfix Release 4.0.1</desc>
+          <valItem ident="5.0.0-dev">
+            <desc>Development version of MEI 5.0.0</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1857,22 +1869,7 @@
     <classes>
       <memberOf key="att.duration.ratio"/>
       <memberOf key="att.mensural.shared"/>
-      <memberOf key="att.slashCount"/>
     </classes>
-    <attList>
-      <attDef ident="dot" usage="opt">
-        <desc>Specifies whether a dot is to be added to the base symbol.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-      <attDef ident="sign" usage="opt">
-        <desc>The base symbol in the mensuration sign/time signature of mensural notation.</desc>
-        <datatype>
-          <rng:ref name="data.MENSURATIONSIGN"/>
-        </datatype>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.meterConformance" module="MEI.shared" type="atts">
     <desc>Attributes that provide information about a structure's conformance to the prevailing
@@ -1982,7 +1979,7 @@
     <attList>
       <attDef ident="mm" usage="opt">
         <desc>Used to describe tempo in terms of beats (often the meter signature denominator) per
-          minute, ala M.M. (Maezel's Metronome). Do not confuse this attribute with midi.bpm or
+          minute, ala M.M. (Maelzel's Metronome). Do not confuse this attribute with midi.bpm or
           midi.mspb. In MIDI, a beat is always defined as a quarter note, *not the numerator of the
           time signature or the metronomic indication*.</desc>
         <datatype>
@@ -2111,6 +2108,7 @@
       <memberOf key="att.note.log.cmn"/>
       <memberOf key="att.note.log.mensural"/>
       <memberOf key="att.pitched"/>
+      <memberOf key="att.duration.quality"/>
     </classes>
   </classSpec>
   <classSpec ident="att.noteHeads" module="MEI.shared" type="atts">
@@ -2726,10 +2724,22 @@
     <classes>
       <memberOf key="att.augmentDots"/>
       <memberOf key="att.cue"/>
-      <memberOf key="att.duration.logical"/>
+      <memberOf key="att.restduration.logical"/>
       <memberOf key="att.event"/>
       <memberOf key="att.rest.log.cmn"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.restduration.logical" module="MEI.shared" type="atts">
+    <desc>Attributes that express duration of rests in musical terms.</desc>
+    <attList>
+      <attDef ident="dur" usage="opt">
+        <desc>Records the duration of a rest using the relative durational values provided by the
+          data.DURATIONRESTS datatype.</desc>
+        <datatype>
+          <rng:ref name="data.DURATIONRESTS"/>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.sb.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
@@ -3074,6 +3084,7 @@
       notes.</desc>
     <classes>
       <memberOf key="att.stems.cmn"/>
+      <memberOf key="att.stems.mensural"/>
     </classes>
     <attList>
       <attDef ident="stem.dir" usage="opt">
@@ -3100,6 +3111,32 @@
         <datatype>
           <rng:ref name="data.STEMPOSITION"/>
         </datatype>
+      </attDef>
+      <attDef ident="stem.sameas" usage="opt">
+        <desc>Points to a note element in a different layer whose stem is shared. 
+          The linked notes should be rendered like a chord though they are part of different layers.
+        </desc>
+        <datatype maxOccurs="1">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_stem.sameasTarget" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@stem.sameas">
+              <sch:let name="layer.n" value="self::node()/ancestor::mei:layer/@n"/>
+              <sch:let name="ref.id" value="substring(.,2)"/>
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@stem.sameas attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="substring(.,2)=//mei:note[not(ancestor::mei:layer/@n=$layer.n)]/@xml:id">
+                The value in @stem.sameas should correspond to the @xml:id attribute of the linked note
+                element of a different layer.</sch:assert>
+              <sch:assert role="warning"
+                test="../@dur=//mei:note[@xml:id=$ref.id]/@dur">
+                The linked notes by @stem.sameas should have the same @dur values.
+              </sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
       </attDef>
       <attDef ident="stem.visible" usage="opt">
         <desc>Determines whether a stem should be displayed.</desc>
@@ -3163,6 +3200,9 @@
           <valItem ident="m">
             <desc>(medial) neither first nor last syllable.</desc>
           </valItem>
+          <valItem ident="s">
+            <desc>(single) single syllable.</desc>
+          </valItem>
           <valItem ident="t">
             <desc>(terminal) last syllable.</desc>
           </valItem>
@@ -3191,8 +3231,8 @@
     <desc>Attributes that capture system layout information.</desc>
     <attList>
       <attDef ident="system.leftline" usage="opt">
-        <desc>Indicates whether the staves are joined at the left by a continuous line. The default
-          value is "true". Do not confuse this with the heavy vertical line used as a grouping
+        <desc>Indicates whether the system starts with a continuous line connecting all staves,
+          including single-staff systems. Do not confuse this with the heavy vertical line used as a grouping
           symbol.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
@@ -3253,7 +3293,8 @@
     <classes>
       <memberOf key="att.controlEvent"/>
       <memberOf key="att.mmTempo"/>
-      <memberOf key="att.startId"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
     </classes>
     <attList>
       <attDef ident="func">
@@ -4389,19 +4430,6 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="Check_barLinetaktplace" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:barLine[@taktplace]">
-          <sch:let name="staff" value="ancestor::mei:staff/@n"/>
-          <sch:let name="staffpos"
-            value="count(ancestor::mei:staff/preceding-sibling::mei:staff) + 1"/>
-          <sch:assert
-            test="number(@taktplace) &lt;= number(2 * preceding::mei:staffDef[@n=$staff and @lines][1]/@lines)"
-            >The value of @taktplace must be less than or equal to two times the number of staff
-            lines.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks>
       <p>This element is provided for repertoires, such as mensural notation, that lack measures.
         Because the <gi scheme="MEI">barLine</gi> element's attributes, from which the logical and
@@ -4571,7 +4599,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.metadataPointing"/>
-      <memberOf key="model.musicPart"/>
+      <memberOf key="macro.musicPart"/>
     </classes>
     <content>
       <rng:oneOrMore>
@@ -4979,7 +5007,9 @@
       <memberOf key="model.eventLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <rng:zeroOrMore>
+        <rng:ref name="accid"/>
+      </rng:zeroOrMore>
     </content>
     <remarks>
       <p>The most common visual form is a sign resembling a mordent. Other graphical forms may be
@@ -5365,6 +5395,7 @@
       <memberOf key="att.dot.ges"/>
       <memberOf key="att.dot.anl"/>
       <memberOf key="model.noteModifierLike"/>
+      <memberOf key="model.eventLike.mensural"/>
     </classes>
     <content>
       <rng:empty/>
@@ -5710,7 +5741,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.metadataPointing"/>
-      <memberOf key="model.musicPart"/>
+      <memberOf key="macro.musicPart"/>
     </classes>
     <content>
       <rng:choice>
@@ -5875,7 +5906,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="model.incipLike"/>
     </classes>
-    <!-- Can XSLT be used within content to "select" an incipit from the 
+    <!-- Can XSLT be used within content to "select" an incipit from the
         already-encoded MEI transcription in the music element?
         <rng:ref name="macro.XSLT"/> -->
     <content>
@@ -6495,6 +6526,8 @@
           <rng:ref name="model.appLike"/>
           <rng:ref name="model.editLike"/>
           <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="plica"/>
+          <rng:ref name="stem"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -6714,7 +6747,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.metaLike.page"/>
+      <memberOf key="macro.metaLike.page"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7089,7 +7122,7 @@
       <constraint>
         <!-- See http://vocab.org/frbr/core for more-precise entity-to-entity constraints -->
         <sch:rule
-          context="mei:relationList/mei:relation[parent::mei:work or parent::mei:expression or             
+          context="mei:relationList/mei:relation[parent::mei:work or parent::mei:expression or
           parent::mei:source or parent::mei:item]">
           <sch:assert
             test="matches(@rel, 'hasAbridgement') or
@@ -7297,7 +7330,7 @@
       <constraint>
         <sch:rule context="mei:respStmt[not(ancestor::mei:change)]">
           <sch:assert
-            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or 
+            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or
             count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
             role="warning">At least one element pair (a resp element and a name-like element) is
             recommended. Alternatively, each name-like element may have a @role
@@ -7398,9 +7431,7 @@
       <memberOf key="model.milestoneLike.music"/>
     </classes>
     <content>
-      <rng:optional>
-        <rng:ref name="custos"/>
-      </rng:optional>
+      <rng:empty/>
     </content>
     <remarks>
       <p>Do not confuse this element with the <gi scheme="MEI">lb</gi> element, which performs a
@@ -8000,7 +8031,7 @@
         coordinate terms using the <att>x</att> and <att>y</att> attributes or relative to another
         element using the <att>startid</att> attribute. Attributes in the att.visualOffset class may
         be used to record horizontal, vertical, or time offsets from the absolute coordinates or
-        from the location of the referenced element. The <att>ref</att> attribute must contain the
+        from the location of the referenced element. The <att>altsym</att> attribute must contain the
         id of a <gi scheme="MEI">symbolDef</gi> element. The <att>scale</att> attribute indicates
         that the printed output must be scaled by the specified percentage.</p>
     </remarks>
