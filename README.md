@@ -109,7 +109,7 @@ Nevertheless it is possible to build any customization locally in your working c
    cd [YOUR-CLONE-LOCATION]
    ```
    
-   * Call the Aache Ant init task:
+   * Call the Apache Ant init task:
    ```bash
    ant init
    ```
