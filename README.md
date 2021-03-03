@@ -131,3 +131,9 @@ Nevertheless it is possible to build any customization locally in your working c
    ```bash
    ant -lib lib/saxon/saxon9he.jar
    ```
+
+# Additional Resources
+
+Samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) repository, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.
+
+
