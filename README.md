@@ -43,12 +43,13 @@ Or, the same command using `jing`.
 
 # Customizing MEI
 
-To create your own customization, you should understand the building and customization process. The MEI Schema may be customized to express and validate different types of music documents. These customizations are controlled by customization  By default, MEI includes five customizations:
+To create your own customization, you should understand the building and customization process. The MEI Schema may be customized to express and validate different types of music documents. These customizations are configured with individual ODD files. This repository already includes several customizations:
 
  * mei-all: The full MEI Schema. This is the most permissive version of MEI.
  * mei-CMN: Validates MEI files that express common Western music notation.
  * mei-Mensural: Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
  * mei-Neumes: Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
+ * mei-basic: A very restricted version of MEI for minimum compatibility and exchangeability scenarios.
 
 ## Why Customizations?
 
