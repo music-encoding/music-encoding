@@ -49,7 +49,7 @@ The MEI Schema may be customized to express and validate different types of musi
  * mei-CMN: Validates MEI files that express common Western music notation.
  * mei-Mensural: Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
  * mei-Neumes: Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
- * mei-basic: A very restricted version of MEI for minimum compatibility and exchangeability scenarios.
+ * mei-basic: The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
 
 ## Why Customizations?
 
