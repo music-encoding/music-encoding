@@ -20,12 +20,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 **!ATTENTION!**
 
-For the sake of a a continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories:
-
-* Schema: https://github.com/music-encoding/schema
-* Guidelines: https://github.com/music-encoding/guidelines
-
-In addition, samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) project, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.  
+For the sake of a a continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
 
 # Validating MEI files against an MEI Schema
 
@@ -63,7 +58,7 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 # Building MEI
 
-The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](https://github.com/music-encoding/music-encoding#customizing-mei).
+The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)).
 
 Nevertheless it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
 
@@ -133,5 +128,16 @@ Nevertheless it is possible to build any customization locally in your working c
    ```
 
 # Additional Resources
+
+In addition to the source files for MEI in this repository, there are other useful resources in other repositories. The prebuilt release and development versions of:
+
+* Schemata: https://github.com/music-encoding/schema
+* Guidelines: https://github.com/music-encoding/guidelines
+
+And moreover
+
+* MEI sample-encodings: https://github.com/music-encoding/sample-encodings
+* Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools)
+
 
 Samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) repository, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.
