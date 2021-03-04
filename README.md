@@ -139,6 +139,3 @@ And moreover
 
 * MEI sample-encodings: https://github.com/music-encoding/sample-encodings
 * Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools)
-
-
-Samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) repository, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.
