@@ -20,7 +20,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 **!ATTENTION!**
 
-The prebuild schema files no longer exist in this repository, since reintegrating the guidelines and configuring a continuous integration workflow the build artifacts of this repository (Schemata and Guidelines) are being generated on every commit to the develop branch and automatically pushed to separate repositories:
+For the sake of a a continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories:
 
 * Schema: https://github.com/music-encoding/schema
 * Guidelines: https://github.com/music-encoding/guidelines
@@ -135,4 +135,3 @@ Nevertheless it is possible to build any customization locally in your working c
 # Additional Resources
 
 Samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) repository, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.
-
