@@ -43,7 +43,7 @@ Or, the same command using `jing`.
 
 # Customizing MEI
 
-To create your own customization, you should understand the building and customization process. The MEI Schema may be customized to express and validate different types of music documents. These customizations are configured with individual ODD files. This repository already includes several customizations:
+The MEI Schema may be customized to express and validate different types of music documents. To create your own customization, you should understand the building and customization process. Customizations are configured with individual ODD files. This repository already includes several customizations:
 
  * mei-all: The full MEI Schema. This is the most permissive version of MEI.
  * mei-CMN: Validates MEI files that express common Western music notation.
@@ -135,5 +135,4 @@ Nevertheless it is possible to build any customization locally in your working c
 # Additional Resources
 
 Samples of MEI-encoded files are available in the [sample-encodings](https://github.com/music-encoding/sample-encodings) repository, and tools for working with and converting to and from other formats and MEI are available in the [encoding-tools](https://github.com/music-encoding/encoding-tools) project.
-
 
