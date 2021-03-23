@@ -68,10 +68,10 @@ Nevertheless it is possible to build any customization locally in your working c
    * If you do not have a clone on your local machine yet run the following from your command line:
 
      ```bash
-     git clone https://github.com/music-encoding.git --recursive
+     git clone https://github.com/music-encoding/music-encoding.git --recursive
      ```
      
-   * If you already have a clone on your system you still might have to initialize the submodules by running the following commands form the command line:
+   * If you already have a clone on your system you still might have to initialize the submodules by running the following commands from the command line:
 
      Switch to your clone's directory:
      ```bash
@@ -79,11 +79,11 @@ Nevertheless it is possible to build any customization locally in your working c
      ```
      Initialize the submodules:
      ```bash
-     git submodules init
+     git submodule init
      ```
      Update the submodules:
      ```bash
-     git submodules update
+     git submodule update
      ```
 2. Check if your system meets the build requisites
 
@@ -123,7 +123,7 @@ Nevertheless it is possible to build any customization locally in your working c
    ant -lib lib/saxon/saxon9he.jar -Dcustomization.path=[PATH/TO/YOUR/CUSTOMIZATION] build-rng
    ```
 
-   * Build everything (all customizations shipped with tis repository, compiled ODDs for each customization, guidelines HTML):
+   * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
    ```bash
    ant -lib lib/saxon/saxon9he.jar
    ```
