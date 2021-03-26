@@ -262,8 +262,6 @@
                                 const storageName = 'meiSpecs_' + facetId + '_display';
                                 localStorage.setItem(storageName,style);
                                 
-                                //console.log('setting tabs, storageName: ' + storageName + ', facetId: ' + facetId + ', style: ' + style)
-                                
                                 const facetElem = document.getElementById(facetId);
                                 
                                 //console.log(facetElem)
