@@ -99,34 +99,34 @@ Nevertheless it is possible to build any customization locally in your working c
      ant -version
      ```
    
-2. Initialize the build process
+3. Initialize the build process
 
    * Switch to your clone's directory:
-   ```bash
-   cd [YOUR-CLONE-LOCATION]
-   ```
+     ```bash
+     cd [YOUR-CLONE-LOCATION]
+     ```
    
    * Call the Apache Ant init task:
-   ```bash
-   ant init
-   ```
+     ```bash
+     ant init
+     ```
 
 4. Run the build process
 
    * Build guidelines HTML:
-   ```bash
-   ant -lib lib/saxon/saxon9he.jar build-guidelines-html
-   ```
+     ```bash
+     ant -lib lib/saxon/saxon9he.jar build-guidelines-html
+     ```
 
    * Build a specific customization's RNG schema:
-   ```bash
-   ant -lib lib/saxon/saxon9he.jar -Dcustomization.path=[PATH/TO/YOUR/CUSTOMIZATION] build-rng
-   ```
+     ```bash
+     ant -lib lib/saxon/saxon9he.jar -Dcustomization.path=[PATH/TO/YOUR/CUSTOMIZATION] build-rng
+     ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
-   ```bash
-   ant -lib lib/saxon/saxon9he.jar
-   ```
+     ```bash
+     ant -lib lib/saxon/saxon9he.jar
+     ```
 
 ## Using Oxygen to Build MEI
 
