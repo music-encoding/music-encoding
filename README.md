@@ -20,7 +20,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 **!ATTENTION!**
 
-For the sake of a a continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
+For the sake of the continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
 
 # Validating MEI files against an MEI Schema
 
@@ -43,7 +43,7 @@ The MEI Schema may be customized to express and validate different types of musi
  * [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
  * [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
  * [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
- * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive cutomization of MEI.
+ * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
  * [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
  * [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
 
@@ -85,7 +85,7 @@ Nevertheless it is possible to build any customization locally in your working c
      ```bash
      git submodule update
      ```
-2. Check if your system meets the build requisites
+2. Check if your system meets the build prerequisites
 
    * Is Java 8 or above available on your machine?
    
