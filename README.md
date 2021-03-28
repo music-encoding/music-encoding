@@ -7,6 +7,8 @@
 
 The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI schema, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed as an eXtensible Markup Language (XML) schema. It is complemented by the MEI Guidelines, which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
+In this document, you will learn how to contribute to the development of MEI by building the schema and guidelines (you should also consider consulting the tutorial on ["Understanding ODD"](https://music-encoding.org/tutorials/understanding-odd.html)). For the pre-built schemas of the latest release of MEI, please consult the ["schemas" section](https://music-encoding.org/resources/schemas.html) of the music-encoding website.
+
 # Structure of this repository
 
 This repository contains all the source code of the MEI Schema and Guidelines:
