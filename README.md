@@ -89,19 +89,43 @@ Nevertheless it is possible to build any customization locally in your working c
      ```bash
      git submodule update
      ```
-2. Check if your system meets the build prerequisites
+2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
+     
+     Java 8 or above is needed for the build process drive by apache Ant (see below).
+     To check for Java on your machine, run the following command:
    
      ```bash
      java -version
      ```
+     
+     This should return something similar to
+     
+     ```bash
+     openjdk version "11.0.9" 2020-10-20
+     OpenJDK Runtime Environment (build 11.0.9+11)
+     OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
+     ```
+     
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction found on the internet and matching your operating system.
    
    * Is Apache Ant installed?
+
+     [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD sources.
+     Run the following command to see if it is available on yout system:
 
      ```bash
      ant -version
      ```
+     
+     This should return something similar to:
+     
+     ```
+     Apache Ant(TM) version 1.10.9 compiled on September 27 2020
+     ```
+     
+     We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt return an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
    
 3. Initialize the build process
 
