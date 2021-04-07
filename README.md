@@ -26,7 +26,7 @@ For the sake of the continuous integration (CI) workflow, the build artifacts of
 
 # Validating MEI files against an MEI Schema
 
-One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviours. To validate an MEI file you need XML validator software. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com) has built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
+One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviours. To validate an MEI file you need a XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
 
 For example, you might validate an MEI file from the the ['sample-encodings'](https://github.com/music-encoding/sample-encodings/) project using xmllint:
 
@@ -67,7 +67,7 @@ Nevertheless it is possible to build any customization locally in your working c
 
 1. Create a recursive clone of this repository
   
-  Git offers a mechanism called `submodule` that allows to reference third party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
+  Git offers a mechanism called `submodule` that allows you to reference third party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
 
    * If you do not have a clone on your local machine yet run the following from your command line:
 
@@ -93,7 +93,7 @@ Nevertheless it is possible to build any customization locally in your working c
 
    * Is Java 8 or above available on your machine?
      
-     Java 8 or above is needed for the build process drive by apache Ant (see below).
+     Java 8 or above is needed for the build process driven by apache Ant (see below).
      To check for Java on your machine, run the following command:
    
      ```bash
@@ -108,12 +108,12 @@ Nevertheless it is possible to build any customization locally in your working c
      OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
      ```
      
-     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction found on the internet and matching your operating system.
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system that (to be found on the internet).
    
    * Is Apache Ant installed?
 
      [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD sources.
-     Run the following command to see if it is available on yout system:
+     Run the following command to see if it is available on your system:
 
      ```bash
      ant -version
@@ -125,7 +125,7 @@ Nevertheless it is possible to build any customization locally in your working c
      Apache Ant(TM) version 1.10.9 compiled on September 27 2020
      ```
      
-     We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt return an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
+     We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
    
 3. Initialize the build process
 
