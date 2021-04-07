@@ -66,6 +66,8 @@ The MEI Source is not a schema in itself; rather, it can be used to build custom
 Nevertheless it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
 
 1. Create a recursive clone of this repository
+  
+  Git offers a mechanism called `submodule` that allows to reference third party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
 
    * If you do not have a clone on your local machine yet run the following from your command line:
 
