@@ -25,8 +25,8 @@
           <rng:ref name="data.FRETNUMBER"/>
         </datatype>
       </attDef>
-      <attDef ident="tab.string" usage="opt">
-        <desc>Records which string is to be played.</desc>
+      <attDef ident="tab.course" usage="opt">
+        <desc>Records which course is to be played.</desc>
         <datatype>
           <rng:ref name="data.STRINGNUMBER"/>
         </datatype>
@@ -47,7 +47,7 @@
   <classSpec ident="att.stringtab.tuning" module="MEI.stringtab" type="atts">
     <desc>String tablature tuning information.</desc>
     <attList>
-      <attDef ident="tab.strings" usage="opt">
+      <attDef ident="tab.courses" usage="opt">
         <desc>Provides a *written* pitch and octave for each open string or course of
           strings.</desc>
         <datatype>
@@ -62,6 +62,65 @@
         </datatype>
       </attDef>
     </attList>
+  </classSpec>
+  <classSpec ident="att.tabDurSym.log" module="MEI.stringtab" type="atts">
+    <desc>Logical domain attributes for tabDurSym.</desc>
+    <classes>
+      <memberOf key="att.layerIdent"/>
+      <memberOf key="att.partIdent"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.tabDurSym.vis" module="MEI.stringtab" type="atts">
+    <desc>Visual domain attributes for tabDurSym.</desc>
+    <classes>
+      <memberOf key="att.altSym"/>
+      <memberOf key="att.color"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.placementRelStaff"/>
+      <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.tabDurSym.ges" module="MEI.stringtab" type="atts">
+    <desc>Gestural domain attributes for tabDurSym.</desc>
+  </classSpec>
+  <classSpec ident="att.tabDurSym.anl" module="MEI.stringtab" type="atts">
+    <desc>Analytical domain attributes for tabDurSym.</desc>
+  </classSpec>
+  <classSpec ident="att.tabGrp.log" module="MEI.stringtab" type="atts">
+    <desc>Logical domain attributes for tabGrp.</desc>
+    <classes>
+      <!-- Would that be helpful? <memberOf key="att.articulation"/>-->      
+      <memberOf key="att.augmentDots"/>
+      <memberOf key="att.duration.logical"/>
+      <memberOf key="att.event"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.tabGrp.vis" module="MEI.stringtab" type="atts">
+    <desc>Visual domain attributes for tabGrp.</desc>
+    <classes>
+      <!--Would that be helpful? <memberOf key="att.altSym"/>-->
+      <!--Would that be helpful? <memberOf key="att.extSym"/>-->
+      <memberOf key="att.visibility"/>
+      <memberOf key="att.visualOffset.ho"/>
+      <memberOf key="att.visualOffset.to"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.tabGrp.ges" module="MEI.stringtab" type="atts">
+    <desc>Gestural domain attributes for tabGrp.</desc>
+    <classes>
+      <!-- Would that be helpful? <memberOf key="att.articulation.gestural"/>-->
+      <memberOf key="att.duration.gestural"/>      
+    </classes>
+  </classSpec>
+  <classSpec ident="att.tabGrp.anl" module="MEI.stringtab" type="atts">
+    <desc>Analytical domain attributes for tabGrp.</desc>
+    <classes>
+      <!-- Would that be helpful? <memberOf key="att.fermataPresent"/>-->
+    </classes>
   </classSpec>
   <elementSpec ident="barre" module="MEI.stringtab">
     <desc>A barre in a chord tablature grid.</desc>
@@ -92,4 +151,58 @@
         attribute.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="tabDurSym" module="MEI.stringtab">
+    <desc>A visual indication of the duration of a <gi scheme="MEI">tagGrp</gi>.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.tabDurSym.log"/>
+      <memberOf key="att.tabDurSym.vis"/>
+      <memberOf key="att.tabDurSym.ges"/>
+      <memberOf key="att.tabDurSym.anl"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>
+    <constraintSpec ident="check_tabDurSym_in_beams" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:tabDurSym">
+          <sch:assert role="warning" test="not(ancestor::mei:beam)">It is very uncommon to see tab duration symbols inside beams.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>The presence of a <gi scheme="MEI">tabDurSym</gi> indicates that there is a symbol rendered
+        for the parent <gi scheme="MEI">tabGrp</gi>. If no additional attributes like 
+        <att>altsym</att>are given, a default symbol conforming to the current notation style or font
+        is to be used. The absence of this elements indicates that the last provided duration symbol
+        equally applies to the current tab group.</p>
+    </remarks>    
+  </elementSpec>
+  <elementSpec ident="tabGrp" module="MEI.stringtab">
+    <desc>A group of simultaneous tab notes, comparable to a <gi scheme="MEI">chord</gi> in CMN.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.tabGrp.log"/>
+      <memberOf key="att.tabGrp.vis"/>
+      <memberOf key="att.tabGrp.ges"/>
+      <memberOf key="att.tabGrp.anl"/>
+      <memberOf key="model.eventLike"/>
+    </classes>
+    <content>
+      <rng:optional>
+        <rng:ref name="tabDurSym"/>
+      </rng:optional>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <!-- alternative: model.chordPart – This would give note and artic -->
+          <rng:ref name="note"/>
+          <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.appLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>    
+  </elementSpec>  
 </specGrp>
