@@ -2,8 +2,7 @@
 
 | Branch        | Continuous Integration Status  |
 | ------------- |:------------------------------:|
-| Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop) |
-| Master | [![Build Status](https://travis-ci.org/music-encoding/music-encoding.svg?branch=master)](https://travis-ci.org/music-encoding/music-encoding) |
+| Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
 
 The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI schema, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed as an eXtensible Markup Language (XML) schema. It is complemented by the MEI Guidelines, which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
@@ -34,7 +33,7 @@ For example, you might validate an MEI file from the the ['sample-encodings'](ht
 
     sample-encodings/MEI 3.0/Music/Complete examples/Bach_Ein_festeBurg.mei validates
 
-Or, the same command using `jing`. 
+Or, the same command using `jing`.
 
     $> jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
 
@@ -66,7 +65,7 @@ The MEI Source is not a schema in itself; rather, it can be used to build custom
 Nevertheless it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
 
 1. Create a recursive clone of this repository
-  
+
   Git offers a mechanism called `submodule` that allows you to reference third party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
 
    * If you do not have a clone on your local machine yet run the following from your command line:
@@ -74,7 +73,7 @@ Nevertheless it is possible to build any customization locally in your working c
      ```bash
      git clone https://github.com/music-encoding/music-encoding.git --recursive
      ```
-     
+
    * If you already have a clone on your system you still might have to initialize the submodules by running the following commands from the command line:
 
      Switch to your clone's directory:
@@ -92,24 +91,24 @@ Nevertheless it is possible to build any customization locally in your working c
 2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
-     
+
      Java 8 or above is needed for the build process driven by apache Ant (see below).
      To check for Java on your machine, run the following command:
-   
+
      ```bash
      java -version
      ```
-     
+
      This should return something similar to
-     
+
      ```bash
      openjdk version "11.0.9" 2020-10-20
      OpenJDK Runtime Environment (build 11.0.9+11)
      OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
      ```
-     
+
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system that (to be found on the internet).
-   
+
    * Is Apache Ant installed?
 
      [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD sources.
@@ -118,22 +117,22 @@ Nevertheless it is possible to build any customization locally in your working c
      ```bash
      ant -version
      ```
-     
+
      This should return something similar to:
-     
+
      ```
      Apache Ant(TM) version 1.10.9 compiled on September 27 2020
      ```
-     
+
      We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
-   
+
 3. Initialize the build process
 
    * Switch to your clone's directory:
      ```bash
      cd [YOUR-CLONE-LOCATION]
      ```
-   
+
    * Call the Apache Ant init task:
      ```bash
      ant init
