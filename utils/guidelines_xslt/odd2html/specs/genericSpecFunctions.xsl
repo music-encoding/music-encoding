@@ -1187,12 +1187,19 @@
                 <xsl:if test="not($macroSpec)">
                     <xsl:message select="$macroSpec.name || ' missing at ' || $object/@ident" terminate="yes"/>
                 </xsl:if>
-                <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>    
+                <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>
+                <xsl:for-each select="$macroSpec//tei:content//rng:ref[starts-with(@name,'model.')]">
+                    <xsl:sequence select="tools:getChildren(@name)"/>    
+                </xsl:for-each>
             </xsl:for-each>
         </xsl:variable>
         <xsl:variable name="children" select="$direct.children | $class.children | $macro.children" as="node()*"/>
         <xsl:variable name="allows.anyXML" select="exists($object/tei:content/rng:element[rng:anyName and rng:zeroOrMore/rng:attribute/rng:anyName and rng:zeroOrMore//rng:text and rng:zeroOrMore//rng:ref[@name = $object/@ident]])" as="xs:boolean"/>
-        <xsl:variable name="allows.text" select="xs:boolean(not($allows.anyXML) and exists($object/tei:content//rng:text))" as="xs:boolean"/>
+        <xsl:variable name="allows.text" as="xs:boolean">
+            <xsl:variable name="regular.text" select="xs:boolean(not($allows.anyXML) and exists($object/tei:content//rng:text))" as="xs:boolean"/>
+            <xsl:variable name="macro.text" select="some $macroSpec in (for $name in $object//tei:content//rng:ref[starts-with(@name,'macro.')]/@name return ($macro.groups/self::tei:macroSpec[@ident = $name])) satisfies exists($macroSpec//tei:content//rng:text)" as="xs:boolean"/>
+            <xsl:value-of select="$regular.text or $macro.text"/>
+        </xsl:variable>
         
         <xsl:choose>
             <xsl:when test="count($children) gt 0 or $allows.text">
