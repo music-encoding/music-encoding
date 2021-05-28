@@ -705,6 +705,12 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.course.log" module="MEI.shared" type="atts">
+    <desc>Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.pitched"/>
+    </classes>
+  </classSpec>
   <classSpec ident="att.cue" module="MEI.shared" type="atts">
     <desc>Attributes that describe "cue-ness".</desc>
     <attList>
@@ -3465,6 +3471,40 @@
         C to C♯ and one from C to D♭.</p>
     </remarks>
   </classSpec>
+  <classSpec ident="att.tuning.log" module="MEI.shared" type="atts">
+    <desc>Logical domain attributes for tuning.</desc>
+    <attList>
+      <attDef ident="tuning.standard" usage="opt">
+        <desc>Describes the tuning standard used.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="guitar.standard">
+            <desc>Standard tuning for current guitars. The courses are tuned to E2 A2 D3 G3 B3 E4.</desc>
+          </valItem>
+          <valItem ident="guitar.drop.D">
+            <desc>Drop D tuning for guitars. The lowest course is tuned down to D, while all other courses are kept to their regular pitches. D2 A2 D3 G3 B3 E4.</desc>
+          </valItem>
+          <valItem ident="guitar.open.D">
+            <desc>Open D tuning for guitars. D2 A2 D3 F3s A3 D4.</desc>
+          </valItem>
+          <valItem ident="guitar.open.G">
+            <desc>Open G tuning for guitars. D2 G2 D2 G2 B3 D4.</desc>
+          </valItem>
+          <valItem ident="guitar.open.A">
+            <desc>Open A tuning for guitars. E2 A2 E3 A3 C4s E4.</desc>
+          </valItem>
+          <valItem ident="lute.renaissance.6">
+            <desc>Renaissance tuning for lutes with 10 strings on 6 courses. G2G3 C3C4 F3F4 A4A4 D4 G4.</desc>
+          </valItem>
+          <valItem ident="lute.baroque.d.major">
+            <desc>Baroque tuning for lutes with 6 stable courses, and additional bass courses tuned to the key of D Major.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.tupletPresent" module="MEI.shared" type="atts">
     <desc>Attributes for indicating the presence of a tuplet.</desc>
     <attList>
@@ -4153,6 +4193,9 @@
   </classSpec>
   <classSpec ident="model.titlePagePart" module="MEI.shared" type="model">
     <desc>Groups elements that may appear as part of a title page transcription.</desc>
+  </classSpec>
+  <classSpec ident="model.tuningPart" module="MEI.shared" type="model">
+    <desc>Groups elements that may appear inside the <gi scheme="MEI">tuning</gi> element.</desc>
   </classSpec>
   <elementSpec ident="accid" module="MEI.shared">
     <desc>(accidental) – Records a temporary alteration to the pitch of a note.</desc>
@@ -4987,6 +5030,20 @@
         </remarks>
       </attDef>
     </attList>
+  </elementSpec>
+  <elementSpec ident="course" module="MEI.shared">
+    <desc>Describes the tuning of a course.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.course.log"/>
+      <memberOf key="att.course.vis"/>
+      <memberOf key="att.course.ges"/>
+      <memberOf key="att.course.anl"/>
+      <memberOf key="model.tuningPart"/>
+    </classes>
+    <content>
+      <rng:empty/>
+    </content>    
   </elementSpec>
   <elementSpec ident="creation" module="MEI.shared">
     <desc>Non-bibliographic details of the creation of an intellectual entity, in narrative form,
@@ -8412,6 +8469,25 @@
     </attList>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="tuning" module="MEI.shared">
+    <desc>Describes the tuning of an instrument</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.tuning.log"/>
+      <memberOf key="att.tuning.vis"/>
+      <memberOf key="att.tuning.ges"/>
+      <memberOf key="att.tuning.anl"/>      
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.tuningPart"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks>
+      <p>At this point, the tuning element has been worked out for string instruments only. However, as it 
+        seems applicable for other instruments, it's been made available in the MEI.shared module.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="width" module="MEI.shared">
