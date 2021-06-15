@@ -177,7 +177,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
    b. Locating the `defaultSource` parameter and double-clicking on its value to change it. This will open the _Edit Parameter_ window.
 
-   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it.
+   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it. Make sure that the path start with *file* protocol `file:/` (e.g. `file:/D:/music-encoding/source/mei-source.xml`).
 
    d. Click on the _OK_ button. The _Edit Parameter_ window will close.
 
@@ -185,7 +185,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
 8. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Projects_ section of the window, you will find your _new project_ with the name you gave it in step 5. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will build the schema.
 
-Once the building is done, Oxygen will automatically open the schema. The schema file is also stored in the `music-encoding/out/` folder if you want to consult it later. You can change the location where the schema generated is saved by clicking on _Output_ in the _Edit Ant Scenario_ window and changing the file path.
+Once the building is done, Oxygen will automatically open the schema. The schema file is also stored in the `music-encoding/customizations/out/` folder if you want to consult it later. You can change the location where the schema generated is saved by clicking on _Output_ in the _Edit Ant Scenario_ window and changing the file path.
 
 ### Build Guidelines HTML
 
