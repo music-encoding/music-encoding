@@ -177,7 +177,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
    b. Locating the `defaultSource` parameter and double-clicking on its value to change it. This will open the _Edit Parameter_ window.
 
-   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it. Make sure that the path starts with the *file* protocol, e.g. `file:/D:/music-encoding/source/mei-source.xml`.
+   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it. If you are on Windows, make sure that the path starts with the *file* protocol, e.g. `file:/D:/music-encoding/source/mei-source.xml`.
 
    d. Click on the _OK_ button. The _Edit Parameter_ window will close.
 
