@@ -169,7 +169,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
 4. Click on the _Duplicate_ button. This will open the _Edit Ant Scenario_ window.
 
-5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., "MEI Mensural Schema - plica feature").
+5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., "MEI Mensural Schema - plica feature"). The storage option can be either _Project Options_ or _Global Options_.
 
 6. Change its `defaultSource` parameter by:
 
@@ -183,7 +183,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
 7. Now, you will be back in the _Edit Ant Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the directory where your schema gets stored by clicking on the _Output_ tab.
 
-8. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Projects_ section of the window, you will find your _new project_ with the name you gave it in step 5. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will build the schema.
+8. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Projects_ or _Global_ section of the window based on your choice in step 5, you will find your _new project_ with the name you gave it in step 5. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will build the schema.
 
 Once the building is done, Oxygen will automatically open the schema. The schema file is also stored in the `music-encoding/customizations/out/` folder if you want to consult it later. You can change the location where the schema generated is saved by clicking on _Output_ in the _Edit Ant Scenario_ window and changing the file path.
 
