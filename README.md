@@ -144,6 +144,7 @@ Nevertheless it is possible to build any customization locally in your working c
      ```bash
      ant -lib lib/saxon/saxon9he.jar build-guidelines-html
      ```
+     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
 
    * Build a specific customization's RNG schema:
      ```bash
