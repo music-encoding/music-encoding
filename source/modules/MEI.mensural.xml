@@ -171,6 +171,38 @@
         </datatype>
       </attDef>
     </attList>
+    <constraintSpec ident="check_duplex_quality" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:note[@dur.quality='duplex']">
+          <sch:assert test="@dur='longa'">
+            Duplex quality can only be used with longas (in Ars antiqua).
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+      <constraint>
+        <sch:rule context="mei:space[@dur.quality='duplex']">
+          <sch:assert test="@dur='longa'">
+            Duplex quality can only be used with longas (in Ars antiqua).
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="check_maiorminor_quality" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:note[@dur.quality='maior' or @dur.quality='minor']">
+          <sch:assert test="@dur='semibrevis'">
+            Maior / minor quality can only be used with semibreves (in Ars antiqua).
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+      <constraint>
+        <sch:rule context="mei:space[@dur.quality='maior' or @dur.quality='minor']">
+          <sch:assert test="@dur='semibrevis'">
+            Maior / minor quality can only be used with semibreves (in Ars antiqua).
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </classSpec>
   <classSpec ident="att.ligature.log" module="MEI.mensural" type="atts">
     <desc>Logical domain attributes.</desc>
@@ -248,6 +280,18 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.note.anl.mensural" module="MEI.mensural" type="atts">
+    <desc>Analytical domain attributes in the Mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.note.ges.mensural" module="MEI.mensural" type="atts">
+    <desc>Gestural domain attributes in the Mensural repertoire.</desc>
+    <classes>
+      <memberOf key="att.duration.ratio"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="att.note.log.mensural" module="MEI.mensural" type="atts">
+    <desc>Logical domain attributes in the Mensural repertoire.</desc>
+  </classSpec>
   <classSpec ident="att.note.vis.mensural" module="MEI.mensural" type="atts">
     <desc>Visual domain attributes in the Mensural repertoire.</desc>
     <attList>
@@ -259,14 +303,31 @@
       </attDef>
     </attList>
   </classSpec>
-  <classSpec ident="att.note.ges.mensural" module="MEI.mensural" type="atts">
-    <desc>Gestural domain attributes.</desc>
-    <classes>
-      <memberOf key="att.duration.ratio"/>
-    </classes>
+  <classSpec ident="att.plica.anl" module="MEI.mensural" type="atts">
+    <desc>Analytical domain attributes that describe the properties of a plica in the mensural repertoire.</desc>
   </classSpec>
-  <classSpec ident="att.note.log.mensural" module="MEI.mensural" type="atts">
-    <desc>Logical domain attributes in the Mensural repertoire.</desc>
+  <classSpec ident="att.plica.ges" module="MEI.mensural" type="atts">
+    <desc>Gestural domain attributes that describe the properties of a plica in the mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.plica.log" module="MEI.mensural" type="atts">
+    <desc>Logical domain attributes that describe the properties of a plica in the mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.plica.vis" module="MEI.mensural" type="atts">
+    <desc>Visual domain attributes that describe the properties of a plica stem in the mensural repertoire.</desc>
+    <attList>
+      <attDef ident="dir" usage="opt">
+        <desc>Describes the direction of a stem.</desc>
+        <datatype>
+          <rng:ref name="data.STEMDIRECTION.basic"/>
+        </datatype>
+      </attDef>
+      <attDef ident="len" usage="opt">
+        <desc>Encodes the stem length.</desc>
+        <datatype>
+          <rng:ref name="data.MEASUREMENTABS"/>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.proport.log" module="MEI.mensural" type="atts">
     <desc>Logical domain attributes. These attributes describe augmentation or diminution of the
@@ -318,10 +379,20 @@
       <memberOf key="att.mensural.vis"/>
     </classes>
   </classSpec>
-  <classSpec ident="att.STEMPROPERTIES.mensural" module="MEI.mensural" type="atts">
-    <desc>Attributes that describe the properties of stems in the mensural repertoire.</desc>
+  <classSpec ident="att.stem.anl" module="MEI.mensural" type="atts">
+    <desc>Analytical domain attributes that describe the properties of a stem in the mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.stem.ges" module="MEI.mensural" type="atts">
+    <desc>Gestural domain attributes that describe the properties of a stem in the mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.stem.log" module="MEI.mensural" type="atts">
+    <desc>Logical domain attributes that describe the properties of a stem in the mensural repertoire.</desc>
+  </classSpec>
+  <classSpec ident="att.stem.vis" module="MEI.mensural" type="atts">
+    <desc>Visual domain attributes that describe the properties of a stem in the mensural repertoire.</desc>
     <classes>
         <memberOf key="att.xy"/>
+        <memberOf key="att.color"/>
     </classes>
     <attList>
       <attDef ident="pos" usage="opt">
@@ -330,7 +401,7 @@
           <rng:ref name="data.STEMPOSITION"/>
         </datatype>
       </attDef>
-      <attDef ident="length" usage="opt">
+      <attDef ident="len" usage="opt">
         <desc>Encodes the stem length.</desc>
         <datatype>
           <rng:ref name="data.MEASUREMENTABS"/>
@@ -461,6 +532,24 @@
         example, one slash is added for what we now call 'alla breve'.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="plica" module="MEI.mensural">
+    <desc>Plica</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.plica.log"/>
+      <memberOf key="att.plica.vis"/>
+      <memberOf key="att.plica.ges"/>
+      <memberOf key="att.plica.anl"/>
+    </classes>
+    <constraintSpec ident="Check_plica" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:plica">
+          <sch:assert test="count(../mei:plica) &lt;= 1">Only one plica is allowed.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
   <elementSpec ident="proport" module="MEI.mensural">
     <desc>(proportion) – Description of note duration as arithmetic ratio.</desc>
     <classes>
@@ -487,8 +576,11 @@
     <desc>A stem element.</desc>
     <classes>
       <memberOf key="att.common"/>
-      <memberOf key="att.STEMPROPERTIES.mensural"/>
-      <memberOf key="model.noteModifierLike"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.stem.log"/>
+      <memberOf key="att.stem.vis"/>
+      <memberOf key="att.stem.ges"/>
+      <memberOf key="att.stem.anl"/>
     </classes>
     <content>
       <rng:empty/>

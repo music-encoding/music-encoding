@@ -689,6 +689,20 @@
           <rng:data type="nonNegativeInteger"/>
         </datatype>
       </attDef>
+      <attDef ident="rotate">
+        <desc>
+          Indicates the amount by which the contents of this element have been rotated clockwise or, if applicable, how the orientation of
+          the element self should be interpreted, with respect to the normal orientation of the parent surface.
+          The orientation is expressed in arc degrees.
+        </desc>
+        <datatype minOccurs="1" maxOccurs="1">
+          <rng:ref name="data.DEGREES"/>
+        </datatype>
+        <defaultVal>0</defaultVal>
+        <remarks>
+          <p>This attribute is based on the TEI attribute of the same name.</p>
+        </remarks>
+      </attDef>
     </attList>
   </classSpec>
   <classSpec ident="att.cue" module="MEI.shared" type="atts">
@@ -1841,13 +1855,10 @@
     <attList>
       <attDef ident="meiversion" usage="opt">
         <desc>Specifies a generic MEI version label.</desc>
-        <defaultVal>4.0.1</defaultVal>
+        <defaultVal>5.0.0-dev</defaultVal>
         <valList type="closed">
-          <valItem ident="4.0.0">
-            <desc>First release of MEI 4</desc>
-          </valItem>
-          <valItem ident="4.0.1">
-            <desc>Bugfix Release 4.0.1</desc>
+          <valItem ident="5.0.0-dev">
+            <desc>Development version of MEI 5.0.0</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1951,7 +1962,9 @@
         <desc>Contains the number indicating the beat unit, that is, the bottom number of the meter
           signature.</desc>
         <datatype>
-          <rng:data type="decimal"/>
+          <rng:data type="decimal">
+            <rng:param name="minExclusive">0</rng:param>
+          </rng:data>
         </datatype>
       </attDef>
       <attDef ident="meter.sym" usage="opt">
@@ -2494,8 +2507,31 @@
       <memberOf key="att.octave"/>
     </classes>
   </classSpec>
-  <classSpec ident="att.placement" module="MEI.shared" type="atts">
-    <desc>Attributes capturing placement information.</desc>
+  <classSpec ident="att.placementOnStaff" module="MEI.shared" type="atts">
+    <desc>Attributes capturing placement on a staff.</desc>
+    <attList>
+       <attDef ident="onstaff" usage="opt">
+          <desc>Indicates the placement of the item within the staff. A value of 'true' means on the staff, and 'false' off the staff.</desc>
+          <datatype>
+             <rng:ref name="data.BOOLEAN"/>
+          </datatype>
+       </attDef>
+    </attList>
+  </classSpec>   
+  <classSpec ident="att.placementRelEvent" module="MEI.shared" type="atts">
+    <desc>Attributes capturing placement information with respect to an event.</desc>
+    <attList>
+       <attDef ident="place" usage="opt">
+          <desc>Captures the placement of the item with respect to the event with which it is
+             associated.</desc>
+          <datatype>
+             <rng:ref name="data.STAFFREL"/>
+          </datatype>
+       </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.placementRelStaff" module="MEI.shared" type="atts">
+    <desc>Attributes capturing placement information with respect to the staff.</desc>
     <attList>
       <attDef ident="place" usage="opt">
         <desc>Captures the placement of the item with respect to the staff with which it is
@@ -3101,6 +3137,32 @@
           <rng:ref name="data.STEMPOSITION"/>
         </datatype>
       </attDef>
+      <attDef ident="stem.sameas" usage="opt">
+        <desc>Points to a note element in a different layer whose stem is shared. 
+          The linked notes should be rendered like a chord though they are part of different layers.
+        </desc>
+        <datatype maxOccurs="1">
+          <rng:ref name="data.URI"/>
+        </datatype>
+        <constraintSpec ident="check_stem.sameasTarget" scheme="isoschematron">
+          <constraint>
+            <sch:rule context="@stem.sameas">
+              <sch:let name="layer.n" value="self::node()/ancestor::mei:layer/@n"/>
+              <sch:let name="ref.id" value="substring(.,2)"/>
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@stem.sameas attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="substring(.,2)=//mei:note[not(ancestor::mei:layer/@n=$layer.n)]/@xml:id">
+                The value in @stem.sameas should correspond to the @xml:id attribute of the linked note
+                element of a different layer.</sch:assert>
+              <sch:assert role="warning"
+                test="../@dur=//mei:note[@xml:id=$ref.id]/@dur">
+                The linked notes by @stem.sameas should have the same @dur values.
+              </sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
       <attDef ident="stem.visible" usage="opt">
         <desc>Determines whether a stem should be displayed.</desc>
         <datatype>
@@ -3256,7 +3318,8 @@
     <classes>
       <memberOf key="att.controlEvent"/>
       <memberOf key="att.mmTempo"/>
-      <memberOf key="att.startId"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.logical"/>
     </classes>
     <attList>
       <attDef ident="func">
@@ -4561,7 +4624,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.metadataPointing"/>
-      <memberOf key="model.musicPart"/>
+      <memberOf key="macro.musicPart"/>
     </classes>
     <content>
       <rng:oneOrMore>
@@ -5357,6 +5420,7 @@
       <memberOf key="att.dot.ges"/>
       <memberOf key="att.dot.anl"/>
       <memberOf key="model.noteModifierLike"/>
+      <memberOf key="model.eventLike.mensural"/>
     </classes>
     <content>
       <rng:empty/>
@@ -5702,7 +5766,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.metadataPointing"/>
-      <memberOf key="model.musicPart"/>
+      <memberOf key="macro.musicPart"/>
     </classes>
     <content>
       <rng:choice>
@@ -6487,6 +6551,8 @@
           <rng:ref name="model.appLike"/>
           <rng:ref name="model.editLike"/>
           <rng:ref name="model.transcriptionLike"/>
+          <rng:ref name="plica"/>
+          <rng:ref name="stem"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -6706,7 +6772,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.metaLike.page"/>
+      <memberOf key="macro.metaLike.page"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7566,6 +7632,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
+      <memberOf key="att.duration.quality"/>
       <memberOf key="att.space.log"/>
       <memberOf key="att.space.vis"/>
       <memberOf key="att.space.ges"/>

@@ -17,7 +17,7 @@ We use GitHub as our main development platform. GitHub features a "Pull Request"
  1. Fork the `music-encoding/music-encoding` repository into your own account (e.g., `username/music-encoding`.
  2. Create a dedicated branch for your fix on your repository. For example, you might create a `fix-duration-attribute` branch if you're proposing a fix for the duration attribute.
  3. Make your changes. You can commit to your branch as many times as you like.
- 4. When you're ready to provide your changes "upstream," you can open a pull request to the `music-encoding/music-encoding` branch. **NB:** You will want to make sure you're proposing a merge to `develop` and not `master`.
+ 4. When you're ready to provide your changes "upstream," you can open a pull request to the `music-encoding/music-encoding` branch. **NB:** You will want to make sure you're proposing a merge to `develop` and not `stable`.
  5. Members of the MEI Technical Team will then review your submission. If you are asked to make changes, you can push these changes to your original branch and the pull request will be automatically updated.
  6. Once the changes have gone through our review process, a Core Contributor will merge your changes into the MEI source repository. You may then delete your dedicated branch.
 
@@ -32,7 +32,7 @@ Pull requests containing contributions of any significant changes should be acco
 
 Customizations to the schema should be placed in the `customizations` folder, named as `mei-NAME-[suffix].xml`. Our automated build system, TravisCI, will build all customizations in this folder and ensure there are no problems. It will also run our automated tests to ensure no validation problems.
 
-The naming of the customizations is important. If your customization should be tested against the "CMN" test corpus, you should name your customization `mei-CMN-something.xml`. This will automatically build and test your customization. If, however, your customization requires a unique test set, you should create a folder and place your sample encodings in this folder. 
+The naming of the customizations is important. If your customization should be tested against the "CMN" test corpus, you should name your customization `mei-CMN-something.xml`. This will automatically build and test your customization. If, however, your customization requires a unique test set, you should create a folder and place your sample encodings in this folder.
 
 For example, `mei-Shakuhachi.xml` would test validation against files contained in the `tests/Shakuhachi` folder.
 
@@ -62,7 +62,7 @@ Do **not** simply reference another issue or pull request by number in the summa
 
 The details of the commit go in the body. Specifically, the body should include the motivation for the change.  For commits that fix bugs you should contrast behavior before the commit with behavior after the commit.
 
-### Message Summary
+### Message Footer
 
 If the commit closes an issue by fixing the bug, implementing a feature, or rendering it obsolete, or if it references an issue without closing it, that should be indicated in the message footer.
 
@@ -123,9 +123,9 @@ Testing in MEI is done through the `build.sh` script. This script will look thro
 
 Releases are declared by the MEI Board, in consultation with, and on the advice of, the MEI Technical Team.
 
-The most recent 'stable' version of MEI is always found on the 'master' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
+The most recent 'stable' version of MEI is always found on the 'stable' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
 
-Releases are 'tagged' on the master branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
+Releases are 'tagged' on the stable branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
 
 ## Versioning
 
