@@ -356,7 +356,7 @@
         <xd:desc>
             <xd:p>Gets the users of a data type</xd:p>
         </xd:desc>
-        <xd:param name="object">the datat type</xd:param>
+        <xd:param name="object">the data type</xd:param>
         <xd:return>the resulting div</xd:return>
     </xd:doc>
     <xsl:function name="tools:getDatatypeUsersFacet" as="node()">
