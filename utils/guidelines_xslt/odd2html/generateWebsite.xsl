@@ -672,25 +672,33 @@
         
         <xsl:copy>
             <xsl:apply-templates select="@*" mode="#current"/>
-            <ul class="tab">
-                <xsl:for-each select="$tabs">
-                    <li class="tab-item">
-                        <a data-display="{@id}" 
-                            id="{@id}_tab"
-                            href="#{@id}"
-                            class="displayTab{if(position() = 1) then(' active') else()}"><xsl:value-of select="@data-label"/></a>
-                    </li>
-                </xsl:for-each>
-            </ul>
-            <xsl:for-each select="$tabs">
-                <xsl:copy>
-                    <xsl:sequence select="@*"/>
-                    <xsl:if test="position() = 1">
-                        <xsl:attribute name="class" select="@class || ' active'"/>
-                    </xsl:if>
-                    <xsl:sequence select="node()"/>
-                </xsl:copy>
-            </xsl:for-each>
+            <xsl:choose>
+                <xsl:when test="$facet.type != 'usedBy'">
+                    <ul class="tab">
+                        <xsl:for-each select="$tabs">
+                            <li class="tab-item">
+                                <a data-display="{@id}" 
+                                    id="{@id}_tab"
+                                    href="#{@id}"
+                                    class="displayTab{if(position() = 1) then(' active') else()}"><xsl:value-of select="@data-label"/></a>
+                            </li>
+                        </xsl:for-each>
+                    </ul>
+                    <xsl:for-each select="$tabs">
+                        <xsl:copy>
+                            <xsl:sequence select="@*"/>
+                            <xsl:if test="position() = 1">
+                                <xsl:attribute name="class" select="@class || ' active'"/>
+                            </xsl:if>
+                            <xsl:sequence select="node()"/>
+                        </xsl:copy>
+                    </xsl:for-each>        
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="group" mode="get.website.classTab"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            
         </xsl:copy>
         
         <!--<xsl:sequence select="$compact"/>-->
@@ -792,6 +800,12 @@
             <span class="desc">
                 <xsl:apply-templates select="child::desc/node()" mode="get.website"/>
             </span>
+            <xsl:for-each select="child::item[@class='attribute']">
+                <div class="attributeRef">
+                    <span class="ident attribute"><xsl:value-of select="child::link/text()"/></span>
+                    <span class="desc"><xsl:apply-templates select="child::desc/node()" mode="get.website"/></span>
+                </div>
+            </xsl:for-each>
         </div>
     </xsl:template>
     
