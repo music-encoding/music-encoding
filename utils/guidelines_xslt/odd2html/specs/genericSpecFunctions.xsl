@@ -403,11 +403,25 @@
         <xsl:variable name="element.links" as="node()*">
             <xsl:for-each select="$referencing.elements">
                 <xsl:variable name="current.element" select="." as="node()"/>
+                
                 <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                
                 <item class="element" ident="{$current.element/@ident}" module="{$current.element/@module}">
                     <link><a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a></link>
                     <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
+
+                    <xsl:variable name="attributes" select="$current.element//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                    
+                    <xsl:for-each select="$attributes">
+                        <xsl:variable name="current.attribute" select="." as="node()"/>
+                        <item class="attribute" ident="{$current.attribute/@ident}" module="{$current.element/@module}">
+                            <link><xsl:value-of select="$current.attribute/@ident"/></link>
+                            <desc><xsl:apply-templates select="$current.attribute/tei:desc" mode="guidelines"/></desc>                    
+                        </item>
+                    </xsl:for-each>
+
                 </item>
+                
                 <!--<span class="ident element" data-ident="{$current.element/@ident}" data-module="{$current.element/@module}" title="{$desc}">
                     <a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a>
                 </span>-->
@@ -419,7 +433,7 @@
             <div class="statement classes">
                 <xsl:choose>
                     <xsl:when test="count($data.type.links) = 0 and count($att.class.links) = 0 and count($element.links) = 0">
-                        <!--– <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>-->
+                        <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:if test="count($element.links) gt 0">
