@@ -4370,27 +4370,6 @@
         annotation.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="arranger" module="MEI.shared">
-    <desc>A person or organization who transcribes a musical composition, usually for a different
-      medium from that of the original; in an arrangement the musical substance remains essentially
-      unchanged.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
   <elementSpec ident="artic" module="MEI.shared">
     <desc>(articulation) – An indication of how to play a note or chord.</desc>
     <classes>
@@ -4412,30 +4391,6 @@
         the <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi> elements. It may be used when
         specific display info, such as size or color, needs to be recorded for the articulation or
         when multiple articulation marks occur on a single note or chord.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="author" module="MEI.shared">
-    <desc>The name of the creator of the intellectual content of a non-musical, literary
-      work.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <remarks>
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="barLine" module="MEI.shared">
@@ -4924,61 +4879,73 @@
       </attDef>
     </attList>
   </elementSpec>
-  <elementSpec ident="composer" module="MEI.shared">
-    <desc>The name of the creator of the intellectual content of a musical work.</desc>
+  <elementSpec ident="agent" module="MEI.shared">
+    <desc>An individual, family or corporate body who or which is related to any other entity. 
+      The nature of the relationship should be expressed within the <att>role</att> attribute.</desc>
     <classes>
+      <memberOf key="att.canonical"/>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.evidence"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
+      <memberOf key="model.itemLike"/>
+      <memberOf key="model.manifestationLike"/>
       <memberOf key="model.respLikePart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
+      <rng:ref name="model.nameLike"/>
     </content>
-  </elementSpec>
-  <elementSpec ident="contributor" module="MEI.shared">
-    <desc>Names of individuals, institutions, or organizations responsible for contributions to the
-      intellectual content of a work, where the specialized elements for authors, editors, etc. do
-      not suffice or do not apply.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <constraintSpec ident="check_contributor_role" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:contributor">
-          <sch:assert
-            test="not(matches(normalize-space(lower-case(@role)),               '(arranger|author|composer|contributor|editor|funder|librettist|lyricist|sponsor)'))"
-            >The value of @role must not contain the name of another element available in this
-            context.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <attList>
-      <attDef ident="role" usage="rec">
-        <desc>Used to specify the contributor's function.</desc>
+      <attDef ident="role" usage="req">
+        <desc>Used to specify the agent's function.</desc>
         <datatype>
           <rng:text/>
         </datatype>
+        <valList type="semi">
+          <valItem ident="arranger">
+            <desc>Arranger.</desc>
+          </valItem>
+          <valItem ident="author">
+            <desc>Author.</desc>
+          </valItem>
+          <valItem ident="composer">
+            <desc>Composer.</desc>
+          </valItem>
+          <valItem ident="contributor">
+            <desc>Contributor.</desc>
+          </valItem>
+          <valItem ident="dedicatee">
+            <desc>Dedicatee.</desc>
+          </valItem>
+          <valItem ident="distributor">
+            <desc>Distributor.</desc>
+          </valItem>
+          <valItem ident="editor">
+            <desc>Editor.</desc>
+          </valItem>
+          <valItem ident="encoder">
+            <desc>Encoder.</desc>
+          </valItem>
+          <valItem ident="funder">
+            <desc>Funder.</desc>
+          </valItem>
+          <valItem ident="librettist">
+            <desc>Librettist.</desc>
+          </valItem>
+          <valItem ident="lyricist">
+            <desc>Lyricist.</desc>
+          </valItem>
+          <valItem ident="publisher">
+            <desc>Publisher.</desc>
+          </valItem>
+          <valItem ident="recipient">
+            <desc>Recipient.</desc>
+          </valItem>
+          <valItem ident="sponsor">
+            <desc>Sponsor.</desc>
+          </valItem>
+        </valList>
         <remarks>
           <p>When applicable, values from the MARC relator term list (<ref
             target="http://www.loc.gov/marc/relators/relaterm.html"
@@ -5066,32 +5033,6 @@
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
         Archival Description (EAD) standards.</p>
     </remarks>
-  </elementSpec>
-  <elementSpec ident="dedicatee" module="MEI.shared">
-    <desc>Entity to whom a creative work is formally offered.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.textPhraseLike.limited"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <constraintSpec ident="check_dedicatee" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:dedicatee">
-          <sch:assert test="not(ancestor::mei:dedicatee)">The dedicatee element may not be
-            recursively nested.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
   </elementSpec>
   <elementSpec ident="depth" module="MEI.shared">
     <desc>Description of a measurement taken through a three-dimensional object.</desc>
@@ -5499,7 +5440,7 @@
         <rng:choice>
           <rng:text/>
           <rng:ref name="model.textPhraseLike.limited"/>
-          <rng:ref name="editor"/>
+          <rng:ref name="agent"/>
           <rng:ref name="respStmt"/>
           <rng:ref name="textLang"/>
         </rng:choice>
@@ -5508,29 +5449,6 @@
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
         Archival Description (EAD) standards.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="editor" module="MEI.shared">
-    <desc>The name of the individual(s), institution(s) or organization(s) acting in an editorial
-      capacity.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <remarks>
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="ending" module="MEI.shared">
@@ -5713,30 +5631,6 @@
     <remarks>
       <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
         Archival Description (EAD) standards.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="funder" module="MEI.shared">
-    <desc>Names of individuals, institutions, or organizations responsible for funding. Funders
-      provide financial support for a project; they are distinct from sponsors, who provide
-      intellectual support and authority.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <remarks>
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="genre" module="MEI.shared">
@@ -6238,44 +6132,6 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="librettist" module="MEI.shared">
-    <desc>Person or organization who is a writer of the text of an opera, oratorio, etc.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
-  <elementSpec ident="lyricist" module="MEI.shared">
-    <desc>Person or organization who is a writer of the text of a song.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
   <elementSpec ident="mdiv" module="MEI.shared">
     <desc>(musical division) – Contains a subdivision of the body of a musical text.</desc>
     <classes>
@@ -6377,7 +6233,7 @@
               </rng:oneOrMore>
               <rng:zeroOrMore>
                 <rng:choice>
-                  <rng:ref name="editor"/>
+                  <rng:ref name="agent"/>
                   <rng:ref name="model.identifierLike"/>
                   <rng:ref name="respStmt"/>
                 </rng:choice>
@@ -6408,7 +6264,7 @@
           <rng:zeroOrMore>
             <rng:choice>
               <rng:ref name="model.identifierLike"/>
-              <rng:ref name="editor"/>
+              <rng:ref name="agent"/>
               <rng:ref name="respStmt"/>
             </rng:choice>
           </rng:zeroOrMore>
@@ -7076,25 +6932,6 @@
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
     </remarks>
   </elementSpec>
-  <elementSpec ident="recipient" module="MEI.shared">
-    <desc>The name of the individual(s), institution(s) or organization(s) receiving
-      correspondence.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.biblPart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
   <elementSpec ident="relatedItem" module="MEI.shared">
     <desc>(related item) – Contains or references another bibliographic item which is related to the
       present one.</desc>
@@ -7345,9 +7182,8 @@
       </rng:zeroOrMore>
       <rng:zeroOrMore>
         <rng:choice>
-          <rng:ref name="name"/>
           <rng:ref name="resp"/>
-          <rng:ref name="model.nameLike.agent"/>
+          <rng:ref name="agent"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -7615,7 +7451,7 @@
           <rng:ref name="model.locrefLike"/>
           <rng:ref name="model.milestoneLike.text"/>
           <rng:ref name="model.titleLike"/>
-          <rng:ref name="editor"/>
+          <rng:ref name="agent"/>
           <rng:ref name="extent"/>
           <rng:ref name="respStmt"/>
           <rng:ref name="textLang"/>
@@ -7663,31 +7499,6 @@
     </content>
     <remarks>
       <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="sponsor" module="MEI.shared">
-    <desc>Names of sponsoring individuals, organizations or institutions. Sponsors give their
-      intellectual authority to a project; they are to be distinguished from funders, who provide
-      the funding but do not necessarily take intellectual responsibility.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.evidence"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.respLikePart"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <remarks>
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="stack" module="MEI.shared">
