@@ -28,6 +28,21 @@
         <pathelement path="${basedir}/lib/saxon/saxon9he.jar"/>
     </path>
     <property name="java.class.path" value="" classpathref="mei.classpath"/>
+    <loadresource property="windir">
+        <string value="${basedir}"/>
+        <filterchain>
+            <tokenfilter>
+                <replaceregex pattern="\\" replace="/"/>
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
+    <condition property="canonicalizedSourcePath"
+        value="${dir.dist.schemata}/mei-source_canonicalized.xml"
+        else="file:/${windir}/${dir.dist}/schemata/${version}/mei-source_canonicalized.xml">
+        <not>
+            <os family="windows" />
+        </not>
+    </condition>    
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
@@ -125,7 +140,7 @@
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${basedir}/${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="defaultSource" value="${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
             <property name="verbose">true</property>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
@@ -138,7 +153,7 @@
         <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${basedir}/${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
             <property name="verbose">true</property>
         </ant>
     </target>
