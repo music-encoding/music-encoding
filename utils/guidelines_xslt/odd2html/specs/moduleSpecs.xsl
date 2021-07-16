@@ -114,7 +114,7 @@
                     </div>
                 </div>
                 <div class="contentListBox">
-                    <h3>Data Typess in <xsl:value-of select="$module/@ident"/></h3>
+                    <h3>Data Types in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
                         <xsl:variable name="items" select="$module.content//tei:macroSpec[@type = 'dt']" as="node()*"/>
                         <xsl:for-each select="$items">

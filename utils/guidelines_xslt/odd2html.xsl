@@ -110,6 +110,13 @@
     </xd:doc>
     <xsl:param name="hash" select="'latest'" as="xs:string"/>
     
+    <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
+    <xsl:variable name="docs.folder" select="collection(substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/source/docs')//tei:TEI" as="node()*"/>
+    
+    <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+    <xsl:variable name="git.head" select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))" as="xs:string"/>
+    <xsl:variable name="retrieved.hash" select="unparsed-text($git.path || $git.head)" as="xs:string"/>
+    
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
     <xsl:include href="odd2html/renderXML.xsl"/>
@@ -133,6 +140,7 @@
     </xd:doc>
     <xsl:template match="/">
         <xsl:message select="'Processing MEI v' || $version || ' at revision ' || $hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        <xsl:message select="'.   git: ' || $retrieved.hash"/>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
@@ -142,7 +150,7 @@
         
         <xsl:variable name="intro"/>
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
-        <xsl:variable name="preface" select="tools:generatePreface()" as="node()"/>
+        <xsl:variable name="preface" select="tools:generatePreface()" as="node()+"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
@@ -154,6 +162,8 @@
         <xsl:variable name="macroGroupSpecs" select="tools:getMacroGroupSpecs()" as="node()"/>
         <xsl:variable name="attClassSpecs" select="tools:getAttClassSpecs()" as="node()"/>
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
+        
+        <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
             
         
         
@@ -168,8 +178,10 @@
             <xsl:sequence select="$macroGroupSpecs"/>
             <xsl:sequence select="$attClassSpecs"/>
             <xsl:sequence select="$dataTypeSpecs"/>
+            
+            <xsl:sequence select="$indizes"/>
         </xsl:variable>
-        
+                
         <!-- generate a single-page HTML version of the Guidelines -->
         <xsl:variable name="singlePage" as="node()+">
             <xsl:call-template name="getSinglePage">
@@ -184,9 +196,9 @@
         </xsl:call-template>
         
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}_raw.html">
+        <!--<xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}_raw.html">
             <xsl:sequence select="$singlePage"/>
-        </xsl:result-document>
+        </xsl:result-document>-->
         
         <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
             <xsl:apply-templates select="$singlePage" mode="preparePDF"/>
