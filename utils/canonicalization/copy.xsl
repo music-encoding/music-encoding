@@ -22,8 +22,10 @@
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
     </xsl:template>
+
+    <xsl:template match="processing-instruction('xml-model')"/>
     
-    <xsl:template match="processing-instruction('xml-model')">
+    <xsl:template match="/processing-instruction('xml-model')">
         <xsl:text>&#xa;</xsl:text>
         <xsl:copy/>
     </xsl:template>
