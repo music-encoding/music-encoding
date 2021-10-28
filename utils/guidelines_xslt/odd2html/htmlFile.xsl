@@ -9,7 +9,8 @@
     xmlns:rng="http://relaxng.org/ns/structure/1.0"
     xmlns:sch="http://purl.oclc.org/dsdl/schematron"
     xmlns:tools="no:where"
-    exclude-result-prefixes="xs math xd xhtml tei tools rng sch egx"
+    xmlns:search="temp.search"
+    exclude-result-prefixes="xs math xd xhtml tei tools search rng sch egx"
     version="3.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
@@ -26,7 +27,7 @@
         <xd:param name="contents">Everything that is supposed to be inserted into the file</xd:param>
         <xd:param name="media">The medium for which this file is intended</xd:param>
     </xd:doc>
-    <xsl:template name="getSinglePage">
+    <xsl:template name="getSinglePage" >
         <xsl:param name="contents" as="node()*"/>
         <xsl:param name="media" as="xs:string"/>
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
@@ -55,14 +56,14 @@
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/tipuesearch.css" />                        
+                            href="{$cssPath}css/search.css" />                        
                         <link rel="stylesheet" media="screen" type="text/css"
                             href="{$cssPath}css/mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
                             href="{$cssPath}css/mei-screen.css" />
+                        <script src="{$cssPath}search/searchIndex.js"></script>
+                        <script src="{$cssPath}search/fuse.min.js"></script>
                     </xsl:when>
-                    
-                    
                 </xsl:choose>
             </head>
             <body class="simple" id="TOP">
@@ -96,17 +97,17 @@
                                         </div>
                                         
                                         <div class="searchbox">
-                                            <form action="/guidelines/dev/content/metadata.html"><!-- TODO: fix that link??? -->
-                                                <div class="tipue_search_group">
-                                                    <input name="q" id="tipue_search_input" pattern=".{{3,}}" title="At least 3 characters" required="" type="text"></input><button type="submit" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
-                                                </div>
-                                            </form>
+                                            
+                                            <form><div class="search_group">
+                                                <input id="search_inputTop" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonTop" class="search_button"><span class="search_icon">⚲</span></button>
+                                            </div></form>
+                                            
                                         </div>
                                         
                                     </div>
                                 </div>
                                 <div class="column col-8 col-md-12">
-                                    <div id="tipue-search-content"></div>
+                                    <div id="search-content"></div>
                                     <xsl:sequence select="$contents"/>    
                                 </div>
                                 <div class="column col-4 col-hide-md">
@@ -115,11 +116,11 @@
                                         <span id="versionID"><xsl:value-of select="$version"/> </span>
                                         <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
                                     </div>
-                                    <form action="/guidelines/dev/content/metadata.html">
-                                        <div class="tipue_search_group">
-                                            <input name="q" id="tipue_search_input" pattern=".{{3,}}" title="At least 3 characters" required="" type="text"></input><button type="submit" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
-                                        </div>
-                                    </form>
+                                    
+                                    <form><div class="search_group">
+                                        <input name="q" id="search_input" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonSide" class="search_button"><span class="search_icon">⚲</span></button>
+                                    </div></form>
+                                    
                                     <ul class="nav"> 
                                         <li class="nav-item">
                                             <a href="{$cssPath}content/index.html">Guidelines</a>
@@ -187,10 +188,6 @@
                             </div>
                             <script>
                                 window.addEventListener("load", function(event) {
-                                    /*$('#tipue_search_input').tipuesearch({
-                                        showURL: false,
-                                        descriptiveWords: 25
-                                    });*/
                                     document.getElementById('topNavigationShow').addEventListener('click',function(e) {
                                         var elem = document.getElementById('toc-modal');
                                         elem.classList.toggle('active');
@@ -227,6 +224,24 @@
                             </script>
                         </div>
                         
+                        <div class="modal" id="searchResultsModal">
+                            <a id="searchModalCloseBg" href="#" class="modal-overlay" aria-label="Close"></a>
+                            <div class="modal-container">
+                                <div class="modal-header">
+                                    <button id="searchModalCloseLink" class="btn btn-clear float-right" aria-label="Close"></button>
+                                    <div class="modal-title h5">Search Results for "<span id="searchPattern"></span>"</div>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="content" id="searchResultsBox">
+                                        <!-- content here -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn" id="searchModalCloseBtn">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <script type="text/javascript">
                             const tabbedFacets = document.querySelectorAll('.facet ul.tab');
                             
@@ -237,7 +252,7 @@
                                 setTabs(facetId,style)
                             }
                             
-                            console.log('Javascript is working…')
+                            console.log('[INFO] Javascript initialized')
                             
                             for(let facetUl of tabbedFacets) {
                                 const facetElem = facetUl.parentNode.parentNode;
@@ -264,19 +279,11 @@
                                 
                                 const facetElem = document.getElementById(facetId);
                                 
-                                //console.log(facetElem)
-                                
                                 const oldTab = facetElem.querySelector('.displayTab.active');
                                 oldTab.classList.remove('active');
                                 
-                                //console.log('trying to find newTab: "' + style + '_tab"');
-                                
                                 const newTab = document.getElementById(style + '_tab');
                                 newTab.classList.add('active');
-                                
-                                //console.log('\noldTab / newTab:')
-                                //console.log(oldTab)
-                                //console.log(newTab)
                                 
                                 const oldBox = facetElem.querySelector('.active.facetTabbedContent');
                                 oldBox.classList.remove('active');
@@ -284,12 +291,11 @@
                                 
                                 const newBox = document.getElementById(style);
                                 newBox.classList.add('active');
-                                newBox.style.display = 'block';      
-                                
-                                //console.log('\noldBox / newBox:')
-                                //console.log(oldBox)
-                                //console.log(newBox)
+                                newBox.style.display = 'block';
                             }
+                            
+                            const reducedLevels = <xsl:value-of select="if($reducedLevels = true()) then('true') else('false')"/>;
+                            <xsl:sequence select="search:getJavascript()"/>
                         </script>
                     </xsl:when>
                     <xsl:otherwise>
