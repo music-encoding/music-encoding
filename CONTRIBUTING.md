@@ -10,7 +10,7 @@ Membership in the Technical Team is informal. Being considered a "member" of thi
 
 The Technical Team Co-chairs will, from time to time, designate and appoint senior members of the Technical Team to act as Core Contributors. These Core Contributors will have the responsibility of commit access to the core MEI Schema, and will ensure these contributions are consistent with the spirit and design of the MEI schema.
 
-## How to contribute
+## How to Contribute
 
 We use GitHub as our main development platform. GitHub features a "Pull Request" mechanism for proposing contributions to the schema from our community. A brief overview of this process:
 
