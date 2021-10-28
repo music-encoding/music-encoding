@@ -56,7 +56,7 @@
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/tipuesearch.css" />                        
+                            href="{$cssPath}css/search.css" />                        
                         <link rel="stylesheet" media="screen" type="text/css"
                             href="{$cssPath}css/mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
@@ -98,8 +98,8 @@
                                         
                                         <div class="searchbox">
                                             
-                                            <form><div class="tipue_search_group">
-                                                <input id="tipue_search_inputTop" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonTop" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
+                                            <form><div class="search_group">
+                                                <input id="search_inputTop" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonTop" class="search_button"><span class="search_icon">⚲</span></button>
                                             </div></form>
                                             
                                         </div>
@@ -107,7 +107,7 @@
                                     </div>
                                 </div>
                                 <div class="column col-8 col-md-12">
-                                    <div id="tipue-search-content"></div>
+                                    <div id="search-content"></div>
                                     <xsl:sequence select="$contents"/>    
                                 </div>
                                 <div class="column col-4 col-hide-md">
@@ -117,8 +117,8 @@
                                         <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
                                     </div>
                                     
-                                    <form><div class="tipue_search_group">
-                                        <input name="q" id="tipue_search_input" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonSide" class="tipue_search_button"><span class="tipue_search_icon">⚲</span></button>
+                                    <form><div class="search_group">
+                                        <input name="q" id="search_input" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonSide" class="search_button"><span class="search_icon">⚲</span></button>
                                     </div></form>
                                     
                                     <ul class="nav"> 

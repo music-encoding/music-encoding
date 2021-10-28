@@ -84,7 +84,6 @@
                             <string key="url"><xsl:value-of select="$url"/></string>
                             <string key="tags"><xsl:value-of select="''"/></string>
                         </map>
-                        <!-- ./tipuesearch/search_content.js -->
                     </xsl:for-each>
                 </array>
             </map>
@@ -92,10 +91,6 @@
         <xsl:variable name="newline" as="xs:string"><xsl:text>&#xa;</xsl:text></xsl:variable>
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
-        
-        <!--<xsl:result-document href="{$web.output}tipuesearch/search_content.js" method="text" indent="yes" omit-xml-declaration="yes" >
-            var tipuesearch = <xsl:value-of select="$json.string"/>;
-        </xsl:result-document>-->
         
         <xsl:result-document href="{$web.output}/search/searchIndex.js" method="text" omit-xml-declaration="yes">
             const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>

@@ -158,8 +158,8 @@
             
             const searchButton1 = document.querySelector('#submitSearchButtonSide');
             const searchButton2 = document.querySelector('#submitSearchButtonTop');
-            const searchInput1 = document.querySelector('#tipue_search_input');
-            const searchInput2 = document.querySelector('#tipue_search_inputTop');
+            const searchInput1 = document.querySelector('#search_input');
+            const searchInput2 = document.querySelector('#search_inputTop');
             const searchModal = document.querySelector('#searchResultsModal');
             const searchModalCloseBtn = document.querySelector('#searchModalCloseBtn');
             const searchModalCloseBg = document.querySelector('#searchModalCloseBg');
