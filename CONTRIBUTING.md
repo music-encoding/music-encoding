@@ -21,7 +21,7 @@ We use GitHub as our main development platform. GitHub features a "Pull Request"
  5. Members of the MEI Technical Team will then review your submission. If you are asked to make changes, you can push these changes to your original branch and the pull request will be automatically updated.
  6. Once the changes have gone through our review process, a Core Contributor will merge your changes into the MEI source repository. You may then delete your dedicated branch.
 
-## Checklist for a contribution
+## Checklist for a Contribution
 
 Pull requests containing contributions of any significant changes should be accompanied by the following supporting changes:
 
