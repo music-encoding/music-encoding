@@ -36,7 +36,7 @@
         <html xml:lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                <xsl:comment>THIS FILE IS GENERATED FROM AN XML MASTER. DO NOT EDIT!</xsl:comment>
+                <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
                 <meta name="author" content="Johannes Kepper" />
                 <meta name="author" content="Perry D. Roland" />
