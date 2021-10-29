@@ -465,9 +465,6 @@
                 <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml')">
                     <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml'"/>
                 </xsl:when>
-                <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml')">
-                    <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml'"/>
-                </xsl:when>
             </xsl:choose>
         </xsl:variable>
         
