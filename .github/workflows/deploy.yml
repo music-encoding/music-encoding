@@ -48,6 +48,7 @@ jobs:
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
+        if: github.repository_owner == 'music-encoding'
         uses: actions/checkout@v2
         with:
           # repository to check out
@@ -61,15 +62,18 @@ jobs:
           path: ${{ env.SCHEMA_DIR }}
 
       - name: Copy built schema to SCHEMA_DIR
+        if: github.repository_owner == 'music-encoding'
         run: cp -r dist/schemata/dev $SCHEMA_DIR/
 
       - name: Check git status before commit
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Configuring git..."
@@ -77,6 +81,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Running git commit..."
@@ -84,11 +89,13 @@ jobs:
           git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to SCHEMA
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: git push origin HEAD:$SCHEMA_BRANCH
 
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
+        if: github.repository_owner == 'music-encoding'
         uses: actions/checkout@v2
         with:
           # repository to check out
@@ -102,18 +109,21 @@ jobs:
           path: ${{ env.GUIDELINES_DIR }}
 
       - name: Copy built guidelines to GUIDELINES_DIR
+        if: github.repository_owner == 'music-encoding'
         run: |
           rm -rf $GUIDELINES_DIR/dev 
           cp -r dist/guidelines/dev/web $GUIDELINES_DIR/
           mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev 
 
       - name: Check git status before commit
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Configuring git..."
@@ -121,6 +131,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Running git commit..."
@@ -128,5 +139,6 @@ jobs:
           git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to GUIDELINES
+        if: github.repository_owner == 'music-encoding'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: git push origin HEAD:$GUIDELINES_BRANCH
