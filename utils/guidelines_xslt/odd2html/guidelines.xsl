@@ -136,7 +136,7 @@
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="yes" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
+                <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
