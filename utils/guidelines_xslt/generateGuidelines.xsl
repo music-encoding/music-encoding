@@ -1052,15 +1052,15 @@
                 <tr>
                     <td class="wovenodd-col1"><span class="label" lang="en">May contain</span></td>
                     <td class="wovenodd-col2">
-                        <xsl:variable name="direct.childs" select="$elements/descendant-or-self::tei:elementSpec[@ident = $elementSpec//tei:content//rng:ref[not(starts-with(@name,'model.'))]/@name]" as="node()*"/>
-                        <xsl:variable name="class.childs" as="node()*">
+                        <xsl:variable name="direct.children" select="$elements/descendant-or-self::tei:elementSpec[@ident = $elementSpec//tei:content//rng:ref[not(starts-with(@name,'model.'))]/@name]" as="node()*"/>
+                        <xsl:variable name="class.children" as="node()*">
                             
                             <xsl:for-each select="$elementSpec//tei:content//rng:ref[starts-with(@name,'model.')]">
                                 <xsl:variable name="modelClass.name" select="@name" as="xs:string"/>
-                                <xsl:sequence select="local:getChilds($modelClass.name)"/>
+                                <xsl:sequence select="local:getChildren($modelClass.name)"/>
                             </xsl:for-each>
                         </xsl:variable>
-                        <xsl:variable name="macro.childs" as="node()*">
+                        <xsl:variable name="macro.children" as="node()*">
                             <xsl:for-each select="$elementSpec//tei:content//rng:ref[starts-with(@name,'macro.')]">
                                 <xsl:variable name="macroSpec.name" select="@name" as="xs:string"/>
                                 <xsl:variable name="macroSpec" select="$data.types/descendant-or-self::tei:macroSpec[@ident = $macroSpec.name]" as="node()"/>
@@ -1068,10 +1068,10 @@
                             </xsl:for-each>
                         </xsl:variable>
                         
-                        <xsl:variable name="childs" select="$direct.childs | $class.childs | $macro.childs" as="node()*"/>
-                        <!--<xsl:message select="'INFO: ' || $elementSpec/@ident || ' has ' || count($direct.childs) || ' direct and ' || count($class.childs) ||' class childs.'"/>-->
+                        <xsl:variable name="children" select="$direct.children | $class.children | $macro.children" as="node()*"/>
+                        <!--<xsl:message select="'INFO: ' || $elementSpec/@ident || ' has ' || count($direct.children) || ' direct and ' || count($class.children) ||' class children.'"/>-->
                         <xsl:choose>
-                            <xsl:when test="(count($childs) gt 0) or $elementSpec//tei:content//rng:text">
+                            <xsl:when test="(count($children) gt 0) or $elementSpec//tei:content//rng:text">
                                 <div class="specChildren">
                                     <xsl:if test="$elementSpec//tei:content//rng:text">
                                         <div class="specChild">
@@ -1079,10 +1079,10 @@
                                             <span class="specChildElements"></span>
                                         </div>
                                     </xsl:if>
-                                    <xsl:for-each select="distinct-values($childs/descendant-or-self::tei:elementSpec/@module)">
+                                    <xsl:for-each select="distinct-values($children/descendant-or-self::tei:elementSpec/@module)">
                                         <xsl:sort select="count($mei.source//tei:moduleSpec[@ident = current()]/preceding::tei:moduleSpec)" data-type="number"/>
                                         <xsl:variable name="current.module" select="." as="xs:string"/>
-                                        <xsl:variable name="relevant.element.names" select="distinct-values($childs/descendant-or-self::tei:elementSpec[@module = $current.module]/@ident)" as="xs:string*"/>
+                                        <xsl:variable name="relevant.element.names" select="distinct-values($children/descendant-or-self::tei:elementSpec[@module = $current.module]/@ident)" as="xs:string*"/>
                                         <div class="specChild">
                                             <span class="specChildModule"><xsl:value-of select="$current.module"/></span>
                                             <span class="specChildElements">
@@ -1396,13 +1396,13 @@
         </xsl:for-each>
     </xsl:function>
     
-    <xsl:function name="local:getChilds" as="node()*">
+    <xsl:function name="local:getChildren" as="node()*">
         <xsl:param name="className" as="xs:string"/>
         <xsl:sequence select="$elements/descendant-or-self::tei:elementSpec[.//tei:memberOf[@key = $className]]"/>
         
         <xsl:variable name="inheriting.models" select="$model.classes/descendant-or-self::tei:classSpec[.//tei:memberOf/@key = $className]/@ident" as="xs:string*"/>
         <xsl:for-each select="$inheriting.models">
-            <xsl:sequence select="local:getChilds(.)"/>    
+            <xsl:sequence select="local:getChildren(.)"/>    
         </xsl:for-each>
         
     </xsl:function>
@@ -2055,7 +2055,7 @@
         <html xml:lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                <xsl:comment>THIS FILE IS GENERATED FROM AN XML MASTER. DO NOT EDIT!</xsl:comment>
+                <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
                 <meta name="author" content="Perry D. Roland, Johannes Kepper" />
                 <meta name="subject" content="Documentation for the Music Encoding Initiative (MEI) Data Model" />
