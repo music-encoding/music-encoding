@@ -30,6 +30,7 @@
         <respStmt>
           <resp>Authored by</resp>
           <name xml:id="PR">Perry Roland</name>
+          <name xml:id="bwb">Benjamin W. Bohl</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
@@ -40,6 +41,14 @@
       </sourceDesc>
     </fileDesc>
     <revisionDesc>
+      <change n="2" when="2021-11-05" who="#bwb">
+        <desc>
+          <list>
+            <item>adding `@meiversion` (actually `att.meiVersion`) to `att.basic` and thus allowing it on any element, and consequently to prevent duplicate attributes, removing it from the elements that could have `@meiversion` before.</item>
+            <item>adding a schematron rule to assert `@meiversion` is present on the root element</item>
+          </list>
+        </desc>
+      </change>
       <change n="1" when="2015-12-04" who="#PR">
         <desc>Creation of the initial ODD.</desc>
       </change>
@@ -91,7 +100,7 @@
         typeDesc typeNote unclear unpub useRestrict vel verse volta watermark when width work workList
         zone">
         <!-- Declare MEI and XLink namespaces for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
+        <constraintSpec ident="set_ns" scheme="schematron" mode="add">
           <constraint>
             <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
               uri="http://www.music-encoding.org/ns/mei"/>
@@ -141,6 +150,60 @@
             </rng:define>
           </content>
         </moduleRef>
+
+        <classSpec ident="att.meiVersion" module="MEI.shared" type="atts" mode="change">
+          <attList>
+            <attDef ident="meiversion" usage="rec" mode="change">
+              <desc>Specifies a generic MEI version label.</desc>
+              <valList type="closed">
+                <valItem ident="5.0.0-dev">
+                  <desc>Development version of MEI 5.0.0</desc>
+                </valItem>
+              </valList>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <classSpec ident="att.basic" module="MEI.shared" type="atts" mode="change">
+          <classes>
+            <memberOf key="att.id"/>
+            <memberOf key="att.meiVersion"/>
+          </classes>
+        </classSpec>
+
+        <constraintSpec ident="meiVersion.root" scheme="schematron">
+          <desc>Require meiversion attribute on the root element.</desc>
+          <constraint>
+            <sch:rule context="root()">
+              <sch:assert test="/mei:*[@meiversion]">The root element must have the @meiversion attribute in order to indicate the MEI version of the snippet.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+
+        <elementSpec ident="meiCorpus" module="MEI.corpus" mode="change">
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="model.startLike.corpus"/>
+          </classes>
+        </elementSpec>
+
+        <elementSpec ident="meiHead" module="MEI.header" mode="change">
+          <classes>
+            <memberOf key="att.basic"/>
+            <memberOf key="att.bibl"/>
+            <memberOf key="att.labelled"/>
+            <memberOf key="att.lang"/>
+            <memberOf key="att.responsibility"/>
+            <memberOf key="model.startLike.header"/>
+          </classes>
+        </elementSpec>
+
+        <elementSpec ident="music" module="MEI.shared" mode="change">
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.metadataPointing"/>
+          </classes>
+        </elementSpec>
 
       </schemaSpec>
     </body>
