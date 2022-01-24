@@ -148,7 +148,7 @@ Nevertheless it is possible to build any customization locally in your working c
 
    * Build a specific customization's RNG schema:
      ```bash
-     ant -lib lib/saxon/saxon9he.jar -Dcustomization.path=[PATH/TO/YOUR/CUSTOMIZATION] build-rng
+     ant -lib lib/saxon/saxon9he.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
