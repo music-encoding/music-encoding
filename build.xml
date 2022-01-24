@@ -138,17 +138,6 @@
         </java>
     </target>
     
-    <!--    <target name="canonicalize-guidelines">
-        <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar">
-            <arg value="-s:${basedir}/source/mei-source.xml" />
-            <arg value="-xsl:submodules/Stylesheets/odds/odd2odd.xsl" />
-            <arg value="-o:${basedir}/${dir.dist}/mei-source_canonicalized.xml" />
-            <arg value="-xi:on" />
-            <arg value="defaultSource=${basedir}/source/mei-source.xml"/>
-            <arg value="selectedSchema=mei-source"/>
-        </java>
-    </target>-->
-    
     <target name="build-compiled-odd" depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>${odd.basename}</echo>
@@ -186,11 +175,9 @@
         <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon9he.jar" failonerror="true">
             <arg value="-s:${dir.dist.schemata}/mei-source_canonicalized.xml" />
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl" />
-<!--            <arg value="-o:${dir.dist.guidelines}" />-->
             <arg value="-xi:on"/>
             <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
             <arg value="hash=${hash}"/>
-            <!--<arg value="branch=develop"/>--><!-- unused in XSLT -->
         </java>
         <copy todir="${dir.dist.guidelines}/web/css">
             <fileset dir="source/web/css">
