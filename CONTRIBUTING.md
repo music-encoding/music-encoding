@@ -109,9 +109,11 @@ Above all, however, Core Contributors are asked to exercise wisdom and common se
 
 Sometimes it's easiest if you can check out a pull request's changes locally and run it on your own machine. To do this, you can follow [these instructions](https://gist.github.com/piscisaureus/3342247). This will allow you to further test proposed modifications.
 
-### TravisCI
+### GithubActions
 
-When a new pull request comes in, the TravisCI service will automatically build the schema using the TEIC Stylesheets, and then validate the test files and the sample encodings against the built schemas. If, for some reason, a change breaks the schema build, or breaks validation, TravisCI will report an error on the pull request. It is then up to the original contributor to fix the issue and submit the fix to the pull request.
+When there is a new push to the develop branch GitHub Actions will automaticall build the MEI schema files and guidelines and publish them at: https://github.com/music-encoding/schema/tree/main/dev
+
+Soon this will also be triggered on pull requests against both the develop and the stable branches.
 
 ### Tests
 
