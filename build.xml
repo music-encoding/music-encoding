@@ -19,6 +19,14 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
+    <loadresource property="windir">
+        <string value="${basedir}"/>
+        <filterchain>
+            <tokenfilter>
+                <replaceregex pattern="\\" replace="/"/>
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
     <property name="version" value="dev"/><!-- in XSLT version = att.meiversion defaultVal -->
     <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/> 
@@ -28,21 +36,28 @@
         <pathelement path="${basedir}/lib/saxon/saxon9he.jar"/>
     </path>
     <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <loadresource property="windir">
-        <string value="${basedir}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="\\" replace="/"/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
     <condition property="canonicalizedSourcePath"
         value="${dir.dist.schemata}/mei-source_canonicalized.xml"
         else="file:/${windir}/${dir.dist}/schemata/${version}/mei-source_canonicalized.xml">
         <not>
             <os family="windows" />
         </not>
-    </condition>    
+    </condition>
+    <loadresource property="dir.dist.guidelines_win">
+        <string value="${dir.dist.guidelines}"/>
+        <filterchain>
+            <tokenfilter>
+                <replaceregex pattern="\\" replace="/"/>
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
+    <condition property="dir.dist.guidelines_adjusted"
+        value="${dir.dist.guidelines}"
+        else="file:/${dir.dist.guidelines_win}">
+        <not>
+            <os family="windows" />
+        </not>
+    </condition>
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
@@ -173,7 +188,7 @@
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl" />
 <!--            <arg value="-o:${dir.dist.guidelines}" />-->
             <arg value="-xi:on"/>
-            <arg value="output.folder=${dir.dist.guidelines}/"/>
+            <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
             <arg value="hash=${hash}"/>
             <!--<arg value="branch=develop"/>--><!-- unused in XSLT -->
         </java>
