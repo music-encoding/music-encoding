@@ -41,12 +41,12 @@ Or, the same command using `jing`.
 
 The MEI Schema may be customized to express and validate different types of music documents. To create your own customization, you should understand the building and customization process. Customizations are configured with individual ODD files. This repository already includes several customizations:
 
- * [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
- * [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
- * [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
- * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
- * [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
- * [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
+* [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
+* [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
+* [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
+* [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
+* [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
+* [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
 
 ## Why Customizations?
 
