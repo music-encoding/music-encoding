@@ -110,7 +110,7 @@
                                     <div id="search-content"></div>
                                     <xsl:sequence select="$contents"/>    
                                 </div>
-                                <div class="column col-4 col-hide-md">
+                                <div class="column col-4 hide-md">
                                     <div id="guidelinesVersion">
                                         <span class="versionLabel">MEI Version: </span>
                                         <span id="versionID"><xsl:value-of select="$version"/> </span>
