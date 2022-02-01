@@ -1411,7 +1411,7 @@
             <div class="facet remarks">
                 <div class="label">Remarks</div>
                 <div class="statement remarks">
-                    <p><xsl:apply-templates select="$object/tei:remarks/tei:p/node()" mode="guidelines"/></p>
+                    <xsl:apply-templates select="$object/tei:remarks/node()" mode="guidelines"/>
                 </div>
             </div>
         </xsl:if>
