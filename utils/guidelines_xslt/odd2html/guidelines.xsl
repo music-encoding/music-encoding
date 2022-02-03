@@ -487,7 +487,7 @@
                 <img alt="SMuFL glyph" class="smufl" src="{@url}"/>
             </xsl:when>
             <xsl:otherwise>
-                <img class="graphic" src="{tools:adjustImageUrl(@url)}"/>
+                <img alt="example" class="graphic" src="{tools:adjustImageUrl(@url)}"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
