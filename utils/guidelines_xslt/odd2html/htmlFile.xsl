@@ -33,7 +33,7 @@
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
         
         <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
-        <html xml:lang="en">
+        <html lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
