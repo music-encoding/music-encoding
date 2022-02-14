@@ -99,7 +99,7 @@ Nevertheless it is possible to build any customization locally in your working c
      java -version
      ```
 
-     This should return something similar to
+     This should return something similar to:
 
      ```bash
      openjdk version "11.0.9" 2020-10-20
