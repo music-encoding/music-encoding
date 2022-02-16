@@ -265,7 +265,7 @@
     <xsl:template match="tei:ref" mode="guidelines">
         <xsl:choose>
             <xsl:when test="starts-with(@target,'#')">
-                <xsl:variable name="chapter.id" select="replace(@target,'#','')" as="xs:string"/>
+                <xsl:variable name="chapter.id" select="substring-after(@target,'#')" as="xs:string"/>
                 <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?"/>
                 <xsl:choose>
                     <xsl:when test="exists($tocInfo)">
