@@ -400,11 +400,56 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>term</xd:p>
+            <xd:p>Names</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:name" mode="guidelines">
+        <xsl:choose>
+            <xsl:when test="not(@ref)">
+                <xsl:apply-templates select="node()" mode="#current" />
+            </xsl:when>
+            <xsl:otherwise>
+                <a class="link_ref link_external" href="{@ref}">
+                    <xsl:apply-templates select="node()" mode="#current" />
+                </a>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Terms</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:term" mode="guidelines">
-        <span class="term"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <span class="term">
+            <xsl:choose>
+                <xsl:when test="not(@ref)">
+                    <xsl:apply-templates select="node()" mode="#current" />
+                </xsl:when>
+                <xsl:when test="starts-with(@ref,'#')">
+                    <xsl:variable name="chapter.id" select="substring-after(@ref,'#')" as="xs:string" />
+                    <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?" />
+                    <xsl:choose>
+                        <xsl:when test="exists($tocInfo)">
+                            <a class="link_ref chapterLink" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}">
+                                <xsl:apply-templates select="node()" mode="#current" />
+                            </a>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="wrong_ref" data-target="{$chapter.id}">
+                                <xsl:apply-templates select="node()" mode="#current" />
+                            </span>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <a class="link_ref link_external" href="{@ref}">
+                        <xsl:apply-templates select="node()" mode="#current" />
+                    </a>
+                </xsl:otherwise>
+            </xsl:choose>
+        </span>
     </xsl:template>
     
     <xd:doc>
