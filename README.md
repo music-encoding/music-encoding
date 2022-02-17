@@ -99,7 +99,7 @@ Nevertheless it is possible to build any customization locally in your working c
      java -version
      ```
 
-     This should return something similar to
+     This should return something similar to:
 
      ```bash
      openjdk version "11.0.9" 2020-10-20
@@ -142,18 +142,18 @@ Nevertheless it is possible to build any customization locally in your working c
 
    * Build guidelines HTML:
      ```bash
-     ant -lib lib/saxon/saxon9he.jar build-guidelines-html
+     ant -lib lib/saxon/saxon-he-10.5.jar build-guidelines-html
      ```
      The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
 
    * Build a specific customization's RNG schema:
      ```bash
-     ant -lib lib/saxon/saxon9he.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
+     ant -lib lib/saxon/saxon-he-10.5.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
      ```bash
-     ant -lib lib/saxon/saxon9he.jar
+     ant -lib lib/saxon/saxon-he-10.5.jar
      ```
 
 ### Using Oxygen to Build MEI

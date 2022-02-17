@@ -382,6 +382,15 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>abbr</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:abbr" mode="guidelines">
+        <abbr><xsl:apply-templates select="node()" mode="#current"/></abbr>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>bibl</xd:p>
         </xd:desc>
     </xd:doc>
