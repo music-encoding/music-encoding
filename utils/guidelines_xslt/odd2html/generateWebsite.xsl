@@ -1055,7 +1055,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="img/@src" mode="get.website">
-        <xsl:attribute name="src" select="'../' || ."/>
+        <xsl:choose>
+            <xsl:when test="starts-with(., 'http')">
+                <xsl:attribute name="src" select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="src" select="'../' || ."/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
 </xsl:stylesheet>
