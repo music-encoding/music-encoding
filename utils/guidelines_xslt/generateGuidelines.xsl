@@ -2052,10 +2052,10 @@
     <xsl:template name="getSinglePage">
         <xsl:param name="contents" as="node()*"/>
         
-        <html xml:lang="en">
+        <html lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-                <xsl:comment>THIS FILE IS GENERATED FROM AN XML MASTER. DO NOT EDIT!</xsl:comment>
+                <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
                 <meta name="author" content="Perry D. Roland, Johannes Kepper" />
                 <meta name="subject" content="Documentation for the Music Encoding Initiative (MEI) Data Model" />

@@ -136,7 +136,7 @@
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="yes" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
+                <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -382,6 +382,15 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>abbr</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:abbr" mode="guidelines">
+        <abbr><xsl:apply-templates select="node()" mode="#current"/></abbr>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>bibl</xd:p>
         </xd:desc>
     </xd:doc>
@@ -473,7 +482,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:graphic" mode="guidelines">
-        <img class="graphic" src="{tools:adjustImageUrl(@url)}"/>
+        <xsl:choose>
+            <xsl:when test="@rend">
+                <img alt="SMuFL glyph" class="smufl" src="{@url}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <img alt="example" class="graphic" src="{tools:adjustImageUrl(@url)}"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xd:doc>

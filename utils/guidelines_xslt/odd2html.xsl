@@ -9,7 +9,8 @@
     xmlns:rng="http://relaxng.org/ns/structure/1.0"
     xmlns:sch="http://purl.oclc.org/dsdl/schematron"
     xmlns:tools="no:where"
-    exclude-result-prefixes="xs math xd xhtml tei tools rng sch egx"
+    xmlns:search="temp.search"
+    exclude-result-prefixes="xs math xd xhtml tei tools search rng sch egx"
     version="3.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
@@ -84,6 +85,10 @@
                     <xd:b>odd2html/preparePDF.xsl</xd:b>: 
                     This holds code for polishing the HTML output for PDF publication. 
                 </xd:li>
+                <xd:li>
+                    <xd:b>odd2html/generateSearchIndex.xsl</xd:b>: 
+                    This holds code for preparing the search function on the website. 
+                </xd:li>
             </xd:ul></xd:p>
         </xd:desc>
     </xd:doc>
@@ -132,6 +137,8 @@
     
     <xsl:include href="odd2html/generateWebsite.xsl"/>
     <xsl:include href="odd2html/preparePDF.xsl"/>
+    
+    <xsl:include href="odd2html/generateSearchIndex.xsl"/>
     
     <xd:doc>
         <xd:desc>
