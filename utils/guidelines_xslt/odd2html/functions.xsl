@@ -143,8 +143,9 @@
                 <xsl:value-of select="$current.name || ' ' || $chapters"/>
             </xsl:for-each>
         </xsl:variable>
+        <xsl:variable name="editor-in-chief-label" select="if(count($editor.in.chief) gt 1) then('Editors-in-chief') else('Editor-in-chief')" as="xs:string"/>
         
-        <xsl:message select="'pbd: ' || $editor.in.chief"/>
+        <xsl:message select="'pbd: ' || string-join($editor.in.chief,', ')"/>
         <xsl:message select="'edt: ' || string-join($editors,', ')"/>
         
         <section class="page1">
@@ -164,7 +165,7 @@
             <div id="imprint">
                 <div class="title">The Music Encoding Initiative Guidelines</div>
                 <div class="versionInfo">Version <xsl:value-of select="$version"/> (<a class="hiddenLink" href="{$git.link}">#<xsl:value-of select="$git.short"/></a>), generated on <xsl:value-of select="format-date(current-date(), '[D1] [MNn] [Y1]')"/></div>
-                <div class="editors">Editor-in-chief: <xsl:value-of select="string-join($editor.in.chief,', ')"/></div>
+                <div class="editors"><xsl:value-of select="$editor-in-chief-label"/>: <xsl:value-of select="string-join($editor.in.chief,', ')"/></div>
                 <div class="editors">Editors: <xsl:value-of select="string-join($editors,', ')"/></div>
                 <div class="layout">Layout: Johannes Kepper</div>
                 <div class="copyright">© by the Music Encoding Initiative, as represented by the MEI Board.</div>
