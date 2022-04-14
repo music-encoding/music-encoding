@@ -31,25 +31,23 @@
     <xsl:function name="tools:xml2html" as="node()*">
         <xsl:param name="input" as="xs:string"/>
         
-        <xsl:variable name="relevantExcerpt" as="xs:string">
-            <xsl:variable name="pi.start" select="'&lt;?edit-start?&gt;'" as="xs:string"/>
-            <xsl:variable name="pi.end" select="'&lt;?edit-end?&gt;'" as="xs:string"/>
-            <xsl:choose>
-                <xsl:when test="contains($input, $pi.start) and contains($input, $pi.end) and index-of($input, $pi.start) lt index-of($input, $pi.end)">
-                    <xsl:sequence select="substring-before(substring-after($input, $pi.start), $pi.end)"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:sequence select="$input"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        
         <xsl:variable name="q" as="xs:string">"</xsl:variable>
-        <xsl:variable name="wrapped" select="'&lt;WRAPPER&gt;' || $relevantExcerpt || '&lt;/WRAPPER&gt;'" as="xs:string"/>
+        <xsl:variable name="wrapped" select="'&lt;WRAPPER&gt;' || $input || '&lt;/WRAPPER&gt;'" as="xs:string"/>
         <xsl:variable name="output">
             <xsl:try>
                 <xsl:variable name="xml" select="parse-xml($wrapped)/WRAPPER/child::node()" as="node()*"/>
-                <xsl:apply-templates select="$xml" mode="preserveSpace"/>        
+                <xsl:variable name="pi.start" select="$xml//processing-instruction('edit-start')" as="processing-instruction()*"/>
+                <xsl:variable name="pi.end" select="$xml//processing-instruction('edit-end')" as="processing-instruction()*"/>
+                <xsl:choose>
+                    <xsl:when test="exists($pi.start) and exists($pi.end)">
+                        <xsl:message select="'CUTTING EXAMPLE'"/>
+                        <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates select="$xml" mode="preserveSpace"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <!--<xsl:apply-templates select="$xml" mode="preserveSpace"/>-->        
                 <xsl:catch>
                     <xsl:message select="'ERROR: Unable to parse the following XML snippet, which is apparently not well-formed:'"/>
                     <xsl:message select="$input"/>
