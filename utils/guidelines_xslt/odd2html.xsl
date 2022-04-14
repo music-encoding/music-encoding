@@ -86,6 +86,10 @@
                     This holds code for polishing the HTML output for PDF publication. 
                 </xd:li>
                 <xd:li>
+                    <xd:b>odd2html/prepareLiveExample.xsl</xd:b>: 
+                    This prepares examples that are to be rendered for inclusion in the Guidelines. 
+                </xd:li>
+                <xd:li>
                     <xd:b>odd2html/generateSearchIndex.xsl</xd:b>: 
                     This holds code for preparing the search function on the website. 
                 </xd:li>
@@ -120,7 +124,7 @@
     
     <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
     <xsl:variable name="git.head" select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))" as="xs:string"/>
-    <xsl:variable name="retrieved.hash" select="unparsed-text($git.path || $git.head)" as="xs:string"/>
+    <xsl:variable name="retrieved.hash" select="unparsed-text($git.path || $git.head) || ''" as="xs:string"/>
     
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
@@ -139,6 +143,8 @@
     <xsl:include href="odd2html/preparePDF.xsl"/>
     
     <xsl:include href="odd2html/generateSearchIndex.xsl"/>
+    
+    <xsl:include href="odd2html/prepareLiveExamples.xsl"/>
     
     <xd:doc>
         <xd:desc>
@@ -196,6 +202,11 @@
                 <xsl:with-param name="media" select="'print'"/>
             </xsl:call-template>
         </xsl:variable>
+        
+        <!-- retrieve multiple HTML files for online publication -->
+        <xsl:call-template name="prepareLiveExamples">
+            <xsl:with-param name="guidelinesSources" select="$mei.source//tei:body/child::tei:div"/>
+        </xsl:call-template>
         
         <!-- retrieve multiple HTML files for online publication -->
         <xsl:call-template name="generateWebsite">
