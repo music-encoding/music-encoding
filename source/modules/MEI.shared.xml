@@ -735,8 +735,9 @@
           connecting the starting and ending points of the curve. The first value captures a
           distance to the left (positive value) or right (negative value) of the line, expressed in
           virtual units. The second value of each pair represents a point along the line, expressed
-          as a percentage of the line's length. N.B. An MEI virtual unit (VU) is half the distance
-          between adjacent staff lines.</desc>
+          as a percentage of the line's length. N.B. An MEI virtual unit (vu) is half the distance
+          between adjacent staff lines where the interline space is measured from the middle of a 
+          staff line.</desc>
         <datatype>
           <rng:list>
             <rng:oneOrMore>
@@ -1396,6 +1397,7 @@
   <classSpec ident="att.layer.log" module="MEI.shared" type="atts">
     <desc>Logical domain attributes.</desc>
     <classes>
+      <memberOf key="att.cue"/>
       <memberOf key="att.meterConformance"/>
     </classes>
     <attList>
@@ -2146,7 +2148,7 @@
             <sch:rule context="mei:*[lower-case(@head.auth) eq 'smufl']">
               <sch:assert test="matches(@head.shape, '^#x') or matches(@head.shape, '^U+')">When
                 @head.auth matches 'smufl', @head.shape must contain a numeric glyph reference in
-                hexadecimal notation, <abbr>e.g.</abbr>, "#xE000" or "U+E000".</sch:assert>
+                hexadecimal notation, e.g., "#xE000" or "U+E000".</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
@@ -4856,7 +4858,7 @@
     </content>
     <constraintSpec ident="Clef_position_lines" scheme="isoschematron">
       <constraint>
-        <sch:rule context="mei:clef[ancestor::mei:staffDef[@lines]]">
+        <sch:rule context="mei:clef[matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
           <sch:assert
             test="number(@line) &lt;= number(ancestor::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
@@ -8014,6 +8016,7 @@
         <rng:choice>
           <rng:text/>
           <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.appLike"/>
           <rng:ref name="model.editLike"/>
           <rng:ref name="model.transcriptionLike"/>
         </rng:choice>

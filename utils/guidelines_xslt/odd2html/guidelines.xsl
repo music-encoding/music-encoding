@@ -482,7 +482,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:graphic" mode="guidelines">
-        <img class="graphic" src="{tools:adjustImageUrl(@url)}"/>
+        <xsl:choose>
+            <xsl:when test="@rend">
+                <img alt="SMuFL glyph" class="smufl" src="{@url}"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <img alt="example" class="graphic" src="{tools:adjustImageUrl(@url)}"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xd:doc>
