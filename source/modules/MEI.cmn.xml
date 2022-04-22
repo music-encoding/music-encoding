@@ -56,6 +56,56 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.POSITION.cmn" module="MEI.cmn" type="dt">
+    <desc>Location of musical material from the CMN repertoire.</desc>
+    <content>
+      <rng:choice>
+        <rng:ref name="data.POSITION.cmn.basic"/>
+        <rng:ref name="data.POSITION.cmn.extended"/>
+      </rng:choice>
+    </content>
+    <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:*[@place eq 'between']">
+          <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The @staff
+            attribute must contain 2 numerically-adjacent integer values.</sch:assert>
+          <sch:let name="tokenizedStaff" value="tokenize(normalize-space(string(@staff)), '\s+')"/>
+          <sch:let name="maxValue"
+            value="max((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
+          <sch:let name="minValue"
+            value="min((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
+          <sch:assert test="$maxValue - $minValue = 1">Staves <sch:value-of select="$minValue"/> and
+            <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </macroSpec>
+  <macroSpec ident="data.POSITION.cmn.basic" module="MEI" type="dt">
+    <desc>Location of symbol relative to a staff.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="above">
+          <desc>Above the staff.</desc>
+        </valItem>
+        <valItem ident="below">
+          <desc>Below the staff.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.POSITION.cmn.extended" module="MEI" type="dt">
+    <desc>Location of symbol relative to a staff.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="between">
+          <desc>Between staves.</desc>
+        </valItem>
+        <valItem ident="within">
+          <desc>Within/on the staff.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.STAFFITEM.cmn" module="MEI.cmn" type="dt">
     <desc>Items in the CMN repertoire that may be printed near a staff.</desc>
     <content>
