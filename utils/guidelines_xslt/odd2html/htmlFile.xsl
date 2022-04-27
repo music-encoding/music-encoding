@@ -98,9 +98,12 @@
                                         
                                         <div class="searchbox">
                                             
-                                            <form><div class="search_group">
-                                                <input id="search_inputTop" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonTop" class="search_button"><span class="search_icon">⚲</span></button>
-                                            </div></form>
+                                            <form>
+                                                <div class="search_group">
+                                                    <input id="search_inputTop" class="search_input" title="At least 3 characters" type="text"></input>
+                                                    <button type="submit" id="submitSearchButtonTop" class="search_button"><span class="search_icon">⚲</span></button>
+                                                </div>
+                                            </form>
                                             
                                         </div>
                                         
@@ -117,9 +120,12 @@
                                         <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
                                     </div>
                                     
-                                    <form><div class="search_group">
-                                        <input name="q" id="search_input" title="At least 3 characters" type="text"></input><button type="submit" id="submitSearchButtonSide" class="search_button"><span class="search_icon">⚲</span></button>
-                                    </div></form>
+                                    <form>
+                                        <div class="search_group">
+                                            <input name="q" id="search_input" class="search_input" title="At least 3 characters" type="text"></input>
+                                            <button type="submit" id="submitSearchButtonSide" class="search_button"><span class="search_icon">⚲</span></button>
+                                        </div>
+                                    </form>
                                     
                                     <ul class="nav"> 
                                         <li class="nav-item">
