@@ -61,8 +61,6 @@
                             href="{$cssPath}css/mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
                             href="{$cssPath}css/mei-screen.css" />
-                        <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/guidelines.css" />
                         <script src="{$cssPath}search/searchIndex.js"></script>
                         <script src="{$cssPath}search/fuse.min.js"></script>
                     </xsl:when>
