@@ -122,9 +122,18 @@
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     <xsl:variable name="docs.folder" select="collection(substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/source/docs')//tei:TEI" as="node()*"/>
     
-    <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-    <xsl:variable name="git.head" select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))" as="xs:string"/>
-    <xsl:variable name="retrieved.hash" select="unparsed-text($git.path || $git.head) || ''" as="xs:string"/>
+    <xsl:variable name="retrieved.hash" as="xs:string">
+        <xsl:choose>
+            <xsl:when test="$hash eq 'latest'">
+                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:variable name="git.head" select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))" as="xs:string"/>
+                <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$hash"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
     
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
