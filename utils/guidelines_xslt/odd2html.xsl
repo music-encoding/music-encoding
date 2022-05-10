@@ -126,8 +126,24 @@
     </xd:doc>
     <xsl:param name="branch" select="'develop'" as="xs:string"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The base directory handed over from Ant</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="basedir" select="''" as="xs:string"/>
+    
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
-    <xsl:variable name="docs.folder" select="collection(substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/source/docs')//tei:TEI" as="node()*"/>
+    <xsl:variable name="docs.folder" as="node()*">
+        <xsl:choose>
+            <xsl:when test="$basedir eq ''">
+                <xsl:sequence select="collection(substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/source/docs')//tei:TEI"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="collection($basedir || '/source/docs')//tei:TEI"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
     
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
