@@ -504,7 +504,7 @@
             
         </xsl:variable>
         
-        <xsl:variable name="curated.uri" select="replace(string(document-uri($mei.source)),'/source/mei-source.xml','/source/contributors/curated.contributors.json')" as="xs:string">
+        <xsl:variable name="curated.uri" as="xs:string">
             <xsl:choose>
                 <xsl:when test="$basedir eq ''">
                     <xsl:value-of select="replace(string(document-uri($mei.source)),'/source/mei-source.xml','/source/contributors/curated.contributors.json')"/>
