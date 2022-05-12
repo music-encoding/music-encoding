@@ -504,7 +504,16 @@
             
         </xsl:variable>
         
-        <xsl:variable name="curated.uri" select="replace(string(document-uri($mei.source)),'/source/mei-source.xml','/source/contributors/curated.contributors.json')" as="xs:string"/>
+        <xsl:variable name="curated.uri" as="xs:string">
+            <xsl:choose>
+                <xsl:when test="$basedir eq ''">
+                    <xsl:value-of select="replace(string(document-uri($mei.source)),'/source/mei-source.xml','/source/contributors/curated.contributors.json')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$basedir || '/source/contributors/curated.contributors.json'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="curated.contributors" select="tools:retrieveData($curated.uri)" as="node()*"/>
         
         <xsl:variable name="merged.contributors" as="node()*">

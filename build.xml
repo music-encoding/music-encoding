@@ -94,6 +94,14 @@
         </exec>
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
+    
+    <target name="get-local-git-branch" description="Retrieves the current git branch via commandline">
+        <exec executable="git" outputproperty="github.branch.local">
+            <arg value="branch"/>
+            <arg value="--show-current"/>
+        </exec>
+        <echo>Local github.sha: ${github.branch.local}</echo>
+    </target>
 
     <target name="reset">
         <delete dir="temp/"/>
@@ -163,7 +171,7 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha">
+    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha, get-local-git-branch">
         <!-- TODO check dependency try with mei-source.xml -->
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building HTML guidelines for ${odd.basename} from ${customization.path}</echo>
@@ -180,11 +188,14 @@
             <arg value="-xi:on"/>
             <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
             <arg value="hash=${hash}"/>
+            <arg value="branch=${github.branch.local}"/>
+            <arg value="basedir=${basedir}"/>
         </java>
-        <copy todir="${dir.dist.guidelines}/web/css">
-            <fileset dir="source/web/css">
-                <include name="*.css"/>
-            </fileset>
+        <antcall target="copy-guidelines-html-assets"/>
+    </target>
+    <target name="copy-guidelines-html-assets">
+        <copy todir="${dir.dist.guidelines}/web">
+            <fileset dir="source/web"/>
         </copy>
         <copy todir="${dir.dist.guidelines}/web/images">
             <fileset dir="source/images">
