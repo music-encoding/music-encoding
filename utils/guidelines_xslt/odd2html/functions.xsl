@@ -310,6 +310,9 @@
             <xsl:when test="$target = $elements/@ident">
                 <xsl:value-of select="'link_odd link_odd_elementSpec'"/>
             </xsl:when>
+            <xsl:when test="$target = ('svg_svg','svg')">
+                <xsl:value-of select="'link_odd link_external_module'"/>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:message select="'ERROR: Unable to resolve link to ' || $target"/>
                 <xsl:value-of select="'link_odd broken'"/>
