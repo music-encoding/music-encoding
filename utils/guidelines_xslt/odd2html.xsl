@@ -266,7 +266,7 @@
             <xsl:sequence select="$singlePage"/>
         </xsl:result-document>-->
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+        <xsl:result-document href="{$build.folder || $pdf.file.name}.html">
             <xsl:apply-templates select="$singlePage" mode="preparePDF"/>
         </xsl:result-document>
         

@@ -32,7 +32,7 @@
     <xsl:template name="generateWebsite">
         <xsl:param name="input" as="node()+"/>
         
-        <xsl:variable name="web.output" select="$output.folder || 'web/'" as="xs:string"/>
+        <xsl:variable name="web.output" select="$dist.folder" as="xs:string"/>
         
         <!-- index page -->
         <xsl:result-document href="{$web.output}index.html">
@@ -92,7 +92,7 @@
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
-        <xsl:result-document href="{$web.output}/search/searchIndex.js" method="text" omit-xml-declaration="yes">
+        <xsl:result-document href="{$web.output}/js/searchIndex.js" method="text" omit-xml-declaration="yes">
             const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>
         </xsl:result-document>
         
