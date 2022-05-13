@@ -185,4 +185,24 @@
         </div>
     </xsl:template>
     
+    <xsl:template match="img/@src" mode="preparePDF">
+        <xsl:choose>
+            <xsl:when test="starts-with(.,'http://')">
+                <xsl:next-match/>
+            </xsl:when>
+            <xsl:when test="starts-with(.,'https://')">
+                <xsl:next-match/>
+            </xsl:when>
+            <xsl:when test="starts-with(.,'images/') and not(contains(.,'/generated/'))">
+                <xsl:attribute name="src" select="$cleaned.basedir || 'source/' || ."/>
+            </xsl:when>
+            <xsl:when test="starts-with(.,'./images/generated/')">
+                <xsl:attribute name="src" select="$build.folder.generated.images || substring(.,20)"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message terminate="yes" select="'dunno how to resolve image src=' || ."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
 </xsl:stylesheet>
