@@ -15,13 +15,6 @@
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Jul 8, 2021</xd:p>
-            <xd:p><xd:b>Author:</xd:b> johannes</xd:p>
-            <xd:p></xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xd:doc scope="stylesheet">
-        <xd:desc>
-            <xd:p><xd:b>Created on:</xd:b> Nov 11, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
             <xd:p>This XSLT is part of odd2html.xsl. It holds basic functions, which are
                 used to adjust input parameters like image paths.</xd:p>
@@ -64,7 +57,7 @@
         <xsl:sequence select="$out"/>
     </xsl:function>
     
-    <xd:doc>
+    <!--<xd:doc>
         <xd:desc>
             <xd:p>Builds a flat list of chapter elements that can be used for building tocs etc. Recursively called on child chapters.</xd:p>
         </xd:desc>
@@ -72,7 +65,7 @@
         <xd:param name="level">The current level of nesting. Increased by one with every recursive call</xd:param>
         <xd:param name="parent.number">The number of parent chapters, to which the current index will be appended</xd:param>
         <xd:return>A list of chapter elements</xd:return>
-    </xd:doc>
+    </xd:doc>-->
     <xd:doc>
         <xd:desc>
             <xd:p></xd:p>
@@ -486,8 +479,9 @@
                 </xsl:for-each>
             </xsl:variable>
             
-            <xsl:message select="$raw.contributors"/>
-            <xsl:message select="$unique.ids"/>
+            <!-- DEBUG -->
+            <!--<xsl:message select="$raw.contributors"/>
+            <xsl:message select="$unique.ids"/>-->
             
             
             <array xmlns="http://www.w3.org/2005/xpath-functions">
