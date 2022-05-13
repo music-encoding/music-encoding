@@ -26,9 +26,13 @@
                 included which focus on specific tasks:
             <xd:ul>
                 <xd:li>
+                    <xd:b>odd2html/config.xsl</xd:b>: 
+                    This file holds configuration options for the XSLT, mostly output paths.
+                </xd:li>
+                <xd:li>
                     <xd:b>odd2html/globalVariables.xsl</xd:b>: 
                     This file holds preprocessed variables, like all elements, which are made available throughout 
-                    the XSLT
+                    the XSLT.
                 </xd:li>
                 <xd:li>
                     <xd:b>odd2html/functions.xsl</xd:b>: 
@@ -169,6 +173,7 @@
         </xsl:choose>
     </xsl:variable>
     
+    <xsl:include href="odd2html/config.xsl"/>
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
     <xsl:include href="odd2html/renderXML.xsl"/>
