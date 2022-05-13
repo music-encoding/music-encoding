@@ -32,6 +32,7 @@
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
     <property name="dir.dist" value="dist"/>
+    <property name="dir.build" value="build"/>
     <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
     <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
     <path id="mei.classpath">
@@ -39,7 +40,7 @@
         <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
     </path>
     <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <condition property="canonicalizedSourcePath" value="${dir.dist.schemata}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.dist}/schemata/${version}/mei-source_canonicalized.xml">
+    <condition property="canonicalizedSourcePath" value="${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/${version}/mei-source_canonicalized.xml">
         <not>
             <os family="windows"/>
         </not>
@@ -138,11 +139,11 @@
         <!--TODO update to latest version -->
     </target>
 
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
+    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in build/mei-source_canonicalized.xml" depends="init">
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
-            <arg value="-o:${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+            <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xi:on"/>
         </java>
     </target>
@@ -183,7 +184,7 @@
             </not>
         </condition>
         <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon-he-10.5.jar" failonerror="true">
-            <arg value="-s:${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+            <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
             <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
@@ -194,14 +195,19 @@
         <antcall target="copy-guidelines-html-assets"/>
     </target>
     <target name="copy-guidelines-html-assets">
-        <copy todir="${dir.dist.guidelines}/web">
-            <fileset dir="source/web"/>
+        <copy todir="${dir.dist.guidelines}/web/js">
+            <fileset dir="source/js"/>
+        </copy>
+        <copy todir="${dir.dist.guidelines}/web/css">
+            <fileset dir="source/css/screen"/>
         </copy>
         <copy todir="${dir.dist.guidelines}/web/images">
             <fileset dir="source/images">
                 <include name="**/*"/>
             </fileset>
         </copy>
+        <!-- generated images can only be copied after they're generated, which depends on running a Docker image independend of Ant. 
+            Needs to be taken care of elsewhere -->
     </target>
 
     <target name="build-customizations">
