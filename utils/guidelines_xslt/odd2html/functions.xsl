@@ -532,7 +532,7 @@
                 </tr>
             </thead>
             <tbody>
-                <xsl:for-each select="$merged.contributors//json:map">
+                <xsl:for-each select="$merged.contributors//json:map[json:string[@key = 'login']]">
                     <!-- make sure accounts without name are pushed to the end -->
                     <xsl:sort select="tokenize(normalize-space(./json:string[@key = 'name']/text() || 'zzzzzzzz'),' ')[last()]"/>
                     <xsl:variable name="current.contributor" select="." as="node()"/>
@@ -565,6 +565,10 @@
                             
                         </td>
                     </tr>
+                </xsl:for-each>
+                <xsl:for-each select="$merged.contributors//json:map[not(json:string[@key = 'login'])]">
+                    <xsl:message select="'Unable to handle the following contributor:'"/>
+                    <xsl:message select="."/>
                 </xsl:for-each>
             </tbody>
         </table>
