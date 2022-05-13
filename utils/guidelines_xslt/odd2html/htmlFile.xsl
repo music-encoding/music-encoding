@@ -38,8 +38,9 @@
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
-                <meta name="author" content="Johannes Kepper" />
-                <meta name="author" content="Perry D. Roland" />
+                <xsl:for-each select="$source.file//tei:respStmt/tei:name[@role='pbd']/normalize-space(text())">
+                    <meta name="author" content="{.}"/>
+                </xsl:for-each>
                 <meta name="subject" content="Documentation for the Music Encoding Initiative (MEI) Data Model" />
                 <meta name="keywords" content="Music Encoding, MEI, Digital Humanities, Musicology, Music Librarianship, Music Information Retrieval" />
                 <meta name="date" content="{substring(string(current-date()),1,10)}" />
