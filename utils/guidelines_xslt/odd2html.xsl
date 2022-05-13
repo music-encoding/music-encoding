@@ -104,13 +104,6 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The relative path where the resulting HTML file should be stored. If changed, you should adjust image paths accordingly (see funcions.xsl)</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:param name="output.folder" select="'./'" as="xs:string"/>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
@@ -118,7 +111,7 @@
         
     <xd:doc>
         <xd:desc>
-            <xd:p>The git commit hash of the version this is generated from</xd:p>
+            <xd:p>The git commit hash of the version this is generated from. Should not be set manually.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:param name="hash" select="'latest'" as="xs:string"/>
@@ -132,13 +125,18 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The base directory handed over from Ant</xd:p>
+            <xd:p>The base directory handed over from Ant. Should not be set when the XSLT is called locally.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:param name="basedir" select="''" as="xs:string"/>
     
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The (computed) head branch of the repo for which documentation will be generated.</xd:p>
+        </xd:desc>
+    </xd:doc>
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
@@ -151,6 +149,11 @@
         </xsl:choose>
     </xsl:variable>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The (computed) git hash of the repo.</xd:p>
+        </xd:desc>
+    </xd:doc>
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
@@ -190,8 +193,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
-        <xsl:message select="'Processing MEI v' || $version || ' at revision ' || $hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
-        <xsl:message select="'.   git: ' || $retrieved.hash"/>
+        <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
@@ -199,7 +201,6 @@
         <xsl:message select="'.   data types: ' || count($data.types)"/>
         <xsl:message select="'.   macro groups: ' || count($macro.groups)"/>
         
-        <xsl:variable name="intro"/>
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="preface" select="tools:generatePreface()" as="node()+"/>
         <xsl:variable name="guidelines" as="node()">

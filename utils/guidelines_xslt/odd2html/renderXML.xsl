@@ -40,7 +40,7 @@
                 <xsl:variable name="pi.end" select="$xml//processing-instruction('edit-end')" as="processing-instruction()*"/>
                 <xsl:choose>
                     <xsl:when test="exists($pi.start) and exists($pi.end)">
-                        <xsl:message select="'CUTTING EXAMPLE'"/>
+                        <!--<xsl:message select="'CUTTING EXAMPLE'"/>-->
                         <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
                     </xsl:when>
                     <xsl:otherwise>
