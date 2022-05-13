@@ -50,9 +50,9 @@
                 <xsl:choose>
                     <xsl:when test="$media = 'print'">
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="css/mei-print.css" />
+                            href="{$css.folder.print}mei-print.css" />
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="css/mei.css" />
+                            href="{$css.folder.print}mei.css" />
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
@@ -61,8 +61,8 @@
                             href="{$cssPath}css/mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
                             href="{$cssPath}css/mei-screen.css" />
-                        <script src="{$cssPath}search/searchIndex.js"></script>
-                        <script src="{$cssPath}search/fuse.min.js"></script>
+                        <script src="{$cssPath}js/searchIndex.js"></script>
+                        <script src="{$cssPath}js/fuse.min.js"></script>
                     </xsl:when>
                 </xsl:choose>
             </head>
