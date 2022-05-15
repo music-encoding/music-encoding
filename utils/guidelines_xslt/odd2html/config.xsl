@@ -62,7 +62,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <!-- todo: add some validation if that given $basedir really exists? -->
-                <xsl:value-of select="$basedir"/>
+                <xsl:value-of select="$basedir || '/'"/>
             </xsl:otherwise>
         </xsl:choose>    
     </xsl:variable>
