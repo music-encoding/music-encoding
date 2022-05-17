@@ -47,7 +47,7 @@
         <xsl:for-each select="$guidelinesSources//egx:egXML['verovio' = tokenize(normalize-space(@rend),' ')]">
             <xsl:variable name="id" select="generate-id(.)" as="xs:string"/>
             <xsl:try>
-                <xsl:result-document href="{$build.folder.generated.images}{$id}.mei" method="xml" indent="yes">
+                <xsl:result-document href="{$build.folder.generated.images.abs}{$id}.mei" method="xml" indent="yes">
                     <xsl:sequence select="parse-xml(node())"/>
                 </xsl:result-document>
                 <xsl:catch>

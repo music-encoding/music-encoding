@@ -194,10 +194,10 @@
                 <xsl:next-match/>
             </xsl:when>
             <xsl:when test="starts-with(.,'images/') and not(contains(.,'/generated/'))">
-                <xsl:attribute name="src" select="$cleaned.basedir || 'source/' || ."/>
+                <xsl:attribute name="src" select="$parentdir.rel || 'source/' || ."/>
             </xsl:when>
             <xsl:when test="starts-with(.,'./images/generated/')">
-                <xsl:attribute name="src" select="$build.folder.generated.images || substring(.,20)"/>
+                <xsl:attribute name="src" select="$build.folder.generated.images.rel || substring(.,20)"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes" select="'dunno how to resolve image src=' || ."/>
