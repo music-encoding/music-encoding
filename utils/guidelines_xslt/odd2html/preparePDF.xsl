@@ -157,7 +157,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>This templates ensures a space character between heading number and heading in the PDF table of contents</xd:p>
+            <xd:p>This template ensures a space character between heading number and heading in the PDF table of contents</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="span[@class='headingNumber']" mode="preparePDF">
