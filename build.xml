@@ -34,7 +34,7 @@
     <property name="dir.build" value="build"/>
     <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
-    <loadresource property="dir.dist.guidelines_win">
+    <loadresource property="dir.dist.guidelines.win">
         <string value="${dir.dist.guidelines}"/>
         <filterchain>
             <tokenfilter>
@@ -42,7 +42,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <condition property="dir.dist.guidelines_adjusted" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines_win}">
+    <condition property="dir.dist.guidelines.cross_platform" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines.win}">
         <not>
             <os family="windows"/>
         </not>
@@ -53,7 +53,7 @@
         <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
     </path>
     <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <condition property="canonicalizedSourcePath" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
+    <condition property="canonicalized.source.path.cross_platform" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
         <not>
             <os family="windows"/>
         </not>
@@ -155,7 +155,7 @@
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
@@ -168,7 +168,7 @@
         <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
         </ant>
     </target>
@@ -188,7 +188,7 @@
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
-            <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
+            <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${github.branch.local}"/>
             <arg value="basedir=${basedir}"/>
