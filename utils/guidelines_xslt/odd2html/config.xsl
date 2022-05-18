@@ -113,7 +113,7 @@
             <xd:p>The dist folder, in which the final results of the XSLT are stored.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="dist.folder" select="$cleaned.basedir || 'dist/guidelines/web/'" as="xs:string"/>
+    <xsl:variable name="dist.folder" select="$cleaned.basedir || 'dist/guidelines/' || $revision || '/web/'" as="xs:string"/>
     
     <xd:doc>
         <xd:desc>

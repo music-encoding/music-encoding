@@ -116,6 +116,17 @@
         </exec>
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
+    
+    <target name="get-local-git-revision">
+        <description>Get the current git revision</description>
+        <exec executable="git" outputproperty="github.revision.local">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+            <arg value="--always"/>
+            <arg value="HEAD"/>
+        </exec>
+        <echo>Local github.revision: ${github.revision.local}</echo>
+    </target>
 
     <target name="reset">
         <delete dir="lib"/>
@@ -185,7 +196,7 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha, get-local-git-branch">
+    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha, get-local-git-branch, get-local-git-revision">
         <!-- TODO check dependency try with mei-source.xml -->
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo message="building HTML guidelines for ${odd.basename} from ${customization.path} on branch ${github.branch.local}"/>
@@ -203,6 +214,7 @@
             <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${github.branch.local}"/>
+            <arg value="revision=${github.revision.local}"/>
             <arg value="basedir=${basedir}"/>
         </java>
         <antcall target="copy-guidelines-html-assets"/>
