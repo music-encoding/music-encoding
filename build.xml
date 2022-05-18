@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="music-encoding" default="dist">
     <property name="github.sha" value="github.sha"/>
-    <property name="github.ref" value="github.ref"/>
-    <!-- string	The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     <property name="github.event_name" value="github.event_name"/>
     <!--string	The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
+    <property name="github.ref" value="github.ref"/>
+    <!-- string	The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     <loadresource property="github.ref-type">
         <string value="${github.ref}"/>
         <filterchain>
@@ -31,20 +31,9 @@
     </loadresource>
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
-    <property name="dir.dist" value="dist"/>
     <property name="dir.build" value="build"/>
+    <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
-    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
-    <path id="mei.classpath">
-        <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
-    </path>
-    <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <condition property="canonicalizedSourcePath" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/${version}/mei-source_canonicalized.xml">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
     <loadresource property="dir.dist.guidelines_win">
         <string value="${dir.dist.guidelines}"/>
         <filterchain>
@@ -58,6 +47,18 @@
             <os family="windows"/>
         </not>
     </condition>
+    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
+    <path id="mei.classpath">
+        <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
+        <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
+    </path>
+    <property name="java.class.path" value="" classpathref="mei.classpath"/>
+    <condition property="canonicalizedSourcePath" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
+        <not>
+            <os family="windows"/>
+        </not>
+    </condition>
+
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
