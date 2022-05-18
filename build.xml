@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="music-encoding" default="dist">
     <property name="github.sha" value="github.sha"/>
-    <property name="github.ref" value="github.ref"/>
-    <!-- string	The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     <property name="github.event_name" value="github.event_name"/>
     <!--string	The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
+    <property name="github.ref" value="github.ref"/>
+    <!-- string	The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     <loadresource property="github.ref-type">
         <string value="${github.ref}"/>
         <filterchain>
@@ -31,21 +31,10 @@
     </loadresource>
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
-    <property name="dir.dist" value="dist"/>
     <property name="dir.build" value="build"/>
+    <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
-    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
-    <path id="mei.classpath">
-        <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
-    </path>
-    <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <condition property="canonicalizedSourcePath" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/${version}/mei-source_canonicalized.xml">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
-    <loadresource property="dir.dist.guidelines_win">
+    <loadresource property="dir.dist.guidelines.win">
         <string value="${dir.dist.guidelines}"/>
         <filterchain>
             <tokenfilter>
@@ -53,11 +42,30 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <condition property="dir.dist.guidelines_adjusted" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines_win}">
+    <condition property="dir.dist.guidelines.cross_platform" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines.win}">
         <not>
             <os family="windows"/>
         </not>
     </condition>
+    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
+    <condition property="canonicalized.source.path.cross_platform" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
+        <not>
+            <os family="windows"/>
+        </not>
+    </condition>
+    <property name="dir.lib" value="${basedir}/lib"/>
+    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <property name="saxon.download.version" value="Saxon-HE/10/Java/SaxonHE10-5J"/>
+    <property name="saxon.jar.file" value="saxon-he-10.5.jar"/>
+    <property name="xerces.version" value="21.1.0.2"/>
+    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    <path id="mei.classpath">
+        <pathelement path="${dir.lib.xerces}/${xerces.jar.file}"/>
+        <pathelement path="${dir.lib.saxon}/${saxon.jar.file}"/>
+    </path>
+    <property name="java.class.path" value="" classpathref="mei.classpath"/>
+
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
@@ -77,8 +85,9 @@
     </target>
 
     <target name="clean">
-        <delete dir="temp/"/>
-        <delete dir="dist/"/>
+        <delete dir="build"/>
+        <delete dir="dist"/>
+        <delete dir="temp"/>
     </target>
 
     <target name="echo-properties" description="Outputs ">
@@ -101,18 +110,18 @@
             <arg value="branch"/>
             <arg value="--show-current"/>
         </exec>
-        <echo>Local github.sha: ${github.branch.local}</echo>
+        <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
     <target name="reset">
-        <delete dir="temp/"/>
-        <delete dir="lib/"/>
-        <delete dir="dist/"/>
+        <delete dir="lib"/>
+        <antcall target="clean"/>
     </target>
 
     <target name="init" description="initializes the build, e.g. downloads saxon">
-        <available property="xerces-available" file="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <available property="saxon-available" file="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
+        <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
+        <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
+        <mkdir dir="${dir.lib}"/>
         <antcall target="saxon-prepare"/>
         <antcall target="xerces-download"/>
         <echo>initialized</echo>
@@ -120,7 +129,7 @@
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/10/Java/SaxonHE10-5J.zip/download" dest="temp/"/>
+        <get src="https://sourceforge.net/projects/saxon/files/${saxon.download.version}.zip/download" dest="temp/"/>
         <!-- TODO check for newer releases-->
     </target>
 
@@ -129,13 +138,13 @@
     </target>
 
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
-        <mkdir dir="lib"/>
-        <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
+        <mkdir dir="${dir.lib.saxon}"/>
+        <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
-        <mkdir dir="lib/xerces/"/>
-        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/>
+        <mkdir dir="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
         <!--TODO update to latest version -->
     </target>
 
@@ -154,7 +163,7 @@
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
@@ -167,7 +176,7 @@
         <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
         </ant>
     </target>
@@ -183,11 +192,11 @@
                 <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
             </not>
         </condition>
-        <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon-he-10.5.jar" failonerror="true">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
-            <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
+            <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${github.branch.local}"/>
             <arg value="basedir=${basedir}"/>
@@ -195,13 +204,13 @@
         <antcall target="copy-guidelines-html-assets"/>
     </target>
     <target name="copy-guidelines-html-assets">
-        <copy todir="${dir.dist.guidelines}/web/js">
+        <copy todir="${dir.dist.guidelines.cross_platform}/web/js">
             <fileset dir="source/js"/>
         </copy>
-        <copy todir="${dir.dist.guidelines}/web/css">
+        <copy todir="${dir.dist.guidelines.cross_platform}/web/css">
             <fileset dir="source/css/screen"/>
         </copy>
-        <copy todir="${dir.dist.guidelines}/web/images">
+        <copy todir="${dir.dist.guidelines.cross_platform}/web/images">
             <fileset dir="source/images">
                 <include name="**/*"/>
             </fileset>
