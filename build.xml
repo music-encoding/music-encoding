@@ -207,6 +207,9 @@
                 <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
             </not>
         </condition>
+        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
+            <equals arg1="${github.ref-type}" arg2="heads" forcestring="true"/>
+        </condition>
         <condition property="revision" value="${github.ref-name}" else="${github.revision.local}">
             <equals arg1="${github.ref-type}" arg2="tags" forcestring="true"/>
         </condition>
@@ -216,7 +219,7 @@
             <arg value="-xi:on"/>
             <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
             <arg value="hash=${hash}"/>
-            <arg value="branch=${github.branch.local}"/>
+            <arg value="branch=${branch}"/>
             <arg value="revision=${revision}"/>
             <arg value="basedir=${basedir}"/>
         </java>
