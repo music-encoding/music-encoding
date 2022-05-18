@@ -48,16 +48,23 @@
         </not>
     </condition>
     <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
-    <path id="mei.classpath">
-        <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
-    </path>
-    <property name="java.class.path" value="" classpathref="mei.classpath"/>
     <condition property="canonicalized.source.path.cross_platform" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
         <not>
             <os family="windows"/>
         </not>
     </condition>
+    <property name="dir.lib" value="${basedir}/lib"/>
+    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <property name="saxon.download.version" value="Saxon-HE/10/Java/SaxonHE10-5J"/>
+    <property name="saxon.jar.file" value="saxon-he-10.5.jar"/>
+    <property name="xerces.version" value="21.1.0.2"/>
+    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    <path id="mei.classpath">
+        <pathelement path="${basedir}/lib/xerces/${xerces.jar.file}"/>
+        <pathelement path="${basedir}/lib/saxon/${saxon.jar.file}"/>
+    </path>
+    <property name="java.class.path" value="" classpathref="mei.classpath"/>
 
     <target name="help">
         <echo>================================================</echo>
@@ -112,8 +119,9 @@
     </target>
 
     <target name="init" description="initializes the build, e.g. downloads saxon">
-        <available property="xerces-available" file="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <available property="saxon-available" file="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
+        <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
+        <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
+        <mkdir dir="${dir.lib}"/>
         <antcall target="saxon-prepare"/>
         <antcall target="xerces-download"/>
         <echo>initialized</echo>
@@ -121,7 +129,7 @@
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/10/Java/SaxonHE10-5J.zip/download" dest="temp/"/>
+        <get src="https://sourceforge.net/projects/saxon/files/${saxon.download.version}.zip/download" dest="temp/"/>
         <!-- TODO check for newer releases-->
     </target>
 
@@ -130,13 +138,13 @@
     </target>
 
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
-        <mkdir dir="lib"/>
-        <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
+        <mkdir dir="${dir.lib.saxon}"/>
+        <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
-        <mkdir dir="lib/xerces/"/>
-        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/>
+        <mkdir dir="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
         <!--TODO update to latest version -->
     </target>
 
@@ -184,7 +192,7 @@
                 <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
             </not>
         </condition>
-        <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon-he-10.5.jar" failonerror="true">
+        <java classname="net.sf.saxon.Transform" classpath="${dir.lib.xerces}/${xerces.jar.file};${dir.lib.saxon}/${saxon.jar.file}" failonerror="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
