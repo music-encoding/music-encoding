@@ -66,6 +66,14 @@
             </xsl:otherwise>
         </xsl:choose>    
     </xsl:variable>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>A variable for the parent directory. Used in the context of relative paths.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="parentdir.rel" select="'../'" as="xs:string"/>
+
     
     <xd:doc>
         <xd:desc>
@@ -87,11 +95,19 @@
     <xd:doc>
         <xd:desc>
             <xd:p>The folder, in which MEI files are placed that need to be turned into SVG images. 
-                Those images will eventually be placed in $dist.folder.generated.images.</xd:p>
+                Those images will eventually be placed in $dist.folder.generated.images. Relative path.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="build.folder.generated.images" select="$build.folder || 'images/'" as="xs:string"/>
-    
+    <xsl:variable name="build.folder.generated.images.rel" select="'./images/'" as="xs:string"/>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The folder, in which MEI files are placed that need to be turned into SVG images.
+                Those images will eventually be placed in $dist.folder.generated.images. Absolute path.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="build.folder.generated.images.abs" select="$build.folder || substring($build.folder.generated.images.rel, 3)" as="xs:string"/>
+
     <xd:doc>
         <xd:desc>
             <xd:p>The dist folder, in which the final results of the XSLT are stored.</xd:p>
@@ -127,5 +143,5 @@
             point to the files in the source folder.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="css.folder.print" select="$cleaned.basedir || 'source/css/print/'" as="xs:string"/>
+    <xsl:variable name="css.folder.print" select="$parentdir.rel || 'source/css/print/'" as="xs:string"/>
 </xsl:stylesheet>
