@@ -207,6 +207,9 @@
                 <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
             </not>
         </condition>
+        <condition property="revision" value="${github.ref-name}" else="${github.revision.local}">
+            <equals arg1="${github.ref-type}" arg2="tags"/>
+        </condition>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
@@ -214,7 +217,7 @@
             <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${github.branch.local}"/>
-            <arg value="revision=${github.revision.local}"/>
+            <arg value="revision=${revision}"/>
             <arg value="basedir=${basedir}"/>
         </java>
         <antcall target="copy-guidelines-html-assets"/>
