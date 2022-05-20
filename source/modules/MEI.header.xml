@@ -724,6 +724,67 @@
         institutions.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="componentList" module="MEI.header">
+    <desc>Container for intellectual or physical component parts of a bibliographic entity.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="model.workLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.expressionLike"/>
+          </rng:zeroOrMore>
+        </rng:choice>
+        <rng:choice>
+          <rng:zeroOrMore>
+            <rng:ref name="model.manifestationLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="model.itemLike"/>
+          </rng:zeroOrMore>
+        </rng:choice>
+      </rng:choice>
+    </content>
+    <constraintSpec ident="checkComponentList" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:componentList">
+          <sch:assert
+            test="every $i in ./child::mei:*[not(local-name()='head')] satisfies
+            $i/local-name() eq ./parent::mei:*/local-name()"
+            >Only child elements of the same name as the parent of the componentList are
+            allowed.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="checkComponents" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:componentList[mei:*[@comptype]]">
+          <sch:assert role="warning"
+            test="count(mei:*[@comptype]) = count(mei:*[local-name() ne 'head'])">When any child
+            element has a comptype attribute, it is recommended that comptype appear on all child
+            elements.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks>
+      <p>The child elements of this element are treated as components of the bibliographic entity
+        containing the <gi scheme="MEI">componentList</gi>. Although this is an implicit way of
+        expressing FRBR's hasPart and isPartOf relationships, it avoids this terminology in order to
+        prevent confusion with musical terminology. Work, expression, and item components must be
+        the same type as the parent of componentList: <gi scheme="MEI">work</gi> children are
+        allowed within <gi scheme="MEI">work</gi>, etc. Manifestations; <abbr>i.e.</abbr>, sources, may have
+        either <gi scheme="MEI">source</gi> or <gi scheme="MEI">item</gi>components as required to
+        accommodate composite sources (those containing multiple sources) or multi-part sources
+        (those made up of several physical items.</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="condition" module="MEI.header">
     <desc>The physical condition of an item, particularly any variances between the physical make-up
       of the item and that of other copies of the same item (<abbr>e.g.</abbr>, missing pages or plates,
@@ -2322,7 +2383,7 @@
         the recording medium, <abbr>i.e.</abbr>, 2-track monophonic recordings. In this example, the soundChan
         element should record the fact that there is a single output channel, while the <gi
         scheme="MEI">trackConfig</gi> element should capture the existence of two physical tracks.
-        This element is analogous to MARC field 344 subfield g.</p>
+        This element is analogous to <abbr>MARC</abbr> field 344 subfield g.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="source" module="MEI.header">
@@ -2627,7 +2688,7 @@
         the recording medium, <abbr>i.e.</abbr>, 2-track monophonic recordings. In this example, the trackConfig
         element should record the fact that there are two physical tracks on the sound medium, while
         the <gi scheme="MEI">soundChan</gi> element should be used to state that there is a single
-        output channel. This element may be mapped to MARC field 344 subfield e or subfield f as
+        output channel. This element may be mapped to <abbr>MARC</abbr> field 344 subfield e or subfield f as
         appropriate.</p>
     </remarks>
   </elementSpec>
