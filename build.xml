@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="music-encoding" default="dist">
+    <property name="version" value="dev"/>
+    <!-- in XSLT version = att.meiversion defaultVal -->
     <property name="github.sha" value="github.sha">
         <!-- string    external    The current GitHub sha -->
     </property>
@@ -33,31 +35,17 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <property name="version" value="dev"/>
-    <!-- in XSLT version = att.meiversion defaultVal -->
+    <condition property="basedir.cross_platform" value="${basedir}" else="file:/${windir}">
+        <not>
+            <os family="windows"/>
+        </not>
+    </condition>
     <property name="dir.build" value="build"/>
+    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${dir.build}/mei-source_canonicalized.xml"/>
     <property name="dir.dist" value="dist"/>
-    <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
-    <loadresource property="dir.dist.guidelines.win">
-        <string value="${dir.dist.guidelines}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="\\" replace="/"/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
-    <condition property="dir.dist.guidelines.cross_platform" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines.win}">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
-    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
-    <condition property="canonicalized.source.path.cross_platform" value="${basedir}/${dir.build}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.build}/mei-source_canonicalized.xml">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
-    <property name="dir.lib" value="${basedir}/lib"/>
+    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/${version}"/>
+    <property name="dir.dist.schemata" value="${dir.dist}/schemata/${version}"/>
+    <property name="dir.lib" value="lib"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
     <property name="saxon.download.version" value="Saxon-HE/10/Java/SaxonHE10-5J"/>
@@ -200,10 +188,10 @@
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
-            <arg value="output.folder=${dir.dist.guidelines.cross_platform}/"/>
+            <arg value="output.folder=${basedir}/${dir.build}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${github.branch.local}"/>
-            <arg value="basedir=${basedir}"/>
+            <arg value="basedir=${basedir.cross_platform}"/>
         </java>
         <antcall target="copy-guidelines-html-assets"/>
     </target>
