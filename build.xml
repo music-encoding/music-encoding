@@ -184,6 +184,7 @@
                 <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
             </not>
         </condition>
+        <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
@@ -193,27 +194,23 @@
             <arg value="branch=${github.branch.local}"/>
             <arg value="basedir=${basedir.cross_platform}"/>
         </java>
-        <antcall target="copy-guidelines-html-assets"/>
     </target>
-    <target name="copy-guidelines-html-assets">
-        <copy todir="${dir.dist.guidelines.cross_platform}/web/js">
-            <fileset dir="source/js"/>
+
+    <target name="copy-guidelines-assets">
+        <echo message="copying guidelines assets from source to build and dist folders"/>
+        <copy todir="${dir.build}/assets">
+            <fileset dir="source/assets"/>
         </copy>
-        <copy todir="${dir.dist.guidelines.cross_platform}/web/css">
-            <fileset dir="source/css/screen"/>
-        </copy>
-        <copy todir="${dir.dist.guidelines.cross_platform}/web/images">
-            <fileset dir="source/images">
-                <include name="**/*"/>
-            </fileset>
+        <copy todir="${dir.dist.guidelines}/assets">
+            <fileset dir="source/assets"/>
         </copy>
     </target>
     
     <!-- copy generated images to dist after they're created by running Docker image -->
     <target name="copy-generated-images">
-        <copy todir="${dir.dist.guidelines.cross_platform}/web/images/generated">
-            <fileset dir="${dir.build}/images">
-                <include name="**/*.svg"/>
+        <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
+            <fileset dir="${dir.build}/assets/images/GeneratedImages">
+                <include name="*.svg"/>
             </fileset>
         </copy>
     </target>
