@@ -92,7 +92,7 @@
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
-        <xsl:result-document href="{$web.output}/js/searchIndex.js" method="text" omit-xml-declaration="yes">
+        <xsl:result-document href="{$web.output}assets/js/searchIndex.js" method="text" omit-xml-declaration="yes">
             const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>
         </xsl:result-document>
         
@@ -1060,7 +1060,7 @@
                 <xsl:attribute name="src" select="."/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:attribute name="src" select="'../' || ."/>
+                <xsl:attribute name="src" select="'../' || substring(., 3)"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

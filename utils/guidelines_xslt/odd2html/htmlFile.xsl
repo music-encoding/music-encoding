@@ -32,7 +32,7 @@
         <xsl:param name="media" as="xs:string"/>
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
         
-        <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
+        <xsl:variable name="output.path" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
         <html lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -51,19 +51,19 @@
                 <xsl:choose>
                     <xsl:when test="$media = 'print'">
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="{$css.folder.print}mei-print.css" />
+                            href="{$assets.folder.css.print}mei-print.css" />
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="{$css.folder.print}mei.css" />
+                            href="{$assets.folder.css.print}mei.css" />
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/search.css" />                        
+                            href="{$output.path}{$assets.folder.css.screen}search.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/mei-website.css" />
+                            href="{$output.path}{$assets.folder.css.screen}mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/mei-screen.css" />
-                        <script src="{$cssPath}js/searchIndex.js"></script>
-                        <script src="{$cssPath}js/fuse.min.js"></script>
+                            href="{$output.path}{$assets.folder.css.screen}mei-screen.css" />
+                        <script src="{$output.path}{$assets.folder.js}searchIndex.js"></script>
+                        <script src="{$output.path}{$assets.folder.js}fuse.min.js"></script>
                     </xsl:when>
                 </xsl:choose>
             </head>
@@ -124,25 +124,25 @@
                                     
                                     <ul class="nav"> 
                                         <li class="nav-item">
-                                            <a href="{$cssPath}content/index.html">Guidelines</a>
+                                            <a href="{$output.path}content/index.html">Guidelines</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}modules.html">Modules</a>
+                                            <a href="{$output.path}modules.html">Modules</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}elements.html">Elements</a>
+                                            <a href="{$output.path}elements.html">Elements</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                            <a href="{$output.path}model-classes.html">Model Classes</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                            <a href="{$output.path}macro-groups.html">Macro Groups</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                            <a href="{$output.path}attribute-classes.html">Attribute Classes</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}data-types.html">Data Types</a>
+                                            <a href="{$output.path}data-types.html">Data Types</a>
                                         </li>                                        
                                     </ul> 
                                     <div class="divider"></div>
@@ -160,25 +160,25 @@
                                         <div class="content">
                                             <ul class="nav"> 
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}content/index.html">Guidelines</a>
+                                                    <a href="{$output.path}content/index.html">Guidelines</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}modules.html">Modules</a>
+                                                    <a href="{$output.path}modules.html">Modules</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}elements.html">Elements</a>
+                                                    <a href="{$output.path}elements.html">Elements</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                                    <a href="{$output.path}model-classes.html">Model Classes</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                                    <a href="{$output.path}macro-groups.html">Macro Groups</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                                    <a href="{$output.path}attribute-classes.html">Attribute Classes</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}data-types.html">Data Types</a>
+                                                    <a href="{$output.path}data-types.html">Data Types</a>
                                                 </li>                   
                                             </ul> 
                                             <div class="divider"></div>

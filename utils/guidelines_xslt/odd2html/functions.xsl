@@ -37,11 +37,10 @@
     </xd:doc>
     <xsl:function name="tools:adjustImageUrl" as="xs:string">
         <xsl:param name="url" as="xs:string"/>
-        
         <xsl:variable name="out" as="xs:string">
             <xsl:choose>
                 <xsl:when test="starts-with($url,'../images')">
-                    <xsl:value-of select="substring($url,4)"/>
+                    <xsl:value-of select="$assets.folder.rel || substring($url,4)"/>
                 </xsl:when>
                 <xsl:when test="starts-with($url, 'http://')">
                     <xsl:sequence select="$url"/>

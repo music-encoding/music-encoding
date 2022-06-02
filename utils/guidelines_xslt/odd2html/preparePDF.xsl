@@ -193,11 +193,14 @@
             <xsl:when test="starts-with(.,'https://')">
                 <xsl:next-match/>
             </xsl:when>
-            <xsl:when test="starts-with(.,'images/') and not(contains(.,'/generated/'))">
-                <xsl:attribute name="src" select="$parentdir.rel || 'source/' || ."/>
+            <xsl:when test="starts-with(.,'./assets/images/') and not(contains(.,'GeneratedImages/'))">
+                <xsl:next-match/>
             </xsl:when>
-            <xsl:when test="starts-with(.,'./images/generated/')">
-                <xsl:attribute name="src" select="$build.folder.generated.images.rel || substring(.,20)"/>
+            <xsl:when test="starts-with(.,'./assets/images/GeneratedImages/')">
+                <xsl:next-match/>
+            </xsl:when>
+            <xsl:when test="starts-with(.,'images/') and not(contains(.,'GeneratedImages/'))">
+                <xsl:attribute name="src" select="$assets.folder.rel || ."/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="yes" select="'dunno how to resolve image src=' || ."/>
