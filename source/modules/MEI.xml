@@ -1190,53 +1190,6 @@
       </valList>
     </content>
   </macroSpec>
-  <macroSpec ident="data.EVENTREL" module="MEI" type="dt">
-    <desc>Location of musical material relative to a symbol on a staff instead of the staff.</desc>
-    <content>
-      <alternate>
-        <macroRef key="data.EVENTREL.basic"/>
-        <macroRef key="data.EVENTREL.extended"/>
-      </alternate>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.EVENTREL.basic" module="MEI" type="dt">
-    <desc>Location of musical material relative to a symbol other than a staff.</desc>
-    <content>
-      <valList type="closed">
-        <valItem ident="above">
-          <desc>Above.</desc>
-        </valItem>
-        <valItem ident="below">
-          <desc>Below.</desc>
-        </valItem>
-        <valItem ident="left">
-          <desc>Left.</desc>
-        </valItem>
-        <valItem ident="right">
-          <desc>Right.</desc>
-        </valItem>
-      </valList>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.EVENTREL.extended" module="MEI" type="dt">
-    <desc>Location of musical material relative to a symbol other than a staff.</desc>
-    <content>
-      <valList type="closed">
-        <valItem ident="above-left">
-          <desc>Above and left; north-west.</desc>
-        </valItem>
-        <valItem ident="above-right">
-          <desc>Above and right; north-east.</desc>
-        </valItem>
-        <valItem ident="below-left">
-          <desc>Below and left; south-west.</desc>
-        </valItem>
-        <valItem ident="below-right">
-          <desc>Below and right; south-east.</desc>
-        </valItem>
-      </valList>
-    </content>
-  </macroSpec>
   <macroSpec ident="data.FILL" module="MEI" type="dt">
     <desc>Describes how a graphical object, such as a note head, should be filled. The relative
       values — top, bottom, left, and right — indicate these locations *after* rotation is
@@ -3076,7 +3029,7 @@
     <desc>Location information.</desc>
     <content>
       <rng:choice>
-        <rng:ref name="data.STAFFREL"/>
+        <rng:ref name="data.POSITION"/>
         <rng:ref name="data.NONSTAFFPLACE"/>
         <rng:ref name="data.NMTOKEN"/>
       </rng:choice>
@@ -3249,54 +3202,13 @@
       <rng:data type="integer"/>
     </content>
   </macroSpec>
-  <macroSpec ident="data.STAFFREL" module="MEI" type="dt">
-    <desc>Location of musical material relative to a staff.</desc>
+  <macroSpec ident="data.POSITION" module="MEI" type="dt">
+    <desc>Location of musical material.</desc>
     <content>
       <rng:choice>
-        <rng:ref name="data.STAFFREL.basic"/>
-        <rng:ref name="data.STAFFREL.extended"/>
+        <rng:ref name="data.POSITION.cmn"/>
+        <rng:ref name="data.POSITION.neumes"/>
       </rng:choice>
-    </content>
-    <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
-      <constraint>
-        <sch:rule context="mei:*[@place eq 'between']">
-          <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The @staff
-            attribute must contain 2 numerically-adjacent integer values.</sch:assert>
-          <sch:let name="tokenizedStaff" value="tokenize(normalize-space(string(@staff)), '\s+')"/>
-          <sch:let name="maxValue"
-            value="max((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
-          <sch:let name="minValue"
-            value="min((number($tokenizedStaff[1]), number($tokenizedStaff[2])))"/>
-          <sch:assert test="$maxValue - $minValue = 1">Staves <sch:value-of select="$minValue"/> and
-            <sch:value-of select="$maxValue"/> are not adjacent.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-  </macroSpec>
-  <macroSpec ident="data.STAFFREL.basic" module="MEI" type="dt">
-    <desc>Location of symbol relative to a staff.</desc>
-    <content>
-      <valList type="closed">
-        <valItem ident="above">
-          <desc>Above the staff.</desc>
-        </valItem>
-        <valItem ident="below">
-          <desc>Below the staff.</desc>
-        </valItem>
-      </valList>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.STAFFREL.extended" module="MEI" type="dt">
-    <desc>Location of symbol relative to a staff.</desc>
-    <content>
-      <valList type="closed">
-        <valItem ident="between">
-          <desc>Between staves.</desc>
-        </valItem>
-        <valItem ident="within">
-          <desc>Within/on the staff.</desc>
-        </valItem>
-      </valList>
     </content>
   </macroSpec>
   <macroSpec ident="data.STEMDIRECTION" module="MEI" type="dt">
