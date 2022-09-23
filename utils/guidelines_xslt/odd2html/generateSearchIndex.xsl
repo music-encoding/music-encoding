@@ -25,7 +25,7 @@
                     <string key="ident"><xsl:value-of select="$current.element/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.element/tei:desc//text(),' '))"/></string>
                     <string key="remarks"><xsl:value-of select="normalize-space(string-join($current.element/tei:remarks//text(),' '))"/></string>
-                    <string key="url"><xsl:value-of select="'../elements/' || $current.element/@ident || '.html'"/></string>
+                    <string key="url"><xsl:value-of select="'elements/' || $current.element/@ident || '.html'"/></string>
                     <string key="type">element</string>
                 </map>
             </xsl:for-each>
@@ -38,7 +38,7 @@
                     <string key="ident"><xsl:value-of select="$current.macro.group/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.macro.group/tei:desc//text(),' '))"/></string>
                     <string key="remarks"><xsl:value-of select="normalize-space(string-join($current.macro.group/tei:remarks//text(),' '))"/></string>
-                    <string key="url"><xsl:value-of select="'../macro-groups/' || $current.macro.group/@ident || '.html'"/></string>
+                    <string key="url"><xsl:value-of select="'macro-groups/' || $current.macro.group/@ident || '.html'"/></string>
                     <string key="type">macroGroup</string>
                 </map>
             </xsl:for-each>
@@ -51,7 +51,7 @@
                     <string key="ident"><xsl:value-of select="$current.model.class/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.model.class/tei:desc//text(),' '))"/></string>
                     <string key="remarks"><xsl:value-of select="normalize-space(string-join($current.model.class/tei:remarks//text(),' '))"/></string>
-                    <string key="url"><xsl:value-of select="'../model-classes/' || $current.model.class/@ident || '.html'"/></string>
+                    <string key="url"><xsl:value-of select="'model-classes/' || $current.model.class/@ident || '.html'"/></string>
                     <string key="type">modelClass</string>
                 </map>
             </xsl:for-each>
@@ -64,7 +64,7 @@
                     <string key="ident"><xsl:value-of select="$current.att.class/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.att.class/tei:desc//text(),' '))"/></string>
                     <string key="remarks"><xsl:value-of select="normalize-space(string-join($current.att.class/tei:remarks//text(),' '))"/></string>
-                    <string key="url"><xsl:value-of select="'../attribute-classes/' || $current.att.class/@ident || '.html'"/></string>
+                    <string key="url"><xsl:value-of select="'attribute-classes/' || $current.att.class/@ident || '.html'"/></string>
                     <string key="type">attClass</string>
                 </map>
             </xsl:for-each>
@@ -77,7 +77,7 @@
                     <string key="ident"><xsl:value-of select="$current.data.type/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.data.type/tei:desc//text(),' '))"/></string>
                     <string key="remarks"><xsl:value-of select="normalize-space(string-join($current.data.type/tei:remarks//text(),' '))"/></string>
-                    <string key="url"><xsl:value-of select="'../data-types/' || $current.data.type/@ident || '.html'"/></string>
+                    <string key="url"><xsl:value-of select="'data-types/' || $current.data.type/@ident || '.html'"/></string>
                     <string key="type">dataType</string>
                 </map>
             </xsl:for-each>
@@ -99,7 +99,7 @@
                     <string key="ident"><xsl:value-of select="$label"/></string>
                     <string key="desc"><xsl:value-of select="$desc"/></string>
                     <string key="remarks"><xsl:value-of select="$remarks"/></string>
-                    <string key="url"><xsl:value-of select="'../content/' || $level1 || $level2"/></string>
+                    <string key="url"><xsl:value-of select="'content/' || $level1 || $level2"/></string>
                     <string key="type">chapter</string>
                 </map>
             </xsl:for-each>

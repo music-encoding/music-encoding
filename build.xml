@@ -140,8 +140,8 @@
         <!--TODO update to latest version -->
     </target>
 
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in build/mei-source_canonicalized.xml" depends="init">
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath">
+    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
             <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
@@ -185,7 +185,7 @@
             </not>
         </condition>
         <antcall target="copy-guidelines-assets"/>
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
