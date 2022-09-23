@@ -53,7 +53,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Creates a section for a single macroSpec[@type='pe']</xd:p>
+            <xd:p>Creates a section for a single macroSpec</xd:p>
         </xd:desc>
         <xd:param name="macro.group">the macro group</xd:param>
         <xd:return>the section element</xd:return>
