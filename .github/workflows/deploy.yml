@@ -51,6 +51,12 @@ jobs:
         run: |
           ant -noinput -buildfile build.xml init
           ant -noinput -buildfile build.xml -lib lib/saxon/saxon-he-10.5.jar -Dgithub.sha=${{ github.sha }}
+          
+      - name: Generate Images
+        run: docker run --rm -v $(pwd)/build/assets/images/GeneratedImages:/data edirom/staticverovioconverter:latest
+        
+      - name: Copy Generated Images
+        run: ant copy-generated-images
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
