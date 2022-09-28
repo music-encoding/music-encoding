@@ -112,13 +112,13 @@
                                 </div>
                                 <div class="column col-8 col-md-12">
                                     <div id="search-content"></div>
-                                    <xsl:sequence select="$contents"/>    
+                                    <xsl:sequence select="$contents"/>
                                 </div>
                                 <div class="column col-4 hide-md">
                                     <div id="guidelinesVersion">
                                         <span class="versionLabel">MEI Version: </span>
                                         <span id="versionID"><xsl:value-of select="$version"/> </span>
-                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
+                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>
                                     </div>
                                     
                                     <form>
@@ -128,7 +128,7 @@
                                         </div>
                                     </form>
                                     
-                                    <ul class="nav"> 
+                                    <ul class="nav">
                                         <li class="nav-item">
                                             <a href="{$output.path}content/index.html">Guidelines</a>
                                         </li>
@@ -149,11 +149,11 @@
                                         </li>
                                         <li class="nav-item">
                                             <a href="{$output.path}data-types.html">Data Types</a>
-                                        </li>                                        
-                                    </ul> 
+                                        </li>
+                                    </ul>
                                     <div class="divider"></div>
-                                    <xsl:sequence select="$pageMenu"/>                    
-                                </div>        
+                                    <xsl:sequence select="$pageMenu"/>
+                                </div>
                             </div>
                             <div class="modal" id="toc-modal">
                                 <a href="#close" id="toc-modal-outer-close" class="modal-overlay" aria-label="Close"></a>
@@ -164,7 +164,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="content">
-                                            <ul class="nav"> 
+                                            <ul class="nav">
                                                 <li class="nav-item">
                                                     <a href="{$output.path}content/index.html">Guidelines</a>
                                                 </li>
@@ -185,8 +185,8 @@
                                                 </li>
                                                 <li class="nav-item">
                                                     <a href="{$output.path}data-types.html">Data Types</a>
-                                                </li>                   
-                                            </ul> 
+                                                </li>
+                                            </ul>
                                             <div class="divider"></div>
                                             <xsl:sequence select="$pageMenu"/>
                                         </div>
@@ -211,7 +211,7 @@
                                     function getMenu() {
                                         const fullVersion = '<xsl:value-of select="$version"/>'
                                         const version = (fullVersion.includes('-dev')) ? 'dev' : 'v' + fullVersion.split('.')[0];
-                                        console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')'); 
+                                        console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')');
                                         
                                         const url = 'https://music-encoding.org/menus/' + version + '/menu.html';
                                         
@@ -277,10 +277,10 @@
                                 
                                 for(let tab of tabs) {
                                     tab.addEventListener('click',tabClick);
-                                }                            
+                                }
                             }
                             
-                            function setTabs(facetId, style) {                            
+                            function setTabs(facetId, style) {
                                 const storageName = 'meiSpecs_' + facetId + '_display';
                                 localStorage.setItem(storageName,style);
                                 
