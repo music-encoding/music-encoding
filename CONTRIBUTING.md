@@ -4,24 +4,24 @@ This document sets out the methods and practices for contributing to the Music E
 
 # Contributors
 
-The Music Encoding Initiative (MEI) schema is developed and maintained by the MEI Technical Team. There are two co-leaders of the Technical Team, who act as administrative representatives to the board and manage the technical infrastructure of the project (e.g., GitHub administrative access). The role of the technical team is to review and propose changes to the MEI Schema.
+The Music Encoding Initiative (MEI) schema is developed and maintained by the MEI Technical Team. There are two Co-chairs of the Technical Team, who act as administrative representatives to the MEI Board and manage the technical infrastructure of the project (e.g., GitHub administrative access). The role of the Technical Team is to review and propose changes to the MEI Schema.
 
 Membership in the Technical Team is informal. Being considered a "member" of this group means you have introduced yourself to the community, have expressed an interest in helping grow and develop MEI, and have demonstrated an ability to contribute to the development of MEI. These contributions may be to the core schema, documentation, tools, tests, or sample encodings. Technical Team members will also help triage issues and help review pull request proposals.
 
-The Technical Team co-leaders will, from time to time, designate and appoint senior members of the technical team to act as Core Contributors. These core contributors will have the responsibility of commit access to the core MEI Schema, and will ensure these contributions are consistent with the spirit and design of the MEI schema.
+The Technical Team Co-chairs will, from time to time, designate and appoint senior members of the Technical Team to act as Core Contributors. These Core Contributors will have the responsibility of commit access to the core MEI Schema, and will ensure these contributions are consistent with the spirit and design of the MEI schema.
 
-## How to contribute
+## How to Contribute
 
 We use GitHub as our main development platform. GitHub features a "Pull Request" mechanism for proposing contributions to the schema from our community. A brief overview of this process:
 
  1. Fork the `music-encoding/music-encoding` repository into your own account (e.g., `username/music-encoding`.
  2. Create a dedicated branch for your fix on your repository. For example, you might create a `fix-duration-attribute` branch if you're proposing a fix for the duration attribute.
  3. Make your changes. You can commit to your branch as many times as you like.
- 4. When you're ready to provide your changes "upstream," you can open a pull request to the `music-encoding/music-encoding` branch. **NB:** You will want to make sure you're proposing a merge to `develop` and not `master`.
+ 4. When you're ready to provide your changes "upstream," you can open a pull request to the `music-encoding/music-encoding` branch. **NB:** You will want to make sure you're proposing a merge to `develop` and not `stable`.
  5. Members of the MEI Technical Team will then review your submission. If you are asked to make changes, you can push these changes to your original branch and the pull request will be automatically updated.
  6. Once the changes have gone through our review process, a Core Contributor will merge your changes into the MEI source repository. You may then delete your dedicated branch.
 
-## Checklist for a contribution
+## Checklist for a Contribution
 
 Pull requests containing contributions of any significant changes should be accompanied by the following supporting changes:
 
@@ -32,7 +32,7 @@ Pull requests containing contributions of any significant changes should be acco
 
 Customizations to the schema should be placed in the `customizations` folder, named as `mei-NAME-[suffix].xml`. Our automated build system, TravisCI, will build all customizations in this folder and ensure there are no problems. It will also run our automated tests to ensure no validation problems.
 
-The naming of the customizations is important. If your customization should be tested against the "CMN" test corpus, you should name your customization `mei-CMN-something.xml`. This will automatically build and test your customization. If, however, your customization requires a unique test set, you should create a folder and place your sample encodings in this folder. 
+The naming of the customizations is important. If your customization should be tested against the "CMN" test corpus, you should name your customization `mei-CMN-something.xml`. This will automatically build and test your customization. If, however, your customization requires a unique test set, you should create a folder and place your sample encodings in this folder.
 
 For example, `mei-Shakuhachi.xml` would test validation against files contained in the `tests/Shakuhachi` folder.
 
@@ -62,7 +62,7 @@ Do **not** simply reference another issue or pull request by number in the summa
 
 The details of the commit go in the body. Specifically, the body should include the motivation for the change.  For commits that fix bugs you should contrast behavior before the commit with behavior after the commit.
 
-### Message Summary
+### Message Footer
 
 If the commit closes an issue by fixing the bug, implementing a feature, or rendering it obsolete, or if it references an issue without closing it, that should be indicated in the message footer.
 
@@ -92,26 +92,28 @@ If your commit messages do not contain enough information for a reviewer to unde
 
 ## Responsibilities of Core Contributors
 
-Core contributors (i.e., those with commit access to the MEI schema) are responsible for maintaining and reviewing contributions to the schema. In general, there are four classes of contributions that core contributors need to deal with:
+Core Contributors (i.e., those with commit access to the MEI schema) are responsible for maintaining and reviewing contributions to the schema. In general, there are four classes of contributions that Core Contributors need to deal with:
 
- 1. Typos (i.e., Mistakes that affect the documentation, but not the schema).
- 2. Bug fixes (i.e., Undesired behaviour of the schema)
+ 1. Typos (i.e., mistakes that affect the documentation, but not the schema).
+ 2. Bug fixes (i.e., undesired behaviour of the schema)
  3. Contributions to the schema that do not break backwards compatibility
  3. Contributions to the schema that break backwards compatibility
 
-Each of these comes with varying requirements for review and testing. While core contributors *can* commit directly to the develop branch, they should reserve this ability for all but the most trivial of changes (e.g., typos).
+Each of these comes with varying requirements for review and testing. While Core Contributors *can* commit directly to the develop branch, they should reserve this ability for all but the most trivial of changes (e.g., typos).
 
-For *all other types of contributions*, core contributors should file a pull request containing their proposed changes. This pull request will be reviewed by at least one other core contributor for inclusion. Merging the contribution is the responsibility of the reviewing contributor.
+For *all other types of contributions*, Core Contributors should file a pull request containing their proposed changes. This pull request will be reviewed by at least one other core contributor for inclusion. Merging the contribution is the responsibility of the reviewing contributor.
 
-Above all, however, core contributors are asked to exercise wisdom and common sense in merging contributions. If they are unsure of the impact of a proposed change, or the documentation of the contribution (pull request messages, commit messages, discussions) are not answered to their satisfaction, they should err on the side of caution and not merge until they are completely satisfied, or call in help from other members of the community.
+Above all, however, Core Contributors are asked to exercise wisdom and common sense in merging contributions. If they are unsure of the impact of a proposed change, or the documentation of the contribution (pull request messages, commit messages, discussions) are not answered to their satisfaction, they should err on the side of caution and not merge until they are completely satisfied, or call in help from other members of the community.
 
 ### Working with Pull Requests Locally
 
 Sometimes it's easiest if you can check out a pull request's changes locally and run it on your own machine. To do this, you can follow [these instructions](https://gist.github.com/piscisaureus/3342247). This will allow you to further test proposed modifications.
 
-### TravisCI
+### Github Actions
 
-When a new pull request comes in, the TravisCI service will automatically build the schema using the TEIC Stylesheets, and then validate the test files and the sample encodings against the built schemas. If, for some reason, a change breaks the schema build, or breaks validation, TravisCI will report an error on the pull request. It is then up to the original contributor to fix the issue and submit the fix to the pull request.
+When there is a new push to the develop branch, a GitHub Actions workflow will automatically build the MEI schema files and guidelines and publish them in the respective repositries at https://github.com/music-encoding/schema/tree/main/dev and https://github.com/music-encoding/guidelines/tree/main/dev.
+
+A future plan is to also trigger this on pull requests against both the develop and the stable branches for easier code review.
 
 ### Tests
 
@@ -123,9 +125,9 @@ Testing in MEI is done through the `build.sh` script. This script will look thro
 
 Releases are declared by the MEI Board, in consultation with, and on the advice of, the MEI Technical Team.
 
-The most recent 'stable' version of MEI is always found on the 'master' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
+The most recent 'stable' version of MEI is always found on the 'stable' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
 
-Releases are 'tagged' on the master branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
+Releases are 'tagged' on the stable branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
 
 ## Versioning
 
