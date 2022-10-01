@@ -75,6 +75,9 @@
             <h2 id="{$element/@ident}">&lt;<xsl:value-of select="$element/@ident"/>&gt;</h2>
             <div class="specs">
                 <div class="desc">
+                    <xsl:if test="$element/tei:gloss">
+                        <xsl:value-of select="concat('(', $element/tei:gloss/text(), ') – ')"/>
+                    </xsl:if>
                     <xsl:apply-templates select="$element/tei:desc/node()" mode="guidelines"/>
                     <xsl:sequence select="$refs"/>
                 </div>
