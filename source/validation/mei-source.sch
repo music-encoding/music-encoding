@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
-
-    <sch:pattern id="gi">
+    <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
+    <sch:pattern id="check_gi_references">
+        <sch:rule context="tei:gi">
+            <sch:assert role="error"
+                test="exists(@scheme)"
+                >A &lt;gi&gt; element needs to specify the @scheme which is used. Usually this will have a value of "MEI".</sch:assert>
+        </sch:rule>
         <sch:rule context="tei:gi[@scheme = 'MEI']">
             <sch:let name="ident_vals" value="//tei:elementSpec/@ident/string()"/>
             <sch:assert role="error"
@@ -15,7 +20,12 @@
         <sch:p>A &lt;gi&gt; in the MEI scheme must reference a value from &lt;elementSpec&gt;/@ident.</sch:p>
     </sch:pattern>
 
-    <sch:pattern id="ident">
+    <sch:pattern id="check_ident_references">
+        <sch:rule context="tei:ident">
+            <sch:assert role="error"
+                test="exists(@type)"
+                >An &lt;ident&gt; element needs to specify its @type. This is usually "class".</sch:assert>
+        </sch:rule>
         <sch:rule context="tei:ident[@type = 'class']">
             <sch:let name="ident_vals" value="//tei:classSpec[@type = ('atts', 'model')]/@ident/string()"/>
             <sch:assert role="error"
@@ -29,7 +39,12 @@
         </sch:rule>
     </sch:pattern>
 
-    <sch:pattern id="ptr">
+    <sch:pattern id="check_ptr">
+        <sch:rule context="tei:ptr">
+            <sch:assert role="error"
+                test="exists(@target)"
+                >A &lt;ptr&gt; element needs to specify a @target.</sch:assert>
+        </sch:rule>
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
             <sch:let name="div_IDs" value="//tei:div/@xml:id/string()"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
@@ -88,6 +103,47 @@
     <sch:pattern id="div">
         <sch:rule context="tei:div[ancestor::tei:body]">
             <sch:assert role="error" test="@xml:id">The &lt;<sch:name/>&gt; has no @xml:id.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <!-- check whether things are referenced somewhere -->
+    <sch:pattern id="unused_objects">
+        <sch:rule context="tei:classSpec[@type = 'atts']">
+            <sch:let name="all.memberships" value="//tei:memberOf/string(@key)"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = $all.memberships" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
+            </sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:classSpec[@type = 'model']">
+            <sch:let name="all.memberships" value="//tei:memberOf/string(@key)"/>
+            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = $all.memberships or $ident = $all.refs" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
+            </sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:macroSpec[@type = 'pe']">
+            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = $all.refs" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
+            </sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:elementSpec">
+            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="models" value=".//tei:memberOf[starts-with(@key, 'model.')]/@key"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = $all.refs or count($models) gt 0" role="warning">
+                Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
+            </sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:macroSpec[@type = 'dt']">
+            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = $all.refs" role="warning">
+                &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
+            </sch:assert>
         </sch:rule>
     </sch:pattern>
 
