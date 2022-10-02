@@ -356,7 +356,7 @@
         <xd:desc>
             <xd:p>Gets the users of a data type</xd:p>
         </xd:desc>
-        <xd:param name="object">the datat type</xd:param>
+        <xd:param name="object">the data type</xd:param>
         <xd:return>the resulting div</xd:return>
     </xd:doc>
     <xsl:function name="tools:getDatatypeUsersFacet" as="node()">
@@ -403,11 +403,25 @@
         <xsl:variable name="element.links" as="node()*">
             <xsl:for-each select="$referencing.elements">
                 <xsl:variable name="current.element" select="." as="node()"/>
+                
                 <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
+                
                 <item class="element" ident="{$current.element/@ident}" module="{$current.element/@module}">
                     <link><a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a></link>
                     <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
+
+                    <xsl:variable name="attributes" select="$current.element//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                    
+                    <xsl:for-each select="$attributes">
+                        <xsl:variable name="current.attribute" select="." as="node()"/>
+                        <item class="attribute" ident="{$current.attribute/@ident}" module="{$current.element/@module}">
+                            <link><xsl:value-of select="$current.attribute/@ident"/></link>
+                            <desc><xsl:apply-templates select="$current.attribute/tei:desc" mode="guidelines"/></desc>                    
+                        </item>
+                    </xsl:for-each>
+
                 </item>
+                
                 <!--<span class="ident element" data-ident="{$current.element/@ident}" data-module="{$current.element/@module}" title="{$desc}">
                     <a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}"><xsl:value-of select="$current.element/@ident"/></a>
                 </span>-->
@@ -419,7 +433,7 @@
             <div class="statement classes">
                 <xsl:choose>
                     <xsl:when test="count($data.type.links) = 0 and count($att.class.links) = 0 and count($element.links) = 0">
-                        <!--– <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>-->
+                        <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:if test="count($element.links) gt 0">
@@ -635,6 +649,30 @@
                                     <xsl:message terminate="yes" select="$dt"/>
                                 </xsl:otherwise>
                             </xsl:choose>
+                        </xsl:when>
+                        <xsl:when test="$current.att/tei:datatype[rng:choice[every $child in child::* satisfies local-name($child) eq 'ref']]">
+                            <xsl:variable name="refs" as="node()+">
+                                <xsl:for-each select="$current.att/tei:datatype//rng:ref">
+                                    <xsl:variable name="separator" as="xs:string">
+                                        <xsl:choose>
+                                            <xsl:when test="count($current.att/tei:datatype//rng:ref) eq 2 and position() = 1">
+                                                <xsl:value-of select="' or '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() lt last() -1">
+                                                <xsl:value-of select="', '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() eq last() -1">
+                                                <xsl:value-of select="', or '"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="''"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <a class="{tools:getLinkClasses(@name)}" href="#{@name}"><xsl:value-of select="@name"/></a><xsl:value-of select="$separator"/>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            Value conforms to either <xsl:sequence select="$refs"/>.
                         </xsl:when>
                         <xsl:when test="$current.att/tei:datatype[rng:data]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
@@ -1187,12 +1225,19 @@
                 <xsl:if test="not($macroSpec)">
                     <xsl:message select="$macroSpec.name || ' missing at ' || $object/@ident" terminate="yes"/>
                 </xsl:if>
-                <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>    
+                <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>
+                <xsl:for-each select="$macroSpec//tei:content//rng:ref[starts-with(@name,'model.')]">
+                    <xsl:sequence select="tools:getChildren(@name)"/>    
+                </xsl:for-each>
             </xsl:for-each>
         </xsl:variable>
         <xsl:variable name="children" select="$direct.children | $class.children | $macro.children" as="node()*"/>
         <xsl:variable name="allows.anyXML" select="exists($object/tei:content/rng:element[rng:anyName and rng:zeroOrMore/rng:attribute/rng:anyName and rng:zeroOrMore//rng:text and rng:zeroOrMore//rng:ref[@name = $object/@ident]])" as="xs:boolean"/>
-        <xsl:variable name="allows.text" select="xs:boolean(not($allows.anyXML) and exists($object/tei:content//rng:text))" as="xs:boolean"/>
+        <xsl:variable name="allows.text" as="xs:boolean">
+            <xsl:variable name="regular.text" select="xs:boolean(not($allows.anyXML) and exists($object/tei:content//rng:text))" as="xs:boolean"/>
+            <xsl:variable name="macro.text" select="some $macroSpec in (for $name in $object//tei:content//rng:ref[starts-with(@name,'macro.')]/@name return ($macro.groups/self::tei:macroSpec[@ident = $name])) satisfies exists($macroSpec//tei:content//rng:text)" as="xs:boolean"/>
+            <xsl:value-of select="$regular.text or $macro.text"/>
+        </xsl:variable>
         
         <xsl:choose>
             <xsl:when test="count($children) gt 0 or $allows.text">
@@ -1390,7 +1435,7 @@
             <div class="facet remarks">
                 <div class="label">Remarks</div>
                 <div class="statement remarks">
-                    <p><xsl:apply-templates select="$object/tei:remarks/tei:p/node()" mode="guidelines"/></p>
+                    <xsl:apply-templates select="$object/tei:remarks/node()" mode="guidelines"/>
                 </div>
             </div>
         </xsl:if>

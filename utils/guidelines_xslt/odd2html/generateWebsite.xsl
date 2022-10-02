@@ -8,8 +8,10 @@
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     xmlns:rng="http://relaxng.org/ns/structure/1.0"
     xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+    xmlns:json="http://www.w3.org/2005/xpath-functions"
     xmlns:tools="no:where"
-    exclude-result-prefixes="xs math xd xhtml tei tools rng sch egx"
+    xmlns:search="temp.search"
+    exclude-result-prefixes="xs math xd xhtml tei tools search json rng sch egx"
     version="3.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
@@ -60,7 +62,7 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
@@ -82,7 +84,6 @@
                             <string key="url"><xsl:value-of select="$url"/></string>
                             <string key="tags"><xsl:value-of select="''"/></string>
                         </map>
-                        <!-- ./tipuesearch/search_content.js -->
                     </xsl:for-each>
                 </array>
             </map>
@@ -91,11 +92,11 @@
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
-        <xsl:result-document href="{$web.output}tipuesearch/search_content.js" method="text" indent="yes" omit-xml-declaration="yes" >
-            var tipuesearch = <xsl:value-of select="$json.string"/>;
+        <xsl:result-document href="{$web.output}/search/searchIndex.js" method="text" omit-xml-declaration="yes">
+            const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>
         </xsl:result-document>
         
-        <xsl:result-document href="{$web.output}content/index.html">
+        <xsl:result-document href="{$web.output}content/index.html" method="html">
             <xsl:variable name="chapter.overview" as="node()*">
                 <h1>MEI Guidelines (<xsl:value-of select="$version"/>)</h1>
                 <xsl:for-each select="$input//section[@class='div1']/h1[1]">
@@ -125,12 +126,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}modules.html">
+        <xsl:result-document href="{$web.output}modules.html" method="html">
             <xsl:variable name="modules.overview" as="node()*">
                 <div class="specPage overview">
                     <h2>MEI Modules</h2>
@@ -164,12 +165,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}elements.html">
+        <xsl:result-document href="{$web.output}elements.html" method="html">
             
             <xsl:variable name="elementSpecs" select="$input//section[@class='specPage elementSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($elementSpecs/substring(@id,1,1))" as="xs:string*"/>
@@ -225,12 +226,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}model-classes.html">
+        <xsl:result-document href="{$web.output}model-classes.html" method="html">
             
             <xsl:variable name="modelSpecs" select="$input//section[@class='specPage modelClassSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($modelSpecs/substring(@id,7,1))" as="xs:string*"/>
@@ -285,12 +286,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}macro-groups.html">
+        <xsl:result-document href="{$web.output}macro-groups.html" method="html">
             
             <xsl:variable name="macroGroupSpecs" select="$input//section[@class='specPage macroGroupSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($macroGroupSpecs/substring(@id,7,1))" as="xs:string*"/>
@@ -345,12 +346,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}attribute-classes.html">
+        <xsl:result-document href="{$web.output}attribute-classes.html" method="html">
             
             <xsl:variable name="attClassSpecs" select="$input//section[@class='specPage attClassSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($attClassSpecs/substring(@id,5,1))" as="xs:string*"/>
@@ -405,12 +406,12 @@
                 </xsl:call-template>
             </xsl:variable>
             
-            <xsl:result-document href="{$path}">
+            <xsl:result-document href="{$path}" method="html">
                 <xsl:sequence select="$content"/>
             </xsl:result-document>
         </xsl:for-each>
         
-        <xsl:result-document href="{$web.output}data-types.html">
+        <xsl:result-document href="{$web.output}data-types.html" method="html">
             
             <xsl:variable name="dataTypeSpecs" select="$input//section[@class='specPage dataTypeSpec']/h2[1]" as="node()*"/>
             <xsl:variable name="starting.letters" select="distinct-values($dataTypeSpecs/substring(@id,6,1))" as="xs:string*"/>
@@ -463,9 +464,6 @@
             <xsl:choose>
                 <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml')">
                     <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/main/_config.yml'"/>
-                </xsl:when>
-                <xsl:when test="unparsed-text-available('https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml')">
-                    <xsl:value-of select="'https://raw.githubusercontent.com/music-encoding/music-encoding.github.io/master/_config.yml'"/>
                 </xsl:when>
             </xsl:choose>
         </xsl:variable>
@@ -672,25 +670,33 @@
         
         <xsl:copy>
             <xsl:apply-templates select="@*" mode="#current"/>
-            <ul class="tab">
-                <xsl:for-each select="$tabs">
-                    <li class="tab-item">
-                        <a data-display="{@id}" 
-                            id="{@id}_tab"
-                            href="#{@id}"
-                            class="displayTab{if(position() = 1) then(' active') else()}"><xsl:value-of select="@data-label"/></a>
-                    </li>
-                </xsl:for-each>
-            </ul>
-            <xsl:for-each select="$tabs">
-                <xsl:copy>
-                    <xsl:sequence select="@*"/>
-                    <xsl:if test="position() = 1">
-                        <xsl:attribute name="class" select="@class || ' active'"/>
-                    </xsl:if>
-                    <xsl:sequence select="node()"/>
-                </xsl:copy>
-            </xsl:for-each>
+            <xsl:choose>
+                <xsl:when test="$facet.type != 'usedBy'">
+                    <ul class="tab">
+                        <xsl:for-each select="$tabs">
+                            <li class="tab-item">
+                                <a data-display="{@id}" 
+                                    id="{@id}_tab"
+                                    href="#{@id}"
+                                    class="displayTab{if(position() = 1) then(' active') else()}"><xsl:value-of select="@data-label"/></a>
+                            </li>
+                        </xsl:for-each>
+                    </ul>
+                    <xsl:for-each select="$tabs">
+                        <xsl:copy>
+                            <xsl:sequence select="@*"/>
+                            <xsl:if test="position() = 1">
+                                <xsl:attribute name="class" select="@class || ' active'"/>
+                            </xsl:if>
+                            <xsl:sequence select="node()"/>
+                        </xsl:copy>
+                    </xsl:for-each>        
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="group" mode="get.website.classTab"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            
         </xsl:copy>
         
         <!--<xsl:sequence select="$compact"/>-->
@@ -792,6 +798,12 @@
             <span class="desc">
                 <xsl:apply-templates select="child::desc/node()" mode="get.website"/>
             </span>
+            <xsl:for-each select="child::item[@class='attribute']">
+                <div class="attributeRef">
+                    <span class="ident attribute"><xsl:value-of select="child::link/text()"/></span>
+                    <span class="desc"><xsl:apply-templates select="child::desc/node()" mode="get.website"/></span>
+                </div>
+            </xsl:for-each>
         </div>
     </xsl:template>
     
@@ -1043,7 +1055,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="img/@src" mode="get.website">
-        <xsl:attribute name="src" select="'../' || ."/>
+        <xsl:choose>
+            <xsl:when test="starts-with(., 'http')">
+                <xsl:attribute name="src" select="."/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:attribute name="src" select="'../' || ."/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
 </xsl:stylesheet>

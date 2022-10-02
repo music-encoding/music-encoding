@@ -8,7 +8,7 @@ The Music Encoding Initiative (MEI) is an open-source effort to define a system 
 
 In this document, you will learn how to contribute to the development of MEI by building the schema and guidelines (you should also consider consulting the tutorial on ["Understanding ODD"](https://music-encoding.org/tutorials/understanding-odd.html)). For the pre-built schemas of the latest release of MEI, please consult the ["schemas" section](https://music-encoding.org/resources/schemas.html) of the music-encoding website.
 
-# Structure of this repository
+## Structure of this repository
 
 This repository contains all the source code of the MEI Schema and Guidelines:
 
@@ -23,7 +23,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 For the sake of the continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
 
-# Validating MEI files against an MEI Schema
+## Validating MEI files against an MEI Schema
 
 One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviours. To validate an MEI file you need a XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
 
@@ -37,18 +37,18 @@ Or, the same command using `jing`.
 
     $> jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
 
-# Customizing MEI
+## Customizing MEI
 
 The MEI Schema may be customized to express and validate different types of music documents. To create your own customization, you should understand the building and customization process. Customizations are configured with individual ODD files. This repository already includes several customizations:
 
- * [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
- * [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
- * [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
- * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
- * [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
- * [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
+* [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
+* [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
+* [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
+* [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
+* [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
+* [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
 
-## Why Customizations?
+### Why Customizations?
 
 For those who are used to having a single DTD or W3C Schema to validate music notation encodings, the customization process may seem to be a complex way of arriving at a schema to validate music notation. However, customizations are a vital part of the expressive power of MEI, and when used to their full extent, can assist organizations in ensuring the integrity and validity of their data.
 
@@ -58,7 +58,7 @@ Most attempts at addressing this complexity restricts a schema to only a certain
 
 The MEI takes a different approach. With the customization system, schemas may be generated from an existing "library" of well-defined musical behaviours, but each behaviour may be mixed and matched according to the needs of the notation. In this sense, the MEI source functions more as a "library" of music encoding tools from which many different types of notation can be expressed, and not just a single monolithic schema.
 
-# Building MEI
+## Building MEI
 
 The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)).
 
@@ -99,7 +99,7 @@ Nevertheless it is possible to build any customization locally in your working c
      java -version
      ```
 
-     This should return something similar to
+     This should return something similar to:
 
      ```bash
      openjdk version "11.0.9" 2020-10-20
@@ -142,22 +142,23 @@ Nevertheless it is possible to build any customization locally in your working c
 
    * Build guidelines HTML:
      ```bash
-     ant -lib lib/saxon/saxon9he.jar build-guidelines-html
+     ant -lib lib/saxon/saxon-he-10.5.jar build-guidelines-html
      ```
+     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
 
    * Build a specific customization's RNG schema:
      ```bash
-     ant -lib lib/saxon/saxon9he.jar -Dcustomization.path=[PATH/TO/YOUR/CUSTOMIZATION] build-rng
+     ant -lib lib/saxon/saxon-he-10.5.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
      ```bash
-     ant -lib lib/saxon/saxon9he.jar
+     ant -lib lib/saxon/saxon-he-10.5.jar
      ```
 
-## Using Oxygen to Build MEI
+### Using Oxygen to Build MEI
 
-### Build a Specific Customization's RNG Schema
+#### Build a Specific Customization's RNG Schema
 
 If you are not that comfortable with the command line, here we provide an alternative to build MEI by using Oxygen following these steps:
 
@@ -169,7 +170,7 @@ If you are not that comfortable with the command line, here we provide an altern
 
 4. Click on the _Duplicate_ button. This will open the _Edit Ant Scenario_ window.
 
-5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., "MEI Mensural Schema - plica feature").
+5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., "MEI Mensural Schema - plica feature"). The storage option can be either _Project Options_ or _Global Options_.
 
 6. Change its `defaultSource` parameter by:
 
@@ -177,17 +178,17 @@ If you are not that comfortable with the command line, here we provide an altern
 
    b. Locating the `defaultSource` parameter and double-clicking on its value to change it. This will open the _Edit Parameter_ window.
 
-   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it.
+   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it. If you are on Windows, make sure that the path starts with the *file* protocol, e.g. `file:/D:/music-encoding/source/mei-source.xml`.
 
    d. Click on the _OK_ button. The _Edit Parameter_ window will close.
 
 7. Now, you will be back in the _Edit Ant Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the directory where your schema gets stored by clicking on the _Output_ tab.
 
-8. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Projects_ section of the window, you will find your _new project_ with the name you gave it in step 5. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will build the schema.
+8. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Projects_ or _Global_ section of the window based on your choice in step 5, you will find your _new project_ with the name you gave it in step 5. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will build the schema.
 
-Once the building is done, Oxygen will automatically open the schema. The schema file is also stored in the `music-encoding/out/` folder if you want to consult it later. You can change the location where the schema generated is saved by clicking on _Output_ in the _Edit Ant Scenario_ window and changing the file path.
+Once the building is done, Oxygen will automatically open the schema. The schema file is also stored in the `music-encoding/customizations/out/` folder if you want to consult it later. You can change the location where the schema generated is saved by clicking on _Output_ in the _Edit Ant Scenario_ window and changing the file path.
 
-### Build Guidelines HTML
+#### Build Guidelines HTML
 
 In this section, we will use Oxygen to generate the HTML document for the guidelines using the XSLT Stylesheet located at `music-encoding/utils/guidelines_xslt/odd2html.xsl`. The steps are the following:
 
@@ -207,7 +208,7 @@ In this section, we will use Oxygen to generate the HTML document for the guidel
 
 After a few minutes, the results of this build can be found in the web folder (`music-encoding/source/web`). The guidelines are stored in the `index.html` file.
 
-# Additional Resources
+## Additional Resources
 
 In addition to the source files for MEI in this repository, there are other useful resources in other repositories. The prebuilt release and development versions of:
 
