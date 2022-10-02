@@ -650,6 +650,30 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:when>
+                        <xsl:when test="$current.att/tei:datatype[rng:choice[every $child in child::* satisfies local-name($child) eq 'ref']]">
+                            <xsl:variable name="refs" as="node()+">
+                                <xsl:for-each select="$current.att/tei:datatype//rng:ref">
+                                    <xsl:variable name="separator" as="xs:string">
+                                        <xsl:choose>
+                                            <xsl:when test="count($current.att/tei:datatype//rng:ref) eq 2 and position() = 1">
+                                                <xsl:value-of select="' or '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() lt last() -1">
+                                                <xsl:value-of select="', '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() eq last() -1">
+                                                <xsl:value-of select="', or '"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="''"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <a class="{tools:getLinkClasses(@name)}" href="#{@name}"><xsl:value-of select="@name"/></a><xsl:value-of select="$separator"/>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            Value conforms to either <xsl:sequence select="$refs"/>.
+                        </xsl:when>
                         <xsl:when test="$current.att/tei:datatype[rng:data]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
                             <xsl:choose>
