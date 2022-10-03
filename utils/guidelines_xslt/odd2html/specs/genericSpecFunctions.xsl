@@ -185,10 +185,11 @@
                     </xsl:for-each>
                 </xsl:variable>-->
                 <xsl:variable name="members.by.module" as="node()*">
-                    <xsl:for-each select="distinct-values($members/self::tei:elementSpec/@module)">
+                    <xsl:for-each select="distinct-values($members//@module)">
                         <xsl:sort select="." data-type="text"/>
                         <xsl:variable name="current.module" select="." as="xs:string"/>
                         <xsl:variable name="relevant.element.names" select="distinct-values($members/self::tei:elementSpec[@module = $current.module]/@ident)" as="xs:string*"/>
+                        <xsl:variable name="relevant.class.names" select="distinct-values($members/self::tei:classSpec[@type='model'][@module = $current.module]/@ident)" as="xs:string*"/>
                         
                         <xsl:variable name="ident" select="$current.module" as="xs:string"/>
                         <xsl:variable name="desc" select="normalize-space(string-join($mei.source//tei:moduleSpec[@ident = $current.module]/tei:desc/text(),' '))" as="xs:string"/>
@@ -206,12 +207,20 @@
                             </xsl:for-each>
                         </xsl:variable>-->
                         <xsl:variable name="content" as="node()*">
-                            <xsl:for-each select="$relevant.element.names">
+                            <xsl:for-each select="distinct-values($relevant.element.names)">
                                 <xsl:sort select="." data-type="text"/>
                                 <xsl:variable name="current.elem" select="." as="xs:string"/>
                                 <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
                                     <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a></link>
                                     <desc><xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $current.elem]/tei:desc" mode="guidelines"/></desc>
+                                </item>
+                            </xsl:for-each>
+                            <xsl:for-each select="$relevant.class.names">
+                                <xsl:sort select="." data-type="text"/>
+                                <xsl:variable name="current.class" select="." as="xs:string"/>
+                                <item class="modelClass" ident="{$current.class}" module="{$current.module}">
+                                    <link><a class="{tools:getLinkClasses($current.class)}" href="#{$current.class}"><xsl:value-of select="$current.class"/></a></link>
+                                    <desc><xsl:apply-templates select="$model.classes/self::tei:classSpec[@ident = $current.class]/tei:desc" mode="guidelines"/></desc>
                                 </item>
                             </xsl:for-each>
                         </xsl:variable>
