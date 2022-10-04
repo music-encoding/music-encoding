@@ -70,7 +70,7 @@
         </sch:rule>
     </sch:pattern>
     
-    <sch:pattern id="check_rngRefs">
+    <sch:pattern id="check_rngRef">
         <sch:rule context="rng:ref">
             <sch:assert role="error"
                 test="exists(@name)"
