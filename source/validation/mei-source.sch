@@ -55,7 +55,7 @@
         </sch:rule>
     </sch:pattern>
     
-    <sch:pattern id="check_memberOfs">
+    <sch:pattern id="check_memberOf">
         <sch:rule context="tei:memberOf">
             <sch:assert role="error"
                 test="exists(@key)"
