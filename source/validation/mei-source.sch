@@ -123,7 +123,7 @@
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'pe']">
+        <sch:rule context="tei:macroSpec">
             <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs" role="warning">
@@ -138,7 +138,7 @@
                 Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'dt']">
+        <sch:rule context="tei:dataSpec">
             <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs" role="warning">
