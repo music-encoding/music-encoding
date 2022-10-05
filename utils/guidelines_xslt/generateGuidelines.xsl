@@ -152,7 +152,7 @@
         </xsl:for-each>
     </xsl:variable>
     <xsl:variable name="data.types" as="node()*">
-        <xsl:for-each select="//tei:macroSpec">
+        <xsl:for-each select="//tei:dataSpec">
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:sequence select="."/>
         </xsl:for-each>
@@ -1769,30 +1769,30 @@
     </xsl:function>
     
     <!-- resolve data types -->
-    <xsl:template match="tei:macroSpec">
+    <xsl:template match="tei:dataSpec">
         
-        <xsl:variable name="macroSpec" select="." as="node()"/>
-        <div class="macroSpec">
+        <xsl:variable name="dataSpec" select="." as="node()"/>
+        <div class="dataSpec">
             <h3 id="{@ident}"><xsl:value-of select="@ident"/></h3>
             <table class="wovenodd">
                 <tr>
                     <td colspan="2" class="wovenodd-col2">
                         <span class="label"><xsl:value-of select="@ident"/> </span>
-                        <xsl:value-of select="' '"/><xsl:value-of select="$macroSpec/tei:desc/text()"/>
+                        <xsl:value-of select="' '"/><xsl:value-of select="$dataSpec/tei:desc/text()"/>
                     </td>
                 </tr>
                 <tr>
                     <td class="wovenodd-col1"><span class="label" lang="en">Module</span></td>
-                    <td class="wovenodd-col2"><xsl:value-of select="$macroSpec/@module"/></td>
+                    <td class="wovenodd-col2"><xsl:value-of select="$dataSpec/@module"/></td>
                 </tr>
                 <tr>
                     <td class="wovenodd-col1"><span class="label" lang="en">Used by</span></td>
                     <td class="wovenodd-col2">
                         <div class="parent">
                             
-                            <xsl:variable name="dataTypes" select="$data.types/descendant-or-self::tei:macroSpec[.//tei:macroRef[@key = $macroSpec/@ident]]" as="node()*"/>
-                            <xsl:variable name="attClasses" select="$att.classes/descendant-or-self::tei:classSpec[.//rng:ref[@name = $macroSpec/@ident]]" as="node()*"/>
-                            <xsl:variable name="relevantElements" select="$elements/descendant-or-self::tei:elementSpec[.//rng:ref[@name = $macroSpec/@ident]]" as="node()*"/>
+                            <xsl:variable name="dataTypes" select="$data.types/descendant-or-self::tei:dataSpec[.//tei:dataSpec[@key = $dataSpec/@ident]]" as="node()*"/>
+                            <xsl:variable name="attClasses" select="$att.classes/descendant-or-self::tei:classSpec[.//rng:ref[@name = $dataSpec/@ident]]" as="node()*"/>
+                            <xsl:variable name="relevantElements" select="$elements/descendant-or-self::tei:elementSpec[.//rng:ref[@name = $dataSpec/@ident]]" as="node()*"/>
                             
                             <xsl:choose>
                                 <xsl:when test="$target = 'website'">
@@ -1801,9 +1801,9 @@
                                         <xsl:if test="position() gt 1">
                                             <xsl:value-of select="', '"/>
                                         </xsl:if>
-                                        <xsl:variable name="subref" select="$ref//tei:attDef[.//rng:ref[@name = $macroSpec/@ident]][1]/@ident" as="xs:string?"/>
+                                        <xsl:variable name="subref" select="$ref//tei:attDef[.//rng:ref[@name = $dataSpec/@ident]][1]/@ident" as="xs:string?"/>
                                         <xsl:choose>
-                                            <xsl:when test="local-name($ref) = 'macroSpec'">
+                                            <xsl:when test="local-name($ref) = 'dataSpec'">
                                                 <a class="link_odd" href="/documentation/{$version}/{$ref/@ident}"><xsl:value-of select="$ref/@ident"/></a>
                                             </xsl:when>
                                             <xsl:when test="local-name($ref) = 'classSpec'">
@@ -1813,7 +1813,7 @@
                                                 <a class="link_odd_classSpec" href="/documentation/{$version}/{$ref/@ident}"><xsl:value-of select="$ref/@ident"/></a><xsl:value-of select="if($subref) then('/@' || $subref) else()"/>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:message terminate="no" select="'ERROR: Unable to resolve reference to ' || $macroSpec/@ident || ' from a ' || local-name($ref)"/>
+                                                <xsl:message terminate="no" select="'ERROR: Unable to resolve reference to ' || $dataSpec/@ident || ' from a ' || local-name($ref)"/>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:for-each>                     
@@ -1824,9 +1824,9 @@
                                         <xsl:if test="position() gt 1">
                                             <xsl:value-of select="', '"/>
                                         </xsl:if>
-                                        <xsl:variable name="subref" select="$ref//tei:attDef[.//rng:ref[@name = $macroSpec/@ident]][1]/@ident" as="xs:string?"/>
+                                        <xsl:variable name="subref" select="$ref//tei:attDef[.//rng:ref[@name = $dataSpec/@ident]][1]/@ident" as="xs:string?"/>
                                         <xsl:choose>
-                                            <xsl:when test="local-name($ref) = 'macroSpec'">
+                                            <xsl:when test="local-name($ref) = 'dataSpec'">
                                                 <a class="link_odd" href="#{$ref/@ident}"><xsl:value-of select="$ref/@ident"/></a>
                                             </xsl:when>
                                             <xsl:when test="local-name($ref) = 'classSpec'">
@@ -1836,7 +1836,7 @@
                                                 <a class="link_odd_classSpec" href="#{$ref/@ident}"><xsl:value-of select="$ref/@ident"/></a><xsl:value-of select="if($subref) then('/@' || $subref) else()"/>
                                             </xsl:when>
                                             <xsl:otherwise>
-                                                <xsl:message terminate="no" select="'ERROR: Unable to resolve reference to ' || $macroSpec/@ident || ' from a ' || local-name($ref)"/>
+                                                <xsl:message terminate="no" select="'ERROR: Unable to resolve reference to ' || $dataSpec/@ident || ' from a ' || local-name($ref)"/>
                                             </xsl:otherwise>
                                         </xsl:choose>
                                     </xsl:for-each>
@@ -1848,35 +1848,35 @@
                         </div>
                     </td>
                 </tr>
-                <xsl:if test="$macroSpec//tei:valList">
+                <xsl:if test="$dataSpec//tei:valList">
                     <tr>
                         <td class="wovenodd-col1"><span class="label" lang="en">Allowed values</span></td>
                         <td class="wovenodd-col2">
                             <dl>
-                                <xsl:for-each select="$macroSpec//tei:valList/tei:valItem">
+                                <xsl:for-each select="$dataSpec//tei:valList/tei:valItem">
                                     <dt><xsl:value-of select="@ident"/></dt><dd><xsl:value-of select="tei:desc/text()"/></dd>
                                 </xsl:for-each>
                             </dl>
                         </td>
                     </tr>
                 </xsl:if>
-                <xsl:if test="$macroSpec/tei:content">
+                <xsl:if test="$dataSpec/tei:content">
                     <tr>
                         <td class="wovenodd-col1"><span class="label" lang="en">Declaration</span></td>
                         <td class="wovenodd-col2">
-                            <div xml:space="preserve" class="pre"><xsl:apply-templates select="$macroSpec/tei:content" mode="preserveSpace"><xsl:with-param name="getODD" tunnel="yes" select="true()"/></xsl:apply-templates></div>
+                            <div xml:space="preserve" class="pre"><xsl:apply-templates select="$dataSpec/tei:content" mode="preserveSpace"><xsl:with-param name="getODD" tunnel="yes" select="true()"/></xsl:apply-templates></div>
                         </td>
                     </tr>    
                 </xsl:if>
-                <xsl:if test="$macroSpec/tei:remarks">
+                <xsl:if test="$dataSpec/tei:remarks">
                     <tr>
                         <td class="wovenodd-col1"><span class="label" lang="en">Remarks</span></td>
                         <td class="wovenodd-col2">
-                            <p><xsl:apply-templates select="$macroSpec/tei:remarks/tei:p/node()"/></p>
+                            <p><xsl:apply-templates select="$dataSpec/tei:remarks/tei:p/node()"/></p>
                         </td>
                     </tr>
                 </xsl:if>
-                <xsl:for-each select="$macroSpec//tei:constraintSpec">
+                <xsl:for-each select="$dataSpec//tei:constraintSpec">
                     <tr>
                         <td class="wovenodd-col1"><span class="label" lang="en">Constraints</span></td>
                         <td class="wovenodd-col2">
