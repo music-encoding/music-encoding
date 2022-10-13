@@ -7,7 +7,7 @@ name: Deploy Schema and Guidelines
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
 
 env:
   # schema
@@ -24,13 +24,13 @@ env:
 
 jobs:
   build:
-
+    name: Build and deploy Schema and Guidelines
     runs-on: ubuntu-latest
 
     steps:
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # Whether to checkout submodules: `true` to checkout submodules or `recursive` to
           # recursively checkout submodules.
@@ -41,10 +41,11 @@ jobs:
           # Default: false
           submodules: recursive
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          java-version: 1.8
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Build with Ant
         # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
@@ -60,7 +61,7 @@ jobs:
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # repository to check out
           repository: ${{ env.SCHEMA_REPO }}
@@ -101,7 +102,7 @@ jobs:
 
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # repository to check out
           repository: ${{ env.GUIDELINES_REPO }}
@@ -117,7 +118,7 @@ jobs:
         run: |
           rm -rf $GUIDELINES_DIR/dev 
           cp -r dist/guidelines/dev/web $GUIDELINES_DIR/
-          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev 
+          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev
 
       - name: Check git status before commit
         working-directory: ${{ env.GUIDELINES_DIR }}
