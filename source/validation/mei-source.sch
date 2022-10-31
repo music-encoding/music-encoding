@@ -38,6 +38,56 @@
                 &lt;classSpec&gt;/@ident.</sch:p>
         </sch:rule>
     </sch:pattern>
+    
+    <sch:pattern id="check_specDesc">
+        <sch:rule context="tei:specDesc">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;specDesc&gt; element needs to specify a @key.</sch:assert>
+            <sch:let name="key" value="string(@key)"/>
+            <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
+            <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
+            <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:assert role="error"
+                test="$key = $elements or $key = $atts or $key = $models or $key = $macros">
+                The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <sch:pattern id="check_memberOf">
+        <sch:rule context="tei:memberOf">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;memberOf&gt; element needs to specify a @key.</sch:assert>
+            <sch:let name="key" value="string(@key)"/>
+            <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
+            <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:assert role="error"
+                test="$key = $atts or $key = $models or $key = $macros">
+                The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <sch:pattern id="check_rngRef">
+        <sch:rule context="rng:ref">
+            <sch:assert role="error"
+                test="exists(@name)"
+                >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
+            <sch:let name="name" value="string(@name)"/>
+            <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
+            <sch:let name="models" value="//tei:classSpec[@type = 'model']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="datatypes" value="//tei:macroSpec[@type ='dt']/@ident/string()"/>
+            <sch:assert role="error"
+                test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
+                The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <!-- memberOf @key -->
+    <!-- rng:ref @name -->
 
     <sch:pattern id="check_ptr">
         <sch:rule context="tei:ptr">
@@ -140,9 +190,10 @@
         </sch:rule>
         <sch:rule context="tei:dataSpec">
             <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="all.macroRefs" value="//tei:macroRef/string(@key)"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.refs" role="warning">
-                &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
+            <sch:assert test="$ident = $all.refs or $ident = $all.macroRefs" role="warning">
+               <sch:value-of select="$ident"/> seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; or &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
             </sch:assert>
         </sch:rule>
     </sch:pattern>
