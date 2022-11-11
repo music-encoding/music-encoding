@@ -302,10 +302,10 @@
     <xsl:template match="tei:head[parent::tei:figure]" mode="guidelines">
         <xsl:choose>
             <xsl:when test="parent::tei:figure and parent::tei:figure/tei:graphic">
-                <figcaption class="caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
             <xsl:when test="parent::tei:figure and parent::tei:figure/egx:egXML">
-                <figcaption class="caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
         </xsl:choose>
     </xsl:template>

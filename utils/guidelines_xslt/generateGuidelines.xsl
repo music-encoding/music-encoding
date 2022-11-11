@@ -584,10 +584,10 @@
                 </xsl:choose>
             </xsl:when>
             <xsl:when test="parent::tei:figure and parent::tei:figure/tei:graphic">
-                <figcaption class="caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
             <xsl:when test="parent::tei:figure and parent::tei:figure/egx:egXML">
-                <figcaption class="caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
             <xsl:when test="parent::tei:figure">
                 <xsl:message terminate="no" select="'WARNING: Not rendering tei:head in tei:figure, because there is no apparent element to which it belongs. Content: ' || text()"/>
