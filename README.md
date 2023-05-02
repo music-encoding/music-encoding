@@ -212,10 +212,10 @@ After a few minutes, the results of this build can be found in the web folder (`
 
 In addition to the source files for MEI in this repository, there are other useful resources in other repositories. The prebuilt release and development versions of:
 
-* Schemata: https://github.com/music-encoding/schema
-* Guidelines: https://github.com/music-encoding/guidelines
+* Schemata: https://github.com/music-encoding/schema[https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
+* Guidelines: https://github.com/music-encoding/guidelines[https://github.com/music-encoding/guidelines](https://github.com/music-encoding/guidelines)
 
 And moreover
 
-* MEI sample-encodings: https://github.com/music-encoding/sample-encodings
-* Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools)
+* MEI sample-encodings: https://github.com/music-encoding/sample-encodings[https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
+* Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools[https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools))
