@@ -198,6 +198,35 @@
         </java>
         <antcall target="generate-images"/>
     </target>
+    
+    <target name="build-guidelines-pdf" depends="build-guidelines-html">
+        <!-- create output directory for PDF -->
+        <mkdir dir="${dir.dist}/guidelines/pdf"/>
+        <!-- get HTML input file -->
+        <pathconvert property="build.dir.filelist" pathsep="${line.separator}">
+            <map from="${basedir}${file.separator}" to=""/>
+            <fileset dir="${dir.build}">
+                <include name="MEI_Guidelines_*.html"/>
+            </fileset>
+        </pathconvert>
+        <!-- set the prince.input property -->
+        <loadresource property="prince.input">
+            <string value="${build.dir.filelist}"/>
+            <filterchain>
+                <headfilter lines="1"/>
+            </filterchain>
+        </loadresource>
+        <!-- set the prince.output.filename and prince.output.path properties -->
+        <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
+        <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
+        <property name="prince.output.path" value="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
+        <!-- run prince to convert HTML guidelines to PDF -->
+        <exec executable="prince" failonerror="true">
+            <arg prefix="--log=" value="${dir.build}/prince.log"/>
+            <arg prefix="--output=" value="${prince.output.path}"/>
+            <arg file="${prince.input}"/>
+        </exec>
+    </target>
 
     <target name="copy-guidelines-assets">
         <echo message="copying guidelines assets from source to build and dist folders"/>
