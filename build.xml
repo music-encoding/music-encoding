@@ -196,6 +196,7 @@
             <arg value="branch=${github.branch.local}"/>
             <arg value="basedir=${basedir.cross_platform}"/>
         </java>
+        <antcall target="generate-images"/>
     </target>
 
     <target name="copy-guidelines-assets">
@@ -208,6 +209,12 @@
         </copy>
     </target>
     
+    <target name="generate-images" description="Generate SVG images of mei files in assets/images/GeneratedImages; depends on docker-mei container image">
+        <exec executable="node" dir="${basedir}/../">
+            <arg value="index.js"/>
+        </exec>
+    </target>
+
     <target name="copy-generated-images" description="copy generated images to dist after they're created by running Docker image">
         <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
             <fileset dir="${dir.build}/assets/images/GeneratedImages">
