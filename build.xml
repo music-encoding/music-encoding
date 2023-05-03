@@ -53,10 +53,11 @@
     <property name="xerces.version" value="21.1.0.2"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <path id="mei.classpath">
-        <pathelement path="${dir.lib.xerces}/${xerces.jar.file}"/>
-        <pathelement path="${dir.lib.saxon}/${saxon.jar.file}"/>
+        <fileset dir="lib" erroronmissingdir="false">
+            <include name="**/*.jar" />
+        </fileset>
+        <pathelement path="${java.class.path}"/>
     </path>
-    <property name="java.class.path" value="" classpathref="mei.classpath"/>
 
     <target name="help">
         <echo>================================================</echo>
@@ -82,10 +83,14 @@
         <delete dir="temp"/>
     </target>
 
-    <target name="echo-properties" description="Outputs ">
+    <target name="echo-classpath" description="Echos the mei.classpath">
+        <echo message="${ant.refid:mei.classpath}"></echo>
+    </target>
+    
+    <target name="echo-properties" description="Echos all ant properties">
         <echoproperties/>
     </target>
-
+    
     <target name="get-local-git-sha" description="Get the local git sha">
         <exec executable="git" outputproperty="github.sha.local">
             <arg value="describe"/>
