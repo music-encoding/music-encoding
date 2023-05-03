@@ -47,10 +47,11 @@
     </xd:doc>
     <xsl:function name="tools:getModuleFacet" as="node()">
         <xsl:param name="object" as="node()"/>
+        <xsl:variable name="facetId" select="$object/@module" as="xs:string"/>
         <div class="facet module">
             <div class="label">Module</div>
             <div class="statement text">
-                <xsl:value-of select="$object/@module"/>
+                <a href="../modules/{$facetId}.html"><xsl:value-of select="$facetId"/></a>
             </div>
         </div>
     </xsl:function>
