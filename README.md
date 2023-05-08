@@ -29,13 +29,15 @@ One of the core strengths of the MEI Schema is that it allows an individual to v
 
 For example, you might validate an MEI file from the the ['sample-encodings'](https://github.com/music-encoding/sample-encodings/) project using xmllint:
 
-    $> xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
-
-    sample-encodings/MEI 3.0/Music/Complete examples/Bach_Ein_festeBurg.mei validates
+   ```shell
+   xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+   ```
 
 Or, the same command using `jing`.
 
-    $> jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+  ```shell
+  jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+  ```
 
 ## Customizing MEI
 
@@ -70,24 +72,30 @@ Nevertheless, it is possible to build any customization locally in your working 
 
    * If you do not have a clone on your local machine yet run the following from your command line:
 
-     ```bash
+     ```shell
      git clone https://github.com/music-encoding/music-encoding.git --recursive
      ```
 
    * If you already have a clone on your system you still might have to initialize the submodules by running the following commands from the command line:
 
      Switch to your clone's directory:
-     ```bash
+
+     ```shell
      cd [YOUR-CLONE-LOCATION]
      ```
+
      Initialize the submodules:
-     ```bash
+
+     ```shell
      git submodule init
      ```
+
      Update the submodules:
-     ```bash
+
+     ```shell
      git submodule update
      ```
+
 2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
@@ -95,13 +103,13 @@ Nevertheless, it is possible to build any customization locally in your working 
      Java 8 or above is needed for the build process driven by apache Ant (see below).
      To check for Java on your machine, run the following command:
 
-     ```bash
+     ```shell
      java -version
      ```
 
      This should return something similar to:
 
-     ```bash
+     ```shell
      openjdk version "11.0.9" 2020-10-20
      OpenJDK Runtime Environment (build 11.0.9+11)
      OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
@@ -112,15 +120,16 @@ Nevertheless, it is possible to build any customization locally in your working 
    * Is Apache Ant installed?
 
      [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD source files.
+
      Run the following command to see if it is available on your system:
 
-     ```bash
+     ```shell
      ant -version
      ```
 
      This should return something similar to:
 
-     ```
+     ```shell
      Apache Ant(TM) version 1.10.9 compiled on September 27 2020
      ```
 
@@ -129,30 +138,36 @@ Nevertheless, it is possible to build any customization locally in your working 
 3. Initialize the build process
 
    * Switch to your clone’s directory:
-     ```bash
+
+     ```shell
      cd [YOUR-CLONE-LOCATION]
      ```
 
    * Call the Apache Ant init task:
-     ```bash
+
+     ```shell
      ant init
      ```
 
 4. Run the build process
 
    * Build guidelines HTML:
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar build-guidelines-html
      ```
+
      The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
 
    * Build a specific customization's RNG schema:
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar
      ```
 
