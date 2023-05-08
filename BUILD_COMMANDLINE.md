@@ -4,7 +4,7 @@
 
    * Is Java 8 or above available on your machine?
 
-     Java 8 or above is needed for the build process driven by apache Ant (see below).
+     Java 8 or above is needed for the build process driven by Apache Ant™ (see below).
      To check for Java on your machine, run the following command:
 
      ```shell
@@ -21,9 +21,9 @@
 
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet).
 
-   * Is Apache Ant installed?
+   * Is Apache Ant™ installed?
 
-     [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD source files.
+     [Apache Ant™](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD source files.
 
      Run the following command to see if it is available on your system:
 
@@ -47,7 +47,7 @@
      cd [YOUR-CLONE-LOCATION]
      ```
 
-   * Call the Apache Ant init task:
+   * Call the Apache Ant™ init task:
 
      ```shell
      ant init
