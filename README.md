@@ -12,10 +12,10 @@ In this document, you will learn how to contribute to the development of MEI by 
 
 This repository contains all the source code of the MEI Schema and Guidelines:
 
- * [.github](.github): Configuration files for Github Actions workflows.
+ * [.github](.github): Configuration files for GitHub Actions workflows.
  * [customizations](customizations): TEI ODD files that allow you to build customized MEI schemata.
- * [source](source): Contains the source code, as expressed in TEI ODD. This includes the source code for the MEI Guidelines, and the MEI schema modules.
- * [submodules](submodules): A container for Git Submodules, that is third party developments that are needed for e.g. building this repository's contents, but not part of our codebase.
+ * [source](source): Contains the source code, as expressed in TEI ODD. This includes the source code for the MEI Guidelines and the MEI schema modules.
+ * [submodules](submodules): A container for Git Submodules: third-party developments that are needed, e.g., for building this repository's contents, but which are not part of our codebase.
  * [tests](tests): Unit tests for the MEI Schemata.
  * [utils](utils): Helper scripts e.g. for compiling schemata and guidelines from this repository.
 
@@ -25,17 +25,19 @@ For the sake of the continuous integration (CI) workflow, the build artifacts of
 
 ## Validating MEI files against an MEI Schema
 
-One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviours. To validate an MEI file you need a XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
+One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviors. To validate an MEI file you need an XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
 
 For example, you might validate an MEI file from the the ['sample-encodings'](https://github.com/music-encoding/sample-encodings/) project using xmllint:
 
-    $> xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
-
-    sample-encodings/MEI 3.0/Music/Complete examples/Bach_Ein_festeBurg.mei validates
+   ```shell
+   xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+   ```
 
 Or, the same command using `jing`.
 
-    $> jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+  ```shell
+  jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+  ```
 
 ## Customizing MEI
 
@@ -45,7 +47,7 @@ The MEI Schema may be customized to express and validate different types of musi
 * [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
 * [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
 * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
-* [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI-element as root element.
+* [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI element as the root element.
 * [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes
 
 ### Why Customizations?
@@ -54,40 +56,46 @@ For those who are used to having a single DTD or W3C Schema to validate music no
 
 When designing a music encoding system there are many contradictory and non-standardized practices associated with writing music notation. Different repertoires may have extremely different ways of expressing pitch or rhythm; for example, rhythm in Mensural notation is incompatible with the later systems developed in common Western notation.
 
-Most attempts at addressing this complexity restricts a schema to only a certain subset of music notation, and does not attempt to accurately represent the semantics of music notation that falls outside of its defined scope. So, for example, a system designed for common Western notation that depends on the existence of measures, duration, note shapes, or even staves, cannot semantically represent notations that do not have these features.
+Most attempts at addressing this complexity restrict a schema to only a certain subset of music notation and do not attempt to accurately represent the semantics of music notation that falls outside of its defined scope. So, for example, a system designed for common Western notation that depends on the existence of measures, duration, note shapes, or even staves, cannot semantically represent notations that do not have these features.
 
-The MEI takes a different approach. With the customization system, schemas may be generated from an existing "library" of well-defined musical behaviours, but each behaviour may be mixed and matched according to the needs of the notation. In this sense, the MEI source functions more as a "library" of music encoding tools from which many different types of notation can be expressed, and not just a single monolithic schema.
+The MEI takes a different approach. With the customization system, schemas may be generated from an existing ‘library’ of well-defined musical behaviors, but each behavior may be mixed and matched according to the needs of the notation. In this sense, the MEI source functions more as a ‘library’ of music encoding tools by which many different types of notation can be expressed and not just a single monolithic schema.
 
 ## Building MEI
 
 The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)).
 
-Nevertheless it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
+Nevertheless, it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
 
 1. Create a recursive clone of this repository
 
-  Git offers a mechanism called `submodule` that allows you to reference third party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
+  Git offers a mechanism called `submodule` that allows you to reference third-party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
 
    * If you do not have a clone on your local machine yet run the following from your command line:
 
-     ```bash
+     ```shell
      git clone https://github.com/music-encoding/music-encoding.git --recursive
      ```
 
    * If you already have a clone on your system you still might have to initialize the submodules by running the following commands from the command line:
 
      Switch to your clone's directory:
-     ```bash
+
+     ```shell
      cd [YOUR-CLONE-LOCATION]
      ```
+
      Initialize the submodules:
-     ```bash
+
+     ```shell
      git submodule init
      ```
+
      Update the submodules:
-     ```bash
+
+     ```shell
      git submodule update
      ```
+
 2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
@@ -95,32 +103,33 @@ Nevertheless it is possible to build any customization locally in your working c
      Java 8 or above is needed for the build process driven by apache Ant (see below).
      To check for Java on your machine, run the following command:
 
-     ```bash
+     ```shell
      java -version
      ```
 
      This should return something similar to:
 
-     ```bash
+     ```shell
      openjdk version "11.0.9" 2020-10-20
      OpenJDK Runtime Environment (build 11.0.9+11)
      OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
      ```
 
-     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system that (to be found on the internet).
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet).
 
    * Is Apache Ant installed?
 
-     [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD sources.
+     [Apache Ant](https://ant.apache.org/manual/install.html) is a library for building software projects and drives the creation of MEI schemata and guidelines from the ODD source files.
+
      Run the following command to see if it is available on your system:
 
-     ```bash
+     ```shell
      ant -version
      ```
 
      This should return something similar to:
 
-     ```
+     ```shell
      Apache Ant(TM) version 1.10.9 compiled on September 27 2020
      ```
 
@@ -128,31 +137,37 @@ Nevertheless it is possible to build any customization locally in your working c
 
 3. Initialize the build process
 
-   * Switch to your clone's directory:
-     ```bash
+   * Switch to your clone’s directory:
+
+     ```shell
      cd [YOUR-CLONE-LOCATION]
      ```
 
    * Call the Apache Ant init task:
-     ```bash
+
+     ```shell
      ant init
      ```
 
 4. Run the build process
 
    * Build guidelines HTML:
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar build-guidelines-html
      ```
+
      The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
 
    * Build a specific customization's RNG schema:
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
-     ```bash
+
+     ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar
      ```
 
