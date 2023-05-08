@@ -72,6 +72,12 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 ## Additional Resources
 
+A live version of the MEI Guidelines is available on the [MEI](https://music-encoding.org) Website](https://music-encoding.org) in the ’Documentation‘ menu:
+
+* [MEI development version](https://music-encoding.org/guidelines/dev)
+* [MEI version 4](https://music-encoding.org/guidelines/v4)
+* [MEI version 3](https://music-encoding.org/guidelines/v3)
+
 In addition to the source files for MEI in this repository, there are other useful resources in other MEI repositories. The prebuilt release and development versions of:
 
 * MEI Schema files: [https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
