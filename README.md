@@ -72,15 +72,15 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 ## Additional Resources
 
-In addition to the source files for MEI in this repository, there are other useful resources in other repositories. The prebuilt release and development versions of:
+In addition to the source files for MEI in this repository, there are other useful resources in other MEI repositories. The prebuilt release and development versions of:
 
-* Schemata: [https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
-* Guidelines: [https://github.com/music-encoding/guidelines](https://github.com/music-encoding/guidelines)
+* MEI Schema files: [https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
+* MEI Guidelines: [https://github.com/music-encoding/guidelines](https://github.com/music-encoding/guidelines)
 
 And moreover
 
-* MEI sample-encodings: [https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
-* Tools for modifying MEI files and conversion of MEI to/from other encoding formats [https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools)
+* MEI Sample Encodings: [https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
+* MEI Encoding Tools: tools for modifying MEI files and conversion of MEI to/from other encoding formats [https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools)
 
 ## Referenced Material
 
