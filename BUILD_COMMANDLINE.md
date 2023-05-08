@@ -1,6 +1,6 @@
 # Building MEI on the command line
 
-2. Check if your system meets the build requirements
+1. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
 
@@ -39,7 +39,7 @@
 
      We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
 
-3. Initialize the build process
+2. Initialize the build process
 
    * Switch to your clone’s directory:
 
@@ -53,7 +53,7 @@
      ant init
      ```
 
-4. Run the build process
+3. Run the build process
 
    * Build guidelines HTML:
 
