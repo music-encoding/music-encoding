@@ -66,9 +66,29 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 ## Building MEI
 
+Generally, the build process for MEI artifacts is driven by [Apache Ant™](https://ant.apache.org), a Java library and command line tool. Depending on what artifacts you want to build the prerequisites against your operating will increase.
 
+|Artifact                 |Necessary steps Processes                  |Prerequisites                                    |
+|-------------------------|-------------------------------------------|-------------------------------------------------|
+|Compiled ODD and Schemata|XInclude, XSLT 3.0                         |Saxon HE with Xerces                             |
+|Schema                   |XInclude, XSLT 3.0                         |Saxon HE with Xerces                             |
+|Guidelines HTML          |XInclude, XSLT 3.0, MEI to SVG             |Saxon HE with Xerces, Verovio Toolkit            |
+|Guidelines PDF           |XInclude, XSLT 3.0, MEI to SVG, HTML to PDF|Saxon HE with Xerces, Verovio Toolkit, Prince XML|
 
+Generally, we try to support the building process on the most common operating systems: Microsoft Windows, Apple macOS and Linux. While it is possible to achieve the above steps with other implementations as those listed as ‘Recommended implementations’, we strongly advise
 
+To build all possible artifacts your build system has to meet the following prerequisites:
+
+1. Java (at least Java8 at runtime to support Apache Ant™)
+2. Apache Ant (recommended version: 1.10.13)
+3. Saxon HE 11.4 (can be fetched by ant project)
+4. Synchrosoft patched Xerces 25.1.0.1 (can be fetched by ant project)
+5. Verovio Toolkit 3.9
+6. Prince XML 15.1
+
+MEI maintains a Docker image that meets all the prerequisites and can be used for building the artifacts via the command line. How to use the Docker image is described in the [README](https://github.com/music-encoding/docker-mei#readme) of the [docker-mei repository](https://github.com/music-encoding/docker-mei).
+If your build system meets the above prerequisites you can build the artifacts as documented in [Building MEI on the command line](BUILD_COMMANDLINE.md).
+When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Using Oxygen to Build MEI](BUILD_OXYYGEN.md).
 
 ## Additional Resources
 
