@@ -15,7 +15,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
  * [.github](.github): Configuration files for GitHub Actions workflows.
  * [customizations](customizations): TEI ODD files that allow you to build customized MEI schemata.
  * [source](source): Contains the source code, as expressed in TEI ODD. This includes the source code for the MEI Guidelines and the MEI schema modules.
- * [submodules](submodules): A container for Git Submodules, that is third-party developments that are needed, e.g., for building this repository's contents, but not part of our codebase.
+ * [submodules](submodules): A container for Git Submodules: third-party developments that are needed, e.g., for building this repository's contents, but which are not part of our codebase.
  * [tests](tests): Unit tests for the MEI Schemata.
  * [utils](utils): Helper scripts e.g. for compiling schemata and guidelines from this repository.
 
