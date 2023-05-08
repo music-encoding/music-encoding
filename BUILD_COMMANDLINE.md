@@ -1,3 +1,5 @@
+# Building MEI on the command line
+
 2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
