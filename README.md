@@ -4,7 +4,7 @@
 | ------------- |:------------------------------:|
 | Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
 
-The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI schema, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed as an eXtensible Markup Language (XML) schema. It is complemented by the MEI Guidelines, which provide detailed explanations of the components of the MEI model and best practices suggestions.
+The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI Source and customizations, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed in TEI’s ODD language (One Document Does-it-all, cf. amongst others: Viglianti, 2019). As such, the MEI Source contains both, the specifications that can be compiled to schema formats for validating XML files, and documentation in prose, the MEI Guidelines, which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
 The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)).
 
@@ -79,3 +79,7 @@ And moreover
 
 * MEI sample-encodings: https://github.com/music-encoding/sample-encodings[https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
 * Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools[https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools))
+
+## Referenced Material
+
+* Viglianti, R. (2019). One Document Does-it-all (ODD): A language for documentation, schema generation, and customization from the Text Encoding Initiative. Symposium on Markup Vocabulary Customization, Washington, DC. https://doi.org/10.4242/BalisageVol24.Viglianti01
