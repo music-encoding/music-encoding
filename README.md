@@ -25,6 +25,8 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 For the sake of the continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
 
+Nevertheless, it is possible to (build)[building-mei] any customization locally in your working copy of this repository.
+
 ## Validating MEI files against an MEI Schema
 
 One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviors. To validate an MEI file you need an XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command-line utilities, including [xmllint](http://xmlsoft.org/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
@@ -66,7 +68,7 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 
 
-Nevertheless, it is possible to build any customization locally in your working copy of this repository. In order to do so follow the steps below:
+
 
 ## Additional Resources
 
