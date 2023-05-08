@@ -25,7 +25,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 For the sake of the continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
 
-Nevertheless, it is possible to (build)[building-mei] any customization locally in your working copy of this repository.
+Nevertheless, it is possible to (build)[#building-mei] any customization locally in your working copy of this repository.
 
 ## Validating MEI files against an MEI Schema
 
@@ -74,13 +74,13 @@ The MEI takes a different approach. With the customization system, schemas may b
 
 In addition to the source files for MEI in this repository, there are other useful resources in other repositories. The prebuilt release and development versions of:
 
-* Schemata: https://github.com/music-encoding/schema[https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
-* Guidelines: https://github.com/music-encoding/guidelines[https://github.com/music-encoding/guidelines](https://github.com/music-encoding/guidelines)
+* Schemata: [https://github.com/music-encoding/schema](https://github.com/music-encoding/schema)
+* Guidelines: [https://github.com/music-encoding/guidelines](https://github.com/music-encoding/guidelines)
 
 And moreover
 
-* MEI sample-encodings: https://github.com/music-encoding/sample-encodings[https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
-* Tools for modifying MEI files and conversion of MEI to/from other encoding formats https://github.com/music-encoding/encoding-tools[https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools))
+* MEI sample-encodings: [https://github.com/music-encoding/sample-encodings](https://github.com/music-encoding/sample-encodings)
+* Tools for modifying MEI files and conversion of MEI to/from other encoding formats [https://github.com/music-encoding/encoding-tools](https://github.com/music-encoding/encoding-tools)
 
 ## Referenced Material
 
