@@ -6,7 +6,9 @@ For a proper setup of your clone, you need to make a so-called recursive clone.
 
 ## Creating a recursive clone of this repository
 
-Git offers a mechanism called `submodule` that allows you to reference third-party code used in your own project without including the code in your repository. This mechanism is used in the music-encoding repository in order to include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets); these are needed for transforming the ODD files, e.g. to RNG schema files. Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
+To include the [TEI Stylesheets](https://github.com/TEIC/Stylesheets) which are needed for transforming the ODD files, e.g. to RNG schema files, the music-encoding repository uses a mechanism provided by Git that is called `submodule`. It allows you to reference third-party code used in your own project without including the code in your repository.
+
+Cloning a repository including the referenced submodules is referred to as _creating a recursive clone_.
 
   * If you do not have a clone on your local machine yet run the following from your command line:
 
