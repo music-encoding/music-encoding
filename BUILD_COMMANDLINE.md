@@ -1,6 +1,21 @@
 # Building MEI on the command line
 
-1. Check if your system meets the build requirements
+1. Build requirements
+
+   To build all possible artifacts, your build system has to meet the following prerequisites:
+
+   | Prerequisite | Recommended version |
+   |----|----------------|
+   |Java| 17 (at least Java 8 at runtime to support Apache Ant™)|
+   |Apache Ant|1.10.13|
+   |Verovio Toolkit|3.9|
+   |Prince XML|15.1|
+   |Saxon HE*| 11.4 |
+   |Xerces*|Synchrosoft patched version 25.1.0.1|
+
+   \* automatically pulled during build execution
+
+2. Check if your system meets the build requirements
 
    * Is Java 8 or above available on your machine?
 
@@ -14,9 +29,9 @@
      This should return something similar to:
 
      ```shell
-     openjdk version "11.0.9" 2020-10-20
-     OpenJDK Runtime Environment (build 11.0.9+11)
-     OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode)
+     openjdk version "17.0.2" 2022-01-18 LTS
+     OpenJDK Runtime Environment Zulu17.32+13-CA (build 17.0.2+8-LTS)
+     OpenJDK 64-Bit Server VM Zulu17.32+13-CA (build 17.0.2+8-LTS, mixed mode, sharing)
      ```
 
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet).
