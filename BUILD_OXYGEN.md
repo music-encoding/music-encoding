@@ -1,4 +1,4 @@
-### Using Oxygen to Build MEI
+### Building MEI with Oxygen XML Editor
 
 #### Build a Specific Customization's RNG Schema
 
