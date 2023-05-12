@@ -34,10 +34,10 @@
      This should return something similar to:
 
      ```shell
-     Apache Ant(TM) version 1.10.9 compiled on September 27 2020
+     Apache Ant™ version 1.10.13 compiled on September 27 2020
      ```
 
-     We recommend using version 1.10.9, being the latest stable release of Apache Ant. If your system has an older version of Apache Ant installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant Installation Instructions](https://ant.apache.org/manual/install.html).
+     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html).
 
 2. Initialize the build process
 
