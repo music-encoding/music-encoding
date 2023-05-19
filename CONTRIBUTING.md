@@ -109,7 +109,7 @@ Above all, however, Core Contributors are asked to exercise wisdom and common se
 
 Sometimes it's easiest if you can check out a pull request's changes locally and run it on your own machine. To do this, you can follow [these instructions](https://gist.github.com/piscisaureus/3342247). This will allow you to further test proposed modifications.
 
-### Github Actions
+### GitHub Actions
 
 When there is a new push to the develop branch, a GitHub Actions workflow will automatically build the MEI schema files and guidelines and publish them in the respective repositries at https://github.com/music-encoding/schema/tree/main/dev and https://github.com/music-encoding/guidelines/tree/main/dev.
 
