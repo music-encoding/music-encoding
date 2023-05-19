@@ -123,7 +123,7 @@ Testing in MEI is done through the `build.sh` script. This script will look thro
 
 Releases are declared by the MEI Board, in consultation with, and on the advice of, the MEI Technical Team.
 
-The most recent 'stable' version of MEI is always found on the 'stable' branch. This is where all releases are tagged from, and where all development gets merged into once they have been declared stable. The most recent 'work in progress' is found on the the 'develop' branch. This represents the changes that will eventually find their way into the next release.
+The most recent 'stable' version of MEI is always found on the 'stable' branch. This is where all releases are tagged from, and where all development gets merged once they have been declared stable. The most recent 'work in progress' is found on the 'develop' branch. This represents the changes that will eventually find their way into the next release.
 
 Releases are 'tagged' on the stable branch when declared. This tag points to a specific commit that represents the state of development at a given point in time.
 
