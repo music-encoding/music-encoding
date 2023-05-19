@@ -111,7 +111,7 @@ Sometimes it's easiest if you can check out a pull request's changes locally and
 
 ### GitHub Actions
 
-When there is a new push to the develop branch, a GitHub Actions workflow will automatically build the MEI schema files and guidelines and publish them in the respective repositries at https://github.com/music-encoding/schema/tree/main/dev and https://github.com/music-encoding/guidelines/tree/main/dev.
+When there is a new push to the develop branch, a GitHub Actions workflow will automatically build the MEI schema files and guidelines and publish them in the respective repositories at https://github.com/music-encoding/schema/tree/main/dev and https://github.com/music-encoding/guidelines/tree/main/dev.
 
 A future plan is to also trigger this on pull requests against both the develop and the stable branches for easier code review.
 
