@@ -56,7 +56,7 @@ Commit messages should be in the following format:
 
 The summary should be a **concise** description of the commit, preferably 72 characters or less (so we can see the entire description in GitHub), beginning with a lowercase letter and with a terminating period. It should describe only the core issue addressed by the commit. If you find that the summary needs to be very long, your commit is probably too big! Smaller commits are better.
 
-Do **not** simply reference another issue or pull request by number in the summary. First of all, we want to know what was actually changed and why, which may not be fully explained in the referenced issue. Second, github will not create a link to the referenced issue in the commit summary.
+Do **not** simply reference another issue or pull request by number in the summary. First of all, we want to know what was actually changed and why, which may not be fully explained in the referenced issue. Second, GitHub will not create a link to the referenced issue in the commit summary.
 
 ### Message Body
 
