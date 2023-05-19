@@ -81,15 +81,6 @@ While it is possible to build the artifacts with other tools, the above are test
 * **Docker:** MEI maintains a Docker image that meets all the prerequisites and can be used for building the artifacts via the command line. How to use the Docker image is described in the [README](https://github.com/music-encoding/docker-mei#readme) of the [docker-mei repository](https://github.com/music-encoding/docker-mei).
 * **oXygen XML Editor:** When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Building MEI with oXygen XML Editor](BUILD_OXYYGEN.md).
 
-To build all possible artifacts, your build system has to meet the following prerequisites:
-
-1. Java (at least Java8 at runtime to support Apache Ant™)
-2. Apache Ant (recommended version: 1.10.13)
-3. Saxon HE 11.4 (can be fetched by ant project)
-4. Synchrosoft patched Xerces 25.1.0.1 (can be fetched by ant project)
-5. Verovio Toolkit 3.9
-6. Prince XML 15.1
-
 ## Additional Resources
 
 A live version of the MEI Guidelines is available on the [MEI Website](https://music-encoding.org) in the ’Documentation‘ menu:
