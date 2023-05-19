@@ -60,7 +60,7 @@ Do **not** simply reference another issue or pull request by number in the summa
 
 ### Message Body
 
-The details of the commit go in the body. Specifically, the body should include the motivation for the change.  For commits that fix bugs you should contrast behavior before the commit with behavior after the commit.
+The details describing the commit go into the body. Specifically, the body should include the motivation for the change.  For commits that fix bugs, you should contrast behavior before the commit with behavior after the commit.
 
 ### Message Footer
 
