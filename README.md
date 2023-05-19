@@ -4,9 +4,9 @@
 | ------------- |:------------------------------:|
 | Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
 
-The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI Source and customizations, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed in TEI’s ODD language (One Document Does-it-all, cf. amongst others: Viglianti, 2019). As such, the MEI Source contains both, the specifications that can be compiled to [schema](https://music-encoding.org/schema/) formats for (validating)[#validating-mei-files-against-an-mei-schema] XML files, and documentation in prose, the (MEI Guidelines)[https://music-encoding.org/guidelines], which provide detailed explanations of the components of the MEI model and best practices suggestions.
+The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI Source and customizations, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed in TEI’s ODD language (One Document Does-it-all, cf. amongst others: Viglianti, 2019). As such, the MEI Source contains both, the specifications that can be compiled to [schema](https://music-encoding.org/schema/) formats for [validating](#validating-mei-files-against-an-mei-schema) XML files, and documentation in prose, the [MEI Guidelines](https://music-encoding.org/guidelines), which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
-The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)). This repository already includes several customizations. While these can form an ideal starting point for creating your own customizations, you should also understand (customization)[#customizing-mei] and (building)[#building-mei] processes.
+The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)). This repository already includes several customizations. While these can form an ideal starting point for creating your own customizations, you should also understand[customization](#customizing-mei) and [building](#building-mei) processes.
 
 In this document, you will learn how to contribute to the development of MEI by building the schema and guidelines (you should also consider consulting the tutorial on ["Understanding ODD"](https://music-encoding.org/tutorials/understanding-odd.html)). For the pre-built schemas of the latest release of MEI, please consult the ["schemas" section](https://music-encoding.org/resources/schemas.html) of the music-encoding website.
 
@@ -31,7 +31,7 @@ Nevertheless, it is possible to (build)[#building-mei] any customization locally
 
 One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviors. To validate an MEI file you need an XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command line utilities, including [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
 
-For example, you might validate an MEI file from the ['sample-encodings](https://github.com/music-encoding/sample-encodings/)'](https://github.com/music-encoding/sample-encodings/) project using the `xmllint` command line tool:
+For example, you might validate an MEI file from the [sample-encodings](https://github.com/music-encoding/sample-encodings/) project using the `xmllint` command line tool:
 
    ```shell
    xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
@@ -92,7 +92,7 @@ To build all possible artifacts, your build system has to meet the following pre
 
 ## Additional Resources
 
-A live version of the MEI Guidelines is available on the [MEI](https://music-encoding.org) Website](https://music-encoding.org) in the ’Documentation‘ menu:
+A live version of the MEI Guidelines is available on the [MEI Website](https://music-encoding.org) in the ’Documentation‘ menu:
 
 * [MEI development version](https://music-encoding.org/guidelines/dev)
 * [MEI version 4](https://music-encoding.org/guidelines/v4)
@@ -110,4 +110,4 @@ And moreover
 
 ## Referenced Material
 
-* Viglianti, R. (2019). One Document Does-it-all (ODD): A language for documentation, schema generation, and customization from the Text Encoding Initiative. Symposium on Markup Vocabulary Customization, Washington, DC. https://doi.org/10.4242/BalisageVol24.Viglianti01
+* Viglianti, R. (2019). One Document Does-it-all (ODD): A language for documentation, schema generation, and customization from the Text Encoding Initiative. Symposium on Markup Vocabulary Customization, Washington, DC. [https://doi.org/10.4242/BalisageVol24.Viglianti01](https://doi.org/10.4242/BalisageVol24.Viglianti01)
