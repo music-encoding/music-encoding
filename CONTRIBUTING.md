@@ -103,7 +103,7 @@ Each of these comes with varying requirements for review and testing. While Core
 
 For *all other types of contributions*, Core Contributors should file a pull request containing their proposed changes. This pull request will be reviewed by at least one other core contributor for inclusion. Merging the contribution is the responsibility of the reviewing contributor.
 
-Above all, however, Core Contributors are asked to exercise wisdom and common sense in merging contributions. If they are unsure of the impact of a proposed change, or the documentation of the contribution (pull request messages, commit messages, discussions) are not answered to their satisfaction, they should err on the side of caution and not merge until they are completely satisfied, or call in help from other members of the community.
+Above all, however, Core Contributors are asked to exercise wisdom and common sense in merging contributions. If they are unsure of the impact of a proposed change, or the documentation of the contribution (pull request messages, commit messages, discussions) does not answer their questions, they should err on the side of caution and not merge until they are completely satisfied, or call in help from other members of the community.
 
 ### Working with Pull Requests Locally
 
