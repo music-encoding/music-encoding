@@ -129,4 +129,4 @@ Releases are 'tagged' on the stable branch when declared. This tag points to a s
 
 ## Versioning
 
-The MEI Versions follow the ['semantic' versioning scheme](http://semver.org), 'X.Y.Z'. 'X' is a major release, often defined by the presence of backwards-incompatible changes to the schema. 'Y' is a minor release, defined by backwards compatible changes (i.e., added, but not removed, features). 'Z' is the 'patch' number, indicating a release that  fixes or clarifies existing functionality.
+The MEI Versions follow the ['semantic' versioning scheme](http://semver.org), 'X.Y.Z'. 'X' is a major release, often defined by the presence of backward-incompatible changes to the schema. 'Y' is a minor release, defined by backward compatible changes (i.e., added, but not removed, features). 'Z' is the 'patch' number, indicating a release that fixes or clarifies existing functionality.
