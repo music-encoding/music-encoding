@@ -16,6 +16,8 @@ Cloning a repository including the referenced submodules is referred to as _crea
     git clone https://github.com/music-encoding/music-encoding.git --recursive
     ```
 
+    This will create a recursive clone of the repository, making sure all submodules (currently only the TEI Stylesheets) are properly initialized and pulled from their respective repositories.
+
   * If you already have a clone on your system you still might have to initialize the submodules by running the following commands from the command line:
 
     Switch to your clone's directory:
