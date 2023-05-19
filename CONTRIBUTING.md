@@ -95,9 +95,9 @@ If your commit messages do not contain enough information for a reviewer to unde
 Core Contributors (i.e., those with commit access to the MEI schema) are responsible for maintaining and reviewing contributions to the schema. In general, there are four classes of contributions that Core Contributors need to deal with:
 
  1. Typos (i.e., mistakes that affect the documentation, but not the schema).
- 2. Bug fixes (i.e., undesired behaviour of the schema)
- 3. Contributions to the schema that do not break backwards compatibility
- 3. Contributions to the schema that break backwards compatibility
+ 2. Bug fixes (i.e., undesired behavior of the schema)
+ 3. Contributions to the schema that do not break backward compatibility
+ 3. Contributions to the schema that break backward compatibility
 
 Each of these comes with varying requirements for review and testing. While Core Contributors *can* commit directly to the develop branch, they should reserve this ability for all but the most trivial of changes (e.g., typos).
 
