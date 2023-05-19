@@ -8,7 +8,7 @@ The Music Encoding Initiative (MEI) schema is developed and maintained by the ME
 
 Membership in the Technical Team is informal. Being considered a "member" of this group means you have introduced yourself to the community, have expressed an interest in helping grow and develop MEI, and have demonstrated an ability to contribute to the development of MEI. These contributions may be to the core schema, documentation, tools, tests, or sample encodings. Technical Team members will also help triage issues and help review pull request proposals.
 
-The Technical Team Co-chairs will, from time to time, designate and appoint senior members of the Technical Team to act as Core Contributors. These Core Contributors will have the responsibility of commit access to the core MEI Schema, and will ensure these contributions are consistent with the spirit and design of the MEI schema.
+The Technical Team Co-chairs will, from time to time, designate and appoint senior members of the Technical Team to act as Core Contributors. These Core Contributors will have the responsibility of commit access to the core MEI Schema and will ensure these contributions are consistent with the spirit and design of the MEI schema.
 
 ## How to Contribute
 
