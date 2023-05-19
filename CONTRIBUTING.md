@@ -113,8 +113,6 @@ Sometimes it's easiest if you can check out a pull request's changes locally and
 
 When there is a new push to the develop branch, a GitHub Actions workflow will automatically build the MEI schema files and guidelines and publish them in the respective repositories at https://github.com/music-encoding/schema/tree/main/dev and https://github.com/music-encoding/guidelines/tree/main/dev.
 
-A future plan is to also trigger this on pull requests against both the develop and the stable branches for easier code review.
-
 ### Tests
 
 Unit tests should be small, discrete test to verify that one specific component of the schema passes validation. It could be built to test that an attribute only accepts certain values, or it could be built to verify a larger MEI excerpt, such as a certain type of header.
