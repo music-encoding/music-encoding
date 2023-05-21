@@ -1,18 +1,22 @@
 ### Building MEI with Oxygen XML Editor
 
-#### Build a Specific Customization's RNG Schema
+If you are not that comfortable with the command line, here we provide an alternative to build MEI schema files for customizations and the HTML version of the Guidelines with Synchrosoft’s oXygen software family. Although the following documentation was developed with oXygen XML Editor, the illustrated workflows should also be possible in oXygen XML Developer and oXygen XML Author.
 
-If you are not that comfortable with the command line, here we provide an alternative to build MEI by using Oxygen following these steps:
+#### Build a Specific Customization’s RNG Schema
 
-1. Open the customization file in Oxygen (make sure that it has the extension `.odd` and not `.xml`).
+To build the RNG schema of a specific customization, follow these steps:
 
-2. Click on the _Configure Transformation Scenario(s)_ button (the button with the wrench). This will open a window of the same name.
+1. Open the customization file in oXygen.
+
+   To make sure that step 2 works out of the box, make sure that it has the extension `.odd` and not `.xml`. This is necessary for oXygen to recognise the file as TEI ODD customization and offer you the preconfigured transformation scenario for generating RNG schema files from an ODD.
+
+2. Click on the _Configure Transformation Scenario(s)_ button (the red play button with the wrench). This will open a window of the same name.
 
 3. Check the _TEI ODD to RELAX NG XML_ check box.
 
 4. Click on the _Duplicate_ button. This will open the _Edit Ant Scenario_ window.
 
-5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., "MEI Mensural Schema - plica feature"). The storage option can be either _Project Options_ or _Global Options_.
+5. Once in the _Edit Ant Scenario_, assign an appropriate name for the project (e.g., “MEI Mensural Schema - plica feature”). The storage option can be either _Project Options_ or _Global Options_.
 
 6. Change its `defaultSource` parameter by:
 
@@ -20,9 +24,9 @@ If you are not that comfortable with the command line, here we provide an altern
 
    b. Locating the `defaultSource` parameter and double-clicking on its value to change it. This will open the _Edit Parameter_ window.
 
-   c. Change the value of the `defaultSource` for the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`) and opening it. If you are on Windows, make sure that the path starts with the *file* protocol, e.g. `file:/D:/music-encoding/source/mei-source.xml`.
+   c. Change the value of the `defaultSource` to the path of the MEI source file (`mei-source.xml`) found on your computer. You can do this by clicking on the folder icon and browsing to the file location (it is located in your local copy of the music-encoding repo, in `music-encoding/source/mei-source.xml`). Select the file and click _Open_ Button. If you are on Windows, make sure that the path starts with the *file* protocol, e.g. `file:/D:/music-encoding/source/mei-source.xml`.
 
-   d. Click on the _OK_ button. The _Edit Parameter_ window will close.
+   d. Back in the _Edit Parameter_ window click on the _OK_ button. The _Edit Parameter_ window will close.
 
 7. Now, you will be back in the _Edit Ant Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the directory where your schema gets stored by clicking on the _Output_ tab.
 
