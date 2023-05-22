@@ -50,7 +50,7 @@
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
     <property name="saxon.download.version" value="Saxon-HE/11/Java/SaxonHE11-4J"/>
     <property name="saxon.jar.file" value="saxon-he-11.4.jar"/>
-    <property name="xerces.version" value="21.1.0.2"/>
+    <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <path id="mei.classpath">
         <fileset dir="lib" erroronmissingdir="false">
@@ -86,11 +86,11 @@
     <target name="echo-classpath" description="Echos the mei.classpath">
         <echo message="${ant.refid:mei.classpath}"></echo>
     </target>
-    
+
     <target name="echo-properties" description="Echos all ant properties">
         <echoproperties/>
     </target>
-    
+
     <target name="get-local-git-sha" description="Get the local git sha">
         <exec executable="git" outputproperty="github.sha.local">
             <arg value="describe"/>
@@ -101,7 +101,7 @@
         </exec>
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
-    
+
     <target name="get-local-git-branch" description="Retrieves the current git branch via commandline">
         <exec executable="git" outputproperty="github.branch.local">
             <arg value="branch"/>
@@ -142,7 +142,6 @@
     <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
-        <!--TODO update to latest version -->
     </target>
 
     <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
@@ -204,7 +203,7 @@
         <antcall target="generate-images"/>
         <antcall target="copy-generated-images"/>
     </target>
-    
+
     <target name="build-guidelines-pdf" depends="build-guidelines-html">
         <!-- create output directory for PDF -->
         <mkdir dir="${dir.dist}/guidelines/pdf"/>
@@ -243,7 +242,7 @@
             <fileset dir="source/assets"/>
         </copy>
     </target>
-    
+
     <target name="generate-images" description="Generate SVG images of mei files in assets/images/GeneratedImages; depends on docker-mei container image" if="${docker}">
         <exec executable="node" dir="${basedir}/../">
             <arg value="index.js"/>
