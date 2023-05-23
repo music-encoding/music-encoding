@@ -32,14 +32,15 @@
         <xsl:param name="media" as="xs:string"/>
         <xsl:param name="reducedLevels" as="xs:boolean?"/>
         
-        <xsl:variable name="cssPath" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
+        <xsl:variable name="output.path" select="if($reducedLevels) then('') else('../')" as="xs:string"/>
         <html lang="en">
             <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
                 <xsl:comment>THIS FILE IS GENERATED FROM AN XML TEMPLATE. DO NOT EDIT!</xsl:comment>
                 <title>Music Encoding Initiative Guidelines</title>
-                <meta name="author" content="Johannes Kepper" />
-                <meta name="author" content="Perry D. Roland" />
+                <xsl:for-each select="$source.file//tei:respStmt/tei:name[@role='pbd']/normalize-space(text())">
+                    <meta name="author" content="{.}"/>
+                </xsl:for-each>
                 <meta name="subject" content="Documentation for the Music Encoding Initiative (MEI) Data Model" />
                 <meta name="keywords" content="Music Encoding, MEI, Digital Humanities, Musicology, Music Librarianship, Music Information Retrieval" />
                 <meta name="date" content="{substring(string(current-date()),1,10)}" />
@@ -50,19 +51,19 @@
                 <xsl:choose>
                     <xsl:when test="$media = 'print'">
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="css/mei-print.css" />
+                            href="{$assets.folder.css.print}mei-print.css" />
                         <link rel="stylesheet" media="print" type="text/css"
-                            href="css/mei.css" />
+                            href="{$assets.folder.css.print}mei.css" />
                     </xsl:when>
                     <xsl:when test="$media = 'screen'">
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/search.css" />                        
+                            href="{$output.path}{$assets.folder.css.screen}search.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/mei-website.css" />
+                            href="{$output.path}{$assets.folder.css.screen}mei-website.css" />
                         <link rel="stylesheet" media="screen" type="text/css"
-                            href="{$cssPath}css/mei-screen.css" />
-                        <script src="{$cssPath}search/searchIndex.js"></script>
-                        <script src="{$cssPath}search/fuse.min.js"></script>
+                            href="{$output.path}{$assets.folder.css.screen}mei-screen.css" />
+                        <script src="{$output.path}{$assets.folder.js}searchIndex.js"></script>
+                        <script src="{$output.path}{$assets.folder.js}fuse.min.js"></script>
                     </xsl:when>
                 </xsl:choose>
             </head>
@@ -111,13 +112,13 @@
                                 </div>
                                 <div class="column col-8 col-md-12">
                                     <div id="search-content"></div>
-                                    <xsl:sequence select="$contents"/>    
+                                    <xsl:sequence select="$contents"/>
                                 </div>
                                 <div class="column col-4 hide-md">
                                     <div id="guidelinesVersion">
                                         <span class="versionLabel">MEI Version: </span>
                                         <span id="versionID"><xsl:value-of select="$version"/> </span>
-                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>   
+                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>
                                     </div>
                                     
                                     <form>
@@ -127,32 +128,32 @@
                                         </div>
                                     </form>
                                     
-                                    <ul class="nav"> 
+                                    <ul class="nav">
                                         <li class="nav-item">
-                                            <a href="{$cssPath}content/index.html">Guidelines</a>
+                                            <a href="{$output.path}content/index.html">Guidelines</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}modules.html">Modules</a>
+                                            <a href="{$output.path}modules.html">Modules</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}elements.html">Elements</a>
+                                            <a href="{$output.path}elements.html">Elements</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                            <a href="{$output.path}model-classes.html">Model Classes</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                            <a href="{$output.path}macro-groups.html">Macro Groups</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                            <a href="{$output.path}attribute-classes.html">Attribute Classes</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a href="{$cssPath}data-types.html">Data Types</a>
-                                        </li>                                        
-                                    </ul> 
+                                            <a href="{$output.path}data-types.html">Data Types</a>
+                                        </li>
+                                    </ul>
                                     <div class="divider"></div>
-                                    <xsl:sequence select="$pageMenu"/>                    
-                                </div>        
+                                    <xsl:sequence select="$pageMenu"/>
+                                </div>
                             </div>
                             <div class="modal" id="toc-modal">
                                 <a href="#close" id="toc-modal-outer-close" class="modal-overlay" aria-label="Close"></a>
@@ -163,29 +164,29 @@
                                     </div>
                                     <div class="modal-body">
                                         <div class="content">
-                                            <ul class="nav"> 
+                                            <ul class="nav">
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}content/index.html">Guidelines</a>
+                                                    <a href="{$output.path}content/index.html">Guidelines</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}modules.html">Modules</a>
+                                                    <a href="{$output.path}modules.html">Modules</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}elements.html">Elements</a>
+                                                    <a href="{$output.path}elements.html">Elements</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}model-classes.html">Model Classes</a>
+                                                    <a href="{$output.path}model-classes.html">Model Classes</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}macro-groups.html">Macro Groups</a>
+                                                    <a href="{$output.path}macro-groups.html">Macro Groups</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}attribute-classes.html">Attribute Classes</a>
+                                                    <a href="{$output.path}attribute-classes.html">Attribute Classes</a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{$cssPath}data-types.html">Data Types</a>
-                                                </li>                   
-                                            </ul> 
+                                                    <a href="{$output.path}data-types.html">Data Types</a>
+                                                </li>
+                                            </ul>
                                             <div class="divider"></div>
                                             <xsl:sequence select="$pageMenu"/>
                                         </div>
@@ -210,7 +211,7 @@
                                     function getMenu() {
                                         const fullVersion = '<xsl:value-of select="$version"/>'
                                         const version = (fullVersion.includes('-dev')) ? 'dev' : 'v' + fullVersion.split('.')[0];
-                                        console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')'); 
+                                        console.log('trying to get menu for version ' + version + ' (' + fullVersion + ')');
                                         
                                         const url = 'https://music-encoding.org/menus/' + version + '/menu.html';
                                         
@@ -276,10 +277,10 @@
                                 
                                 for(let tab of tabs) {
                                     tab.addEventListener('click',tabClick);
-                                }                            
+                                }
                             }
                             
-                            function setTabs(facetId, style) {                            
+                            function setTabs(facetId, style) {
                                 const storageName = 'meiSpecs_' + facetId + '_display';
                                 localStorage.setItem(storageName,style);
                                 
