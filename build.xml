@@ -192,6 +192,11 @@
                 <equals arg1="${github.sha}" arg2="" forcestring="true"/>
             </not>
         </condition>
+        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
+            <not>
+                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
@@ -199,7 +204,7 @@
             <arg value="-xi:on"/>
             <arg value="output.folder=${basedir}/${dir.build}/"/>
             <arg value="hash=${hash}"/>
-            <arg value="branch=${github.branch.local}"/>
+            <arg value="branch=${branch}"/>
             <arg value="basedir=${basedir.cross_platform}"/>
         </java>
         <antcall target="generate-images"/>
