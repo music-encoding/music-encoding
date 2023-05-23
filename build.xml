@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="music-encoding" default="dist">
+<project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
-    <property name="github.sha" value="github.sha">
+    <property name="github.sha" value="">
         <!-- string    external    The current GitHub sha -->
     </property>
     <property name="github.event_name" value="github.event_name">
         <!--string    external    The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
     </property>
-    <property name="github.ref" value="github.ref">
+    <property name="github.ref" value="">
         <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     </property>
     <loadresource property="github.ref-type">
@@ -179,15 +179,17 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
+    <target name="build-guidelines-html" depends="canonicalize-source" unless="${build-guidelines-html.done}">
         <!-- TODO check dependency try with mei-source.xml -->
+        <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
+        <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo message="building HTML guidelines for ${odd.basename} from ${customization.path} on branch ${github.branch.local}"/>
         <echo>github.sha: ${github.sha}</echo>
         <echo>github.sha.local: ${github.sha.local}</echo>
         <condition property="hash" value="${github.sha}" else="${github.sha.local}">
             <not>
-                <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
+                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
             </not>
         </condition>
         <antcall target="copy-guidelines-assets"/>
