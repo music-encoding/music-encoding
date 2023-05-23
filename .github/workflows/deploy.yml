@@ -44,6 +44,19 @@ jobs:
       - name: Build schema and guidelines with Docker image
         run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ghcr.io/music-encoding/docker-mei:latest ant -noinput -buildfile music-encoding/build.xml -Ddocker=true -Dgithub.sha=${{ github.sha }} -Dgithub.event_name=${{ github.event_name }} -Dgithub.ref=${{ github.ref }}
 
+      ### UPLOADING THE ARTIFACTS ### 
+      - name: Upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf
+          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf
+      
+      - name: Upload Prince XML log
+        uses: actions/upload-artifact@v3
+        with:
+          name: prince_log
+          path: ${{ github.workspace }}/build/prince.log
+
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
         uses: actions/checkout@v3
