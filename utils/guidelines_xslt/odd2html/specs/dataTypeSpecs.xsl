@@ -67,7 +67,7 @@
         <xsl:variable name="declarationFacet" select="tools:getDeclarationFacet($data.type)" as="node()"/>
         
         <section class="specPage dataTypeSpec">
-            <h2 id="{$data.type/@ident}">&lt;<xsl:value-of select="$data.type/@ident"/>&gt;</h2>
+            <h2 id="{$data.type/@ident}"><xsl:value-of select="$data.type/@ident"/></h2>
             <div class="specs">
                 <div class="desc">
                     <xsl:apply-templates select="$data.type/tei:desc/node()" mode="guidelines"/>                    

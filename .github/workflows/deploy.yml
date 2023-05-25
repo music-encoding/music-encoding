@@ -7,7 +7,7 @@ name: Deploy Schema and Guidelines
 
 on:
   push:
-    branches: [ develop ]
+    branches: [develop]
 
 env:
   # schema
@@ -24,13 +24,13 @@ env:
 
 jobs:
   build:
-
+    name: Build and deploy Schema and Guidelines
     runs-on: ubuntu-latest
 
     steps:
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # Whether to checkout submodules: `true` to checkout submodules or `recursive` to
           # recursively checkout submodules.
@@ -40,21 +40,26 @@ jobs:
           #
           # Default: false
           submodules: recursive
+      
+      - name: Build schema and guidelines with Docker image
+        run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ghcr.io/music-encoding/docker-mei:latest ant -noinput -buildfile music-encoding/build.xml -Ddocker=true -Dgithub.sha=${{ github.sha }} -Dgithub.event_name=${{ github.event_name }} -Dgithub.ref=${{ github.ref }}
 
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v1
+      ### UPLOADING THE ARTIFACTS ### 
+      - name: Upload PDF
+        uses: actions/upload-artifact@v3
         with:
-          java-version: 1.8
-
-      - name: Build with Ant
-        # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-ant
-        run: |
-          ant -noinput -buildfile build.xml init
-          ant -noinput -buildfile build.xml -lib lib/saxon/saxon-he-10.5.jar -Dgithub.sha=${{ github.sha }}
+          name: pdf
+          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf
+      
+      - name: Upload Prince XML log
+        uses: actions/upload-artifact@v3
+        with:
+          name: prince_log
+          path: ${{ github.workspace }}/build/prince.log
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # repository to check out
           repository: ${{ env.SCHEMA_REPO }}
@@ -67,7 +72,11 @@ jobs:
           path: ${{ env.SCHEMA_DIR }}
 
       - name: Copy built schema to SCHEMA_DIR
-        run: cp -r dist/schemata/dev $SCHEMA_DIR/
+        run: | 
+          rm -r $SCHEMA_DIR/dev
+          cp -r dist/schemata/ $SCHEMA_DIR/
+          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/dev
+          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/dev
 
       - name: Check git status before commit
         working-directory: ${{ env.SCHEMA_DIR }}
@@ -95,7 +104,7 @@ jobs:
 
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           # repository to check out
           repository: ${{ env.GUIDELINES_REPO }}
@@ -110,8 +119,9 @@ jobs:
       - name: Copy built guidelines to GUIDELINES_DIR
         run: |
           rm -rf $GUIDELINES_DIR/dev 
-          cp -r dist/guidelines/dev/web $GUIDELINES_DIR/
-          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev 
+          cp -r dist/guidelines/web $GUIDELINES_DIR/
+          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev
+          cp -r dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf $GUIDELINES_DIR/dev/
 
       - name: Check git status before commit
         working-directory: ${{ env.GUIDELINES_DIR }}

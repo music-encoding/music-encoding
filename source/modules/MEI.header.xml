@@ -43,6 +43,9 @@
       <rng:optional>
         <rng:ref name="pubStmt"/>
       </rng:optional>
+      <rng:optional>
+        <rng:ref name="availability"/>
+      </rng:optional>
       <rng:zeroOrMore>
         <rng:ref name="physDesc"/>
       </rng:zeroOrMore>
@@ -106,6 +109,63 @@
         </datatype>
       </attDef>
     </attList>
+  </classSpec>
+  <classSpec ident="att.perfRes" module="MEI.header" type="atts">
+    <desc xml:lang="en">Attributes that define the characteristics and components of the performance resource.</desc>
+    <classes>
+      <memberOf key="att.perfRes.basic"/>
+      <memberOf key="att.transposition"/>
+    </classes>
+    <attList>
+      <attDef ident="solo" usage="opt">
+        <desc xml:lang="en">Use this attribute to identify the performance resource as a soloist especially in an accompanied work, such as a concerto or vocal solo.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.perfRes.basic" module="MEI.header" type="atts">
+    <desc xml:lang="en">Attributes that define the characteristics and components of the performance resource or a performance resource list.</desc>
+    <classes>
+      <memberOf key="att.adlibitum"/>
+    </classes>
+    <attList>
+      <attDef ident="count" usage="opt">
+        <desc xml:lang="en">Indicates the number of performers.</desc>
+        <datatype>
+          <rng:data type="positiveInteger"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.adlibitum" module="MEI.header" type="atts">
+    <desc xml:lang="en">Attributes that describe a performance resource as ad libitum (optional).</desc>
+    <attList>
+      <attDef ident="adlib" usage="opt">
+        <desc xml:lang="en">Marks a performance resource as ad libitum (optional).</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+    <remarks xml:lang="en">
+      <p>The technical term “ad libitum” has several meanings depending on the context in which it occurs:</p>
+      <p>
+        <list type="gloss">
+          <head>Meanings of ad libitum</head>
+          <label>1</label>
+          <item>indicates an optional performance resource (instrumental or vocal part or group),</item>
+          <label>2</label>
+          <item>marks a passage to be played freely or free in time,</item>
+          <label>3</label>
+          <item>requests or invites to improvise a passage of music,</item>
+          <label>4</label>
+          <item>indicates that the number repetitions can be set individually or spontaneously.</item>
+        </list>
+      </p>
+      <p>Currently only the use within a performance resource (case 1) is supported.</p>
+    </remarks>
   </classSpec>
   <classSpec ident="att.recordType" type="atts" module="MEI.header">
     <desc xml:lang="en">Attributes that define the characteristics and components of the bibliographic
@@ -307,8 +367,7 @@
         afforded by copyright.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-accessrestrict">accessrestrict</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="acquisition" module="MEI.header">
@@ -321,10 +380,28 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="eventList"/>
+              <rng:ref name="model.pLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-acquisition.html">acquisition</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="altId" module="MEI.header">
@@ -346,7 +423,7 @@
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>One or the other of <gi scheme="MEI">altId</gi> or the <att>id</att> attribute on <gi
+      <p>One or the other of <gi scheme="MEI">altId</gi> or the <att>xml:id</att> attribute on <gi
         scheme="MEI">mei</gi> is required when applicable.</p>
     </remarks>
   </elementSpec>
@@ -367,7 +444,7 @@
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-appInfo.html">appInfo</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="application" module="MEI.header">
@@ -400,7 +477,7 @@
       </attDef>
     </attList>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-application.html">application</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="attUsage" module="MEI.header">
@@ -469,8 +546,7 @@
         >availability</gi> indicates access to the MEI-encoded document itself.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-availability.html">availability</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="bifolium" module="MEI.header">
@@ -666,8 +742,7 @@
         new version that supersedes earlier versions.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="changeDesc" module="MEI.header">
@@ -806,8 +881,7 @@
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="contentItem" module="MEI.header">
@@ -864,7 +938,7 @@
     <exemplum>
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
-  <p>A suitable tone ; Left hand colouring ; Rhythm and accent ; Tempo ; 
+  <p>A suitable tone ; Left hand coloring ; Rhythm and accent ; Tempo ; 
     Flexibility ; Ornaments</p>
 </contents>
             </egXML>
@@ -947,7 +1021,7 @@
       </attDef>
     </attList>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-correction.html">correction</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="cutout" module="MEI.header">
@@ -1108,8 +1182,8 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-editionStmt.html">editionStmt</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-editionstmt">editionstmt</ref> Encoded
+        Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="editorialDecl" module="MEI.header">
@@ -1142,7 +1216,7 @@
       </rng:choice>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-editorialDecl.html">editorialDecl</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="encodingDesc" module="MEI.header">
@@ -1182,7 +1256,7 @@
       </rng:optional>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-encodingDesc.html">encodingDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="exhibHist" module="MEI.header">
@@ -1217,8 +1291,7 @@
       </rng:choice>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the <abbr>MARC</abbr> <ref target="https://www.loc.gov/marc/bibliographic/bd585.html">585</ref> field.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="extMeta" module="MEI.header">
@@ -1285,8 +1358,8 @@
       <p>Extent in this context represents file size.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-fileDesc.html">fileDesc</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-filedesc">filedesc</ref> element of the Encoded
+        Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="foliaDesc" module="MEI.header">
@@ -1373,7 +1446,7 @@
         element.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-handNote.html">handNote</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="handList" module="MEI.header">
@@ -1403,7 +1476,7 @@
       </constraint>
     </constraintSpec>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-handNotes.html">handNotes</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="history" module="MEI.header">
@@ -1475,7 +1548,7 @@
             <desc xml:lang="en">Plaine &amp; Easie Code.</desc>
           </valItem>
           <valItem ident="humdrumKern">
-            <desc xml:lang="en">Humdrum Kern format.</desc>
+            <desc xml:lang="en">**kern representation of the Humdrum format.</desc>
           </valItem>
           <valItem ident="parsons">
             <desc xml:lang="en">Parsons code.</desc>
@@ -1530,14 +1603,14 @@
     </classes>
     <content>
       <rng:zeroOrMore>
-        <rng:ref naem="model.headLike"/>
+        <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:oneOrMore>
         <rng:ref name="model.pLike"/>
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-interpretation.html">interpretation</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="key" module="MEI.header">
@@ -1590,8 +1663,8 @@
         <att>auth.uri</att> attribute, respectively.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-language.html">language</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-language">language</ref> element of the Encoded
+        Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="langUsage" module="MEI.header">
@@ -1612,7 +1685,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-langUsage.html">langUsage</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="meiHead" module="MEI.header">
@@ -1765,7 +1838,7 @@
       </attDef>
     </attList>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-namespace.html">namespace</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="normalization" module="MEI.header">
@@ -1788,7 +1861,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-normalization.html">normalization</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="notesStmt" module="MEI.header">
@@ -1807,7 +1880,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-notesStmt.html">notesStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="otherChar" module="MEI.header">
@@ -1979,6 +2052,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.perfRes"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -1989,21 +2063,12 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="count" usage="opt">
-        <desc xml:lang="en">Indicates the number of performers.</desc>
-        <datatype>
-          <rng:data type="positiveInteger"/>
-        </datatype>
-      </attDef>
-      <attDef ident="solo" usage="opt">
-        <desc xml:lang="en">Marks this instrument or vocal part as a soloist. Do not use this attribute for a solo
-          instrument which is not accompanied.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
+    <remarks xml:lang="en">
+      <p>In the context of a performance resource the attribute <att>adlib</att> marks a resource as optional.</p>
+    </remarks>
+    <remarks xml:lang="en">
+      <p>To indicate the tuning of an instrument, the attribute <att>trans.diat</att> can be used.</p>
+    </remarks>
   </elementSpec>
   <elementSpec ident="perfResList" module="MEI.header">
     <desc xml:lang="en">Several instrumental or vocal resources treated as a group.</desc>
@@ -2013,6 +2078,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.edit"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.perfRes.basic"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -2026,14 +2092,6 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="count" usage="opt">
-        <desc xml:lang="en">Indicates the number of performers.</desc>
-        <datatype>
-          <rng:data type="positiveInteger"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The function of instrumentalists or vocalists is represented by the choice of <gi
         scheme="MEI">perfRes</gi> and <gi scheme="MEI">perfResList</gi> child elements. Arrangements
@@ -2066,8 +2124,7 @@
         meta-data rather than a transcription.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-physdesc">physdesc</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="physMedium" module="MEI.header">
@@ -2089,9 +2146,8 @@
         multiple elements may be used, one for each medium.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Encoded Archival Description (EAD) standard. It
-        has the same function as the material element in the Text Encoding Initiative (TEI)
-        standard.</p>
+      <p>The model of this element is based on respective elements of the Encoded Archival Description (EAD). It
+        has the same function as the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-material.html">material</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="plateNum" module="MEI.header">
@@ -2190,7 +2246,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-projectDesc.html">projectDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="provenance" module="MEI.header">
@@ -2223,8 +2279,8 @@
       </rng:choice>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Encoded Archival Description (EAD) and Text
-        Encoding Initiative (TEI) standards.</p>
+      <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD) and the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-provenance.html">provenance</ref> element of the Text
+        Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="pubStmt" module="MEI.header">
@@ -2253,7 +2309,7 @@
       <p>When an item is unpublished, use only the <gi scheme="MEI">unpub</gi> sub-element.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-publicationStmt.html">publicationStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="revisionDesc" module="MEI.header">
@@ -2277,7 +2333,7 @@
         recent alteration first.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-revisionDesc.html">revisionDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="samplingDecl" module="MEI.header">
@@ -2300,7 +2356,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-samplingDecl.html">samplingDecl</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="scoreFormat" module="MEI.header">
@@ -2336,7 +2392,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-segmentation.html">segmentation</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="seriesStmt" module="MEI.header">
@@ -2378,7 +2434,7 @@
         provided within seriesStmt for the description of a sub-series.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-seriesStmt.html">seriesStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="soundChan" module="MEI.header">
@@ -2467,8 +2523,8 @@
         in the content of this particular source.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded
-        Archival Description (EAD) standards.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-source.html">source</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-source">source</ref> element of the Encoded
+        Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="sourceDesc" module="MEI.header">
@@ -2526,7 +2582,7 @@
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-stdVals.html">stdVals</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="sysReq" module="MEI.header">
@@ -2562,7 +2618,7 @@
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-tagsDecl.html">tagsDecl</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="tagUsage" module="MEI.header">
@@ -2615,7 +2671,7 @@
       </attDef>
     </attList>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-tagUsage.html">tagUsage</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="taxonomy" module="MEI.header">
@@ -2695,7 +2751,7 @@
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-titleStmt.html">titleStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="trackConfig" module="MEI.header">
@@ -2765,8 +2821,7 @@
         solutions used, techniques applied, etc.), the date the treatment was applied, etc.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="treatSched" module="MEI.header">
@@ -2801,8 +2856,7 @@
       </rng:choice>
     </content>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="unpub" module="MEI.header">
@@ -2845,8 +2899,7 @@
         affecting the availability of the material.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Encoded Archival Description (EAD)
-        standard.</p>
+      <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-userestrict">userestrict</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="watermark" module="MEI.header">
@@ -2862,12 +2915,21 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
+    <constraintSpec ident="check_watermark_inline" scheme="isoschematron">
+      <constraint>
+        <sch:rule
+          context="mei:watermark">
+          <sch:assert test="ancestor::mei:physDesc">The watermark element may only appear as a
+            descendant of the physDesc element.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
       <p>The <att>facs</att> attribute may be used to record the location of the watermark in a
         facsimile image.</p>
     </remarks>
     <remarks xml:lang="en">
-      <p>This element is modelled on an element in the Text Encoding Initiative (TEI) standard.</p>
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-watermark.html">watermark</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="work" module="MEI.header">
