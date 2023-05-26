@@ -2245,6 +2245,54 @@
         model.textPhraseLike.limited.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="repeatMark" module="MEI.cmn">
+    <gloss versionDate="2022-05-18" xml:lang="en">repetition mark</gloss>
+    <desc xml:lang="en">
+      An instruction expressed as a combination of text and symbols – segno and coda – typically above, 
+      below, or between staves, but not on the staff.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.repeatMark.log"/>
+      <memberOf key="att.repeatMark.vis"/>
+      <memberOf key="att.repeatMark.ges"/>
+      <memberOf key="att.repeatMark.anl"/>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="repeatMark_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:repeatMark">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="repeatMark_with_glyph_has_to_be_empty" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:repeatMark[@glyph.num or @glyph.name]">
+          <sch:assert test="not(element()) and not(text())">When @glyph.name or @glyph.num is present, repeatMark must not have content.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks xml:lang="en">
+      <p>When only <att>func</att> is provided to describe the function of the repeat mark (<abbr>i.e.</abbr>, without glyph information and no textual content), then a renderer
+        can rely on it to display the appropriate symbol. When textual content is provided, it will take precedence over the symbol implied by the function. Generic repeat marks where
+        no function can be determined, then generic <gi scheme="MEI">dir</gi> elements should be used.
+      </p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="slur" module="MEI.cmn">
     <desc xml:lang="en">Indication of 1) a "unified melodic idea" or 2) performance technique.</desc>
     <classes>
