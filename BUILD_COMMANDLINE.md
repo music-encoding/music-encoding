@@ -76,7 +76,7 @@
      ant -lib lib/saxon/saxon-he-11.4.jar build-guidelines-html
      ```
 
-     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
+     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
 
    * Build the RNG schema of a specific customization:
 
