@@ -81,7 +81,7 @@
    * Build the RNG schema of a specific customization:
 
      ```shell
-     ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
+     ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
