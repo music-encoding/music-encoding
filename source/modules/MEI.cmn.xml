@@ -452,6 +452,15 @@
       </attDef>
     </attList>
   </classSpec>
+ <classSpec ident="att.damp.log" module="MEI.cmn" type="atts">
+    <desc xml:lang="en">Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.log"/>
+    </classes>
+  </classSpec>
   <classSpec ident="att.fermata.log" module="MEI.cmn" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -1510,6 +1519,39 @@
         <rng:ref name="note"/>
       </rng:choice>
     </content>
+  </elementSpec>
+  <elementSpec ident="damp" module="MEI.CMN">
+    <gloss versionDate="2023-05-27" xml:lang="en">damp</gloss>
+    <desc xml:lang="en">An instruction to dampen one or more strings of a stringed instrument, such as the violin, guitar, harp, etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.damp.log"/>
+      <memberOf key="att.damp.vis"/>
+      <memberOf key="att.damp.ges"/>
+      <memberOf key="att.damp.anl"/>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="damp_start-type_attributes_required" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:damp[not(ancestor::mei:syllable)]">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="fermata" module="MEI.cmn">
     <desc xml:lang="en">An indication placed over a note or rest to indicate that it should be held longer than
