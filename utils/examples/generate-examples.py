@@ -12,7 +12,7 @@ IMAGES_PATH = "../../build/assets/images/GeneratedImages"
 
 MEI_NS: Dict = {'mei': 'http://www.music-encoding.org/ns/mei'}
 
-VRV_OPTIONS: Dict = {
+VRV_OPTIONS: dict = {
    'scale': 10,
    'pageWidth': 1500,
    'adjustPageHeight': True,
