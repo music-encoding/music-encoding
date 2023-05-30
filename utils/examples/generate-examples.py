@@ -97,7 +97,7 @@ if __name__ == "__main__":
             # try to get the extMeta tag and load the options if existing
             meta = tree.findtext(".//mei:meiHead/mei:extMeta", namespaces=MEI_NS)
         except:
-            log.info("Could not parse file")
+            log.info("Could not extract extMeta from %s", mei_file)
 
         # This is currently not used be in-place of having rendering options in <extMeta>
         if meta:
