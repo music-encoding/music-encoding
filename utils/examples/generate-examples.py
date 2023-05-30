@@ -103,7 +103,7 @@ if __name__ == "__main__":
         if meta:
             # Overwrite any pre-defined options with the options from the MEI file.
             log.info("Found some locally-defined meta options: %s", meta)
-            metaOptions = meta
+            meta_options = meta
             options.update(metaOptions)
 
         log.debug("Running Verovio with the following options: %s", pprint.pformat(options))
