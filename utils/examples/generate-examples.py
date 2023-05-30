@@ -64,7 +64,7 @@ if __name__ == "__main__":
     # keep all the options to be able to reset them for each example
     default_options: dict = tk.getDefaultOptions()
     # Overwrite the default options with our locally-defined options
-    defaultOptions.update(VRV_OPTIONS)
+    default_options.update(VRV_OPTIONS)
 
     # Will remove extraneous whitespace
     et_parser = etree.XMLParser(remove_blank_text=True)
