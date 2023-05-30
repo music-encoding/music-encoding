@@ -62,7 +62,7 @@ if __name__ == "__main__":
     log.info("Using Verovio %s", tk.getVersion())
 
     # keep all the options to be able to reset them for each example
-    defaultOptions: Dict = tk.getDefaultOptions()
+    default_options: dict = tk.getDefaultOptions()
     # Overwrite the default options with our locally-defined options
     defaultOptions.update(VRV_OPTIONS)
 
