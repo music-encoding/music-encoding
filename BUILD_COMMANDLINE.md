@@ -94,7 +94,7 @@
      ant -lib lib/saxon/saxon-he-11.4.jar build-guidelines-html
      ```
 
-     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
+     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
 
      To generate the example images with Verovio, you need to run:
      ```shell
@@ -107,10 +107,10 @@
      source ./.venv/bin/activate
      ```     
 
-   * Build a specific customization's RNG schema:
+   * Build the RNG schema of a specific customization:
 
      ```shell
-     ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[PATH/TO/YOUR/CUSTOMIZATION]" build-rng
+     ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
@@ -118,3 +118,20 @@
      ```shell
      ant -lib lib/saxon/saxon-he-11.4.jar
      ```
+## Available Targets
+
+The following targets can be called using `ant <target>`:
+
+| target | description |
+|----|-----------------|
+| `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
+| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml. This target will be triggered before all `build-...` targets. |
+| `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations: `mei-all`, `mei-all_anyStart`, `mei-basic`, `mei-CMN`, `mei-Mensural` and `mei-Neumes`. |
+| `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization. |
+| `build-customizations` | Builds the RNG schemata for all MEI customizations. |
+| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization. |
+| `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
+| `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
+| `init` | Initializes the build environment, e.g., downloads jar files for Saxon, Xerces and adds them to the `lib` folder.
+| `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
+| `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |

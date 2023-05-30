@@ -52,6 +52,7 @@
     <property name="saxon.jar.file" value="saxon-he-11.4.jar"/>
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
     <path id="mei.classpath">
         <fileset dir="lib" erroronmissingdir="false">
             <include name="**/*.jar" />
@@ -115,7 +116,7 @@
         <antcall target="clean"/>
     </target>
     
-    <target name="init" description="initializes the build environment, e.g. downloads saxon" unless="${docker}">
+    <target name="init" description="initializes the build environment, e.g., downloads saxon" unless="${docker}">
         <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
         <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
         <mkdir dir="${dir.lib}"/>
@@ -142,6 +143,7 @@
     <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
     </target>
 
     <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
