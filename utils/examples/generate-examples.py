@@ -71,7 +71,8 @@ if __name__ == "__main__":
 
     for file in os.listdir(IMAGES_PATH):
         # Skip everything that is not an .mei or .xml file
-        if not(file.endswith(".mei")) and not(file.endswith(".xml")): continue
+        if not(file.endswith(".mei")) and not(file.endswith(".xml")): 
+            continue
         
         options: Dict = defaultOptions.copy()
 
