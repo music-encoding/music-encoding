@@ -95,6 +95,7 @@ if __name__ == "__main__":
         if len(svg):
             with open(svg_file, 'w') as f:
                 f.write(svg)
+                log.info("Successfully rendered %s", svg_file)
         else:
             log.error("Failed to render %s", mei_file)
             success = False
