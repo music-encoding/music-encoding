@@ -56,12 +56,22 @@
 
   * Is Verovio installed for generating example images locally?
 
-    To build the images with Verovio, you need Python3 to be installed with the `verovio` module. These can be installed with
+    Optional: If you wish, you can use a Python virtual environment to manage your dependencies. Before installing
+    Verovio, create and activate a virtual environment. 
+    
+    ```shell
+    python3 -m venv ./.venv
+    source ./.venv/bin/activate
+    ```
+    
+    This will install your Python libraries in the local `.venv` directory. Once your virtual environment is active you can continue to installing Verovio.
+
+    To build the images with Verovio, you need Python3 to be installed with the `verovio` module. This can be installed with:
 
     ```shell
-    pip install verovio lxml
+    pip install verovio
     ```
-
+    
 2. Initialize the build process
 
    * Switch to your clone’s directory:
@@ -90,6 +100,12 @@
      ```shell
      ant generate-images-py
      ```
+
+     **Note:** If you have installed your dependencies in a virtual environment, be sure to activate it prior to calling the Ant task. Activate it using:
+     
+     ```shell
+     source ./.venv/bin/activate
+     ```     
 
    * Build a specific customization's RNG schema:
 
