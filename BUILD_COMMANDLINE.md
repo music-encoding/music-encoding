@@ -8,7 +8,7 @@
    |----|----------------|
    |Java| 17 (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.13|
-   |Verovio Toolkit|3.9|
+   |Verovio Toolkit|3.15|
    |Prince XML|15.1|
    |Saxon HE*| 11.4 |
    |Xerces*|Synchrosoft patched version 25.1.0.1|
@@ -54,6 +54,14 @@
 
      We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html).
 
+  * Is Verovio installed for generating example images locally?
+
+    To build the images with Verovio, you need Python3 to be installed with the `verovio` and `lxml` modules. These can be installed with
+
+    ```shell
+    pip install verovio lxml
+    ```
+
 2. Initialize the build process
 
    * Switch to your clone’s directory:
@@ -77,6 +85,11 @@
      ```
 
      The results of this build can be found in the web folder (`music-encoding/dist/guidelines/dev/web`). The guidelines are stored in the `index.html` file.
+
+     To generate the example images with Verovio, you need to run:
+     ```shell
+     ant generate-images-py
+     ```
 
    * Build a specific customization's RNG schema:
 
