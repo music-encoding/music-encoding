@@ -2,7 +2,6 @@ import argparse
 import os
 import sys
 import pprint
-from typing import Dict
 import logging
 
 import verovio
