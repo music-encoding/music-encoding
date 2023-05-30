@@ -74,7 +74,7 @@ if __name__ == "__main__":
         if not(file.endswith(".mei")) and not(file.endswith(".xml")): 
             continue
         
-        options: Dict = defaultOptions.copy()
+        options: dict = default_options.copy()
 
         mei_file = os.path.join(IMAGES_PATH, file)
         svg_file = os.path.join(IMAGES_PATH, f"{file}.svg")
