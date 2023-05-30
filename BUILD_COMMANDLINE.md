@@ -56,7 +56,7 @@
 
   * Is Verovio installed for generating example images locally?
 
-    To build the images with Verovio, you need Python3 to be installed with the `verovio` and `lxml` modules. These can be installed with
+    To build the images with Verovio, you need Python3 to be installed with the `verovio` module. These can be installed with
 
     ```shell
     pip install verovio lxml

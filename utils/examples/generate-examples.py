@@ -5,11 +5,8 @@ import pprint
 import logging
 
 import verovio
-from lxml import etree
 
 IMAGES_PATH = "../../build/assets/images/GeneratedImages"
-
-MEI_NS: Dict = {'mei': 'http://www.music-encoding.org/ns/mei'}
 
 VRV_OPTIONS: dict = {
    'scale': 10,
@@ -27,6 +24,8 @@ VRV_OPTIONS: dict = {
    'svgViewBox': True,
     'xmlIdSeed': 1
 }
+
+success: bool = True
 
 if __name__ == "__main__":
     description = """
@@ -65,9 +64,6 @@ if __name__ == "__main__":
     # Overwrite the default options with our locally-defined options
     default_options.update(VRV_OPTIONS)
 
-    # Will remove extraneous whitespace
-    et_parser = etree.XMLParser(remove_blank_text=True)
-
     for file in os.listdir(IMAGES_PATH):
         # Skip everything that is not an .mei or .xml file
         if not(file.endswith(".mei")) and not(file.endswith(".xml")): 
@@ -84,36 +80,28 @@ if __name__ == "__main__":
 
         # Download the MEI file from the given url
         mei_example: str = ""
-        with open(mei_file) as file:
-            mei_example = file.read()
-
-        # parse the MEI file to XML
-        log.debug("Parsing downloaded text to XML")
-        tree = None
-        meta = None
-        try:
-            tree = etree.fromstring(bytes(mei_example.encode("utf-8")), parser=et_parser)
-            # try to get the extMeta tag and load the options if existing
-            meta = tree.findtext(".//mei:meiHead/mei:extMeta", namespaces=MEI_NS)
-        except:
-            log.info("Could not extract extMeta from %s", mei_file)
-
-        # This is currently not used be in-place of having rendering options in <extMeta>
-        if meta:
-            # Overwrite any pre-defined options with the options from the MEI file.
-            log.info("Found some locally-defined meta options: %s", meta)
-            meta_options = meta
-            options.update(meta_options)
+        with open(mei_file) as f:
+            mei_example = f.read()
 
         log.debug("Running Verovio with the following options: %s", pprint.pformat(options))
         tk.setOptions(options)
-        tk.loadData(mei_example)
+        if not(tk.loadData(mei_example)):
+            log.error("Failed to load %s", mei_file)
+            success = False
+            continue
 
         svg: str = tk.renderToSVG(1)
 
-        with open(svg_file, 'w') as f:
-            f.write(svg)
+        if len(svg):
+            with open(svg_file, 'w') as f:
+                f.write(svg)
+        else:
+            log.error("Failed to render %s", mei_file)
+            success = False
 
         log.debug("Finished processing %s", mei_file)
+    
+    if not(success):
+        sys.exit(1)
 
     sys.exit()
