@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
         log.debug("Running Verovio with the following options: %s", pprint.pformat(options))
         tk.setOptions(options)
-        if not(tk.loadData(mei_example)):
+        if not tk.loadData(mei_example):
             log.error("Failed to load %s", mei_file)
             success = False
             continue
