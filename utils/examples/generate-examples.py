@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
         log.debug("Finished processing %s", mei_file)
     
-    if not(success):
+    if not success:
         sys.exit(1)
 
     sys.exit()
