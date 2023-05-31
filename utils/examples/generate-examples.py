@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
         svg: str = tk.renderToSVG(1)
 
-        if len(svg):
+        if svg:
             with open(svg_file, 'w') as f:
                 f.write(svg)
                 log.info("Successfully rendered %s", svg_file)
