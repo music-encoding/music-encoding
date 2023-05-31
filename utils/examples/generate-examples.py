@@ -59,17 +59,13 @@ if __name__ == "__main__":
     # version of the toolkit
     log.info("Using Verovio %s", tk.getVersion())
 
-    # keep all the options to be able to reset them for each example
-    default_options: dict = tk.getDefaultOptions()
-    # Overwrite the default options with our locally-defined options
-    default_options.update(VRV_OPTIONS)
+    log.debug("Running Verovio with the following options: %s", pprint.pformat(VRV_OPTIONS))
+    tk.setOptions(VRV_OPTIONS)
 
     for file in os.listdir(IMAGES_PATH):
         # Skip everything that is not an .mei or .xml file
         if not file.endswith(".mei") and not file.endswith(".xml"): 
             continue
-        
-        options: dict = default_options.copy()
 
         mei_file = os.path.join(IMAGES_PATH, file)
         svg_file = os.path.join(IMAGES_PATH, f"{file}.svg")
@@ -83,8 +79,6 @@ if __name__ == "__main__":
         with open(mei_file) as f:
             mei_example = f.read()
 
-        log.debug("Running Verovio with the following options: %s", pprint.pformat(options))
-        tk.setOptions(options)
         if not tk.loadData(mei_example):
             log.error("Failed to load %s", mei_file)
             success = False
