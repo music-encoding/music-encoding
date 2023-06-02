@@ -6,7 +6,7 @@
 
    | Prerequisite | Recommended version |
    |----|----------------|
-   |Java (JDK) | 17 (at least Java 8 at runtime to support Apache Ant™)|
+|Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.13|
    |Verovio Toolkit|3.9|
    |Prince XML|15.1|
