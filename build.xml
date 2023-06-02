@@ -134,17 +134,15 @@
         <antcall target="clean"/>
     </target>
     
+    <target name="init" description="Initialize: checks if saxon and xerces are available, if not downloads them." unless="${docker}">
         <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
         <available property="xerces-available" classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+        <echo message="xerces available: ${xerces-available}"/>
         <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
-        <mkdir dir="${dir.lib}"/>
-        <antcall target="saxon-prepare"/>
         <available property="saxon-available" classname="net.sf.saxon.Transform"/>
         <echo message="saxon available: ${saxon-available}"/>
-        <available file="${dir.lib}" property="lib-available"/>
-        <echo message="lib directory available: ${lib-available}"/>
-        <mkdir dir="${dir.lib}" unless:true="${lib-available}"/>
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="xerces-download" unless:true="${xerces-available}"/>
         <echo>initialized</echo>
     </target>
 
