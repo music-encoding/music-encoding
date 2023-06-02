@@ -52,7 +52,7 @@
      Apache Ant™ version 1.10.13 compiled on September 27 2020
      ```
 
-     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html). **MacOS users are advised to install ant using brew.**
+     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html). **macOS users are advised to install ant using [Homebrew](https://brew.sh/).**
 
      ```shell
      brew install ant
