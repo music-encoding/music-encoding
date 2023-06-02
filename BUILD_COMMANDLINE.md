@@ -34,7 +34,11 @@
      OpenJDK 64-Bit Server VM Zulu17.32+13-CA (build 17.0.2+8-LTS, mixed mode, sharing)
      ```
 
-     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). For MacOS users, **make sure to install the Java Development Kit (JDK).**
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). For macOS users, **make sure to install the Java Development Kit (JDK),** you can do this using [Homebrew](https://brew.sh/).
+
+     ```shell
+     brew install openjdk
+     ```
 
    * Is Apache Ant™ installed?
 
