@@ -6,7 +6,7 @@
 
    | Prerequisite | Recommended version |
    |----|----------------|
-|Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
+   |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.13|
    |Verovio Toolkit|3.9|
    |Prince XML|15.1|
@@ -34,11 +34,7 @@
      OpenJDK 64-Bit Server VM Zulu17.32+13-CA (build 17.0.2+8-LTS, mixed mode, sharing)
      ```
 
-     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). For macOS users, **make sure to install the Java Development Kit (JDK),** you can do this using [Homebrew](https://brew.sh/).
-
-     ```shell
-     brew install openjdk
-     ```
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). The Java Development Kit we use in our Docker Container is Eclipse Temurin™, which is easy to [install](https://adoptium.net/de/installation/) on Linux, macOS or Windows.
 
    * Is Apache Ant™ installed?
 
@@ -56,11 +52,10 @@
      Apache Ant™ version 1.10.13 compiled on September 27 2020
      ```
 
-     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html). **macOS users are advised to install ant using [Homebrew](https://brew.sh/).**
+     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html) or any other applicable installation instruction.
 
-     ```shell
-     brew install ant
-     ```
+      * **macOS or Linux:** e.g. the Homebrew Package Manager offers an easy installation methods for both a JDK and Apache Ant™ .
+      * **Windows:**
 
 2. Initialize the build process
 
