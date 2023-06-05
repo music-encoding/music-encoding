@@ -55,7 +55,7 @@
      We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html) or any other applicable installation instruction.
 
       * **macOS or Linux:** e.g. the Homebrew Package Manager offers an easy installation methods for both a JDK and Apache Ant™ .
-      * **Windows:**
+      * **Windows:** e.g. the [Chocolatey Package Manager](https://chocolatey.org) can be used to install both a JDK and Apache Ant™.
 
 2. Initialize the build process
 
