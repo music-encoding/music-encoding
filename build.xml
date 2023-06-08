@@ -71,12 +71,6 @@
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
-    <path id="mei.classpath">
-        <fileset dir="lib" erroronmissingdir="false">
-            <include name="**/*.jar" />
-        </fileset>
-        <pathelement path="${java.class.path}"/>
-    </path>
 
     <target name="help">
         <echo>================================================</echo>
@@ -141,6 +135,16 @@
         <antcall target="saxon-prepare"/>
         <antcall target="xerces-download"/>
         <echo>initialized</echo>
+    </target>
+    
+    <target name="init-mei-classpath" description="Initialize classpath: initializes the mei.classpath by prepending the jar files contained in the lib directory to the java classpath.">
+        <antcall target="init" if:true="${initialize}"/>
+        <path id="mei.classpath">
+            <fileset dir="lib" erroronmissingdir="false">
+                <include name="**/*.jar" />
+            </fileset>
+            <pathelement path="${java.class.path}"/>
+        </path>
     </target>
 
     <target name="saxon-download" unless="${saxon-available}">
