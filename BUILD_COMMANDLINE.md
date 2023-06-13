@@ -6,7 +6,7 @@
 
    | Prerequisite | Recommended version |
    |----|----------------|
-   |Java| 17 (at least Java 8 at runtime to support Apache Ant™)|
+   |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.13|
    |Verovio Toolkit|3.9|
    |Prince XML|15.1|
@@ -29,12 +29,12 @@
      This should return something similar to:
 
      ```shell
-     openjdk version "17.0.2" 2022-01-18 LTS
-     OpenJDK Runtime Environment Zulu17.32+13-CA (build 17.0.2+8-LTS)
-     OpenJDK 64-Bit Server VM Zulu17.32+13-CA (build 17.0.2+8-LTS, mixed mode, sharing)
+     openjdk 17.0.2 2022-01-18
+     OpenJDK Runtime Environment Temurin-17.0.2+8 (build 17.0.2+8)
+     OpenJDK 64-Bit Server VM Temurin-17.0.2+8 (build 17.0.2+8, mixed mode, sharing)
      ```
 
-     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet).
+     If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). The Java Development Kit we use in our [Docker Container](https://github.com/music-encoding/docker-mei) is Eclipse Temurin™, which is easy to [install](https://adoptium.net/de/installation/) on Linux, macOS or Windows.
 
    * Is Apache Ant™ installed?
 
@@ -52,7 +52,10 @@
      Apache Ant™ version 1.10.13 compiled on September 27 2020
      ```
 
-     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html).
+     We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html) or any other applicable installation instruction.
+
+      * **macOS or Linux:** e.g. the [Homebrew Package Manager](https://brew.sh/index_de) offers an easy installation method for both a JDK and Apache Ant™.
+      * **Windows:** e.g. the [Chocolatey Package Manager](https://chocolatey.org) can be used to install both a JDK and Apache Ant™.
 
 2. Initialize the build process
 
