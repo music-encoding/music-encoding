@@ -29,9 +29,9 @@
      This should return something similar to:
 
      ```shell
-     openjdk version "17.0.2" 2022-01-18 LTS
-     OpenJDK Runtime Environment Zulu17.32+13-CA (build 17.0.2+8-LTS)
-     OpenJDK 64-Bit Server VM Zulu17.32+13-CA (build 17.0.2+8-LTS, mixed mode, sharing)
+     openjdk 17.0.2 2022-01-18
+     OpenJDK Runtime Environment Temurin-17.0.2+8 (build 17.0.2+8)
+     OpenJDK 64-Bit Server VM Temurin-17.0.2+8 (build 17.0.2+8, mixed mode, sharing)
      ```
 
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). The Java Development Kit we use in our [Docker Container](https://github.com/music-encoding/docker-mei) is Eclipse Temurin™, which is easy to [install](https://adoptium.net/de/installation/) on Linux, macOS or Windows.
