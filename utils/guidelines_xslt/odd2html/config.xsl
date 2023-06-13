@@ -69,14 +69,6 @@
 
     <xd:doc>
         <xd:desc>
-            <xd:p>A variable for the parent directory. Used in the context of relative paths.</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="parentdir.rel" select="'../'" as="xs:string"/>
-
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>Where to find the Guidelines files. This is necessary, as the XIncludes pulling in the chapters
                 point to the bodies of those files, omitting the information about editors of the chapters stored
                 in the headers of the respective TEI files. Hence, this goes back to the sources and opens those
@@ -94,11 +86,34 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The folder, in which MEI files are placed that need to be turned into SVG images. 
+            <xd:p>The folder, in which asset files are placed. Relative path.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="assets.folder.rel" select="'./assets/'" as="xs:string"/>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Folder, in which the CSS files for print can be found. Necessary, as the PDF build artifact needs to
+                point to the files in the assets folder.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="assets.folder.css.print" select="$assets.folder.rel || 'css/print/'" as="xs:string"/>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Folder, in which the CSS files for screen can be found. Necessary, as the website build artifact needs to
+                point to the files in the assets folder.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="assets.folder.css.screen" select="substring($assets.folder.rel, 3) || 'css/screen/'" as="xs:string"/>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The folder, in which MEI files are placed that need to be turned into SVG images.
                 Those images will eventually be placed in $dist.folder.generated.images. Relative path.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="build.folder.generated.images.rel" select="'./images/'" as="xs:string"/>
+    <xsl:variable name="assets.folder.generated.images.rel" select="$assets.folder.rel || 'images/GeneratedImages/'" as="xs:string"/>
 
     <xd:doc>
         <xd:desc>
@@ -106,7 +121,15 @@
                 Those images will eventually be placed in $dist.folder.generated.images. Absolute path.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="build.folder.generated.images.abs" select="$build.folder || substring($build.folder.generated.images.rel, 3)" as="xs:string"/>
+    <xsl:variable name="assets.folder.generated.images.abs" select="$build.folder || substring($assets.folder.generated.images.rel, 3)" as="xs:string"/>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Folder, in which the JS files for screen can be found. Necessary, as the website build artifact needs to
+                point to the files in the assets folder.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="assets.folder.js" select="substring($assets.folder.rel, 3) || 'js/'" as="xs:string"/>
 
     <xd:doc>
         <xd:desc>
@@ -136,12 +159,4 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="pdf.file.name" select="'MEI_Guidelines_v' || $version" as="xs:string"/>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Folder, in which the CSS files for print can be found. Necessary, as the build artifact needs to 
-            point to the files in the source folder.</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:variable name="css.folder.print" select="$parentdir.rel || 'source/css/print/'" as="xs:string"/>
 </xsl:stylesheet>

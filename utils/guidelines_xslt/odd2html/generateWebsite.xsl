@@ -92,7 +92,7 @@
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
-        <xsl:result-document href="{$web.output}/js/searchIndex.js" method="text" omit-xml-declaration="yes">
+        <xsl:result-document href="{$web.output}assets/js/searchIndex.js" method="text" omit-xml-declaration="yes">
             const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>
         </xsl:result-document>
         
@@ -712,6 +712,19 @@
     </xsl:template>
     
     
+    <xsl:function name="tools:getMemberOrder" as="xs:string">
+        <xsl:param name="ident" as="xs:string"/>
+        <xsl:variable name="prefix" as="xs:string">
+            <xsl:choose>
+                <xsl:when test="$ident = $elements/@ident">1_</xsl:when>
+                <xsl:when test="starts-with($ident,'model.')">2_</xsl:when>
+                <xsl:when test="starts-with($ident,'att.')">3_</xsl:when>
+                <xsl:otherwise>5_</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:value-of select="$prefix || $ident"/>
+    </xsl:function>
+    
     <xd:doc>
         <xd:desc>
             <xd:p>Generates a tab for compact display, i.e. only labels (attributes) / links (everything else)</xd:p>
@@ -734,7 +747,16 @@
                         <span class="textualContent" title="textual content">textual content, </span>
                     </xsl:if>
                     
-                    <xsl:for-each select="$div//item/link/node()"><xsl:sort select="text()"/><xsl:if test="position() gt 1">, </xsl:if><xsl:copy>
+                    <xsl:variable name="deduplicated" as="node()*">
+                        <xsl:variable name="uniqueIdents" select="distinct-values($div//item/link/node()/text())" as="xs:string*"/>
+                        <xsl:for-each select="$uniqueIdents">
+                            <xsl:sort select="tools:getMemberOrder(.)"/>
+                            <xsl:variable name="currentIdent" select="." as="xs:string"/>
+                            <xsl:sequence select="($div//item/link/node()[text() = $currentIdent])[1]"/>
+                        </xsl:for-each>
+                    </xsl:variable>
+                    
+                    <xsl:for-each select="$deduplicated"><xsl:if test="position() gt 1">, </xsl:if><xsl:copy>
                             <xsl:apply-templates select="@*" mode="get.website"/>
                             <xsl:attribute name="title" select="normalize-space(string-join(ancestor::item[1]/desc//text(),' '))"/>
                             <xsl:apply-templates select="node()" mode="get.website"/>
@@ -1060,7 +1082,7 @@
                 <xsl:attribute name="src" select="."/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:attribute name="src" select="'../' || ."/>
+                <xsl:attribute name="src" select="'../' || substring(., 3)"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>

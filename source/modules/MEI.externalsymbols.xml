@@ -1,34 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.externalsymbols">
   <moduleSpec ident="MEI.externalsymbols">
-    <desc>External symbols component declarations.</desc>
+    <desc xml:lang="en">External symbols component declarations.</desc>
   </moduleSpec>
-  <classSpec ident="att.extSym" module="MEI.externalsymbols" type="atts">
-    <desc>Attributes used to associate MEI features with corresponding glyphs in an
-      externally-defined standard such as SMuFL.</desc>
+  <classSpec ident="att.extSym.auth" module="MEI.externalsymbols" type="atts">
+    <desc xml:lang="en">Attributes that point to an external symbol authority.</desc>
     <attList>
       <attDef ident="glyph.auth" usage="opt">
-        <desc>A name or label associated with the controlled vocabulary from which the value of
-            <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
+        <desc xml:lang="en">A name or label associated with the controlled vocabulary from which the value of
+          <att>glyph.name</att> or <att>glyph.num</att> is taken, or the textual content of the element.</desc>
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
         <valList type="semi">
           <valItem ident="smufl">
-            <desc>Standard Music Font Layout.</desc>
+            <desc xml:lang="en">Standard Music Font Layout.</desc>
           </valItem>
         </valList>
       </attDef>
+      <attDef ident="glyph.uri" usage="opt">
+        <desc xml:lang="en">The web-accessible location of the controlled vocabulary from which the value of
+          <att>glyph.name</att> or <att>glyph.num</att> is taken, or the textual content of the element.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.extSym.names" module="MEI.externalsymbols" type="atts">
+    <desc xml:lang="en">Attributes that specify names or values taken from an external symbol authority.</desc>
+    <attList>
       <attDef ident="glyph.name" usage="opt">
-        <desc>Glyph name.</desc>
+        <desc xml:lang="en">Glyph name.</desc>
         <datatype>
           <rng:data type="string"/>
         </datatype>
-        <constraintSpec ident="check_glyph.name" scheme="isoschematron">
+        <constraintSpec ident="check_glyph.name" scheme="schematron">
           <constraint>
             <sch:rule context="@glyph.name">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@glyph.name attribute
@@ -38,12 +67,12 @@
         </constraintSpec>
       </attDef>
       <attDef ident="glyph.num" usage="opt">
-        <desc>Numeric glyph reference in hexadecimal notation, <abbr>e.g.</abbr>, "#xE000" or "U+E000". N.B. SMuFL
+        <desc xml:lang="en">Numeric glyph reference in hexadecimal notation, <abbr>e.g.</abbr>, "#xE000" or "U+E000". N.B. SMuFL
           version 1.18 uses the range U+E000 - U+ECBF.</desc>
         <datatype>
           <rng:ref name="data.HEXNUM"/>
         </datatype>
-        <constraintSpec ident="check_glyph.num" scheme="isoschematron">
+        <constraintSpec ident="check_glyph.num" scheme="schematron">
           <constraint>
             <sch:rule
               context="mei:*[@glyph.num and (lower-case(@glyph.auth) eq 'smufl' or @glyph.uri eq 'http://www.smufl.org/')]">
@@ -54,13 +83,14 @@
           </constraint>
         </constraintSpec>
       </attDef>
-      <attDef ident="glyph.uri" usage="opt">
-        <desc>The web-accessible location of the controlled vocabulary from which the value of
-            <att>glyph.name</att> or <att>glyph.num</att> is taken.</desc>
-        <datatype>
-          <rng:ref name="data.URI"/>
-        </datatype>
-      </attDef>
     </attList>
+  </classSpec>
+  <classSpec ident="att.extSym" module="MEI.externalsymbols" type="atts">
+    <desc xml:lang="en">Attributes used to associate MEI features with corresponding glyphs in an
+      externally-defined standard such as SMuFL.</desc>
+    <classes>
+      <memberOf key="att.extSym.auth"/>
+      <memberOf key="att.extSym.names"/>
+    </classes>
   </classSpec>
 </specGrp>

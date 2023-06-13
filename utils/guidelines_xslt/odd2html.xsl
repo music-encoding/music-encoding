@@ -41,7 +41,7 @@
                 </xd:li>
                 <xd:li>
                     <xd:b>odd2html/guidelines.xsl</xd:b>: 
-                    This file holds holds templates that will translate TEI ODD into HTML. This is where the chapters
+                    This file holds templates that will translate TEI ODD into HTML. This is where the chapters
                     of the Guidelines are translated.
                 </xd:li>
                 <xd:li>
