@@ -264,8 +264,8 @@
                             for(let facetUl of tabbedFacets) {
                                 const facetElem = facetUl.parentNode.parentNode;
                                 const facetId = facetElem.id;
-                                const storageName = 'meiSpecs_' + facetId + '_display';
                                 const defaultValue = facetUl.children[0].children[0].getAttribute('data-display');
+                                const storageName = getStorageName(facetId);
                                 
                                 if(localStorage.getItem(storageName) === null) {
                                     setTabs(facetElem.id,defaultValue);
@@ -280,9 +280,13 @@
                                 }
                             }
                             
+                            function getStorageName(facetId) {
+                                return 'meiSpecs_' + facetId + '_display';
+                            }
+
                             function setTabs(facetId, style) {
-                                const storageName = 'meiSpecs_' + facetId + '_display';
                                 localStorage.setItem(storageName,style);
+                                const storageName = getStorageName(facetId);
                                 
                                 const facetElem = document.getElementById(facetId);
                                 
