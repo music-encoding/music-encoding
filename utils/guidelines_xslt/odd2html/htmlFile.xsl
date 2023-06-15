@@ -253,10 +253,10 @@
                             const tabbedFacets = document.querySelectorAll('.facet ul.tab');
                             
                             const tabClick = function(e) {
-                                const style = e.target.getAttribute('data-display');
+                                const targetDataDisplay = e.target.getAttribute('data-display');
                                 const facetId = e.target.parentNode.parentNode.parentNode.parentNode.id;
-                                //console.log('clicked at ' + facetId + ' with style ' + style)
-                                setTabs(facetId,style)
+                                //console.log('clicked at ' + facetId + ' with data display ' + targetDataDisplay);
+                                setTabs(facetId,targetDataDisplay);
                             }
                             
                             console.log('[INFO] Javascript initialized')
@@ -264,11 +264,11 @@
                             for(let facetUl of tabbedFacets) {
                                 const facetElem = facetUl.parentNode.parentNode;
                                 const facetId = facetElem.id;
-                                const defaultValue = facetUl.children[0].children[0].getAttribute('data-display');
                                 const storageName = getStorageName(facetId);
+                                const defaultDataDisplay = facetUl.children[0]?.children[0]?.getAttribute('data-display');
                                 
                                 if(localStorage.getItem(storageName) === null) {
-                                    setTabs(facetElem.id,defaultValue);
+                                    setTabs(facetId,defaultDataDisplay);
                                 } else {
                                     setTabs(facetElem.id,localStorage.getItem(storageName));
                                 }
