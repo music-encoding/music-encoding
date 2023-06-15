@@ -279,14 +279,21 @@
                                     tab.addEventListener('click',tabClick);
                                 }
                             }
-                            
+
+                            function getDisplayStyle(dataDisplay) {
+                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full']
+                                const [, displayStyle = ''] = dataDisplay.split('_');
+                                return displayStyle;
+                            }
+
                             function getStorageName(facetId) {
                                 return 'meiSpecs_' + facetId + '_display';
                             }
 
                             function setTabs(facetId, style) {
-                                localStorage.setItem(storageName,style);
                                 const storageName = getStorageName(facetId);
+                                const displayStyle = getDisplayStyle(style);
+                                localStorage.setItem(storageName,displayStyle);
                                 
                                 const facetElem = document.getElementById(facetId);
                                 
