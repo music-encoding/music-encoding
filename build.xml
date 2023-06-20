@@ -29,7 +29,7 @@
     <property name="github.ref" value="">
         <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     </property>
-    <loadresource property="github.ref-type">
+    <loadresource property="github.ref-type" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -37,7 +37,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="github.ref-name">
+    <loadresource property="github.ref-name" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -45,7 +45,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="windir">
+    <loadresource property="windir" quiet="true">
         <string value="${basedir}"/>
         <filterchain>
             <tokenfilter>
@@ -66,11 +66,14 @@
     <property name="dir.lib" value="lib"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
-    <property name="saxon.download.version" value="Saxon-HE/11/Java/SaxonHE11-4J"/>
-    <property name="saxon.jar.file" value="saxon-he-11.4.jar"/>
+    <property name="saxon.download.version" value="SaxonHE11-5"/>
+    <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
+    <condition property="verbose" value="true" else="false">
+        <contains string="${sun.java.command}" substring="-v" />
+    </condition>
     <path id="mei.classpath">
         <fileset dir="lib" erroronmissingdir="false">
             <include name="**/*.jar" />
@@ -88,7 +91,7 @@
         <echo/>
         <echo>To build distribution of canonicalized source, compiled ODDs and customization RNGs run:</echo>
         <echo>ant init</echo>
-        <echo>ant -lib lib/saxon/saxon-he-11.4.jar</echo>
+        <echo>ant -lib lib/saxon/saxon-he-11.5.jar</echo>
         <echo/>
         <echo>run 'ant -projecthelp' or 'ant -p' to get more information on the available build targets</echo>
         <echo/>
@@ -134,18 +137,21 @@
         <antcall target="clean"/>
     </target>
     
-    <target name="init" description="initializes the build environment, e.g., downloads saxon" unless="${docker}">
+    <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them." unless="${docker}">
         <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
+        <available property="xerces-available" classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+        <echo message="xerces available: ${xerces-available}"/>
         <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
-        <mkdir dir="${dir.lib}"/>
-        <antcall target="saxon-prepare"/>
-        <antcall target="xerces-download"/>
+        <available property="saxon-available" classname="net.sf.saxon.Transform"/>
+        <echo message="saxon available: ${saxon-available}"/>
+        <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="xerces-download" unless:true="${xerces-available}"/>
         <echo>initialized</echo>
     </target>
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/${saxon.download.version}.zip/download" dest="temp/"/>
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip" dest="temp/download"/>
         <!-- TODO check for newer releases-->
     </target>
 
@@ -180,7 +186,7 @@
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
         </ant>
@@ -195,7 +201,7 @@
         <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
             <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="processODD">true</property>
         </ant>
     </target>
@@ -209,7 +215,7 @@
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
         </ant>
     </target>
 
@@ -287,6 +293,14 @@
     <target name="generate-images" description="Generate SVG images of mei files in assets/images/GeneratedImages; depends on docker-mei container image" if="${docker}">
         <exec executable="node" dir="${basedir}/../">
             <arg value="index.js"/>
+        </exec>
+    </target>
+    
+    <target name="generate-images-py">
+        <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
+            <arg value="generate-examples.py"/>
+            <arg value="--clean"/>
+            <arg value="--verbose"/>
         </exec>
     </target>
 
