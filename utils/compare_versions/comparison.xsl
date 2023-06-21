@@ -69,7 +69,7 @@
                 <xsl:sequence select="$macroPe"/>
                 <xsl:sequence select="$macroDt"/>
                 <script src="resources/js/d3.min.js"></script>
-                <script type="text/javascript">
+                <script>
                     var elements = [
                         {type:'added', count: <xsl:value-of select="count($elements//tr[@class='a'])"/>, ref:'#elementsAdded'},
                         {type:'changed', count: <xsl:value-of select="count($elements//tr[@class='c'])"/>, ref:'#elementsChanged'},
