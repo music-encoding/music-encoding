@@ -18,6 +18,9 @@
   CONTACT: info@music-encoding.org
 -->
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <property environment="env">
+        <!-- set environment variable -->
+    </property>
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
     <property name="github.sha" value="">
@@ -29,7 +32,7 @@
     <property name="github.ref" value="">
         <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     </property>
-    <loadresource property="github.ref-type">
+    <loadresource property="github.ref-type" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -37,7 +40,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="github.ref-name">
+    <loadresource property="github.ref-name" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -45,7 +48,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="windir">
+    <loadresource property="windir" quiet="true">
         <string value="${basedir}"/>
         <filterchain>
             <tokenfilter>
@@ -71,6 +74,9 @@
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
+    <condition property="verbose" value="true" else="false">
+        <contains string="${sun.java.command}" substring="-v" />
+    </condition>
     <path id="mei.classpath">
         <fileset dir="lib" erroronmissingdir="false">
             <include name="**/*.jar" />
@@ -188,7 +194,7 @@
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
         </ant>
@@ -203,7 +209,7 @@
         <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
             <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="processODD">true</property>
         </ant>
     </target>
@@ -217,7 +223,7 @@
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
         </ant>
     </target>
 
@@ -297,6 +303,14 @@
             <arg value="index.js"/>
         </exec>
     </target>
+    
+    <target name="generate-images-py">
+        <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
+            <arg value="generate-examples.py"/>
+            <arg value="--clean"/>
+            <arg value="--verbose"/>
+        </exec>
+    </target>
 
     <target name="copy-generated-images" description="copy generated images to dist after they're created by running Docker image">
         <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
@@ -356,7 +370,7 @@
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
-        <antcall target="build-guidelines-pdf" unless:false="${prince-available}"/>
+        <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>
     </target>
 
 </project>
