@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2018 by the Music Encoding Initiative (MEI).
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://opensource.org/licenses/ECL-2.0.
+  at https://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -16,8 +17,9 @@
   
   CONTACT: info@music-encoding.org
 -->
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../source/validation/mei-customizations.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron">
   <teiHeader>
@@ -49,7 +51,7 @@
         start="mei meiHead meiCorpus music">
 
         <!-- Declare MEI and XLink namespaces for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
+        <constraintSpec ident="set_ns" scheme="schematron" mode="add">
           <constraint>
             <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
               uri="http://www.music-encoding.org/ns/mei"/>
@@ -92,7 +94,7 @@
         <moduleRef key="MEI.visual"/>
 
         <!-- Include SVG -->
-        <moduleRef url="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng"
+        <moduleRef url="../source/svg11.rng"
           prefix="svg_">
           <content>
             <rng:define name="mei_model.graphicLike" combine="choice">
@@ -102,13 +104,9 @@
         </moduleRef>
 
         <!-- Remove dur attributes -->
-        <classSpec ident="att.duration.musical" module="MEI.shared" type="atts" mode="delete"/>
+        <classSpec ident="att.duration.log" module="MEI.shared" type="atts" mode="delete"/>
         <classSpec ident="att.duration.additive" module="MEI.shared" type="atts" mode="delete"/>
-        <classSpec ident="att.augmentdots" module="MEI.shared" type="atts" mode="delete"/>
-
-        <!-- Disable CMN-specific model classes in the shared module -->
-        <classSpec ident="model.sectionPart.cmn" module="MEI.shared" type="model" mode="delete"/>
-        <classSpec ident="model.layerPart.cmn" module="MEI.shared" type="model" mode="delete"/>
+        <classSpec ident="att.augmentDots" module="MEI.shared" type="atts" mode="delete"/>
 
         <!-- Disallow events within layer -->
         <!-- <classSpec ident="model.eventLike" module="MEI.shared" type="model" mode="replace">
@@ -127,27 +125,6 @@
             <memberOf key="model.rdgPart.music"/>
           </classes>
         </classSpec>
-        
-        <!-- Allow custos and clef to appear within layer; compensate side effect of removing membership in model.layerPart from model.eventLike -->
-        <elementSpec ident="custos" module="MEI.shared" mode="change">
-          <classes mode="change">
-            <memberOf key="model.layerPart.neumes" mode="add"/>
-          </classes>
-        </elementSpec>
-        <elementSpec ident="clef" module="MEI.shared" mode="change">
-          <classes mode="change">
-            <memberOf key="model.layerPart.neumes" mode="add"/>
-          </classes>
-        </elementSpec>
-        
-        <!-- remove custos and clef (among others) from within syllable -->
-        <classSpec ident="model.eventLike" module="MEI.shared" type="model" mode="change">
-          <classes mode="change">
-            <memberOf key="model.syllablePart" mode="delete"/>
-          </classes>
-        </classSpec>
-        
-
       </schemaSpec>
     </body>
   </text>

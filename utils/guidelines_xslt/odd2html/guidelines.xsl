@@ -302,10 +302,10 @@
     <xsl:template match="tei:head[parent::tei:figure]" mode="guidelines">
         <xsl:choose>
             <xsl:when test="parent::tei:figure and parent::tei:figure/tei:graphic">
-                <figcaption class="caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Figure <xsl:value-of select="count(preceding::tei:figure[./tei:graphic]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
             <xsl:when test="parent::tei:figure and parent::tei:figure/egx:egXML">
-                <figcaption class="caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
+                <figcaption class="figure-caption">Listing <xsl:value-of select="count(preceding::tei:figure[./egx:egXML]) + 1"/>. <xsl:apply-templates select="node()" mode="#current"/></figcaption>
             </xsl:when>
         </xsl:choose>
     </xsl:template>
@@ -507,7 +507,15 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="egx:egXML" mode="guidelines">
-        <div xml:space="preserve" class="pre code egXML_{if(@valid='false') then('invalid') else if(@valid='true') then('valid') else('feasible')}">
+        <xsl:variable name="validClass" select="'egXML_' || (if(@valid='false') then('invalid') else if(@valid='true') then('valid') else('feasible'))" as="xs:string"/>
+        <xsl:variable name="renderedLive" select="'verovio' = tokenize(normalize-space(@rend),' ')" as="xs:boolean"/>
+        <xsl:variable name="verovioClass" select="if($renderedLive) then(' verovio') else('')" as="xs:string"/>
+        <xsl:variable name="id" select="generate-id(.)"/>
+        <xsl:if test="$renderedLive">
+            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.mei.svg'"/>
+            <img alt="example" class="graphic liveExample" src="{tools:adjustImageUrl($imageUrl)}"/>
+        </xsl:if>
+        <div id="{$id}" xml:space="preserve" class="pre code {$validClass}{$verovioClass}">
             <code>
                 <xsl:choose>
                     <xsl:when test="@rend and 'text' = tokenize(normalize-space(@rend),' ')">
@@ -515,13 +523,31 @@
                         <xsl:copy-of select="node()" xml:space="preserve"/>
                     </xsl:when>
                     <xsl:when test="child::element()">
-                        <xsl:apply-templates select="child::node()" mode="preserveSpace"/>
+                        <xsl:variable name="pi.start" select=".//processing-instruction('edit-start')" as="processing-instruction()*"/>
+                        <xsl:variable name="pi.end" select=".//processing-instruction('edit-end')" as="processing-instruction()*"/>
+                        <xsl:choose>
+                            <xsl:when test="exists($pi.start) and exists($pi.end)">
+                                <xsl:message select="'CUTTING EXAMPLE'"/>
+                                <xsl:apply-templates select="$pi.start/following::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:apply-templates select="child::node()" mode="preserveSpace"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:sequence select="tools:xml2html(node())"/>
+                        <!--<xsl:if test="$renderedLive">
+                            <xsl:call-template name="prepareLiveExample">
+                                <xsl:with-param name="id" select="$id"/>
+                                <xsl:with-param name="content" select="node()"/>
+                            </xsl:call-template>
+                        </xsl:if>-->
                     </xsl:otherwise>
                </xsl:choose>            
             </code>
+            <!-- TODO: Insert code for switching tabs between code and rendered image -->
         </div>
     </xsl:template>
     
