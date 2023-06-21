@@ -68,7 +68,7 @@
                 <xsl:sequence select="$modelClasses"/>
                 <xsl:sequence select="$macroPe"/>
                 <xsl:sequence select="$macroDt"/>
-                <script type="text/javascript" src="resources/js/d3.min.js"></script>
+                <script src="resources/js/d3.min.js"></script>
                 <script type="text/javascript">
                     var elements = [
                         {type:'added', count: <xsl:value-of select="count($elements//tr[@class='a'])"/>, ref:'#elementsAdded'},
@@ -101,7 +101,7 @@
                     {type:'unchanged', count: <xsl:value-of select="count($macroDt//tr[@class='u'])"/>, ref:'#macroDtUnchanged'}
                     ];
                 </script>
-                <script type="text/javascript" src="resources/js/main.js"></script>
+                <script src="resources/js/main.js"></script>
             </div>
         </xsl:result-document>
     </xsl:template>
