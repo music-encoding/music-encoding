@@ -42,17 +42,17 @@ jobs:
           #
           # Default: false
           submodules: recursive
-      
+
       - name: Build schema and guidelines with Docker image
         run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ghcr.io/music-encoding/docker-mei:latest ant -noinput -buildfile music-encoding/build.xml -Ddocker=true -Dgithub.sha=${{ github.sha }} -Dgithub.event_name=${{ github.event_name }} -Dgithub.ref=${{ github.ref }}
 
-      ### UPLOADING THE ARTIFACTS ### 
+      ### UPLOADING THE ARTIFACTS ###
       - name: Upload PDF
         uses: actions/upload-artifact@v3
         with:
           name: pdf
-          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf
-      
+          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_*.pdf
+
       - name: Upload Prince XML log
         uses: actions/upload-artifact@v3
         with:
@@ -76,7 +76,7 @@ jobs:
 
       - name: Copy built schema to SCHEMA_DIR
         if: ${{ github.repository_owner == env.REPO_OWNER }}
-        run: | 
+        run: |
           rm -r $SCHEMA_DIR/dev
           cp -r dist/schemata/ $SCHEMA_DIR/
           mv $SCHEMA_DIR/schemata $SCHEMA_DIR/dev
@@ -128,7 +128,7 @@ jobs:
       - name: Copy built guidelines to GUIDELINES_DIR
         if: ${{ github.repository_owner == env.REPO_OWNER }}
         run: |
-          rm -rf $GUIDELINES_DIR/dev 
+          rm -rf $GUIDELINES_DIR/dev
           cp -r dist/guidelines/web $GUIDELINES_DIR/
           mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev
           cp -r dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf $GUIDELINES_DIR/dev/
