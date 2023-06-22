@@ -10,7 +10,7 @@
    |Apache Ant|1.10.13|
    |Verovio Toolkit|3.15|
    |Prince XML|15.1|
-   |Saxon HE*| 11.4 |
+   |Saxon HE*| 11.5 |
    |Xerces*|Synchrosoft patched version 25.1.0.1|
 
    \* automatically pulled during build execution
@@ -19,7 +19,7 @@
 
    * Is Java 8 or above available on your machine?
 
-     Java 8 or above is needed for the build process driven by Apache Ant™ (see below).
+     Java 8 is the minimum version needed for the build process driven by Apache Ant™ (see below). However, we recommend using JDK 17.
      To check for Java on your machine, run the following command:
 
      ```shell
@@ -29,9 +29,9 @@
      This should return something similar to:
 
      ```shell
-     openjdk 17.0.2 2022-01-18
-     OpenJDK Runtime Environment Temurin-17.0.2+8 (build 17.0.2+8)
-     OpenJDK 64-Bit Server VM Temurin-17.0.2+8 (build 17.0.2+8, mixed mode, sharing)
+     openjdk version "17.0.7" 2023-04-18
+     OpenJDK Runtime Environment Temurin-17.0.7+7 (build 17.0.7+7)
+     OpenJDK 64-Bit Server VM Temurin-17.0.7+7 (build 17.0.7+7, mixed mode, sharing)
      ```
 
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). The Java Development Kit we use in our [Docker Container](https://github.com/music-encoding/docker-mei) is Eclipse Temurin™, which is easy to [install](https://adoptium.net/de/installation/) on Linux, macOS or Windows.
@@ -94,7 +94,7 @@
    * Build guidelines HTML:
 
      ```shell
-     ant -lib lib/saxon/saxon-he-11.4.jar build-guidelines-html
+     ant -lib lib/saxon/saxon-he-11.5.jar build-guidelines-html
      ```
 
      The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
@@ -113,13 +113,13 @@
    * Build the RNG schema of a specific customization:
 
      ```shell
-     ant -lib lib/saxon/saxon-he-11.4.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
+     ant -lib lib/saxon/saxon-he-11.5.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
      ```
 
    * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
 
      ```shell
-     ant -lib lib/saxon/saxon-he-11.4.jar
+     ant -lib lib/saxon/saxon-he-11.5.jar
      ```
 ## Available Targets
 
