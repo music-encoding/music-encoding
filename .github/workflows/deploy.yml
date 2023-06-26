@@ -10,6 +10,8 @@ on:
     branches: [develop]
 
 env:
+  REPO_OWNER: music-encoding
+
   # schema
   SCHEMA_REPO: ${{ github.repository_owner }}/schema
   SCHEMA_BRANCH: main
@@ -40,17 +42,17 @@ jobs:
           #
           # Default: false
           submodules: recursive
-      
+
       - name: Build schema and guidelines with Docker image
         run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ghcr.io/music-encoding/docker-mei:latest ant -noinput -buildfile music-encoding/build.xml -Ddocker=true -Dgithub.sha=${{ github.sha }} -Dgithub.event_name=${{ github.event_name }} -Dgithub.ref=${{ github.ref }}
 
-      ### UPLOADING THE ARTIFACTS ### 
+      ### UPLOADING THE ARTIFACTS ###
       - name: Upload PDF
         uses: actions/upload-artifact@v3
         with:
           name: pdf
-          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf
-      
+          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_*.pdf
+
       - name: Upload Prince XML log
         uses: actions/upload-artifact@v3
         with:
@@ -59,6 +61,7 @@ jobs:
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         uses: actions/checkout@v3
         with:
           # repository to check out
@@ -72,19 +75,22 @@ jobs:
           path: ${{ env.SCHEMA_DIR }}
 
       - name: Copy built schema to SCHEMA_DIR
-        run: | 
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        run: |
           rm -r $SCHEMA_DIR/dev
           cp -r dist/schemata/ $SCHEMA_DIR/
           mv $SCHEMA_DIR/schemata $SCHEMA_DIR/dev
           cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/dev
 
       - name: Check git status before commit
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Configuring git..."
@@ -92,6 +98,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Running git commit..."
@@ -99,11 +106,13 @@ jobs:
           git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to SCHEMA
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: git push origin HEAD:$SCHEMA_BRANCH
 
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         uses: actions/checkout@v3
         with:
           # repository to check out
@@ -117,19 +126,22 @@ jobs:
           path: ${{ env.GUIDELINES_DIR }}
 
       - name: Copy built guidelines to GUIDELINES_DIR
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         run: |
-          rm -rf $GUIDELINES_DIR/dev 
+          rm -rf $GUIDELINES_DIR/dev
           cp -r dist/guidelines/web $GUIDELINES_DIR/
           mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev
           cp -r dist/guidelines/pdf/MEI_Guidelines_v5.0.0-dev.pdf $GUIDELINES_DIR/dev/
 
       - name: Check git status before commit
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Configuring git..."
@@ -137,6 +149,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Running git commit..."
@@ -144,5 +157,6 @@ jobs:
           git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to GUIDELINES
+        if: ${{ github.repository_owner == env.REPO_OWNER }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: git push origin HEAD:$GUIDELINES_BRANCH
