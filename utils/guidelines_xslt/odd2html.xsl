@@ -26,9 +26,13 @@
                 included which focus on specific tasks:
             <xd:ul>
                 <xd:li>
+                    <xd:b>odd2html/config.xsl</xd:b>: 
+                    This file holds configuration options for the XSLT, mostly output paths.
+                </xd:li>
+                <xd:li>
                     <xd:b>odd2html/globalVariables.xsl</xd:b>: 
                     This file holds preprocessed variables, like all elements, which are made available throughout 
-                    the XSLT
+                    the XSLT.
                 </xd:li>
                 <xd:li>
                     <xd:b>odd2html/functions.xsl</xd:b>: 
@@ -37,7 +41,7 @@
                 </xd:li>
                 <xd:li>
                     <xd:b>odd2html/guidelines.xsl</xd:b>: 
-                    This file holds holds templates that will translate TEI ODD into HTML. This is where the chapters
+                    This file holds templates that will translate TEI ODD into HTML. This is where the chapters
                     of the Guidelines are translated.
                 </xd:li>
                 <xd:li>
@@ -86,6 +90,10 @@
                     This holds code for polishing the HTML output for PDF publication. 
                 </xd:li>
                 <xd:li>
+                    <xd:b>odd2html/prepareLiveExample.xsl</xd:b>: 
+                    This prepares examples that are to be rendered for inclusion in the Guidelines. 
+                </xd:li>
+                <xd:li>
                     <xd:b>odd2html/generateSearchIndex.xsl</xd:b>: 
                     This holds code for preparing the search function on the website. 
                 </xd:li>
@@ -96,13 +104,6 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The relative path where the resulting HTML file should be stored. If changed, you should adjust image paths accordingly (see funcions.xsl)</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:param name="output.folder" select="'./'" as="xs:string"/>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
@@ -110,11 +111,62 @@
         
     <xd:doc>
         <xd:desc>
-            <xd:p>The git commit hash of the version this is generated from</xd:p>
+            <xd:p>The git commit hash of the version this is generated from. Should not be set manually.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:param name="hash" select="'latest'" as="xs:string"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The git branch of the repo</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="branch" select="'develop'" as="xs:string"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The base directory handed over from Ant. Should not be set when the XSLT is called locally.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="basedir" select="''" as="xs:string"/>
+    
+    <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The (computed) head branch of the repo for which documentation will be generated.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="git.head" as="xs:string">
+        <xsl:choose>
+            <xsl:when test="$hash eq 'latest'">
+                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$branch"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The (computed) git hash of the repo.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="retrieved.hash" as="xs:string">
+        <xsl:choose>
+            <xsl:when test="$hash eq 'latest'">
+                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$hash"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    
+    <xsl:include href="odd2html/config.xsl"/>
     <xsl:include href="odd2html/globalVariables.xsl"/>
     <xsl:include href="odd2html/guidelines.xsl"/>
     <xsl:include href="odd2html/renderXML.xsl"/>
@@ -133,13 +185,15 @@
     
     <xsl:include href="odd2html/generateSearchIndex.xsl"/>
     
+    <xsl:include href="odd2html/prepareLiveExamples.xsl"/>
+    
     <xd:doc>
         <xd:desc>
             <xd:p>The main method of this stylesheet</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
-        <xsl:message select="'Processing MEI v' || $version || ' at revision ' || $hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
@@ -147,9 +201,8 @@
         <xsl:message select="'.   data types: ' || count($data.types)"/>
         <xsl:message select="'.   macro groups: ' || count($macro.groups)"/>
         
-        <xsl:variable name="intro"/>
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
-        <xsl:variable name="preface" select="tools:generatePreface()" as="node()"/>
+        <xsl:variable name="preface" select="tools:generatePreface()" as="node()+"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
@@ -161,6 +214,8 @@
         <xsl:variable name="macroGroupSpecs" select="tools:getMacroGroupSpecs()" as="node()"/>
         <xsl:variable name="attClassSpecs" select="tools:getAttClassSpecs()" as="node()"/>
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
+        
+        <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
             
         
         
@@ -175,8 +230,10 @@
             <xsl:sequence select="$macroGroupSpecs"/>
             <xsl:sequence select="$attClassSpecs"/>
             <xsl:sequence select="$dataTypeSpecs"/>
+            
+            <xsl:sequence select="$indizes"/>
         </xsl:variable>
-        
+                
         <!-- generate a single-page HTML version of the Guidelines -->
         <xsl:variable name="singlePage" as="node()+">
             <xsl:call-template name="getSinglePage">
@@ -186,16 +243,21 @@
         </xsl:variable>
         
         <!-- retrieve multiple HTML files for online publication -->
+        <xsl:call-template name="prepareLiveExamples">
+            <xsl:with-param name="guidelinesSources" select="$mei.source//tei:body/child::tei:div"/>
+        </xsl:call-template>
+        
+        <!-- retrieve multiple HTML files for online publication -->
         <xsl:call-template name="generateWebsite">
             <xsl:with-param name="input" select="$singlePage"/>
         </xsl:call-template>
         
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}_raw.html">
+        <!--<xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}_raw.html">
             <xsl:sequence select="$singlePage"/>
-        </xsl:result-document>
+        </xsl:result-document>-->
         
-        <xsl:result-document href="{$output.folder}MEI_Guidelines_v{$version}_{$hash}.html">
+        <xsl:result-document href="{$build.folder || $pdf.file.name}.html">
             <xsl:apply-templates select="$singlePage" mode="preparePDF"/>
         </xsl:result-document>
         

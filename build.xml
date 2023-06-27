@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="music-encoding" default="dist">
-    <property name="github.sha" value="github.sha"/>
-    <property name="github.ref" value="github.ref"/>
-    <!-- string	The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
-    <property name="github.event_name" value="github.event_name"/>
-    <!--string	The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
-    <loadresource property="github.ref-type">
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <property name="version" value="dev"/>
+    <!-- in XSLT version = att.meiversion defaultVal -->
+    <property name="github.sha" value="">
+        <!-- string    external    The current GitHub sha -->
+    </property>
+    <property name="github.event_name" value="github.event_name">
+        <!--string    external    The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
+    </property>
+    <property name="github.ref" value="">
+        <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
+    </property>
+    <loadresource property="github.ref-type" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -13,7 +37,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="github.ref-name">
+    <loadresource property="github.ref-name" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -21,7 +45,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="windir">
+    <loadresource property="windir" quiet="true">
         <string value="${basedir}"/>
         <filterchain>
             <tokenfilter>
@@ -29,34 +53,34 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <property name="version" value="dev"/>
-    <!-- in XSLT version = att.meiversion defaultVal -->
+    <condition property="basedir.cross_platform" value="${basedir}" else="file:/${windir}">
+        <not>
+            <os family="windows"/>
+        </not>
+    </condition>
+    <property name="dir.build" value="build"/>
+    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${dir.build}/mei-source_canonicalized.xml"/>
     <property name="dir.dist" value="dist"/>
-    <property name="dir.dist.guidelines" value="${basedir}/${dir.dist}/guidelines/${version}"/>
-    <property name="dir.dist.schemata" value="${basedir}/${dir.dist}/schemata/${version}"/>
+    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
+    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
+    <property name="dir.lib" value="lib"/>
+    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <property name="saxon.download.version" value="SaxonHE11-5"/>
+    <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
+    <property name="xerces.version" value="25.1.0.1"/>
+    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
+    <condition property="verbose" value="true" else="false">
+        <contains string="${sun.java.command}" substring="-v" />
+    </condition>
     <path id="mei.classpath">
-        <pathelement path="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <pathelement path="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
+        <fileset dir="lib" erroronmissingdir="false">
+            <include name="**/*.jar" />
+        </fileset>
+        <pathelement path="${java.class.path}"/>
     </path>
-    <property name="java.class.path" value="" classpathref="mei.classpath"/>
-    <condition property="canonicalizedSourcePath" value="${dir.dist.schemata}/mei-source_canonicalized.xml" else="file:/${windir}/${dir.dist}/schemata/${version}/mei-source_canonicalized.xml">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
-    <loadresource property="dir.dist.guidelines_win">
-        <string value="${dir.dist.guidelines}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="\\" replace="/"/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
-    <condition property="dir.dist.guidelines_adjusted" value="${dir.dist.guidelines}" else="file:/${dir.dist.guidelines_win}">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
+
     <target name="help">
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
@@ -67,7 +91,7 @@
         <echo/>
         <echo>To build distribution of canonicalized source, compiled ODDs and customization RNGs run:</echo>
         <echo>ant init</echo>
-        <echo>ant -lib lib/saxon/saxon-he-10.5.jar</echo>
+        <echo>ant -lib lib/saxon/saxon-he-11.5.jar</echo>
         <echo/>
         <echo>run 'ant -projecthelp' or 'ant -p' to get more information on the available build targets</echo>
         <echo/>
@@ -76,11 +100,16 @@
     </target>
 
     <target name="clean">
-        <delete dir="temp/"/>
-        <delete dir="dist/"/>
+        <delete dir="build"/>
+        <delete dir="dist"/>
+        <delete dir="temp"/>
     </target>
 
-    <target name="echo-properties" description="Outputs ">
+    <target name="echo-classpath" description="Echos the mei.classpath">
+        <echo message="${ant.refid:mei.classpath}"></echo>
+    </target>
+
+    <target name="echo-properties" description="Echos all ant properties">
         <echoproperties/>
     </target>
 
@@ -95,23 +124,34 @@
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
 
-    <target name="reset">
-        <delete dir="temp/"/>
-        <delete dir="lib/"/>
-        <delete dir="dist/"/>
+    <target name="get-local-git-branch" description="Retrieves the current git branch via commandline">
+        <exec executable="git" outputproperty="github.branch.local">
+            <arg value="branch"/>
+            <arg value="--show-current"/>
+        </exec>
+        <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
-    <target name="init" description="initializes the build, e.g. downloads saxon">
-        <available property="xerces-available" file="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar"/>
-        <available property="saxon-available" file="${basedir}/lib/saxon/saxon-he-10.5.jar"/>
-        <antcall target="saxon-prepare"/>
-        <antcall target="xerces-download"/>
+    <target name="reset">
+        <delete dir="lib"/>
+        <antcall target="clean"/>
+    </target>
+    
+    <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them." unless="${docker}">
+        <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
+        <available property="xerces-available" classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+        <echo message="xerces available: ${xerces-available}"/>
+        <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
+        <available property="saxon-available" classname="net.sf.saxon.Transform"/>
+        <echo message="saxon available: ${saxon-available}"/>
+        <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="xerces-download" unless:true="${xerces-available}"/>
         <echo>initialized</echo>
     </target>
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/Saxon-HE/10/Java/SaxonHE10-5J.zip/download" dest="temp/"/>
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip" dest="temp/download"/>
         <!-- TODO check for newer releases-->
     </target>
 
@@ -120,21 +160,21 @@
     </target>
 
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
-        <mkdir dir="lib"/>
-        <unzip src="temp/download" overwrite="true" dest="lib/saxon/"/>
+        <mkdir dir="${dir.lib.saxon}"/>
+        <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
-        <mkdir dir="lib/xerces/"/>
-        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/21.1.0.2/oxygen-patched-xerces-21.1.0.2.jar" dest="lib/xerces/"/>
-        <!--TODO update to latest version -->
+        <mkdir dir="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
     </target>
 
     <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
-            <arg value="-o:${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+            <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xi:on"/>
         </java>
     </target>
@@ -145,51 +185,129 @@
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
-            <property name="verbose">true</property>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
+            <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
+        </ant>
+    </target>
+    
+    <target name="build-customization-specs" depends="canonicalize-source" description="Build the specs for a customization submitted as -Dcustomization.path=/ABSOLUTE/FILE/PATH">
+        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
+        <echo>${odd.basename}</echo>
+        <antcall target="build-compiled-odd">
+            <param name="customization.path" value="${customization.path}"></param>
+        </antcall>
+        <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
+            <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
+            <property name="verbose" value="${verbose}"/>
+            <property name="processODD">true</property>
         </ant>
     </target>
 
     <target name="build-rng" depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${odd.basename} from ${customization.path}</echo>
+        <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
+        <echo>    output: ${dir.dist.schemata}/${odd.basename}.rng</echo>
         <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
-            <property name="defaultSource" value="${canonicalizedSourcePath}"/>
-            <property name="verbose">true</property>
+            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
+            <property name="verbose" value="${verbose}"/>
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha">
+    <target name="build-guidelines-html" depends="canonicalize-source" unless="${build-guidelines-html.done}">
         <!-- TODO check dependency try with mei-source.xml -->
+        <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
+        <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>building HTML guidelines for ${odd.basename} from ${customization.path}</echo>
+        <echo message="building HTML guidelines for ${odd.basename} from ${customization.path} on branch ${github.branch.local}"/>
         <echo>github.sha: ${github.sha}</echo>
         <echo>github.sha.local: ${github.sha.local}</echo>
         <condition property="hash" value="${github.sha}" else="${github.sha.local}">
             <not>
-                <equals arg1="${github.sha}" arg2="github.sha" forcestring="true"/>
+                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
             </not>
         </condition>
-        <java classname="net.sf.saxon.Transform" classpath="${basedir}/lib/xerces/oxygen-patched-xerces-21.1.0.2.jar;${basedir}/lib/saxon/saxon-he-10.5.jar" failonerror="true">
-            <arg value="-s:${dir.dist.schemata}/mei-source_canonicalized.xml"/>
+        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
+            <not>
+                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
+        <antcall target="copy-guidelines-assets"/>
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
-            <arg value="output.folder=${dir.dist.guidelines_adjusted}/"/>
+            <arg value="output.folder=${basedir}/${dir.build}/"/>
             <arg value="hash=${hash}"/>
+            <arg value="branch=${branch}"/>
+            <arg value="basedir=${basedir.cross_platform}"/>
         </java>
-        <antcall target="copy-guidelines-html-assets"/>
+        <antcall target="generate-images"/>
+        <antcall target="copy-generated-images"/>
     </target>
-    <target name="copy-guidelines-html-assets">
-        <copy todir="${dir.dist.guidelines}/web">
-            <fileset dir="source/web"/>
+
+    <target name="build-guidelines-pdf" depends="build-guidelines-html">
+        <!-- create output directory for PDF -->
+        <mkdir dir="${dir.dist}/guidelines/pdf"/>
+        <!-- get HTML input file -->
+        <pathconvert property="build.dir.filelist" pathsep="${line.separator}">
+            <map from="${basedir}${file.separator}" to=""/>
+            <fileset dir="${dir.build}">
+                <include name="MEI_Guidelines_*.html"/>
+            </fileset>
+        </pathconvert>
+        <!-- set the prince.input property -->
+        <loadresource property="prince.input">
+            <string value="${build.dir.filelist}"/>
+            <filterchain>
+                <headfilter lines="1"/>
+            </filterchain>
+        </loadresource>
+        <!-- set the prince.output.filename and prince.output.path properties -->
+        <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
+        <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
+        <property name="prince.output.path" value="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
+        <!-- run prince to convert HTML guidelines to PDF -->
+        <exec executable="prince" failonerror="true">
+            <arg prefix="--log=" value="${dir.build}/prince.log"/>
+            <arg prefix="--output=" value="${prince.output.path}"/>
+            <arg file="${prince.input}"/>
+        </exec>
+    </target>
+
+    <target name="copy-guidelines-assets">
+        <echo message="copying guidelines assets from source to build and dist folders"/>
+        <copy todir="${dir.build}/assets">
+            <fileset dir="source/assets"/>
         </copy>
-        <copy todir="${dir.dist.guidelines}/web/images">
-            <fileset dir="source/images">
-                <include name="**/*"/>
+        <copy todir="${dir.dist.guidelines}/assets">
+            <fileset dir="source/assets"/>
+        </copy>
+    </target>
+
+    <target name="generate-images" description="Generate SVG images of mei files in assets/images/GeneratedImages; depends on docker-mei container image" if="${docker}">
+        <exec executable="node" dir="${basedir}/../">
+            <arg value="index.js"/>
+        </exec>
+    </target>
+    
+    <target name="generate-images-py">
+        <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
+            <arg value="generate-examples.py"/>
+            <arg value="--clean"/>
+            <arg value="--verbose"/>
+        </exec>
+    </target>
+
+    <target name="copy-generated-images" description="copy generated images to dist after they're created by running Docker image">
+        <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
+            <fileset dir="${dir.build}/assets/images/GeneratedImages">
+                <include name="*.svg"/>
             </fileset>
         </copy>
     </target>
@@ -243,6 +361,8 @@
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
+        <property name="${build-guidelines-html.done}" value="true"/>
+        <antcall target="build-guidelines-pdf"/>
     </target>
 
 </project>
