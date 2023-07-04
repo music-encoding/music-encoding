@@ -47,10 +47,11 @@
     </xd:doc>
     <xsl:function name="tools:getModuleFacet" as="node()">
         <xsl:param name="object" as="node()"/>
+        <xsl:variable name="facetId" select="$object/@module" as="xs:string"/>
         <div class="facet module">
             <div class="label">Module</div>
             <div class="statement text">
-                <xsl:value-of select="$object/@module"/>
+                <a href="../modules/{$facetId}.html"><xsl:value-of select="$facetId"/></a>
             </div>
         </div>
     </xsl:function>
@@ -185,10 +186,11 @@
                     </xsl:for-each>
                 </xsl:variable>-->
                 <xsl:variable name="members.by.module" as="node()*">
-                    <xsl:for-each select="distinct-values($members/self::tei:elementSpec/@module)">
+                    <xsl:for-each select="distinct-values($members//@module)">
                         <xsl:sort select="." data-type="text"/>
                         <xsl:variable name="current.module" select="." as="xs:string"/>
                         <xsl:variable name="relevant.element.names" select="distinct-values($members/self::tei:elementSpec[@module = $current.module]/@ident)" as="xs:string*"/>
+                        <xsl:variable name="relevant.class.names" select="distinct-values($members/self::tei:classSpec[@type='model'][@module = $current.module]/@ident)" as="xs:string*"/>
                         
                         <xsl:variable name="ident" select="$current.module" as="xs:string"/>
                         <xsl:variable name="desc" select="normalize-space(string-join($mei.source//tei:moduleSpec[@ident = $current.module]/tei:desc/text(),' '))" as="xs:string"/>
@@ -206,12 +208,20 @@
                             </xsl:for-each>
                         </xsl:variable>-->
                         <xsl:variable name="content" as="node()*">
-                            <xsl:for-each select="$relevant.element.names">
+                            <xsl:for-each select="distinct-values($relevant.element.names)">
                                 <xsl:sort select="." data-type="text"/>
                                 <xsl:variable name="current.elem" select="." as="xs:string"/>
                                 <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
                                     <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a></link>
                                     <desc><xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $current.elem]/tei:desc" mode="guidelines"/></desc>
+                                </item>
+                            </xsl:for-each>
+                            <xsl:for-each select="$relevant.class.names">
+                                <xsl:sort select="." data-type="text"/>
+                                <xsl:variable name="current.class" select="." as="xs:string"/>
+                                <item class="modelClass" ident="{$current.class}" module="{$current.module}">
+                                    <link><a class="{tools:getLinkClasses($current.class)}" href="#{$current.class}"><xsl:value-of select="$current.class"/></a></link>
+                                    <desc><xsl:apply-templates select="$model.classes/self::tei:classSpec[@ident = $current.class]/tei:desc" mode="guidelines"/></desc>
                                 </item>
                             </xsl:for-each>
                         </xsl:variable>
@@ -649,6 +659,30 @@
                                     <xsl:message terminate="yes" select="$dt"/>
                                 </xsl:otherwise>
                             </xsl:choose>
+                        </xsl:when>
+                        <xsl:when test="$current.att/tei:datatype[rng:choice[every $child in child::* satisfies local-name($child) eq 'ref']]">
+                            <xsl:variable name="refs" as="node()+">
+                                <xsl:for-each select="$current.att/tei:datatype//rng:ref">
+                                    <xsl:variable name="separator" as="xs:string">
+                                        <xsl:choose>
+                                            <xsl:when test="count($current.att/tei:datatype//rng:ref) eq 2 and position() = 1">
+                                                <xsl:value-of select="' or '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() lt last() -1">
+                                                <xsl:value-of select="', '"/>
+                                            </xsl:when>
+                                            <xsl:when test="position() eq last() -1">
+                                                <xsl:value-of select="', or '"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:value-of select="''"/>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:variable>
+                                    <a class="{tools:getLinkClasses(@name)}" href="#{@name}"><xsl:value-of select="@name"/></a><xsl:value-of select="$separator"/>
+                                </xsl:for-each>
+                            </xsl:variable>
+                            Value conforms to either <xsl:sequence select="$refs"/>.
                         </xsl:when>
                         <xsl:when test="$current.att/tei:datatype[rng:data]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
