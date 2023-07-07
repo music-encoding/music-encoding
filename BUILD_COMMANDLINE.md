@@ -57,16 +57,15 @@
       * **macOS or Linux:** e.g. the [Homebrew Package Manager](https://brew.sh/index_de) offers an easy installation method for both a JDK and Apache Ant™.
       * **Windows:** e.g. the [Chocolatey Package Manager](https://chocolatey.org) can be used to install both a JDK and Apache Ant™.
 
-  * Is Verovio installed for generating example images locally?
+   * Is Verovio installed for generating example images locally?
 
-    Optional: If you wish, you can use a Python virtual environment to manage your dependencies. Before installing
-    Verovio, create and activate a virtual environment. 
-    
-    ```shell
-    python3 -m venv ./.venv
-    source ./.venv/bin/activate
-    ```
-    
+     Optional: If you wish, you can use a Python virtual environment to manage your dependencies. Before installing Verovio, create and activate a virtual environment.
+
+     ```shell
+     python3 -m venv ./.venv
+     source ./.venv/bin/activate
+     ```
+
     This will install your Python libraries in the local `.venv` directory. Once your virtual environment is active you can continue to installing Verovio.
 
     To build the images with Verovio, you need Python3 to be installed with the `verovio` module. This can be installed with:
@@ -74,8 +73,8 @@
     ```shell
     pip install verovio
     ```
-    
-2. Initialize the build process
+
+3. Build MEI artifacts
 
    * Switch to your clone’s directory:
 
@@ -83,50 +82,66 @@
      cd [YOUR-CLONE-LOCATION]
      ```
 
-   * Call the Apache Ant™ init task:
+   * Call an Apache Ant™ task
+
+     For building any MEI artifacts you generally call Apache Ant™ by typing `ant` followed by a space and the name of the desired target:
 
      ```shell
-     ant init
+     ant [TASKNAME]
      ```
 
-3. Run the build process
+     * Build the RNG schema of a specific customization:
 
-   * Build guidelines HTML:
+       ```shell
+       ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
+       ```
 
-     ```shell
-     ant -lib lib/saxon/saxon-he-11.5.jar build-guidelines-html
-     ```
+     * Build the compiled ODD of a specific customization:
 
-     The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
+       ```shell
+       ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-compiled-odd
+       ```
 
-     To generate the example images with Verovio, you need to run:
-     ```shell
-     ant generate-images-py
-     ```
+     * Build guidelines HTML:
 
-     **Note:** If you have installed your dependencies in a virtual environment, be sure to activate it prior to calling the Ant task. Activate it using:
-     
-     ```shell
-     source ./.venv/bin/activate
-     ```     
+       ```shell
+       ant build-guidelines-html
+       ```
 
-   * Build the RNG schema of a specific customization:
+       The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
 
-     ```shell
-     ant -lib lib/saxon/saxon-he-11.5.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
-     ```
+     * Generate the example images with Verovio:
 
-   * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML):
+       ```shell
+       ant generate-images-py
+       ```
 
-     ```shell
-     ant -lib lib/saxon/saxon-he-11.5.jar
-     ```
+       **Note:** If you have installed your dependencies in a virtual environment, be sure to activate it prior to calling the Ant task. Activate it using:
+
+       ```shell
+       source ./.venv/bin/activate
+       ```
+
+     * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML and PDF if Prince is available):
+
+       ```shell
+       ant dist
+       ```
+
+       or, because the `dist` target is the default target, just:
+
+       ```shell
+       ant
+       ```
+
+       Please be aware that depending on your system configuration some targets might fail, e.g. generating the PDF if you do not have Prince XML installed.
+
 ## Available Targets
 
 The following targets can be called using `ant <target>`:
 
-| target | description |
-|----|-----------------|
+| target                | description     |
+|-----------------------|-----------------|
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
 | `canonicalize-source` | Creates a canonicalized version of the mei-source.xml. This target will be triggered before all `build-...` targets. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations: `mei-all`, `mei-all_anyStart`, `mei-basic`, `mei-CMN`, `mei-Mensural` and `mei-Neumes`. |
@@ -135,6 +150,7 @@ The following targets can be called using `ant <target>`:
 | `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
-| `init` | Initializes the build environment, e.g., downloads jar files for Saxon, Xerces and adds them to the `lib` folder.
+| `init` | Initializes the build environment, e.g., downloads jar files for Saxon, Xerces and adds them to the `lib` folder. |
+| `init-mei-classpath` | Initializes the mei.classpath which is essential for the schema generation. Will be called automatically if needed. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
 | `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |
