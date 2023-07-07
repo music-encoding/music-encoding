@@ -59,13 +59,13 @@
 
    * Is Verovio installed for generating example images locally?
 
-     Optional: If you wish, you can use a Python virtual environment to manage your dependencies. Before installing Verovio, create and activate a virtual environment. 
-    
+     Optional: If you wish, you can use a Python virtual environment to manage your dependencies. Before installing Verovio, create and activate a virtual environment.
+
      ```shell
      python3 -m venv ./.venv
      source ./.venv/bin/activate
      ```
- 
+
     This will install your Python libraries in the local `.venv` directory. Once your virtual environment is active you can continue to installing Verovio.
 
     To build the images with Verovio, you need Python3 to be installed with the `verovio` module. This can be installed with:
@@ -83,7 +83,7 @@
      ```
 
    * Call an Apache Ant™ task
-     
+
      For building any MEI artifacts you generally call Apache Ant™ by typing `ant` followed by a space and the name of the desired target:
 
      ```shell
