@@ -90,14 +90,6 @@
      ant [TASKNAME]
      ```
 
-     * Build guidelines HTML:
-
-       ```shell
-       ant build-guidelines-html
-       ```
-
-       The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
-
      * Build the RNG schema of a specific customization:
 
        ```shell
@@ -109,6 +101,14 @@
        ```shell
        ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-compiled-odd
        ```
+
+     * Build guidelines HTML:
+
+       ```shell
+       ant build-guidelines-html
+       ```
+
+       The results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
 
      * Generate the example images with Verovio:
 
