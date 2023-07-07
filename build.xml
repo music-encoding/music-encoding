@@ -134,8 +134,13 @@
     </target>
     
     <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them." unless="${docker}">
-        <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
-        <available property="xerces-available" classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+        <!-- check if xerces is available -->
+        <condition  property="xerces-available" value="true" else="false">
+            <or>
+                <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
+                <available classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+            </or>
+        </condition>
         <echo message="xerces available: ${xerces-available}"/>
         <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
         <available property="saxon-available" classname="net.sf.saxon.Transform"/>
