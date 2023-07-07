@@ -109,37 +109,32 @@
        ```shell
        ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-compiled-odd
        ```
-     * Build the RNG schema of a specific customization:
 
-       ```shell
-       ant -lib lib/saxon/saxon-he-11.5.jar -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
-       ```
-     
      * Generate the example images with Verovio:
-     
+
        ```shell
        ant generate-images-py
        ```
 
        **Note:** If you have installed your dependencies in a virtual environment, be sure to activate it prior to calling the Ant task. Activate it using:
-     
+
        ```shell
        source ./.venv/bin/activate
-       ```     
+       ```
 
      * Build everything (all customizations shipped with this repository, compiled ODDs for each customization, guidelines HTML and PDF if Prince is available):
 
        ```shell
        ant dist
        ```
-       
+
        or, because the `dist` target is the default target, just:
-       
+
        ```shell
        ant
        ```
-       
-       Please be aware that depending on your system configuration some targets might fail, e.g. generating the PDF if you do not have Prince XML installed.       
+
+       Please be aware that depending on your system configuration some targets might fail, e.g. generating the PDF if you do not have Prince XML installed.
 
 ## Available Targets
 
