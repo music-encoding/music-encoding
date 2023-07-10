@@ -130,6 +130,17 @@
         </exec>
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
+    
+    <target name="get-local-git-revision">
+        <description>Get the current git revision</description>
+        <exec executable="git" outputproperty="github.revision.local">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+            <arg value="--always"/>
+            <arg value="HEAD"/>
+        </exec>
+        <echo>Local github.revision: ${github.revision.local}</echo>
+    </target>
 
     <target name="reset">
         <delete dir="lib"/>
@@ -246,7 +257,7 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source" unless="${build-guidelines-html.done}">
+    <target name="build-guidelines-html" depends="canonicalize-source, get-local-git-sha, get-local-git-branch, get-local-git-revision" unless="${build-guidelines-html.done}">
         <!-- TODO check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
@@ -264,6 +275,9 @@
                 <equals arg1="${github.ref}" arg2="" forcestring="true"/>
             </not>
         </condition>
+        <condition property="revision" value="${github.ref-name}" else="${github.revision.local}">
+            <equals arg1="${github.ref-type}" arg2="tags" forcestring="true"/>
+        </condition>
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
@@ -272,6 +286,7 @@
             <arg value="output.folder=${basedir}/${dir.build}/"/>
             <arg value="hash=${hash}"/>
             <arg value="branch=${branch}"/>
+            <arg value="revision=${revision}"/>
             <arg value="basedir=${basedir.cross_platform}"/>
         </java>
         <antcall target="generate-images"/>

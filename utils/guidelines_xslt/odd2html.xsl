@@ -130,6 +130,13 @@
     </xd:doc>
     <xsl:param name="basedir" select="''" as="xs:string"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The git revision of the local working copy</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="revision" select="'dev'" as="xs:string"/>
+    
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
     <xd:doc>
