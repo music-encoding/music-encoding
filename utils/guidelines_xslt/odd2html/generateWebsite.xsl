@@ -677,7 +677,7 @@
                             <li class="tab-item">
                                 <a data-display="{@id}" 
                                     id="{@id}_tab"
-                                    href="#{@id}"
+                                    href="#{@id}_tab"
                                     class="displayTab{if(position() = 1) then(' active') else()}"><xsl:value-of select="@data-label"/></a>
                             </li>
                         </xsl:for-each>

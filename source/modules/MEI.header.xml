@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -491,7 +509,7 @@
         <rng:ref name="desc"/>
       </rng:optional>
     </content>
-    <constraintSpec ident="context_attribute_requires_content" scheme="isoschematron">
+    <constraintSpec ident="context_attribute_requires_content" scheme="schematron">
       <constraint>
         <sch:rule context="@context">
           <sch:assert role="warning" test="not(normalize-space(.) eq '')">@context attribute should
@@ -536,7 +554,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
       <memberOf key="model.pubStmtPart"/>
-      <memberOf key="model.titlePagePart"/>
+      <memberOf key="model.imprintPart"/>
     </classes>
     <content>
       <rng:ref name="macro.availabilityPart"/>
@@ -652,7 +670,7 @@
         <rng:ref name="category"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="category_id" scheme="isoschematron">
+    <constraintSpec ident="category_id" scheme="schematron">
       <constraint>
         <sch:rule context="mei:category">
           <sch:assert test="@xml:id" role="warning">To be addressable, the category element must
@@ -720,7 +738,7 @@
         <rng:ref name="model.dateLike"/>
       </rng:optional>
     </content>
-    <constraintSpec ident="check_change" scheme="isoschematron">
+    <constraintSpec ident="check_change" scheme="schematron">
       <constraint>
         <sch:rule context="mei:change">
           <sch:assert test="@isodate or mei:date">The date of the change must be recorded in an
@@ -834,7 +852,7 @@
         </rng:choice>
       </rng:choice>
     </content>
-    <constraintSpec ident="checkComponentList" scheme="isoschematron">
+    <constraintSpec ident="checkComponentList" scheme="schematron">
       <constraint>
         <sch:rule context="mei:componentList">
           <sch:assert
@@ -845,7 +863,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="checkComponents" scheme="isoschematron">
+    <constraintSpec ident="checkComponents" scheme="schematron">
       <constraint>
         <sch:rule context="mei:componentList[mei:*[@comptype]]">
           <sch:assert role="warning"
@@ -927,7 +945,7 @@
         </rng:oneOrMore>
       </rng:choice>
     </content>
-    <constraintSpec ident="checkContentsLabels" scheme="isoschematron">
+    <constraintSpec ident="checkContentsLabels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:contents[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:contentItem)">When labels
@@ -1467,7 +1485,7 @@
         <rng:ref name="hand"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="checkHandListLabels" scheme="isoschematron">
+    <constraintSpec ident="checkHandListLabels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:handList[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:hand)">When labels are used,
@@ -1503,7 +1521,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="history_restriction" scheme="isoschematron">
+    <constraintSpec ident="history_restriction" scheme="schematron">
       <constraint>
         <sch:rule context="mei:history[parent::mei:work or parent::mei:expression or parent::mei:manifestation[not(@singleton='true')]]">
           <sch:assert test="not(mei:acquisition or mei:provenance or mei:exhibHist or mei:treatHist or mei:treatSched)">The elements acquisition, provenance, exhibHist, treatHist and treatSched are not permitted at the work or expression level and are only permitted at the manifestation level, if the manifestation is a manifestation singleton.</sch:assert>
@@ -1529,7 +1547,7 @@
     <content>
       <rng:text/>
     </content>
-    <constraintSpec ident="Check_incipCode_form_mimetype" scheme="isoschematron">
+    <constraintSpec ident="Check_incipCode_form_mimetype" scheme="schematron">
       <constraint>
         <sch:rule context="mei:incipCode">
           <sch:assert test="@form or @mimetype">incipCode must have a form or mimetype
@@ -1858,7 +1876,8 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="notesStmt" module="MEI.header">
-    <desc xml:lang="en">(notes statement)– Collects any notes providing information about a text additional to
+    <gloss versionDate="2023-06-16" xml:lang="en">notes statement</gloss>
+    <desc xml:lang="en">Collects any notes providing information about a text additional to
       that recorded in other parts of the bibliographic description.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2064,6 +2083,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="perfResList" module="MEI.header">
+    <gloss versionDate="2023-06-16" xml:lang="en">performance resources list</gloss>
     <desc xml:lang="en">Several instrumental or vocal resources treated as a group.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2628,7 +2648,7 @@
         <rng:ref name="attUsage"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="context_attribute_requires_content" scheme="isoschematron">
+    <constraintSpec ident="context_attribute_requires_content" scheme="schematron">
       <constraint>
         <sch:rule context="@context">
           <sch:assert role="warning" test="not(normalize-space(.) eq '')">@context attribute should
@@ -2710,7 +2730,7 @@
         <rng:ref name="term"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="checkTermListLabels" scheme="isoschematron">
+    <constraintSpec ident="checkTermListLabels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:termList[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:term)">When labels are used,
@@ -2860,6 +2880,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="model.imprintPart"/>
     </classes>
     <content>
       <rng:text/>
@@ -2908,7 +2929,7 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
-    <constraintSpec ident="check_watermark_inline" scheme="isoschematron">
+    <constraintSpec ident="check_watermark_inline" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:watermark">

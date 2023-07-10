@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -119,7 +137,7 @@
       <memberOf key="att.color"/>
       <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
-       <memberOf key="att.placementOnStaff"/>       
+      <memberOf key="att.placementOnStaff"/>
       <memberOf key="att.placementRelEvent"/>
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.staffLoc.pitched"/>
@@ -632,7 +650,7 @@
         <datatype>
           <rng:data type="nonNegativeInteger"/>
         </datatype>
-        <constraintSpec ident="check_beams.floating" scheme="isoschematron">
+        <constraintSpec ident="check_beams.floating" scheme="schematron">
           <constraint>
             <sch:rule context="mei:fTrem[@beams and @beams.float]">
               <sch:assert test="@beams.float &lt;= @beams">The number of floating beams must be less
@@ -839,10 +857,10 @@
       <memberOf key="att.visibility"/>
     </classes>
     <attList>
-      <attDef ident="sig.showchange" usage="opt">
-        <desc xml:lang="en">Determines whether cautionary accidentals should be displayed at a key change.</desc>
+      <attDef ident="cancelaccid" usage="opt">
+        <desc xml:lang="en">Determines where cautionary accidentals should be displayed at a key change.</desc>
         <datatype>
-          <rng:ref name="data.BOOLEAN"/>
+          <rng:ref name="data.CANCELACCID"/>
         </datatype>
       </attDef>
     </attList>
@@ -851,10 +869,10 @@
     <desc xml:lang="en">Used by staffDef and scoreDef to provide default values for attributes in the visual
       domain related to key signatures.</desc>
     <attList>
-      <attDef ident="keysig.showchange" usage="opt">
-        <desc xml:lang="en">Determines whether cautionary accidentals should be displayed at a key change.</desc>
+      <attDef ident="keysig.cancelaccid" usage="opt">
+        <desc xml:lang="en">Determines where cautionary accidentals should be displayed at a key change.</desc>
         <datatype>
-          <rng:ref name="data.BOOLEAN"/>
+          <rng:ref name="data.CANCELACCID"/>
         </datatype>
       </attDef>
       <attDef ident="keysig.visible" usage="opt">
@@ -1209,7 +1227,6 @@
       <memberOf key="att.staffLoc.pitched"/>
       <memberOf key="att.typography"/>
       <memberOf key="att.visualOffset"/>
-      <memberOf key="att.visibility"/>
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
@@ -1252,6 +1269,7 @@
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.staffLoc.pitched"/>
       <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
       <memberOf key="att.width"/>
     </classes>
     <attList>
@@ -1514,6 +1532,19 @@
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.repeatMark.vis" module="MEI.visual" type="atts">
+    <desc xml:lang="en">Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.extender"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.placementRelStaff"/>
+      <memberOf key="att.verticalGroup"/>
+      <memberOf key="att.visualOffset"/>
+      <memberOf key="att.visualOffset2.ho"/>
+      <memberOf key="att.visualOffset2.to"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
   <classSpec ident="att.rest.vis" module="MEI.visual" type="atts">
     <desc xml:lang="en">Visual domain attributes.</desc>
     <classes>
@@ -1700,7 +1731,7 @@
           <rng:ref name="data.COLOR"/>
         </datatype>
         <remarks xml:lang="en">
-          <p>The value is structured; that is, it should contain a single color value or have 
+          <p>The value is structured; that is, it should contain a single color value or have
             the same number of space-separated values as the number of lines indicated by the
             lines attribute. The first value then applies to the lowest line of the staff.</p>
           <p>All values from data.COLOR are allowed.</p>
@@ -1830,7 +1861,7 @@
     </classes>
     <!-- Is this constraint true in all cases? -->
     <!-- 
-      <constraintSpec ident="check_sylAncestor" scheme="isoschematron">
+      <constraintSpec ident="check_sylAncestor" scheme="schematron">
         <constraint>
           <sch:rule context="mei:syl[@place]">
             <sch:assert test="not(ancestor::mei:verse or ancestor::mei:refrain)">When syl is a

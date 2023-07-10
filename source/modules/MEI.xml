@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -339,7 +357,7 @@
         </valItem>
       </valList>
     </content>
-    <constraintSpec ident="warn_deprecated" scheme="isoschematron">
+    <constraintSpec ident="warn_deprecated" scheme="schematron">
       <constraint>
         <sch:rule context="@artic">
           <sch:assert role="warning"
@@ -506,6 +524,25 @@
         </valItem>
         <valItem ident="false">
           <desc xml:lang="en">False.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.CANCELACCID" module="MEI" type="dt">
+    <desc xml:lang="en">Indicates where cancellation accidentals are shown in a key signature.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="none">
+          <desc xml:lang="en">Do not show cancellation accidentals.</desc>
+        </valItem>
+        <valItem ident="before">
+          <desc xml:lang="en">Show cancellation accidentals before the new key accidentals.</desc>
+        </valItem>
+        <valItem ident="after">
+          <desc xml:lang="en">Show cancellation accidentals after the new key accidentals ("Old style" or "French")</desc>
+        </valItem>
+        <valItem ident="before-bar">
+          <desc xml:lang="en">Show cancellation accidentals before the barline (also known as "Russian").</desc>
         </valItem>
       </valList>
     </content>
@@ -1203,7 +1240,7 @@
       </rng:choice>
     </content>
   </macroSpec>
-  <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
+  <macroSpec ident="data.DURATION.GESTURAL" module="MEI" type="dt">
     <desc xml:lang="en">Performed duration attribute values.</desc>
     <content>
       <rng:choice>
@@ -3034,8 +3071,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.OCTAVE" module="MEI" type="dt">
-    <desc xml:lang="en">Oct attribute values. The default values conform to Acoustical Society of America
-      representation. Read, p. 44.</desc>
+    <desc xml:lang="en">Octave number. The default values conform to the Scientific Pitch Notation (SPN).</desc>
     <content>
       <rng:data type="nonNegativeInteger">
         <rng:param name="maxInclusive">9</rng:param>
@@ -3106,26 +3142,26 @@
     </content>
 </macroSpec>
   <macroSpec ident="data.PERCENT" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number plus '%', <abbr>i.e.</abbr>, [0-9]+(\.?[0-9]*)?\%.</desc>
+    <desc xml:lang="en">Positive decimal number plus '%', <abbr>i.e.</abbr>, [0-9]+(\.[0-9]*)?%.</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">[0-9]+(\.?[0-9]*)?%</rng:param>
+        <rng:param name="pattern">[0-9]+(\.[0-9]*)?%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
   <macroSpec ident="data.PERCENT.LIMITED" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number between 0 and 100, followed by a percent sign "%".</desc>
+    <desc xml:lang="en">Decimal number between 0 and 100, followed by a percent sign "%".</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">(([0-9]|[1-9][0-9])(\.[0-9]+)?|100(\.0+)?)%</rng:param>
+        <rng:param name="pattern">(([0-9]|[1-9][0-9])(\.[0-9]*)?|100(\.0*)?)%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
   <macroSpec ident="data.PERCENT.LIMITED.SIGNED" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number between -100 and 100, followed by a percent sign "%".</desc>
+    <desc xml:lang="en">Decimal number between -100 and 100, followed by a percent sign "%".</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">(\+|-)?(([0-9]|[1-9][0-9])(\.[0-9]+)?|100(\.0+)?)%</rng:param>
+        <rng:param name="pattern">(\+|-)?(([0-9]|[1-9][0-9])(\.[0-9]*)?|100(\.0*)?)%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -3179,7 +3215,7 @@
       </rng:data>
     </content>
   </macroSpec>
-  <macroSpec ident="data.PITCHNAME.GES" module="MEI" type="dt">
+  <macroSpec ident="data.PITCHNAME.GESTURAL" module="MEI" type="dt">
     <desc xml:lang="en">Gestural pitch names need an additional value for when the notated pitch is not to be
       sounded.</desc>
     <content>
@@ -3203,7 +3239,7 @@
         <rng:ref name="data.NMTOKEN"/>
       </rng:choice>
     </content>
-    <constraintSpec ident="constrain_place" scheme="isoschematron">
+    <constraintSpec ident="constrain_place" scheme="schematron">
       <constraint>
         <sch:rule context="@place">
           <sch:assert
@@ -3379,7 +3415,7 @@
         <rng:ref name="data.STAFFREL.extended"/>
       </rng:choice>
     </content>
-    <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
+    <constraintSpec ident="between_requires_adjacent_staves" scheme="schematron">
       <constraint>
         <sch:rule context="mei:*[@place eq 'between']">
           <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The @staff
@@ -3781,7 +3817,7 @@
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
-        <constraintSpec ident="When_notationsubtype" scheme="isoschematron">
+        <constraintSpec ident="When_notationsubtype" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@notationsubtype]">
               <sch:assert test="@notationtype">An element with a notationsubtype attribute must have

@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <property environment="env">
+        <!-- set environment variable -->
+    </property>
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
     <property name="github.sha" value="">
@@ -11,7 +32,7 @@
     <property name="github.ref" value="">
         <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
     </property>
-    <loadresource property="github.ref-type">
+    <loadresource property="github.ref-type" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -19,7 +40,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="github.ref-name">
+    <loadresource property="github.ref-name" quiet="true">
         <string value="${github.ref}"/>
         <filterchain>
             <tokenfilter>
@@ -27,7 +48,7 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="windir">
+    <loadresource property="windir" quiet="true">
         <string value="${basedir}"/>
         <filterchain>
             <tokenfilter>
@@ -48,16 +69,14 @@
     <property name="dir.lib" value="lib"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
-    <property name="saxon.download.version" value="Saxon-HE/11/Java/SaxonHE11-4J"/>
-    <property name="saxon.jar.file" value="saxon-he-11.4.jar"/>
+    <property name="saxon.download.version" value="SaxonHE11-5"/>
+    <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
-    <path id="mei.classpath">
-        <fileset dir="lib" erroronmissingdir="false">
-            <include name="**/*.jar" />
-        </fileset>
-        <pathelement path="${java.class.path}"/>
-    </path>
+    <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
+    <condition property="verbose" value="true" else="false">
+        <contains string="${sun.java.command}" substring="-v" />
+    </condition>
 
     <target name="help">
         <echo>================================================</echo>
@@ -67,14 +86,16 @@
         <echo>This is the default build target with some usage information.</echo>
         <echo>You can also call this via 'ant help'</echo>
         <echo/>
-        <echo>To build distribution of canonicalized source, compiled ODDs and customization RNGs run:</echo>
-        <echo>ant init</echo>
-        <echo>ant -lib lib/saxon/saxon-he-11.4.jar</echo>
+        <echo>To build distribution of canonicalized source, compiled ODDs and customization RNGs run the default target `dist` by executing:</echo>
+        <echo>ant dist</echo>
+        <echo>OR just</echo>
+        <echo>ant</echo>
         <echo/>
-        <echo>run 'ant -projecthelp' or 'ant -p' to get more information on the available build targets</echo>
+        <echo>run 'ant -projecthelp' or 'ant -p' to get more information on the available build targets.</echo>
         <echo/>
         <echo>The following buildproperties are configured in your environment:</echo>
         <echo/>
+        <antcall target="echo-properties"/>
     </target>
 
     <target name="clean">
@@ -83,7 +104,7 @@
         <delete dir="temp"/>
     </target>
 
-    <target name="echo-classpath" description="Echos the mei.classpath">
+    <target name="echo-classpath" description="Echos the mei.classpath" depends="init-mei-classpath">
         <echo message="${ant.refid:mei.classpath}"></echo>
     </target>
 
@@ -115,18 +136,45 @@
         <antcall target="clean"/>
     </target>
     
-    <target name="init" description="initializes the build environment, e.g. downloads saxon" unless="${docker}">
-        <available property="xerces-available" file="${dir.lib.xerces}/${xerces.jar.file}"/>
-        <available property="saxon-available" file="${dir.lib.saxon}/${saxon.jar.file}"/>
-        <mkdir dir="${dir.lib}"/>
-        <antcall target="saxon-prepare"/>
-        <antcall target="xerces-download"/>
+    <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them. Checks if prince is available.">
+        <!-- check if xerces is available -->
+        <condition  property="xerces-available" value="true" else="false">
+            <or>
+                <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
+                <available classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+            </or>
+        </condition>
+        <echo message="xerces available: ${xerces-available}"/>
+        <!-- check if saxon is available -->
+        <condition  property="saxon-available" value="true" else="false">
+            <or>
+                <available file="${dir.lib.saxon}/${saxon.jar.file}"/>
+                <available classname="net.sf.saxon.Transform"/>
+            </or>
+        </condition>
+        <echo message="saxon available: ${saxon-available}"/>
+        <!-- check for prince -->
+        <condition property="prince-available" value="true" else="false">
+            <available file="prince" filepath="${env.PATH}" />
+        </condition>
+        <echo message="prince available: ${prince-available}"/>
+        <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="xerces-download" unless:true="${xerces-available}"/>
         <echo>initialized</echo>
+    </target>
+    
+    <target name="init-mei-classpath" description="Initialize classpath: initializes the mei.classpath by prepending the jar files contained in the lib directory to the java classpath." depends="init">
+        <path id="mei.classpath">
+            <fileset dir="lib" erroronmissingdir="false">
+                <include name="**/*.jar" />
+            </fileset>
+            <pathelement path="${java.class.path}"/>
+        </path>
     </target>
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://sourceforge.net/projects/saxon/files/${saxon.download.version}.zip/download" dest="temp/"/>
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip" dest="temp/download"/>
         <!-- TODO check for newer releases-->
     </target>
 
@@ -142,9 +190,10 @@
     <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
+        <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
     </target>
 
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init">
+    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init-mei-classpath">
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
@@ -160,9 +209,10 @@
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
+            <reference refid="mei.classpath" torefid="classpath"/>
         </ant>
     </target>
     
@@ -175,8 +225,9 @@
         <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
             <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
-            <property name="verbose">true</property>
+            <property name="verbose" value="${verbose}"/>
             <property name="processODD">true</property>
+            <reference refid="mei.classpath" torefid="classpath"/>
         </ant>
     </target>
 
@@ -190,6 +241,8 @@
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
+            <reference refid="mei.classpath" torefid="classpath"/>
+            <property name="verbose" value="${verbose}"/>
         </ant>
     </target>
 
@@ -269,6 +322,14 @@
             <arg value="index.js"/>
         </exec>
     </target>
+    
+    <target name="generate-images-py">
+        <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
+            <arg value="generate-examples.py"/>
+            <arg value="--clean"/>
+            <arg value="--verbose"/>
+        </exec>
+    </target>
 
     <target name="copy-generated-images" description="copy generated images to dist after they're created by running Docker image">
         <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
@@ -320,15 +381,13 @@
         </antcall>
     </target>
 
-    <target name="dist" depends="init">
-        <!-- TODO does not work with depends="init" only works if init run before -->
-        <!-- TODO if depends init works add to all other targets and introduce global initialized param so that init will only be reexecuted if init not run before -->
+    <target name="dist" depends="init-mei-classpath">
         <classfileset refid="mei.classpath"/>
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
-        <antcall target="build-guidelines-pdf"/>
+        <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>
     </target>
 
 </project>

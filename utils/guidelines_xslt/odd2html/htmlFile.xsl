@@ -249,28 +249,28 @@
                             </div>
                         </div>
                         
-                        <script type="text/javascript">
+                        <script>
                             const tabbedFacets = document.querySelectorAll('.facet ul.tab');
                             
                             const tabClick = function(e) {
-                                const style = e.target.getAttribute('data-display');
+                                const targetDataDisplay = e.target.getAttribute('data-display');
                                 const facetId = e.target.parentNode.parentNode.parentNode.parentNode.id;
-                                //console.log('clicked at ' + facetId + ' with style ' + style)
-                                setTabs(facetId,style)
+                                //console.log('clicked at ' + facetId + ' with data display ' + targetDataDisplay);
+                                setTabs(facetId,targetDataDisplay);
                             }
                             
                             console.log('[INFO] Javascript initialized')
                             
                             for(let facetUl of tabbedFacets) {
-                                const facetElem = facetUl.parentNode.parentNode;
+                                const facetElem = facetUl.parentNode?.parentNode;
                                 const facetId = facetElem.id;
-                                const storageName = 'meiSpecs_' + facetId + '_display';
-                                const defaultValue = facetUl.children[0].children[0].getAttribute('data-display');
+                                const storageName = getStorageName(facetId);
+                                const defaultDataDisplay = facetUl.children[0]?.children[0]?.getAttribute('data-display');
                                 
                                 if(localStorage.getItem(storageName) === null) {
-                                    setTabs(facetElem.id,defaultValue);
+                                    setTabs(facetId,defaultDataDisplay?.trim());
                                 } else {
-                                    setTabs(facetElem.id,localStorage.getItem(storageName));
+                                    setTabs(facetId,localStorage.getItem(storageName)?.trim());
                                 }
                                 
                                 const tabs = facetUl.querySelectorAll('.tab-item a');
@@ -279,26 +279,45 @@
                                     tab.addEventListener('click',tabClick);
                                 }
                             }
-                            
+
+                            function getDisplayStyle(dataDisplay) {
+                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full']
+                                const [, displayStyle = ''] = dataDisplay.split('_');
+                                return displayStyle;
+                            }
+
+                            function getStorageName(facetId) {
+                                return 'meiSpecs_' + facetId + '_display';
+                            }
+
                             function setTabs(facetId, style) {
-                                const storageName = 'meiSpecs_' + facetId + '_display';
-                                localStorage.setItem(storageName,style);
+                                const storageName = getStorageName(facetId);
+                                const displayStyle = getDisplayStyle(style);
+                                localStorage.setItem(storageName,displayStyle);
                                 
                                 const facetElem = document.getElementById(facetId);
                                 
                                 const oldTab = facetElem.querySelector('.displayTab.active');
-                                oldTab.classList.remove('active');
+                                if (oldTab) {
+                                    oldTab.classList.remove('active');
+                                }
                                 
                                 const newTab = document.getElementById(style + '_tab');
-                                newTab.classList.add('active');
+                                if (newTab) {
+                                    newTab.classList.add('active');
+                                }
                                 
                                 const oldBox = facetElem.querySelector('.active.facetTabbedContent');
-                                oldBox.classList.remove('active');
-                                oldBox.style.display = 'none';
+                                if (oldBox) {
+                                    oldBox.classList.remove('active');
+                                    oldBox.style.display = 'none';
+                                }
                                 
                                 const newBox = document.getElementById(style);
-                                newBox.classList.add('active');
-                                newBox.style.display = 'block';
+                                if(newBox) {
+                                    newBox.classList.add('active');
+                                    newBox.style.display = 'block';
+                                }
                             }
                             
                             const reducedLevels = <xsl:value-of select="if($reducedLevels = true()) then('true') else('false')"/>;
