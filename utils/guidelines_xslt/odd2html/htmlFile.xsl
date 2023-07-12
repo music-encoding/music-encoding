@@ -280,9 +280,9 @@
                                 }
                             }
 
-                            function getDisplayStyle(dataDisplay) {
-                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full']
-                                const [, displayStyle = ''] = dataDisplay.split('_');
+                            function getDisplayStyle(style) {
+                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full'] and return the second part of the array
+                                const [_, displayStyle = 'compact'] = style.split('_');
                                 return displayStyle;
                             }
 
