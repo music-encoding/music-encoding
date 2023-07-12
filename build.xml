@@ -138,31 +138,36 @@
     
     <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them. Checks if prince is available.">
         <!-- check if xerces is available -->
-        <condition  property="xerces-available" value="true" else="false">
+        <condition property="xerces-available">
             <or>
                 <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
                 <available classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
             </or>
         </condition>
-        <echo message="xerces available: ${xerces-available}"/>
+        <echo if:set="xerces-available" message="xerces available: ${xerces-available}"/>
+        <echo unless:set="xerces-available" message="xerces available: false"/>
         <!-- check if saxon is available -->
-        <condition  property="saxon-available" value="true" else="false">
+        <condition property="saxon-available">
             <or>
                 <available file="${dir.lib.saxon}/${saxon.jar.file}"/>
                 <available classname="net.sf.saxon.Transform"/>
             </or>
         </condition>
-        <echo message="saxon available: ${saxon-available}"/>
+        <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
+        <echo unless:set="saxon-available" message="saxon available: false"/>
         <!-- check for prince -->
-        <condition property="prince-available" value="true" else="false">
+        <condition property="prince-available">
             <available file="prince" filepath="${env.PATH}" />
         </condition>
-        <echo message="prince available: ${prince-available}"/>
+        <echo if:set="prince-available" message="prince available: ${prince-available}"/>
+        <echo unless:set="prince-available" message="prince available: false"/>
+
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
+
         <echo>initialized</echo>
     </target>
-    
+
     <target name="init-mei-classpath" description="Initialize classpath: initializes the mei.classpath by prepending the jar files contained in the lib directory to the java classpath." depends="init">
         <path id="mei.classpath">
             <fileset dir="lib" erroronmissingdir="false">
