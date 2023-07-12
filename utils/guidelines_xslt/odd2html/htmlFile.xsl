@@ -270,7 +270,7 @@
                                 if(localStorage.getItem(storageName) === null) {
                                     setTabs(facetId,defaultDataDisplay?.trim());
                                 } else {
-                                    setTabs(facetId,localStorage.getItem(storageName)?.trim());
+                                    setTabs(facetId,`${facetId}_${localStorage.getItem(storageName)?.trim()}`);
                                 }
                                 
                                 const tabs = facetUl.querySelectorAll('.tab-item a');
