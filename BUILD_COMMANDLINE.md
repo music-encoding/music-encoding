@@ -152,5 +152,6 @@ The following targets can be called using `ant <target>`:
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
 | `init` | Initializes the build environment, e.g., downloads jar files for Saxon, Xerces and adds them to the `lib` folder. |
 | `init-mei-classpath` | Initializes the mei.classpath which is essential for the schema generation. Will be called automatically if needed. |
+| `compare-versions` | Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via `-Dsource`, `-Dold` and `-Doutput` input params. <br> NB: path of old file is relative to `comparison.xml`, while others are relative to `build.xml`. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
 | `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |
