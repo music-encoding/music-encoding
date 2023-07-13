@@ -270,7 +270,7 @@
                                 if(localStorage.getItem(storageName) === null) {
                                     setTabs(facetId,defaultDataDisplay?.trim());
                                 } else {
-                                    setTabs(facetId,localStorage.getItem(storageName)?.trim());
+                                    setTabs(facetId,`${facetId}_${localStorage.getItem(storageName)?.trim()}`);
                                 }
                                 
                                 const tabs = facetUl.querySelectorAll('.tab-item a');
@@ -280,9 +280,9 @@
                                 }
                             }
 
-                            function getDisplayStyle(dataDisplay) {
-                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full']
-                                const [, displayStyle = ''] = dataDisplay.split('_');
+                            function getDisplayStyle(style) {
+                                // split dataDisplay string at underscore, e.g. 'attributes_full' to ['attributes','full'] and return the second part of the array
+                                const [_, displayStyle = 'compact'] = style.split('_');
                                 return displayStyle;
                             }
 
