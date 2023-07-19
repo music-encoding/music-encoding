@@ -138,31 +138,36 @@
     
     <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them. Checks if prince is available.">
         <!-- check if xerces is available -->
-        <condition  property="xerces-available" value="true" else="false">
+        <condition property="xerces-available">
             <or>
                 <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
                 <available classname="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
             </or>
         </condition>
-        <echo message="xerces available: ${xerces-available}"/>
+        <echo if:set="xerces-available" message="xerces available: ${xerces-available}"/>
+        <echo unless:set="xerces-available" message="xerces available: false"/>
         <!-- check if saxon is available -->
-        <condition  property="saxon-available" value="true" else="false">
+        <condition property="saxon-available">
             <or>
                 <available file="${dir.lib.saxon}/${saxon.jar.file}"/>
                 <available classname="net.sf.saxon.Transform"/>
             </or>
         </condition>
-        <echo message="saxon available: ${saxon-available}"/>
+        <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
+        <echo unless:set="saxon-available" message="saxon available: false"/>
         <!-- check for prince -->
-        <condition property="prince-available" value="true" else="false">
+        <condition property="prince-available">
             <available file="prince" filepath="${env.PATH}" />
         </condition>
-        <echo message="prince available: ${prince-available}"/>
+        <echo if:set="prince-available" message="prince available: ${prince-available}"/>
+        <echo unless:set="prince-available" message="prince available: false"/>
+
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
+
         <echo>initialized</echo>
     </target>
-    
+
     <target name="init-mei-classpath" description="Initialize classpath: initializes the mei.classpath by prepending the jar files contained in the lib directory to the java classpath." depends="init">
         <path id="mei.classpath">
             <fileset dir="lib" erroronmissingdir="false">
@@ -170,6 +175,7 @@
             </fileset>
             <pathelement path="${java.class.path}"/>
         </path>
+        <echo>mei.classpath set</echo>
     </target>
 
     <target name="saxon-download" unless="${saxon-available}">
@@ -193,13 +199,16 @@
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
     </target>
 
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in dist/mei-source_canonicalized.xml" depends="init-mei-classpath">
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in build/mei-source_canonicalized.xml" depends="init-mei-classpath" >
+        <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
+        <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
             <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
             <arg value="-xi:on"/>
         </java>
+        <property name="canonicalize-source.done" value="true"/>
+        <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
     <target name="build-compiled-odd" depends="canonicalize-source">
@@ -339,7 +348,7 @@
         </copy>
     </target>
 
-    <target name="build-customizations">
+    <target name="build-customizations" depends="canonicalize-source">
         <antcall target="build-rng">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -360,7 +369,7 @@
         </antcall>
     </target>
 
-    <target name="build-compiled-odds">
+    <target name="build-compiled-odds" depends="canonicalize-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -423,7 +432,8 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" depends="init-mei-classpath">
+    <target name="dist" depends="init-mei-classpath, canonicalize-source">
+
         <classfileset refid="mei.classpath"/>
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
