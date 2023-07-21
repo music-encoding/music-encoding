@@ -143,14 +143,14 @@ The following targets can be called using `ant <target>`:
 | target                | description     |
 |-----------------------|-----------------|
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
-| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml. This target will be triggered before all `build-...` targets. |
-| `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations: `mei-all`, `mei-all_anyStart`, `mei-basic`, `mei-CMN`, `mei-Mensural` and `mei-Neumes`. |
-| `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization. |
+| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e. resolves xincludes and puts result in `build/mei-source_canonicalized`. This target will be triggered before all `build-...` targets. |
+| `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
+| `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
 | `build-customizations` | Builds the RNG schemata for all MEI customizations. |
-| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization. |
+| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
-| `init` | Initializes the build environment, e.g., downloads jar files for Saxon, Xerces and adds them to the `lib` folder. |
-| `init-mei-classpath` | Initializes the mei.classpath which is essential for the schema generation. Will be called automatically if needed. |
+| `init` | Initializes the build environment, i.e., checks if saxon and xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the `lib` folder. Checks if prince is available. |
+| `init-mei-classpath` | Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
 | `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |
