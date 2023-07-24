@@ -98,21 +98,21 @@
         <antcall target="echo-properties"/>
     </target>
 
-    <target name="clean">
+    <target name="clean" description="Deletes the following directories: `build`, `dist` and `temp`.">
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="temp"/>
     </target>
 
-    <target name="echo-classpath" description="Echos the mei.classpath" depends="init-mei-classpath">
+    <target name="echo-classpath" description="Echos the mei.classpath." depends="init-mei-classpath">
         <echo message="${ant.refid:mei.classpath}"></echo>
     </target>
 
-    <target name="echo-properties" description="Echos all ant properties">
+    <target name="echo-properties" description="Echos all ant properties.">
         <echoproperties/>
     </target>
 
-    <target name="get-local-git-sha" description="Get the local git sha">
+    <target name="get-local-git-sha" description="Retrieves the local git sha.">
         <exec executable="git" outputproperty="github.sha.local">
             <arg value="describe"/>
             <arg value="--match=NeVeRmAtCh"/>
@@ -123,7 +123,7 @@
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
 
-    <target name="get-local-git-branch" description="Retrieves the current git branch via commandline">
+    <target name="get-local-git-branch" description="Retrieves the current git branch via commandline.">
         <exec executable="git" outputproperty="github.branch.local">
             <arg value="branch"/>
             <arg value="--show-current"/>
@@ -131,12 +131,12 @@
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
-    <target name="reset">
+    <target name="reset" description="Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files.">
         <delete dir="lib"/>
         <antcall target="clean"/>
     </target>
     
-    <target name="init" description="Initialize: checks if saxon and xerces are available, and if not, downloads them. Checks if prince is available.">
+    <target name="init" description="Initializes the build environment, i.e., checks if saxon and xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the lib folder. Checks if prince is available.">
         <!-- check if xerces is available -->
         <condition property="xerces-available">
             <or>
@@ -168,7 +168,7 @@
         <echo>initialized</echo>
     </target>
 
-    <target name="init-mei-classpath" description="Initialize classpath: initializes the mei.classpath by prepending the jar files contained in the lib directory to the java classpath." depends="init">
+    <target name="init-mei-classpath" description="Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed." depends="init">
         <path id="mei.classpath">
             <fileset dir="lib" erroronmissingdir="false">
                 <include name="**/*.jar" />
@@ -199,7 +199,7 @@
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
     </target>
 
-    <target name="canonicalize-source" description="Canonicalizes the mei-source.xml, i.e. resolves xincludes and puts result in build/mei-source_canonicalized.xml" depends="init-mei-classpath" >
+    <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in build/mei-source_canonicalized. This target will be triggered before all `build-...` targets." depends="init-mei-classpath" >
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
@@ -211,7 +211,7 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <target name="build-compiled-odd" depends="canonicalize-source">
+    <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>${odd.basename}</echo>
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
@@ -225,7 +225,7 @@
         </ant>
     </target>
     
-    <target name="build-customization-specs" depends="canonicalize-source" description="Build the specs for a customization submitted as -Dcustomization.path=/ABSOLUTE/FILE/PATH">
+    <target name="build-customization-specs" depends="canonicalize-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>${odd.basename}</echo>
         <antcall target="build-compiled-odd">
@@ -240,7 +240,7 @@
         </ant>
     </target>
 
-    <target name="build-rng" depends="canonicalize-source">
+    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${odd.basename} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
@@ -255,7 +255,7 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" depends="canonicalize-source" unless="${build-guidelines-html.done}">
+    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="canonicalize-source" unless="${build-guidelines-html.done}">
         <!-- TODO check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
@@ -287,7 +287,7 @@
         <antcall target="copy-generated-images"/>
     </target>
 
-    <target name="build-guidelines-pdf" depends="build-guidelines-html">
+    <target name="build-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
         <!-- create output directory for PDF -->
         <mkdir dir="${dir.dist}/guidelines/pdf"/>
         <!-- get HTML input file -->
@@ -326,13 +326,13 @@
         </copy>
     </target>
 
-    <target name="generate-images" description="Generate SVG images of mei files in assets/images/GeneratedImages; depends on docker-mei container image" if="${docker}">
+    <target name="generate-images" description="Generates SVG images of MEI files in assets/images/GeneratedImages; depends on docker-mei container image." if="${docker}">
         <exec executable="node" dir="${basedir}/../">
             <arg value="index.js"/>
         </exec>
     </target>
     
-    <target name="generate-images-py">
+    <target name="generate-images-py" description="Generates SVG images of MEI files in assets/images/GeneratedImages; depends on python3 with Verovio installed.">
         <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
             <arg value="generate-examples.py"/>
             <arg value="--clean"/>
@@ -340,7 +340,7 @@
         </exec>
     </target>
 
-    <target name="copy-generated-images" description="copy generated images to dist after they're created by running Docker image">
+    <target name="copy-generated-images" description="Copies generated images to dist after they're created by running Docker image.">
         <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
             <fileset dir="${dir.build}/assets/images/GeneratedImages">
                 <include name="*.svg"/>
@@ -348,7 +348,7 @@
         </copy>
     </target>
 
-    <target name="build-customizations" depends="canonicalize-source">
+    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="canonicalize-source">
         <antcall target="build-rng">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -369,7 +369,7 @@
         </antcall>
     </target>
 
-    <target name="build-compiled-odds" depends="canonicalize-source">
+    <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="canonicalize-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -432,7 +432,7 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" depends="init-mei-classpath, canonicalize-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="init-mei-classpath, canonicalize-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
