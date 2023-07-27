@@ -421,15 +421,22 @@
         </condition>
         <echo>Using output folder: ${output.folder}</echo>
 
+        <!-- check if old.file is available -->
+        <condition property="old.available" value="true" else="false">
+              <available file="${old.file}"/>
+        </condition>
+        <echo message="old.file is available: ${old.available}"></echo>
         <!-- compare versions -->
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true" if:true="${old.available}">
             <arg value="-s:${source.file}"/>
             <arg value="-xsl:${basedir}/utils/compare_versions/comparison.xsl"/>
             <arg value="-xi:on"/>
             <arg value="output.folder=${output.folder}"/>
             <arg value="old.version.filename=${old.file}"/>
         </java>
-        <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
+        <echo if:true="${old.available}">Comparison done. See ${output.folder}/comparison.html for results.</echo>
+        
+        <fail unless:true="${old.available}">Unfortunately the $old.file is not available at the specified location.</fail>
     </target>
 
     <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="init-mei-classpath, canonicalize-source">
