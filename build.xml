@@ -421,11 +421,25 @@
         </condition>
         <echo>Using output folder: ${output.folder}</echo>
 
+        <!-- if old.default is picked, check if available, otherwise get -->
+        <condition property="old.default-and-available" value="true">
+            <and>
+                <equals arg1="${old.file}" arg2="${old.default}"/>
+                <available file="${old.file}"/>
+            </and>
+        </condition>
+
+        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/4.0.1/mei-source_canonicalized_v4.0.1.xml" dest="${output.folder}${old.default}" unless:true="${old.default-and-available}"/>
+
         <!-- check if old.file is available -->
         <condition property="old.available" value="true" else="false">
+            <or>
               <available file="${old.file}"/>
+              <available file="${output.folder}${old.default}"/>
+            </or>
         </condition>
         <echo message="old.file is available: ${old.available}"></echo>
+
         <!-- compare versions -->
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true" if:true="${old.available}">
             <arg value="-s:${source.file}"/>
