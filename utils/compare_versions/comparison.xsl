@@ -42,12 +42,14 @@
             ---
             <div>
                 <link rel="stylesheet" href="resources/css/main.css" />
-                <h1>MEI Comparison <br/>
-                    <small>
-                        <span class=""><xsl:value-of select="$new.version"/></span> <span class=""> vs </span>
-                        <span class=""><xsl:value-of select="$old.version"/></span>
-                    </small>
+                <div id="headingArea">
+                    <h1>MEI Comparison <br/>
+                        <small>
+                            <span class=""><xsl:value-of select="$new.version"/></span> <span class=""> vs </span>
+                            <span class=""><xsl:value-of select="$old.version"/></span>
+                        </small>
                 </h1>
+                </div>
                 <div id="chartArea">
                     <div id="chartsBox">
                         <div id="elementsChart" class="chartBox"><label>Elements</label></div>
