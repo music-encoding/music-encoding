@@ -246,11 +246,11 @@
                                 <xsl:for-each select="$new.memberships">
                                     <xsl:variable name="current.class" select="." as="xs:string"/>
                                     <xsl:choose>
-                                        <xsl:when test="$current.class= $added.memberships">
-                                            <li class="added" title="added class"><xsl:value-of select="$current.class"/></li>
+                                        <xsl:when test="$current.class = $added.memberships">
+                                            <li class="added" title="added class"><a href="#{$current.class}"><xsl:value-of select="$current.class"/></a></li>
                                         </xsl:when>
                                         <xsl:when test="$current.class = $casechanged.memberships">
-                                            <li class="casechanged" title="was: {$old.memberships[lower-case(.) = lower-case($current.class)]}"><xsl:value-of select="$current.class"/></li>
+                                            <li class="casechanged" title="was: {$old.memberships[lower-case(.) = lower-case($current.class)]}"><a href="#{$current.class}"><xsl:value-of select="$current.class"/></a></li>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <li class="unchanged"><xsl:value-of select="$current.class"/></li>
@@ -258,7 +258,7 @@
                                     </xsl:choose>
                                 </xsl:for-each>
                                 <xsl:for-each select="$removed.memberships">
-                                    <li class="removed" title="removed class"><xsl:value-of select="."/></li>
+                                    <li class="removed" title="removed class"><a href="#{.}"><xsl:value-of select="."/></a></li>
                                 </xsl:for-each>
                             </ul>
                         </td>
@@ -268,10 +268,10 @@
                                     <xsl:variable name="current.content" select="." as="xs:string"/>
                                     <xsl:choose>
                                         <xsl:when test="$current.content= $added.content">
-                                            <li class="added" title="added content"><xsl:value-of select="$current.content"/></li>
+                                            <li class="added" title="added content"><a href="#{$current.content}"><xsl:value-of select="$current.content"/></a></li>
                                         </xsl:when>
                                         <xsl:when test="$current.content = $casechanged.content">
-                                            <li class="casechanged" title="was: {$old.content[lower-case(.) = lower-case($current.content)]}"><xsl:value-of select="$current.content"/></li>
+                                            <li class="casechanged" title="was: {$old.content[lower-case(.) = lower-case($current.content)]}"><a href="#{$current.content}"><xsl:value-of select="$current.content"/></a></li>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <li class="unchanged"><xsl:value-of select="$current.content"/></li>
@@ -279,7 +279,7 @@
                                     </xsl:choose>
                                 </xsl:for-each>
                                 <xsl:for-each select="$removed.content">
-                                    <li class="removed" title="removed content"><xsl:value-of select="."/></li>
+                                    <li class="removed" title="removed content"><a href="#{.}"><xsl:value-of select="."/></a></li>
                                 </xsl:for-each>
                             </ul>
                         </td>
@@ -289,10 +289,11 @@
                                     <xsl:variable name="current.att" select="." as="xs:string"/>
                                     <xsl:choose>
                                         <xsl:when test="$current.att = $added.atts/@ident">
-                                            <li class="added" title="added attribute"><span class="attribute"><xsl:value-of select="$current.att"/></span></li>
+                                            <li class="added" title="added attribute"><span class="attribute"><a href="https://music-encoding.org/guidelines/v{$new.version.major}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.att"/></a></span></li>
+                                            <!-- TODO linking does not work here since there is no target to point to -->
                                         </xsl:when>
                                         <xsl:when test="$current.att = $changed.atts/@ident">
-                                            <li class="changed" title="changed attribute"><span class="attribute"><xsl:value-of select="$current.att"/></span></li>
+                                            <li class="changed" title="changed attribute"><span class="attribute"><a href="https://music-encoding.org/guidelines/v{$new.version.major}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.att"/></a></span></li>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <li class="unchanged"><span class="attribute"><xsl:value-of select="$current.att"/></span></li>
@@ -300,7 +301,7 @@
                                     </xsl:choose>
                                 </xsl:for-each>
                                 <xsl:for-each select="$removed.atts/@ident">
-                                    <li class="removed" title="removed attribute"><span class="attribute"><xsl:value-of select="."/></span></li>
+                                    <li class="removed" title="removed attribute"><span class="attribute"><a href="https://music-encoding.org/guidelines/v{$old.version.major}/elements/{lower-case($current.element)}.html" target="_blank"><xsl:value-of select="."/></a></span></li>
                                 </xsl:for-each>
                             </ul>
                         </td>
@@ -319,9 +320,10 @@
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="a" id="{$current.element}">
-                    <td class="element ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="element ident"><a href="https://music-encoding.org/guidelines/v{$new.version.major}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.element"/></a></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
+                    <td><a href="https://music-encoding.org/guidelines/v{$new.version.major}/elements/{$current.element}.html" target="_blank">visit guidelines</a></td>
                 </tr>
             </xsl:for-each>
         </table>
@@ -334,6 +336,7 @@
                     <td class="element ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
+                    <td><a href="https://music-encoding.org/guidelines/v{$old.version.major}/elements/{lower-case($current.element)}.html" target="_blank">visit guidelines</a></td>
                 </tr>
             </xsl:for-each>
         </table>
@@ -417,8 +420,8 @@
                                 <xsl:for-each select="$new.memberships">
                                     <xsl:variable name="current.class" select="." as="xs:string"/>
                                     <xsl:choose>
-                                        <xsl:when test="$current.class= $added.memberships">
-                                            <li class="added" title="added class"><xsl:value-of select="$current.class"/></li>
+                                        <xsl:when test="$current.class = $added.memberships">
+                                            <li class="added" title="added class"><a href="#{$current.class}"><xsl:value-of select="$current.class"/></a></li>
                                         </xsl:when>
                                         <xsl:when test="$current.class = $casechanged.memberships">
                                             <li class="casechanged" title="was: {$old.memberships[lower-case(.) = lower-case($current.class)]}"><xsl:value-of select="$current.class"/></li>
@@ -429,7 +432,7 @@
                                     </xsl:choose>
                                 </xsl:for-each>
                                 <xsl:for-each select="$removed.memberships">
-                                    <li class="removed" title="removed class"><xsl:value-of select="."/></li>
+                                    <li class="removed" title="removed class"><a href="#{.}"><xsl:value-of select="."/></a></li>
                                 </xsl:for-each>
                             </ul>
                         </td>
@@ -439,7 +442,7 @@
                                     <xsl:variable name="current.content" select="." as="xs:string"/>
                                     <xsl:choose>
                                         <xsl:when test="$current.content= $added.content">
-                                            <li class="added" title="added attribute"><span class="attribute"><xsl:value-of select="$current.content"/></span></li>
+                                            <li class="added" title="added attribute"><span class="attribute"><a href="https://music-encoding.org/guidelines/v{$new.version.major}/attribute-classes/{$current.attribute}.html" target="_blank"><xsl:value-of select="$current.content"/></a></span></li>
                                         </xsl:when>
                                         <xsl:otherwise>
                                             <li class="unchanged"><span class="attribute"><xsl:value-of select="$current.content"/></span></li>
@@ -447,7 +450,7 @@
                                     </xsl:choose>
                                 </xsl:for-each>
                                 <xsl:for-each select="$removed.content">
-                                    <li class="removed" title="removed attribute"><span class="attribute"><xsl:value-of select="."/></span></li>
+                                    <li class="removed" title="removed attribute"><span class="attribute"><a href="https://music-encoding.org/guidelines/v{$old.version.major}/attribute-classes/{lower-case($current.attribute)}.html" target="_blank"><xsl:value-of select="."/></a></span></li>
                                 </xsl:for-each>
                             </ul>
                         </td>
