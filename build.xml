@@ -390,7 +390,7 @@
         </antcall>
     </target>
 
-    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params. NB: path of old file is relative to comparison.xml, while others are relative to build.xml." depends="canonicalize-source">
+    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params. NB: path of old file is relative to comparison.xsl, while others are relative to build.xml." depends="canonicalize-source">
         <!-- set source file (relative to build.xml) -->
         <property name="source.default" value="${dir.build}/mei-source_canonicalized.xml"/>
         <echo level="verbose">source.default: ${source.default}</echo>
@@ -401,7 +401,7 @@
         </condition>
         <echo>Using source.file: ${source.file}</echo>
 
-        <!-- set old file to compare with (relative to comparison.xsl) -->
+        <!-- set old file to compare with (absolute path needed for comparison.xsl) -->
         <property name="old.default" value="/${dir.build}/mei-source_canonicalized_v4.0.1.xml"/>
         <condition property="old.default-available" value="true">
                 <available file="${old.default}"/>
@@ -442,6 +442,7 @@
             <arg value="output.folder=${output.folder}"/>
             <arg value="old.version.filename=${old.file}"/>
         </java>
+
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
