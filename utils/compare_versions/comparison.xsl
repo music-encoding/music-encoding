@@ -18,6 +18,10 @@
         </xd:desc>
     </xd:doc>
     
+    <!-- TODO content link to text has no target -->
+    <!-- TODO content link to empty has no target -->
+    <!-- TODO linking v4 element-names are lowercase while v5 are uppercase, this might change in the future, so maybe checking availability or switching between version instead of making a general decision would be beneficial. -->
+    
     <xsl:output method="html" indent="yes"/>
     
     <xsl:param name="output.folder" select="''" as="xs:string"/>
