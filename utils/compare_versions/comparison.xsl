@@ -27,6 +27,8 @@
     <xsl:variable name="new.file" select="//tei:back" as="node()"/>
     <xsl:variable name="new.version" select="//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
     <xsl:variable name="old.version" select="doc($old.version.filename)//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
+    <xsl:variable name="new.version.major" select="tokenize((//tei:attDef[@ident='meiversion']//tei:valItem/@ident)[1], '\.')[1]" as="xs:string"/>
+    <xsl:variable name="old.version.major" select="tokenize((doc($old.version.filename)//tei:attDef[@ident='meiversion']//tei:valItem/@ident)[1], '\.')[1]" as="xs:string"/>
     
     <xsl:template match="/">
         <xsl:result-document href="{$output}">
