@@ -416,7 +416,15 @@
         </condition>
         <echo>Using old.file: ${old.file}</echo>
 
-        <!-- set ouput folder  (relative to build.xml) -->
+        <!-- check if old.file is available -->
+        <condition property="old.available" value="true" else="false">
+            <available file="${old.file}"/>
+        </condition>
+        <echo message="old.file available: ${old.available}"></echo>
+
+        <fail unless:true="${old.available}">Unfortunately, the $old.file ${old.file} is not available at the specified location.</fail>
+
+        <!-- set ouput folder (relative to build.xml) -->
         <property name="output.default" value="./utils/compare_versions/"/>
         <echo level="verbose">output.default: ${output.default}</echo>
         <echo level="verbose">output user input: ${output}</echo>
