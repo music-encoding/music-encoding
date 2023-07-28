@@ -227,7 +227,7 @@
                     or count($added.atts) gt 0
                     or count($removed.atts) gt 0
                     or count($changed.atts) gt 0">
-                    <tr class="c">
+                    <tr class="c" id="{$current.element}">
                         <td class="element ident"><xsl:value-of select="$current.element"/></td>
                         <td class="module"><xsl:value-of select="$new.element/@module"/></td>
                         <td class="desc">
@@ -318,7 +318,7 @@
             <xsl:for-each select="$added.elements">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
-                <tr class="a">
+                <tr class="a" id="{$current.element}">
                     <td class="element ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -330,7 +330,7 @@
             <xsl:for-each select="$removed.elements">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$old.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
-                <tr class="r">
+                <tr class="r" id="{$current.element}">
                     <td class="element ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -398,7 +398,7 @@
                     or count($casechanged.memberships) gt 0
                     or count($added.content) gt 0
                     or count($removed.content) gt 0">
-                    <tr class="c">
+                    <tr class="c" id="{$current.attribute}">
                         <td class="attClass ident"><xsl:value-of select="$current.attribute"/></td>
                         <td class="module"><xsl:value-of select="$new.attribute/@module"/></td>
                         <td class="desc">
@@ -465,7 +465,7 @@
             <xsl:for-each select="$added.attributes">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:classSpec[@type = 'atts' and @ident = $current.element]" as="node()"/>
-                <tr class="a">
+                <tr class="a" id="{$current.element}">
                     <td class="attClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -477,7 +477,7 @@
             <xsl:for-each select="$removed.attributes">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$old.file//tei:classSpec[@type = 'atts' and @ident = $current.element]" as="node()"/>
-                <tr class="r">
+                <tr class="r" id="{$current.element}">
                     <td class="attClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -493,7 +493,7 @@
             <xsl:for-each select="$unchanged.attributes">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:classSpec[@type = 'atts' and @ident = $current.element]" as="node()"/>
-                <tr class="u">
+                <tr class="u" id="{$current.element}">
                     <td class="attClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module unchanged"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td class="unchanged"><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -533,7 +533,7 @@
                 <xsl:if test="count($added.memberships) gt 0 
                     or count($removed.memberships) gt 0 
                     or count($casechanged.memberships) gt 0">
-                    <tr class="c">
+                    <tr class="c" id="{$current.model}">
                         <td class="modelClass ident"><xsl:value-of select="$current.model"/></td>
                         <td class="module"><xsl:value-of select="$new.model/@module"/></td>
                         <td class="desc">
@@ -582,7 +582,7 @@
             <xsl:for-each select="$added.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:classSpec[@type = 'model' and @ident = $current.element]" as="node()"/>
-                <tr class="a">
+                <tr class="a" id="${$current.element}">
                     <td class="modelClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -594,7 +594,7 @@
             <xsl:for-each select="$removed.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$old.file//tei:classSpec[@type = 'model' and @ident = $current.element]" as="node()"/>
-                <tr class="r">
+                <tr class="r" id="{$current.element}">
                     <td class="modelClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -610,7 +610,7 @@
             <xsl:for-each select="$unchanged.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:classSpec[@type = 'model' and @ident = $current.element]" as="node()"/>
-                <tr class="u">
+                <tr class="u" id="{$current.element}">
                     <td class="modelClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module unchanged"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td class="unchanged"><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -666,7 +666,7 @@
                 <xsl:if test="count($added.content) gt 0 
                     or count($removed.content) gt 0 
                     or count($casechanged.content) gt 0">
-                    <tr class="c">
+                    <tr class="c" id="{$current.macro}">
                         <td class="macroClass ident"><xsl:value-of select="$current.macro"/></td>
                         <td class="module"><xsl:value-of select="$new.model/@module"/></td>
                         <td class="desc">
@@ -715,7 +715,7 @@
             <xsl:for-each select="$added.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
-                <tr class="a">
+                <tr class="a" id="${$current.element}">
                     <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -727,7 +727,7 @@
             <xsl:for-each select="$removed.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$old.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
-                <tr class="r">
+                <tr class="r" id="{$current.element}">
                     <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -743,7 +743,7 @@
             <xsl:for-each select="$unchanged.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
-                <tr class="u">
+                <tr class="u" id="{$current.element}">
                     <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module unchanged"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td class="unchanged"><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
@@ -797,7 +797,7 @@
                     or count($casechanged.references) gt 0
                     or count($added.values) gt 0
                     or count($removed.values) gt 0">
-                    <tr class="c">
+                    <tr class="c" id="{$current.macro}">
                         <td class="macroSpec datatype ident"><xsl:value-of select="$current.macro"/></td>
                         <td class="module"><xsl:value-of select="$new.macro/@module"/></td>
                         <td class="desc">
@@ -864,7 +864,7 @@
             <xsl:for-each select="$added.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="macroSpec" select="$new.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
-                <tr class="a">
+                <tr class="a" id="{$current.element}">
                     <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$macroSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
@@ -876,7 +876,7 @@
             <xsl:for-each select="$removed.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="macroSpec" select="$old.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
-                <tr class="r">
+                <tr class="r" id="{$current.element}">
                     <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$macroSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
@@ -892,7 +892,7 @@
             <xsl:for-each select="$unchanged.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="macroSpec" select="$new.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
-                <tr class="u">
+                <tr class="u" id="{$current.element}">
                     <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module unchanged"><xsl:value-of select="$macroSpec/@module"/></td>
                     <td class="unchanged"><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
