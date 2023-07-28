@@ -25,10 +25,10 @@
     <xsl:param name="old.version.filename" select="''" as="xs:string"/>
     <xsl:variable name="old.file" select="doc($old.version.filename)//tei:back" as="node()"/>
     <xsl:variable name="new.file" select="//tei:back" as="node()"/>
+    <xsl:variable name="new.version" select="//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
+    <xsl:variable name="old.version" select="doc($old.version.filename)//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
     
     <xsl:template match="/">
-        <xsl:variable name="new.version" select="//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
-        <xsl:variable name="old.version" select="doc($old.version.filename)//tei:fileDesc/tei:editionStmt/tei:edition/text()" as="xs:string"/>
         <xsl:result-document href="{$output}">
             ---
             layout: default
