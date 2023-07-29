@@ -50,15 +50,15 @@
         <xsl:result-document href="{$output}">
             ---
             layout: default
-            title: "Comparison of MEI <xsl:value-of select="$new.version"/> and <xsl:value-of select="$old.version"/>"
+            title: "Comparison of MEI v<xsl:value-of select="$new.version"/> and v<xsl:value-of select="$old.version"/>"
             ---
             <div>
                 <link rel="stylesheet" href="resources/css/main.css" />
                 <div id="headingArea">
                     <h1>MEI Comparison <br/>
                         <small>
-                            <span class=""><xsl:value-of select="$new.version"/></span> <span class=""> vs </span>
-                            <span class=""><xsl:value-of select="$old.version"/></span>
+                            <span class="">Version <xsl:value-of select="$new.version"/></span> <span class=""> vs </span>
+                            <span class="">Version <xsl:value-of select="$old.version"/></span>
                         </small>
                 </h1>
                 </div>
