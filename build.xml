@@ -390,8 +390,8 @@
         </antcall>
     </target>
 
-    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params. NB: path of old file is relative to comparison.xsl, while others are relative to build.xml." depends="canonicalize-source">
-        <!-- set source file (relative to build.xml) -->
+    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="canonicalize-source">
+        <!-- set source file -->
         <property name="source.default" value="${dir.build}/mei-source_canonicalized.xml"/>
         <echo level="verbose">source.default: ${source.default}</echo>
         <echo level="verbose">source user input: ${source}</echo>
@@ -401,8 +401,8 @@
         </condition>
         <echo>Using source.file: ${source.file}</echo>
 
-        <!-- set old file to compare with (absolute path needed for comparison.xsl) -->
-        <property name="old.default" value="/${dir.build}/mei-source_canonicalized_v4.0.1.xml"/>
+        <!-- set old file to compare with -->
+        <property name="old.default" value="${dir.build}/mei-source_canonicalized_v4.0.1.xml"/>
         <condition property="old.default-available" value="true">
                 <available file="${old.default}"/>
         </condition>
@@ -424,7 +424,7 @@
 
         <fail unless:true="${old.available}">Unfortunately, the $old.file ${old.file} is not available at the specified location.</fail>
 
-        <!-- set ouput folder (relative to build.xml) -->
+        <!-- set ouput folder -->
         <property name="output.default" value="./utils/compare_versions/"/>
         <echo level="verbose">output.default: ${output.default}</echo>
         <echo level="verbose">output user input: ${output}</echo>
@@ -440,7 +440,7 @@
             <arg value="-xsl:${basedir}/utils/compare_versions/comparison.xsl"/>
             <arg value="-xi:on"/>
             <arg value="output.folder=${output.folder}"/>
-            <arg value="old.version.filename=${old.file}"/>
+            <arg value="old.version.filename=/${old.file}"/>
         </java>
 
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
