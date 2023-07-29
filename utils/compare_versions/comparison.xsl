@@ -24,8 +24,7 @@
     
     <xsl:output method="html" indent="yes"/>
     
-    <xsl:param name="output.folder" select="''" as="xs:string"/>
-    <xsl:variable name="output" select="concat($output.folder,'comparison.html')" />
+    <xsl:variable name="new.file" select="//tei:back" as="node()"/>
     <xsl:variable name="new.version" select="//tei:attDef[@ident='meiversion']//tei:defaultVal" as="xs:string"/>
     <xsl:variable name="new.version.major" as="xs:string*">
         <xsl:choose>
@@ -42,9 +41,10 @@
     
     <xsl:param name="old.version.filename" select="''" as="xs:string"/>
     <xsl:variable name="old.file" select="doc($old.version.filename)//tei:back" as="node()"/>
-    <xsl:variable name="new.file" select="//tei:back" as="node()"/>
     <xsl:variable name="old.version" select="doc($old.version.filename)//tei:attDef[@ident='meiversion']//tei:defaultVal" as="xs:string"/>
     <xsl:variable name="old.version.major" select="concat('v',tokenize($old.version, '\.')[1])" as="xs:string"/>
+    <xsl:param name="output.folder" select="''" as="xs:string"/>
+    <xsl:variable name="output" select="concat($output.folder,'comparison_',$new.version.major,'_vs_',$old.version.major, '.html')" />
     
     <xsl:template match="/">
         <xsl:result-document href="{$output}">
