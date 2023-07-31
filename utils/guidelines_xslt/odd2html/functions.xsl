@@ -429,7 +429,7 @@
             <p>
                 The Guidelines and specifications made available in this document wouldn't have been possible without the generous
                 and selfless support of a large number of people. Some of those people, especially from the early days of MEI are 
-                explicitly mentioned in chapter <a href="#acknowledgments">1.1.2 Acknowledgments</a> of these Guidelines. However, we 
+                explicitly mentioned in chapter <a href="#acknowledgments">1.1.1 Acknowledgments</a> of these Guidelines. However, we 
                 believe it is important to give proper recognition to everyone contributing to this community effort. Without 
                 their continued commitment, MEI would not be possible. 
             </p>            
