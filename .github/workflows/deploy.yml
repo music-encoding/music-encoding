@@ -96,10 +96,10 @@ jobs:
       - name: Copy built schema to SCHEMA_DIR
         if: ${{ github.repository_owner == env.REPO_OWNER }}
         run: |
-          rm -r $SCHEMA_DIR/dev
+          rm -r $SCHEMA_DIR/${{ env.TARGET_DIR }}
           cp -r dist/schemata/ $SCHEMA_DIR/
-          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/dev
-          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/dev
+          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/${{ env.TARGET_DIR }}
+          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/${{ env.TARGET_DIR }}
 
       - name: Check git status before commit
         if: ${{ github.repository_owner == env.REPO_OWNER }}
@@ -147,10 +147,10 @@ jobs:
       - name: Copy built guidelines to GUIDELINES_DIR
         if: ${{ github.repository_owner == env.REPO_OWNER }}
         run: |
-          rm -rf $GUIDELINES_DIR/dev
+          rm -rf $GUIDELINES_DIR/${{ env.TARGET_DIR }}
           cp -r dist/guidelines/web $GUIDELINES_DIR/
-          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/dev
-          find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/dev/ \;
+          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/${{ env.TARGET_DIR }}
+          find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/${{ env.TARGET_DIR }}/ \;
 
       - name: Check git status before commit
         if: ${{ github.repository_owner == env.REPO_OWNER }}
