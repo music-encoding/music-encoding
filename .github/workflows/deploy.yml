@@ -32,6 +32,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      ### Exit if ref_type is tag but branch is not stable
+      - name: Set TARGET_DIR
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'tag')  && (github.event.base_ref != 'stable') }}
+        run: exit -1
+
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
         uses: actions/checkout@v3
