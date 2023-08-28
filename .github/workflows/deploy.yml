@@ -94,7 +94,7 @@ jobs:
           path: ${{ env.SCHEMA_DIR }}
 
       - name: Copy built schema to SCHEMA_DIR
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         run: |
           rm -r $SCHEMA_DIR/${{ env.TARGET_DIR }}
           cp -r dist/schemata/ $SCHEMA_DIR/
@@ -117,7 +117,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Running git commit..."
@@ -125,7 +125,7 @@ jobs:
           git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to SCHEMA
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         working-directory: ${{ env.SCHEMA_DIR }}
         run: git push origin HEAD:$SCHEMA_BRANCH
 
@@ -145,7 +145,7 @@ jobs:
           path: ${{ env.GUIDELINES_DIR }}
 
       - name: Copy built guidelines to GUIDELINES_DIR
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         run: |
           rm -rf $GUIDELINES_DIR/${{ env.TARGET_DIR }}
           cp -r dist/guidelines/web $GUIDELINES_DIR/
@@ -168,7 +168,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Running git commit..."
@@ -176,6 +176,6 @@ jobs:
           git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to GUIDELINES
-        if: ${{ github.repository_owner == env.REPO_OWNER }}
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: git push origin HEAD:$GUIDELINES_BRANCH
