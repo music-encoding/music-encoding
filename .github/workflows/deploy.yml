@@ -148,13 +148,16 @@ jobs:
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.GUIDELINES_DIR }}
 
-      - name: Copy built guidelines to GUIDELINES_DIR
+      - name: Copy built web guidelines to GUIDELINES_DIR
         if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         run: |
           rm -rf $GUIDELINES_DIR/${{ env.TARGET_DIR }}
           cp -r dist/guidelines/web $GUIDELINES_DIR/
           mv $GUIDELINES_DIR/web $GUIDELINES_DIR/${{ env.TARGET_DIR }}
-          find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/${{ env.TARGET_DIR }}/ \;
+
+      - name: Copy built PDF guidelines to GUIDELINES_DIR, if release is being created
+        if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.event.base_ref == 'stable') }}
+        run: find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/${{ env.TARGET_DIR }}/ \;
 
       - name: Check git status before commit
         if: ${{ github.repository_owner == env.REPO_OWNER }}
