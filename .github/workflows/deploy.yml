@@ -186,3 +186,21 @@ jobs:
         if: ${{ (github.repository_owner == env.REPO_OWNER) && ((github.event.base_ref == 'develop')  || (github.event.base_ref == 'stable')) }}
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: git push origin HEAD:$GUIDELINES_BRANCH
+
+      # Whenever a tag is being created a released is being issued
+      # could be remodelled to automaticall create the tag, too
+      # but then the version would have to be determined programatically
+      - name: Create release
+        if: ${{ (github.ref_type == 'tag') && (github.event.base_ref == 'stable') }}
+        uses: ncipollo/release-action@v1.13.0
+        with:
+          allowUpdates: false
+          artifacts: |
+            ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf,
+            ${{ github.workspace }}dist/schemata
+          commit: ${{ github.sha }}
+          generateReleaseNotes: true
+          name: "MEI ${{ github.ref_name }}"
+          prerelease: false
+          replacesArtifacts: true
+          tag: "" # ref_name will be used if it is a tag
