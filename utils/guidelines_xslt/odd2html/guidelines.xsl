@@ -528,7 +528,7 @@
                         <xsl:choose>
                             <xsl:when test="exists($pi.start) and exists($pi.end)">
                                 <xsl:message select="'CUTTING EXAMPLE'"/>
-                                <xsl:apply-templates select="$pi.start/following::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
+                                <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:apply-templates select="child::node()" mode="preserveSpace"/>
