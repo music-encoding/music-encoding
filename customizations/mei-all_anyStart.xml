@@ -158,13 +158,20 @@
 
         <classSpec ident="att.meiVersion" module="MEI.shared" type="atts" mode="change">
           <constraintSpec ident="meiVersion.root" scheme="schematron">
-          <desc>Require meiversion attribute on the root element.</desc>
-          <constraint>
-            <sch:rule context="root()">
-              <sch:assert test="/mei:*[@meiversion]">The root element must have the @meiversion attribute in order to indicate the MEI version of the snippet.</sch:assert>
-            </sch:rule>
-          </constraint>
-        </constraintSpec>
+            <desc>Require meiversion attribute on the root element.</desc>
+            <constraint>
+              <sch:rule context="root()">
+                <sch:assert test="/mei:*[@meiversion]">The root element must have the @meiversion attribute in order to indicate the MEI version of the snippet.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <constraintSpec ident="meiVersion.warning.anyStart" scheme="schematron" mode="add">
+            <constraint>
+              <sch:rule context="/mei:*">
+                <sch:report role="error" test="not(local-name(.) = ('mei', 'meiHead', 'meiCorpus', 'music')) and not(@meiversion = '5.0-dev+anyStart')">If the root element is any other than mei, meiHead, meiCorpus, or music the value of @meiversion must be '5.0-dev+anyStart'.</sch:report>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
           <attList>
             <attDef ident="meiversion" usage="rec" mode="change">
               <defaultVal>5.0-dev+anyStart</defaultVal>
