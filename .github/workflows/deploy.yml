@@ -39,7 +39,7 @@ jobs:
 
     steps:
       ### Exit if ref_type is tag but branch is not stable
-      - name: Set TARGET_DIR
+      - name: Exit if tag not on stable
         if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'tag')  && (github.event.base_ref != 'stable') }}
         run: exit -1
 
@@ -73,12 +73,12 @@ jobs:
           path: ${{ github.workspace }}/build/prince.log
 
       ### SET TARGET_DIR environment variable for dev version
-      - name: Set TARGET_DIR
+      - name: Set TARGET_DIR for dev
         if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'branch') && (github.event.base_ref == 'develop') }}
         run: echo "TARGET_DIR=dev" >> $GITHUB_ENV
 
       ### SET TARGET_DIR environment variable for tagged release
-      - name: Set TARGET_DIR
+      - name: Set TARGET_DIR for tagged release
         if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'tag')  && (github.event.base_ref == 'stable') }}
         run: echo "TARGET_DIR=${{ github.ref_name }}" >> $GITHUB_ENV
 
@@ -192,12 +192,10 @@ jobs:
       # but then the version would have to be determined programatically
       - name: Create release
         if: ${{ (github.ref_type == 'tag') && (github.event.base_ref == 'stable') }}
-        uses: ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # ratchet:ncipollo/release-action@v1.13.0
         with:
           allowUpdates: false
-          artifacts: |
-            ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf,
-            ${{ github.workspace }}/dist/schemata
+          artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf,${{ github.workspace }}/dist/schemata"
           artifactErrorsFailBuild: true
           commit: ${{ github.sha }}
           generateReleaseNotes: true
