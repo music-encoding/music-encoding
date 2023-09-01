@@ -40,10 +40,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      ### Exit if ref_type is tag but branch is not stable
-      - name: Exit if tag not on stable
-        if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'tag')  && (github.event.base_ref != 'stable') }}
-        run: exit -1
 
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
@@ -83,6 +79,11 @@ jobs:
       - name: Set TARGET_DIR for tagged release
         if: ${{ (github.repository_owner == env.REPO_OWNER) && (github.ref_type == 'tag')  && (github.event.base_ref == 'stable') }}
         run: echo "TARGET_DIR=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      ### Exit if ref is not develop branch or release tag
+      - name: Exit if not on develop or tag
+        if: github.ref != 'refs/heads/develop' && !startsWith(github.ref, 'refs/tags/v')
+        run: exit -1
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
