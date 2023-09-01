@@ -79,6 +79,7 @@
     </condition>
 
     <target name="help">
+        <antcall target="echo-mei"/>
         <echo>================================================</echo>
         <echo>= Welcome to the MEI music-encoding ant-script! =</echo>
         <echo>================================================</echo>
@@ -106,6 +107,11 @@
 
     <target name="echo-classpath" description="Echos the mei.classpath." depends="init-mei-classpath">
         <echo message="${ant.refid:mei.classpath}"></echo>
+    </target>
+
+    <target name="echo-mei">
+      <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei"/>
+        <echo message="${mei}"/>
     </target>
 
     <target name="echo-properties" description="Echos all ant properties.">
@@ -448,6 +454,7 @@
 
     <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="init-mei-classpath, canonicalize-source">
         <classfileset refid="mei.classpath"/>
+        <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
