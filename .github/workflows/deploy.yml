@@ -31,8 +31,7 @@ env:
   # temporary directories
   SCHEMA_DIR: schema-dir
   GUIDELINES_DIR: guidelines-dir
-
-  # TARGET_DIR variable will be set dynamically in steps below
+  TARGET_DIR: '' # will be set dynamically for in steps below
 
 jobs:
   build:
@@ -40,6 +39,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Echo properties
+        run: |
+          echo "github.repository: ${{ github.repository }}"
+          echo "github.repository_owner: ${{ github.repository_owner }}"
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_type: ${{ github.ref_type }}"
+          echo "github.ref_name: ${{ github.ref_name }}"
+          echo "github.sha: ${{ github.sha }}"
+          echo "github.event_name: ${{ github.event_name }}"
+          echo "github.event.base_ref: ${{ github.event.base_ref }}"
 
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
@@ -80,6 +89,10 @@ jobs:
         if: github.repository_owner == env.REPO_OWNER  && startsWith(github.ref, 'refs/tags/')
         run: echo "TARGET_DIR=${{ github.ref_name }}" >> $GITHUB_ENV
 
+      ### VALIDATE TARGET NAME
+      - name: Validate TARGET_DIR
+        run: echo "TARGET_DIR=$TARGET_DIR"
+
       ### Exit if ref is not develop branch or release tag
       - name: Exit if not on develop or tag
         if: github.ref != 'refs/heads/develop' && !startsWith(github.ref, 'refs/tags/v')
@@ -99,6 +112,9 @@ jobs:
           ref: ${{ env.SCHEMA_BRANCH }}
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.SCHEMA_DIR }}
+
+      - name: Validate SCHEMA_DIR
+        run: echo "SCHEMA_DIR=$SCHEMA_DIR/$TARGET_DIR"
 
       - name: Copy built schema to SCHEMA_DIR
         if: github.repository_owner == env.REPO_OWNER
@@ -150,6 +166,9 @@ jobs:
           ref: ${{ env.GUIDELINES_BRANCH }}
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.GUIDELINES_DIR }}
+
+      - name: Validate GUIDELINES_DIR
+        run: echo "GUIDELINES_DIR=$GUIDELINES_DIR/$TARGET_DIR"
 
       - name: Copy built web guidelines to GUIDELINES_DIR
         if: github.repository_owner == env.REPO_OWNER
