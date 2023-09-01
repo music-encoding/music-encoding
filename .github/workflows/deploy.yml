@@ -119,10 +119,10 @@ jobs:
       - name: Copy built schema to SCHEMA_DIR
         if: github.repository_owner == env.REPO_OWNER
         run: |
-          rm -r $SCHEMA_DIR/${{ env.TARGET_DIR }}
+          rm -rf $SCHEMA_DIR/$TARGET_DIR
           cp -r dist/schemata/ $SCHEMA_DIR/
-          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/${{ env.TARGET_DIR }}
-          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/${{ env.TARGET_DIR }}
+          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/$TARGET_DIR
+          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
 
       - name: Check git status before commit
         if: github.repository_owner == env.REPO_OWNER
@@ -173,13 +173,13 @@ jobs:
       - name: Copy built web guidelines to GUIDELINES_DIR
         if: github.repository_owner == env.REPO_OWNER
         run: |
-          rm -rf $GUIDELINES_DIR/${{ env.TARGET_DIR }}
+          rm -rf $GUIDELINES_DIR/$TARGET_DIR
           cp -r dist/guidelines/web $GUIDELINES_DIR/
-          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/${{ env.TARGET_DIR }}
+          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/$TARGET_DIR
 
       - name: Copy built PDF guidelines to GUIDELINES_DIR, if release is being created
-        run: find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/${{ env.TARGET_DIR }}/ \;
         if: github.repository_owner == env.REPO_OWNER && startsWith(github.ref, 'refs/tags/v')
+        run: find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/$TARGET_DIR/ \;
 
       - name: Check git status before commit
         if: github.repository_owner == env.REPO_OWNER
