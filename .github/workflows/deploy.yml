@@ -79,6 +79,11 @@ jobs:
           name: prince_log
           path: ${{ github.workspace }}/build/prince.log
 
+      ### Do not continue if ref is not develop branch or release tag
+      - name: Exit if not on develop or tag
+        if: github.ref != 'refs/heads/develop' && !startsWith(github.ref, 'refs/tags/v')
+        run: exit -1
+
       ### SET TARGET_DIR environment variable for dev version
       - name: Set TARGET_DIR for dev
         if: github.repository_owner == env.REPO_OWNER && github.ref == 'refs/heads/develop'
@@ -92,11 +97,6 @@ jobs:
       ### VALIDATE TARGET NAME
       - name: Validate TARGET_DIR
         run: echo "TARGET_DIR=$TARGET_DIR"
-
-      ### Exit if ref is not develop branch or release tag
-      - name: Exit if not on develop or tag
-        if: github.ref != 'refs/heads/develop' && !startsWith(github.ref, 'refs/tags/v')
-        run: exit -1
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
