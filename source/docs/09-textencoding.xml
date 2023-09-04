@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
+     xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+     xmlns="http://www.tei-c.org/ns/1.0"
+     version="5.0"
+     rend="book"
+     xml:lang="en">
+   <teiHeader>
+      <fileDesc>
+         <titleStmt>
+            <title level="s">The Music Encoding Initiative Guidelines</title>
+            <title level="a">Text Encoding</title>
+            <respStmt>
+               <resp>Edited by</resp>
+               <!-- tbd -->
+               <name role="edt">tbd</name>
+               <note>The editors listed here are responsible for the contents of this very chapter of the MEI Guidelines.</note>
+            </respStmt>
+            <respStmt>
+               <resp>With contributions by</resp>
+               <!--TODO: To be filled automatically via GitHub API-->
+               <name ref="https://api.github.com/users/bwbohl">Benjamin W. Bohl</name>
+               <name ref="https://api.github.com/users/BruxDDay">BruxDDay</name>
+               <name ref="https://api.github.com/users/ndubo">Norbert Dubowy</name>
+               <name ref="https://api.github.com/users/fujinaga">Ichiro Fujinaga</name>
+               <name ref="https://api.github.com/users/axgeertinger">Axel Geertinger</name>
+               <name ref="https://api.github.com/users/ahankinson">Andrew Hankinson</name>
+               <name ref="https://api.github.com/users/irmlindcapelle">irmlindcapelle</name>
+               <name ref="https://api.github.com/users/frakel">franz kelnreiter</name>
+               <name ref="https://api.github.com/users/kepper">kepper</name>
+               <name ref="https://api.github.com/users/zolaemil">Zoltan Komives</name>
+               <name ref="https://api.github.com/users/DDMAL-LabManager">DDMAL LabManager</name>
+               <name ref="https://api.github.com/users/uliska">Urs Liska</name>
+               <name ref="https://api.github.com/users/elsinhadl">Elsa De Luca</name>
+               <name ref="https://api.github.com/users/napulen">Néstor Nápoles López</name>
+               <name ref="https://api.github.com/users/MajaHartwig">MajaHartwig</name>
+               <name ref="https://api.github.com/users/musicEnfanthen">Stefan Münnich</name>
+               <name ref="https://api.github.com/users/pe-ro">pe-ro</name>
+               <name ref="https://api.github.com/users/lpugin">Laurent Pugin</name>
+               <name ref="https://api.github.com/users/JRegimbal">Juliette Regimbal</name>
+               <name ref="https://api.github.com/users/rettinghaus">Klaus Rettinghaus</name>
+               <name ref="https://api.github.com/users/aseipelt">Agnes Seipelt</name>
+               <name ref="https://api.github.com/users/martha-thomae">Martha E. Thomae</name>
+               <name ref="https://api.github.com/users/raffazizzi">Raffaele Viglianti</name>
+               <name ref="https://api.github.com/users/vigliensoni">Gabriel Vigliensoni</name>
+               <name ref="https://api.github.com/users/th-we">Thomas Weber</name>
+               <name ref="https://api.github.com/users/musicog">David M. Weigl</name>
+            </respStmt>
+         </titleStmt>
+         <publicationStmt>
+            <distributor>Music Encoding Initiative (MEI) Council</distributor>
+            <availability>
+               <p>
+                  <hi>Music Encoding Initiative (MEI)</hi>
+               </p>
+               <p>NOTICE: Copyright (c) 2017–2023 by the Music Encoding Initiative (MEI) Council.</p>
+               <p>Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+                                            not use this file except in compliance with the License. You may obtain a copy of the
+                                            License at <ref target="http://opensource.org/licenses/ECL-2.0">http://opensource.org/licenses/ECL-2.0</ref>.</p>
+               <p>Unless required by applicable law or agreed to in writing, software distributed under
+                                            the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+                                            KIND, either express or implied. See the License for the specific language governing
+                                            permissions and limitations under the License.</p>
+               <p>This is a derivative work based on earlier versions of the schema copyright (c)
+                                            2001-2006 Perry Roland and the Rector and Visitors of the University of Virginia;
+                                            licensed under the Educational Community License version 1.0.</p>
+               <p>CONTACT: contact@music-encoding.org </p>
+            </availability>
+         </publicationStmt>
+         <sourceDesc>
+            <p>Born digital: No previous source exists.</p>
+         </sourceDesc>
+      </fileDesc>
+   </teiHeader>
+   <text>
+      <body>
+         <div xml:id="textencoding" type="div1">
+            <head>Text Encoding</head>
+            <p>This chapter describes methods for encoding textual content with MEI. It is divided into section: One part deals with <ptr target="#textstructures"/> in MEI, the other with <ptr target="#text"/>. While the first covers structures of textual documents such as front matter or back matter, the latter describes how to mark up features and various entities within a text, such as names, tables or quotes. These features may appear both within data (a <gi scheme="MEI">fig</gi>ure scribbled as marginal <gi scheme="MEI">annot</gi>ation into a score by a bored second violin…) and metadata (a number of <gi scheme="MEI">date</gi>s within a text about the <gi scheme="MEI">creation</gi> of a work). Accordingly, many of the elements and models explained in this chapter are used to encode <ptr target="#metadata"/>. However, they should not be confused with the elements from the <ptr target="#lyricsperfdir"/> chapter, which deals with <hi rend="italic">performed</hi> text in MEI.</p>
+            <p>Most of the elements described here take inspiration from encoding formats that deal primarily with text, such as HTML and the Text Encoding Initiative (TEI). These elements are provided to encode relatively basic textual information. For deeper encoding of text, these Guidelines recommend consideration of other text-specific encoding formats with embedded MEI markup.</p>
+            <div xml:id="textstructures" type="div2">
+               <head>Text Structures</head>
+               <p>This chapter focuses on the text that accompanies the score, <abbr>i.e.</abbr>, paratext (prefatory material, back matter, appendices, etc.).</p>
+               <div xml:id="textDivisions" type="div3">
+                  <head>Organizing Text into Divisions</head>
+                  <p>Text can be organized in different parts, for example in chapters or sections. The <gi scheme="MEI">div</gi> element is used to encode such structural divisions.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="div"/>
+                     </specList>
+                  </p>
+                  <p>For example, printed scores, before the actual notation, can have text that can be organized in multiple sections (<abbr>e.g.</abbr>, a preface, a critical report, performance instructions, etc. for which see the following sections); each of these sections should be identified by a different <gi scheme="MEI">div</gi> element. Text might also occur in between music sections (see <ptr target="#sharedMdivContent"/>), for example in a collection of romantic piano works, a few pieces might be preceded or followed by poetry. Such text should be encoded with the <gi scheme="MEI">div</gi> element, as demonstrated in the following example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample358.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Textual divisions may have titles or other forms of introductory material, which are encoded with the <gi scheme="MEI">head</gi> element.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="head"/>
+                     </specList>
+                  </p>
+                  <p>The following example shows the encoding of a preface translated into three different languages, each with a different heading:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample359.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Having said that <gi scheme="MEI">div</gi> identifies any structural organization of text, it is often helpful to distinguish the typology of division. The <att>type</att> attribute can be used for this purpose.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="div" atts="type"/>
+                     </specList>
+                  </p>
+                  <p>
+                     <att>type</att> may contain any number of space-separated <hi rend="italic">tags</hi> describing the nature of the <gi scheme="MEI">div</gi> (or, in fact, any other element). The following example shows the use of <att>type</att> (in combination with <att>n</att>) to indicate three prefaces in English, German and Italian are columns on the same page.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample360.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="textFrontBack" type="div3">
+                  <head>Paratext</head>
+                  <p>This section introduces paratextual material, such as title pages, prefaces, indexes and other text that precedes or follows the actual score.</p>
+                  <div xml:id="textFront" type="div4">
+                     <head>Front Matter</head>
+                     <p>By ‘front matter’ these Guidelines mean distinct sections of a text (usually, but not necessarily, a printed one), prefixed to it by way of introduction or identification as a part of its production. Features such as title pages or prefaces are clear examples; a less definite case might be the prologue attached to a dramatic work. The front matter of an encoded text should not be confused with the MEI header described in chapter <ptr target="#headerstructure"/>, which provides metadata for the entire file.</p>
+                     <p>An encoder may choose simply to ignore the front matter in a text, if the original presentation of the work is of no interest. No specific tags are provided for the various kinds of subdivision which may appear within front matter: instead, generic <gi scheme="MEI">div</gi> (“division”) elements may be used, which should not be confused with <gi scheme="MEI">mdiv</gi> (“musical division”) elements. The following suggested values for the <att>type</att> attribute may be used to distinguish various kinds of division characteristic of front matter:</p>
+                     <list type="gloss">
+                        <label>'preface'</label>
+                        <item>A foreword or preface addressed to the reader in which the author or publisher explains the content, purpose, or origin of the text.</item>
+                        <label>'ack'</label>
+                        <item>A formal declaration of acknowledgement by the author in which persons and institutions are thanked for their part in the creation of a text.</item>
+                        <label>'dedication'</label>
+                        <item>A formal offering or dedication of a text to one or more persons or institutions by the author.</item>
+                        <label>'abstract'</label>
+                        <item>A summary of the content of a text as continuous prose.</item>
+                        <label>'contents'</label>
+                        <item>A table of contents, specifying the structure of a work and listing its constituents. The list element should be used to mark its structure.</item>
+                        <label>'frontispiece'</label>
+                        <item>A pictorial frontispiece, possibly including some text.</item>
+                     </list>
+                     <p>The following extended example demonstrates how various parts of the front matter of a text may be encoded. The front part begins with a title page, which is presented in section <ptr target="#textTitlePages"/>, below. This is followed by a dedication and a preface, each of which is encoded as a distinct div:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample368.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The front matter concludes with another <gi scheme="MEI">div</gi> element, shown in the next example, this time containing a table of contents, which contains a <gi scheme="MEI">list</gi> element (as described in chapter <ptr target="#textLists"/>). Note the use of the <gi scheme="MEI">ptr</gi> element to provide page-references: the implication here is that the target identifiers (song1, song2, etc.) will correspond with identifiers used for the <gi scheme="MEI">mdiv</gi> elements containing the individual songs. (For a description of the <gi scheme="MEI">ptr</gi> element, see chapter <ptr target="#linkFromMei"/>.)</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample369.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Alternatively, the pointers in the table of contents might link to the page breaks at which a song begins, assuming that these have been included in the markup:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample370.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+                  <div xml:id="textBack" type="div4">
+                     <head>Back Matter</head>
+                     <p>Conventions vary as to which elements are grouped as back matter and which as front. For example, some books place the table of contents at the front, and others at the back. For this reason, the content models of the <gi scheme="MEI">front</gi> and <gi scheme="MEI">back</gi> elements are identical.</p>
+                     <p>The following suggested values may be used for the <att>type</att> attribute on all division elements, in order to distinguish various kinds of divisions characteristic of back matter:</p>
+                     <list type="gloss">
+                        <label>'appendix'</label>
+                        <item>An ancillary self-contained section of a work, often providing additional but in some sense extra-canonical text.</item>
+                        <label>'glossary'</label>
+                        <item>A list of terms associated with definition texts (‘glosses’).</item>
+                        <label>'notes'</label>
+                        <item>A section in which textual notes are gathered together.</item>
+                        <label>'bibliography'</label>
+                        <item>A list of bibliographic citations.</item>
+                        <label>'index'</label>
+                        <item>Any form of index to the work.</item>
+                        <label>'colophon'</label>
+                        <item>A statement appearing at the end of a book describing the conditions of its physical production.</item>
+                     </list>
+                     <p>No additional elements are proposed for the encoding of back matter at present. Some characteristic examples follow; first, an index (for the case in which a printed index is of sufficient interest to merit transcription):</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample372.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Note that if the page breaks in the original source have also been explicitly encoded, and given identifiers, the references to them in the above index can more usefully be recorded as links. For example, assuming that the encoding of page 77 of the original source starts like this:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample373.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>then the last item above might be encoded more usefully in the following form:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample374.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+               </div>
+            </div>
+            <div xml:id="text" type="div2">
+               <head>Text in MEI</head>
+               <p>This chapter describes methods for encoding textual content with MEI. Textual information on scores has several different uses, although some text is closer to music notation than other kinds. For example, tempo marks, directives and lyrics are directly related to the functionality of the notated music and are, therefore, described in other chapters (see for example <ptr target="#lyricsDesc"/> and <ptr target="#sharedTextDirectives"/>).</p>
+               <p>Most of the elements described here take inspiration from encoding formats that deal primarily with text, such as HTML and the Text Encoding Initiative (TEI). These elements are provided to encode relatively basic textual information. For deeper encoding of text, these Guidelines recommend consideration of other text-specific encoding formats with embedded MEI markup.</p>
+               <div xml:id="sharedParagraphs" type="div3">
+                  <head>Paragraphs</head>
+                  <p>Paragraphs are fundamental to prose text and typically group one or more sentences that form a logical passage. Usually, it is typographically distinct; that is, it usually begins on a new line and the first letter of the content is often indented, enlarged, or both. This element has a similar meaning as the corresponding elements in Encoded Archival Description (EAD), Text Encoding Initiative (TEI), and HTML.</p>
+                  <p>A paragraph is encoded with the <gi scheme="MEI">p</gi> element:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="p"/>
+                     </specList>
+                  </p>
+                  <p>Prose text is used for several different purposes within a MEI document, therefore <gi scheme="MEI">p</gi> can occur in many situations. For example, it may be used within metadata elements (see <ptr target="#headerstructure"/>):</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample361.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Alternatively, paragraphs may be part of the document contents (and therefore encoded within <gi scheme="MEI">music</gi>), either as <ptr target="#textFrontBack"/> or within the music notation. In these cases, a paragraph will likely be contained by a <gi scheme="MEI">div</gi> or other elements containing prose (<abbr>e.g.</abbr>, <gi scheme="MEI">annot</gi>, <gi scheme="MEI">figDesc</gi>, etc.).</p>
+                  <p>The following example shows a paragraph in a preface section:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample362.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="sharedTextRendition" type="div3">
+                  <head>Text Rendition</head>
+                  <p>Sometimes, it is desirable to capture the typographical qualities of a word or phrase without assigning it a special meaning. For this purpose, MEI offers the <gi scheme="MEI">rend</gi> element, similar to TEI’s <hi rend="italic">hi</hi> element. Using CSS-like values, its <att>rend</att> attribute can be used to specify many typographic features, such as font style, font variants, and relative font size and weight. In addition, text decoration, direction, and enclosing ‘boxes’ may be captured. While <att>rend</att> is used to record relative font size and weight, absolute values for these qualities (measured in printer’s points) should be specified using the <att>fontsize</att> and <att>fontweight</att> attributes. In addition to commonly found typographical qualities, MEI provides the <att>altrend</att> attribute for the capture of additional, user-defined rendition information.</p>
+                  <p>The <gi scheme="MEI">rend</gi> element can accept <att>glyph.auth</att> and <att>glyph.uri</att> attributes, which provide encoders with the ability to specify an external authority for Unicode codepoints in the textual content. Only the text content that should be rendered using SMuFL code points should go inside the <gi scheme="MEI">rend</gi> element when using <att>glyph.auth</att> and <att>glyph.uri</att>.</p>
+                  <p>
+                     <figure>
+                        <head />
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample375.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>
+                     <specList>
+                        <specDesc key="rend"/>
+                        <specDesc key="att.textRendition" atts="rend altrend"/>
+                        <specDesc key="att.typography" atts="fontname fontsize fontstyle fontweight"/>
+                        <specDesc key="att.horizontalAlign" atts="halign"/>
+                        <specDesc key="att.verticalAlign" atts="valign"/>
+                     </specList>
+                  </p>
+               </div>
+               <div xml:id="figTableFigures" type="div3">
+                  <head>Figures</head>
+                  <p>The <gi scheme="MEI">fig</gi> element groups elements representing or containing graphic information such as an illustration or figure. This element is modelled on the figure element in the Text Encoding Initiative (TEI). The <gi scheme="MEI">fig</gi> element is used to contain images, captions, and textual descriptions of the pictures. The images themselves are specified using the <gi scheme="MEI">graphic</gi> element, whose <att>target</att> attribute provides the location of an image. For example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample252.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>The graphic element may occur multiple times within the markup of the figure in order to indicate the availability of different image formats or resolutions:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample253.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <div xml:id="figTableCaptionsDescriptions" type="div4">
+                     <head>Figure Captions and Descriptions</head>
+                     <p>The element <gi scheme="MEI">caption</gi> may be used to transcribe (or supply) a title or descriptive heading for the graphic itself, as in the following example:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample254.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The figure description (<gi scheme="MEI">figDesc</gi>) element usually contains a brief prose description of the appearance or content of a graphic figure, for use when documenting an image, perhaps without displaying it. This element is intended for use as an alternative to the content of its parent <gi scheme="MEI">fig</gi> element; for example, for display when the equipment in use cannot display graphic images. It may also be used for indexing or documentary purposes, in which case best practice suggests the use of controlled vocabulary terms.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample255.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Occasionally, a figure description may have a complex structure. In this case, one or more textual component elements (<gi scheme="MEI">p</gi> [paragraph], <gi scheme="MEI">table</gi>, <gi scheme="MEI">list</gi>, <gi scheme="MEI">quote</gi>, or <gi scheme="MEI">lg</gi> [linegroup]) may be used to model the internal structure of the description:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample256.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+                  <div xml:id="figTableImages" type="div4">
+                     <head>Images</head>
+                     <p>The <gi scheme="MEI">graphic</gi> element indicates the location of an inline graphic, illustration, or figure. As noted above, there exists a wide variety of different graphics formats, and the following list is in no way exhaustive. Moreover, inclusion of any format in this list should not be taken as indicating endorsement by the MEI of this format or any products associated with it. Some of the formats listed here are proprietary to a greater or lesser extent and cannot therefore be regarded as standards in any meaningful sense. They are, however, widely used by many different vendors. The following formats are widely used at the present time, and are likely to remain supported by more than one vendor’s software:</p>
+                     <list rend="bulleted">
+                        <item>BMP: Microsoft bitmap format</item>
+                        <item>CGM: Computer Graphics Metafile</item>
+                        <item>GIF: Graphics Interchange Format</item>
+                        <item>JPEG: Joint Photographic Expert Group</item>
+                        <item>PBM: Portable Bit Map</item>
+                        <item>PCX: IBM PC raster format</item>
+                        <item>PICT: Macintosh drawing format</item>
+                        <item>PNG: Portable Network Graphics format</item>
+                        <item>Photo-CD: Kodak Photo Compact Disk format</item>
+                        <item>QuickTime: Apple real-time image system</item>
+                        <item>SMIL: Synchronized Multimedia Integration Language format</item>
+                        <item>SVG: Scalable Vector Graphics format</item>
+                        <item>TIFF: Tagged Image File Format</item>
+                     </list>
+                     <p>Brief descriptions of all the above are given below. Where possible, current addresses or other contact information are shown for the originator of each format. Many formal standards, especially those promulgated by the ISO and many related national organizations (ANSI, DIN, BSI, and many more), are available from those national organizations. Addresses may be found in any standard organizational directory for the country in question.</p>
+                     <div xml:id="figTableVectorGraphicFormats" type="div5">
+                        <head>Vector Graphic Formats</head>
+                        <list type="gloss">
+                           <label>SVG (Scalable Vector Graphics format)</label>
+                           <item>SVG is a language for describing two-dimensional vector and mixed vector or raster graphics in XML. It is defined by the Scalable Vector Graphics (SVG) 1.0 Specification, W3C Recommendation, 04 September 2001, available at http://www.w3.org/TR/2001/REC-SVG-20010904/.</item>
+                           <label>PICT (Macintosh drawing format)</label>
+                           <item>This format is universally supported on Macintosh (tm) systems, and readable by a limited range of software for other systems. Documentation is available from Apple Computer, Cupertino, California USA.</item>
+                           <label>CGM (Computer Graphics Metafile)</label>
+                           <item>This vector graphics format is specified by an ISO standard, ISO 8632:1987, amended in 1990. It defines binary, character, and plain-text encodings; the non-binary forms are safer for blind interchange, especially over networks. Documentation is available from ISO and from its member national bodies, such as AFNOR, ANSI, BSI, DIN, JIS, etc.</item>
+                        </list>
+                     </div>
+                     <div xml:id="figTableRasterGraphicFormats" type="div5">
+                        <head>Raster Graphic Formats</head>
+                        <list type="gloss">
+                           <label>PNG (Portable Network Graphics format)</label>
+                           <item>PNG is a non-proprietary raster format currently widely available. It provides an extensible file format for the losslessly compressed storage of raster images. Indexed-color, grayscale, and true-color images are supported, plus an optional alpha channel. Sample depths range from 1 to 16 bits. It is defined by IETF RFC 2083, March 1997.</item>
+                           <label>TIFF (Tagged Image File Format)</label>
+                           <item>Currently the most widely supported raster image format, especially for black and white images, TIFF is also one of the few formats commonly supported on more than one operating system. The drawback to TIFF is that it actually is a wrapper for several formats, and some TIFF-supporting software does not support all variants. TIFF files may use LZW, CCITT Group 4, or PackBits compression methods, or may use no compression at all. Also, TIFF files may be monochrome, greyscale, or polychromatic. All such options should be specified in prose at the end of the encodingDesc section of the MEI header for any document including TIFF images. TIFF is owned by Aldus Corporation. Documentation on TIFF is available from the owner at Craigcook Castle, Craigcook Road, Edinburgh EH4 3UH, Scotland, or 411 First Avenue South, Seattle, Washington 98104 USA.</item>
+                           <label>GIF (Graphics Interchange Format)</label>
+                           <item>Raster images are widely available in this form, which was created by CompuServe Information Services, but has by now been implemented for many other systems as well. Documentation is copyright by, and is available from, CompuServe Incorporated, Graphics Technology Department, 5000 Arlington Center Boulevard, Columbus, Ohio 43220 USA.</item>
+                           <label>PBM (Portable Bit Map</label>
+                           <item>PBM files are easy to process, eschewing all compression in favor of transparency of file format. PBM files can, of course, be compressed by generic file-compression tools for storage and transfer. Public domain software exists which will convert many other formats to and from PBM. Documentation of PBM is copyright by Jeff Poskanzer, and is available widely on the Internet.</item>
+                           <label>PCX (IBM PC raster format)</label>
+                           <item>This format is used by most IBM PC paint programs, and supports both monochrome and polychromatic images. Documentation is available from ZSoft Corporation, Technical Support Department, ATTN: Technical Reference Manual, 450 Franklin Rd. Suite 100, Marietta, GA 30067 USA.</item>
+                           <label>BMP (Microsoft bitmap format)</label>
+                           <item>This format is the standard raster format for computer using Microsoft Windows (tm) or Presentation Manager (tm). Documentation is available from Microsoft Corporation.</item>
+                        </list>
+                     </div>
+                     <div xml:id="figTablePhotographicAndMotionVideoFormats" type="div5">
+                        <head>Photographic and Motion Video Formats</head>
+                        <list type="gloss">
+                           <label>JPEG (Joint Photographic Experts Group)</label>
+                           <item>This format is sponsored by CCITT and by ISO. It is ISO/IEC Draft International Standard 10918-1, and CCITT T.81. It handles monochrome and polychromatic images with a variety of compression techniques. JPEG per se, like CCITT Group IV, must be encapsulated before transmission; this can be done via TIFF, or via the JPEG File Interchange Format (JFIF), as commonly done for Internet delivery.</item>
+                           <label>Photo-CD (Kodak Photo Compact Disk format)</label>
+                           <item>This format was introduced by Kodak for rasterizing photographs and storing them on CD-ROMs (about one hundred 35mm file images fit on one disk), for display on televisions or CD-I systems. Information on Photo-CD is available from Kodak Limited, Research and Development, Headstone Drive, Harrow, Middlesex HA1 4TY, UK.</item>
+                        </list>
+                     </div>
+                  </div>
+               </div>
+               <div xml:id="textLists" type="div3">
+                  <head>Lists</head>
+                  <p>When a text contains lists, they can be encoded with the following elements:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="list"/>
+                        <specDesc key="head"/>
+                        <specDesc key="item"/>
+                     </specList>
+                  </p>
+                  <p>The <gi scheme="MEI">list</gi> element can identify any kind of list; the <att>form</att> attribute can be used to specify whether the list is ordered, unordered etc. Each item in the list is encoded with the <gi scheme="MEI">li</gi> element. The <att>n</att> can be used to record a label for a list item, as in the following example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample363.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Occasionally, lists have headers or titles, which can be encoded with <gi scheme="MEI">head</gi>:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample364.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="figTableTables" type="div3">
+                  <head>Tables</head>
+                  <p>The element <gi scheme="MEI">table</gi> contains text displayed in tabular form, <abbr>i.e.</abbr>, in rows and columns. A table is the least ‘graphic’ of the elements discussed in this chapter. Almost any text structure can be presented as a series of rows and columns: one might, for example, choose to show a glossary or other form of list in tabular form, without necessarily regarding it as a table. When tabular presentation is regarded as of less intrinsic importance, it is correspondingly simpler to encode descriptive or functional information about the contents of the table, for example to identify one cell as containing a name and another as containing a date, though the two methods may be combined.</p>
+                  <p>The <gi scheme="MEI">table</gi> element may appear both within other components (such as paragraphs), or between them, provided that the module defined in this chapter has been enabled. It is to a large extent arbitrary whether a table should be regarded as a series of rows or as a series of columns. For compatibility with currently available systems, however, these Guidelines require a row-by-row description of a table.</p>
+                  <p>While rows and columns are always encoded in top-to-bottom, left-to-right order, formatting properties such as those provided by CSS may be used to specify that they should be displayed differently.</p>
+                  <div xml:id="figTableTableRows" type="div4">
+                     <head>Rows</head>
+                     <p>The <gi scheme="MEI">tr</gi> (table row) element is a formatting element that contains one or more <gi scheme="MEI">td</gi> or <gi scheme="MEI">th</gi> elements (cells) in a <gi scheme="MEI">table</gi>. A cell is the intersection of a row and a column. The precise rendition of the table and its cells should be specified in a style steet. <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample257.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+                  <div xml:id="figTableTableCells" type="div4">
+                     <head>Cells</head>
+                     <p>The <gi scheme="MEI">td</gi> (table data) element designates a table cell that contains data as opposed to a cell that contains column or row heading information. The <att>colspan</att> and <att>rowspan</att> attributes provide tabular rendering information. They indicate that a particular cell or row of a table spans more than one row or column.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample258.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The <gi scheme="MEI">th</gi> (table header) element designates a table cell containing column or row heading information as opposed to one containing data. The <att>colspan</att> and <att>rowspan</att> attributes tabular display rendering information. They indicate that a particular cell or row of a table spans more than one row or column.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/figTable/figTable-sample259.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+               </div>
+               <div xml:id="textQuote" type="div3">
+                  <head>Quotation</head>
+                  <p>It is common, in many types of texts, to find quotations. A quotation is typically attributed to another text other than the one being encoded. Often, the quoted material is typographically distinct from the surrounding text; <abbr>i.e.</abbr>, surrounded by so-called ‘quote marks’ or rendered as a separate block of text. The <gi scheme="MEI">quote</gi> element is used to mark this function:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="quote"/>
+                     </specList>
+                  </p>
+                  <p>The following examples show the use of <gi scheme="MEI">quote</gi>.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample365.txt" parse="text"/></egXML>
+                     </figure>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample366.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="textPoetry" type="div3">
+                  <head>Poetry</head>
+                  <p>This <gi scheme="MEI">lg</gi> (line group) element is used generically to encode any section of text that is organized as a group of lines. Following the recommendations of the Text Encoding Initiative, it is recommended to use it, along with the following elements, for marking up poetry:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="lg"/>
+                        <specDesc key="head"/>
+                        <specDesc key="l"/>
+                     </specList>
+                  </p>
+                  <p>Because <gi scheme="MEI">lg</gi> groups verses, it can be used to encode additional stanzas not integrated into the music notation. In addition, it is common for a poem to include a title or a header, as is demonstrated by the following example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/text/text-sample367.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="sharedNames" type="div3">
+                  <head>Names</head>
+                  <p>The <gi scheme="MEI">name</gi> element may be used to mark up portions of a text that function as name.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="name"/>
+                     </specList>
+                  </p>
+                  <p>The <gi scheme="MEI">name</gi> element is intended for generic applications and may be used to identify any named entity, such as a person, item, application, place, etc. Sometimes, however, a more specific encoding is desired, identifying the type of entity by using dedicated elements. MEI offers an (optional) module for this, which provides such elements for various types of names.</p>
+               </div>
+               <div xml:id="dates" type="div3">
+                  <head>Dates</head>
+                  <p>The <gi scheme="MEI">date</gi> element may be used to mark up portions of a text that denote a date.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="date"/>
+                     </specList>
+                  </p>
+                  <p>The element <gi scheme="MEI">date</gi> contains a date in any format, including a date range. A date range may be expressed as textual content or, when intervening punctuation is present, as a combination of date sub-elements and text.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/namesDates/namesDates-sample294.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>To be more specific about the date, the attributes in the <ident type="class">att.datable</ident> and <ident type="class">att.calendared</ident> classes can be used:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="att.datable" atts="startdate enddate notbefore notafter isodate"/>
+                        <specDesc key="att.calendared" atts="calendar"/>
+                     </specList>
+                  </p>
+                  <p>In the following example, the ambiguous date text "5/3/05" is resolved using the <att>isodate</att> attribute:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/namesDates/namesDates-sample295.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="sharedNumbers" type="div3">
+                  <head>Numbers</head>
+                  <p>The <gi scheme="MEI">num</gi> element may be used to identify any numeric information in a text. The <att>unit</att> may be used to specify the unit of measurement.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="num"/>
+                        <specDesc key="att.measurement" atts="unit"/>
+                     </specList>
+                  </p>
+                  <p>This element is useful when it is necessary to provide specific information about numeric data, such as the unit of measurement or the kind of quantity described, or when it should be displayed in a special manner.</p>
+               </div>
+               <div xml:id="sharedAddresses" type="div3">
+                  <head>Addresses</head>
+                  <p>Addresses may be encoded using the <gi scheme="MEI">address</gi> element, which itself may hold an arbitrary number of <gi scheme="MEI">addrLine</gi> elements.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="address"/>
+                        <specDesc key="addrLine"/>
+                     </specList>
+                  </p>
+                  <p>It is important to note that the <gi scheme="MEI">address</gi> element does not hold a reference to the person or organization whose address is specified. This must be provided in a separate element, as in the following example: <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-sample010.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="sharedBibliographicCitations" type="div3">
+                  <head>Bibliographic Citations and References</head>
+                  <p>The following element is used in the encoding of bibliographic citations and references:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="bibl"/>
+                     </specList>
+                  </p>
+                  <p>The <gi scheme="MEI">bibl</gi> element may contain a mix of text and more specific elements, including the following:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="annot"/>
+                        <specDesc key="arranger"/>
+                        <specDesc key="author"/>
+                        <specDesc key="biblScope"/>
+                        <specDesc key="composer"/>
+                        <specDesc key="creation"/>
+                        <specDesc key="date"/>
+                        <specDesc key="distributor"/>
+                        <specDesc key="edition"/>
+                        <specDesc key="editor"/>
+                        <specDesc key="extent"/>
+                        <specDesc key="funder"/>
+                        <specDesc key="genre"/>
+                        <specDesc key="identifier"/>
+                        <specDesc key="imprint"/>
+                        <specDesc key="librettist"/>
+                        <specDesc key="lyricist"/>
+                        <specDesc key="physLoc"/>
+                        <specDesc key="publisher"/>
+                        <specDesc key="pubPlace"/>
+                        <specDesc key="recipient"/>
+                        <specDesc key="relatedItem"/>
+                        <specDesc key="repository"/>
+                        <specDesc key="respStmt"/>
+                        <specDesc key="series"/>
+                        <specDesc key="sponsor"/>
+                        <specDesc key="textLang"/>
+                        <specDesc key="title"/>
+                     </specList>
+                  </p>
+                  <p>These elements fall into the following categories: - identification of the bibliographic entity and those responsible for its intellectual content - publication and distribution data for the bibliographic entity - description of the physical characteristics of the item - annotation of the bibliographic citation and additional details regarding the item’s intellectual content</p>
+                  <p>The elements <gi scheme="MEI">title</gi>, <gi scheme="MEI">edition</gi>, <gi scheme="MEI">series</gi>, and <gi scheme="MEI">identifier</gi> fall into the first category as do the elements <gi scheme="MEI">arranger</gi>, <gi scheme="MEI">author</gi>, <gi scheme="MEI">composer</gi>, <gi scheme="MEI">librettist</gi>, <gi scheme="MEI">lyricist</gi>, <gi scheme="MEI">funder</gi>, <gi scheme="MEI">sponsor</gi>, and <gi scheme="MEI">respStmt</gi>. The respStmt element is provided for marking responsibility roles that cannot be recorded using more specific elements. The <gi scheme="MEI">biblScope</gi> element also carries information of an identifying nature.</p>
+                  <p>The <gi scheme="MEI">identifier</gi> for a given item may be an International Standard Book/Music Number, Library of Congress Control Number, a publisher’s or plate number, a personal identification number, an entry in a bibliography or catalog, etc.</p>
+                  <p>To classify the <gi scheme="MEI">title</gi> according to some convenient typology, the <att>type</att> attribute may be used. Sample values include: main (main title), subordinate (subtitle, title of part), abbreviated (abbreviated form of title), alternative (alternate title by which the work is also known), translated (translated form of title), uniform (collective title). The <att>type</att> attribute is provided for convenience in analysing titles and processing them according to their type; where such specialized processing is not necessary, there is no need for such analysis, and the entire title, including subtitles and any parallel titles, may be enclosed within a single <gi scheme="MEI">title</gi> element. Title parts may be encoded in <gi scheme="MEI">title</gi> sub-elements. The name of the list from which a controlled value is taken may be recorded using the <att>authority</att> attribute.</p>
+                  <p>Publication and distribution data may be captured using <gi scheme="MEI">pubPlace</gi>, <gi scheme="MEI">publisher</gi>, <gi scheme="MEI">distributor</gi>, and <gi scheme="MEI">date</gi> elements directly inside <gi scheme="MEI">bibl</gi> when the citation is unstructured. However, these elements should be grouped within <gi scheme="MEI">imprint</gi> whenever practical.</p>
+                  <p>The physical characteristics of the cited item may be described using the <gi scheme="MEI">extent</gi> element.</p>
+                  <p>Annotation of the bibliographic citation and the provision of other pertinent details are addressed by several elements. Commentary on the bibliographic item or citation is accommodated by the <gi scheme="MEI">annot</gi> and <gi scheme="MEI">creation</gi> elements. The <gi scheme="MEI">annot</gi> element is provided for generic comments, while <gi scheme="MEI">creation</gi> is intended to hold information about the context of the creation of the cited item. Terms by which the bibliographic item can be classified may be placed in <gi scheme="MEI">genre</gi>. For letters and other correspondence, <gi scheme="MEI">recipient</gi> captures the name of the person or organization to whom the item was addressed. The natural language(s) of the item may be recorded in one or more <gi scheme="MEI">textLang</gi> elements. Finally, a holding institution may be documented using the <gi scheme="MEI">repository</gi> element directly within <gi scheme="MEI">bibl</gi>, but <gi scheme="MEI">physLoc</gi> should be used whenever possible as a grouping mechanism for location and shelfmark information. To identify sub-units of the holding institution, <gi scheme="MEI">repository</gi> sub-elements may be used. The name of the list from which a controlled value for the agency name is taken may be recorded using the <att>authority</att> attribute.</p>
+                  <p>When supplied with a <att>target</att> attribute, <gi scheme="MEI">bibl</gi> may function as a hypertext reference to an external electronic resource. In addition, other related bibliographic items may be described or referenced using the <gi scheme="MEI">relatedItem</gi> element.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-sample012.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Please consult <ptr target="#sharedNames"/> and <ptr target="#dates"/> for more information about recording the names and dates frequently found in bibliographic citations.</p>
+                  <div xml:id="sharedRelatedItemDesc" type="div4">
+                     <head>Related Items</head>
+                     <p>In some situations it is necessary to provide references from one bibliographic item to another. For these situations, MEI offers the <gi scheme="MEI">relatedItem</gi> element. A <gi scheme="MEI">relatedItem</gi> may be used inside of <gi scheme="MEI">bibl</gi>, and may either point to a different entity using its <att>target</att> attribute, or may hold the related item as a child.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-sample013.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>In this example, the nested <gi scheme="MEI">relatedItem</gi> / <gi scheme="MEI">bibl</gi> provides information about the ‘container’ where the outer <gi scheme="MEI">bibl</gi> may be found. The kind of relation is expressed using the <att>rel</att> attribute. It describes the relationship of the child <gi scheme="MEI">bibl</gi> to the <gi scheme="MEI">relatedItem</gi>’s parent <gi scheme="MEI">bibl</gi>.</p>
+                     <p>
+                        <specList>
+                           <specDesc key="relatedItem" atts="rel"/>
+                        </specList>
+                     </p>
+                     <p>In these relations, the subject is always the relatedItem, and the object is always the parent of the relatedItem. Thus, a value of <att>rel</att>="preceding" indicates that the resource described within the relatedItem (or referenced by its <att>target</att> attribute) precedes the <gi scheme="MEI">bibl</gi> containing the <gi scheme="MEI">relatedItem</gi>. Following <abbr>MODS</abbr>, both values of <val>preceding</val> and <val>succeeding</val> indicate a temporal order.</p>
+                     <p>It is important not to confuse <gi scheme="MEI">relatedItem</gi> with the concepts of <ptr target="#FRBR"/>; see <ptr target="#headerRelatedItemVsFRBR"/>.</p>
+                  </div>
+               </div>
+               <div xml:id="sharedAnnotations" type="div3">
+                  <head>Annotations</head>
+                  <p>Annotations are one of the most versatile features of MEI. They are provided using the <gi scheme="MEI">annot</gi> element.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="annot"/>
+                     </specList>
+                  </p>
+                  <p>This element may be contained by a wide range of other elements and may contain a large number of other elements. While this offers great flexibility in addressing the wide variety of textual features that might occur within an annotation, it may lead to markup that cannot be effectively processed mechanistically.</p>
+                  <p>In all cases, <gi scheme="MEI">annot</gi> provides a comment upon a feature of the encoding, but never contains textual transcription. Depending on its context, an annotation will deal with either its parent element, or, more usually, with the element(s) specified in its <att>plist</att> attribute. This attribute uses URI references to link to one or more other elements using their <att>xml:id</att> attribute values, as in the following example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-sample011.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+            </div>
+         </div>
+      </body>
+   </text>
+</TEI>

@@ -1,0 +1,237 @@
+# This workflow will perform the following steps for pushes the the develop branch
+# * build the Schema and the Guidelines with Ant
+# * publish the Schema to music-encoding/schema under ./dev
+# * publish the Guidelines to music-encoding/guidelines under ./dev
+# Alternatively it will peform the following steps for tags on stable
+# * build the Schema and the Guidelines with Ant
+# * publish the Schema to music-encoding/schema under ./[TAG-NAME]
+# * publish the Guidelines to music-encoding/guidelines under ./[TAG-NAME]
+
+name: Deploy Schema and Guidelines
+
+on:
+  push:
+    branches: 
+      - 'develop'
+      - 'release/**'
+    tags:
+      - 'v[1-9][0-9]?.[0-9]'
+
+env:
+  REPO_OWNER: music-encoding
+  IS_DEV_OR_TAG: false # will be set dynamically in steps below
+  
+  # schema
+  SCHEMA_REPO: ${{ github.repository_owner }}/schema
+  SCHEMA_BRANCH: main
+
+  # guidelines
+  GUIDELINES_REPO: ${{ github.repository_owner }}/guidelines
+  GUIDELINES_BRANCH: main
+
+  # temporary directories
+  SCHEMA_DIR: schema-dir
+  GUIDELINES_DIR: guidelines-dir
+  TARGET_DIR: '' # will be set dynamically in steps below
+
+
+jobs:
+  build:
+    name: Build and deploy Schema and Guidelines
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Echo properties
+        run: |
+          echo "github.repository: ${{ github.repository }}"
+          echo "github.repository_owner: ${{ github.repository_owner }}"
+          echo "github.ref: ${{ github.ref }}"
+          echo "github.ref_type: ${{ github.ref_type }}"
+          echo "github.ref_name: ${{ github.ref_name }}"
+          echo "github.sha: ${{ github.sha }}"
+          echo "github.event_name: ${{ github.event_name }}"
+          echo "github.event.base_ref: ${{ github.event.base_ref }}"
+
+      ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+        with:
+          # Whether to checkout submodules: `true` to checkout submodules or `recursive` to
+          # recursively checkout submodules.
+          #
+          # When the `ssh-key` input is not provided, SSH URLs beginning with
+          # `git@github.com:` are converted to HTTPS.
+          #
+          # Default: false
+          submodules: recursive
+
+      - name: Build schema and guidelines with Docker image
+        run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ghcr.io/music-encoding/docker-mei:latest ant -noinput -buildfile music-encoding/build.xml -Ddocker=true -Dgithub.sha=${{ github.sha }} -Dgithub.event_name=${{ github.event_name }} -Dgithub.ref=${{ github.ref }}
+
+      ### UPLOADING THE ARTIFACTS ###
+      - name: Upload PDF
+        uses: actions/upload-artifact@v3
+        with:
+          name: pdf
+          path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_*.pdf
+
+      - name: Upload Prince XML log
+        uses: actions/upload-artifact@v3
+        with:
+          name: prince_log
+          path: ${{ github.workspace }}/build/prince.log
+
+      ### Block further steps if not running on develop or tag
+      - name: Block steps if not on develop or tag
+        if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+        run: echo "IS_DEV_OR_TAG=true" >> $GITHUB_ENV
+            
+      ### VALIDATE IS_DEV_OR_TAG VARIABLE
+      - name: Validate IS_DEV_OR_TAG
+        run: echo "IS_DEV_OR_TAG=$IS_DEV_OR_TAG"
+
+      ### SET TARGET_DIR environment variable for dev version
+      - name: Set TARGET_DIR for dev
+        if: github.repository_owner == env.REPO_OWNER && github.ref == 'refs/heads/develop'
+        run: echo "TARGET_DIR=dev" >> $GITHUB_ENV
+
+      ### SET TARGET_DIR environment variable for tagged release
+      - name: Set TARGET_DIR for tagged release
+        if: github.repository_owner == env.REPO_OWNER  && startsWith(github.ref, 'refs/tags/v')
+        run: echo "TARGET_DIR=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      ### VALIDATE TARGET NAME
+      - name: Validate TARGET_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: echo "TARGET_DIR=$TARGET_DIR"
+
+      ### PUBLISHING THE SCHEMA ###
+      - name: Checkout SCHEMA_REPO into SCHEMA_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        uses: actions/checkout@v3
+        with:
+          # repository to check out
+          repository: ${{ env.SCHEMA_REPO }}
+          # Deploy key as secret for accessing <owner>/<SCHEMA_REPO>;
+          # cf. explanation in https://github.com/rism-ch/verovio/pull/1751
+          ssh-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY_SCHEMA }}
+          # ref (branch, tag or SHA) to check out
+          ref: ${{ env.SCHEMA_BRANCH }}
+          # relative path under $GITHUB_WORKSPACE to place the repository
+          path: ${{ env.SCHEMA_DIR }}
+
+      - name: Validate SCHEMA_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: echo "SCHEMA_DIR=$SCHEMA_DIR/$TARGET_DIR"
+
+      - name: Copy built schema to SCHEMA_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: |
+          rm -rf $SCHEMA_DIR/$TARGET_DIR
+          cp -r dist/schemata/ $SCHEMA_DIR/
+          mv $SCHEMA_DIR/schemata $SCHEMA_DIR/$TARGET_DIR
+          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
+
+      - name: Check git status before commit
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: |
+          git config --get remote.origin.url
+          git status
+
+      - name: Configure git
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: |
+          echo "Configuring git..."
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Commit files
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: |
+          echo "Running git commit..."
+          git add .
+          git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
+
+      - name: Push changes to SCHEMA
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.SCHEMA_DIR }}
+        run: git push origin HEAD:$SCHEMA_BRANCH
+
+      ### PUBLISHING THE GUIDELINES ###
+      - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        uses: actions/checkout@v3
+        with:
+          # repository to check out
+          repository: ${{ env.GUIDELINES_REPO }}
+          # Deploy key as secret for accessing <owner>/<GUIDELINES_REPO>;
+          # cf. explanation in https://github.com/rism-ch/verovio/pull/1751
+          ssh-key: ${{ secrets.GH_ACTIONS_DEPLOY_KEY_GUIDELINES }}
+          # ref (branch, tag or SHA) to check out
+          ref: ${{ env.GUIDELINES_BRANCH }}
+          # relative path under $GITHUB_WORKSPACE to place the repository
+          path: ${{ env.GUIDELINES_DIR }}
+
+      - name: Validate GUIDELINES_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: echo "GUIDELINES_DIR=$GUIDELINES_DIR/$TARGET_DIR"
+
+      - name: Copy built web guidelines to GUIDELINES_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: |
+          rm -rf $GUIDELINES_DIR/$TARGET_DIR
+          cp -r dist/guidelines/web $GUIDELINES_DIR/
+          mv $GUIDELINES_DIR/web $GUIDELINES_DIR/$TARGET_DIR
+
+      - name: Copy built PDF guidelines to GUIDELINES_DIR, if release is being created
+        if: github.repository_owner == env.REPO_OWNER && startsWith(github.ref, 'refs/tags/v')
+        run: find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/$TARGET_DIR/ \;
+
+      - name: Check git status before commit
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          git config --get remote.origin.url
+          git status
+
+      - name: Configure git
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          echo "Configuring git..."
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+
+      - name: Commit files
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: |
+          echo "Running git commit..."
+          git add .
+          git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
+
+      - name: Push changes to GUIDELINES
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        working-directory: ${{ env.GUIDELINES_DIR }}
+        run: git push origin HEAD:$GUIDELINES_BRANCH
+
+      # Create a release, when a tag is pushed
+      # could be remodelled to automatically create the tag, too
+      # but then the version would have to be determined programatically
+      - name: Create release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # ratchet:ncipollo/release-action@v1.13.0
+        with:
+          allowUpdates: false
+          artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf,${{ github.workspace }}/dist/schemata"
+          artifactErrorsFailBuild: true
+          commit: ${{ github.sha }}
+          draft: true
+          generateReleaseNotes: true
+          name: "MEI ${{ github.ref_name }}"
+          prerelease: false
+          replacesArtifacts: true
+          tag: "" # ref_name will be used if it is a tag
