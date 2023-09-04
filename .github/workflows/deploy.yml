@@ -19,7 +19,8 @@ on:
 
 env:
   REPO_OWNER: music-encoding
-
+  IS_DEV_OR_TAG: false # will be set dynamically in steps below
+  
   # schema
   SCHEMA_REPO: ${{ github.repository_owner }}/schema
   SCHEMA_BRANCH: main
@@ -32,6 +33,7 @@ env:
   SCHEMA_DIR: schema-dir
   GUIDELINES_DIR: guidelines-dir
   TARGET_DIR: '' # will be set dynamically in steps below
+
 
 jobs:
   build:
@@ -79,7 +81,14 @@ jobs:
           name: prince_log
           path: ${{ github.workspace }}/build/prince.log
 
-      ### The following steps will only be executed if ref is not develop branch or release tag ###
+      ### Block further steps if not running on develop or tag
+      - name: Block steps if not on develop or tag
+        if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+        run: echo "IS_DEV_OR_TAG=true" >> $GITHUB_ENV
+            
+      ### VALIDATE IS_DEV_OR_TAG VARIABLE
+      - name: Validate IS_DEV_OR_TAG
+        run: echo "IS_DEV_OR_TAG=$IS_DEV_OR_TAG"
 
       ### SET TARGET_DIR environment variable for dev version
       - name: Set TARGET_DIR for dev
@@ -93,12 +102,12 @@ jobs:
 
       ### VALIDATE TARGET NAME
       - name: Validate TARGET_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         run: echo "TARGET_DIR=$TARGET_DIR"
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         uses: actions/checkout@v3
         with:
           # repository to check out
@@ -112,11 +121,11 @@ jobs:
           path: ${{ env.SCHEMA_DIR }}
 
       - name: Validate SCHEMA_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         run: echo "SCHEMA_DIR=$SCHEMA_DIR/$TARGET_DIR"
 
       - name: Copy built schema to SCHEMA_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         run: |
           rm -rf $SCHEMA_DIR/$TARGET_DIR
           cp -r dist/schemata/ $SCHEMA_DIR/
@@ -124,14 +133,14 @@ jobs:
           cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
 
       - name: Check git status before commit
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Configuring git..."
@@ -139,7 +148,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: |
           echo "Running git commit..."
@@ -147,13 +156,13 @@ jobs:
           git commit -m "Auto-commit of schema build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to SCHEMA
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.SCHEMA_DIR }}
         run: git push origin HEAD:$SCHEMA_BRANCH
 
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         uses: actions/checkout@v3
         with:
           # repository to check out
@@ -167,11 +176,11 @@ jobs:
           path: ${{ env.GUIDELINES_DIR }}
 
       - name: Validate GUIDELINES_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         run: echo "GUIDELINES_DIR=$GUIDELINES_DIR/$TARGET_DIR"
 
       - name: Copy built web guidelines to GUIDELINES_DIR
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         run: |
           rm -rf $GUIDELINES_DIR/$TARGET_DIR
           cp -r dist/guidelines/web $GUIDELINES_DIR/
@@ -182,14 +191,14 @@ jobs:
         run: find ${{ github.workspace }}/dist/guidelines/pdf -name 'MEI_Guidelines_*.pdf' -exec cp {} $GUIDELINES_DIR/$TARGET_DIR/ \;
 
       - name: Check git status before commit
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           git config --get remote.origin.url
           git status
 
       - name: Configure git
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Configuring git..."
@@ -197,7 +206,7 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
 
       - name: Commit files
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: |
           echo "Running git commit..."
@@ -205,7 +214,7 @@ jobs:
           git commit -m "Auto-commit of guidelines build for ${{ github.repository }}@${{ github.sha }}"
 
       - name: Push changes to GUIDELINES
-        if: github.repository_owner == env.REPO_OWNER && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v'))
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.GUIDELINES_DIR }}
         run: git push origin HEAD:$GUIDELINES_BRANCH
 
