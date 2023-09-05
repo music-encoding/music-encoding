@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2018 by the Music Encoding Initiative (MEI).
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://opensource.org/licenses/ECL-2.0.
+  at https://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -16,10 +17,10 @@
   
   CONTACT: info@music-encoding.org
 -->
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron">
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../source/validation/mei-customizations.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
   <teiHeader>
     <fileDesc>
       <titleStmt>
@@ -31,7 +32,10 @@
         </respStmt>
       </titleStmt>
       <publicationStmt>
-        <p/>
+        <publisher>Music Encoding Initiative (MEI) Board</publisher>
+        <availability>
+          <licence target="https://opensource.org/license/ECL-2.0/">Licensed under the Educational Community License version 2.0</licence>
+        </availability>
       </publicationStmt>
       <sourceDesc>
         <p/>
@@ -49,12 +53,10 @@
         start="mei meiHead meiCorpus music">
 
         <!-- Declare MEI and XLink namespaces for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
+        <constraintSpec ident="set_ns" scheme="schematron" mode="add">
           <constraint>
-            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
-              uri="http://www.music-encoding.org/ns/mei"/>
-            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="xlink"
-              uri="http://www.w3.org/1999/xlink"/>
+            <sch:ns prefix="mei" uri="http://www.music-encoding.org/ns/mei"/>
+            <sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
           </constraint>
         </constraintSpec>
 
@@ -92,8 +94,7 @@
         <moduleRef key="MEI.visual"/>
 
         <!-- Include SVG -->
-        <moduleRef url="https://www.tei-c.org/release/xml/tei/custom/schema/relaxng/svg11.rng"
-          prefix="svg_">
+        <moduleRef url="../source/svg11.rng" prefix="svg_">
           <content>
             <rng:define name="mei_model.graphicLike" combine="choice">
               <rng:ref name="svg_svg"/>
@@ -101,9 +102,84 @@
           </content>
         </moduleRef>
 
-        <!-- Disable CMN-specific model classes in the shared module -->
-        <classSpec ident="model.sectionPart.cmn" module="MEI.shared" type="model" mode="delete"/>
-        <classSpec ident="model.layerPart.cmn" module="MEI.shared" type="model" mode="delete"/>
+        <classSpec ident="att.meiVersion" module="MEI.shared" type="atts" mode="change">
+          <attList>
+            <attDef ident="meiversion" usage="rec" mode="change">
+              <defaultVal>5.0+Mensural</defaultVal>
+              <valList type="closed" mode="change">
+                <valItem ident="5.0+anyStart" mode="delete"/>
+                <valItem ident="5.0+basic" mode="delete"/>
+                <valItem ident="5.0+CMN" mode="delete"/>
+                <valItem ident="5.0+Neumes" mode="delete"/>
+            </valList>
+            </attDef>
+          </attList>
+        </classSpec>
+
+        <!-- Change the availability of dots -->
+        <!-- Remove them as children of <note> -->
+        <elementSpec ident="dot" module="MEI.shared" mode="change">
+          <desc>Dot of augmentation or division.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.dot.log"/>
+            <memberOf key="att.dot.vis"/>
+            <memberOf key="att.dot.ges"/>
+            <memberOf key="att.dot.anl"/>
+            <memberOf key="model.noteModifierLike" mode="delete"/>
+            <memberOf key="model.eventLike.mensural"/>
+          </classes>
+          <content>
+            <rng:empty/>
+          </content>
+          <remarks>
+            <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
+              >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific display
+              info, such as size or color, needs to be recorded for the dot. This element may also be used
+              for dots of division in the mensural repertoire.</p>
+          </remarks>
+        </elementSpec>
+        <!-- Remove them as children of <rest> -->
+        <elementSpec ident="rest" module="MEI.shared" mode="replace">
+          <desc>A non-sounding event found in the source being transcribed.</desc>
+          <classes>
+            <memberOf key="att.common"/>
+            <memberOf key="att.facsimile"/>
+            <memberOf key="att.rest.log"/>
+            <memberOf key="att.rest.vis"/>
+            <memberOf key="att.rest.ges"/>
+            <memberOf key="att.rest.anl"/>
+            <memberOf key="model.eventLike"/>
+          </classes>
+          <content>
+            <rng:zeroOrMore>
+              <rng:choice>
+                <!--<rng:ref name="dot"/>-->
+                <rng:ref name="model.appLike"/>
+                <rng:ref name="model.editLike"/>
+                <rng:ref name="model.transcriptionLike"/>
+              </rng:choice>
+            </rng:zeroOrMore>
+          </content>
+          <constraintSpec ident="Check_restline" scheme="schematron">
+            <constraint>
+              <sch:rule context="mei:rest[@line]">
+                <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
+                <sch:assert
+                  test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
+                  >The value of @line must be less than or equal to the number of lines on the
+                  staff.</sch:assert>
+              </sch:rule>
+            </constraint>
+          </constraintSpec>
+          <remarks>
+            <p>See (Read, p. 96-102). Do not confuse this element with the <gi scheme="MEI">space</gi>
+              element, which is used as an aid for visual alignment.</p>
+          </remarks>
+        </elementSpec>
+        <!-- Remove them as attributes of <note> and <rest> -->
+        <classSpec ident="att.augmentDots" module="MEI.shared" type="atts" mode="delete"/>
 
       </schemaSpec>
     </body>

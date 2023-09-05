@@ -1,54 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.fingering">
   <moduleSpec ident="MEI.fingering">
-    <desc>Fingering component declarations.</desc>
+    <desc xml:lang="en">Fingering component declarations.</desc>
   </moduleSpec>
   <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
-    <desc>Logical domain attributes.</desc>
+    <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.controlEvent"/>
       <memberOf key="att.duration.additive"/>
       <memberOf key="att.startEndId"/>
-      <memberOf key="att.timestamp2.logical"/>
+      <memberOf key="att.timestamp2.log"/>
     </classes>
   </classSpec>
   <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
-    <desc>Logical domain attributes.</desc>
+    <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.controlEvent"/>
       <memberOf key="att.duration.additive"/>
       <memberOf key="att.startEndId"/>
-      <memberOf key="att.timestamp2.logical"/>
+      <memberOf key="att.timestamp2.log"/>
     </classes>
     <attList>
       <attDef ident="form" usage="opt">
         <valList type="closed">
           <valItem ident="alter">
-            <desc>alternation of fingers.</desc>
+            <desc xml:lang="en">alternation of fingers.</desc>
           </valItem>
           <valItem ident="combi">
-            <desc>combination of fingers.</desc>
+            <desc xml:lang="en">combination of fingers.</desc>
           </valItem>
           <valItem ident="subst">
-            <desc>substitution of fingers.</desc>
+            <desc xml:lang="en">substitution of fingers.</desc>
           </valItem>
         </valList>
       </attDef>
     </attList>
   </classSpec>
   <classSpec ident="model.fingeringLike" module="MEI.fingering" type="model">
-    <desc>Groups elements that capture performance instructions regarding the use of the fingers of
+    <desc xml:lang="en">Groups elements that capture performance instructions regarding the use of the fingers of
       the hand (or a subset of them).</desc>
     <classes>
       <memberOf key="model.controlEventLike"/>
     </classes>
   </classSpec>
   <elementSpec ident="fing" module="MEI.fingering">
-    <desc>finger – An individual finger in a fingering indication.</desc>
+    <gloss versionDate="2023-06-16" xml:lang="en">finger</gloss>
+    <desc xml:lang="en">An individual finger in a fingering indication.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -68,7 +87,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="fing_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="fing_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:fing[not(ancestor::mei:fingGrp)]">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -76,7 +95,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="stack_exclusion" scheme="isoschematron">
+    <constraintSpec ident="stack_exclusion" scheme="schematron">
       <!-- Exclusion implemented using Schematron -->
       <constraint>
         <sch:rule context="mei:fing">
@@ -87,7 +106,8 @@
     </constraintSpec>
   </elementSpec>
   <elementSpec ident="fingGrp" module="MEI.fingering">
-    <desc>(finger group)– A group of individual fingers in a fingering indication.</desc>
+    <gloss versionDate="2023-06-16" xml:lang="en">finger group</gloss>
+    <desc xml:lang="en">A group of individual fingers in a fingering indication.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -106,7 +126,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="require_fingeringLike_children" scheme="isoschematron">
+    <constraintSpec ident="require_fingeringLike_children" scheme="schematron">
       <constraint>
         <sch:rule context="mei:fingGrp">
           <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or fingGrp
@@ -114,7 +134,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="isoschematron">
+    <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="schematron">
       <constraint>
         <sch:pattern>
           <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
