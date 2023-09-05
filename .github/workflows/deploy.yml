@@ -142,10 +142,6 @@ jobs:
           mv $SCHEMA_DIR/schemata $SCHEMA_DIR/$TARGET_DIR
           cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
 
-      - name: Zip files
-        if: github.repository_owner == env.REPO_OWNER && startsWith(github.ref, 'refs/tags/v')
-        run: zip -r -X -j dist/MEI_Schemata_${{ github.ref_name }}.zip $SCHEMA_DIR/$TARGET_DIR
-
       - name: Check git status before commit
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
         working-directory: ${{ env.SCHEMA_DIR }}
@@ -246,7 +242,7 @@ jobs:
         uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # ratchet:ncipollo/release-action@v1.13.0
         with:
           allowUpdates: false
-          artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf,${{ github.workspace }}/dist/MEI_Schemata_${{ github.ref_name }}.zip"
+          artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf
           artifactErrorsFailBuild: true
           commit: ${{ github.sha }}
           draft: true
