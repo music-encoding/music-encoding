@@ -97,15 +97,17 @@ jobs:
         if: github.repository_owner == env.REPO_OWNER && github.ref == 'refs/heads/develop'
         run: echo "TARGET_DIR=dev" >> $GITHUB_ENV
 
-      ### SET TARGET_DIR environment variable for tagged release
-      - name: Set TARGET_DIR for tagged release
+      ### SET TAG_VERSION environment variable for tagged release
+      - name: Set TAG_VERSION for tagged release
         if: github.repository_owner == env.REPO_OWNER  && startsWith(github.ref, 'refs/tags/v')
-        run: echo "TARGET_DIR=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: echo "TAG_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
 
-      ### VALIDATE TARGET NAME
+      ### VALIDATE TARGET NAME & TAG VERSION
       - name: Validate TARGET_DIR
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
-        run: echo "TARGET_DIR=$TARGET_DIR"
+        run: | 
+          echo "TARGET_DIR=$TARGET_DIR"
+          echo "TAG_VERSION=$TAG_VERSION"
 
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
@@ -121,6 +123,12 @@ jobs:
           ref: ${{ env.SCHEMA_BRANCH }}
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.SCHEMA_DIR }}
+
+      - name: Create correct TARGET_DIR for schema on release (e.g., 5.0)
+        if: github.repository_owner == env.REPO_OWNER && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo ${TAG_VERSION:1:3}
+          echo "TARGET_DIR=${TAG_VERSION:1:3}" >> $GITHUB_ENV
 
       - name: Validate SCHEMA_DIR
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
@@ -176,6 +184,12 @@ jobs:
           ref: ${{ env.GUIDELINES_BRANCH }}
           # relative path under $GITHUB_WORKSPACE to place the repository
           path: ${{ env.GUIDELINES_DIR }}
+
+      - name: Create correct TARGET_DIR for guidelines on release (e.g., v5)
+        if: github.repository_owner == env.REPO_OWNER && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo ${TAG_VERSION:0:2}
+          echo "TARGET_DIR=${TAG_VERSION:0:2}" >> $GITHUB_ENV
 
       - name: Validate GUIDELINES_DIR
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
