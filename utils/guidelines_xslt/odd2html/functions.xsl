@@ -107,7 +107,7 @@
         
         <xsl:variable name="overlay.content" as="xs:string?">
             <xsl:choose>
-                <xsl:when test="tokenize($git.head,'/')[last()] = ('stable','main','master')"></xsl:when>
+                <xsl:when test="tokenize($git.head,'/')[last()] = ('stable','main','master, 'v5.0')"></xsl:when>
                 <xsl:when test="tokenize($git.head,'/')[last()] = 'develop'">DEVELOPMENT VERSION</xsl:when>
                 <xsl:otherwise><xsl:value-of select="upper-case(tokenize($git.head,'/')[last()]) || ' BRANCH'"/></xsl:otherwise>
             </xsl:choose>
