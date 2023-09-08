@@ -59,4 +59,11 @@
         </sch:rule>
     </sch:pattern>
     
+    <!-- CHECK IF A CLASS REFERENCED BY classes/memberOf IS AVAILABLE -->
+    <sch:pattern id="check_memberOf_key_available">
+        <sch:let name="classnames.deleted" value="//tei:classSpec[@mode = 'delete']/@ident"/>
+        <sch:rule context="tei:classes/tei:memberOf">
+            <sch:report role="warning" test="@key = $classnames.deleted">The referenced class "<sch:value-of select="@key"/>" has been deleted from you customization.</sch:report>
+        </sch:rule>
+    </sch:pattern>
 </sch:schema>
