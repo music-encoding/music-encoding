@@ -28,7 +28,7 @@
     
     <!-- CHECK IF MODEL CLASSES ARE AVAILABLE AND IN CORRECT MODULE -->
     <sch:pattern id="check_model_classSpecs">
-        <sch:rule context="tei:classSpec[@type = 'model']">
+        <sch:rule context="tei:classSpec[@type = 'model'][not(@mode = 'add')]">
             <sch:let name="ident" value="@ident"/>
             <sch:let name="module" value="@module"/>
             <sch:let name="exists" value="$ident = $mei.source//tei:classSpec[@type = 'model']/@ident"/>
