@@ -61,8 +61,11 @@
     
     <!-- CHECK IF A CLASS REFERENCED BY classes/memberOf IS AVAILABLE -->
     <sch:pattern id="check_memberOf_key_available">
+        <sch:let name="classenames.source" value="$mei.source//tei:classSpec/@ident"/>
+        <sch:let name="classnames.customization" value="//tei:classSpec/@ident[@mode = 'add']"/>
         <sch:let name="classnames.deleted" value="//tei:classSpec[@mode = 'delete']/@ident"/>
         <sch:rule context="tei:classes/tei:memberOf">
+            <sch:assert test="@key = ($classenames.source, $classnames.customization)">The referenced class "<sch:value-of select="@key"/>" does neither exist in your source, nor in your customization.</sch:assert>
             <sch:report role="warning" test="@key = $classnames.deleted">The referenced class "<sch:value-of select="@key"/>" has been deleted from you customization.</sch:report>
         </sch:rule>
     </sch:pattern>
