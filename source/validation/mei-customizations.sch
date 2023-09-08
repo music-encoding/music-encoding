@@ -17,7 +17,7 @@
     
     <!-- CHECK IF ATTRIBUTE CLASSES ARE AVAILABLE AND IN CORRECT MODULE -->
     <sch:pattern id="check_att_classSpecs">
-        <sch:rule context="tei:classSpec[@type = 'atts']">
+        <sch:rule context="tei:classSpec[@type = 'atts'][not(@mode = 'add')]">
             <sch:let name="ident" value="@ident"/>
             <sch:let name="module" value="@module"/>
             <sch:let name="exists" value="$ident = $mei.source//tei:classSpec[@type = 'atts']/@ident"/>
