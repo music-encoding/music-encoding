@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -63,6 +81,7 @@
       <memberOf key="att.color"/>
       <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.typography"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.xy"/>
@@ -98,18 +117,6 @@
           <rng:ref name="data.COLOR"/>
         </datatype>
       </attDef>
-      <attDef ident="line.form" usage="opt">
-        <desc xml:lang="en">Visual form of the line.</desc>
-        <datatype>
-          <rng:ref name="data.LINEFORM"/>
-        </datatype>
-      </attDef>
-      <attDef ident="line.width" usage="opt">
-        <desc xml:lang="en">Width of the line.</desc>
-        <datatype>
-          <rng:ref name="data.LINEWIDTH"/>
-        </datatype>
-      </attDef>
     </attList>
   </classSpec>
   <classSpec ident="att.artic.vis" module="MEI.visual" type="atts">
@@ -119,7 +126,7 @@
       <memberOf key="att.color"/>
       <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
-       <memberOf key="att.placementOnStaff"/>       
+      <memberOf key="att.placementOnStaff"/>
       <memberOf key="att.placementRelEvent"/>
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.staffLoc.pitched"/>
@@ -265,12 +272,12 @@
       attributes.</desc>
     <classes>
       <memberOf key="att.color"/>
+      <memberOf key="att.curvature"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2"/>
       <memberOf key="att.xy"/>
       <memberOf key="att.xy2"/>
-      <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
     </classes>
   </classSpec>
   <classSpec ident="att.bracketSpan.vis" module="MEI.visual" type="atts">
@@ -402,12 +409,28 @@
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.curvatureDirection" module="MEI.visual" type="atts">
+    <desc xml:lang="en">Attributes describing the direction of curvature.</desc>
+    <attList>
+      <attDef ident="curve" usage="opt">
+        <desc xml:lang="en">Records direction of curvature.</desc>
+        <valList type="closed">
+          <valItem ident="a">
+            <desc xml:lang="en">Anti-clockwise curvature.</desc>
+          </valItem>
+          <valItem ident="c">
+            <desc xml:lang="en">Clockwise curvature.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.curve.vis" module="MEI.visual" type="atts">
     <desc xml:lang="en">Visual domain attributes.</desc>
     <classes>
       <memberOf key="att.color"/>
       <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2"/>
       <memberOf key="att.xy"/>
@@ -616,7 +639,7 @@
         <datatype>
           <rng:data type="nonNegativeInteger"/>
         </datatype>
-        <constraintSpec ident="check_beams.floating" scheme="isoschematron">
+        <constraintSpec ident="check_beams.floating" scheme="schematron">
           <constraint>
             <sch:rule context="mei:fTrem[@beams and @beams.float]">
               <sch:assert test="@beams.float &lt;= @beams">The number of floating beams must be less
@@ -652,6 +675,17 @@
     <classes>
       <memberOf key="att.color"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.guitarGrid.vis" module="MEI.visual" type="atts">
+    <desc xml:lang="en">Visual domain attributes</desc>
+    <attList>
+      <attDef ident="grid.show" usage="opt">
+        <desc xml:lang="en">Determines whether to display guitar chord grids.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.grpSym.vis" module="MEI.visual" type="atts">
     <desc xml:lang="en">Visual domain attributes.</desc>
@@ -812,10 +846,10 @@
       <memberOf key="att.visibility"/>
     </classes>
     <attList>
-      <attDef ident="sig.showchange" usage="opt">
-        <desc xml:lang="en">Determines whether cautionary accidentals should be displayed at a key change.</desc>
+      <attDef ident="cancelaccid" usage="opt">
+        <desc xml:lang="en">Determines where cautionary accidentals should be displayed at a key change.</desc>
         <datatype>
-          <rng:ref name="data.BOOLEAN"/>
+          <rng:ref name="data.CANCELACCID"/>
         </datatype>
       </attDef>
     </attList>
@@ -824,14 +858,14 @@
     <desc xml:lang="en">Used by staffDef and scoreDef to provide default values for attributes in the visual
       domain related to key signatures.</desc>
     <attList>
-      <attDef ident="keysig.show" usage="opt">
-        <desc xml:lang="en">Indicates whether the key signature should be displayed.</desc>
+      <attDef ident="keysig.cancelaccid" usage="opt">
+        <desc xml:lang="en">Determines where cautionary accidentals should be displayed at a key change.</desc>
         <datatype>
-          <rng:ref name="data.BOOLEAN"/>
+          <rng:ref name="data.CANCELACCID"/>
         </datatype>
       </attDef>
-      <attDef ident="keysig.showchange" usage="opt">
-        <desc xml:lang="en">Determines whether cautionary accidentals should be displayed at a key change.</desc>
+      <attDef ident="keysig.visible" usage="opt">
+        <desc xml:lang="en">Determines whether the key signature is to be displayed.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
         </datatype>
@@ -943,6 +977,7 @@
     <classes>
       <memberOf key="att.altSym"/>
       <memberOf key="att.color"/>
+      <memberOf key="att.curvatureDirection"/>
       <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
       <memberOf key="att.staffLoc"/>
@@ -952,17 +987,6 @@
       <memberOf key="att.xy"/>
     </classes>
     <attList>
-      <attDef ident="curve" usage="opt">
-        <desc xml:lang="en">Records direction of curvature.</desc>
-        <valList type="closed">
-          <valItem ident="a">
-            <desc xml:lang="en">Anti-clockwise curvature.</desc>
-          </valItem>
-          <valItem ident="c">
-            <desc xml:lang="en">Clockwise curvature.</desc>
-          </valItem>
-        </valList>
-      </attDef>
       <attDef ident="looped" usage="opt">
         <desc xml:lang="en">Indicates whether curve is closed.</desc>
         <datatype>
@@ -980,12 +1004,12 @@
       beats.</desc>
     <classes>
       <memberOf key="att.color"/>
+      <memberOf key="att.curvature"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2"/>
       <memberOf key="att.xy"/>
       <memberOf key="att.xy2"/>
-      <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
     </classes>
   </classSpec>
   <classSpec ident="att.lyrics.vis" module="MEI.visual" type="atts">
@@ -1120,6 +1144,7 @@
       <memberOf key="att.enclosingChars"/>
       <memberOf key="att.extSym"/>
       <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
     </classes>
     <attList>
       <attDef ident="form" usage="opt">
@@ -1143,6 +1168,12 @@
       <attDef ident="meter.showchange" usage="opt">
         <desc xml:lang="en">Determines whether the old meter signature should be displayed when the meter
           signature changes.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="meter.visible" usage="opt">
+        <desc xml:lang="en">Determines whether the meter signature is to be displayed.</desc>
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
         </datatype>
@@ -1185,7 +1216,6 @@
       <memberOf key="att.staffLoc.pitched"/>
       <memberOf key="att.typography"/>
       <memberOf key="att.visualOffset"/>
-      <memberOf key="att.visibility"/>
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
@@ -1228,6 +1258,7 @@
       <memberOf key="att.staffLoc"/>
       <memberOf key="att.staffLoc.pitched"/>
       <memberOf key="att.typography"/>
+      <memberOf key="att.visibility"/>
       <memberOf key="att.width"/>
     </classes>
     <attList>
@@ -1490,6 +1521,19 @@
       <memberOf key="att.xy"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.repeatMark.vis" module="MEI.visual" type="atts">
+    <desc xml:lang="en">Visual domain attributes.</desc>
+    <classes>
+      <memberOf key="att.extender"/>
+      <memberOf key="att.extSym"/>
+      <memberOf key="att.placementRelStaff"/>
+      <memberOf key="att.verticalGroup"/>
+      <memberOf key="att.visualOffset"/>
+      <memberOf key="att.visualOffset2.ho"/>
+      <memberOf key="att.visualOffset2.to"/>
+      <memberOf key="att.xy"/>
+    </classes>
+  </classSpec>
   <classSpec ident="att.rest.vis" module="MEI.visual" type="atts">
     <desc xml:lang="en">Visual domain attributes.</desc>
     <classes>
@@ -1604,12 +1648,12 @@
       normal position) of the entire rendered slur/phrase mark.</desc>
     <classes>
       <memberOf key="att.color"/>
+      <memberOf key="att.curvature"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2"/>
       <memberOf key="att.xy"/>
       <memberOf key="att.xy2"/>
-      <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
     </classes>
   </classSpec>
   <classSpec ident="att.sp.vis" module="MEI.visual" type="atts">
@@ -1649,6 +1693,7 @@
       <memberOf key="att.barring"/>
       <memberOf key="att.cleffing.vis"/>
       <memberOf key="att.distances"/>
+      <memberOf key="att.guitarGrid.vis"/>
       <memberOf key="att.keySigDefault.vis"/>
       <memberOf key="att.lyricStyle"/>
       <memberOf key="att.meterSigDefault.vis"/>
@@ -1663,12 +1708,6 @@
       <memberOf key="att.staffDef.vis.mensural"/>
     </classes>
     <attList>
-      <attDef ident="grid.show" usage="opt">
-        <desc xml:lang="en">Determines whether to display guitar chord grids.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
       <attDef ident="layerscheme" usage="opt">
         <desc xml:lang="en">Indicates the number of layers and their stem directions.</desc>
         <datatype>
@@ -1681,7 +1720,7 @@
           <rng:ref name="data.COLOR"/>
         </datatype>
         <remarks xml:lang="en">
-          <p>The value is structured; that is, it should contain a single color value or have 
+          <p>The value is structured; that is, it should contain a single color value or have
             the same number of space-separated values as the number of lines indicated by the
             lines attribute. The first value then applies to the lowest line of the staff.</p>
           <p>All values from data.COLOR are allowed.</p>
@@ -1811,7 +1850,7 @@
     </classes>
     <!-- Is this constraint true in all cases? -->
     <!-- 
-      <constraintSpec ident="check_sylAncestor" scheme="isoschematron">
+      <constraintSpec ident="check_sylAncestor" scheme="schematron">
         <constraint>
           <sch:rule context="mei:syl[@place]">
             <sch:assert test="not(ancestor::mei:verse or ancestor::mei:refrain)">When syl is a
@@ -1857,12 +1896,12 @@
       beats.</desc>
     <classes>
       <memberOf key="att.color"/>
+      <memberOf key="att.curvature"/>
+      <memberOf key="att.lineRend.base"/>
       <memberOf key="att.visualOffset"/>
       <memberOf key="att.visualOffset2"/>
       <memberOf key="att.xy"/>
       <memberOf key="att.xy2"/>
-      <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
     </classes>
   </classSpec>
   <classSpec ident="att.trill.vis" module="MEI.visual" type="atts">

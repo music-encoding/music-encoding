@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -9,7 +27,7 @@
   </moduleSpec>
   <classSpec ident="att.alignment" module="MEI.performance" type="atts">
     <desc xml:lang="en">Temporal alignment attributes.</desc>
-    <constraintSpec ident="check_whenTarget" scheme="isoschematron">
+    <constraintSpec ident="check_whenTarget" scheme="schematron">
       <constraint>
         <sch:rule context="@when">
           <sch:assert role="warning" test="not(normalize-space(.) eq '')">@when attribute should
@@ -47,7 +65,7 @@
         <rng:ref name="clip"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="avFile_child_of_clip" scheme="isoschematron">
+    <constraintSpec ident="avFile_child_of_clip" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clip/mei:avFile">
           <sch:assert test="count(mei:*) = 0">An avFile child of clip cannot have
@@ -78,7 +96,7 @@
         <rng:ref name="when"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+    <constraintSpec ident="betype_required_when_begin_or_end" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clip[@begin or @end]">
           <sch:assert role="warning" test="@betype or ancestor::mei:*[@betype]">When @begin or @end
@@ -129,7 +147,7 @@
         <rng:ref name="clip"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="betype_required_when_begin_or_end" scheme="isoschematron">
+    <constraintSpec ident="betype_required_when_begin_or_end" scheme="schematron">
       <constraint>
         <sch:rule context="mei:recording[@begin or @end]">
           <sch:assert role="warning" test="@betype">When @begin or @end is used, @betype should be
@@ -151,9 +169,11 @@
       <memberOf key="att.dataPointing"/>
     </classes>
     <content>
-      <rng:empty/>
+      <rng:zeroOrMore>
+         <rng:ref name="extData"/>
+      </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_when_interval" scheme="isoschematron">
+    <constraintSpec ident="check_when_interval" scheme="schematron">
       <constraint>
         <sch:rule context="mei:when[@interval]">
           <sch:assert test="@since">@since must be present when @interval is used.</sch:assert>
@@ -172,7 +192,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="check_when_absolute" scheme="isoschematron">
+    <constraintSpec ident="check_when_absolute" scheme="schematron">
       <constraint>
         <sch:rule context="mei:when[@absolute]">
           <sch:assert role="warning" test="@abstype or ancestor::mei:*[@betype]">When @absolute is
@@ -222,7 +242,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_sinceTarget" scheme="isoschematron">
+        <constraintSpec ident="check_sinceTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@since">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@since attribute

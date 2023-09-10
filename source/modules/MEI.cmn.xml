@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -245,7 +263,7 @@
         <datatype>
           <rng:ref name="data.BEAMPLACE"/>
         </datatype>
-        <constraintSpec ident="check_beam_place" scheme="isoschematron">
+        <constraintSpec ident="check_beam_place" scheme="schematron">
           <constraint>
             <sch:rule
               context="mei:beam[@place eq 'mixed' and not(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])]">
@@ -376,20 +394,8 @@
       <memberOf key="att.augmentDots"/>
       <memberOf key="att.duration.log"/>
       <memberOf key="att.numbered"/>
+      <memberOf key="att.tremForm"/>
     </classes>
-    <attList>
-      <attDef ident="form" usage="opt">
-        <desc xml:lang="en">Indicates whether the tremolo is measured or unmeasured.</desc>
-        <valList type="closed">
-          <valItem ident="meas">
-            <desc xml:lang="en">Measured tremolo.</desc>
-          </valItem>
-          <valItem ident="unmeas">
-            <desc xml:lang="en">Unmeasured tremolo.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.chord.anl.cmn" module="MEI.cmn" type="atts">
     <desc xml:lang="en">Analytical domain attributes in the CMN repertoire.</desc>
@@ -465,20 +471,8 @@
       <memberOf key="att.event"/>
       <memberOf key="att.augmentDots"/>
       <memberOf key="att.duration.log"/>
+      <memberOf key="att.tremForm"/>
     </classes>
-    <attList>
-      <attDef ident="form" usage="opt">
-        <desc xml:lang="en">Describes the style of the tremolo.</desc>
-        <valList type="closed">
-          <valItem ident="meas">
-            <desc xml:lang="en">Measured tremolo.</desc>
-          </valItem>
-          <valItem ident="unmeas">
-            <desc xml:lang="en">Unmeasured tremolo.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.glissPresent" module="MEI.cmn" type="atts">
     <desc xml:lang="en">Attributes that indicate whether an event participates in a glissando.</desc>
@@ -965,7 +959,7 @@
     <desc xml:lang="en">Visual domain attributes.</desc>
     <classes>
       <memberOf key="att.curvature"/>
-      <memberOf key="att.curveRend"/>
+      <memberOf key="att.lineRend.base"/>
     </classes>
   </classSpec>
   <classSpec ident="att.pianoPedals" module="MEI.cmn" type="atts">
@@ -1038,19 +1032,12 @@
     <desc xml:lang="en">Visual domain attributes.</desc>
     <classes>
       <memberOf key="att.beaming.vis"/>
+      <memberOf key="att.guitarGrid.vis"/>
       <memberOf key="att.pianoPedals"/>
       <memberOf key="att.rehearsal"/>
       <memberOf key="att.slurRend"/>
       <memberOf key="att.tieRend"/>
     </classes>
-    <attList>
-      <attDef ident="grid.show" usage="opt">
-        <desc xml:lang="en">Determines whether to display guitar chord grids.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.slur.log" module="MEI.cmn" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
@@ -1137,6 +1124,22 @@
         <datatype>
           <rng:ref name="data.LINEWIDTH"/>
         </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.tremForm" module="MEI.cmn" type="atts">
+    <desc>Attributes describing the form of a tremolo.</desc>
+    <attList>
+      <attDef ident="form" usage="opt">
+        <desc xml:lang="en">Describes the style of the tremolo.</desc>
+        <valList type="closed">
+          <valItem ident="meas">
+            <desc xml:lang="en">Measured tremolo.</desc>
+          </valItem>
+          <valItem ident="unmeas">
+            <desc xml:lang="en">Unmeasured tremolo.</desc>
+          </valItem>
+        </valList>
       </attDef>
     </attList>
   </classSpec>
@@ -1274,7 +1277,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="attacca_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="attacca_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:attacca[not(ancestor::mei:syllable)]">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1315,7 +1318,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="When_not_copyof_beam_content" scheme="isoschematron">
+    <constraintSpec ident="When_not_copyof_beam_content" scheme="schematron">
       <constraint>
         <sch:rule context="mei:beam[not(@copyof or @sameas)]">
           <sch:assert
@@ -1349,7 +1352,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="beamspan_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="beamspan_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:beamSpan">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1406,7 +1409,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="bend_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="bend_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:bend">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1436,8 +1439,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="bracketSpan_start-_and_end-type_attributes_required"
-      scheme="isoschematron">
+    <constraintSpec ident="bracketSpan_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:bracketSpan">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1472,7 +1474,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="breath_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="breath_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:breath">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1528,7 +1530,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="fermata_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="fermata_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:fermata">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1605,7 +1607,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="gliss_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="gliss_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:gliss">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1628,6 +1630,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="graceGrp" module="MEI.cmn">
+    <gloss versionDate="2023-06-16" xml:lang="en">grace group</gloss>
     <desc xml:lang="en">A container for a sequence of grace notes.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1649,7 +1652,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="When_not_copyof_graceGrp_content" scheme="isoschematron">
+    <constraintSpec ident="When_not_copyof_graceGrp_content" scheme="schematron">
       <constraint>
         <sch:rule context="mei:graceGrp[not(@copyof)]">
           <sch:assert
@@ -1659,7 +1662,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="When_graced" scheme="isoschematron">
+    <constraintSpec ident="When_graced" scheme="schematron">
       <constraint>
         <sch:rule context="mei:graceGrp[@grace]">
           <sch:assert test="not(descendant::mei:*[@grace])">The grace attribute is not allowed on
@@ -1683,7 +1686,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="hairpin_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="hairpin_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:hairpin">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1737,7 +1740,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="harpPedal_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="harpPedal_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:harpPedal">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1768,7 +1771,7 @@
         <rng:ref name="curve"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="lv_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="lv_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:lv">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -1776,7 +1779,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="lv_containing_curve" scheme="isoschematron">
+    <constraintSpec ident="lv_containing_curve" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:lv[mei:curve[@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or @startvo or              @endvo or @x or @y or @x2 or @y2]]">
@@ -1868,7 +1871,7 @@
         <rng:ref name="meterSig"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_meterSigGrpContent" scheme="isoschematron">
+    <constraintSpec ident="check_meterSigGrpContent" scheme="schematron">
       <constraint>
         <sch:rule context="mei:meterSigGrp[not(@copyof)]">
           <sch:assert test="count(mei:meterSig) &gt; 1">meterSigGrp must have at least 2 child
@@ -2046,7 +2049,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="octave_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="octave_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:octave">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -2131,7 +2134,7 @@
         </rng:interleave>
       </rng:choice>
     </content>
-    <constraintSpec ident="Check_ossia" scheme="isoschematron">
+    <constraintSpec ident="Check_ossia" scheme="schematron">
       <constraint>
         <sch:pattern>
           <sch:rule context="mei:measure/mei:ossia">
@@ -2202,7 +2205,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="pedal_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="pedal_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:pedal">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -2245,6 +2248,54 @@
         model.textPhraseLike.limited.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="repeatMark" module="MEI.cmn">
+    <gloss versionDate="2022-05-18" xml:lang="en">repetition mark</gloss>
+    <desc xml:lang="en">
+      An instruction expressed as a combination of text and symbols – segno and coda – typically above, 
+      below, or between staves, but not on the staff.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.repeatMark.log"/>
+      <memberOf key="att.repeatMark.vis"/>
+      <memberOf key="att.repeatMark.ges"/>
+      <memberOf key="att.repeatMark.anl"/>
+      <memberOf key="model.controlEventLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.graphicPrimitiveLike"/>
+          <rng:ref name="model.editLike"/>
+          <rng:ref name="model.transcriptionLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <constraintSpec ident="repeatMark_start-type_attributes_required" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:repeatMark">
+          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="repeatMark_with_glyph_has_to_be_empty" scheme="isoschematron">
+      <constraint>
+        <sch:rule context="mei:repeatMark[@glyph.num or @glyph.name]">
+          <sch:assert test="not(element()) and not(text())">When @glyph.name or @glyph.num is present, repeatMark must not have content.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks xml:lang="en">
+      <p>When only <att>func</att> is provided to describe the function of the repeat mark (<abbr>i.e.</abbr>, without glyph information and no textual content), then a renderer
+        can rely on it to display the appropriate symbol. When textual content is provided, it will take precedence over the symbol implied by the function. Generic repeat marks where
+        no function can be determined, then generic <gi scheme="MEI">dir</gi> elements should be used.
+      </p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="slur" module="MEI.cmn">
     <desc xml:lang="en">Indication of 1) a "unified melodic idea" or 2) performance technique.</desc>
     <classes>
@@ -2261,7 +2312,7 @@
         <rng:ref name="curve"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="slur_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="slur_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:slur">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -2271,7 +2322,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="slur_containing_curve" scheme="isoschematron">
+    <constraintSpec ident="slur_containing_curve" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:slur[mei:curve[@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or @startvo or @endvo or @x or @y or @x2 or @y2]]">
@@ -2320,7 +2371,7 @@
         <rng:ref name="curve"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="tie_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="tie_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:tie">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -2330,7 +2381,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="tie_containing_curve" scheme="isoschematron">
+    <constraintSpec ident="tie_containing_curve" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:tie[mei:curve[@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or @startho or @endho or @to or @startto or @endto or @vo or @startvo or @endvo or @x or @y or @x2 or @y2]]">
@@ -2403,7 +2454,7 @@
       <rng:empty/>
     </content>
     <constraintSpec ident="tupletSpan_start-_and_end-type_attributes_required"
-      scheme="isoschematron">
+      scheme="schematron">
       <constraint>
         <sch:rule context="mei:tupletSpan">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the

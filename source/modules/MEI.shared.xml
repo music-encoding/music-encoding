@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -249,7 +267,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_attaccaTarget" scheme="isoschematron">
+        <constraintSpec ident="check_attaccaTarget" scheme="schematron">
           <constraint>
             <sch:rule context="mei:attacca/@target">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@target attribute
@@ -288,7 +306,7 @@
         <datatype>
           <rng:ref name="data.AUGMENTDOT"/>
         </datatype>
-        <constraintSpec ident="dots_attribute_requires_dur" scheme="isoschematron">
+        <constraintSpec ident="dots_attribute_requires_dur" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@dots]">
               <sch:assert test="@dur">An element with a dots attribute must also have a dur
@@ -364,7 +382,7 @@
         <datatype>
           <rng:ref name="data.BARMETHOD"/>
         </datatype>
-        <constraintSpec ident="check_barmethod" scheme="isoschematron">
+        <constraintSpec ident="check_barmethod" scheme="schematron">
           <constraint>
             <sch:rule context="@bar.method[parent::*[matches(local-name(), '(staffDef|measure)')]]">
               <sch:assert test="not(. eq 'mensur')">"mensur" not allowed in this
@@ -486,7 +504,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_classURI" scheme="isoschematron">
+        <constraintSpec ident="check_classURI" scheme="schematron">
           <constraint>
             <sch:rule context="@class">
               <sch:assert
@@ -520,7 +538,7 @@
   <classSpec ident="att.cleffing.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Used by staffDef and scoreDef to provide default values for attributes in the logical
       domain related to clefs.</desc>
-    <constraintSpec ident="clef_shape_requires_clef_line" scheme="isoschematron">
+    <constraintSpec ident="clef_shape_requires_clef_line" scheme="schematron">
       <constraint>
         <sch:rule context="mei:*[matches(@clef.shape, '[FCG]')]">
           <sch:assert test="@clef.line">An 'F', 'C', or 'G' clef requires that its position be
@@ -566,7 +584,7 @@
   </classSpec>
   <classSpec ident="att.clefShape" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that record the shape of a clef.</desc>
-    <constraintSpec ident="shape_requires_line" scheme="isoschematron">
+    <constraintSpec ident="shape_requires_line" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clef[matches(@shape, '[FCG]')]">
           <sch:assert test="@line">When @shape is present, @line must also be
@@ -621,6 +639,16 @@
       <memberOf key="att.typed"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.contemporary" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Attributes specifying whether a feature is contemporary or historical.</desc>
+    <attList>
+      <attDef ident="contemporary" usage="opt">
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.controlEvent" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes shared by events which rely on other events for their existence. For example, a
       slur/phrase marking must be drawn between or over a group of notes. The slur is therefore a
@@ -639,19 +667,10 @@
   <classSpec ident="att.coordinated" module="MEI.shared" type="atts">
     <desc xml:lang="en">This attribute class records the position of a feature within a two-dimensional coordinate
       system.</desc>
+    <classes>
+      <memberOf key="att.coordinated.ul"/>
+    </classes>
     <attList>
-      <attDef ident="ulx" usage="opt">
-        <desc xml:lang="en">Indicates the upper-left corner x coordinate.</desc>
-        <datatype>
-          <rng:data type="nonNegativeInteger"/>
-        </datatype>
-      </attDef>
-      <attDef ident="uly" usage="opt">
-        <desc xml:lang="en">Indicates the upper-left corner y coordinate.</desc>
-        <datatype>
-          <rng:data type="nonNegativeInteger"/>
-        </datatype>
-      </attDef>
       <attDef ident="lrx" usage="opt">
         <desc xml:lang="en">Indicates the lower-right corner x coordinate.</desc>
         <datatype>
@@ -677,6 +696,24 @@
         <remarks xml:lang="en">
           <p>This attribute is based on the TEI attribute of the same name.</p>
         </remarks>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.coordinated.ul" module="MEI.shared" type="atts">
+    <desc xml:lang="en">This attribute class records the upper left position of a feature within a two-dimensional coordinate
+      system.</desc>
+    <attList>
+      <attDef ident="ulx" usage="opt">
+        <desc xml:lang="en">Indicates the upper-left corner x coordinate.</desc>
+        <datatype>
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+      </attDef>
+      <attDef ident="uly" usage="opt">
+        <desc xml:lang="en">Indicates the upper-left corner y coordinate.</desc>
+        <datatype>
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
       </attDef>
     </attList>
   </classSpec>
@@ -738,23 +775,6 @@
       </attDef>
     </attList>
   </classSpec>
-  <classSpec ident="att.curveRend" module="MEI.shared" type="atts">
-    <desc xml:lang="en">Attributes that record the visual rendition of curves.</desc>
-    <attList>
-      <attDef ident="lform" usage="opt">
-        <desc xml:lang="en">Describes the line style of a curve.</desc>
-        <datatype>
-          <rng:ref name="data.LINEFORM"/>
-        </datatype>
-      </attDef>
-      <attDef ident="lwidth" usage="opt">
-        <desc xml:lang="en">Width of a curved line.</desc>
-        <datatype>
-          <rng:ref name="data.LINEWIDTH"/>
-        </datatype>
-      </attDef>
-    </attList>
-  </classSpec>
   <classSpec ident="att.custos.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -768,7 +788,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_custosTarget" scheme="isoschematron">
+        <constraintSpec ident="check_custosTarget" scheme="schematron">
           <constraint>
             <sch:rule context="mei:custos/@target">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@target attribute
@@ -826,7 +846,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_dataTarget" scheme="isoschematron">
+        <constraintSpec ident="check_dataTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@data">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@data attribute should
@@ -858,7 +878,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_declsTarget" scheme="isoschematron">
+        <constraintSpec ident="check_declsTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@decls">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@decls attribute
@@ -1136,7 +1156,7 @@
         <datatype>
           <rng:data type="string"/>
         </datatype>
-        <constraintSpec ident="check_extent" scheme="isoschematron">
+        <constraintSpec ident="check_extent" scheme="schematron">
           <constraint>
             <sch:rule context="@extent[matches(normalize-space(.), '^\d+(\.\d+)?$')]">
               <sch:assert role="warning" test="../@unit">The @unit attribute is
@@ -1176,6 +1196,17 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.formework" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Attributes that record the function (i.e., placement) of forme work elements.</desc>
+    <attList>
+      <attDef ident="func" usage="opt">
+        <desc xml:lang="en">Records the function (i.e., placement) of a page header or footer.</desc>
+        <datatype>
+          <rng:ref name="data.PGFUNC"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.grpSym.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -1200,7 +1231,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_handTarget" scheme="isoschematron">
+        <constraintSpec ident="check_handTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@hand">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@hand attribute should
@@ -1276,7 +1307,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_joinTarget" scheme="isoschematron">
+        <constraintSpec ident="check_joinTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@join">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@join attribute should
@@ -1298,6 +1329,17 @@
       <memberOf key="att.pitched"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.keyMode" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Attributes for describing key mode.</desc>
+    <attList>
+      <attDef ident="mode" usage="opt">
+        <desc xml:lang="en">Indicates major, minor, or other tonality.</desc>
+        <datatype>
+          <rng:ref name="data.MODE"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.keySig.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <attList>
@@ -1318,7 +1360,7 @@
     <desc xml:lang="en">Used by staffDef and scoreDef to provide default values for attributes in the logical
       domain that are related to key signatures.</desc>
     <attList>
-      <attDef ident="key.sig" usage="opt">
+      <attDef ident="keysig" usage="opt">
         <desc xml:lang="en">Written key signature.</desc>
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.KEYFIFTHS"/>
@@ -1396,7 +1438,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_defTarget_layer" scheme="isoschematron">
+        <constraintSpec ident="check_defTarget_layer" scheme="schematron">
           <constraint>
             <sch:rule context="mei:layer/@def">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute should
@@ -1482,18 +1524,23 @@
   <classSpec ident="att.lineRend.base" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that record the basic visual rendition of lines.</desc>
     <attList>
-      <attDef ident="lform" usage="opt">
-        <gloss versionDate="2022-10-18" xml:lang="en">line form</gloss>
-        <desc xml:lang="en">Describes the line style of a line.</desc>
-        <datatype>
-          <rng:ref name="data.LINEFORM"/>
-        </datatype>
-      </attDef>
       <!-- @llength not necessary:
             @llength implies we know the direction of the vector which we
             can't know without establishing an end point, which in turn makes
             @llength redundant. -->
-      <attDef ident="lsegs" usage="opt">
+        <attDef ident="lform" usage="opt">
+          <desc xml:lang="en">Describes the style of a line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEFORM"/>
+          </datatype>
+        </attDef>
+        <attDef ident="lwidth" usage="opt">
+          <desc xml:lang="en">Width of a line.</desc>
+          <datatype>
+            <rng:ref name="data.LINEWIDTH"/>
+          </datatype>
+        </attDef>
+        <attDef ident="lsegs" usage="opt">
         <desc xml:lang="en">Describes the number of segments into which a dashed or dotted line may be divided, or
           the number of "peaks" of a wavy line; a pair of space-separated values (minimum and
           maximum, respectively) provides a range between which a rendering system-supplied value
@@ -1504,7 +1551,7 @@
             <rng:param name="minInclusive">2</rng:param>
           </rng:data>
         </datatype>
-        <constraintSpec ident="check_lsegs" scheme="isoschematron">
+        <constraintSpec ident="check_lsegs" scheme="schematron">
           <constraint>
             <sch:rule context="@lsegs">
               <sch:assert test="matches(../@lform, '(dashed|dotted|wavy)')">@lform attribute
@@ -1512,12 +1559,6 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
-      </attDef>
-      <attDef ident="lwidth" usage="opt">
-        <desc xml:lang="en">Width of a line.</desc>
-        <datatype>
-          <rng:ref name="data.LINEWIDTH"/>
-        </datatype>
       </attDef>
       <!-- Possible addition:
           <attDef ident="lwaveheight" usage="opt">
@@ -1850,10 +1891,25 @@
     <attList>
       <attDef ident="meiversion" usage="opt">
         <desc xml:lang="en">Specifies a generic MEI version label.</desc>
-        <defaultVal>5.0.0-dev</defaultVal>
+        <defaultVal>5.0</defaultVal>
         <valList type="closed">
-          <valItem ident="5.0.0-dev">
-            <desc xml:lang="en">Development version of MEI 5.0.0</desc>
+          <valItem ident="5.0">
+            <desc xml:lang="en">MEI 5.0</desc>
+          </valItem>
+          <valItem ident="5.0+anyStart">
+            <desc>MEI 5.0+anyStart</desc>
+          </valItem>
+          <valItem ident="5.0+basic">
+              <desc>MEI 5.0+basic</desc>
+          </valItem>
+          <valItem ident="5.0+CMN">
+            <desc>MEI 5.0+CMN</desc>
+          </valItem>
+          <valItem ident="5.0+Mensural">
+            <desc>MEI 5.0+Mensural</desc>
+          </valItem>
+          <valItem ident="5.0+Neumes">
+            <desc>MEI 5.0+Neumes</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1865,6 +1921,14 @@
       <memberOf key="att.duration.ratio"/>
       <memberOf key="att.mensural.shared"/>
     </classes>
+    <attList>
+      <attDef ident="level" usage="opt">
+        <desc>Level of duration at which the proportion given by the @num and @numbase ratio applies.</desc>
+        <datatype>
+          <rng:ref name="data.DURATION.mensural"/>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.meterConformance" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that provide information about a structure’s conformance to the prevailing
@@ -2026,7 +2090,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_nymrefTarget" scheme="isoschematron">
+        <constraintSpec ident="check_nymrefTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@nymref">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@nymref attribute
@@ -2120,7 +2184,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_head.altsymTarget" scheme="isoschematron">
+        <constraintSpec ident="check_head.altsymTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@head.altsym">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@head.altsym attribute
@@ -2139,7 +2203,7 @@
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
-        <constraintSpec ident="check_head.auth" scheme="isoschematron">
+        <constraintSpec ident="check_head.auth" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[lower-case(@head.auth) eq 'smufl']">
               <sch:assert test="matches(@head.shape, '^#x') or matches(@head.shape, '^U+')">When
@@ -2191,7 +2255,7 @@
         <datatype>
           <rng:ref name="data.HEADSHAPE"/>
         </datatype>
-        <constraintSpec ident="check_headshape_num" scheme="isoschematron">
+        <constraintSpec ident="check_headshape_num" scheme="schematron">
           <constraint>
             <sch:rule
               context="mei:*[(matches(@head.shape, '#x') or matches(@head.shape, 'U+')) and (lower-case(@head.auth) eq 'smufl')]">
@@ -2343,7 +2407,7 @@
         <datatype>
           <rng:ref name="data.MEASUREBEAT"/>
         </datatype>
-        <constraintSpec ident="origin.tstamp2_requires_origin.tstamp" scheme="isoschematron">
+        <constraintSpec ident="origin.tstamp2_requires_origin.tstamp" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@origin.tstamp2]">
               <sch:assert test="@origin.tstamp">When @origin.tstamp2 is used @origin.tstamp must
@@ -2557,7 +2621,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_plistTarget" scheme="isoschematron">
+        <constraintSpec ident="check_plistTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@plist">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@plist attribute
@@ -2700,7 +2764,7 @@
         <datatype>
           <rng:ref name="data.CONFIDENCE"/>
         </datatype>
-        <constraintSpec ident="check_confidence" scheme="isoschematron">
+        <constraintSpec ident="check_confidence" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@confidence]">
               <sch:assert test="@min and @max">The attributes @min and @max are required when
@@ -2708,6 +2772,37 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.repeatMark.log" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Logical domain attributes.</desc>
+    <classes>
+      <memberOf key="att.controlEvent"/>
+      <memberOf key="att.duration.additive"/>
+      <memberOf key="att.startEndId"/>
+      <memberOf key="att.timestamp2.log"/>
+    </classes>
+    <attList>
+      <attDef ident="func" usage="req">
+        <desc xml:lang="en">Indicates the function of the mark, usually implying a corresponding form.</desc>
+        <valList type="closed">
+          <valItem ident="coda">
+            <desc xml:lang="en">Coda (SMuFL E048 or Unicode 1D10C).</desc>
+          </valItem>
+          <valItem ident="segno">
+            <desc xml:lang="en">Segno (SMuFL E047 or Unicode 1D10B).</desc>
+          </valItem>
+          <valItem ident="dalSegno">
+            <desc xml:lang="en">Dal segno (SMuFL E045 or Unicode 1D109).</desc>
+          </valItem>
+          <valItem ident="daCapo">
+            <desc xml:lang="en">Da capo (SMuFL E046 or Unicode 1D10A).</desc>
+          </valItem>
+          <valItem ident="fine">
+            <desc xml:lang="en">Fine. (text)</desc>
+          </valItem>
+        </valList>
       </attDef>
     </attList>
   </classSpec>
@@ -2722,7 +2817,7 @@
         <datatype maxOccurs="unbounded">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_respTarget" scheme="isoschematron">
+        <constraintSpec ident="check_respTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@resp">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@resp attribute should
@@ -2915,7 +3010,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_defTarget_staff" scheme="isoschematron">
+        <constraintSpec ident="check_defTarget_staff" scheme="schematron">
           <constraint>
             <sch:rule context="mei:staff/@def">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@def attribute should
@@ -3059,7 +3154,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_endidTarget" scheme="isoschematron">
+        <constraintSpec ident="check_endidTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@endid">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@endid attribute
@@ -3083,7 +3178,7 @@
         <datatype>
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_startidTarget" scheme="isoschematron">
+        <constraintSpec ident="check_startidTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@startid">
               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@startid attribute
@@ -3138,7 +3233,7 @@
         <datatype maxOccurs="1">
           <rng:ref name="data.URI"/>
         </datatype>
-        <constraintSpec ident="check_stem.sameasTarget" scheme="isoschematron">
+        <constraintSpec ident="check_stem.sameasTarget" scheme="schematron">
           <constraint>
             <sch:rule context="@stem.sameas">
               <sch:let name="layer.n" value="self::node()/ancestor::mei:layer/@n"/>
@@ -3759,7 +3854,7 @@
       <attDef ident="xml:space" usage="opt">
         <desc xml:lang="en">Allows one to signal to an application whether an element’s white space is
           "significant". The behavior of xml:space cascades to all descendant elements, but it can
-          be turned off locally by setting the xml:space attribute to the value "default".</desc>
+          be turned off locally by setting the xml:space attribute to the value <val>default</val>.</desc>
         <valList type="closed">
           <valItem ident="default">
             <desc xml:lang="en">Allows the application to handle white space as necessary. Not including an
@@ -4388,7 +4483,7 @@
         </rng:zeroOrMore>
       </rng:choice>
     </content>
-    <constraintSpec ident="Check_annot_data" scheme="isoschematron">
+    <constraintSpec ident="Check_annot_data" scheme="schematron">
       <constraint>
         <sch:rule context="mei:annot[@data]">
           <sch:assert test="ancestor::mei:notesStmt">The @data attribute may only occur on an
@@ -4533,7 +4628,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="checkBiblLabels" scheme="isoschematron">
+    <constraintSpec ident="checkBiblLabels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:biblList[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:bibl)">When labels are used,
@@ -4659,7 +4754,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="caesura_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="caesura_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:caesura">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -4795,7 +4890,7 @@
         <datatype>
           <rng:data type="positiveInteger"/>
         </datatype>
-        <constraintSpec ident="check_cb" scheme="isoschematron">
+        <constraintSpec ident="check_cb" scheme="schematron">
           <constraint>
             <sch:rule context="mei:cb">
               <sch:let name="totalColumns" value="preceding::mei:colLayout[1]/@cols"/>
@@ -4856,7 +4951,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="Clef_position_lines" scheme="isoschematron">
+    <constraintSpec ident="Clef_position_lines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clef[matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
@@ -4867,7 +4962,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Clef_position_nolines" scheme="isoschematron">
+    <constraintSpec ident="Clef_position_nolines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clef[ancestor::mei:staffDef[not(@lines)]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
@@ -5214,7 +5309,7 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
-    <constraintSpec ident="check_dimensions" scheme="isoschematron">
+    <constraintSpec ident="check_dimensions" scheme="schematron">
       <constraint>
         <sch:rule context="mei:physDesc/mei:dimensions">
           <sch:assert test="not(count(mei:depth) &gt; 1)">The depth element may only appear
@@ -5240,10 +5335,9 @@
   </elementSpec>
   <elementSpec ident="dir" module="MEI.shared">
     <gloss versionDate="2022-05-18" xml:lang="en">directive</gloss>
-    <desc xml:lang="en">An instruction expressed as a combination of text and symbols — such as
-      segno and coda symbols, fermatas over a bar line, etc., typically above, below, or between
-      staves, but not on the staff — that is not encoded elsewhere in more specific elements, like
-      <gi scheme="MEI">tempo</gi> or <gi scheme="MEI">dynam</gi>.</desc>
+    <desc xml:lang="en">An instruction expressed as a combination of text and symbols, typically above,
+      below, or between staves, but not on the staff — that is not encoded elsewhere in more specific
+      elements, like <gi scheme="MEI">tempo</gi>, <gi scheme="MEI">dynam</gi>  or <gi scheme="MEI">repeatMark</gi>.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -5265,7 +5359,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="dir_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="dir_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:dir[not(ancestor::mei:syllable)]">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -5449,7 +5543,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="dynam_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="dynam_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:dynam">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real"> Must have one of
@@ -5457,7 +5551,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="dynam_end-type_attributes" scheme="isoschematron">
+    <constraintSpec ident="dynam_end-type_attributes" scheme="schematron">
       <constraint>
         <sch:rule context="mei:dynam[@val2]">
           <sch:assert test="@dur or @dur.ges or @endid or @tstamp2">When @val2 is present, either
@@ -5687,6 +5781,56 @@
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-extent.html">extent</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="extData" module="MEI.shared">
+    <gloss versionDate="2023-05-23" xml:lang="en">extended data</gloss>
+    <desc xml:lang="en">Provides a container element for non-MEI data formats.</desc>
+    <classes>
+      <memberOf key="att.basic" />
+      <memberOf key="att.labelled" />
+      <memberOf key="att.responsibility" />
+      <memberOf key="att.typed" />
+      <memberOf key="att.whitespace"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="att.internetMedia"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:group>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="macro.anyXML"/>
+          </rng:choice>
+        </rng:group>
+      </rng:zeroOrMore>
+    </content>
+    <remarks xml:lang="en">
+      <p>Container for holding non-MEI data formats, similar to <gi scheme="MEI">extMeta</gi> but available in <gi scheme="MEI">when</gi> rather than in <gi scheme="MEI">meiHead</gi>. The content of this element, by virtue of being inside a <gi scheme="MEI">when</gi> element, is associated with a particular point in time in a media file and this point in time may be linked to symbolic data, such as notes, chords, rests, etc., recorded elsewhere. When the data in <gi scheme="MEI">extData</gi> contains left angle bracket (less-than) or ampersand characters, or when it contains white space that should be preserved (such as line breaks), then the data should be enclosed in a CDATA section (<abbr>e.g.</abbr>, for JSON formatted data).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="funder" module="MEI.shared">
+    <desc xml:lang="en">Names of individuals, institutions, or organizations responsible for funding. Funders
+      provide financial support for a project; they are distinct from sponsors, who provide
+      intellectual support and authority.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.respLikePart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-funder.html">funder</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="genre" module="MEI.shared">
     <desc xml:lang="en">Term or terms that designate a category characterizing a particular style, form, or
       content.</desc>
@@ -5753,7 +5897,7 @@
         <rng:ref name="model.labelLike"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_grpSym_attributes_scoreDef" scheme="isoschematron">
+    <constraintSpec ident="check_grpSym_attributes_scoreDef" scheme="schematron">
       <constraint>
         <sch:rule context="mei:grpSym[parent::mei:scoreDef]">
           <sch:assert test="@startid and @endid and @level">In scoreDef, grpSym must have startid,
@@ -5761,7 +5905,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="check_grpSym_attributes_staffDef" scheme="isoschematron">
+    <constraintSpec ident="check_grpSym_attributes_staffDef" scheme="schematron">
       <constraint>
         <sch:rule context="mei:grpSym[parent::mei:staffGrp]">
           <sch:assert test="not(@startid or @endid or @level)">In staffGrp, grpSym must not have
@@ -5948,7 +6092,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="Check_keyAccidPlacement" scheme="isoschematron">
+    <constraintSpec ident="Check_keyAccidPlacement" scheme="schematron">
       <constraint>
         <sch:rule context="mei:keyAccid">
           <sch:assert test="(@x and @y) or @pname or @loc">One of the following is required: @x and
@@ -5996,7 +6140,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_keyAccid_oct" scheme="isoschematron">
+    <constraintSpec ident="check_keyAccid_oct" scheme="schematron">
       <constraint>
         <sch:rule context="mei:keySig[mei:keyAccid[@oct]]">
           <sch:assert test="count(mei:keyAccid[@oct]) = count(mei:keyAccid)">If the @oct attribute
@@ -6005,7 +6149,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="check_keySig_editorial" scheme="isoschematron">
+    <constraintSpec ident="check_keySig_editorial" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:keySig/mei:*[local-name() eq 'add' or local-name() eq 'corr'             or local-name() eq 'damage' or local-name() eq 'del' or local-name() eq 'orig' or              local-name() eq 'reg' or local-name() eq 'restore' or local-name() eq 'sic' or              local-name() eq 'supplied' or local-name() eq 'unclear']">
@@ -6250,7 +6394,7 @@
       <rng:ref name="meiHead"/>
       <rng:ref name="music"/>
     </content>
-    <constraintSpec ident="Check_staff" scheme="isoschematron">
+    <constraintSpec ident="Check_staff" scheme="schematron">
       <constraint>
         <sch:rule context="mei:*[@staff]">
           <sch:assert
@@ -6388,7 +6532,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="nameParts" scheme="isoschematron">
+    <constraintSpec ident="nameParts" scheme="schematron">
       <constraint>
         <sch:rule context="mei:name">
           <sch:assert role="warning" test="not(mei:geogName or mei:persName or mei:corpName)"
@@ -6547,7 +6691,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="ornam_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="ornam_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:ornam">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -6723,6 +6867,8 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
+      <memberOf key="att.formework"/>
+      <memberOf key="att.horizontalAlign"/>
       <memberOf key="att.lang"/>
     </classes>
     <content>
@@ -6738,20 +6884,6 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="halign" usage="opt">
-        <desc xml:lang="en">Records horizontal alignment of the page footer.</desc>
-        <datatype>
-          <rng:ref name="data.HORIZONTALALIGNMENT"/>
-        </datatype>
-      </attDef>
-      <attDef ident="func" usage="opt">
-        <desc xml:lang="en">Records the function (i.e., placement) of the page footer.</desc>
-        <datatype>
-          <rng:ref name="data.PGFUNC"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>This element is used to capture the textual data that often appears in
         printed music. It may also be used for similarly formatted material in manuscripts. When
@@ -6768,6 +6900,8 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
+      <memberOf key="att.formework"/>
+      <memberOf key="att.horizontalAlign"/>
       <memberOf key="att.lang"/>
     </classes>
     <content>
@@ -6783,20 +6917,6 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="halign" usage="opt">
-        <desc xml:lang="en">Records horizontal alignment of the page header.</desc>
-        <datatype>
-          <rng:ref name="data.HORIZONTALALIGNMENT"/>
-        </datatype>
-      </attDef>
-      <attDef ident="func" usage="opt">
-        <desc xml:lang="en">Records the function (i.e., placement) of the page header.</desc>
-        <datatype>
-          <rng:ref name="data.PGFUNC"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>This element is used to capture the textual data that often appears in
         printed music. It may also be used for similarly formatted material in manuscripts. When
@@ -6823,7 +6943,7 @@
         <rng:ref name="curve"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="phrase_start-_and_end-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="phrase_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:phrase">
           <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
@@ -6833,7 +6953,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="phrase_containing_curve" scheme="isoschematron">
+    <constraintSpec ident="phrase_containing_curve" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:phrase[mei:curve[@bezier or @bulge or @curvedir or @lform or @lwidth or @ho or              @startho or @endho or @to or @startto or @endto or @vo or @startvo or @endvo or @x or @y or @x2 or @y2]]">
@@ -6990,7 +7110,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="FRBR_relation" scheme="isoschematron">
+    <constraintSpec ident="FRBR_relation" scheme="schematron">
       <constraint>
         <!-- See http://vocab.org/frbr/core for more-precise entity-to-entity constraints -->
         <sch:rule
@@ -7090,6 +7210,7 @@
     <classes>
       <memberOf key="att.color"/>
       <memberOf key="att.common"/>
+      <memberOf key="att.extSym.auth"/>
       <memberOf key="att.horizontalAlign"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.textRendition"/>
@@ -7119,7 +7240,9 @@
     </attList>
     <remarks xml:lang="en">
       <p>When an entire element should be rendered in a special way, a style sheet function should
-        be used instead of the <gi scheme="MEI">rend</gi> element.</p>
+        be used instead of the <gi scheme="MEI">rend</gi> element. The <att>glyph.auth</att> and <att>glyph.uri</att>
+        attributes may be used to specify an external authority, <abbr>e.g.,</abbr> SMuFL, to be used for
+        displaying code points in the textual content of the element.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="repository" module="MEI.shared">
@@ -7199,7 +7322,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_respStmt" scheme="isoschematron">
+    <constraintSpec ident="check_respStmt" scheme="schematron">
       <constraint>
         <sch:rule context="mei:respStmt[not(ancestor::mei:change)]">
           <sch:assert
@@ -7236,7 +7359,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="Check_restline" scheme="isoschematron">
+    <constraintSpec ident="Check_restline" scheme="schematron">
       <constraint>
         <sch:rule context="mei:rest[@line]">
           <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
@@ -7372,12 +7495,12 @@
       <rng:optional>
         <rng:ref name="model.meterSigLike"/>
       </rng:optional>
-      <rng:optional>
+      <rng:zeroOrMore>
         <rng:ref name="pgHead"/>
-      </rng:optional>
-      <rng:optional>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:ref name="pgFoot"/>
-      </rng:optional>
+      </rng:zeroOrMore>
       <rng:optional>
         <rng:ref name="instrGrp"/>
       </rng:optional>
@@ -7426,7 +7549,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="Check_sectionexpansion" scheme="isoschematron">
+    <constraintSpec ident="Check_sectionexpansion" scheme="schematron">
       <constraint>
         <sch:rule context="mei:section[mei:expansion]">
           <sch:assert test="descendant::mei:section|descendant::mei:ending|descendant::mei:rdg">A
@@ -7590,7 +7713,7 @@
       </rng:zeroOrMore>
     </content>
     <!--
-        <constraintSpec ident="staffOrganization" scheme="isoschematron">
+        <constraintSpec ident="staffOrganization" scheme="schematron">
           <constraint>
             <sch:rule context="mei:staff">
               <sch:assert test="not(descendant::mei:staff)">A staff cannot have staff
@@ -7599,7 +7722,7 @@
           </constraint>
         </constraintSpec>
       -->
-    <constraintSpec ident="checkStaff_n" scheme="isoschematron">
+    <constraintSpec ident="checkStaff_n" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staff[@n]">
           <sch:let name="thisstaff" value="@n"/>
@@ -7652,7 +7775,7 @@
         <rng:ref name="ambitus"/>
       </rng:optional>
     </content>
-    <constraintSpec ident="Check_staffDefn" scheme="isoschematron">
+    <constraintSpec ident="Check_staffDefn" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[not(ancestor::mei:staff)]">
           <sch:let name="thisstaff" value="@n"/>
@@ -7665,7 +7788,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_ancestor_staff" scheme="isoschematron">
+    <constraintSpec ident="Check_ancestor_staff" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[ancestor::mei:staff and @n]">
           <sch:let name="thisstaff" value="@n"/>
@@ -7674,7 +7797,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_ancestor_staff_lines" scheme="isoschematron">
+    <constraintSpec ident="Check_ancestor_staff_lines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[ancestor::mei:staff and not(@n)]">
           <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
@@ -7684,7 +7807,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_clef_position_staffDef" scheme="isoschematron">
+    <constraintSpec ident="Check_clef_position_staffDef" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[@clef.line and @lines]">
           <sch:assert test="number(@clef.line) &lt;= number(@lines)">The clef position must be less
@@ -7692,7 +7815,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_clef_position_staffDef_nolines" scheme="isoschematron">
+    <constraintSpec ident="Check_clef_position_staffDef_nolines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[@clef.line and not(@lines)]">
           <sch:let name="thisstaff" value="@n"/>
@@ -7703,7 +7826,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_tab_strings_lines" scheme="isoschematron">
+    <constraintSpec ident="Check_tab_strings_lines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[@tab.strings and @lines]">
           <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
@@ -7712,7 +7835,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_tab_strings_nolines" scheme="isoschematron">
+    <constraintSpec ident="Check_tab_strings_nolines" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
           <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
@@ -7724,7 +7847,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_lines_color" scheme="isoschematron">
+    <constraintSpec ident="Check_lines_color" scheme="schematron">
       <constraint>
         <sch:pattern>
           <sch:rule context="mei:staffDef[@lines.color and @lines]">
@@ -7744,7 +7867,7 @@
         </sch:pattern>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_staff_ppq_ancestor" scheme="isoschematron">
+    <constraintSpec ident="Check_staff_ppq_ancestor" scheme="schematron">
       <constraint>
         <sch:pattern>
           <sch:rule context="mei:staffDef[@ppq][ancestor::mei:scoreDef[@ppq]]">
@@ -7756,7 +7879,7 @@
         </sch:pattern>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="Check_staff_ppq_preceding" scheme="isoschematron">
+    <constraintSpec ident="Check_staff_ppq_preceding" scheme="schematron">
       <constraint>
         <sch:pattern>
           <sch:rule context="mei:staffDef[@ppq][preceding::mei:scoreDef[@ppq]]">
@@ -7802,7 +7925,7 @@
         <rng:ref name="grpSym"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="Check_staffGrp_unique_staff_n_values" scheme="isoschematron">
+    <constraintSpec ident="Check_staffGrp_unique_staff_n_values" scheme="schematron">
       <constraint>
         <sch:rule context="mei:staffGrp">
           <sch:let name="countstaves" value="count(descendant::mei:staffDef)"/>
@@ -7862,7 +7985,7 @@
     <content>
       <rng:empty/>
     </content>
-    <constraintSpec ident="symbolDef_symbol_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="symbolDef_symbol_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule context="mei:symbol[ancestor::mei:symbolDef]">
           <sch:assert test="@startid or (@x and @y)">In the symbolDef context, symbol must have
@@ -7909,7 +8032,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="isoschematron">
+    <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="schematron">
       <constraint>
         <sch:rule context="mei:tempo[not(ancestor::mei:score or ancestor::mei:part)]">
           <sch:assert
@@ -7920,7 +8043,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <constraintSpec ident="tempo_start-type_attributes_required" scheme="isoschematron">
+    <constraintSpec ident="tempo_start-type_attributes_required" scheme="schematron">
       <constraint>
         <sch:rule
           context="mei:tempo[not(ancestor::mei:syllable) and not(ancestor::mei:work) and not(ancestor::mei:expression) and not(count(ancestor::mei:*) = 0)]">
@@ -7947,7 +8070,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="Check_term_dataTarget" scheme="isoschematron">
+    <constraintSpec ident="Check_term_dataTarget" scheme="schematron">
       <constraint>
         <sch:rule context="mei:term[@data]">
           <sch:assert test="ancestor::mei:classification">The @data attribute may only occur on a

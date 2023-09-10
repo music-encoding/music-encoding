@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -88,6 +106,18 @@
         </valItem>
         <valItem ident="nd">
           <desc xml:lang="en">Natural note lowered by quarter tone (natural modified by arrow).</desc>
+        </valItem>
+        <valItem ident="xu">
+          <desc xml:lang="en">Double sharp note raised by quarter tone (double sharp modified by arrow).</desc>
+        </valItem>
+        <valItem ident="xd">
+          <desc xml:lang="en">Double sharp note lowered by quarter tone (double sharp modified by arrow).</desc>
+        </valItem>
+        <valItem ident="ffu">
+          <desc xml:lang="en">Double flat note raised by quarter tone (double flat modified by arrow).</desc>
+        </valItem>
+        <valItem ident="ffd">
+          <desc xml:lang="en">Double flat note lowered by quarter tone (double flat modified by arrow).</desc>
         </valItem>
         <!-- 1qf, 3qf, 1qs, 3qs represent fixed symbols (Gould, p. 96) -->
         <valItem ident="1qf">
@@ -209,6 +239,12 @@
         <valItem ident="fd">
           <desc xml:lang="en">Three quarter-tones flat.</desc>
         </valItem>
+        <valItem ident="xu">
+          <desc xml:lang="en">Five quarter-tones sharp.</desc>
+        </valItem>
+        <valItem ident="ffd">
+          <desc xml:lang="en">Five quarter-tones flat.</desc>
+        </valItem>
       </valList>
     </content>
   </macroSpec>
@@ -244,6 +280,12 @@
         </valItem>
         <valItem ident="spicc">
           <desc xml:lang="en">Spiccato.</desc>
+        </valItem>
+        <valItem ident="stress">
+          <desc xml:lang="en">Stress (Unicode 00B4).</desc>
+        </valItem>
+        <valItem ident="unstress">
+          <desc xml:lang="en">Unstress (Unicode 02D8).</desc>
         </valItem>
         <valItem ident="doit">
           <desc xml:lang="en">Main note followed by short slide to higher, indeterminate pitch (Unicode
@@ -333,7 +375,7 @@
         </valItem>
       </valList>
     </content>
-    <constraintSpec ident="warn_deprecated" scheme="isoschematron">
+    <constraintSpec ident="warn_deprecated" scheme="schematron">
       <constraint>
         <sch:rule context="@artic">
           <sch:assert role="warning"
@@ -504,6 +546,25 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.CANCELACCID" module="MEI" type="dt">
+    <desc xml:lang="en">Indicates where cancellation accidentals are shown in a key signature.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="none">
+          <desc xml:lang="en">Do not show cancellation accidentals.</desc>
+        </valItem>
+        <valItem ident="before">
+          <desc xml:lang="en">Show cancellation accidentals before the new key accidentals.</desc>
+        </valItem>
+        <valItem ident="after">
+          <desc xml:lang="en">Show cancellation accidentals after the new key accidentals ("Old style" or "French")</desc>
+        </valItem>
+        <valItem ident="before-bar">
+          <desc xml:lang="en">Show cancellation accidentals before the barline (also known as "Russian").</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.CERTAINTY" module="MEI" type="dt">
     <desc xml:lang="en">Values for certainty attribute. Certainty may be expressed by one of the predefined symbolic values <val>high</val>, 
       <val>medium</val>, or <val>low</val>. The value <val>unknown</val> should be used in cases where the encoder 
@@ -541,7 +602,7 @@
           <desc xml:lang="en">G clef (Unicode 1D11E).</desc>
         </valItem>
         <valItem ident="GG">
-          <desc xml:lang="en">Double G clef.</desc>
+          <desc xml:lang="en">Double G clef. Sounds one octave lower than G clef. (See remarks on usage below.)</desc>
         </valItem>
         <valItem ident="F">
           <desc xml:lang="en">F clef (Unicode 1D122).</desc>
@@ -557,6 +618,14 @@
         </valItem>
       </valList>
     </content>
+    <remarks xml:lang="en">
+      <p>Double-G clefs sound one octave lower, so do not combine with <att>dis</att>/
+        <att>dis.place</att>/<att>clef.dis</att>/<att>clef.dis.place</att>. In some cases
+        the double G clef may be used to indicate that two voices share one staff and 
+        does not sound one octave lower. In this case the <att>oct</att> attribute may be 
+        used to clarify the sounding octave of the instruments for the clef.
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.CLUSTER" module="MEI" type="dt">
     <desc xml:lang="en">Tone-cluster rendition.</desc>
@@ -1189,7 +1258,7 @@
       </rng:choice>
     </content>
   </macroSpec>
-  <macroSpec ident="data.DURATION.gestural" module="MEI" type="dt">
+  <macroSpec ident="data.DURATION.GESTURAL" module="MEI" type="dt">
     <desc xml:lang="en">Performed duration attribute values.</desc>
     <content>
       <rng:choice>
@@ -2104,9 +2173,6 @@
         <valItem ident="sym+norm">
           <desc xml:lang="en">Meter signature rendered using both the symbol and the traditional numeric values.</desc>
         </valItem>
-        <valItem ident="invis">
-          <desc xml:lang="en">Meter signature not rendered.</desc>
-        </valItem>
       </valList>
     </content>
   </macroSpec>
@@ -3003,7 +3069,7 @@
         <valItem ident="circle">
           <desc xml:lang="en">Enclosing circle.</desc>
         </valItem>
-        <valItem ident="dblwhole">
+        <valItem ident="fences">
           <desc xml:lang="en">Enclosing "fences".</desc>
         </valItem>
       </valList>
@@ -3023,8 +3089,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.OCTAVE" module="MEI" type="dt">
-    <desc xml:lang="en">Oct attribute values. The default values conform to Acoustical Society of America
-      representation. Read, p. 44.</desc>
+    <desc xml:lang="en">Octave number. The default values conform to the Scientific Pitch Notation (SPN).</desc>
     <content>
       <rng:data type="nonNegativeInteger">
         <rng:param name="maxInclusive">9</rng:param>
@@ -3095,26 +3160,26 @@
     </content>
 </macroSpec>
   <macroSpec ident="data.PERCENT" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number plus '%', <abbr>i.e.</abbr>, [0-9]+(\.?[0-9]*)?\%.</desc>
+    <desc xml:lang="en">Positive decimal number plus '%', <abbr>i.e.</abbr>, [0-9]+(\.[0-9]*)?%.</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">[0-9]+(\.?[0-9]*)?%</rng:param>
+        <rng:param name="pattern">[0-9]+(\.[0-9]*)?%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
   <macroSpec ident="data.PERCENT.LIMITED" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number between 0 and 100, followed by a percent sign "%".</desc>
+    <desc xml:lang="en">Decimal number between 0 and 100, followed by a percent sign "%".</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">(([0-9]|[1-9][0-9])(\.[0-9]+)?|100(\.0+)?)%</rng:param>
+        <rng:param name="pattern">(([0-9]|[1-9][0-9])(\.[0-9]*)?|100(\.0*)?)%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
   <macroSpec ident="data.PERCENT.LIMITED.SIGNED" module="MEI" type="dt">
-    <desc xml:lang="en">Positive decimal number between -100 and 100, followed by a percent sign "%".</desc>
+    <desc xml:lang="en">Decimal number between -100 and 100, followed by a percent sign "%".</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">(\+|-)?(([0-9]|[1-9][0-9])(\.[0-9]+)?|100(\.0+)?)%</rng:param>
+        <rng:param name="pattern">(\+|-)?(([0-9]|[1-9][0-9])(\.[0-9]*)?|100(\.0*)?)%</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -3168,7 +3233,7 @@
       </rng:data>
     </content>
   </macroSpec>
-  <macroSpec ident="data.PITCHNAME.GES" module="MEI" type="dt">
+  <macroSpec ident="data.PITCHNAME.GESTURAL" module="MEI" type="dt">
     <desc xml:lang="en">Gestural pitch names need an additional value for when the notated pitch is not to be
       sounded.</desc>
     <content>
@@ -3192,7 +3257,7 @@
         <rng:ref name="data.NMTOKEN"/>
       </rng:choice>
     </content>
-    <constraintSpec ident="constrain_place" scheme="isoschematron">
+    <constraintSpec ident="constrain_place" scheme="schematron">
       <constraint>
         <sch:rule context="@place">
           <sch:assert
@@ -3352,7 +3417,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.STAFFLOC" module="MEI" type="dt">
-    <desc xml:lang="en">Staff location. The value '0' indicates the bottom line of the current staff; positive
+    <desc xml:lang="en">Staff location. The value <val>0</val> indicates the bottom line of the current staff; positive
       values are used for positions above the bottom line and negative values for the positions
       below. For example, in treble clef, 1 = F4, 2 = G4, 3 = A4, etc. and -1 = D4, -2 = C4, and so
       on.</desc>
@@ -3368,7 +3433,7 @@
         <rng:ref name="data.STAFFREL.extended"/>
       </rng:choice>
     </content>
-    <constraintSpec ident="between_requires_adjacent_staves" scheme="isoschematron">
+    <constraintSpec ident="between_requires_adjacent_staves" scheme="schematron">
       <constraint>
         <sch:rule context="mei:*[@place eq 'between']">
           <sch:assert test="count(tokenize(normalize-space(string(@staff)), '\s+')) = 2">The @staff
@@ -3770,7 +3835,7 @@
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
-        <constraintSpec ident="When_notationsubtype" scheme="isoschematron">
+        <constraintSpec ident="When_notationsubtype" scheme="schematron">
           <constraint>
             <sch:rule context="mei:*[@notationsubtype]">
               <sch:assert test="@notationtype">An element with a notationsubtype attribute must have

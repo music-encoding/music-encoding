@@ -1,20 +1,25 @@
-<!--
-© 2017 by the Music Encoding Initiative (MEI) Council.
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://opensource.org/licenses/ECL-2.0.
-
+  at https://opensource.org/licenses/ECL-2.0.
+  
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
   OF ANY KIND, either express or implied. See the License for the specific language
   governing permissions and limitations under the License.
-
+  
   This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
   and the Rector and Visitors of the University of Virginia; licensed under the Educational
   Community License version 1.0.
-
-  CONTACT: info@music-encoding.org                        
-                    --><?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?><?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?><TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
      xmlns:sch="http://purl.oclc.org/dsdl/schematron"
      xmlns="http://www.tei-c.org/ns/1.0"
      version="5.0"
@@ -27,14 +32,14 @@
             <title level="a">Repertoire: Common Music Notation</title>
             <respStmt>
                <resp>Edited by</resp>
-               <!--TODO: To be filled manually-->
+               <name role="edt">Klaus Rettinghaus</name>
+               <note>The editors listed here are responsible for the contents of this very chapter of the MEI Guidelines.</note>
             </respStmt>
             <respStmt>
                <resp>With contributions by</resp>
                <!--TODO: To be filled automatically via GitHub API-->
                <name ref="https://api.github.com/users/bwbohl">Benjamin W. Bohl</name>
                <name ref="https://api.github.com/users/BruxDDay">BruxDDay</name>
-               <name ref="https://api.github.com/users/dinamix">dinamix</name>
                <name ref="https://api.github.com/users/ndubo">Norbert Dubowy</name>
                <name ref="https://api.github.com/users/fujinaga">Ichiro Fujinaga</name>
                <name ref="https://api.github.com/users/axgeertinger">Axel Geertinger</name>
@@ -50,6 +55,7 @@
                <name ref="https://api.github.com/users/MajaHartwig">MajaHartwig</name>
                <name ref="https://api.github.com/users/musicEnfanthen">Stefan Münnich</name>
                <name ref="https://api.github.com/users/pe-ro">pe-ro</name>
+               <name ref="https://api.github.com/users/alastair">Alastair Porter</name>
                <name ref="https://api.github.com/users/lpugin">Laurent Pugin</name>
                <name ref="https://api.github.com/users/JRegimbal">Juliette Regimbal</name>
                <name ref="https://api.github.com/users/rettinghaus">Klaus Rettinghaus</name>
@@ -146,7 +152,7 @@
                      <specList>
                         <specDesc key="att.meterSigDefault.log" atts="meter.count meter.unit"/>
                         <specDesc key="att.meterSigDefault.log" atts="meter.sym"/>
-                        <specDesc key="att.keySigDefault.log" atts="key.sig"/>
+                        <specDesc key="att.keySigDefault.log" atts="keysig"/>
                      </specList>
                   </p>
                   <p>The following example describes a score in common time with 3 flats:</p>
@@ -230,8 +236,8 @@
                   </p>
                </div>
                <div xml:id="cmnReDef" type="div3">
-                  <head>Redefinition of Score Parameters</head>
-                  <p>Sometimes it is necessary to provide the parameters of a score or a staff with new values. For example. a score may change keys, gain or lose staves, use different layout settings at any point, etc. Likewise, a staff may change its clef, gain or lose layers, or become invisible, and so on. To accommodate these circumstances, in CMN <gi scheme="MEI">staffDef</gi> is allowed to occur in the following locations:</p>
+                  <head>Re-definition of Score Parameters</head>
+                  <p>Sometimes it is necessary to re-define the parameters of a score or a staff. For example, a score may change keys, the number of staves, or use different layout settings. Likewise, a staff may change its clef, change the number of layers, or become invisible. To accommodate these changes, <gi scheme="MEI">staffDef</gi> is allowed to occur in the following locations:</p>
                   <list rend="bulleted">
                      <item>within the description of staff groups; that is, in <gi scheme="MEI">staffGrp</gi>,</item>
                      <item>within the content of a <gi scheme="MEI">measure</gi>,</item>
@@ -243,7 +249,14 @@
                      <item>within sections and endings; that is, inside <gi scheme="MEI">section</gi> and <gi scheme="MEI">ending</gi> elements; and</item>
                      <item>between sections and endings; that is, directly within a <gi scheme="MEI">score</gi> or <gi scheme="MEI">part</gi>.</item>
                   </list>
-                  <p>The possibility also exists to include <gi scheme="MEI">scoreDef</gi> and <gi scheme="MEI">staffDef</gi> in staves and layers when the mei-all schema is in use; however, this practice is not recommended for the CMN repertoire.</p>
+                  <p>It is also possible to include <gi scheme="MEI">scoreDef</gi> and <gi scheme="MEI">staffDef</gi> in staves and layers when the MEI All schema is in use; however, this practice is not recommended for the CMN repertoire.</p>
+                  <p>The following example shows how to change the key and meter signatures within a score. The <att>keysig.cancelaccid</att> attribute may be used to control the position of the cancellation accidentals of the key signature change, while the <att>keysig.visible</att> can be used to hide the key signature entirely.</p>  
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="verovio code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/04-score-redefinition.mei" parse="text"/></egXML>
+                     </figure>
+                  </p>
                </div>
                <div xml:id="cmnNotesChords" type="div3">
                   <head>Notes, Chords and Rests in CMN</head>
@@ -263,7 +276,6 @@
                               <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample098.txt" parse="text"/></egXML>
                            </figure>
                         </p>
-                        <p>Because these attributes may not be required in all situations (such as <att>dur</att> for the notes of a chord), processing software should anticipate retrieving the information that would have been provided by missing attributes from a preceding note or <gi scheme="MEI">chord</gi> parent in the same <gi scheme="MEI">layer</gi>. Only information from <att>pname</att>, <att>oct</att> and <att>dur</att> attributes can be gathered in this fashion. No other attributes can be treated this way.</p>
                         <p>The default values for <att>pname</att> and <att>oct</att> conform to the <ref target="https://en.wikipedia.org/wiki/Scientific_pitch_notation">Scientific Pitch Notation (SPN)</ref> (also known as American Standard Pitch Notation); that is, the letters A–G indicate the musical note name of a pitch, and the numbers 0–9 indicate the octave range to which a note belongs. <att>pname</att> values differ from this convention only by using lower case values for pitches (a–g instead of A-G). The value for <att>oct</att> changes between B and C, that is, octave ranges go from C, D, …, G, A, to B. For example, <hi rend="italic">middle C</hi> or <hi rend="italic">c'</hi> (the C in the middle, <abbr>i.e.</abbr>, fourth C key from left, on a standard 88-key piano keyboard) is represented on the first ledger line in G clef notation and labelled as <hi rend="italic">C4</hi>, in the naming convention of SPN. The note one semitone below would be labelled <hi rend="italic">B3</hi>, and <hi rend="italic">A4</hi> would refer to the first A above <hi rend="italic">C4</hi>.</p>
                         <p>The usual CMN-specific values for <att>dur</att> are:</p>
                         <list type="gloss">
@@ -892,7 +904,7 @@
                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-gliss.txt" parse="text"/></egXML>
                         </figure>
                      </p>
-                     <p>The <gi scheme="MEI">gliss</gi> element is a member of the <ident type="class">model.controlEventLike</ident> class and therefore, like other control events, it occurs inside a measure after the staves and uses its <att>staff</att>, <att>layer</att>, <att>tstamp</att>, <att>tstamp2</att>, <att>startid</att> and <att>endid</att> attributes to connect it to the affected notes or chords. It is a semantic error not to specify a starting point attribute. The visual appearance of the indicating line may be recorded in the <att>line.form</att> and <att>line.width</att> attributes.</p>
+                     <p>The <gi scheme="MEI">gliss</gi> element is a member of the <ident type="class">model.controlEventLike</ident> class and therefore, like other control events, it occurs inside a measure after the staves and uses its <att>staff</att>, <att>layer</att>, <att>tstamp</att>, <att>tstamp2</att>, <att>startid</att> and <att>endid</att> attributes to connect it to the affected notes or chords. It is a semantic error not to specify a starting point attribute. The visual appearance of the indicating line may be recorded in the <att>lform</att> and <att>lwidth</att> attributes.</p>
                   </div>
                   <div xml:id="cmnBend" type="div4">
                      <head>Bend</head>

@@ -100,6 +100,19 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>A list of links to all elements for PDF purposes</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="elements.pdf.links" as="node()*">
+        <xsl:for-each select="$elements">
+            <xsl:sort select="@ident" data-type="text"/>
+            <xsl:variable name="name" select="@ident"/>
+            <a class="{tools:getLinkClasses($name)} {substring($name,1,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>A list of all attribute classes in MEI</xd:p>
         </xd:desc>
     </xd:doc>
@@ -120,6 +133,19 @@
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,5,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>A list of links to all attribute classes for PDF purposes</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="att.classes.pdf.links" as="node()*">
+        <xsl:for-each select="$att.classes">
+            <xsl:sort select="@ident" data-type="text"/>
+            <xsl:variable name="name" select="@ident"/>
+            <a class="{tools:getLinkClasses($name)} {substring($name,5,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     
@@ -150,6 +176,19 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>A list of links to all model classes for PDF purposes</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="model.classes.pdf.links" as="node()*">
+        <xsl:for-each select="$model.classes">
+            <xsl:sort select="@ident" data-type="text"/>
+            <xsl:variable name="name" select="@ident"/>
+            <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>A list of all data types in MEI</xd:p>
         </xd:desc>
     </xd:doc>
@@ -174,6 +213,18 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>A list of links to all data types for PDF purposes</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="data.types.pdf.links" as="node()*">
+        <xsl:for-each select="$data.types">
+            <xsl:variable name="name" select="@ident"/>
+            <a class="{tools:getLinkClasses($name)} {substring($name,6,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>A list of all macro groups in MEI</xd:p>
         </xd:desc>
     </xd:doc>
@@ -193,6 +244,18 @@
         <xsl:for-each select="$data.types">
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>A list of links to all macro group for PDF purposess</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="macro.groups.pdf.links" as="node()*">
+        <xsl:for-each select="$data.types">
+            <xsl:variable name="name" select="@ident"/>
+            <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
     </xsl:variable>
     

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  © 2018 by the Music Encoding Initiative (MEI).
+  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
-  at http://opensource.org/licenses/ECL-2.0.
+  at https://opensource.org/licenses/ECL-2.0.
   
   Unless required by applicable law or agreed to in writing, software distributed under the
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
@@ -16,23 +17,24 @@
   
   CONTACT: info@music-encoding.org
 -->
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<TEI xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns="http://www.tei-c.org/ns/1.0">
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../source/validation/mei-customizations.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
   <teiHeader>
     <fileDesc>
       <titleStmt>
-        <title>Music Encoding Initiative Guidelines: <title type="sub">All
-          Customization</title></title>
+        <title>Music Encoding Initiative Guidelines: <title type="sub">All Customization</title></title>
         <respStmt>
           <resp>Authored by</resp>
           <name xml:id="PR">Perry Roland</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
-        <p/>
+        <publisher>Music Encoding Initiative (MEI) Board</publisher>
+        <availability>
+          <licence target="https://opensource.org/license/ECL-2.0/">Licensed under the Educational Community License version 2.0</licence>
+        </availability>
       </publicationStmt>
       <sourceDesc>
         <p/>
@@ -55,12 +57,10 @@
         start="mei meiHead meiCorpus music">
 
         <!-- Declare MEI and XLink namespaces for use in Schematron -->
-        <constraintSpec ident="set_ns" scheme="isoschematron" mode="add">
+        <constraintSpec ident="set_ns" scheme="schematron" mode="add">
           <constraint>
-            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="mei"
-              uri="http://www.music-encoding.org/ns/mei"/>
-            <sch:ns xmlns:sch="http://purl.oclc.org/dsdl/schematron" prefix="xlink"
-              uri="http://www.w3.org/1999/xlink"/>
+            <sch:ns prefix="mei" uri="http://www.music-encoding.org/ns/mei"/>
+            <sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
           </constraint>
         </constraintSpec>
 
@@ -97,14 +97,28 @@
         <moduleRef key="MEI.visual"/>
 
         <!-- Include SVG -->
-        <moduleRef url="../source/svg11.rng"
-          prefix="svg_">
+        <moduleRef url="../source/svg11.rng" prefix="svg_">
           <content>
             <rng:define name="mei_model.graphicLike" combine="choice">
               <rng:ref name="svg_svg"/>
             </rng:define>
           </content>
         </moduleRef>
+
+        <classSpec ident="att.meiVersion" module="MEI.shared" type="atts" mode="change">
+          <attList>
+            <attDef ident="meiversion" usage="rec" mode="change">
+              <defaultVal>5.0</defaultVal>
+              <valList type="closed" mode="change">
+                <valItem ident="5.0+anyStart" mode="delete"/>
+                <valItem ident="5.0+basic" mode="delete"/>
+                <valItem ident="5.0+CMN" mode="delete"/>
+                <valItem ident="5.0+Mensural" mode="delete"/>
+                <valItem ident="5.0+Neumes" mode="delete"/>
+            </valList>
+            </attDef>
+          </attList>
+        </classSpec>
 
       </schemaSpec>
     </body>
