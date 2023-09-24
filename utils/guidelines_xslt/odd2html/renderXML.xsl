@@ -172,11 +172,11 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Translates macroRef relationships into operable links</xd:p>
+            <xd:p>Translates dataRef relationships into operable links</xd:p>
             <xd:p>In order to preserve spacing, it is important that the following template is kept on one line.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:template match="tei:macroRef/@key" mode="preserveSpace" priority="2"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:template>
+    <xsl:template match="tei:dataRef/@key" mode="preserveSpace" priority="2"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:template>
     
     <xd:doc>
         <xd:desc>

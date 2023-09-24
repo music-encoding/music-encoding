@@ -373,7 +373,7 @@
         
         <xsl:param name="object" as="node()"/>
         
-        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:macroSpec[.//tei:macroRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:dataSpec[.//tei:dataRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
         <xsl:variable name="referencing.att.classes" select="$att.classes/self::tei:classSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
         <xsl:variable name="referencing.elements" select="$elements/self::tei:elementSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
         
@@ -396,7 +396,7 @@
             <xsl:for-each select="$referencing.att.classes">
                 <xsl:variable name="current.class" select="." as="node()"/>
                 <xsl:variable name="class.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
-                <xsl:variable name="attributes" select="$current.class//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                <xsl:variable name="attributes" select="$current.class//tei:attDef[.//dataRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()+"/>
                 <xsl:for-each select="$attributes">
                     <xsl:variable name="current.attribute" select="." as="node()"/>
                     <xsl:variable name="attribute.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
@@ -641,6 +641,27 @@
                             <xsl:if test="$current.att/tei:valList/@type = 'semi' and $current.att/tei:dataType/rng:data[@type = 'NMTOKEN']">
                                 and custom <i>NMToken</i>
                             </xsl:if>
+                        </xsl:when>
+                        <xsl:when test="$current.att/tei:datatype[tei:dataRef]">
+                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
+                            <xsl:choose>
+                                <xsl:when test="$dt/@maxOccurs = '1'">
+                                    Value conforms to <a class="{tools:getLinkClasses($dt/tei:dataRef/@key)}" href="#{$dt/tei:dataRef/@key}"><xsl:value-of select="$dt/tei:dataRef/@key"/></a>.
+                                </xsl:when>
+                                <xsl:when test="$dt/@maxOccurs = '2'">
+                                    One or two values from <a class="{tools:getLinkClasses($dt/tei:dataRef/@key)}" href="#{$dt/tei:dataRef/@key}"><xsl:value-of select="$dt/tei:dataRef/@key"/></a>, separated by a space.
+                                </xsl:when>
+                                <xsl:when test="$dt/@maxOccurs = 'unbounded'">
+                                    One or more values from <a class="{tools:getLinkClasses($dt/tei:dataRef/@key)}" href="#{$dt/tei:dataRef/@key}"><xsl:value-of select="$dt/tei:dataRef/@key"/></a>, separated by spaces.
+                                </xsl:when>
+                                <xsl:when test="not($dt/@maxOccurs) and not($dt/@minOccurs)">
+                                    Value conforms to <a class="{tools:getLinkClasses($dt/tei:dataRef/@key)}" href="#{$dt/tei:dataRef/@key}"><xsl:value-of select="$dt/tei:dataRef/@key"/></a>.
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
+                                    <xsl:message terminate="yes" select="$dt"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:when>
                         <xsl:when test="$current.att/tei:datatype[rng:ref]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
