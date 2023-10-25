@@ -1,5 +1,7 @@
 # The Music Encoding Initiative
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8319922.svg)](https://zenodo.org/doi/10.5281/zenodo.8319922)
+
 | Branch        | Continuous Integration Status  |
 | ------------- |:------------------------------:|
 | Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
