@@ -1,7 +1,8 @@
 # The Music Encoding Initiative
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8319922.svg)](https://zenodo.org/doi/10.5281/zenodo.8319922)
-[![GitHub release (with filter)](https://img.shields.io/github/v/release/music-encoding/music-encoding)](https://github.com/music-encoding/music-encoding/releases/latest)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/music-encoding/music-encoding?label=latest%20release)
+](https://github.com/music-encoding/music-encoding/releases/latest)
 [![GitHub](https://img.shields.io/github/license/music-encoding/music-encoding)](LICENSE)
 ![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
 
