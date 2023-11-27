@@ -4,8 +4,7 @@
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
     
     <sch:let name="customization.path" value="string(document-uri(.))"/>
-    <sch:let name="mei.source.folder" value="substring-before($customization.path,'/customizations/') || '/source/'"/>
-    <sch:let name="mei.source.path" value="$mei.source.folder || 'mei-source.xml'"/>
+    <sch:let name="mei.source.path" value=" resolve-uri('../mei-source.xml')"/>
     <sch:let name="mei.source" value="document($mei.source.path)"/>
     
     <!-- CHECK IF MEI SOURCE IS IN EXPECTED LOCATION AND AVAILABLE -->
