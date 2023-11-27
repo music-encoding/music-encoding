@@ -3,8 +3,8 @@
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
     
-    <sch:let name="schematron.path" value="string(document-uri(.))"/>
-    <sch:let name="mei.source.folder" value="substring-before($schematron.path,'/customizations/') || '/source/'"/>
+    <sch:let name="customization.path" value="string(document-uri(.))"/>
+    <sch:let name="mei.source.folder" value="substring-before($customization.path,'/customizations/') || '/source/'"/>
     <sch:let name="mei.source.path" value="$mei.source.folder || 'mei-source.xml'"/>
     <sch:let name="mei.source" value="document($mei.source.path)"/>
     
