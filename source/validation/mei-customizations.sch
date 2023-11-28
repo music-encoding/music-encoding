@@ -60,8 +60,10 @@
     <!-- CHECK IF MODULES ARE AVAILABLE -->
     <sch:pattern id="check_moduleRef">
         <sch:rule context="tei:moduleRef[@key]">
+            <sch:extends rule="get.source"/>
             <sch:let name="moduleKey" value="@key"/>
-            <sch:assert test="$moduleKey = $mei.source//tei:moduleSpec/@ident">There is no module "<sch:value-of select="$moduleKey"/>" in MEI.</sch:assert>
+            <sch:let name="exists" value="$moduleKey = $applicable.source.doc//tei:moduleSpec/@ident"/>
+            <sch:assert test="$exists">There is no module "<sch:value-of select="$moduleKey"/>".</sch:assert>
         </sch:rule>
     </sch:pattern>
     
