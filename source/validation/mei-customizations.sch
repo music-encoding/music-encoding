@@ -70,14 +70,15 @@
     <!-- CHECK IF ELEMENTS ARE PROPERLY INCLUDED AND EXCEPTED FROM MODULES -->
     <sch:pattern id="check_moduleRef_includesExcepts">
         <sch:rule context="tei:moduleRef[@key and (@include or @except)]">
+            <sch:extends rule="get.source"/>
             <sch:let name="moduleKey" value="@key"/>
-            <sch:let name="all.elements.in.module" value="$mei.source//tei:elementSpec[@module = $moduleKey]/@ident"/>
+            <sch:let name="all.elements.in.module" value="$applicable.source.doc//tei:elementSpec[@module = $moduleKey]/@ident"/>
             <sch:let name="included.elements" value="tokenize(normalize-space(@include),' ')"/>
             <sch:let name="false.inclusions" value="$included.elements[not(. = $all.elements.in.module)]"/>
             <sch:let name="excepted.elements" value="tokenize(normalize-space(@except),' ')"/>
             <sch:let name="false.exceptions" value="$excepted.elements[not(. = $all.elements.in.module)]"/>
-            <sch:assert test="not(@include) or count($false.inclusions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.inclusions return ($error || ' (should be: ' || $mei.source//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
-            <sch:assert test="not(@except) or count($false.exceptions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.exceptions return ($error || ' (should be: ' || $mei.source//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
+            <sch:assert test="not(@include) or count($false.inclusions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.inclusions return ($error || ' (should be: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
+            <sch:assert test="not(@except) or count($false.exceptions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.exceptions return ($error || ' (should be: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
         </sch:rule>
     </sch:pattern>
     
