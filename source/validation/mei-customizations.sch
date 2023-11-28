@@ -40,11 +40,10 @@
     <!-- CHECK IF ATTRIBUTE CLASSES ARE AVAILABLE AND IN CORRECT MODULE -->
     <sch:pattern id="check_att_classSpecs">
         <sch:rule context="tei:classSpec[@type = 'atts']">
-            <sch:let name="ident" value="@ident"/>
-            <sch:let name="module" value="@module"/>
-            <sch:let name="exists" value="$ident = $mei.source//tei:classSpec[@type = 'atts']/@ident"/>
+            <sch:extends rule="get.source"/>
+            <sch:let name="exists" value="$ident = $applicable.source.doc//tei:classSpec[@type = 'atts']/@ident"/>
             <sch:assert test="$exists">There is no attribute class with name "<sch:value-of select="$ident"/>".</sch:assert>
-            <sch:assert test="not($exists) or $module = $mei.source//tei:classSpec[@ident = $ident]/@module">Attribute class "<sch:value-of select="$ident"/>" is not in module "<sch:value-of select="$module"/>", but in module "<sch:value-of select="$mei.source//tei:classSpec[@ident = $ident]/@module"/>".</sch:assert>
+            <sch:assert test="not($exists) or $module = $applicable.source.doc//tei:classSpec[@ident = $ident]/@module">Attribute class "<sch:value-of select="$ident"/>" is not in module "<sch:value-of select="$module"/>", but in module "<sch:value-of select="$applicable.source.doc//tei:classSpec[@ident = $ident]/@module"/>".</sch:assert>
         </sch:rule>
     </sch:pattern>
     
