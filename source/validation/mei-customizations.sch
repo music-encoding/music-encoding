@@ -15,17 +15,18 @@
             <sch:let name="module.spec" value="ancestor-or-self::tei:schemaSpec//*[@ident = $module] | ancestor-or-self::tei:schemaSpec//*[@key = $module]"/>
             <sch:let name="module.source.path" value="resolve-uri($module.spec/@source, document-uri(/root()))"/>
             <sch:let name="this.source.path" value="resolve-uri(@source, document-uri(/root()))"/>
-            <sch:let name="applicable.source.path" value="if (@source) then
-                                                              if (doc-available($this.source.path)) then
+            <sch:let name="applicable.source.path" value="if ($this.source.path != '') then
                                                                   $this.source.path
-                                                              else 'error'
-                                                          else if (doc-available($module.source.path)) then
+                                                          else if ($module.source.path != '') then
                                                             $module.source.path
-                                                          else if (doc-available($schemaSpec.source.path)) then
+                                                          else if ($schemaSpec.source.path != '') then
                                                             $schemaSpec.source.path
                                                           else $mei.source.path"/>
-            <sch:let name="applicable.source.doc" value="doc($applicable.source.path)"/>
-            <sch:report role="info" test="true()">applicable source: <sch:value-of select="$applicable.source.path"/></sch:report>
+            <sch:let name="applicable.source.doc" value="if (doc-available($applicable.source.path)) then
+                                                            doc($applicable.source.path)
+                                                         else doc($customization.path)"/>
+            <sch:report role="info" test="true()">applicable source path: <sch:value-of select="$applicable.source.path"/></sch:report>
+            <sch:report role="error" test="document-uri($applicable.source.doc) = $customization.path">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
         </sch:rule>
     </sch:pattern>
     
