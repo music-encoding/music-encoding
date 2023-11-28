@@ -31,8 +31,9 @@
     
     <!-- CHECK IF MEI SOURCE IS IN EXPECTED LOCATION AND AVAILABLE -->
     <sch:pattern id="check_source_available">
-        <sch:rule context="tei:TEI">
-            <sch:assert test="doc-available($mei.source.path)" role="error">The MEI Source file is not available at the expected location of <sch:value-of select="$mei.source.path"/></sch:assert>
+        <sch:rule context="tei:schemaSpec">
+            <sch:extends rule="get.source"/>
+            <sch:assert role="warning" test="doc-available($applicable.source.path)">The applicable MEI Source file is not available at the expected location of <sch:value-of select="$applicable.source.path"/></sch:assert>
         </sch:rule>
     </sch:pattern>
     
