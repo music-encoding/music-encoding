@@ -7,6 +7,28 @@
     <sch:let name="mei.source.path" value=" resolve-uri('../mei-source.xml')"/>
     <sch:let name="mei.source" value="document($mei.source.path)"/>
     
+    <sch:pattern id="abstract-rules">
+        <sch:rule abstract="true" id="get.source">
+            <sch:let name="schemaSpec.source.path" value="resolve-uri(ancestor-or-self::tei:schemaSpec/@source, document-uri(/root()))"/>
+            <sch:let name="ident" value="@ident"/>
+            <sch:let name="module" value="@module"/>
+            <sch:let name="module.spec" value="ancestor-or-self::tei:schemaSpec//*[@ident = $module] | ancestor-or-self::tei:schemaSpec//*[@key = $module]"/>
+            <sch:let name="module.source.path" value="resolve-uri($module.spec/@source, document-uri(/root()))"/>
+            <sch:let name="this.source.path" value="resolve-uri(@source, document-uri(/root()))"/>
+            <sch:let name="applicable.source.path" value="if (@source) then
+                                                              if (doc-available($this.source.path)) then
+                                                                  $this.source.path
+                                                              else 'error'
+                                                          else if (doc-available($module.source.path)) then
+                                                            $module.source.path
+                                                          else if (doc-available($schemaSpec.source.path)) then
+                                                            $schemaSpec.source.path
+                                                          else $mei.source.path"/>
+            <sch:let name="applicable.source.doc" value="doc($applicable.source.path)"/>
+            <sch:report role="info" test="true()">applicable source: <sch:value-of select="$applicable.source.path"/></sch:report>
+        </sch:rule>
+    </sch:pattern>
+    
     <!-- CHECK IF MEI SOURCE IS IN EXPECTED LOCATION AND AVAILABLE -->
     <sch:pattern id="check_source_available">
         <sch:rule context="tei:TEI">
