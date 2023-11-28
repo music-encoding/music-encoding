@@ -77,8 +77,16 @@
             <sch:let name="false.inclusions" value="$included.elements[not(. = $all.elements.in.module)]"/>
             <sch:let name="excepted.elements" value="tokenize(normalize-space(@except),' ')"/>
             <sch:let name="false.exceptions" value="$excepted.elements[not(. = $all.elements.in.module)]"/>
-            <sch:assert test="not(@include) or count($false.inclusions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.inclusions return ($error || ' (should be: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
-            <sch:assert test="not(@except) or count($false.exceptions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((for $error in $false.exceptions return ($error || ' (should be: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')')), ', ')"/>.</sch:assert>
+            <sch:assert test="not(@include) or count($false.inclusions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((
+                for $error in $false.inclusions return
+                    concat($error, if($applicable.source.doc//tei:elementSpec[@ident = $error]/@module) then
+                        ' (should be included in: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')'
+                        else ' (cannot be found in any module)')), ', ')"/>.</sch:assert>
+            <sch:assert test="not(@except) or count($false.exceptions) = 0">The following elements are not available in <sch:value-of select="$moduleKey"/>: <sch:value-of select="string-join((
+                for $error in $false.exceptions return
+                    concat($error, if($applicable.source.doc//tei:elementSpec[@ident = $error]/@module) then
+                        ' (should be excepted in: ' || $applicable.source.doc//tei:elementSpec[@ident = $error]/@module || ')'
+                        else ' (cannot be found in any module)')), ', ')"/>.</sch:assert>
         </sch:rule>
     </sch:pattern>
     
