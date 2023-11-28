@@ -11,10 +11,20 @@
         <sch:rule abstract="true" id="get.source">
             <sch:let name="schemaSpec.source.path" value="resolve-uri(ancestor-or-self::tei:schemaSpec/@source, document-uri(/root()))"/>
             <sch:let name="ident" value="@ident"/>
+            <sch:let name="key" value="@key"/>
             <sch:let name="module" value="@module"/>
-            <sch:let name="module.spec" value="ancestor-or-self::tei:schemaSpec//*[@ident = $module] | ancestor-or-self::tei:schemaSpec//*[@key = $module]"/>
-            <sch:let name="module.source.path" value="resolve-uri($module.spec/@source, document-uri(/root()))"/>
-            <sch:let name="this.source.path" value="resolve-uri(@source, document-uri(/root()))"/>
+            <sch:let name="module.spec" value="if (local-name(.) = 'memberOf') then
+                                                   if (ancestor::tei:schemaSpec//tei:moduleRef[@key = current()/ancestor::tei:schemaSpec//tei:classSpec[@ident = $key]/@module]) then
+                                                       ancestor::tei:schemaSpec//tei:moduleRef[@key = current()/ancestor::tei:schemaSpec//tei:classSpec[@ident = $key]/@module]
+                                                   else for $source.ref in ancestor::tei:schemaSpec//tei:moduleRef/@source
+                                                        return
+                                                            if(doc(resolve-uri($source.ref, $customization.path))//tei:classSpec[@ident = $key]) then
+                                                                ancestor::tei:schemaSpec//tei:moduleRef[@key = doc(resolve-uri($source.ref, $customization.path))//tei:classSpec[@ident = $key]/@module]
+                                                       else ancestor::tei:TEI
+                                               else ancestor::tei:schemaSpec//tei:moduleSpec[@ident = $module] | ancestor::tei:schemaSpec//tei:moduleRef[@key = $module]
+                "/><?TODO local moduleSpec ?>
+            <sch:let name="module.source.path" value="resolve-uri($module.spec/@source, $customization.path)"/>
+            <sch:let name="this.source.path" value="resolve-uri(@source, $customization.path)"/>
             <sch:let name="applicable.source.path" value="if ($this.source.path != '') then
                                                                   $this.source.path
                                                           else if ($module.source.path != '') then
@@ -25,6 +35,7 @@
             <sch:let name="applicable.source.doc" value="if (doc-available($applicable.source.path)) then
                                                             doc($applicable.source.path)
                                                          else doc($customization.path)"/>
+            <sch:report role="info" test="true()">Validating <sch:name/> (<sch:value-of select="$ident | $key | $module"/>)</sch:report>
             <sch:report role="info" test="true()">applicable source path: <sch:value-of select="$applicable.source.path"/></sch:report>
             <sch:report role="error" test="document-uri($applicable.source.doc) = $customization.path">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
         </sch:rule>
@@ -93,12 +104,14 @@
     
     <!-- CHECK IF A CLASS REFERENCED BY classes/memberOf IS AVAILABLE -->
     <sch:pattern id="check_memberOf_key_available">
-        <sch:let name="classenames.source" value="$mei.source//tei:classSpec/@ident"/>
-        <sch:let name="classnames.customization" value="//tei:classSpec/@ident[@mode = 'add']"/>
-        <sch:let name="classnames.deleted" value="//tei:classSpec[@mode = 'delete']/@ident"/>
         <sch:rule context="tei:classes/tei:memberOf">
-            <sch:assert test="@key = ($classenames.source, $classnames.customization)">The referenced class "<sch:value-of select="@key"/>" does neither exist in your source, nor in your customization.</sch:assert>
-            <sch:report role="warning" test="@key = $classnames.deleted">The referenced class "<sch:value-of select="@key"/>" has been deleted from your customization.</sch:report>
+            <sch:extends rule="get.source"/>
+            <sch:let name="classenames.mei.source" value="$mei.source//tei:classSpec/@ident"/>
+            <sch:let name="classenames.applicable.source" value="$applicable.source.doc//tei:classSpec/@ident"/>
+            <sch:let name="classnames.customization" value="//tei:classSpec/@ident[@mode = 'add']"/>
+            <sch:let name="classnames.deleted" value="//tei:classSpec[@mode = 'delete']/@ident"/>
+            <sch:assert test="@key = ($classenames.mei.source, $classenames.applicable.source, $classnames.customization)">The referenced class "<sch:value-of select="@key"/>" does neither exist in the applicable source nor in mei source or in your customization.</sch:assert>
+            <sch:report role="warning" test="@key = $classnames.deleted">The referenced class "<sch:value-of select="@key"/>" has been deleted from your customization. When converting the ODD to a schema the class will probably be zapped but you should remove the reference here or make sure it is not deleted from your customization.</sch:report>
         </sch:rule>
     </sch:pattern>
 </sch:schema>
