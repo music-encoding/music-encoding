@@ -474,8 +474,10 @@
         <xsl:variable name="values" select="$object//tei:valList/tei:valItem" as="node()*"/>
         
         <xsl:if test="count($values) gt 0">
+            <xsl:variable name="valTolerance" select="if($object//tei:valList/@type = 'semi') then('Suggested') else('Allowed')" as="xs:string?"/>
+            
             <div class="facet allowedValues" id="allowedValues">
-                <div class="label">Allowed Values</div>
+                <div class="label"><xsl:value-of select="$valTolerance || ' Values'"/></div>
                 <div class="statement list">
                     <xsl:for-each select="$values">
                         <div class="dataValueBox" id="{@ident}">
@@ -631,7 +633,8 @@
                 <span class="attributeValues">
                     <xsl:choose>
                         <xsl:when test="$current.att/tei:valList">
-                            Allowed values are:
+                            <xsl:variable name="valTolerance" select="if($current.att/tei:valList/@type = 'semi') then('Suggested') else('Allowed')" as="xs:string?"/>
+                            <xsl:value-of select="' ' || $valTolerance || ' values are:'"/>
                             <xsl:for-each select="$current.att/tei:valList/tei:valItem">
                                 <xsl:if test="position() gt 1">, </xsl:if> "<span style="font-weight: 500;"><xsl:value-of select="@ident"/></span>" <xsl:if test="tei:desc"> <i>(<xsl:value-of select="tei:desc/text()"/>)</i></xsl:if>
                             </xsl:for-each>
