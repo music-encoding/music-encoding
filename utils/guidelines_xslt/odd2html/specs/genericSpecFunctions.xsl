@@ -463,7 +463,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Retreives the allowed values of an attribute</xd:p>
+            <xd:p>Retrieves the allowed values of an attribute</xd:p>
         </xd:desc>
         <xd:param name="object"></xd:param>
         <xd:return></xd:return>
@@ -609,7 +609,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Resolves the defition of an attribute</xd:p>
+            <xd:p>Resolves the definition of an attribute</xd:p>
         </xd:desc>
         <xd:param name="current.att">The current attribute</xd:param>
         <xd:param name="module"></xd:param>
