@@ -201,8 +201,8 @@
         <xsl:message select="'.   data types: ' || count($data.types)"/>
         <xsl:message select="'.   macro groups: ' || count($macro.groups)"/>
         
-        <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="preface" select="tools:generatePreface()" as="node()+"/>
+        <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
