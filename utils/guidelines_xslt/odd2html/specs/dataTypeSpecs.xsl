@@ -24,7 +24,7 @@
                     <!--<xd:li>Chapter references</xd:li>-->
                     <xd:li>Module</xd:li>
                     <xd:li>Used By</xd:li>
-                    <xd:li>Allowed values</xd:li>
+                    <xd:li>Tolerated values</xd:li>
                     <xd:li>Remarks (optional)</xd:li>
                     <xd:li>Constraints (optional)</xd:li>
                     <xd:li>Declaration</xd:li>
@@ -62,7 +62,7 @@
         
         <xsl:variable name="moduleFacet" select="tools:getModuleFacet($data.type)" as="node()"/>
         <xsl:variable name="usedByFacet" select="tools:getDatatypeUsersFacet($data.type)" as="node()"/>
-        <xsl:variable name="allowedValuesFacet" select="tools:getAllowedValuesFacet($data.type)" as="node()?"/>
+        <xsl:variable name="toleratedValuesFacet" select="tools:getToleratedValuesFacet($data.type)" as="node()?"/>
         <xsl:variable name="remarksFacet" select="tools:getRemarksFacet($data.type)" as="node()?"/>
         <xsl:variable name="constraintsFacet" select="tools:getSchematronFacet($data.type)" as="node()?"/>
         <xsl:variable name="declarationFacet" select="tools:getDeclarationFacet($data.type)" as="node()"/>
@@ -75,7 +75,7 @@
                 </div>
                 <xsl:sequence select="$moduleFacet"/>
                 <xsl:sequence select="$usedByFacet"/>
-                <xsl:sequence select="$allowedValuesFacet"/>
+                <xsl:sequence select="$toleratedValuesFacet"/>
                 <xsl:sequence select="$remarksFacet"/>
                 <xsl:sequence select="$constraintsFacet"/>
                 <xsl:sequence select="$declarationFacet"/>

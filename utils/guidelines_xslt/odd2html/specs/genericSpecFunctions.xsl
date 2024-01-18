@@ -463,12 +463,12 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Retrieves the allowed values of an attribute</xd:p>
+            <xd:p>Retrieves the tolerated values of an attribute</xd:p>
         </xd:desc>
         <xd:param name="object"></xd:param>
         <xd:return></xd:return>
     </xd:doc>
-    <xsl:function name="tools:getAllowedValuesFacet" as="node()?">
+    <xsl:function name="tools:getToleratedValuesFacet" as="node()?">
         <xsl:param name="object" as="node()"/>
         
         <xsl:variable name="values" select="$object//tei:valList/tei:valItem" as="node()*"/>
@@ -476,7 +476,7 @@
         <xsl:if test="count($values) gt 0">
             <xsl:variable name="valTolerance" select="if($object//tei:valList/@type = 'semi') then('Suggested') else('Allowed')" as="xs:string?"/>
             
-            <div class="facet allowedValues" id="allowedValues">
+            <div class="facet toleratedValues" id="toleratedValues">
                 <div class="label"><xsl:value-of select="$valTolerance || ' Values'"/></div>
                 <div class="statement list">
                     <xsl:for-each select="$values">
