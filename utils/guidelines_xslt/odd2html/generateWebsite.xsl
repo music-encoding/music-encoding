@@ -1007,7 +1007,7 @@
                                 <xsl:apply-templates select=".//span[@class='specList-elementSpec']" mode="#current"/>
                             </div>
                             <div class="tile-subtitle text-gray">
-                                <xsl:apply-templates select="text()"/>
+                                <xsl:apply-templates select="text()|abbr/text()"/>
                             </div>
                         </div>
                     </div>
@@ -1048,7 +1048,7 @@
                                 <xsl:apply-templates select=".//a" mode="#current"/>
                             </div>
                             <div class="tile-subtitle text-gray">
-                                <xsl:apply-templates select="text()"/>
+                                <xsl:apply-templates select="text()|abbr/text()"/>
                             </div>
                         </div>
                     </div>
