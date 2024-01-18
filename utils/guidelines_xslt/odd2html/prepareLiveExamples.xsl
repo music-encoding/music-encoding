@@ -43,6 +43,7 @@
     
     <xsl:template name="prepareLiveExamples">
         <xsl:param name="guidelinesSources" as="node()*"/>
+        <xsl:message select="'Preparing live examples'"/>
         
         <xsl:for-each select="$guidelinesSources//egx:egXML['verovio' = tokenize(normalize-space(@rend),' ')]">
             <xsl:variable name="id" select="generate-id(.)" as="xs:string"/>

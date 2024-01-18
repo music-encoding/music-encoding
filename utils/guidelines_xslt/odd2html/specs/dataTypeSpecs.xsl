@@ -40,6 +40,7 @@
         <xd:return>the section element</xd:return>
     </xd:doc>
     <xsl:function name="tools:getDataTypeSpecs" as="node()">
+        <xsl:message select="'Getting data type specs'"/>
         <section id="dataTypeSpecs" class="specSection">
             <h1>Data Type Specifications</h1>
             <xsl:for-each select="$data.types">
