@@ -1048,7 +1048,7 @@
                                 <xsl:apply-templates select=".//a" mode="#current"/>
                             </div>
                             <div class="tile-subtitle text-gray">
-                                <xsl:apply-templates select="text()|abbr/text()"/>
+                                <xsl:apply-templates select="text()"/>
                             </div>
                         </div>
                     </div>
