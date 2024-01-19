@@ -31,6 +31,7 @@
     </xd:doc>
     <xsl:template name="generateWebsite">
         <xsl:param name="input" as="node()+"/>
+        <xsl:message select="'Generating HTML document for website'"/>
         
         <xsl:variable name="web.output" select="$dist.folder" as="xs:string"/>
         
