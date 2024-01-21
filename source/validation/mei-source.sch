@@ -2,12 +2,16 @@
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
+
     <sch:pattern id="check_gi_references">
         <sch:rule context="tei:gi">
             <sch:assert role="error"
                 test="exists(@scheme)"
                 >A &lt;gi&gt; element needs to specify the @scheme which is used. Usually this will have a value of "MEI".</sch:assert>
         </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_gi_scheme_MEI_references">
         <sch:rule context="tei:gi[@scheme = 'MEI']">
             <sch:let name="ident_vals" value="//tei:elementSpec/@ident/string()"/>
             <sch:assert role="error"
@@ -20,12 +24,16 @@
         <sch:p>A &lt;gi&gt; in the MEI scheme must reference a value from &lt;elementSpec&gt;/@ident.</sch:p>
     </sch:pattern>
 
-    <sch:pattern id="check_ident_references">
+    
+    <sch:pattern id="check_ident_type_references">
         <sch:rule context="tei:ident">
             <sch:assert role="error"
                 test="exists(@type)"
                 >An &lt;ident&gt; element needs to specify its @type. This is usually "class".</sch:assert>
         </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_ident_type_class_references">
         <sch:rule context="tei:ident[@type = 'class']">
             <sch:let name="ident_vals" value="//tei:classSpec[@type = ('atts', 'model')]/@ident/string()"/>
             <sch:assert role="error"
@@ -36,7 +44,7 @@
                 &lt;classSpec&gt;/@ident.</sch:assert>
             <sch:p>The text value of &lt;ident&gt; must be equal to at least one value of
                 &lt;classSpec&gt;/@ident.</sch:p>
-        </sch:rule>
+        </sch:rule> 
     </sch:pattern>
     
     <sch:pattern id="check_specDesc">
@@ -88,13 +96,15 @@
     
     <!-- memberOf @key -->
     <!-- rng:ref @name -->
-
-    <sch:pattern id="check_ptr">
+    <sch:pattern id="check_ptr_target">
         <sch:rule context="tei:ptr">
             <sch:assert role="error"
                 test="exists(@target)"
                 >A &lt;ptr&gt; element needs to specify a @target.</sch:assert>
         </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_ptr_target_references">
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
             <sch:let name="div_IDs" value="//tei:div/@xml:id/string()"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
