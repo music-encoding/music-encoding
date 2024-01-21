@@ -44,7 +44,7 @@
                 &lt;classSpec&gt;/@ident.</sch:assert>
             <sch:p>The text value of &lt;ident&gt; must be equal to at least one value of
                 &lt;classSpec&gt;/@ident.</sch:p>
-        </sch:rule> 
+        </sch:rule>
     </sch:pattern>
     
     <sch:pattern id="check_specDesc">
@@ -96,6 +96,7 @@
     
     <!-- memberOf @key -->
     <!-- rng:ref @name -->
+
     <sch:pattern id="check_ptr_target">
         <sch:rule context="tei:ptr">
             <sch:assert role="error"
