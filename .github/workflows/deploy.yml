@@ -140,7 +140,10 @@ jobs:
           rm -rf $SCHEMA_DIR/$TARGET_DIR
           cp -r dist/schemata/ $SCHEMA_DIR/
           mv $SCHEMA_DIR/schemata $SCHEMA_DIR/$TARGET_DIR
-          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
+      
+      - name: Copy mei-source_canonicalized to SCHEMA_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: find ${{ github.workspace }}/build -name 'mei-source_canonicalized_*.xml' -exec cp {} $SCHEMA_DIR/$TARGET_DIR/ \;
 
       - name: Check git status before commit
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
