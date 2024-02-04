@@ -72,9 +72,12 @@
     <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
     <property name="dir.lib" value="lib"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
     <property name="saxon.download.version" value="SaxonHE11-5"/>
     <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
+    <property name="schematron.version" value="1.9.5"/>
+    <property name="schematron.jar.file" value="ant-schxslt-${schematron.version}.jar"/>
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
@@ -165,6 +168,15 @@
         </condition>
         <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
         <echo unless:set="saxon-available" message="saxon available: false"/>
+        <!-- check if schematron is available -->
+        <condition property="schematron-available">
+            <or>
+                <available file="${dir.lib.schematron}/${schematron.jar.file}"/>
+                <available classname="name.dmaus.schxslt.ant.Task"/>
+            </or>
+        </condition>
+        <echo if:set="schematron-available" message="schematron available: ${schematron-available}"/>
+        <echo unless:set="schematron-available" message="schematron available: false"/>
         <!-- check for prince -->
         <condition property="prince-available">
             <available file="prince" filepath="${env.PATH}" />
@@ -173,6 +185,7 @@
         <echo unless:set="prince-available" message="prince available: false"/>
 
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="schematron-download" unless:true="${schematron-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
 
         <echo>initialized</echo>
@@ -201,15 +214,24 @@
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
         <mkdir dir="${dir.lib.saxon}"/>
         <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
+        <echo>downloaded saxon jar</echo>
+    </target>
+
+    <target name="schematron-download" unless="${schematron-available}">
+        <mkdir dir="${dir.lib.schematron}"/>
+        <get src="https://github.com/schxslt/schxslt/releases/download/v${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
+        <echo>downloaded schematron jar</echo>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
+        <echo>downloaded xeces jars</echo>
+    </target>
     </target>
 
-    <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in build/mei-source_canonicalized. This target will be triggered before all `build-...` targets." depends="init-mei-classpath" >
+    <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in build/mei-source_canonicalized. This target will be triggered before all `build-...` targets." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
@@ -219,6 +241,12 @@
         </java>
         <property name="canonicalize-source.done" value="true"/>
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
+        <antcall target="validate-source"/>
+    </target>
+
+    <target name="validate-source" description="Validates the canonicalized source.">
+        <taskdef name="schematron" classname="name.dmaus.schxslt.ant.Task" classpath="${dir.lib.schematron}/${schematron.jar.file}"/>
+        <schematron schema="${dir.validation}/mei-source.sch" file="${canonicalized.source.path}" report="${dir.build}/validation-report.xml"/>
     </target>
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
