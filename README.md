@@ -1,8 +1,10 @@
 # The Music Encoding Initiative
 
-| Branch        | Continuous Integration Status  |
-| ------------- |:------------------------------:|
-| Develop       |![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8319922.svg)](https://zenodo.org/doi/10.5281/zenodo.8319922)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/music-encoding/music-encoding?label=latest%20release)
+](https://github.com/music-encoding/music-encoding/releases/latest)
+[![GitHub](https://img.shields.io/github/license/music-encoding/music-encoding)](LICENSE)
+![Deploy Schema and Guidelines](https://github.com/music-encoding/music-encoding/workflows/Deploy%20Schema%20and%20Guidelines/badge.svg?branch=develop)
 
 The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI Source and customizations, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed in TEI’s ODD language (One Document Does-it-all, cf. amongst others: Viglianti, 2019). As such, the MEI Source contains both, the specifications that can be compiled to [schema](https://music-encoding.org/schema/) formats for [validating](#validating-mei-files-against-an-mei-schema) XML files, and documentation in prose, the [MEI Guidelines](https://music-encoding.org/guidelines), which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
@@ -103,3 +105,24 @@ And moreover
 ## Referenced Material
 
 * Viglianti, R. (2019). One Document Does-it-all (ODD): A language for documentation, schema generation, and customization from the Text Encoding Initiative. Symposium on Markup Vocabulary Customization, Washington, DC. [https://doi.org/10.4242/BalisageVol24.Viglianti01](https://doi.org/10.4242/BalisageVol24.Viglianti01)
+
+## License
+
+Copyright 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council")
+
+Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://opensource.org/licenses/ECL-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+
+This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+and the Rector and Visitors of the University of Virginia; licensed under the Educational
+Community License version 1.0.
+
+CONTACT: info@music-encoding.org

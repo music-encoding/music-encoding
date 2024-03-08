@@ -463,19 +463,21 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Retreives the allowed values of an attribute</xd:p>
+            <xd:p>Retrieves the tolerated values of an attribute</xd:p>
         </xd:desc>
         <xd:param name="object"></xd:param>
         <xd:return></xd:return>
     </xd:doc>
-    <xsl:function name="tools:getAllowedValuesFacet" as="node()?">
+    <xsl:function name="tools:getToleratedValuesFacet" as="node()?">
         <xsl:param name="object" as="node()"/>
         
         <xsl:variable name="values" select="$object//tei:valList/tei:valItem" as="node()*"/>
         
         <xsl:if test="count($values) gt 0">
-            <div class="facet allowedValues" id="allowedValues">
-                <div class="label">Allowed Values</div>
+            <xsl:variable name="valTolerance" select="if($object//tei:valList/@type = 'semi') then('Suggested') else('Allowed')" as="xs:string?"/>
+            
+            <div class="facet toleratedValues" id="toleratedValues">
+                <div class="label"><xsl:value-of select="$valTolerance || ' Values'"/></div>
                 <div class="statement list">
                     <xsl:for-each select="$values">
                         <div class="dataValueBox" id="{@ident}">
@@ -607,7 +609,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Resolves the defition of an attribute</xd:p>
+            <xd:p>Resolves the definition of an attribute</xd:p>
         </xd:desc>
         <xd:param name="current.att">The current attribute</xd:param>
         <xd:param name="module"></xd:param>
@@ -631,7 +633,8 @@
                 <span class="attributeValues">
                     <xsl:choose>
                         <xsl:when test="$current.att/tei:valList">
-                            Allowed values are:
+                            <xsl:variable name="valTolerance" select="if($current.att/tei:valList/@type = 'semi') then('Suggested') else('Allowed')" as="xs:string?"/>
+                            <xsl:value-of select="' ' || $valTolerance || ' values are:'"/>
                             <xsl:for-each select="$current.att/tei:valList/tei:valItem">
                                 <xsl:if test="position() gt 1">, </xsl:if> "<span style="font-weight: 500;"><xsl:value-of select="@ident"/></span>" <xsl:if test="tei:desc"> <i>(<xsl:value-of select="tei:desc/text()"/>)</i></xsl:if>
                             </xsl:for-each>

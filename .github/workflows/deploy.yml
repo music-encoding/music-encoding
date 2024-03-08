@@ -72,13 +72,13 @@ jobs:
 
       ### UPLOADING THE ARTIFACTS ###
       - name: Upload PDF
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pdf
           path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_*.pdf
 
       - name: Upload Prince XML log
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: prince_log
           path: ${{ github.workspace }}/build/prince.log
@@ -140,7 +140,10 @@ jobs:
           rm -rf $SCHEMA_DIR/$TARGET_DIR
           cp -r dist/schemata/ $SCHEMA_DIR/
           mv $SCHEMA_DIR/schemata $SCHEMA_DIR/$TARGET_DIR
-          cp -r build/mei-source_canonicalized.xml $SCHEMA_DIR/$TARGET_DIR
+      
+      - name: Copy mei-source_canonicalized to SCHEMA_DIR
+        if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
+        run: find ${{ github.workspace }}/build -name 'mei-source_canonicalized_*.xml' -exec cp {} $SCHEMA_DIR/$TARGET_DIR/ \;
 
       - name: Check git status before commit
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
@@ -239,7 +242,7 @@ jobs:
       # but then the version would have to be determined programatically
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: ncipollo/release-action@6c75be85e571768fa31b40abf38de58ba0397db5 # ratchet:ncipollo/release-action@v1.13.0
+        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # ratchet:ncipollo/release-action@v1.14.0
         with:
           allowUpdates: false
           artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf"

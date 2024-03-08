@@ -19,8 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.cmn">
   <moduleSpec ident="MEI.cmn">
     <desc xml:lang="en">Common Music Notation (CMN) repertoire component declarations.</desc>
@@ -267,18 +266,15 @@
           <constraint>
             <sch:rule
               context="mei:beam[@place eq 'mixed' and not(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])]">
-              <sch:assert
-                test="count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])"
-                >Stem direction must be specified for all notes and chords under the
+              <sch:assert test="count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])" role="warning"
+                >Stem directions should be specified for all notes and chords under the
                 beam.</sch:assert>
-              <sch:assert
-                test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+              <sch:assert test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) != 1"
                 >Opposing stem directions are required for a beam with @place="mixed".</sch:assert>
             </sch:rule>
             <sch:rule
-              context="mei:beam[@place eq 'mixed' and (descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])                 and count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])]">
-              <sch:assert
-                test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+              context="mei:beam[@place eq 'mixed' and (descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n]) and count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])]">
+              <sch:assert test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) != 1"
                 >Opposing stem directions are required for a beam with @place="mixed".</sch:assert>
             </sch:rule>
           </constraint>
@@ -574,7 +570,7 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.event"/>
-      <memberOf key="att.duration.log"/>
+      <memberOf key="att.duration.additive"/>
     </classes>
   </classSpec>
   <classSpec ident="att.harpPedal.log" module="MEI.cmn" type="atts">
@@ -926,7 +922,7 @@
       <attDef ident="func" usage="opt">
         <gloss versionDate="2022-10-18" xml:lang="en">function</gloss>
         <desc xml:lang="en">Indicates the function of the depressed pedal, but not necessarily the text associated
-          with its use. Use the <gi>dir</gi> element for such text.</desc>
+          with its use. Use the <gi scheme="MEI">dir</gi> element for such text.</desc>
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
@@ -1237,7 +1233,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The modern arpeggiation symbol is a vertical wavy line preceding the chord. When the notes
@@ -1350,7 +1346,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="beamspan_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1385,7 +1381,7 @@
       <memberOf key="model.eventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p> <gi scheme="MEI">beatRpt</gi> may also be used in guitar or rhythm parts to indicate where
@@ -1407,7 +1403,7 @@
       <memberOf key="model.controlEventLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="bend_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1472,7 +1468,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="breath_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1528,7 +1524,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="fermata_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1684,7 +1680,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="hairpin_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1722,7 +1718,7 @@
       <memberOf key="model.eventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="harpPedal" module="MEI.cmn">
@@ -1738,7 +1734,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="harpPedal_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1851,7 +1847,7 @@
       <memberOf key="model.meterSigLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="meterSigGrp" module="MEI.cmn">
@@ -1921,7 +1917,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>Automatically-generated numbering of consecutive measures of rest may be controlled via the
@@ -1942,7 +1938,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The automated numbering of consecutive measures of rest may be controlled via the
@@ -1964,7 +1960,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="mSpace" module="MEI.cmn">
@@ -1980,7 +1976,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The automated numbering of consecutive measures of space may be controlled via the
@@ -2002,7 +1998,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <!--<remarks xml:lang="en"><p>The num attribute can used to store a number to be rendered along with
         the note. See Read, p. 102-105.</p></remarks>-->
@@ -2020,7 +2016,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>In modern publishing practice, repeats of more than two measures should be written out
@@ -2203,7 +2199,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="pedal_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -2451,7 +2447,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="tupletSpan_start-_and_end-type_attributes_required"
       scheme="schematron">

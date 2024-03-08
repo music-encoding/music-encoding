@@ -61,8 +61,12 @@
             <os family="windows"/>
         </not>
     </condition>
+    <property name="meiversion.latest" value="5.0"/>
+    <property name="meiversion.next" value="5.1-dev"/>
     <property name="dir.build" value="build"/>
-    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${dir.build}/mei-source_canonicalized.xml"/>
+    <property name="canonicalized.file" value="mei-source_canonicalized_v"/>
+    <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file}${meiversion.next}.xml"/>
+    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
     <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
     <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
@@ -210,7 +214,7 @@
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
-            <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
+            <arg value="-o:${canonicalized.source.path}"/>
             <arg value="-xi:on"/>
         </java>
         <property name="canonicalize-source.done" value="true"/>
@@ -251,7 +255,7 @@
         <echo>building rng ${odd.basename} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
         <echo>    output: ${dir.dist.schemata}/${odd.basename}.rng</echo>
-        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
+        <ant dir="submodules/Stylesheets/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
@@ -281,7 +285,7 @@
         </condition>
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
-            <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
+            <arg value="-s:${canonicalized.source.path}"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
             <arg value="output.folder=${basedir}/${dir.build}/"/>
@@ -398,7 +402,7 @@
 
     <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="canonicalize-source">
         <!-- set source file -->
-        <property name="source.default" value="${dir.build}/mei-source_canonicalized.xml"/>
+        <property name="source.default" value="${canonicalized.source.path}"/>
         <echo level="verbose">source.default: ${source.default}</echo>
         <echo level="verbose">source user input: ${source}</echo>
 
@@ -408,11 +412,11 @@
         <echo>Using source.file: ${source.file}</echo>
 
         <!-- set old file to compare with -->
-        <property name="old.default" value="${dir.build}/mei-source_canonicalized_v4.0.1.xml"/>
+        <property name="old.default" value="${dir.build}/${canonicalized.file}${meiversion.latest}.xml"/>
         <condition property="old.default-available" value="true">
                 <available file="${old.default}"/>
         </condition>
-        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/4.0.1/mei-source_canonicalized_v4.0.1.xml" dest="${old.default}" unless:true="${old.default-available}"/>
+        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/${meiversion.latest}/${canonicalized.file}${meiversion.latest}.xml" dest="${old.default}" unless:true="${old.default-available}"/>
 
         <echo level="verbose">old.default: ${old.default}</echo>
         <echo level="verbose">old user input: ${old}</echo>
