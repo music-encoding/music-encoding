@@ -40,6 +40,7 @@
         <xd:return>the section element</xd:return>
     </xd:doc>
     <xsl:function name="tools:getAttClassSpecs" as="node()">
+        <xsl:message select="'Getting attribute class specs'"/>
         <section id="attClassSpecs" class="specSection">
             <h1>Attribute Class Specifications</h1>
             <xsl:for-each select="$att.classes">
