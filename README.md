@@ -23,11 +23,10 @@ This repository contains all the source code of the MEI Schema and Guidelines:
  * [tests](tests): Unit tests for the MEI Schemata.
  * [utils](utils): Helper scripts e.g. for compiling schemata and guidelines from this repository.
 
-**!ATTENTION!**
-
-Nevertheless, it is possible to [build](#building-mei) any customization locally in your working copy of this repository.
-
-Nevertheless, it is possible to (build)[#building-mei] any customization locally in your working copy of this repository.
+>[!IMPORTANT]
+>For the sake of the continuous integration (CI) workflow, the build artifacts of the schemata and guidelines are no longer included in this repository, but are generated on every commit to the develop branch and automatically pushed to their dedicated repositories. For more information please see the section [Additional Resources](#additional-resources) below.
+>
+>Nevertheless, it is possible to [build](#building-mei) any customization locally in your working copy of this repository.
 
 ## Validating MEI files against an MEI Schema
 
