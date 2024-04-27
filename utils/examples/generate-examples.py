@@ -73,7 +73,7 @@ if __name__ == "__main__":
         mei_example: str = mei_file.read_text()
 
         if not tk.loadData(mei_example):
-            log.error("Failed to load %s", mei_file)
+            log.error("Failed to load %s", mei_file.name)
             success = False
             continue
 
