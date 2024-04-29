@@ -72,9 +72,11 @@
     <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
     <property name="dir.lib" value="lib"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
     <property name="saxon.download.version" value="SaxonHE12-4"/>
     <property name="saxon.jar.file" value="saxon-he-12.4.jar"/>
+    <property name="stylesheets.download.version" value="7.56.0"/>
     <property name="xerces.version" value="26.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
@@ -114,7 +116,7 @@
     </target>
 
     <target name="echo-mei">
-      <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei"/>
+        <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei" />
         <echo message="${mei}"/>
     </target>
 
@@ -165,6 +167,15 @@
         </condition>
         <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
         <echo unless:set="saxon-available" message="saxon available: false"/>
+        <!-- check if stylesheets are available -->
+        <condition property="stylesheets-available">
+            <or>
+                <available file="${dir.lib.stylesheets}"/>
+            </or>
+        </condition>
+        <echo if:set="stylesheets-available"
+            message="stylesheets available: ${stylesheets-available}"/>
+        <echo unless:set="stylesheets-available" message="stylesheets available: false"/>
         <!-- check if Prince is available -->
         <condition property="prince-available">
             <available file="prince" filepath="${env.PATH}" />
@@ -172,6 +183,7 @@
         <echo if:set="prince-available" message="prince available: ${prince-available}"/>
         <echo unless:set="prince-available" message="prince available: false"/>
 
+        <antcall target="stylesheets-prepare" unless:true="${stylesheets-available}"/>
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
 
@@ -190,7 +202,9 @@
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip" dest="temp/download"/>
+        <get
+            src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip"
+            dest="temp/download"/>
     </target>
 
     <target name="saxon-prepare" depends="saxon-unzip" unless="${saxon-available}">
@@ -200,6 +214,30 @@
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
         <mkdir dir="${dir.lib.saxon}"/>
         <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
+    </target>
+
+    <target name="stylesheets-download" unless="${stylesheets-available}">
+        <mkdir dir="temp"/>
+        <get
+            src="https://github.com/TEIC/Stylesheets/releases/download/v${stylesheets.download.version}/tei-xsl-${stylesheets.download.version}.zip"
+            dest="temp/download"/>
+    </target>
+
+    <target name="stylesheets-prepare" depends="stylesheets-unzip" unless="${stylesheets-available}">
+        <delete dir="temp/"/>
+    </target>
+
+    <target name="stylesheets-unzip" depends="stylesheets-download"
+        unless="${stylesheets-available}">
+        <mkdir dir="${dir.lib.stylesheets}"/>
+        <unzip src="temp/download" overwrite="true" dest="${dir.lib.stylesheets}">
+            <patternset>
+                <include name="xml/tei/stylesheet/**"/>
+            </patternset>
+            <mapper>
+                <globmapper from="xml/tei/stylesheet/*" to="*"/>
+            </mapper>
+        </unzip>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
@@ -222,7 +260,7 @@
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
+        <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
@@ -238,7 +276,7 @@
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${customization.path}"></param>
         </antcall>
-        <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
+        <ant dir="${dir.lib.stylesheets}/html5" antfile="build-to.xml" target="odd" inheritall="true">
             <property name="inputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.html"/>
             <property name="verbose" value="${verbose}"/>
@@ -252,7 +290,7 @@
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
         <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
-        <ant dir="submodules/Stylesheets/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
+        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
