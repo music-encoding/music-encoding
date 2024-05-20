@@ -772,7 +772,260 @@
                         the TEI</ref>, and the "<ref
                         target="https://tei-c.org/guidelines/customization/getting-started-with-p5-odds/"
                         >Getting Started with P5 ODDs</ref>" document.</p>
-                  <p>At this point, there is no specific documentation on how to customize MEI with
+                  <div xml:id="customizationTerminologyWorkflows" type="div4">
+                     <head>Terminology and Workflows</head>
+                     <p>MEI can be customized for different reasons, and it is important to use the 
+                        correct terminology for the different use cases. The MEI profile called <hi rend="bold italic">mei-all</hi>
+                        (see chapter <ptr target="#meiProfiles"/>) takes a special role in this. This profile 
+                        contains the complete concept model of MEI. All customizations are measured against 
+                        <hi rend="italic">mei-all</hi>. If a customization is a <hi rend="italic">conceptual subset</hi> of
+                        <hi rend="italic">mei-all</hi>, it is considered as <hi rend="bold">conformant</hi> with MEI. If, 
+                        on the other hand, it contains concepts and markup unknown to <hi rend="italic">mei-all</hi>, it
+                        is considered an <hi rend="bold">extension</hi> of MEI, but it is <hi rend="italic">not 
+                           conforming</hi> to MEI. Such an extending customization cannot claim <hi rend="italic">compatibility
+                           with MEI</hi> as a whole, even though parts of it are likely to be conformant.</p>
+                     <p>For the decision if a customization is conceptually conformant with <hi rend="italic">mei-all</hi>, it
+                        is important to consider that MEI already provides a certain level of built-in extensibility, whick means 
+                        that customizations based on the approaches described in chapters <ptr target="#extensionsUsingType"/> and 
+                        <ptr target="#extensionsUsingClass"/> are always conformant to MEI. All official profiles provided by MEI 
+                        (see chapter <ptr target="#meiProfiles"/>) are subsets of MEI, and thus conformant to 
+                        <hi rend="italic">mei-all</hi>.</p>
+                     <p>If stated correctly, not being conformant with <hi rend="italic">mei-all</hi> is not considered harmful or 
+                        problematic. Actually, such extensions to current MEI are considered the intended way to add new 
+                        functionality to MEI. For this, all markup that goes beyond the conceptual model of 
+                        <hi rend="italic">mei-all</hi> is supposed to use an XML Namespace other than 
+                        <hi rend="italic">http://www.music-encoding.org/ns/mei</hi> (see chapter <ptr target="#extensions"/>). 
+                        Adopting such an extension into MEI is very easy from a technical perspective, but the different namespace 
+                        will very clearly communicate which parts of an MEI instance are conforming, and which are not yet adopted.
+                        Putting these extensions into the MEI Namespace would make false claims, is unexpected by MEI users, and 
+                        might not be interpreted as intended. At the same time, having files which are using a separate namespace 
+                        for their extensions to MEI will exemplify the use of the proposed new markup, and are thus an ideal basis 
+                        for discussing the benefit of these new concepts with the wider 
+                        <ref target="https://music-encoding.org/community/community-contacts.html">MEI Community</ref>, whcih is a 
+                        first step into adopting it into regular MEI.</p>
+                     <p>Reaching out to the <ref target="https://music-encoding.org/community/community-contacts.html">MEI Community</ref>
+                        is recommended for all types of customizations, as this allows others to evaluate such uses of MEI and may
+                        convince them to follow the same practice, increasing interoperability of data between different projects.</p>
+                  </div>
+                  <div xml:id="extensionsUsingType" type="div4">
+                     <head>Quick Extensions using the Type Attribute</head>
+                     <p>In MEI, the <att>type</att> attribute is available on (almost) every element.</p>
+                     <p>
+                        <specList>
+                           <specDesc key="att.typed" atts="type"/>
+                        </specList>
+                     </p>
+                     <p><att>type</att> is a built-in, <hi rend="italic">easy to use</hi> extension mechanism, as it allows to add
+                        almost any kind of data to any given element.</p>
+                     <p>
+                        <figure>
+                           <head>Snippet from the <hi rend="italic">Ehre sei mit Dir</hi> from Heinrich Schütz' 
+                              <hi rend="italic">Matthäuspassion</hi> (composed 1665/1666).</head>
+                           <graphic url="../images/modules/introduction/Schütz_Matthäuspassion_16th.png"/>
+                        </figure>
+                     </p>
+                     <p>In the example above, the scribe uses two different ways to write 16th notes for the Canto and Alto voices.
+                        In the following measure, he uses the same way again, leaving it unclear if there is any meaning associated
+                        with the form written.</p>
+                     <p>If a project wants to preserve this observation, ib order to be able to get back to it later, compiling all 
+                        such cases and search for potentially meaningful patterns, it is possible to flag one or both of these notes
+                        with a <att>type</att> attribute. Such a solution could be as follows:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-type.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>While not using dedicated new markup for this information, it is possible to query a file for all the 
+                        notes having a <att>type</att> of <val>weirdShape</val> (or any other value), using standard 
+                        <ref target="https://www.w3.org/TR/xpath-31/">XPath</ref> queries. In other words, a (here deliberately informal) 
+                        description of an additional feature not covered by regular MEI has been added to the encoding of the note,
+                        which is fully accessible to further investigation and / or processing. Please note that it is not required 
+                        to add <att>type</att> to all notes, so it would be equally possible to add it just to the "special" notes or 
+                        elements, and then later query for the absence of a given type value.</p>
+                     <p>The datatype of <att>type</att> allows for a series of multiple string values, making it possible to capture 
+                        any number of additional features not catered for by regular MEI.</p>
+                  </div>
+                  <div xml:id="extensionsUsingClass" type="div4">
+                     <head>Extensions based on Classification</head>
+                     <p>With sufficient clarity to categorize elements based on a feature not covered by dedicated markup in MEI, 
+                        it is recommended to move from the use of <att>type</att> to <att>class</att> instead.</p>
+                     <p>
+                        <specList>
+                           <specDesc key="att.classed" atts="class"/>
+                        </specList>
+                     </p>
+                     <p>A value in <att>class</att> is then supposed to reference into a formal description of the feature observed.
+                        Using the example from above, an encoding might look like the following:
+                     </p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-classLocal.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>This is a very basic example of a classification, where the <gi scheme="MEI">classDecls</gi> would go into the 
+                        header of the MEI file, and each note would use a <att>class</att> attribute to reference one of the 
+                        <gi scheme="MEI">category</gi> elements. It is expected that those will provide a full description of the 
+                        feature in question, shared by all instances refering to it. For this purposes, additional markup within 
+                        <gi scheme="MEI">desc</gi> is available. The following elements are important for class-based extensions.</p>
+                     <p>
+                        <specList>
+                           <specDesc key="classDecls"/>
+                           <specDesc key="taxonomy"/>
+                           <specDesc key="category"/>
+                           <specDesc key="desc"/>
+                        </specList>
+                     </p>
+                     <p>A major difference between the use of <att>type</att> and <att>class</att> is that the latter already comes 
+                        with a basic amount of validation: Values in <att>class</att> must point to the <att>xml:id</att> of an
+                        <gi scheme="MEI">category</gi> element in the same file (or be an external URI; more on that below). So, while
+                        <att>type</att> is very informal and may be used any time without much preparation to store interesting features
+                        that are not expected upfront, <att>class</att> is meant to thoroughly classify every affected element according
+                        to some predefined terminology.</p>
+                     <p>Instead of using local <gi scheme="MEI">category</gi> elements for defining the features in question, it is 
+                        encouraged to point to existing Authority Files where available and applicable. These external definitions may
+                        be stored in MEI or any other format, as long as the categories used can be referenced by URI.</p>
+                     <p>Every element in MEI can have any number of categories (internal or external) referenced from <att>class</att>.</p>
+                     <p>When observations initally encoded using <att>type</att> have proven their value, it is recommended to turn them
+                        into more formal <att>class</att> declarations and share those with the wider MEI Community. Ideally, this may 
+                        lead to wider adoption in other projects as well, result in shared concepts and new Authority Files, and also
+                        provide arguments for adding new markup to MEI.</p>
+                  </div>
+                  <div xml:id="extensions" type="div4">
+                     <head>Extensions introducing New Markup</head>
+                     <p>Sometimes, <ptr target="#extensionsUsingType"/> and <ptr target="#extensionsUsingClass"/> are not sufficient to
+                        adequately capture certain situations. This is usually the case when existing MEI elements do not offer the 
+                        amount of structure or specifity needed to address the feature in question with attribute-based approaches only.</p>
+                     <p>The following example is a hyphothetical extension to MEI. It is actually not considered a generally useful 
+                        addition – if so, it would have been added already. However, it may make sense under certain conditions, and 
+                        so this example is just an example for the process of extending MEI with new markup – it is not necessarily an 
+                        example of a particularly convincing extension.</p>
+                     <p>Consider a project that wants to encode a music document written in multiple colors. Here is an excerpt of that 
+                        document, used for the purposes of this example:</p>
+                     <p>
+                        <figure>
+                           <head>Excerpt from a hypothetical music document written in multiple colors.</head>
+                           <graphic url="../images/modules/introduction/Colorful.png"/>
+                        </figure>
+                     </p>
+                     <p>MEI is capable of capturing the color of a note, using the <att>color</att> attribute.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem1.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>However, with a value of <val>colorful</val> (or any other single string), it is not possible to explicitly identify 
+                        the different colors for notehead, stem and flag independently. If that music document would reflect some fictional
+                        20th century piece where color of these parameters would indicate some meaningful feature (performing forces, dynamics, 
+                        …), it would be necessary to capture the color at a higher resolution. One potential way to do that would be to go 
+                        for dedicated child elements:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem2.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>This encoding would now capture the colors of the various note components correctly, but following to the arguments
+                        provided in chapter <ptr target="#customizationTerminologyWorkflows"/>, would be considered an incorrect extension 
+                        to MEI: Neither the <gi>stem</gi> and <gi>flag</gi> elements are actually part of MEI, and the <gi scheme="MEI">head</gi>
+                        element is actually not meant for noteheads, but headings – even when adding <att>color</att> to it, it would be
+                        severe <hi rend="italic">tag abuse</hi> to use it for the purpose at hand. Instead, the new child elements of 
+                        <gi scheme="MEI">note</gi> should be put in a separate namespace:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem3.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The three child elements are now referencing a (yet to be defined) separate namespace, making it clear they are not 
+                        part of regular MEI. Please note that the notehead is also avoiding the name of the <gi scheme="MEI">head</gi>
+                        element to minimize the risk of confusion on the encoder's side.</p>
+                     <p>The definition of one such new element could be as follows:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem4.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>This <gi scheme="TEI">elementSpec</gi> would be inserted in an ODD customization file, that would then be compiled 
+                        against the MEI sources to create a new MEI profile supporting this new element (see the 
+                        <ref target="https://github.com/music-encoding/music-encoding?tab=readme-ov-file#customizing-mei">MEI 
+                           repository</ref> for details about the technical procedures). While this definition is quite similar to the
+                        definition of other elements in the MEI sources, there are some important attributes to note. First of all,
+                        the <att>mode</att> attribute with <val>add</val> value is necessary to insert an element in a customization – it 
+                        means that this element will be added compared to what is in the ODD sources the customization is applied to.
+                        The <att>ns</att> attribute will actually move the new element to a different namespace, while the <att>prefix</att> 
+                        attribute will specify how this new element may be addressed within the ODD file (more on that below). It has no 
+                        meaning for files using this modified model. Please also note that the new element, despite being in a separate 
+                        namespace, may fully utilize existing MEI attribute classes.</p>
+                     <p>With the new <gi>ex:noteHead</gi> element being defined, it is now necessary to make it available somewhere within 
+                        MEI, in this case as a child of the regular <gi scheme="MEI">note</gi> element. For this purpose, the customization
+                        could also update the specification of that element:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem5.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Here, the existing <gi scheme="TEI">elementSpec</gi> is updated using the <val>change</val> <att>mode</att>. This means 
+                        that original child elements are overwritten with the specifications provided within the customization, leaving all others 
+                        unchanged. For the purposes of this example, it is sufficient to just update the <gi scheme="TEI">content</gi>, 
+                        where an additional <gi scheme="RNG">rng:ref</gi> with <att>name</att> <val>ex_noteHead</val> is inserted. This refers to 
+                        the <att>prefix</att> attribute given for the new <gi>noteHead</gi> element above, and will make this newly specified
+                        element available as child inside <gi scheme="MEI">note</gi>.</p>
+                     <p>When changing existing MEI elements, it is recommended to add a <gi scheme="TEI">remarks</gi> element which explains
+                        the changes made and thus provides documentation for the specific use of this element and how it differs from common use.</p>
+                     <p>Another, perhaps more elegant way to insert the new element into the MEI model which does not require
+                        to change existing elements would be to make the new element a member of the <ident type="class">model.noteModifierLike</ident> 
+                        class, as in the following example:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elem6.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Since members of that class are already allowed as child elements of <gi scheme="MEI">note</gi>, the new 
+                        <gi>noteHead</gi> element will be allowed there as well. Please note that it is not necessary to offer both options, and using
+                        classes may result in a number of additional places where elements are allowed, which may or may not be appropriate. Also, 
+                        sometimes there are no adequate classes available, so this is just illustrating potential solutions.</p>
+                     
+                     <p>It is equally possible to extend MEI with new attributes. Following the same arguments, these attributes should also be put in 
+                        a separate namespace. Note that the following approach could also serve as an alternative strategy to encode the color of 
+                        the different components of our colorful music document.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-attDef.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>This new attribute could then either be added to an existing or new attribute class, or could be made available on 
+                        <gi scheme="MEI">note</gi> directly. An encoding using this attribute might then look like so:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-attUse.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>Using ODD customizations, it is also possible to restrict or extend allowed values of attributes. While this is not
+                        documented in the current version of these Guidelines, it is important to point out that it technically not possible to
+                        indicate which values are not included in regular MEI, as neither XML Namespaces nor similar mechanisms can be applied to
+                        those new values. It is therefore important to exercise extra diligence when documenting such extensions to the schema.</p>
+                     <p>Extending MEI should not be taken lightly, and should always be based on intense interchange with the MEI Community. 
+                        Adding new markup to the schema is often a tempting solution, but it comes at the risk of weakening the standard through
+                        competing solutions. In general, extensions should only be made when either the community agrees on the proposed solution, 
+                        ensuring interoperability between similar projects, or when the proposed markup is for internal use only, and not expected 
+                        to be taken up by others at all. Very often, less invasive but equally target-oriented approaches can be found. In case of the
+                        colorful example above, it might be equally adequate to address the situtation by using <att>type</att> (or <att>class</att>):</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="false"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/introduction/introduction-extension-elemType.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </div>
+                  <!--<p>At this point, there is no specific documentation on how to customize MEI with
                      ODD beyond the generic TEI documentation. However, the provided <ptr
                         target="#meiProfiles"/> are based on ODD customizations, and may serve as
                      starting point for further project-specific restrictions. They can be found
@@ -792,7 +1045,7 @@
                      customizing MEI will be provided as time permits; until then, it is recommended
                         to <ref target="https://music-encoding.org/community/community-contacts.html"
                         >reach out to the MEI Community</ref> for additional
-                     assistance.</p>
+                     assistance.</p>-->
                </div>
             </div>
             <div xml:id="samplesTools" type="div2">
