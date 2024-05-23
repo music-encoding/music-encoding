@@ -223,10 +223,11 @@
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
+        <property name="compiled-odd.path" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
         <echo>${odd.basename}</echo>
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
+            <property name="outputFile" value="${compiled-odd.path}"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
@@ -235,19 +236,19 @@
         </ant>
     </target>
     
-    <target name="build-customization-specs" depends="canonicalize-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
+    <target name="build-customization-specs" depends="build-compiled-odd" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
         <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
         <echo>${odd.basename}</echo>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${customization.path}"></param>
-        </antcall>
-        <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
-            <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
-            <property name="verbose" value="${verbose}"/>
-            <property name="processODD">true</property>
-            <reference refid="mei.classpath" torefid="classpath"/>
-        </ant>
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-s:${compiled-odd.path}"/>
+            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
+            <arg value="-xi:on"/>
+            <arg value="output.folder=${basedir}/${dir.build}/"/>
+            <arg value="hash=${hash}"/>
+            <arg value="branch=${branch}"/>
+            <arg value="basedir=${basedir.cross_platform}"/>
+            <arg value="skip-guidelines=true"/>
+        </java>
     </target>
 
     <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
