@@ -56,7 +56,20 @@
     </xd:doc>
     <xsl:function name="tools:getModuleSpecPage" as="node()">
         <xsl:param name="module" as="node()"/>
-        <xsl:variable name="module.content" select="$module/parent::tei:specGrp" as="node()"/>
+        <xsl:variable name="module.content" as="node()">
+            <xsl:choose>
+                <!-- operating on the MEI sources -->
+                <xsl:when test="$module/parent::tei:specGrp">
+                    <xsl:sequence select="$module/parent::tei:specGrp"/>
+                </xsl:when>
+                <!-- operating on a customization -->
+                <xsl:when test="not($module/child::element())">
+                    <specGrp xmlns="http://www.tei-c.org/ns/1.0">
+                        <xsl:sequence select="$module/parent::tei:schemaSpec/child::tei:*[@module = $module/@ident]"/>
+                    </specGrp>
+                </xsl:when>
+            </xsl:choose>
+        </xsl:variable>
         
         <section class="specPage moduleSpec">
             <h2 id="{$module/@ident}"><xsl:value-of select="$module/@ident"/></h2>

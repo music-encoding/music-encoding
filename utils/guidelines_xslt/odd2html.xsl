@@ -130,6 +130,13 @@
     </xd:doc>
     <xsl:param name="basedir" select="''" as="xs:string"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Whether Guidelines should not be generated (usually true for Customizations, which only generate Specs).</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="skip-guidelines" select="'false'" as="xs:string"/>
+    
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
     <xd:doc>
@@ -140,7 +147,7 @@
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/') || '/.git/'" as="xs:string"/>
                 <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
             </xsl:when>
             <xsl:otherwise>
@@ -157,7 +164,7 @@
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/') || '/.git/'" as="xs:string"/>
                 <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
             </xsl:when>
             <xsl:otherwise>
@@ -205,7 +212,9 @@
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
-                <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
+                <xsl:if test="$skip-guidelines ne 'false'">
+                    <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>
+                </xsl:if>       
             </main>
         </xsl:variable>
         <xsl:variable name="moduleSpecs" select="tools:getModuleSpecs()" as="node()"/>
@@ -216,9 +225,7 @@
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
         
         <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
-            
-        
-        
+
         <xsl:variable name="contents" as="node()*">
             <xsl:sequence select="$preface"/>
             <xsl:sequence select="$toc"/>
