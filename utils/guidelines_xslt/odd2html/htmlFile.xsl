@@ -129,9 +129,11 @@
                                     </form>
                                     
                                     <ul class="nav">
-                                        <li class="nav-item">
-                                            <a href="{$output.path}content/index.html">Guidelines</a>
-                                        </li>
+                                        <xsl:if test="$skip-guidelines ne 'false'">
+                                            <li class="nav-item">
+                                                <a href="{$output.path}content/index.html">Guidelines</a>
+                                            </li>
+                                        </xsl:if>
                                         <li class="nav-item">
                                             <a href="{$output.path}modules.html">Modules</a>
                                         </li>

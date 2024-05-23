@@ -75,7 +75,7 @@
                 files independently again. See tools:generatePreface() in functions.xsl.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="docs.folder" select="collection($cleaned.basedir || 'source/docs')//tei:TEI" as="node()*"/>
+    <xsl:variable name="docs.folder" select="if($skip-guidelines eq 'false') then(collection($cleaned.basedir || 'source/docs')//tei:TEI) else()" as="node()*"/>
     
     <xd:doc>
         <xd:desc>
