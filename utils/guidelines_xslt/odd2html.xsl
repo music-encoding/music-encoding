@@ -130,6 +130,13 @@
     </xd:doc>
     <xsl:param name="basedir" select="''" as="xs:string"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Whether Contributors should be retrieved live from GitHub. Please consider that this may result in excessive API calls.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="retrieve-contributors" select="'false'" as="xs:string"/>
+    
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
     <xd:doc>
