@@ -146,7 +146,7 @@
     </xd:doc>
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
-            <xsl:when test="$hash eq 'latest'">
+            <xsl:when test="$hash eq 'latest' and contains(document-uri(/), '/source/')">
                 <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/') || '/.git/'" as="xs:string"/>
                 <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
             </xsl:when>
@@ -163,7 +163,7 @@
     </xd:doc>
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
-            <xsl:when test="$hash eq 'latest'">
+            <xsl:when test="$hash eq 'latest' and contains(document-uri(/), '/source/')">
                 <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/') || '/.git/'" as="xs:string"/>
                 <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
             </xsl:when>
@@ -171,6 +171,18 @@
                 <xsl:value-of select="$hash"/>
             </xsl:otherwise>
         </xsl:choose>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>If operating on a customization like REPO/dist/schemata/mei-basic_compiled.odd, the name of the customization, i.e. "mei-basic".</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="customization-name" as="xs:string?">
+        <xsl:if test="contains(document-uri(/), '/dist/schemata/')">
+            <xsl:variable name="baseName" select="substring-before(substring-after(document-uri(/), '/dist/schemata/mei-'), '_compiled')" as="xs:string"/>
+            <xsl:value-of select="'MEI ' || upper-case(substring($baseName, 1, 1)) || substring($baseName, 2)"/>
+        </xsl:if>
     </xsl:variable>
     
     <xsl:include href="odd2html/config.xsl"/>
@@ -200,7 +212,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="/">
-        <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10) || (if(exists($customization-name)) then(', customization: ' || $customization-name) else())"/>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
