@@ -114,7 +114,7 @@
         </xsl:variable>
         
         <xsl:variable name="editor.in.chief" select="$source.file//tei:respStmt/tei:name[@role='pbd']/normalize-space(text())" as="xs:string*"/>
-        <xsl:variable name="editors" as="xs:string+">
+        <xsl:variable name="editors" as="xs:string*">
             <xsl:for-each select="distinct-values($docs.folder//tei:respStmt/tei:name[@role='edt']/normalize-space(text()))">
                 <xsl:sort select="tokenize(.,' ')[last()]"/>
                 <xsl:variable name="current.name" select="." as="xs:string"/>
