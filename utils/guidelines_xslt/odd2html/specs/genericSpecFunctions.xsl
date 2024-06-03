@@ -687,7 +687,7 @@
                             </xsl:variable>
                             Value conforms to either <xsl:sequence select="$refs"/>.
                         </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:data]">
+                        <xsl:when test="$current.att/tei:datatype[rng:data|tei:dataRef/@name]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
                             <xsl:choose>
                                 <xsl:when test="$dt/@maxOccurs = '1'">
@@ -709,6 +709,9 @@
                                     Value is a valid <a target="_blank" href="https://www.w3.org/TR/xml-id/">xml:id</a>.
                                 </xsl:when>
                                 <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'decimal'">
+                                    Value is a decimal number.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'decimal'">
                                     Value is a decimal number.
                                 </xsl:when>
                                 <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'integer'">
