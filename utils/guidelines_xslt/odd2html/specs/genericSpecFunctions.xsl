@@ -1169,9 +1169,11 @@
         
         <xsl:if test="$is.element">
             <xsl:variable name="class.parents" select="$model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key]" as="node()*"/>
-            <!-- The following creates recursive loops -->
-            <!--<xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>-->
-            <xsl:variable name="ancestor.models" select="$class.parents" as="node()*"/>
+            <xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
+            <xsl:variable name="ancestor.models" as="node()*">
+                <xsl:sequence select="$class.parents"/>
+                <xsl:sequence select="$macro.parents"/>
+            </xsl:variable>
             <xsl:for-each select="$ancestor.models">
                 <xsl:sequence select="tools:getParentsByModel(.)"/>    
             </xsl:for-each>    
