@@ -77,8 +77,8 @@
     <property name="dir.validation" value="source/validation"/>
     <property name="saxon.download.version" value="SaxonHE11-5"/>
     <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
-    <property name="schematron.version" value="1.9.5"/>
-    <property name="schematron.jar.file" value="ant-schxslt-${schematron.version}.jar"/>
+    <property name="schematron.version" value="5.6.5"/>
+    <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
     <property name="xerces.version" value="25.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
@@ -173,7 +173,7 @@
         <condition property="schematron-available">
             <or>
                 <available file="${dir.lib.schematron}/${schematron.jar.file}"/>
-                <available classname="name.dmaus.schxslt.ant.Task"/>
+                <available classname="com.helger.schematron.ant.Schematron"/>
             </or>
         </condition>
         <echo if:set="schematron-available" message="schematron available: ${schematron-available}"/>
@@ -210,7 +210,7 @@
 
     <target name="schematron-download" unless="${schematron-available}">
         <mkdir dir="${dir.lib.schematron}"/>
-        <get src="https://github.com/schxslt/schxslt/releases/download/v${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
+        <get src="https://repo1.maven.org/maven2/com/helger/ph-schematron-ant-task/${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
         <echo>downloaded schematron jar</echo>
     </target>
 
@@ -228,7 +228,6 @@
                 <include name="xerces/*.jar"/>
                 <include name="schematron/*.jar"/>
             </fileset>
-            <pathelement path="${java.class.path}"/>
         </path>
         <echo>mei.classpath set</echo>
     </target>
@@ -246,9 +245,13 @@
         <antcall target="validate-source"/>
     </target>
 
-    <target name="validate-source" description="Validates the canonicalized source.">
-        <taskdef name="schematron" classname="name.dmaus.schxslt.ant.Task" classpath="${dir.lib.schematron}/${schematron.jar.file}"/>
-        <schematron schema="${dir.validation}/mei-source.sch" file="${canonicalized.source.path}" report="${dir.build}/validation-report.xml"/>
+    <target name="validate-source" depends="init-mei-classpath" description="Validates the canonicalized source.">
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
+        <schematron schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+            <fileset dir="${dir.build}">    
+                <include name="${canonicalized.file}${meiversion.next}.xml" ></include>
+            </fileset>
+        </schematron>
     </target>
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
