@@ -143,7 +143,7 @@ The following targets can be called using `ant <target>`:
 | target                | description     |
 |-----------------------|-----------------|
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
-| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized`. This target will be triggered before all `build-...` targets. |
+| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`. This target will be triggered before all `build-...` targets and includes schematron validation. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
 | `build-customizations` | Builds the RNG schemata for all MEI customizations. |
