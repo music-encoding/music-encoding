@@ -64,8 +64,10 @@
     <property name="meiversion.latest" value="5.0"/>
     <property name="meiversion.next" value="5.1-dev"/>
     <property name="dir.build" value="build"/>
-    <property name="canonicalized.file" value="mei-source_canonicalized_v"/>
-    <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file}${meiversion.next}.xml"/>
+    <property name="canonicalized.file.prefix" value="mei-source_canonicalized_v"/>
+    <property name="canonicalized.file.latest" value="${canonicalized.file.prefix}${meiversion.latest}.xml"/>
+    <property name="canonicalized.file.next" value="${canonicalized.file.prefix}${meiversion.next}.xml"/>
+    <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
     <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
     <property name="dir.dist" value="dist"/>
     <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
@@ -249,7 +251,7 @@
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
         <schematron schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">    
-                <include name="${canonicalized.file}${meiversion.next}.xml" ></include>
+                <include name="${canonicalized.file.next}" ></include>
             </fileset>
         </schematron>
     </target>
@@ -445,11 +447,11 @@
         <echo>Using source.file: ${source.file}</echo>
 
         <!-- set old file to compare with -->
-        <property name="old.default" value="${dir.build}/${canonicalized.file}${meiversion.latest}.xml"/>
+        <property name="old.default" value="${dir.build}/${canonicalized.file.latest}"/>
         <condition property="old.default-available" value="true">
                 <available file="${old.default}"/>
         </condition>
-        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/${meiversion.latest}/${canonicalized.file}${meiversion.latest}.xml" dest="${old.default}" unless:true="${old.default-available}"/>
+        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/${meiversion.latest}/${canonicalized.file.latest}" dest="${old.default}" unless:true="${old.default-available}"/>
 
         <echo level="verbose">old.default: ${old.default}</echo>
         <echo level="verbose">old user input: ${old}</echo>
