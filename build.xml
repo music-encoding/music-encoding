@@ -221,11 +221,10 @@
     </target>
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>${odd.basename}</echo>
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
@@ -235,14 +234,13 @@
     </target>
     
     <target name="build-customization-specs" depends="canonicalize-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>${odd.basename}</echo>
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${customization.path}"></param>
         </antcall>
         <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
-            <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
+            <property name="inputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.html"/>
             <property name="verbose" value="${verbose}"/>
             <property name="processODD">true</property>
             <reference refid="mei.classpath" torefid="classpath"/>
@@ -250,13 +248,13 @@
     </target>
 
     <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>building rng ${odd.basename} from ${customization.path}</echo>
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
-        <echo>    output: ${dir.dist.schemata}/${odd.basename}.rng</echo>
+        <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
         <ant dir="submodules/Stylesheets/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
             <reference refid="mei.classpath" torefid="classpath"/>
@@ -268,8 +266,8 @@
         <!-- TODO check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo message="building HTML guidelines for ${odd.basename} from ${customization.path} on branch ${github.branch.local}"/>
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo message="building HTML guidelines for ${selectedSchema} from ${customization.path} on branch ${github.branch.local}"/>
         <echo>github.sha: ${github.sha}</echo>
         <echo>github.sha.local: ${github.sha.local}</echo>
         <condition property="hash" value="${github.sha}" else="${github.sha.local}">
