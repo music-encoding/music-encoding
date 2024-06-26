@@ -7,11 +7,11 @@
    | Prerequisite | Recommended version |
    |----|----------------|
    |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
-   |Apache Ant|1.10.13|
-   |Verovio Toolkit|3.15|
+   |Apache Ant|1.10.14|
+   |Verovio Toolkit|4.2.1|
    |Prince XML|15.1|
-   |Saxon HE*| 11.5 |
-   |Xerces*|Synchrosoft patched version 25.1.0.1|
+   |Saxon HE*| 12.4 |
+   |Xerces*|Synchrosoft patched version 26.1.0.1|
 
    \* automatically pulled during build execution
 
@@ -29,9 +29,9 @@
      This should return something similar to:
 
      ```shell
-     openjdk version "17.0.7" 2023-04-18
-     OpenJDK Runtime Environment Temurin-17.0.7+7 (build 17.0.7+7)
-     OpenJDK 64-Bit Server VM Temurin-17.0.7+7 (build 17.0.7+7, mixed mode, sharing)
+     openjdk version "11.0.23" 2024-04-16
+     OpenJDK Runtime Environment Homebrew (build 11.0.23+0)
+     OpenJDK 64-Bit Server VM Homebrew (build 11.0.23+0, mixed mode)
      ```
 
      If the version number indicated is lower than `8.0.0` or if the command returns an empty string, please update or install Java according to an installation instruction matching your operating system (to be found on the internet). The Java Development Kit we use in our [Docker Container](https://github.com/music-encoding/docker-mei) is Eclipse Temurin™, which is easy to [install](https://adoptium.net/de/installation/) on Linux, macOS or Windows.
@@ -49,7 +49,7 @@
      This should return something similar to:
 
      ```shell
-     Apache Ant™ version 1.10.13 compiled on September 27 2020
+     Apache Ant(TM) version 1.10.14 compiled on August 16 2023
      ```
 
      We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html) or any other applicable installation instruction.
