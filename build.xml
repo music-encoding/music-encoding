@@ -135,7 +135,7 @@
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
 
-    <target name="get-local-git-branch" description="Retrieves the current git branch via command line.">
+    <target name="get-local-git-branch" description="Retrieves the current git branch via command  line.">
         <exec executable="git" outputproperty="github.branch.local">
             <arg value="branch"/>
             <arg value="--show-current"/>
@@ -143,13 +143,13 @@
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
-    <target name="reset" description="Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the Saxon and Xerces jar files.">
+    <target name="reset" description="Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the TEI Stylesheets and the Saxon and Xerces jar files.">
         <delete dir="lib"/>
         <antcall target="clean"/>
     </target>
     
-    <target name="init" description="Initializes the build environment, i.e., checks if Saxon and Xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the lib folder. Checks if Prince is available.">
-        <!-- check if Xerces is available -->
+    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon and Xerces are available, and if not, it downloads everything into the `lib` folder. Checks if prince is available.">
+        <!-- check if xerces is available -->
         <condition property="xerces-available">
             <or>
                 <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
@@ -301,7 +301,7 @@
     </target>
 
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="canonicalize-source" unless="${build-guidelines-html.done}">
-        <!-- TODO check dependency try with mei-source.xml -->
+        <!-- TODO: check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
