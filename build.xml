@@ -74,9 +74,9 @@
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
     <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
-    <property name="saxon.download.version" value="SaxonHE12-4"/>
+    <property name="saxon.version" value="SaxonHE12-4"/>
     <property name="saxon.jar.file" value="saxon-he-12.4.jar"/>
-    <property name="stylesheets.download.version" value="7.56.0"/>
+    <property name="stylesheets.version" value="7.56.0"/>
     <property name="xerces.version" value="26.1.0.1"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
@@ -167,14 +167,11 @@
         </condition>
         <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
         <echo unless:set="saxon-available" message="saxon available: false"/>
-        <!-- check if stylesheets are available -->
+        <!-- check if Stylesheets are available -->
         <condition property="stylesheets-available">
-            <or>
-                <available file="${dir.lib.stylesheets}"/>
-            </or>
+            <available file="${dir.lib.stylesheets}"/>
         </condition>
-        <echo if:set="stylesheets-available"
-            message="stylesheets available: ${stylesheets-available}"/>
+        <echo if:set="stylesheets-available" message="stylesheets available: ${stylesheets-available}"/>
         <echo unless:set="stylesheets-available" message="stylesheets available: false"/>
         <!-- check if Prince is available -->
         <condition property="prince-available">
@@ -202,9 +199,7 @@
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get
-            src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip"
-            dest="temp/download"/>
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.version}/${saxon.version}J.zip" dest="temp/download"/>
     </target>
 
     <target name="saxon-prepare" depends="saxon-unzip" unless="${saxon-available}">
@@ -218,17 +213,14 @@
 
     <target name="stylesheets-download" unless="${stylesheets-available}">
         <mkdir dir="temp"/>
-        <get
-            src="https://github.com/TEIC/Stylesheets/releases/download/v${stylesheets.download.version}/tei-xsl-${stylesheets.download.version}.zip"
-            dest="temp/download"/>
+        <get src="https://github.com/TEIC/Stylesheets/releases/download/v${stylesheets.version}/tei-xsl-${stylesheets.version}.zip" dest="temp/download"/>
     </target>
 
     <target name="stylesheets-prepare" depends="stylesheets-unzip" unless="${stylesheets-available}">
         <delete dir="temp/"/>
     </target>
 
-    <target name="stylesheets-unzip" depends="stylesheets-download"
-        unless="${stylesheets-available}">
+    <target name="stylesheets-unzip" depends="stylesheets-download" unless="${stylesheets-available}">
         <mkdir dir="${dir.lib.stylesheets}"/>
         <unzip src="temp/download" overwrite="true" dest="${dir.lib.stylesheets}">
             <patternset>
