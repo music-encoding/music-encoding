@@ -150,8 +150,8 @@ The following targets can be called using `ant <target>`:
 | `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
-| `init` | Initializes the build environment, i.e., checks if saxon and xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the `lib` folder. Checks if prince is available. |
+| `init` | Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon and Xerces are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available. |
 | `init-mei-classpath` | Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed. |
 | `compare-versions` | Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via `-Dsource`, `-Dold` and `-Doutput` input params. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
-| `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |
+| `reset` | Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the TEI Stylesheets and the Saxon and Xerces jar files. |
