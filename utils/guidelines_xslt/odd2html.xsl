@@ -223,6 +223,7 @@
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
         
         <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
+        <xsl:variable name="contributors" select="tools:generateContributorsList()" as="node()+"/>
             
         
         
@@ -239,6 +240,7 @@
             <xsl:sequence select="$dataTypeSpecs"/>
             
             <xsl:sequence select="$indizes"/>
+            <xsl:sequence select="$contributors"/>
         </xsl:variable>
                 
         <!-- generate a single-page HTML version of the Guidelines -->
