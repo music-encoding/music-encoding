@@ -87,7 +87,7 @@
             <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
             <sch:let name="models" value="//tei:classSpec[@type = 'model']/@ident/string()"/>
             <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
-            <sch:let name="datatypes" value="//tei:macroSpec[@type ='dt']/@ident/string()"/>
+            <sch:let name="datatypes" value="//tei:dataSpec/@ident/string()"/>
             <sch:assert role="error"
                 test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -199,7 +199,7 @@
                 Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'dt']">
+        <sch:rule context="tei:dataSpec">
             <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
             <sch:let name="all.macroRefs" value="//tei:macroRef/string(@key)"/>
             <sch:let name="ident" value="@ident"/>
