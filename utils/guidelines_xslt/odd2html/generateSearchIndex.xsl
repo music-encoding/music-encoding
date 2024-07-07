@@ -71,7 +71,7 @@
         </xsl:variable>
         
         <xsl:variable name="datatypes" as="element(json:map)*">
-            <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'dt']|$mei.source//tei:dataSpec">
+            <xsl:for-each select="$mei.source//tei:dataSpec">
                 <xsl:variable name="current.data.type" select="." as="element(tei:dataSpec)"/>
                 <map xmlns="http://www.w3.org/2005/xpath-functions">
                     <string key="ident"><xsl:value-of select="$current.data.type/@ident"/></string>

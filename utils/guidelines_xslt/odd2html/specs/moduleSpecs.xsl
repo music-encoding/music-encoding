@@ -116,7 +116,7 @@
                 <div class="contentListBox">
                     <h3>Data Types in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:macroSpec[@type = 'dt']|$module.content//tei:dataSpec" as="node()*"/>
+                        <xsl:variable name="items" select="$module.content//tei:dataSpec" as="node()*"/>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
