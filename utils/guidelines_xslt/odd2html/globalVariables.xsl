@@ -229,7 +229,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="macro.groups" as="node()*">
-        <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+        <xsl:for-each select="$mei.source//tei:macroSpec">
             <xsl:sort select="@ident" data-type="text"/>
             <xsl:sequence select="."/>
         </xsl:for-each>
