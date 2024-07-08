@@ -1126,7 +1126,7 @@
     <xsl:function name="tools:getParentsByModel" as="node()*">
         <xsl:param name="object" as="node()"/>
         <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
-        <xsl:variable name="is.macroGroup" select="local-name($object) = 'macroSpec' and $object/@type = 'pe'" as="xs:boolean"/>
+        <xsl:variable name="is.macroGroup" select="local-name($object) = 'macroSpec'" as="xs:boolean"/>
         
         <xsl:variable name="direct.parents" select="$elements/self::tei:elementSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
         
@@ -1373,7 +1373,7 @@
         
         <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
         <xsl:variable name="is.model" select="local-name($object) = 'classSpec' and $object/@type = 'model'" as="xs:boolean"/>
-        <xsl:variable name="is.macro" select="local-name($object) = 'macroSpec' and $object/@type = 'pe'" as="xs:boolean"/>
+        <xsl:variable name="is.macro" select="local-name($object) = 'macroSpec'" as="xs:boolean"/>
         <xsl:variable name="ident" select="if($is.element) then('direct children') else($object/@ident)" as="xs:string"/>
         <xsl:variable name="desc" select="if($is.element) then('') else('(' || $object/@module || ') ' || normalize-space(string-join($object/tei:desc/text(),' ')))" as="xs:string"/>
         
