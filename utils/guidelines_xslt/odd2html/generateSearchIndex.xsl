@@ -32,7 +32,7 @@
         </xsl:variable>
         
         <xsl:variable name="macros" as="element(json:map)*">
-            <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+            <xsl:for-each select="$mei.source//tei:macroSpec">
                 <xsl:variable name="current.macro.group" select="." as="element(tei:macroSpec)"/>
                 <map xmlns="http://www.w3.org/2005/xpath-functions">
                     <string key="ident"><xsl:value-of select="$current.macro.group/@ident"/></string>

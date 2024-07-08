@@ -649,8 +649,8 @@
         <xsl:param name="new.file" as="node()"/>
         <xsl:param name="old.file" as="node()"/>
         
-        <xsl:variable name="new.macros" select="distinct-values($new.file//tei:macroSpec[@type = 'pe']/@ident)" as="xs:string*"/>
-        <xsl:variable name="old.macros" select="distinct-values($old.file//tei:macroSpec[@type = 'pe']/@ident)" as="xs:string*"/>
+        <xsl:variable name="new.macros" select="distinct-values($new.file//tei:macroSpec/@ident)" as="xs:string*"/>
+        <xsl:variable name="old.macros" select="distinct-values($old.file//tei:macroSpec/@ident)" as="xs:string*"/>
         
         <xsl:variable name="added.macros" select="$new.macros[not(. = $old.macros)]" as="xs:string*"/>
         <xsl:variable name="removed.macros" select="$old.macros[not(. = $new.macros)]" as="xs:string*"/>
