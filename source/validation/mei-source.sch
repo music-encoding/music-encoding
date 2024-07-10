@@ -86,7 +86,7 @@
             <sch:let name="name" value="string(@name)"/>
             <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
             <sch:let name="models" value="//tei:classSpec[@type = 'model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec/@ident/string()"/>
             <sch:let name="datatypes" value="//tei:dataSpec/@ident/string()"/>
             <sch:assert role="error"
                 test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
