@@ -80,7 +80,7 @@ While it is possible to build the artifacts with other tools, the above are test
 
 * **command line:** If your build system meets the prerequisites as described in [Building MEI on the command line](BUILD_COMMANDLINE.md), you can build the artifacts natively.
 * **Docker:** MEI maintains a Docker image that meets all the prerequisites and can be used for building the artifacts via the command line. How to use the Docker image is described in the [README](https://github.com/music-encoding/docker-mei#readme) of the [docker-mei repository](https://github.com/music-encoding/docker-mei).
-* **oXygen XML Editor:** When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Building MEI with oXygen XML Editor](BUILD_OXYYGEN.md).
+* **oXygen XML Editor:** When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Building MEI with oXygen XML Editor](BUILD_OXYGEN.md).
 
 ## Additional Resources
 
