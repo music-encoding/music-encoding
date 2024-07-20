@@ -18,9 +18,9 @@
         </xd:desc>
     </xd:doc>
     
-    <!-- TODO content link to text has no target -->
-    <!-- TODO content link to empty has no target -->
-    <!-- TODO linking v4 element-names are lowercase while v5 are uppercase, this might change in the future, so maybe checking availability or switching between version instead of making a general decision would be beneficial. -->
+    <!-- TODO: content link to text has no target -->
+    <!-- TODO: content link to empty has no target -->
+    <!-- TODO: linking v4 element-names are lowercase while v5 are uppercase, this might change in the future, so maybe checking availability or switching between version instead of making a general decision would be beneficial. -->
     
     <xsl:output method="html" indent="yes"/>
     
@@ -313,7 +313,7 @@
                                     <xsl:choose>
                                         <xsl:when test="$current.att = $added.atts/@ident">
                                             <li class="added" title="added attribute"><span class="attribute"><a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.att"/></a></span></li>
-                                            <!-- TODO linking does not work here since there is no target to point to -->
+                                            <!-- TODO: linking does not work here since there is no target to point to -->
                                         </xsl:when>
                                         <xsl:when test="$current.att = $changed.atts/@ident">
                                             <li class="changed" title="changed attribute"><span class="attribute"><a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.att"/></a></span></li>
