@@ -170,22 +170,22 @@
                 
                 <xsl:variable name="new.content" as="xs:string*">
                     <xsl:if test="$new.element/tei:content//rng:text"><xsl:value-of select="'text'"/></xsl:if>
-                    <xsl:if test="$new.element/tei:content//rng:empty"><xsl:value-of select="'empty'"/></xsl:if>
+                    <xsl:if test="$new.element/tei:content//(tei:empty|rng:empty)"><xsl:value-of select="'empty'"/></xsl:if>
                     <xsl:sequence select="$new.element/tei:content//rng:ref/@name"/>
                 </xsl:variable>
                 <xsl:variable name="old.content" as="xs:string*">
                     <xsl:if test="$old.element/tei:content//rng:text"><xsl:value-of select="'text'"/></xsl:if>
-                    <xsl:if test="$old.element/tei:content//rng:empty"><xsl:value-of select="'empty'"/></xsl:if>
+                    <xsl:if test="$old.element/tei:content//(tei:empty|rng:empty)"><xsl:value-of select="'empty'"/></xsl:if>
                     <xsl:sequence select="$old.element/tei:content//rng:ref/@name"/>
                 </xsl:variable>
                 <xsl:variable name="lowercased.new.content" as="xs:string*">
                     <xsl:if test="$new.element/tei:content//rng:text"><xsl:value-of select="'text'"/></xsl:if>
-                    <xsl:if test="$new.element/tei:content//rng:empty"><xsl:value-of select="'empty'"/></xsl:if>
+                    <xsl:if test="$new.element/tei:content//(tei:empty|rng:empty)"><xsl:value-of select="'empty'"/></xsl:if>
                     <xsl:sequence select="$new.element/tei:content//rng:ref/lower-case(@name)"/>
                 </xsl:variable>
                 <xsl:variable name="lowercased.old.content" as="xs:string*">
                     <xsl:if test="$old.element/tei:content//rng:text"><xsl:value-of select="'text'"/></xsl:if>
-                    <xsl:if test="$old.element/tei:content//rng:empty"><xsl:value-of select="'empty'"/></xsl:if>
+                    <xsl:if test="$old.element/tei:content//(tei:empty|rng:empty)"><xsl:value-of select="'empty'"/></xsl:if>
                     <xsl:sequence select="$old.element/tei:content//rng:ref/lower-case(@name)"/>
                 </xsl:variable>
                 
@@ -666,7 +666,7 @@
                     <xsl:if test="$new.model//rng:element[rng:anyName]">
                         <xsl:value-of select="'any XML content'"/>
                     </xsl:if>
-                    <xsl:if test="$new.model//rng:empty">
+                    <xsl:if test="$new.model//(tei:empty|rng:empty)">
                         <xsl:value-of select="'no content'"/>
                     </xsl:if>
                 </xsl:variable>
@@ -675,7 +675,7 @@
                     <xsl:if test="$old.model//rng:element[rng:anyName]">
                         <xsl:value-of select="'any XML content'"/>
                     </xsl:if>
-                    <xsl:if test="$old.model//rng:empty">
+                    <xsl:if test="$old.model//(tei:empty|rng:empty)">
                         <xsl:value-of select="'no content'"/>
                     </xsl:if>
                 </xsl:variable>
