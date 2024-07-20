@@ -72,8 +72,8 @@
                         <div id="elementsChart" class="chartBox"><label>Elements</label></div>
                         <div id="attClassesChart" class="chartBox"><label>Attribute Classes</label></div>
                         <div id="modelClassesChart" class="chartBox"><label>Model Classes</label></div>
-                        <div id="macroPeChart" class="chartBox"><label>Macro Groups</label></div>
-                        <div id="macroDtChart" class="chartBox"><label>Data Types</label></div>
+                        <div id="macroChart" class="chartBox"><label>Macro Groups</label></div>
+                        <div id="dataChart" class="chartBox"><label>Data Types</label></div>
                         <div style="margin-top: -.5rem;">
                             <span class="added sample">added content</span>
                             <span class="changed sample">changed content</span>
@@ -87,14 +87,14 @@
                 <xsl:variable name="elements" select="mei:compareElements($new.file,$old.file)" as="node()*"/>
                 <xsl:variable name="attClasses" select="mei:compareAttributeClasses($new.file,$old.file)"/>
                 <xsl:variable name="modelClasses" select="mei:compareModelClasses($new.file,$old.file)"/>
-                <xsl:variable name="macroPe" select="mei:compareMacroSpecPe($new.file,$old.file)"/>
-                <xsl:variable name="macroDt" select="mei:compareMacroSpecDt($new.file,$old.file)"/>
+                <xsl:variable name="macro" select="mei:compareMacroSpec($new.file,$old.file)"/>
+                <xsl:variable name="data" select="mei:compareDataSpec($new.file,$old.file)"/>
                 
                 <xsl:sequence select="$elements"/>
                 <xsl:sequence select="$attClasses"/>
                 <xsl:sequence select="$modelClasses"/>
-                <xsl:sequence select="$macroPe"/>
-                <xsl:sequence select="$macroDt"/>
+                <xsl:sequence select="$macro"/>
+                <xsl:sequence select="$data"/>
                 <script src="resources/js/d3.min.js"></script>
                 <script>
                     var elements = [
@@ -115,17 +115,17 @@
                     {type:'removed', count: <xsl:value-of select="count($modelClasses//tr[@class='r'])"/>, ref:'#modelClassesRemoved'},
                     {type:'unchanged', count: <xsl:value-of select="count($modelClasses//tr[@class='u'])"/>, ref:'#modelClassesUnchanged'}
                     ];
-                    var macroPe = [
-                    {type:'added', count: <xsl:value-of select="count($macroPe//tr[@class='a'])"/>, ref:'#macroPeAdded'},
-                    {type:'changed', count: <xsl:value-of select="count($macroPe//tr[@class='c'])"/>, ref:'#macroPeChanged'},
-                    {type:'removed', count: <xsl:value-of select="count($macroPe//tr[@class='r'])"/>, ref:'#macroPeRemoved'},
-                    {type:'unchanged', count: <xsl:value-of select="count($macroPe//tr[@class='u'])"/>, ref:'#macroPeUnchanged'}
+                    var macro = [
+                    {type:'added', count: <xsl:value-of select="count($macro//tr[@class='a'])"/>, ref:'#macroAdded'},
+                    {type:'changed', count: <xsl:value-of select="count($macro//tr[@class='c'])"/>, ref:'#macroChanged'},
+                    {type:'removed', count: <xsl:value-of select="count($macro//tr[@class='r'])"/>, ref:'#macroRemoved'},
+                    {type:'unchanged', count: <xsl:value-of select="count($macro//tr[@class='u'])"/>, ref:'#macroUnchanged'}
                     ];
-                    var macroDt = [
-                    {type:'added', count: <xsl:value-of select="count($macroDt//tr[@class='a'])"/>, ref:'#macroDtAdded'},
-                    {type:'changed', count: <xsl:value-of select="count($macroDt//tr[@class='c'])"/>, ref:'#macroDtChanged'},
-                    {type:'removed', count: <xsl:value-of select="count($macroDt//tr[@class='r'])"/>, ref:'#macroDtRemoved'},
-                    {type:'unchanged', count: <xsl:value-of select="count($macroDt//tr[@class='u'])"/>, ref:'#macroDtUnchanged'}
+                    var data = [
+                    {type:'added', count: <xsl:value-of select="count($data//tr[@class='a'])"/>, ref:'#dataSpecAdded'},
+                    {type:'changed', count: <xsl:value-of select="count($data//tr[@class='c'])"/>, ref:'#dataSpecChanged'},
+                    {type:'removed', count: <xsl:value-of select="count($data//tr[@class='r'])"/>, ref:'#dataSpecRemoved'},
+                    {type:'unchanged', count: <xsl:value-of select="count($data//tr[@class='u'])"/>, ref:'#dataSpecUnchanged'}
                     ];
                 </script>
                 <script src="resources/js/main.js"></script>
@@ -645,12 +645,12 @@
         </table>
     </xsl:function>
     
-    <xsl:function name="mei:compareMacroSpecPe" as="node()*">
+    <xsl:function name="mei:compareMacroSpec" as="node()*">
         <xsl:param name="new.file" as="node()"/>
         <xsl:param name="old.file" as="node()"/>
         
-        <xsl:variable name="new.macros" select="distinct-values($new.file//tei:macroSpec[@type = 'pe']/@ident)" as="xs:string*"/>
-        <xsl:variable name="old.macros" select="distinct-values($old.file//tei:macroSpec[@type = 'pe']/@ident)" as="xs:string*"/>
+        <xsl:variable name="new.macros" select="distinct-values($new.file//tei:macroSpec[@type = 'pe' or not(@type)]/@ident)" as="xs:string*"/>
+        <xsl:variable name="old.macros" select="distinct-values($old.file//tei:macroSpec[@type = 'pe' or not(@type)]/@ident)" as="xs:string*"/>
         
         <xsl:variable name="added.macros" select="$new.macros[not(. = $old.macros)]" as="xs:string*"/>
         <xsl:variable name="removed.macros" select="$old.macros[not(. = $new.macros)]" as="xs:string*"/>
@@ -658,8 +658,26 @@
         <xsl:variable name="modified.macros" as="node()*">
             <xsl:for-each select="$kept.macros">
                 <xsl:variable name="current.macro" select="." as="xs:string"/>
-                <xsl:variable name="new.model" select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.macro]" as="node()"/>
-                <xsl:variable name="old.model" select="$old.file//tei:macroSpec[@type = 'pe' and @ident = $current.macro]" as="node()"/>
+                <xsl:variable name="new.model" as="node()">
+                    <xsl:choose>
+                        <xsl:when test="$new.file//tei:macroSpec[@type = 'pe']">
+                            <xsl:value-of select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.macro]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$new.file//tei:macroSpec[@ident = $current.macro]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="old.model" as="node()">
+                    <xsl:choose>
+                        <xsl:when test="$old.file//tei:macroSpec[@type = 'pe']">
+                            <xsl:value-of select="$old.file//tei:macroSpec[@type = 'pe' and @ident = $current.macro]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$old.file//tei:macroSpec[@ident = $current.macro]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
                 
                 <xsl:variable name="new.content" as="xs:string*">
                     <xsl:sequence select="$new.model//rng:ref[@name != 'macro.anyXML']/@name"/>
@@ -736,11 +754,20 @@
         <xsl:variable name="unchanged.macros" select="$kept.macros[not(. = $modified.macros//td[@class='macroClass ident']/text())]" as="xs:string*"/>
         
         <h2>MacroSpec Comparison (Parameter Entities)</h2>
-        <h3 id="macroPeAdded"><xsl:value-of select="count($added.macros)"/> new macroSpec classes:</h3>
+        <h3 id="macroAdded"><xsl:value-of select="count($added.macros)"/> new macroSpec classes:</h3>
         <table class="added">
             <xsl:for-each select="$added.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="elementSpec" select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
+                <xsl:variable name="elementSpec" as="node()">
+                    <xsl:choose>
+                        <xsl:when test="$new.file//tei:macroSpec[@type = 'pe']">
+                            <xsl:value-of select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$new.file//tei:macroSpec[@ident = $current.element]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
                 <tr class="a" id="${$current.element}">
                     <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
@@ -748,27 +775,47 @@
                 </tr>
             </xsl:for-each>
         </table>
-        <h3 id="macroPeRemoved"><xsl:value-of select="count($removed.macros)"/> removed macroSpec classes:</h3>
+        <h3 id="macroRemoved"><xsl:value-of select="count($removed.macros)"/> removed macroSpec classes:</h3>
         <table class="removed">
             <xsl:for-each select="$removed.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="elementSpec" select="$old.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
-                <tr class="r" id="{$current.element}">
-                    <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
-                    <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
-                    <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
-                </tr>
+                <xsl:variable name="elementSpec" as="node()">
+                    <xsl:choose>
+                        <xsl:when test="$old.file//tei:macroSpec[@type = 'pe']">
+                            <xsl:value-of select="$old.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$old.file//tei:macroSpec[not(@type) and @ident = $current.element]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <if test="not starts-with(current.element, 'data')">
+                    <tr class="r" id="{$current.element}">
+                        <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
+                        <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
+                        <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
+                    </tr>
+                </if>
             </xsl:for-each>
         </table>
-        <h3 id="macroPeChanged"><xsl:value-of select="count($modified.macros)"/> modified macroSpec classes:</h3>
+        <h3 id="macroChanged"><xsl:value-of select="count($modified.macros)"/> modified macroSpec classes:</h3>
         <table>
             <xsl:sequence select="$modified.macros"/>
         </table>
-        <h3 id="macroPeUnchanged"><xsl:value-of select="count($unchanged.macros)"/> unchanged macroSpec classes:</h3>
+        <h3 id="macroUnchanged"><xsl:value-of select="count($unchanged.macros)"/> unchanged macroSpec classes:</h3>
         <table>
             <xsl:for-each select="$unchanged.macros">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="elementSpec" select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]" as="node()"/>
+                <xsl:variable name="elementSpec" as="node()">
+                    <xsl:choose>
+                        <xsl:when test="$new.file//tei:macroSpec[@type = 'pe']">
+                            <xsl:value-of select="$new.file//tei:macroSpec[@type = 'pe' and @ident = $current.element]"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$new.file//tei:macroSpec[@ident = $current.element]"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
                 <tr class="u" id="{$current.element}">
                     <td class="macroClass ident"><xsl:value-of select="$current.element"/></td>
                     <td class="module unchanged"><xsl:value-of select="$elementSpec/@module"/></td>
@@ -778,12 +825,12 @@
         </table>
     </xsl:function>
     
-    <xsl:function name="mei:compareMacroSpecDt" as="node()*">
+    <xsl:function name="mei:compareDataSpec" as="node()*">
         <xsl:param name="new.file" as="node()"/>
         <xsl:param name="old.file" as="node()"/>
         
-        <xsl:variable name="new.models" select="distinct-values($new.file//tei:macroSpec[@type = 'dt']/@ident)" as="xs:string*"/>
-        <xsl:variable name="old.models" select="distinct-values($old.file//tei:macroSpec[@type = 'dt']/@ident)" as="xs:string*"/>
+        <xsl:variable name="new.models" select="distinct-values($new.file//(tei:dataSpec|tei:macroSpec[@type = 'dt'])/@ident)" as="xs:string*"/>
+        <xsl:variable name="old.models" select="distinct-values($old.file//(tei:dataSpec|tei:macroSpec[@type = 'dt'])/@ident)" as="xs:string*"/>
         
         <xsl:variable name="added.models" select="$new.models[not(. = $old.models)]" as="xs:string*"/>
         <xsl:variable name="removed.models" select="$old.models[not(. = $new.models)]" as="xs:string*"/>
@@ -791,8 +838,8 @@
         <xsl:variable name="modified.models" as="node()*">
             <xsl:for-each select="$kept.models">
                 <xsl:variable name="current.macro" select="." as="xs:string"/>
-                <xsl:variable name="new.macro" select="$new.file//tei:macroSpec[@type = 'dt' and @ident = $current.macro]" as="node()"/>
-                <xsl:variable name="old.macro" select="$old.file//tei:macroSpec[@type = 'dt' and @ident = $current.macro]" as="node()"/>
+                <xsl:variable name="new.macro" select="$new.file//(tei:dataSpec[@ident = $current.macro]|tei:macroSpec[@type = 'dt' and @ident = $current.macro])" as="node()"/>
+                <xsl:variable name="old.macro" select="$old.file//(tei:dataSpec[@ident = $current.macro]|tei:macroSpec[@type = 'dt' and @ident = $current.macro])" as="node()"/>
                 
                 <xsl:variable name="new.references" select="$new.macro//rng:ref/@name | $new.macro//tei:macroRef/@key" as="xs:string*"/>
                 <xsl:variable name="old.references" select="$old.macro//rng:ref/@name | $new.macro//tei:macroRef/@key" as="xs:string*"/>
@@ -884,44 +931,44 @@
         </xsl:variable>
         <xsl:variable name="unchanged.models" select="$kept.models[not(. = $modified.models//td[@class='macroSpec datatype ident']/text())]" as="xs:string*"/>
         
-        <h2>MacroSpec Comparison (datatypes)</h2>
-        <h3 id="macroDtAdded"><xsl:value-of select="count($added.models)"/> new macroSpecs:</h3>
+        <h2>DataSpec Comparison (datatypes)</h2>
+        <h3 id="dataSpecAdded"><xsl:value-of select="count($added.models)"/> new dataSpecs:</h3>
         <table class="added">
             <xsl:for-each select="$added.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="macroSpec" select="$new.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
+                <xsl:variable name="dataSpec" select="$new.file//(tei:dataSpec[@ident = $current.element]|tei:macroSpec[@type = 'dt' and @ident = $current.element])" as="node()"/>
                 <tr class="a" id="{$current.element}">
-                    <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
-                    <td class="module"><xsl:value-of select="$macroSpec/@module"/></td>
-                    <td><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
+                    <td class="dataSpec datatype ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="module"><xsl:value-of select="$dataSpec/@module"/></td>
+                    <td><xsl:value-of select="string-join($dataSpec/tei:desc//text(),' ')"/></td>
                 </tr>
             </xsl:for-each>
         </table>
-        <h3 id="macroDtRemoved"><xsl:value-of select="count($removed.models)"/> removed macroSpecs:</h3>
+        <h3 id="dataSpecRemoved"><xsl:value-of select="count($removed.models)"/> removed dataSpecs:</h3>
         <table class="removed">
             <xsl:for-each select="$removed.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="macroSpec" select="$old.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
+                <xsl:variable name="dataSpec" select="$old.file//(tei:dataSpec[@ident = $current.element]|tei:macroSpec[@type = 'dt' and @ident = $current.element])" as="node()"/>
                 <tr class="r" id="{$current.element}">
-                    <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
-                    <td class="module"><xsl:value-of select="$macroSpec/@module"/></td>
-                    <td><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
+                    <td class="dataSpec datatype ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="module"><xsl:value-of select="$dataSpec/@module"/></td>
+                    <td><xsl:value-of select="string-join($dataSpec/tei:desc//text(),' ')"/></td>
                 </tr>
             </xsl:for-each>
         </table>
-        <h3 id="macroDtChanged"><xsl:value-of select="count($modified.models)"/> modified macroSpecs:</h3>
+        <h3 id="dataSpecChanged"><xsl:value-of select="count($modified.models)"/> modified dataSpecs:</h3>
         <table>
             <xsl:sequence select="$modified.models"/>
         </table>
-        <h3 id="macroDtUnchanged"><xsl:value-of select="count($unchanged.models)"/> unchanged macroSpecs:</h3>
+        <h3 id="dataSpecUnchanged"><xsl:value-of select="count($unchanged.models)"/> unchanged dataSpecs:</h3>
         <table>
             <xsl:for-each select="$unchanged.models">
                 <xsl:variable name="current.element" select="." as="xs:string"/>
-                <xsl:variable name="macroSpec" select="$new.file//tei:macroSpec[@type = 'dt' and @ident = $current.element]" as="node()"/>
+                <xsl:variable name="dataSpec" select="$new.file//(tei:dataSpec[@ident = $current.element]|tei:macroSpec[@type = 'dt' and @ident = $current.element])" as="node()"/>
                 <tr class="u" id="{$current.element}">
-                    <td class="macroSpec datatype ident"><xsl:value-of select="$current.element"/></td>
-                    <td class="module unchanged"><xsl:value-of select="$macroSpec/@module"/></td>
-                    <td class="unchanged"><xsl:value-of select="string-join($macroSpec/tei:desc//text(),' ')"/></td>
+                    <td class="dataSpec datatype ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="module unchanged"><xsl:value-of select="$dataSpec/@module"/></td>
+                    <td class="unchanged"><xsl:value-of select="string-join($dataSpec/tei:desc//text(),' ')"/></td>
                 </tr>
             </xsl:for-each>
         </table>
