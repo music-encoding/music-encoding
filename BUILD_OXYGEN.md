@@ -8,7 +8,7 @@ To build the RNG schema of a specific customization, follow these steps:
 
 1. Open the customization file in oXygen.
 
-   To make sure that step 2 works out of the box, make sure that it has the extension `.odd` and not `.xml`. This is necessary for oXygen to recognize the file as TEI ODD customization and offer you the preconfigured transformation scenario for generating RNG schema files from an ODD.
+   To make sure that step 2 works out of the box, make sure that it has the extension `.odd` and not `.xml`. This is necessary for oXygen to recognize the file as TEI ODD customization and offer you the pre-configured transformation scenario for generating RNG schema files from an ODD.
 
 2. Click on the _Configure Transformation Scenario(s)_ button (the red play button with the wrench). This will open a window of the same name.
 
