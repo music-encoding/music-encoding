@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) 2017-2024 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -34,7 +34,7 @@
                <resp>Edited by</resp>
                <name role="edt">David Lewis</name>
                <name role="edt">Reinier de Valk</name>
-               <note>The editors listed here are responsible for the contents of this very chapter of the MEI Guidelines.</note>
+               <note>The editors listed here are responsible for the contents of this chapter of the MEI Guidelines.</note>
             </respStmt>
             <respStmt>
                <resp>With contributions by</resp>
@@ -73,17 +73,10 @@
                <p>
                   <hi>Music Encoding Initiative (MEI)</hi>
                </p>
-               <p>NOTICE: Copyright (c) 2017–2023 by the Music Encoding Initiative (MEI) Council.</p>
-               <p>Licensed under the Educational Community License, Version 2.0 (the "License"); you may
-                                            not use this file except in compliance with the License. You may obtain a copy of the
-                                            License at <ref target="http://opensource.org/licenses/ECL-2.0">http://opensource.org/licenses/ECL-2.0</ref>.</p>
-               <p>Unless required by applicable law or agreed to in writing, software distributed under
-                                            the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-                                            KIND, either express or implied. See the License for the specific language governing
-                                            permissions and limitations under the License.</p>
-               <p>This is a derivative work based on earlier versions of the schema copyright (c)
-                                            2001-2006 Perry Roland and the Rector and Visitors of the University of Virginia;
-                                            licensed under the Educational Community License version 1.0.</p>
+               <p>NOTICE: Copyright (c) 2017–2024 by the Music Encoding Initiative (MEI) Council.</p>
+               <p>Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at <ref target="http://opensource.org/licenses/ECL-2.0"> http://opensource.org/licenses/ECL-2.0</ref>.</p>
+               <p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+               <p>This is a derivative work based on earlier versions of the schema copyright (c) 2001-2006 Perry Roland and the Rector and Visitors of the University of Virginia; licensed under the Educational Community License version 1.0.</p>
                <p>CONTACT: contact@music-encoding.org </p>
             </availability>
          </publicationStmt>
@@ -96,46 +89,98 @@
       <body>
          <div xml:id="tablature" type="div1">
             <head>Repertoire: String Tablature</head>
-            <p>This chapter describes the attribute classes that are part of the MEI.tablature module.</p>
-            <div xml:id="tablatureOverview" type="div2">
-               <head>Overview of the Tablature Module</head>
-               <p>The tablature module is used to record basic tablature notation. It is designed primarily for guitar and similar plucked-string instruments.</p>
-               <p>The <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi> element is used to define the number of lines, courses, or strings, present in the tablature. The <att>tab.strings</att> attribute is then used to enumerate the pitches of the open strings. It is important to note that this is given using the written pitch, not the sounding pitch. For example, the Western 6-string guitar, in standard tuning, sounds an octave below written pitch.</p>
-               <p>The <att>tab.strings</att> attribute gives the string tuning, ordered from highest to lowest pitch.</p>
-               <p>For standard guitar tuning, the <gi scheme="MEI">staffDef</gi> element might look like this:</p>
+            <p>This chapter describes the MEI.stringtab module (which will be renamed to MEI.tablature in a future version). The MEI.stringtab module is used to record basic tablature notation. It is designed primarily for plucked-string instruments, such as guitar and lute.</p>
+            <div xml:id="tablature-staffdef" type="div2">
+               <head>The Staff Definition</head>
+               <div xml:id="tablature-def" type="div3">
+                  <head>Defining the Notation</head>
+                  <p>Tablatures come in a variety of types or notations, varying according to instrument but also according to historical context. The notation used is defined on the <gi scheme="MEI">staffDef</gi> element using the <att>notationtype</att> attribute. Possible values are: <val>tab.guitar</val>, <val>tab.lute.italian</val>, <val>tab.lute.french</val> and <val>tab.lute.german</val>.</p>
+                  <p>The <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi> element is used to define the number of horizontal lines used in a staff.</p> 
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample011.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+               <div xml:id="tablature-tuning" type="div3">
+                  <head>The Instrument Setup and Tuning</head>
+                  <p>Because string tablatures specify which frets and strings to play on the instrument, rather than abstract pitches, it is necessary to know the tuning and setup of the instrument.</p>
+                  <p>Guitar-like instruments can be described in terms of the number of strings they have, but often the strings are grouped and notated as if those groups were a single string. Examples include mandolins and 12-string guitars. To make this distinction explicit, we use "string" exclusively to refer to physical strings. To refer to the notated version, which may consist of one or more physical strings, we use the historical term, "course". Thus, both a 6-string and a 12-string guitar are 6-course instruments.</p>
+                  <p>The course tuning for 6- and 12-string guitars are the same – so they can both play from the same tablatures. Our tuning specification supports indicating course tunings on their own, or string tunings as well.</p>
+                  <p>The <gi scheme="MEI">tuning</gi> element is used inside <gi scheme="MEI">staffDef</gi> to describe the pitches of the open strings of the instrument. In the simplest cases, the tuning can be named from a standard list. For example, to specify the most common tuning of the guitar:</p> 
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample001.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>or, for six-course lute:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample002.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Custom tuning may be needed when no existing <att>tuning.standard</att> value applies. The <gi scheme="MEI">course</gi> element gives the tuning of each course. <att>n</att> captures the course number (counting from the course closest to the player's feet when the instrument is played), <att>pname</att> the pitch information and <att>oct</att> the octave information.</p>                
+                  <p>For standard classical guitar tuning, the <gi scheme="MEI">tuning</gi> element might look like this:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample003.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Chromatic alteration of the open string’s pitch may be indicated by adding the <att>accid</att>. For example, a guitar in E-flat tuning might look like this:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample004.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Where the specific instrumental setup is important, the stringing of the instrument can also be specified. The example below is a common way to string and tune a 6-course renaissance lute. The pitch on <gi scheme="MEI">course</gi> indicates how the resulting note would normally be transcribed in score, and would often be derived from the lowest sounding pitch.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample005.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
+            </div>
+            <div xml:id="tablature-basics" type="div2">
+               <head>Encoding Tablatures</head>
+               <p>Unlike CMN, <gi scheme="MEI">note</gi> elements in tablature do not have an explicit pitch, but indicate playing instructions (<abbr>i.e.</abbr>, where to place fingers on the fingerboard and when to play the strings). The <att>tab.course</att> attribute is used to capture which course is to be struck, and <att>tab.fret</att> specifies on which fret of the fretboard the player should stop the course. A value of <val>0</val> for <att>tab.fret</att> refers to an unstopped, open course; a value of <val>1</val> refers to the first fret; and so on. Course order is the same as that given in the <gi scheme="MEI">course</gi> elements.</p>
                <p>
                   <figure>
                      <head/>
-                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample353.txt" parse="text"/></egXML>
+                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample006.txt" parse="text"/></egXML>
+                  </figure>
+               </p>               
+               <p>A set of vertically-aligned symbols is indicated by <gi scheme="MEI">tabGrp</gi>, <abbr>i.e.</abbr>, a chord whose notes are played at the same time, and have the same (minimum) notated duration. The duration of a <gi scheme="MEI">tabGrp</gi> may be indicated visually with a rhythm symbol, whose presence is encoded using the <gi scheme="MEI">tabDurSym</gi> element. In many cases, the rhythm sign is omitted where it would repeat the previous value. For this reason <gi scheme="MEI">tabDurSym</gi> is optional, and the durational value of the <gi scheme="MEI">tabGrp</gi> is encoded as <att>dur</att>.</p>
+               <p>
+                  <figure>
+                     <head/>
+                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample007.txt" parse="text"/></egXML>
                   </figure>
                </p>
-               <p>Chromatic alteration of the open string’s pitch may be indicated with the '-' or 'f' (flat), or the '#' or 's' (sharp). Multiple sharps and flats are not permitted.</p>
-               <p>A guitar in E-flat tuning might look like this:</p>
+               <p>As with CMN, rhythm flags joined together can be indicated using <gi scheme="MEI">beam</gi>. Since every note in a beam group always has a rhythm sign, <gi scheme="MEI">tabDurSym</gi> should be used for beamed notes.</p>
                <p>
                   <figure>
                      <head/>
-                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample354.txt" parse="text"/></egXML>
+                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample008.txt" parse="text"/></egXML>
                   </figure>
                </p>
-               <p>Some instruments, like the 12-string guitar, have the four lowest strings tuned an octave above but are still written on a 6-line tablature staff. In this case, you may enumerate the open string pitches while maintaining 6 lines.</p>
+               <p>Tablatures usually indicate a rest by a rhythm sign that has no symbols for notes underneath. We can encode this with a <gi scheme="MEI">tabDurSym</gi> that is the only element of a <gi scheme="MEI">tabGrp</gi>.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample009.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               <p>In some rare cases, special rest symbols may also appear below the rhythm sign. This can be encoded by adding a <gi scheme="MEI">rest</gi> to the <gi scheme="MEI">tabGrp</gi>.</p>
                <p>
                   <figure>
                      <head/>
-                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample355.txt" parse="text"/></egXML>
-                  </figure>
-               </p>
-               <p>The <gi scheme="MEI">note</gi> element is used to capture the specific events in the tablature. The <att>tab.string</att> attribute is used to capture which string the note is to be played on. String order is the same as that given in the <att>tab.strings</att> attribute. This attribute takes a positive integer in the range of 1-9.</p>
-               <p>
-                  <figure>
-                     <head/>
-                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample356.txt" parse="text"/></egXML>
-                  </figure>
-               </p>
-               <p>In the case of fretted instruments, the fret number may be captured using the <att>tab.fret</att> attribute. An open string may be indicated using the value <val>0</val> (zero).</p>
-               <p>
-                  <figure>
-                     <head/>
-                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample357.txt" parse="text"/></egXML>
+                     <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample010.txt" parse="text"/></egXML>
                   </figure>
                </p>
             </div>
