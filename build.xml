@@ -284,19 +284,21 @@
         </java>
         <property name="canonicalize-source.done" value="true"/>
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
-        <antcall target="validate-source"/>
     </target>
 
-    <target name="validate-source" depends="init-mei-classpath" description="Validates the canonicalized source.">
+    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source. This target will be triggered before all `build-...` targets.">
+        <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
-        <schematron schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+        <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">    
                 <include name="${canonicalized.file.next}" ></include>
             </fileset>
         </schematron>
+        <property name="validate-source.done" value="true"/>
+        <echo>source validated: ${validate-source.done}</echo>
     </target>
 
-    <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
+    <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
@@ -309,7 +311,7 @@
         </ant>
     </target>
     
-    <target name="build-customization-specs" depends="canonicalize-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
+    <target name="build-customization-specs" depends="validate-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${customization.path}"></param>
@@ -323,7 +325,7 @@
         </ant>
     </target>
 
-    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
+    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
@@ -338,7 +340,7 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="canonicalize-source" unless="${build-guidelines-html.done}">
+    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="validate-source" unless="${build-guidelines-html.done}">
         <!-- TODO: check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
@@ -431,7 +433,7 @@
         </copy>
     </target>
 
-    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="canonicalize-source">
+    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="validate-source">
         <antcall target="build-rng">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -452,7 +454,7 @@
         </antcall>
     </target>
 
-    <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="canonicalize-source">
+    <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -473,7 +475,7 @@
         </antcall>
     </target>
 
-    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="canonicalize-source">
+    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="validate-source">
         <!-- set source file -->
         <property name="source.default" value="${canonicalized.source.path}"/>
         <echo level="verbose">source.default: ${source.default}</echo>
@@ -529,7 +531,7 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="init-mei-classpath, canonicalize-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
