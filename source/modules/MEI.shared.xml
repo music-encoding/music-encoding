@@ -860,6 +860,17 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.dataSelecting" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Attributes for selecting data.</desc>
+    <attList>
+      <attDef ident="select" usage="opt">
+        <desc xml:lang="en">XPath used to select data to which an element or a property applies.</desc>
+        <datatype maxOccurs="1">
+          <rng:data type="token"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.mdiv.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -1922,7 +1933,7 @@
     </classes>
     <attList>
       <attDef ident="level" usage="opt">
-        <desc>Level of duration at which the proportion given by the @num and @numbase ratio applies.</desc>
+        <desc xml:lang="en">Level of duration at which the proportion given by the @num and @numbase ratio applies.</desc>
         <datatype>
           <rng:ref name="data.DURATION.mensural"/>
         </datatype>
@@ -3559,6 +3570,17 @@
         C to C♯ and one from C to D♭.</p>
     </remarks>
   </classSpec>
+  <classSpec ident="att.tuning.log" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Logical domain attributes for tuning.</desc>
+    <attList>
+      <attDef ident="tuning.standard" usage="opt">
+        <desc xml:lang="en">Describes the tuning standard used.</desc>
+        <datatype>
+          <rng:ref name="data.COURSETUNING"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.tuning" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that describe tuning.</desc>
     <attList>
@@ -4284,6 +4306,9 @@
   </classSpec>
   <classSpec ident="model.titlePagePart" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that may appear as part of a title page transcription.</desc>
+  </classSpec>
+  <classSpec ident="model.tuningPart" module="MEI.shared" type="model">
+    <desc xml:lang="en">Groups elements that may appear inside the <gi scheme="MEI">tuning</gi> element.</desc>
   </classSpec>
   <elementSpec ident="accid" module="MEI.shared">
     <gloss versionDate="2022-05-18" xml:lang="en">accidental</gloss>
@@ -7624,9 +7649,9 @@
       <rng:optional>
         <rng:ref name="model.chordTableLike"/>
       </rng:optional>
-      <rng:optional>
+      <rng:zeroOrMore>
         <rng:ref name="model.symbolTableLike"/>
-      </rng:optional>
+      </rng:zeroOrMore>
       <rng:optional>
         <rng:ref name="model.keySigLike"/>
       </rng:optional>
@@ -8522,6 +8547,25 @@
     </attList>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-titlePart.html">titlePart</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="tuning" module="MEI.shared">
+    <desc xml:lang="en">Describes the tuning of an instrument.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.tuning.log"/>
+      <memberOf key="att.tuning.vis"/>
+      <memberOf key="att.tuning.ges"/>
+      <memberOf key="att.tuning.anl"/>
+      <memberOf key="model.staffDefPart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.tuningPart"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks xml:lang="en">
+      <p>At this point, the tuning element has been worked out for string instruments only. However, as it seems applicable for other instruments, it's been made available in the MEI.shared module.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="width" module="MEI.shared">
