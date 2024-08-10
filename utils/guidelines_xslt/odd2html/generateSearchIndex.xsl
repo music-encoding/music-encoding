@@ -173,7 +173,7 @@
                 
                 searchResultsBox.innerHTML = '';
                 
-                document.querySelector('#searchPattern').innerHTML = pattern;
+                document.querySelector('#searchPattern').innerText = pattern;
                 
                 const pathAdjust = (reducedLevels) ? './' : '../';
                 
