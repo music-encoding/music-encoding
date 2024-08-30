@@ -625,7 +625,7 @@
         <item class="attribute" ident="{$current.att/@ident}" module="{$module}">
             <link><xsl:value-of select="$current.att/@ident"/></link>
             <desc>
-                <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}"><xsl:value-of select="$current.att/@ident"/></span>
+                <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}">@<xsl:value-of select="$current.att/@ident"/></span>
                 <xsl:if test="$usage">
                     <span class="attributeUsage">(<xsl:value-of select="$usage"/>)</span>
                 </xsl:if>
@@ -805,7 +805,7 @@
         
         <!--
         <div class="attributeDef def" data-module="{$module}">
-            <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}"><xsl:value-of select="$current.att/@ident"/></span>
+            <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}">@<xsl:value-of select="$current.att/@ident"/></span>
             <xsl:if test="$usage">
                 <span class="attributeUsage">(<xsl:value-of select="$usage"/>)</span>
             </xsl:if>
@@ -1561,7 +1561,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:att" mode="parse.odd">
-        <span class="att"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <span class="att">@<xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
     <xd:doc>

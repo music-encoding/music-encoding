@@ -210,7 +210,7 @@
                                 <xsl:variable name="current.att" select="." as="xs:string"/>
                                 <tr>
                                     <td class="Attribute">
-                                        <span class="att"><xsl:value-of select="$current.att"/></span> (<a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a>)
+                                        <span class="att">@<xsl:value-of select="$current.att"/></span> (<a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a>)
                                     </td>
                                     <td>
                                         <xsl:choose>
@@ -336,7 +336,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:att" mode="guidelines">
-        <span class="att"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <span class="att">@<xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
     <xd:doc>

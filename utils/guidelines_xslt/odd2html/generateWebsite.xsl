@@ -823,7 +823,7 @@
             </span>
             <xsl:for-each select="child::item[@class='attribute']">
                 <div class="attributeRef">
-                    <span class="ident attribute"><xsl:value-of select="child::link/text()"/></span>
+                    <span class="ident attribute">@<xsl:value-of select="child::link/text()"/></span>
                     <span class="desc"><xsl:apply-templates select="child::desc/node()" mode="get.website"/></span>
                 </div>
             </xsl:for-each>
@@ -985,7 +985,7 @@
               <table class="specDesc">
                  <tbody>
                     <tr>
-                       <td class="Attribute"><span class="att"><a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
+                       <td class="Attribute"><span class="att">@<a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
                        <td>Signifies the degree of certainty or precision associated with a feature.</td>
                     </tr>
                  </tbody>
