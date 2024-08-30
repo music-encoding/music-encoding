@@ -82,7 +82,7 @@
                                     <div class="classItem">
                                         <label>
                                             <a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a> / 
-                                            <span class="ident attribute"><xsl:value-of select="$att.item/link/text()"/></span> 
+                                            <span class="ident attribute">@<xsl:value-of select="$att.item/link/text()"/></span> 
                                         </label>
                                         <div class="desc"><xsl:apply-templates select="$att.item/desc/node()" mode="#current"/></div>
                                     </div>
