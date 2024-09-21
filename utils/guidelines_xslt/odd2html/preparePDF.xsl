@@ -63,7 +63,7 @@
                 <xsl:choose>
                     <xsl:when test="$classType = 'Available at'">
                         <div class="classItem">
-                            <label><a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a></label>
+                            <label><a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}">&lt;<xsl:value-of select="$current.item/@ident"/>&gt;</a></label>
                             <div class="desc"><xsl:apply-templates select="$current.item/desc/node()" mode="#current"/></div>
                             <div class="breadcrumb">
                                 <span class="step start"><xsl:value-of select="$start"/></span>
@@ -81,7 +81,7 @@
                                     <xsl:variable name="att.item" select="." as="node()"/>
                                     <div class="classItem">
                                         <label>
-                                            <a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a> / 
+                                            <a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}">&lt;<xsl:value-of select="$current.item/@ident"/>&gt;</a> / 
                                             <span class="ident attribute">@<xsl:value-of select="$att.item/link/text()"/></span> 
                                         </label>
                                         <div class="desc"><xsl:apply-templates select="$att.item/desc/node()" mode="#current"/></div>
