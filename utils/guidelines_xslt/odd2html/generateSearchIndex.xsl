@@ -184,7 +184,7 @@
                     let a = document.createElement('a')
                     a.setAttribute('href', pathAdjust + hit.item.url)
                     a.classList.add(hit.item.type)
-                    a.innerHTML = hit.item.ident
+                    a.innerHTML = "&amp;lt;" + hit.item.ident + "&amp;gt;"
                     div.append(a)
                     
                     if(hit.item.type === 'chapter') {

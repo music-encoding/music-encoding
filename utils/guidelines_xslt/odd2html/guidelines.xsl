@@ -130,7 +130,7 @@
         <xsl:variable name="text" select="string(text())" as="xs:string"/>
         <xsl:choose>
             <xsl:when test="@scheme = 'TEI' and unparsed-text-available('https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-' || $text || '.html')">
-                <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">tei:<xsl:value-of select="$text"/></a>
+                <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">&lt;tei:<xsl:value-of select="$text"/>&gt;</a>
             </xsl:when>
             <xsl:when test="$text = $elements/@ident">
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>

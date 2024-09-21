@@ -251,7 +251,7 @@
                     or count($removed.atts) gt 0
                     or count($changed.atts) gt 0">
                     <tr class="c" id="{$current.element}">
-                        <td class="element ident"><xsl:value-of select="$current.element"/></td>
+                        <td class="element ident">&lt;<xsl:value-of select="$current.element"/>&gt;</td>
                         <td class="module"><xsl:value-of select="$new.element/@module"/></td>
                         <td class="desc">
                             <xsl:choose>
@@ -343,7 +343,7 @@
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="a" id="{$current.element}">
-                    <td class="element ident"><a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank"><xsl:value-of select="$current.element"/></a></td>
+                    <td class="element ident"><a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank">&lt;<xsl:value-of select="$current.element"/>&gt;</a></td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
                     <td><a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank">visit guidelines</a></td>
@@ -356,7 +356,7 @@
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$old.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="r" id="{$current.element}">
-                    <td class="element ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="element ident">&lt;<xsl:value-of select="$current.element"/>&gt;</td>
                     <td class="module"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
                     <td><a href="{$old.guidelines}/elements/{lower-case($current.element)}.html" target="_blank">visit guidelines</a></td>
@@ -373,7 +373,7 @@
                 <xsl:variable name="current.element" select="." as="xs:string"/>
                 <xsl:variable name="elementSpec" select="$new.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="u">
-                    <td class="element ident"><xsl:value-of select="$current.element"/></td>
+                    <td class="element ident">&lt;<xsl:value-of select="$current.element"/>&gt;</td>
                     <td class="module unchanged"><xsl:value-of select="$elementSpec/@module"/></td>
                     <td class="unchanged"><xsl:value-of select="string-join($elementSpec/tei:desc//text(),' ')"/></td>
                 </tr>
