@@ -107,7 +107,7 @@
                   <head>The Instrument Setup and Tuning</head>
                   <p>Because string tablatures specify which frets and strings to play on the instrument, rather than abstract pitches, it is necessary to know the tuning and setup of the instrument.</p>
                   <p>Guitar-like instruments can be described in terms of the number of strings they have, but often the strings are grouped and notated as if those groups were a single string. Examples include mandolins and 12-string guitars. To make this distinction explicit, we use "string" exclusively to refer to physical strings. To refer to the notated version, which may consist of one or more physical strings, we use the historical term, "course". Thus, both a 6-string and a 12-string guitar are 6-course instruments.</p>
-                  <p>The course tuning for 6- and 12-string guitars are the same – so they can both play from the same tablatures. Our tuning specification supports indicating course tunings on their own, or string tunings as well.</p>
+                  <p>The course tuning for 6- and 12-string guitars are the same — so they can both play from the same tablatures. Our tuning specification supports indicating course tunings on their own, or string tunings as well.</p>
                   <p>The <gi scheme="MEI">tuning</gi> element is used inside <gi scheme="MEI">staffDef</gi> to describe the pitches of the open strings of the instrument. In the simplest cases, the tuning can be named from a standard list. For example, to specify the most common tuning of the guitar:</p> 
                   <p>
                      <figure>
@@ -122,7 +122,7 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample002.txt" parse="text"/></egXML>
                      </figure>
                   </p>
-                  <p>Custom tuning may be needed when no existing <att>tuning.standard</att> value applies. The <gi scheme="MEI">course</gi> element gives the tuning of each course. <att>n</att> captures the course number (counting from the course closest to the player's feet when the instrument is played), <att>pname</att> the pitch information and <att>oct</att> the octave information.</p>                
+                  <p>Custom tuning may be needed when no existing <att>tuning.standard</att> value applies. The <gi scheme="MEI">course</gi> element gives the tuning of each course. <att>n</att> captures the course number (counting from the course closest to the player’s feet when the instrument is played), <att>pname</att> the pitch information and <att>oct</att> the octave information.</p>                
                   <p>For standard classical guitar tuning, the <gi scheme="MEI">tuning</gi> element might look like this:</p>
                   <p>
                      <figure>
@@ -146,15 +146,17 @@
                   </p>
                </div>
             </div>
-            <div xml:id="tablature-basics" type="div2">
+            <div xml:id="tablature-encoding" type="div2">
                <head>Encoding Tablatures</head>
+               <div xml:id="tablature-basics" type="div3">
+                  <head>Basic Structure</head>
                <p>Unlike CMN, <gi scheme="MEI">note</gi> elements in tablature do not have an explicit pitch, but indicate playing instructions (<abbr>i.e.</abbr>, where to place fingers on the fingerboard and when to play the strings). The <att>tab.course</att> attribute is used to capture which course is to be struck, and <att>tab.fret</att> specifies on which fret of the fretboard the player should stop the course. A value of <val>0</val> for <att>tab.fret</att> refers to an unstopped, open course; a value of <val>1</val> refers to the first fret; and so on. Course order is the same as that given in the <gi scheme="MEI">course</gi> elements.</p>
                <p>
                   <figure>
                      <head/>
                      <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample006.txt" parse="text"/></egXML>
                   </figure>
-               </p>               
+               </p>
                <p>A set of vertically-aligned symbols is indicated by <gi scheme="MEI">tabGrp</gi>, <abbr>i.e.</abbr>, a chord whose notes are played at the same time, and have the same (minimum) notated duration. The duration of a <gi scheme="MEI">tabGrp</gi> may be indicated visually with a rhythm symbol, whose presence is encoded using the <gi scheme="MEI">tabDurSym</gi> element. In many cases, the rhythm sign is omitted where it would repeat the previous value. For this reason <gi scheme="MEI">tabDurSym</gi> is optional, and the durational value of the <gi scheme="MEI">tabGrp</gi> is encoded as <att>dur</att>.</p>
                <p>
                   <figure>
@@ -183,6 +185,101 @@
                      <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample010.txt" parse="text"/></egXML>
                   </figure>
                </p>
+               </div>
+               <div xml:id="tablature-vertical-org" type="div3">
+                  <head>Vertical Organisation in German Lute Tablature</head>
+                  <p>In German lute tablature, mechanisms for encoding vertical organisation of the tablature notes in horizontal strands (<abbr>i.e.</abbr>, ‘rows’ or ‘lines’) are needed.</p>
+                  <list rend="bulleted">
+                     <item>The <att>tab.align</att> attribute on <gi scheme="MEI">staffDef</gi> specifies the vertical alignment of the tablature notes. It takes only two of the four data.VERTICALALIGNMENT values (‘top’ and ‘bottom’), and can be used to auto-align the tablature notes towards the top row or the bottom row. As with <att>valign</att>, ‘top’ is the default value for <att>tab.align</att>. Therefore, in practice, <att>tab.align</att> is only required in the ‘bottom’ scenario.</item>
+                     <item>The <att>lines</att> attribute, also on <gi scheme="MEI">staffDef</gi>, is used to specify the number of horizontal strands. These lines are conceptual rather than visible. Following general MEI practice, lines are counted from bottom to top.</item>
+                     <item>In specific cases, <att>tab.anchorline</att> is also needed on <gi scheme="MEI">staffDef</gi>. It is used where the vertical alignment of notes is consistent but cannot be identified using a typical value of <att>tab.align</att> (<abbr>i.e.</abbr>, ‘top’ or ‘bottom’). It specifies the horizontal strand corresponding to the <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi> that anchors the vertical position of notes. Note that the usage of <att>tab.anchorline</att> always implies top alignment (see examples below).</item>
+                     <item>The <att>tab.line</att> attribute on <gi scheme="MEI">note</gi>, which also corresponds to the <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi>, is used to indicate position of the note on one of these strands — but only where this deviates from the default positioning suggested by <att>tab.align</att> and/or <att>tab.anchorline</att>.</item>
+                  </list>
+               <p>All this results in four scenarios. Note that, in the encoding, the order of notes in <gi scheme="MEI">tabGrp</gi> is significant — the first encoded note is the top symbol drawn in the chord, while the last encoded note that is a child of <gi scheme="MEI">tabGrp</gi> is the bottom symbol in the chord.</p>
+               <list rend="bulleted">
+                  <item>Alignment from the top.
+                     <p>
+                        <figure>
+                           <head>A-Wn Mus.Hs. 18688, <abbr>fol.</abbr> 7v, [Elslein], <abbr>m.</abbr> 3.</head>
+                           <graphic url="../images/modules/tablature/tab-top-aligned.png"/>
+                        </figure>
+                     </p>
+                     <p>Example encoding:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample012.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </item>
+                  <item>Alignment from the bottom.
+                     <p>
+                        <figure>
+                           <head>A-Wn Mus.Hs. 18688, <abbr>fol.</abbr> 24v, Elseleyn, <abbr>m.</abbr> 4.</head>
+                           <graphic url="../images/modules/tablature/tab-bottom-aligned.png"/>
+                        </figure>
+                     </p>
+                     <p>Example encoding — note the usage of <att>tab.align</att> on the <gi scheme="MEI">staffDef</gi>:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample013.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </item>
+                  <item>Alignment from the top, with deviating anchorline. The anchorline, usually the second line from the top or bottom, is used as the vertical starting position when stacking notes into chords. Single notes simply occupy this position; chords ‘grow upwards’ from this position. If the chord extends further than the number of available horizontal strands above the anchorline, the entire chord is shifted downward until its top note is positioned on the top-most line.
+                     <p>
+                        <figure>
+                           <head>Melchior Neusidler, <hi rend="italic">Teütsch Lautenbuch</hi> (1574), <abbr>fol.</abbr> 4r, Benedicta es coeloru[m], <abbr>mm.</abbr> 22–25.</head>
+                           <graphic url="../images/modules/tablature/tab-anchorline.png"/>
+                        </figure>
+                     </p>
+                     <p>Example encoding (<abbr>m.</abbr> 1) — note the usage of <att>lines</att> and <att>tab.anchorline</att> on the <gi scheme="MEI">staffDef</gi>:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample014.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>
+                        <figure>
+                           <head>Wolff Heckel, <hi rend="italic">Discant. Lautten Bůch</hi> (1562), <abbr>p.</abbr> 3, Ich klag den tag und alle stund, <abbr>mm.</abbr> 3–6.</head>
+                           <graphic url="../images/modules/tablature/tab-anchorline-2.png"/>
+                        </figure>
+                     </p>
+                     <p>Example encoding (<abbr>m.</abbr> 1) — note the usage of <att>lines</att> and <att>tab.anchorline</att> on the <gi scheme="MEI">staffDef</gi>:</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample015.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  </item>
+                  <item>Irregular alignment. In cases where the alignment provided by <att>tab.align</att> are insufficient, <abbr>i.e.</abbr>, because the scribe is placing the symbols according to an imagined grid, this may be specified in the encoding. To do this, the <att>lines</att> attribute on <gi scheme="MEI">staffDef</gi> should be used to specify the number of horizontal strands, and the <att>tab.line</att> attribute on <gi scheme="MEI">note</gi> is to indicate the position of the note on one of these strands — but only where this deviates from the positioning suggested by <att>tab.align</att>.
+                     <p>
+                        <figure>
+                           <head>Sebastian Ochsenkun, <hi rend="italic">Tabulaturbuch auff die Lauten</hi> (1558), <abbr>fol.</abbr> LVIIIr, Herr Gott laß dich erbarmen, <abbr>mm.</abbr> 1–4.</head>
+                           <graphic url="../images/modules/tablature/tab-irregularly-aligned.png"/>
+                        </figure>
+                     </p>
+                     <p>Example encoding (<abbr>mm.</abbr> 1–3) — note the usage of <att>lines</att> on the <gi scheme="MEI">staffDef</gi> and <att>tab.line</att> on the <gi scheme="MEI">note</gi>s.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample016.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>In the above example, it is the case that the vertical positioning is suggestive of voice-leading. To explicitly capture this information, layers can be specified via <att>layer</att> on <gi scheme="MEI">note</gi>. These can be associated with a layer definition in the <gi scheme="MEI">layerDef</gi> within the <gi scheme="MEI">staffDef</gi> if desired.</p>
+                     <p>Example encoding (<abbr>m.</abbr> 3) — note the usage of <att>layer</att> on the <gi scheme="MEI">note</gi>s.</p>
+                        <p>
+                           <figure>
+                              <head/>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample017.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                  </item>
+               </list>
+               </div>
             </div>
          </div>
       </body>
