@@ -120,7 +120,7 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 
-This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+This is a derivative work based on earlier versions of the schema © 2001–2006 Perry Roland
 and the Rector and Visitors of the University of Virginia; licensed under the Educational
 Community License version 1.0.
 
