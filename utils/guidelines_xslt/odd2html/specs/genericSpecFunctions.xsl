@@ -290,7 +290,7 @@
                     <xsl:value-of select="', '"/>
                 </xsl:if>
                 <span class="ident element" title="{$desc}">
-                    <a class="link_odd_elementSpec" href="{tools:linkToElement($current.elem)}">&lt;<xsl:value-of select="$current.elem"/><&gt;/a>
+                    <a class="link_odd_elementSpec" href="{tools:linkToElement($current.elem)}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a>
                 </span>
             </xsl:for-each>
             
@@ -1405,7 +1405,7 @@
                     <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
                     <xsl:variable name="desc" select="normalize-space(string-join(./tei:desc//text(),' '))" as="xs:string"/>
                     <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                        <link>&lt;<a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/>&gt;</a></link>
+                        <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
                         <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
                     </item>
                     <!--<div class="elementDef def">
