@@ -133,7 +133,7 @@
                 <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">&lt;tei:<xsl:value-of select="$text"/>&gt;</a>
             </xsl:when>
             <xsl:when test="$text = $elements/@ident">
-                <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
+                <a class="{tools:getLinkClasses($text)}" href="#{$text}">&lt;<xsl:value-of select="$text"/>&gt;</a>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
