@@ -184,9 +184,12 @@
                     let a = document.createElement('a')
                     a.setAttribute('href', pathAdjust + hit.item.url)
                     a.classList.add(hit.item.type)
-                    a.innerHTML = "&amp;lt;" + hit.item.ident + "&amp;gt;"
+                    a.innerHTML = hit.item.ident
+                    if (hit.item.type === "element") {
+                        a.innerHTML = "&amp;lt;" + a.innerHTML + "&amp;gt;"
+                    }
                     div.append(a)
-                    
+
                     if(hit.item.type === 'chapter') {
                         
                         let remarksHits = hit.matches.filter(m => m.key === 'remarks')
