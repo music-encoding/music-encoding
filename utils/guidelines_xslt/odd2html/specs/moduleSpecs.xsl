@@ -70,7 +70,7 @@
                     <div class="contents">
                         <xsl:variable name="items" select="$module.content//tei:elementSpec" as="node()*"/>
                         <xsl:for-each select="$items">
-                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
+                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}">&lt;<xsl:value-of select="@ident"/>&gt;</a><xsl:if test="position() lt count($items)">, </xsl:if>
                         </xsl:for-each>
                         <xsl:if test="count($items) = 0">
                             <span class="placeholder">– no elements defined in <xsl:value-of select="$module/@ident"/> – </span>
