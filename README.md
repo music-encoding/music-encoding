@@ -107,7 +107,7 @@ And moreover
 
 ## License
 
-Copyright 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council")
+Copyright 2017–2024 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council")
 
 Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -120,7 +120,7 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 
-This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+This is a derivative work based on earlier versions of the schema © 2001–2006 Perry Roland
 and the Rector and Visitors of the University of Virginia; licensed under the Educational
 Community License version 1.0.
 
