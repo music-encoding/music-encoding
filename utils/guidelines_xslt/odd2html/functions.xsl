@@ -378,12 +378,6 @@
         </xd:desc>
         <xd:return></xd:return>
     </xd:doc>
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:return></xd:return>
-    </xd:doc>
     <xsl:function name="tools:generateIndizes" as="node()+">
         <xsl:message select="'Generating indices'"/>
         <section id="elementIndex" class="backIndex">
@@ -426,6 +420,16 @@
                 </div>
             </xsl:for-each>
         </section>
+    </xsl:function>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Generates a list of contributors for the back of the Guidelines PDF</xd:p>
+        </xd:desc>
+        <xd:return></xd:return>
+    </xd:doc>
+    <xsl:function name="tools:generateContributorsList" as="node()+">
+        <xsl:message select="'Generating contributors list'"/>
         <section id="contributorList" class="backIndex">
             <h1>Contributors</h1>
             <p>
@@ -452,7 +456,6 @@
                 bridges between different musical repertoires and styles, historical periods, cultural backgrounds, musical domains, 
                 research interests, and methodical concepts by reasoning about a common encoding framework like MEI. 
             </p>
-            
         </section>
     </xsl:function>
     
@@ -464,13 +467,16 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:getContributors" as="node()*">
+        <xsl:message select="'Getting contributors'"/>
         <xsl:variable name="spec.repo.contributors" select="'https://api.github.com/repos/music-encoding/music-encoding/contributors'" as="xs:string"/>
         <xsl:variable name="docs.repo.contributors" select="'https://api.github.com/repos/music-encoding/guidelines/contributors'" as="xs:string"/>
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
+                <xsl:if test="$retrieve-contributors ne 'false'">
+                    <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
+                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
+                </xsl:if>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
             <xsl:variable name="unique.contributors" as="node()*">
