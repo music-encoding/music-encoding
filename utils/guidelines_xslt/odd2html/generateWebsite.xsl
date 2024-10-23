@@ -198,7 +198,7 @@
                             <div class="statement compact list">
                                 <xsl:for-each select="$elementSpecs[starts-with(@id, $current.letter)]">
                                     <xsl:sort select="@id"/>
-                                    <a class="overviewLink element" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./elements/{@id}.html"><xsl:value-of select="@id"/></a>
+                                    <a class="overviewLink element" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./elements/{@id}.html">&lt;<xsl:value-of select="@id"/>&gt;</a>
                                 </xsl:for-each>
                             </div>
                         </div>
@@ -823,7 +823,7 @@
             </span>
             <xsl:for-each select="child::item[@class='attribute']">
                 <div class="attributeRef">
-                    <span class="ident attribute"><xsl:value-of select="child::link/text()"/></span>
+                    <span class="ident attribute">@<xsl:value-of select="child::link/text()"/></span>
                     <span class="desc"><xsl:apply-templates select="child::desc/node()" mode="get.website"/></span>
                 </div>
             </xsl:for-each>
@@ -977,7 +977,7 @@
         <!-- 
             <li class="specDesc">
                 <span class="specList-elementSpec">
-                    <a class="link_odd link_odd_elementSpec" href="../elements/app.html">app</a>
+                    <a class="link_odd link_odd_elementSpec" href="../elements/app.html">&lt;app&gt;</a>
                 </span>(apparatus) – Contains one or more alternative encodings.
             </li> -->
         <!-- 
@@ -985,7 +985,7 @@
               <table class="specDesc">
                  <tbody>
                     <tr>
-                       <td class="Attribute"><span class="att"><a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
+                       <td class="Attribute"><span class="att">@<a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
                        <td>Signifies the degree of certainty or precision associated with a feature.</td>
                     </tr>
                  </tbody>
