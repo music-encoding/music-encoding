@@ -80,7 +80,7 @@ While it is possible to build the artifacts with other tools, the above are test
 
 * **command line:** If your build system meets the prerequisites as described in [Building MEI on the command line](BUILD_COMMANDLINE.md), you can build the artifacts natively.
 * **Docker:** MEI maintains a Docker image that meets all the prerequisites and can be used for building the artifacts via the command line. How to use the Docker image is described in the [README](https://github.com/music-encoding/docker-mei#readme) of the [docker-mei repository](https://github.com/music-encoding/docker-mei).
-* **oXygen XML Editor:** When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Building MEI with oXygen XML Editor](BUILD_OXYYGEN.md).
+* **oXygen XML Editor:** When the command line is not your preferred tool and you do not want to build the Guidelines PDF, you might consider using alternative environments, such as Synchrosoft’s oXygen XML software family. A description of how to set up corresponding transformation scenarios can be found in [Building MEI with oXygen XML Editor](BUILD_OXYGEN.md).
 
 ## Additional Resources
 
@@ -107,7 +107,7 @@ And moreover
 
 ## License
 
-Copyright 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council")
+Copyright 2017–2024 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council")
 
 Licensed under the Educational Community License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -120,7 +120,7 @@ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 License for the specific language governing permissions and limitations under
 the License.
 
-This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+This is a derivative work based on earlier versions of the schema © 2001–2006 Perry Roland
 and the Rector and Visitors of the University of Virginia; licensed under the Educational
 Community License version 1.0.
 
