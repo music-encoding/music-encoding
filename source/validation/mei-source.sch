@@ -52,7 +52,7 @@
             <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
             <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
             <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec/@ident/string()"/>
             <sch:assert role="error"
                 test="$key = $elements or $key = $atts or $key = $models or $key = $macros">
                 The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -67,7 +67,7 @@
             <sch:let name="key" value="string(@key)"/>
             <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
             <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="macros" value="//tei:macroSpec/@ident/string()"/>
             <sch:assert role="error"
                 test="$key = $atts or $key = $models or $key = $macros">
                 The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -177,7 +177,7 @@
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'pe']">
+        <sch:rule context="tei:macroSpec">
             <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs" role="warning">
