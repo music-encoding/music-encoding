@@ -687,7 +687,7 @@
                             </xsl:variable>
                             Value conforms to either <xsl:sequence select="$refs"/>.
                         </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:data|tei:dataRef/@name]">
+                        <xsl:when test="$current.att/tei:datatype[rng:data]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
                             <xsl:choose>
                                 <xsl:when test="$dt/@maxOccurs = '1'">
@@ -709,9 +709,6 @@
                                     Value is a valid <a target="_blank" href="https://www.w3.org/TR/xml-id/">xml:id</a>.
                                 </xsl:when>
                                 <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'decimal'">
-                                    Value is a decimal number.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'decimal'">
                                     Value is a decimal number.
                                 </xsl:when>
                                 <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'integer'">
@@ -736,6 +733,58 @@
                                     Value is an <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#duration">ISO duration</a>.
                                 </xsl:when>
                                 <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'token' and $dt/child::rng:data/child::rng:param[@name='pattern']">
+                                    Value conforms to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
+                                    <xsl:message terminate="yes" select="$dt"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:when>
+                        <!-- the following when statement is the pureODD replacement for the preceding one -->
+                        <xsl:when test="$current.att/tei:datatype[tei:dataRef/@name]">
+                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
+                            <xsl:choose>
+                                <xsl:when test="$dt/@maxOccurs = '1'">
+                                    Value of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//tei:dataRef[1])"/></span>.
+                                </xsl:when>
+                                <xsl:when test="$dt/@maxOccurs = '2'">
+                                    One or two values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//tei:dataRef[1])"/></span>, separated by a space.
+                                </xsl:when>
+                                <xsl:when test="$dt/@maxOccurs = 'unbounded'">
+                                    One or more values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//tei:dataRef[1])"/></span>, separated by spaces.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'string'">
+                                    Value is plain text.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'ID'">
+                                    Value is a valid <a target="_blank" href="https://www.w3.org/TR/xml-id/">xml:id</a>.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'decimal'">
+                                    Value is a decimal number.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'integer'">
+                                    Value is an integer.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'positiveInteger'">
+                                    Value is a positive integer.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'nonNegativeInteger'">
+                                    Value is a positive integer, including 0.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'language'">
+                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#language">language</a>.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'token'">
+                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#token">token</a>.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'NMTOKEN'">
+                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#NMTOKEN">NMTOKEN</a>.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'duration'">
+                                    Value is an <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#duration">ISO duration</a>.
+                                </xsl:when>
+                                <xsl:when test="count($dt/child::tei:dataRef) = 1 and $dt/child::tei:dataRef/@name = 'token' and $dt/child::tei:dataRef/child::rng:param[@name='pattern']">
                                     Value conforms to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
                                 </xsl:when>
                                 <xsl:otherwise>
@@ -1005,6 +1054,37 @@
             </xsl:when>
             <xsl:when test="$data/@type = 'decimal' and $data/rng:param[@name = 'pattern']">
                 a decimal number matching the pattern "<xsl:value-of select="$data/rng:param/text()"/>"
+            </xsl:when>
+            <!-- below the respective replacements for pureODD -->
+            <xsl:when test="$data/@name = ('string','token') and $data/tei:dataFacet[@name = 'pattern']">
+                a string matching the following regular expression: "<xsl:value-of select="$data/tei:dataFacet/@value"/>"
+            </xsl:when>
+            <xsl:when test="$data/@name = 'decimal' and $data/tei:dataFacet[@name = 'minInclusive'] and $data/tei:dataFacet[@name = 'maxInclusive']">
+                a decimal number between <xsl:value-of select="$data/tei:dataFacet[@name = 'minInclusive']/@value"/> and <xsl:value-of select="$data/tei:dataFacet[@name = 'maxInclusive']/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'positiveInteger' and $data/tei:dataFacet[@name = 'minInclusive'] and $data/tei:dataFacet[@name = 'maxInclusive']">
+                a positive integer between <xsl:value-of select="$data/tei:dataFacet[@name = 'minInclusive']/@value"/> and <xsl:value-of select="$data/tei:dataFacet[@name = 'maxInclusive']/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'positiveInteger' and $data/tei:dataFacet[@name = 'maxInclusive']">
+                a positive integer no larger than <xsl:value-of select="$data/tei:dataFacet/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'positiveInteger' and $data/tei:dataFacet[@name = 'minInclusive']">
+                a positive integer no smaller than <xsl:value-of select="$data/tei:dataFacet/@value" />
+            </xsl:when>
+            <xsl:when test="$data/@name = 'nonNegativeInteger' and $data/tei:dataFacet[@name = 'maxInclusive']">
+                a non-negative integer no larger than <xsl:value-of select="$data/tei:dataFacet/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'decimal' and $data/tei:dataFacet[@name = 'minInclusive']">
+                a decimal number no smaller than <xsl:value-of select="$data/tei:dataFacet/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'decimal' and $data/tei:dataFacet[@name = 'minExclusive']">
+                a decimal number larger than <xsl:value-of select="$data/tei:dataFacet/@value"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'positiveInteger' and $data/tei:dataFacet[@name = 'pattern']">
+                one of the following integers: <xsl:value-of select="string-join(tokenize($data/tei:dataFacet/@value,'|'),', ')"/>
+            </xsl:when>
+            <xsl:when test="$data/@name = 'decimal' and $data/tei:dataFacet[@name = 'pattern']">
+                a decimal number matching the pattern "<xsl:value-of select="$data/tei:dataFacet/@value"/>"
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message select="'ERROR: Cannot resolve the following datatype:'"/>
