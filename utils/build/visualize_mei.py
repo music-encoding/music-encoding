@@ -11,17 +11,10 @@ def parse_xml(file_path):
 
 def load_mei_modules(script_dir, modules_path):
     modules_dir = os.path.join(script_dir, modules_path)
-    module_file_paths = get_module_file_paths(modules_dir)
-    return parse_xml_files(module_file_paths)
-
-
-def parse_xml_files(file_paths):
-    return [parse_xml(file_path) for file_path in file_paths]
-
-
-def get_module_file_paths(modules_dir):
-    return [os.path.join(modules_dir, file)
-            for file in os.listdir(modules_dir) if file.endswith(".xml")]
+    module_file_paths = [os.path.join(modules_dir, file)
+                         for file in os.listdir(modules_dir) if file.endswith(".xml")]
+    parsed_modules = [parse_xml(file_path) for file_path in module_file_paths]
+    return parsed_modules
 
 
 def find_spec_by_ident(modules, ident):
@@ -35,43 +28,57 @@ def find_spec_by_ident(modules, ident):
     for module in modules:
         for spec_type in spec_types:
             for spec in module.findall(f".//{{http://www.tei-c.org/ns/1.0}}{spec_type}"):
-                spec_id = spec.get("ident")
-                if spec_id == ident:
+                if spec.get("ident") == ident:
                     return spec
     return None
 
 
-def append_graph_member(graph, modules, ident):
+def append_graph_members(graph, edges, modules, ident, is_rng_ref=False, is_input_ident=False):
     spec = find_spec_by_ident(modules, ident)
 
     if spec is None:
-        not_found_label = f"NotFound: {ident}"
-        not_found_node = f"NotFound[{not_found_label}]"
-        graph.append(not_found_node)
-        print(not_found_label)
+        graph.append(f"NotFound[NotFound: {ident}]")
+        print(f"NotFound: {ident}")
         return
 
-    if spec is not None:
-        spec_id = spec.get("ident")
-        print(f"Processing {spec_id}")
+    spec_id = spec.get("ident")
+    print(f"Processing {spec_id}")
 
-        module_id = spec.get("module")
-        spec_node = f'{spec_id}["{spec_id} ({module_id})"]'
+    module_id = spec.get("module")
+    spec_node = f'{spec_id}["{spec_id} ({module_id})"]'
+
+    if is_input_ident:
         graph.append(spec_node)
+        class_node = f'class {spec_id} classInput;'
+        graph.append(class_node)
+    else:
+        edges.append(spec_node)
 
+    if not is_rng_ref:
         for member_of in spec.findall(".//{http://www.tei-c.org/ns/1.0}memberOf"):
             member_of_id = member_of.get("key")
             member_of_edge = f"{member_of_id} --> {spec_id}"
-            graph.append(member_of_edge)
+            edges.append(member_of_edge)
 
             # Recursively append the graph for the member_of class
-            append_graph_member(graph, modules, member_of_id)
+            append_graph_members(graph, edges, modules, member_of_id)
+
+    for content in spec.findall(".//{http://www.tei-c.org/ns/1.0}content"):
+        for rng_ref in content.findall(".//{http://relaxng.org/ns/structure/1.0}ref"):
+            rng_ref_name = rng_ref.get("name")
+            rng_ref_edge = f"{spec_id} --> {rng_ref_name}"
+            edges.append(rng_ref_edge)
+
+            # Recursively append the graph for the rng:ref
+            append_graph_members(graph, edges, modules, rng_ref_name, is_rng_ref=True)
 
 
 def generate_mermaid_graph_for_ident(modules, ident):
-    graph = ["graph LR"]
-    append_graph_member(graph, modules, ident)
-
+    graph = ["graph LR", "classDef classInput fill:orange,color:black,stroke:black,stroke-width:2px;"]
+    edges = []
+    append_graph_members(graph, edges, modules, ident, is_input_ident=True)
+    edges.sort()
+    graph.extend(edges)
     return graph
 
 
