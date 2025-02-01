@@ -64,6 +64,9 @@ def append_graph_members(graph, edges, modules, ident, is_rng_ref=False, is_inpu
             append_graph_members(graph, edges, modules, member_of_id)
 
     for content in spec.findall(".//{http://www.tei-c.org/ns/1.0}content"):
+        if content.find(".//{http://www.tei-c.org/ns/1.0}empty") is not None:
+            empty_node = f'{spec_id} --> Empty>"empty"]'
+            edges.append(empty_node)
         for rng_ref in content.findall(".//{http://relaxng.org/ns/structure/1.0}ref"):
             rng_ref_name = rng_ref.get("name")
             rng_ref_edge = f"{spec_id} --> {rng_ref_name}"
