@@ -1,15 +1,41 @@
 """Update the versions in BUILD_COMMANDLINE.md with the versions from build.properties."""
+import argparse
 import re
-from typing import Dict
+from typing import Dict, List
 
-# Global variables for file paths
+# Global variables
 BUILD_PROPERTIES_FILE = 'build.properties'
 BUILD_COMMANDLINE_FILE = 'BUILD_COMMANDLINE.md'
+DOCKER_FILE = 'Dockerfile'
+
+VERSION_KEYS = [
+    'prince.version',
+    'saxon.version',
+    'schematron.version',
+    'stylesheets.version',
+    'verovio.version',
+    'xerces.version'
+]
+
+BUILD_COMMANDLINE_FILE_PATTERNS = {
+    r'\|Prince XML\|.*\|': "|Prince XML|{prince.version}|",
+    r'\|Saxon HE\*\|.*\|': "|Saxon HE*|{saxon.version}|",
+    r'\|TEI Stylesheets\*\|.*\|': "|TEI Stylesheets*|{stylesheets.version}|",
+    r'\|Verovio Toolkit\|.*\|': "|Verovio Toolkit|{verovio.version}|",
+    r'\|Xerces\*\|.*\|': "|Xerces*|Synchrosoft patched version {xerces.version}|"
+}
+
+DOCKER_FILE_PATTERNS = {
+    r'ARG PRINCE_VERSION=.*': "ARG PRINCE_VERSION={prince.version}",
+    r'ARG SAXON_VERSION=.*': "ARG SAXON_VERSION={saxon.version}",
+    r'ARG SCHEMATRON_VERSION=.*': "ARG SCHEMATRON_VERSION={schematron.version}",
+    r'ARG XERCES_VERSION=.*': "ARG XERCES_VERSION={xerces.version}"
+}
 
 
 def read_file(file_path: str) -> str:
     """
-    Read the contents of the file at the given path and return it as a string.
+    Reads the contents of the file at the given path and return it as a string.
 
     Args:
         file_path (str): The path to the file to read.
@@ -24,9 +50,24 @@ def read_file(file_path: str) -> str:
         raise FileNotFoundError(f"File not found: {file_path}") from e
 
 
+def write_file(file_path: str, content: str):
+    """
+    Writes the given content to the specified file.
+
+    Args:
+        file_path (str): The path to the file.
+        content (str): The content to write.
+    """
+    try:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+    except IOError as e:
+        raise IOError(f"Error writing to file: {file_path}") from e
+
+
 def extract_version(properties: str, key: str) -> str:
     """
-    Extract the version number from the properties string using the given key.
+    Extracts the value of a given key from the properties string.
 
     Args:
         properties (str): The properties string to search.
@@ -42,61 +83,95 @@ def extract_version(properties: str, key: str) -> str:
     raise ValueError(f"Version for {key} not found in properties file.")
 
 
-def update_versions_in_markdown(build_md: str, versions: Dict[str, str]) -> str:
+def extract_versions_from_properties_file(file_path: str, keys: List[str]) -> Dict[str, str]:
     """
-    Update the versions in the markdown content.
+    Reads and extracts versions from the properties file.
 
     Args:
-        build_md (str): The markdown content to update.
-        versions (Dict[str, str]): The versions to update the markdown content with.
+        file_path (str): The path to the properties file.
+        keys (List[str]): The list of keys to extract versions for.
 
     Returns:
-        (str) The updated markdown content.
+        (Dict[str, str]) The extracted versions.
     """
-    replacements = {
-        r'\|Prince XML\|.*\|': f"|Prince XML|{versions['prince.version']}|",
-        r'\|Saxon HE\*\|.*\|': f"|Saxon HE*|{versions['saxon.version']}|",
-        r'\|TEI Stylesheets\*\|.*\|': f"|TEI Stylesheets*|{versions['stylesheets.version']}|",
-        r'\|Verovio Toolkit\|.*\|': f"|Verovio Toolkit|{versions['verovio.version']}|",
-        r'\|Xerces\*\|.*\|': f"|Xerces*|Synchrosoft patched version {versions['xerces.version']}|"
-    }
+    properties = read_file(file_path)
+    return {key: extract_version(properties, key) for key in keys}
 
+
+def replace_versions(content: str, replacements: Dict[str, str]) -> str:
+    """
+    Replaces a pattern in the given content based on the replacements dictionary.
+
+    Args:
+        content (str): The content to update.
+        replacements (Dict[str, str]): The patterns and their replacements.
+
+    Returns:
+        (str) The updated content.
+    """
     for pattern, replacement in replacements.items():
-        build_md = re.sub(pattern, replacement, build_md)
-
-    print("Updated versions in BUILD_COMMANDLINE.md:")
-    print(versions)
-
-    return build_md
+        content = re.sub(pattern, replacement, content)
+    return content
 
 
-def update_build_versions():
+def create_replacements(versions: Dict[str, str], patterns: Dict[str, str]) -> Dict[str, str]:
     """
-    Update BUILD_COMMANDLINE.md with the versions from build.properties.
+    Creates the replacements dictionary based on the given patterns and versions.
+
+    Args:
+        versions (Dict[str, str]): The extracted versions.
+        patterns (Dict[str, str]): The patterns to replace.
+
+    Returns:
+        (Dict[str, str]) The replacements dictionary.
     """
-    # Read versions from build.properties
-    properties = read_file(BUILD_PROPERTIES_FILE)
+    def custom_format(replacement: str, versions: Dict[str, str]) -> str:
+        """
+        Custom format function to replace the keys in the replacement string.
+        """
+        for key, value in versions.items():
+            replacement = replacement.replace(f'{{{key}}}', value)
+        return replacement
 
-    keys = [
-        'prince.version',
-        'saxon.version',
-        'stylesheets.version',
-        'verovio.version',
-        'xerces.version'
-    ]
+    return {pattern: custom_format(replacement, versions)
+            for pattern, replacement in patterns.items()}
 
-    versions = {key: extract_version(properties, key) for key in keys}
 
-    # Read BUILD_COMMANDLINE.md
-    build_md = read_file(BUILD_COMMANDLINE_FILE)
+def update_file_versions(file_path: str, patterns: Dict[str, str], versions: Dict[str, str]):
+    """
+    Updates the versions in the specified file content.
 
-    # Update versions in BUILD_COMMANDLINE.md
-    updated_build_md = update_versions_in_markdown(build_md, versions)
+    Args:
+        file_path (str): The path to the file to update.
+        replacements (Dict[str, str]): The patterns and their replacements.
+    """
+    content = read_file(file_path)
+    replacements = create_replacements(versions, patterns)
+    updated_content = replace_versions(content, replacements)
+    write_file(file_path, updated_content)
 
-    # Write updated BUILD_COMMANDLINE.md
-    with open(BUILD_COMMANDLINE_FILE, 'w', encoding='utf-8') as f:
-        f.write(updated_build_md)
+
+def update_build_versions(update_markdown: bool, update_docker: bool):
+    """
+    Updates build versions with the versions from build.properties.
+    """
+    versions = extract_versions_from_properties_file(BUILD_PROPERTIES_FILE, VERSION_KEYS)
+
+    if update_markdown:
+        update_file_versions(BUILD_COMMANDLINE_FILE, BUILD_COMMANDLINE_FILE_PATTERNS, versions)
+
+    if update_docker:
+        update_file_versions(DOCKER_FILE, DOCKER_FILE_PATTERNS, versions)
 
 
 if __name__ == "__main__":
-    update_build_versions()
+    parser = argparse.ArgumentParser(
+        description="Update build versions in markdown and Dockerfile.")
+    parser.add_argument('--markdown', action='store_true', help="Update only the markdown file.")
+    parser.add_argument('--docker', action='store_true', help="Update only the Dockerfile.")
+    args = parser.parse_args()
+
+    should_update_markdown = args.markdown or not args.docker
+    should_update_docker = args.docker or not args.markdown
+
+    update_build_versions(should_update_markdown, should_update_docker)
