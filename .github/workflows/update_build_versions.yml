@@ -1,0 +1,37 @@
+name: Update Build Versions
+
+on:
+  pull_request:
+    paths:
+      - 'build.properties'
+
+jobs:
+  update-versions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Set up Python
+      uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+      with:
+        python-version: '3.13'
+
+    - name: Upgrade pip
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Update build versions in BUILD_COMMANDLINE.md
+      run: |
+        python utils/build/update_build_versions.py --markdown
+
+    - name: Commit and push changes for BUILD_COMMANDLINE.md
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add .
+        git commit -m 'fix: update build versions in BUILD_COMMANDLINE.md'
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
