@@ -257,7 +257,6 @@
     <content>
       <empty/>
     </content>
-    <!-- TODO Add constraint: note(s) and rest(s) should be mutually exclusive -->
     <remarks xml:lang="en">
       <p>The presence of a <gi scheme="MEI">tabDurSym</gi> indicates that there is a symbol rendered for the parent <gi scheme="MEI">tabGrp</gi>. If no additional attributes like <att>altsym</att> are given, a default symbol conforming to the current notation style or font is to be used. The absence of this elements indicates that the last provided duration symbol equally applies to the current tab group.</p>
     </remarks>
@@ -288,5 +287,14 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="mutually_exclusive_elements_in_tabGrp" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:tabGrp">
+          <sch:assert test="not(mei:note and mei:rest)">
+          A tab group must not contain both note and rest at the same time.
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
 </specGrp>
