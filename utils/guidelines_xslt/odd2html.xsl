@@ -140,8 +140,20 @@
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-                <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
+                <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
+                <xsl:choose>
+                    <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
+                        <xsl:variable name="git.path" select="substring-before($docUri,'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                        <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
+                    </xsl:when>
+                    <xsl:when test="contains($docUri, '/customizations/')">
+                        <xsl:variable name="git.path" select="substring-before($docUri,'/customizations/') || '/.git/'" as="xs:string"/>
+                        <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:message select="'Processing a file in a location not expected by odd2html.xsl. docUri: ' || $docUri" terminate="yes"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$branch"/>
@@ -157,8 +169,18 @@
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-                <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+                <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
+                <xsl:choose>
+                    <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
+                        <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                        <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+                    </xsl:when>
+                    <xsl:when test="contains($docUri, '/customizations/')">
+                        <xsl:variable name="git.path" select="substring-before($docUri,'/customizations/') || '/.git/'" as="xs:string"/>
+                        <xsl:value-of select="unparsed-text($git.path || '/' || $git.head)"/>
+                    </xsl:when>
+                </xsl:choose>
+                
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$hash"/>
