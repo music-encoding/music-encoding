@@ -78,12 +78,17 @@
         <xsl:param name="node" as="node()"/>
         <xsl:param name="level" as="xs:integer"/>
         <xsl:param name="parent.number" as="xs:string"/>
+        <xsl:param name="level1prefix" as="xs:string"/>
         
         <xsl:for-each select="$node/child::tei:div">
             <xsl:variable name="current.div" select="." as="node()"/>
-            <xsl:variable name="index" select="position()" as="xs:integer"/>
-            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
-                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $parent.number || $index || '.')"/>    
+            
+            <xsl:variable name="origElemSource" select="$mei.source//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            <xsl:variable name="origElemCustomization" select="$mei.customization//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            
+            <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div[@type = 'div1']) + 1) else(count($origElemCustomization/preceding-sibling::tei:div[@type = 'div1']) + 1)" as="xs:integer"/>
+            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$level1prefix || $parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
+                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $level1prefix || $parent.number || $index || '.', '')"/>    
             </chapter>            
         </xsl:for-each>
     </xsl:function>
@@ -469,8 +474,10 @@
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
+                <xsl:if test="$retrieveContributorsOnline">
+                    <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
+                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
+                </xsl:if>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
             <xsl:variable name="unique.contributors" as="node()*">

@@ -592,7 +592,14 @@
     <xsl:function name="tools:resolveAttClass" as="node()*">
         <xsl:param name="class.name" as="xs:string"/>
         <xsl:param name="parent" as="xs:string"/>
-        <xsl:variable name="att.class" select="$att.classes[@ident = $class.name]" as="node()"/>
+        <xsl:variable name="att.class" select="$att.classes[@ident = $class.name]" as="node()?"/>
+        
+        <xsl:if test="not($att.class)">
+            <xsl:message select="'after killswitch: '"></xsl:message>
+            <xsl:message select="'available attClasses (' || count($att.classes) || '):'"/>
+            <xsl:message select="string-join($att.classes/@ident, ' ')"/>
+            <xsl:message select="'Unable to resolve attClass: ' || $class.name || ' with parent ' || $parent" terminate="yes"/>
+        </xsl:if>
         
         <xsl:variable name="desc" select="'(' || $att.class/@module || ') ' || normalize-space(string-join($att.class/tei:desc/text(),' '))" as="xs:string"/>
         <xsl:variable name="content" as="node()*">

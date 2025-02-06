@@ -107,7 +107,18 @@
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="version" select="tokenize(//tei:edition, ' ')[last()]" as="xs:string"/>
+    <xsl:param name="version" as="xs:string">
+        <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
+        <xsl:choose>
+            <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
+                <xsl:variable name="git.path" select="substring-before($docUri,'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:value-of select="tokenize(//tei:edition, ' ')[last()]"/>
+            </xsl:when>
+            <xsl:when test="contains($docUri, '/customizations/')">
+                <xsl:value-of select="$source.file//tei:classSpec[@ident='att.meiVersion']//tei:valItem[not(@mode = 'delete')][contains(@ident, '+')][1]/@ident"/>
+            </xsl:when>
+        </xsl:choose>
+    </xsl:param>
         
     <xd:doc>
         <xd:desc>
@@ -129,6 +140,20 @@
         </xd:desc>
     </xd:doc>
     <xsl:param name="basedir" select="''" as="xs:string"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>If operating on a customization, it is expected to pass in the URI of a compiled ODD of that customization.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="compiledOddUri" as="xs:string?"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Whether or not to retrieve contributors from GitHub, in addition to the ones stored in the MEI sources.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="retrieveContributorsOnline" select="false()" as="xs:boolean"/>
     
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
@@ -216,6 +241,15 @@
     </xd:doc>
     <xsl:template match="/">
         <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        <xsl:choose>
+            <xsl:when test="$isCustomization">
+                <xsl:message select="'This is a customization.'"/>
+                <xsl:message select="'.   modules included: ' || string-join($mei.customization//tei:moduleRef/@key, ' ')"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message select="'This is documentation for the full mei-source.xml'"/>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
@@ -227,7 +261,7 @@
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
-                <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
+                <xsl:apply-templates select="$chapters" mode="guidelines"/>                
             </main>
         </xsl:variable>
         <xsl:variable name="moduleSpecs" select="tools:getModuleSpecs()" as="node()"/>

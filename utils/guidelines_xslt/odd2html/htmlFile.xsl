@@ -118,7 +118,7 @@
                                     <div id="guidelinesVersion">
                                         <span class="versionLabel">MEI Version: </span>
                                         <span id="versionID"><xsl:value-of select="$version"/> </span>
-                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>
+                                        <span class="gitLink">(<a href="https://github.com/music-encoding/music-encoding/commit/{$retrieved.hash}" target="_blank" rel="noopener noreferrer">#<xsl:value-of select="substring($hash,1,7)"/></a>)</span>
                                     </div>
                                     
                                     <form>

@@ -68,7 +68,13 @@
                 <div class="contentListBox">
                     <h3>Elements in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:elementSpec" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:elementSpec" as="node()*"/>
+                        <xsl:variable name="items" as="node()*">
+                            <xsl:for-each select="$compiled.source//tei:elementSpec[@ident = $source.items/@ident]">
+                                <xsl:sort select="@ident" data-type="text"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </xsl:variable>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
@@ -80,7 +86,13 @@
                 <div class="contentListBox">
                     <h3>Model Classes in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:classSpec[@type = 'model']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:classSpec[@type = 'model']" as="node()*"/>
+                        <xsl:variable name="items" as="node()*">
+                            <xsl:for-each select="$compiled.source//tei:classSpec[@type = 'model'][@ident = $source.items/@ident]">
+                                <xsl:sort select="@ident" data-type="text"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </xsl:variable>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
@@ -92,7 +104,13 @@
                 <div class="contentListBox">
                     <h3>Macro Groups in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:macroSpec[@type = 'pe']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:macroSpec[@type = 'pe']" as="node()*"/>
+                        <xsl:variable name="items" as="node()*">
+                            <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'pe'][@ident = $source.items/@ident]">
+                                <xsl:sort select="@ident" data-type="text"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </xsl:variable>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
@@ -104,7 +122,13 @@
                 <div class="contentListBox">
                     <h3>Attribute Classes in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:classSpec[@type = 'atts']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:classSpec[@type = 'atts']" as="node()*"/>
+                        <xsl:variable name="items" as="node()*">
+                            <xsl:for-each select="$compiled.source//tei:classSpec[@type = 'atts'][@ident = $source.items/@ident]">
+                                <xsl:sort select="@ident" data-type="text"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </xsl:variable>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
@@ -116,7 +140,13 @@
                 <div class="contentListBox">
                     <h3>Data Types in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="items" select="$module.content//tei:macroSpec[@type = 'dt']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:macroSpec[@type = 'dt']" as="node()*"/>
+                        <xsl:variable name="items" as="node()*">
+                            <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'dt'][@ident = $source.items/@ident]">
+                                <xsl:sort select="@ident" data-type="text"/>
+                                <xsl:sequence select="."/>
+                            </xsl:for-each>
+                        </xsl:variable>
                         <xsl:for-each select="$items">
                             <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
                         </xsl:for-each>
