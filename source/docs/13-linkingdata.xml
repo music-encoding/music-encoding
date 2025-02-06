@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -68,12 +68,12 @@
             </respStmt>
          </titleStmt>
          <publicationStmt>
-            <distributor>Music Encoding Initiative (MEI) Council</distributor>
+            <distributor>Music Encoding Initiative (MEI) Board</distributor>
             <availability>
                <p>
                   <hi>Music Encoding Initiative (MEI)</hi>
                </p>
-               <p>NOTICE: Copyright (c) 2017–2023 by the Music Encoding Initiative (MEI) Council.</p>
+               <p>NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").</p>
                <p>Licensed under the Educational Community License, Version 2.0 (the "License"); you may
                                             not use this file except in compliance with the License. You may obtain a copy of the
                                             License at <ref target="http://opensource.org/licenses/ECL-2.0">http://opensource.org/licenses/ECL-2.0</ref>.</p>
@@ -100,6 +100,98 @@
             <div xml:id="links" type="div2">
                <head>Links</head>
                <p>An element is a ‘link’ when it has an attribute whose value is a reference to the ID of one or more other elements (cross-reference). These link elements indicate an association between themselves (or one of their ancestors) and one or more other entities, either inside the same document or elsewhere. An association between two elements in the same document is said to be an ‘internal’ link, while an association that involves an entity outside the current document is called an ‘external’ link. However, either of the elements discussed in the following section can be used for either purpose.</p>
+                <div xml:id="linkingDescribingRelationships" type="div3">
+                    <head>General Relationships Between Elements</head>
+                    <p>MEI offers several attributes in the <ident type="class">att.linking</ident> class for the description of basic relationships:</p>
+                    <p>
+                        <specList>
+                            <specDesc key="att.linking"
+                                atts="copyof sameas corresp next prev precedes follows synch"/>
+                        </specList>
+                    </p>
+                    <p>The <ident type="class">att.alignment</ident> class contains an attribute for describing temporal relationships:</p>
+                    <p>
+                        <specList>
+                            <specDesc key="att.alignment" atts="when"/>
+                        </specList>
+                    </p>
+                    <p>The <ident type="class">att.dataPointing</ident> class provides an attribute for pointing from the header into the music content:</p>
+                    <p>
+                        <specList>
+                            <specDesc key="att.dataPointing" atts="data"/>
+                        </specList>
+                    </p>
+                    <p>To reference images, the <ident type="class">att.facsimile</ident> class provides an attribute for pointing to <gi scheme="MEI">surface</gi> and <gi scheme="MEI">zone</gi> elements:</p>
+                    <p>
+                        <specList>
+                            <specDesc key="att.facsimile" atts="facs"/>
+                        </specList>
+                    </p>
+                    
+                    <p>These attributes accommodate the encoding of linkages between the element carrying the attribute and one or more other elements. All of them use URIs to establish the connection. While the examples below illustrate relationships between musical events, the use of the aforementioned attributes is not restricted to musical events. On the contrary, these attributes can be used to capture information about relations between any elements.</p>
+                    <p>Using the attributes above makes it possible to create relationships between events, which are often widely-spaced in both encoded order and time. The attributes allow a large number of connections, enhancing the informational content, and therefore the potential usefulness, of the encoding.</p>
+                    <p>The <att>copyof</att> attribute points to an element of which the current element is a copy. It can be used to repeat a note, for example, without encoding the whole <gi scheme="MEI">note</gi> element again. The copy is a ‘deep’ one; that is, the <att>copyof</att> attribute copies all attributes and child elements which belong to the copied element, such as the <att>dur</att> and <att>oct</att> attributes of a copied <gi scheme="MEI">note</gi>. The value of the <att>copyof</att> attribute must be a URI, which usually refers to an element in the current document. The following example demonstrates use of the <att>copyof</att> attribute:</p>
+                    <p>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example017.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>In this example, the <gi scheme="MEI">note</gi> in the second measure has exactly the same characteristics as the <gi scheme="MEI">note</gi> in the first <gi scheme="MEI">measure</gi>.</p>
+                    <p>Using <att>copyof</att> is not limited to copying events. The <att>copyof</att> attribute can also be used to copy an entire <gi scheme="MEI">measure</gi> or <gi scheme="MEI">staff</gi>. When there are many repeated features, the use of the <att>copyof</att> greatly reduces encoding effort. The image and the following encoding of the beginning of Schubert’s <hi rend="italic">Erlkönig</hi> illustrates the benefit of using the <att>copyof</att> attribute.</p>
+                    <p>
+                        <figure>
+                            <head>First measure of Schubert’s Erlkönig</head>
+                            <graphic url="../images/modules/analysis/schubert_erlkonig_op1_m1.png"/>
+                        </figure>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example018.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>This example can be reduced further by using <att>copyof</att> inside the initial tuplet to represent the repeated chords:</p>
+                    <p>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example019.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>While <att>copyof</att> signifies a duplicate copy of an element, the <att>sameas</att> indicates that the current element represents exactly the same entity as the one referenced in <att>sameas</att>. Use of <att>sameas</att> is used for describing the same entity from multiple perspectives, <abbr>e.g.</abbr>, the same event in two layers.</p>
+                    <p>While <att>copyof</att> and <att>sameas</att> have defined semantics, the <att>corresp</att> may be used to create user-defined relationships between elements. The example below demonstrates the encoding of a relationship between the third note and the fermata, even though the fermata is not placed directly above the note.</p>
+                    <p>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example020.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>The <att>corresp</att> attribute only marks the correspondence between the current element and one or more other entities. To describe the nature of the correspondence, one must use <gi scheme="MEI">annot</gi>.</p>
+                    <p>One possible usage of <att>corresp</att> is to link related editorial markup. Because of the hierarchical nature of XML it may be necessary to split related editorial markup into multiple elements. In the following example, <att>corresp</att> is used to encode the relationship between those elements.</p>
+                    <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="verovio code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/att-corresp.mei" parse="text"/></egXML>
+                    </figure>
+                    <p>A one-to-many relationship between the current element and the entities being referred to can be expressed by using a list of space-separated URIs in <att>corresp</att>.</p>
+                    <p>The <att>next</att> and <att>prev</att> attributes point to elements which follow or precede the current element in some fashion other than that indicated by encoding order. The use of these attributes helps to avoid confusion in the sequence of events, for example, in voice leading across layers or staves, when the encoding reflects the physical arrangement of voices. In the second measure of the following example, the target of the next attribute occurs after the pointing element in time, but before it in encoding order:</p>
+                    <p>
+                        <figure>
+                            <head>Bach Chorale, Ach Gott, vom Himmel sieh' darein, m. 6-7</head>
+                            <graphic url="../images/modules/analysis/chor003_m6-7.png"/>
+                        </figure>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example021.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>The <att>next</att> and <att>prev</att> attributes may also be useful to clarify a sequence of entities which occurs across some form of interruption, in this case, notes before and after a new system or page beginning where there is no custos or direct in the source:</p>
+                    <p>
+                        <figure>
+                            <head/>
+                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/linkalign/linkalign-example022.txt" parse="text"/></egXML>
+                        </figure>
+                    </p>
+                    <p>The <att>synch</att> attribute points to an element that is synchronous with; that is, begins at the same moment in time, as the current element. It is useful when the encoding order differs from the order in which entities occur in time.</p>
+                    <p>The <att>when</att> attribute may be used to indicate the point of occurrence of the feature bearing this attribute along a time line. Its value must be the ID of a <gi scheme="MEI">when</gi> element. For more detailed information regarding the use of <att>when</att>, please see <ptr target="#performances"/>.</p>
+                </div>
             </div>
             <div xml:id="linkFromMei" type="div2">
                <head>Linking from MEI</head>
@@ -114,7 +206,7 @@
                         </specList>
                     </p>
                     <p>
-                        The <gi scheme="MEI">ptr</gi> element is a traversible pointer to another location. It is an empty linking element that uses only attributes to describe its link destination. It cannot contain text or sub-elements to describe the referenced object. The next example shows the use of the <gi scheme="MEI">ptr</gi> element to target a certain identifier (here <abbr>e.g.</abbr>, a page number, or more precisely, page break elements, <gi scheme="MEI">pb</gi>, bearing these identifiers) from within a <gi scheme="MEI">list</gi> of item descriptions:
+                        The <gi scheme="MEI">ptr</gi> element is a traversible pointer to another location. It is an empty linking element that uses only attributes to describe its link destination. It cannot contain text or sub-elements to describe the referenced object. The next example shows the use of the <gi scheme="MEI">ptr</gi> element to target a certain identifier (here <abbr>e.g.</abbr>, a page number, or more precisely, page beginning elements, <gi scheme="MEI">pb</gi>, bearing these identifiers) from within a <gi scheme="MEI">list</gi> of item descriptions:
                     </p>
                     <p>
                         <figure>
@@ -135,7 +227,7 @@
                 <div xml:id="ptrrefModule" type="div3">
                     <head>Specifying Link Elements</head>
                     <p>
-                        The <gi scheme="MEI">ptr</gi> and <gi scheme="MEI">ref</gi> elements share a set of common attributes that are inherited from the <ident type="class">att.pointing</ident> class (a more detailed explanation is provided below):
+                        In addition to the common linking attributes provided by the <ident type="class">att.linking</ident> class (see <ptr target="#linkingDescribingRelationships"/>), the <gi scheme="MEI">ptr</gi> and <gi scheme="MEI">ref</gi> elements inherit another set of common attributes from the <ident type="class">att.pointing</ident> class (a more detailed explanation is provided below):
                     </p>
                     <p>
                         <specList>
@@ -143,19 +235,11 @@
                         </specList>
                     </p>
                     <p>
-                        In addition to the attributes in the <ident type="class">att.pointing</ident> class, the <att>mimetype</att> attribute from the <ident type="class">att.internetMedia</ident> class is also available on <gi scheme="MEI">ptr</gi> and <gi scheme="MEI">ref</gi> (a more detailed explanation is provided below):
+                        Furthermore, the <att>mimetype</att> attribute from the <ident type="class">att.internetMedia</ident> class is also available on <gi scheme="MEI">ptr</gi> and <gi scheme="MEI">ref</gi> (a more detailed explanation is provided below):
                     </p>
                     <p>
                         <specList>
                             <specDesc key="att.internetMedia" atts="mimetype"/>
-                        </specList>
-                    </p>
-                    <p>
-                        The <ident type="class">att.linking</ident> class provides another set of common attributes (a more detailed explanation is provided in <ptr target="#analysisharm"/>: <ptr target="#analysisDescribingRelationships"/>):
-                    </p>
-                    <p>
-                        <specList>
-                            <specDesc key="att.linking" atts="copyof corresp follows next precedes prev sameas synch"/>
                         </specList>
                     </p>
                     <p>

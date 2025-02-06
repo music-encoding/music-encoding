@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -19,8 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.cmn">
   <moduleSpec ident="MEI.cmn">
     <desc xml:lang="en">Common Music Notation (CMN) repertoire component declarations.</desc>
@@ -70,6 +69,22 @@
         </valItem>
         <valItem ident="2048">
           <desc xml:lang="en">2048th note.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.HARPPEDALPOSITION" module="MEI.cmn" type="dt">
+    <desc xml:lang="en">Indicates the pedal setting for a harp strings.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="f">
+          <desc xml:lang="en">Flat.</desc>
+        </valItem>
+        <valItem ident="n">
+          <desc xml:lang="en">Natural.</desc>
+        </valItem>
+        <valItem ident="s">
+          <desc xml:lang="en">Sharp.</desc>
         </valItem>
       </valList>
     </content>
@@ -238,21 +253,21 @@
         <desc xml:lang="en">Captures whether a beam is "feathered" and in which direction.</desc>
         <valList type="closed">
           <valItem ident="acc">
-            <gloss versionDate="2022-05-18" xml:lang="en">accelerando</gloss>
+            <gloss xml:lang="en">accelerando</gloss>
             <desc xml:lang="en">means that the secondary beams become progressively more distant
               toward the end of the beam.</desc>
           </valItem>
           <valItem ident="mixed">
-            <gloss versionDate="2022-05-18" xml:lang="en">mixed acc and rit</gloss>
+            <gloss xml:lang="en">mixed acc and rit</gloss>
             <desc xml:lang="en">for beams that are "feathered" in both directions.</desc>
           </valItem>
           <valItem ident="rit">
-            <gloss versionDate="2022-05-18" xml:lang="en">ritardando</gloss>
+            <gloss xml:lang="en">ritardando</gloss>
             <desc xml:lang="en">indicates that the secondary beams get progressively closer together
             toward the end of the beam.</desc>
           </valItem>
           <valItem ident="norm">
-            <gloss versionDate="2022-05-18" xml:lang="en">normal</gloss>
+            <gloss xml:lang="en">normal</gloss>
             <desc xml:lang="en">indicates that the secondary beams are equidistant along the course of
               the beam.</desc>
           </valItem>
@@ -267,18 +282,15 @@
           <constraint>
             <sch:rule
               context="mei:beam[@place eq 'mixed' and not(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])]">
-              <sch:assert
-                test="count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])"
-                >Stem direction must be specified for all notes and chords under the
+              <sch:assert test="count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])" role="warning"
+                >Stem directions should be specified for all notes and chords under the
                 beam.</sch:assert>
-              <sch:assert
-                test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+              <sch:assert test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) != 1"
                 >Opposing stem directions are required for a beam with @place="mixed".</sch:assert>
             </sch:rule>
             <sch:rule
-              context="mei:beam[@place eq 'mixed' and (descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n])                 and count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@stem.dir]) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])]">
-              <sch:assert
-                test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) &gt; 1"
+              context="mei:beam[@place eq 'mixed' and (descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ./@staff] or descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'][@staff != ancestor::mei:staff/@n]) and count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir) = count(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord'])]">
+              <sch:assert test="count(distinct-values(descendant::mei:*[local-name() eq 'note' or local-name() eq 'chord']/@stem.dir)) != 1"
                 >Opposing stem directions are required for a beam with @place="mixed".</sch:assert>
             </sch:rule>
           </constraint>
@@ -357,7 +369,7 @@
     </classes>
     <attList>
       <attDef ident="func" usage="req">
-        <gloss versionDate="2022-10-18" xml:lang="en">function</gloss>
+        <gloss xml:lang="en">function</gloss>
         <desc xml:lang="en">Describes the function of the bracketed event sequence.</desc>
         <datatype>
           <rng:data type="NMTOKENS"/>
@@ -371,6 +383,9 @@
           </valItem>
           <valItem ident="ligature">
             <desc xml:lang="en">Represents a ligature in the mensural notation source material.</desc>
+          </valItem>
+          <valItem ident="unspecified">
+            <desc xml:lang="en">Unspecified bracket.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -478,7 +493,7 @@
     <desc xml:lang="en">Attributes that indicate whether an event participates in a glissando.</desc>
     <attList>
       <attDef ident="gliss" usage="opt">
-        <gloss versionDate="2022-10-18" xml:lang="en">glissando</gloss>
+        <gloss xml:lang="en">glissando</gloss>
         <desc xml:lang="en">Indicates that this element participates in a glissando. If visual information about
           the glissando needs to be recorded, then a <gi scheme="MEI">gliss</gi> element should be
           employed instead.</desc>
@@ -574,7 +589,7 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.event"/>
-      <memberOf key="att.duration.log"/>
+      <memberOf key="att.duration.additive"/>
     </classes>
   </classSpec>
   <classSpec ident="att.harpPedal.log" module="MEI.cmn" type="atts">
@@ -587,108 +602,52 @@
     <attList>
       <attDef ident="c" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s C strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="d" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s D strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="e" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s E strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="f" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s F strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="g" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s G strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="a" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s A strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="b" usage="opt">
         <desc xml:lang="en">Indicates the pedal setting for the harp’s B strings.</desc>
+        <datatype>
+          <rng:ref name="data.HARPPEDALPOSITION"/>
+        </datatype>
         <defaultVal>n</defaultVal>
-        <valList type="closed">
-          <valItem ident="f">
-            <desc xml:lang="en">Flat.</desc>
-          </valItem>
-          <valItem ident="n">
-            <desc xml:lang="en">Natural.</desc>
-          </valItem>
-          <valItem ident="s">
-            <desc xml:lang="en">Sharp.</desc>
-          </valItem>
-        </valList>
       </attDef>
     </attList>
   </classSpec>
@@ -753,7 +712,7 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <attList>
       <attDef ident="func" usage="req">
-        <gloss versionDate="2022-10-18" xml:lang="en">function</gloss>
+        <gloss xml:lang="en">function</gloss>
         <desc xml:lang="en">Function of the meter signature group.</desc>
         <valList type="closed">
           <valItem ident="alternating">
@@ -844,7 +803,7 @@
     <desc xml:lang="en">Attributes that record numbers to be displayed with a feature.</desc>
     <attList>
       <attDef ident="num" usage="opt">
-        <gloss versionDate="2022-10-18" xml:lang="en">number</gloss>
+        <gloss xml:lang="en">number</gloss>
         <desc xml:lang="en">Records a number or count accompanying a notational feature.</desc>
         <datatype>
           <rng:data type="positiveInteger"/>
@@ -857,7 +816,7 @@
       tremolo or tuplet.</desc>
     <attList>
       <attDef ident="num.place" usage="opt">
-        <gloss versionDate="2022-10-30" xml:lang="en">number placement</gloss>
+        <gloss xml:lang="en">number placement</gloss>
         <desc xml:lang="en">States where the tuplet number will be placed in relation to the note heads.</desc>
         <datatype>
           <rng:ref name="data.STAFFREL.basic"/>
@@ -906,7 +865,7 @@
     </classes>
     <attList>
       <attDef ident="dir" usage="req">
-        <gloss versionDate="2022-10-30" xml:lang="en">direction</gloss>
+        <gloss xml:lang="en">direction</gloss>
         <desc xml:lang="en">Records the position of the piano damper pedal.</desc>
         <valList type="closed">
           <valItem ident="down">
@@ -924,9 +883,9 @@
         </valList>
       </attDef>
       <attDef ident="func" usage="opt">
-        <gloss versionDate="2022-10-18" xml:lang="en">function</gloss>
+        <gloss xml:lang="en">function</gloss>
         <desc xml:lang="en">Indicates the function of the depressed pedal, but not necessarily the text associated
-          with its use. Use the <gi>dir</gi> element for such text.</desc>
+          with its use. Use the <gi scheme="MEI">dir</gi> element for such text.</desc>
         <datatype>
           <rng:data type="NMTOKEN"/>
         </datatype>
@@ -1128,7 +1087,7 @@
     </attList>
   </classSpec>
   <classSpec ident="att.tremForm" module="MEI.cmn" type="atts">
-    <desc>Attributes describing the form of a tremolo.</desc>
+    <desc xml:lang="en">Attributes describing the form of a tremolo.</desc>
     <attList>
       <attDef ident="form" usage="opt">
         <desc xml:lang="en">Describes the style of the tremolo.</desc>
@@ -1224,7 +1183,7 @@
     </classes>
   </classSpec>
   <elementSpec ident="arpeg" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">arpeggiation</gloss>
+    <gloss xml:lang="en">arpeggiation</gloss>
     <desc xml:lang="en">Indicates that the notes of a chord are to be performed successively
       rather than simultaneously, usually from lowest to highest. Sometimes called a "roll".</desc>
     <classes>
@@ -1237,7 +1196,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The modern arpeggiation symbol is a vertical wavy line preceding the chord. When the notes
@@ -1259,10 +1218,10 @@
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.attacca.anl"/>
+      <memberOf key="att.attacca.ges"/>
       <memberOf key="att.attacca.log"/>
       <memberOf key="att.attacca.vis"/>
-      <memberOf key="att.attacca.ges"/>
-      <memberOf key="att.attacca.anl"/>
       <memberOf key="model.controlEventLike.cmn"/>
       <!--<memberOf key="model.controlEventLike"/>-->
     </classes>
@@ -1337,7 +1296,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="beamSpan" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">beam span</gloss>
+    <gloss xml:lang="en">beam span</gloss>
     <desc xml:lang="en">Alternative element for explicitly encoding beams, particularly those which
       extend across bar lines.</desc>
     <classes>
@@ -1350,7 +1309,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="beamspan_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1371,7 +1330,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="beatRpt" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">beat repeat</gloss>
+    <gloss xml:lang="en">beat repeat</gloss>
     <desc xml:lang="en">An indication that material on a preceding beat should be repeated.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1385,7 +1344,7 @@
       <memberOf key="model.eventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p> <gi scheme="MEI">beatRpt</gi> may also be used in guitar or rhythm parts to indicate where
@@ -1407,7 +1366,7 @@
       <memberOf key="model.controlEventLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="bend_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1459,7 +1418,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="breath" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">breath mark</gloss>
+    <gloss xml:lang="en">breath mark</gloss>
     <desc xml:lang="en">An indication of a point at which the performer on an instrument requiring
       breath (including the voice) may breathe.</desc>
     <classes>
@@ -1472,7 +1431,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="breath_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1496,7 +1455,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="bTrem" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">bowed tremolo</gloss>
+    <gloss xml:lang="en">bowed tremolo</gloss>
     <desc xml:lang="en">A rapid alternation on a single pitch or chord.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1528,7 +1487,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="fermata_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1549,7 +1508,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="fTrem" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">fingered tremolo</gloss>
+    <gloss xml:lang="en">fingered tremolo</gloss>
     <desc xml:lang="en">A rapid alternation between a pair of notes (or chords or perhaps
       between a note and a chord) that are (usually) farther apart than a major second.</desc>
     <classes>
@@ -1587,7 +1546,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="gliss" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">glissando</gloss>
+    <gloss xml:lang="en">glissando</gloss>
     <desc xml:lang="en">A continuous or sliding movement from one pitch to another, usually
       indicated by a straight or wavy line.</desc>
     <classes>
@@ -1630,7 +1589,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="graceGrp" module="MEI.cmn">
-    <gloss versionDate="2023-06-16" xml:lang="en">grace group</gloss>
+    <gloss xml:lang="en">grace group</gloss>
     <desc xml:lang="en">A container for a sequence of grace notes.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1684,7 +1643,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="hairpin_start-_and_end-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1710,7 +1669,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="halfmRpt" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">half-measure repeat</gloss>
+    <gloss xml:lang="en">half-measure repeat</gloss>
     <desc xml:lang="en">A half-measure repeat in any meter.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1722,11 +1681,11 @@
       <memberOf key="model.eventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="harpPedal" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">harp pedal</gloss>
+    <gloss xml:lang="en">harp pedal</gloss>
     <desc xml:lang="en">Harp pedal diagram.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1738,7 +1697,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="harpPedal_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -1755,7 +1714,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="lv" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">laissez vibrer</gloss>
+    <gloss xml:lang="en">laissez vibrer</gloss>
     <desc xml:lang="en">A "tie-like" indication that a note should ring beyond its written duration.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1839,7 +1798,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="meterSig" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">meter signature</gloss>
+    <gloss xml:lang="en">meter signature</gloss>
     <desc xml:lang="en">Written meter signature.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1851,11 +1810,11 @@
       <memberOf key="model.meterSigLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="meterSigGrp" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">meter signature group</gloss>
+    <gloss xml:lang="en">meter signature group</gloss>
     <desc xml:lang="en">Used to capture alternating, interchanging, mixed or other non-standard meter signatures.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1867,21 +1826,14 @@
       <memberOf key="model.meterSigLike"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="meterSig"/>
-      </rng:zeroOrMore>
+      <rng:ref name="model.meterSigLike"/>
+      <rng:oneOrMore>
+        <rng:ref name="model.meterSigLike"/>
+      </rng:oneOrMore>
     </content>
-    <constraintSpec ident="check_meterSigGrpContent" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:meterSigGrp[not(@copyof)]">
-          <sch:assert test="count(mei:meterSig) &gt; 1">meterSigGrp must have at least 2 child
-            meterSig elements.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
   </elementSpec>
   <elementSpec ident="mNum" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">measure number</gloss>
+    <gloss xml:lang="en">measure number</gloss>
     <desc xml:lang="en">Designation, name, or label for a measure, often but not always
       consisting of digits. Use this element when the <att>n</att> attribute on <gi scheme="MEI"
       >measure</gi> does not adequately capture the appearance or placement of the measure
@@ -1909,7 +1861,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="mRest" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">measure rest</gloss>
+    <gloss xml:lang="en">measure rest</gloss>
     <desc xml:lang="en">Complete measure rest in any meter. <!-- (Read, p. 97-98). --> </desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1921,7 +1873,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>Automatically-generated numbering of consecutive measures of rest may be controlled via the
@@ -1930,7 +1882,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="mRpt" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">measure repeat</gloss>
+    <gloss xml:lang="en">measure repeat</gloss>
     <desc xml:lang="en">An indication that the previous measure should be repeated.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1942,7 +1894,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The automated numbering of consecutive measures of rest may be controlled via the
@@ -1951,7 +1903,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="mRpt2" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">2-measure repeat</gloss>
+    <gloss xml:lang="en">2-measure repeat</gloss>
     <desc xml:lang="en">An indication that the previous two measures should be
       repeated.</desc>
     <classes>
@@ -1964,11 +1916,11 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="mSpace" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">measure space</gloss>
+    <gloss xml:lang="en">measure space</gloss>
     <desc xml:lang="en">A measure containing only empty space in any meter.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1980,7 +1932,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The automated numbering of consecutive measures of space may be controlled via the
@@ -1989,9 +1941,9 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="multiRest" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">multiple rest</gloss>
-    <desc xml:lang="en">Multiple measures of rest compressed into a single symbol, frequently
-      found in performer parts.</desc>
+    <gloss xml:lang="en">multimeasure rest</gloss>
+    <desc xml:lang="en">Multiple full measure rests compressed into a single bar, 
+      frequently found in performer parts.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
@@ -2002,13 +1954,13 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <!--<remarks xml:lang="en"><p>The num attribute can used to store a number to be rendered along with
         the note. See Read, p. 102-105.</p></remarks>-->
   </elementSpec>
   <elementSpec ident="multiRpt" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">multiple repeat</gloss>
+    <gloss xml:lang="en">multiple repeat</gloss>
     <desc xml:lang="en">Multiple repeated measures.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2020,7 +1972,7 @@
       <memberOf key="model.eventLike.measureFilling"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>In modern publishing practice, repeats of more than two measures should be written out
@@ -2072,7 +2024,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="oLayer" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">ossia layer</gloss>
+    <gloss xml:lang="en">ossia layer</gloss>
     <desc xml:lang="en">A layer that contains an alternative to material in another layer.</desc>
     <classes>
       <memberOf key="att.basic"/>
@@ -2158,7 +2110,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="oStaff" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">ossia staff</gloss>
+    <gloss xml:lang="en">ossia staff</gloss>
     <desc xml:lang="en">A staff that holds an alternative passage which may be played instead of
       the original material.</desc>
     <classes>
@@ -2203,7 +2155,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="pedal_start-type_attributes_required" scheme="schematron">
       <constraint>
@@ -2220,7 +2172,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="reh" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">rehearsal mark</gloss>
+    <gloss xml:lang="en">rehearsal mark</gloss>
     <desc xml:lang="en">In an orchestral score and its corresponding parts, a mark indicating a
       convenient point from which to resume rehearsal after a break.</desc>
     <classes>
@@ -2249,7 +2201,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="repeatMark" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">repetition mark</gloss>
+    <gloss xml:lang="en">repetition mark</gloss>
     <desc xml:lang="en">
       An instruction expressed as a combination of text and symbols – segno and coda – typically above, 
       below, or between staves, but not on the staff.</desc>
@@ -2438,7 +2390,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="tupletSpan" module="MEI.cmn">
-    <gloss versionDate="2022-05-18" xml:lang="en">tuplet span</gloss>
+    <gloss xml:lang="en">tuplet span</gloss>
     <desc xml:lang="en">Alternative element for encoding tuplets, especially useful for tuplets
       that extend across bar lines.</desc>
     <classes>
@@ -2451,7 +2403,7 @@
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <constraintSpec ident="tupletSpan_start-_and_end-type_attributes_required"
       scheme="schematron">

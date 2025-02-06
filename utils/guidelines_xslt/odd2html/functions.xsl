@@ -101,7 +101,7 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:generatePreface" as="node()+">
-        
+        <xsl:message select="'Generating preface'"/>
         <xsl:variable name="git.link" select="'https://github.com/music-encoding/music-encoding/commit/' || $retrieved.hash" as="xs:string"/>
         <xsl:variable name="git.short" select="substring($retrieved.hash,1,7)" as="xs:string"/>
         
@@ -180,6 +180,7 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:generateToc" as="node()">
+        <xsl:message select="'Generating TOC'"/>
         <nav>
             <header>Table of Contents</header>
             <!-- TODO: Do we have front pages that need to be included? -->
@@ -384,6 +385,7 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:generateIndizes" as="node()+">
+        <xsl:message select="'Generating indices'"/>
         <section id="elementIndex" class="backIndex">
             <h1>Index of Elements</h1>
             <xsl:for-each select="$elements.pdf.links">

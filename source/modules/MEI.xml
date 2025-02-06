@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -19,8 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI">
   <moduleSpec ident="MEI">
     <desc xml:lang="en">Data type definitions.</desc>
@@ -437,16 +436,16 @@
         </valItem>
         <valItem ident="dblheavy">
           <desc xml:lang="en">Heavy double bar line (SMuFL E035).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="dblsegno">
           <desc xml:lang="en">Segno serpent with vertical lines (SMuFL E04B).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="end">
           <desc xml:lang="en">End bar line (SMuFL E032 and Unicode 1D102).</desc>
         </valItem>
         <valItem ident="heavy">
           <desc xml:lang="en">Heavy bar line (SMuFL E034).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="invis">
           <desc xml:lang="en">Bar line not rendered.</desc>
         </valItem>
@@ -493,15 +492,18 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.BEAT" module="MEI" type="dt">
-    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, [0-9]+(\.?[0-9]*)? The value must fall between 0 and the numerator
-      of the time signature + 1, where 0 represents the left bar line and the upper boundary
-      represents the right bar line. For example, in 12/8 the value must be in the range from 0 to
-      13.</desc>
+    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, a decimal number.</desc>
     <content>
       <rng:data type="decimal">
         <rng:param name="minInclusive">0</rng:param>
       </rng:data>
     </content>
+    <remarks xml:lang="en">
+      <p>The value must fall between 0 and the numerator of the time signature + 1,
+        where 0 represents the left bar line and the upper boundary represents the right bar line.
+        For example, in 12/8 the value must be in the range from 0 to 13.
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.BEATRPT.REND" module="MEI" type="dt">
     <desc xml:lang="en">Visual and performance information for a repeated beat symbol.</desc>
@@ -1666,14 +1668,26 @@
     </content>
   </macroSpec>-->
   <macroSpec ident="data.INTERVAL.HARMONIC" module="MEI" type="dt">
-    <desc xml:lang="en">A token indicating diatonic interval quality and size.</desc>
+    <desc xml:lang="en">A token indicating diatonic interval quality and size in shorthand notation.</desc>
     <content>
       <rng:choice>
         <rng:data type="token">
-          <rng:param name="pattern">[AdMmP][0-9]+</rng:param>
+          <rng:param name="pattern">[AdMmP][1-9][0-9]*</rng:param>
         </rng:data>
       </rng:choice>
     </content>
+    <remarks xml:lang="en">
+      <p>
+        <list>
+          <head>Interval qualities:</head>
+          <item>A = augmented,</item>
+          <item>d = diminished,</item>
+          <item>M = major,</item>
+          <item>m = minor,</item>
+          <item>P = perfect</item>
+        </list>
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
     <desc xml:lang="en">A token indicating direction of the interval but not its precise value, a diatonic
@@ -3025,6 +3039,18 @@
         <valItem ident="tab">
           <desc xml:lang="en">Tablature notation.</desc>
         </valItem>
+        <valItem ident="tab.guitar">
+          <desc xml:lang="en">Tablature notation for guitars (includes "spanish" lute tablature). Frets are indicated using numbers. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.french">
+          <desc xml:lang="en">"French" tablature notation for lutes. Frets are indicated using letters. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.italian">
+          <desc xml:lang="en">"Italian" tablature notation for lutes. Frets are indicated using numbers. Courses closest to the player's feet are at the bottom of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.german">
+          <desc xml:lang="en">"German" tablature notation for lutes. Fret and course information is conveyed solely by choice of symbol (vertical position is not used for this).</desc>
+        </valItem>
       </valList>
     </content>
   </macroSpec>
@@ -3573,7 +3599,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.STRINGNUMBER" module="MEI" type="dt">
-    <desc xml:lang="en">In string tablature, the number of the string to be played, <abbr>i.e.</abbr>, [1-9]+.</desc>
+    <desc xml:lang="en">This datatype is deprecated in favor of data.COURSENUMBER and will be removed in a future version. In string tablature, the number of the string to be played.</desc>
     <content>
       <rng:data type="positiveInteger"/>
     </content>

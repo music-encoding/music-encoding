@@ -107,7 +107,7 @@
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="version" select="//tei:classSpec[@ident = ('att.meiversion','att.meiVersion')]//tei:defaultVal/text()" as="xs:string"/>
+    <xsl:param name="version" select="tokenize(//tei:edition, ' ')[last()]" as="xs:string"/>
         
     <xd:doc>
         <xd:desc>
@@ -201,8 +201,8 @@
         <xsl:message select="'.   data types: ' || count($data.types)"/>
         <xsl:message select="'.   macro groups: ' || count($macro.groups)"/>
         
-        <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="preface" select="tools:generatePreface()" as="node()+"/>
+        <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
                 <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
