@@ -473,7 +473,7 @@
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:if test="$retrieve-contributors ne 'false'">
+                <xsl:if test="$retrieve-contributors">
                     <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
                     <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
                 </xsl:if>
