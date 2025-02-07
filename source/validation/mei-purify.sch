@@ -15,5 +15,10 @@
         </sch:rule>
     </sch:pattern>
 
+    <sch:pattern id="check_teiDatatype">
+        <sch:rule context="tei:datatype">
+            <sch:report role="error" test="rng:choice">An &lt;tei:datatype&gt; must not an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
+        </sch:rule>
+    </sch:pattern>
 
 </sch:schema>
