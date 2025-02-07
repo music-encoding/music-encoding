@@ -17,7 +17,7 @@
 
     <sch:pattern id="check_teiDatatype">
         <sch:rule context="tei:datatype">
-            <sch:report role="warning" test="rng:choice">An &lt;tei:datatype&gt; must not an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
+            <sch:report role="warning" test="rng:choice">An &lt;tei:datatype&gt; must not contain an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
         </sch:rule>
     </sch:pattern>
 
