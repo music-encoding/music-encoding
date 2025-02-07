@@ -5,19 +5,19 @@
 
     <sch:pattern id="check_rngChoice">
         <sch:rule context="rng:choice">
-            <sch:assert role="error" test="count(*) > 1">An &lt;rng:choice&gt; element hast to contain more than one option to choose from.</sch:assert>
+            <sch:assert role="warning" test="count(*) > 1">An &lt;rng:choice&gt; element hast to contain more than one option to choose from.</sch:assert>
         </sch:rule>
     </sch:pattern>
 
     <sch:pattern id="check_teiConstraintSpec_ident">
         <sch:rule context="tei:constraintSpec">
-            <sch:assert role="error" test="@ident != preceding::tei:constraintSpec/@ident">The @ident on constraintSpec has to be unique across all of mei-source.xml.</sch:assert>
+            <sch:assert role="warning" test="@ident != preceding::tei:constraintSpec/@ident">The @ident on constraintSpec has to be unique across all of mei-source.xml.</sch:assert>
         </sch:rule>
     </sch:pattern>
 
     <sch:pattern id="check_teiDatatype">
         <sch:rule context="tei:datatype">
-            <sch:report role="error" test="rng:choice">An &lt;tei:datatype&gt; must not an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
+            <sch:report role="warning" test="rng:choice">An &lt;tei:datatype&gt; must not an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
         </sch:rule>
     </sch:pattern>
 
