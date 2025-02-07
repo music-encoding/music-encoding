@@ -199,7 +199,9 @@
             <xsl:choose>
                 <xsl:when test="not($specDesc/@atts)">
                     <span class="specList-{local-name($spec)}"><a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a></span>
-                    <xsl:apply-templates select="$spec/tei:desc/node()" mode="#current"/>
+                    <span class="specList-{local-name($spec)}-desc">
+                        <xsl:apply-templates select="$spec/tei:desc/node()" mode="#current"/>
+                    </span>
                 </xsl:when>
                 <xsl:otherwise>
                     <table class="specDesc">
@@ -265,7 +267,7 @@
     <xsl:template match="tei:ref" mode="guidelines">
         <xsl:choose>
             <xsl:when test="starts-with(@target,'#')">
-                <xsl:variable name="chapter.id" select="replace(@target,'#','')" as="xs:string"/>
+                <xsl:variable name="chapter.id" select="substring(@target,2)" as="xs:string"/>
                 <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?"/>
                 <xsl:choose>
                     <xsl:when test="exists($tocInfo)">
@@ -361,7 +363,6 @@
         </xsl:choose>
     </xsl:template>
     
-    
     <xd:doc>
         <xd:desc>
             <xd:p>soCalled</xd:p>
@@ -400,11 +401,56 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>term</xd:p>
+            <xd:p>Names</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:name" mode="guidelines">
+        <xsl:choose>
+            <xsl:when test="not(@ref)">
+                <xsl:apply-templates select="node()" mode="#current" />
+            </xsl:when>
+            <xsl:otherwise>
+                <a class="link_ref link_external" href="{@ref}">
+                    <xsl:apply-templates select="node()" mode="#current" />
+                </a>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Terms</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:term" mode="guidelines">
-        <span class="term"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <span class="term">
+            <xsl:choose>
+                <xsl:when test="not(@ref)">
+                    <xsl:apply-templates select="node()" mode="#current" />
+                </xsl:when>
+                <xsl:when test="starts-with(@ref,'#')">
+                    <xsl:variable name="chapter.id" select="substring(@target,2)" as="xs:string" />
+                    <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?" />
+                    <xsl:choose>
+                        <xsl:when test="exists($tocInfo)">
+                            <a class="link_ref chapterLink" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}">
+                                <xsl:apply-templates select="node()" mode="#current" />
+                            </a>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="wrong_ref" data-target="{$chapter.id}">
+                                <xsl:apply-templates select="node()" mode="#current" />
+                            </span>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:when>
+                <xsl:otherwise>
+                    <a class="link_ref link_external" href="{@ref}">
+                        <xsl:apply-templates select="node()" mode="#current" />
+                    </a>
+                </xsl:otherwise>
+            </xsl:choose>
+        </span>
     </xsl:template>
     
     <xd:doc>
@@ -416,6 +462,15 @@
         <span class="mentioned"><xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Quoted content</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:q|tei:quote" mode="guidelines">
+        <xsl:value-of select="'&quot;'"/><xsl:apply-templates select="node()" mode="#current"/><xsl:value-of select="'&quot;'"/>
+    </xsl:template>
+
     <xd:doc>
         <xd:desc>
             <xd:p>Emphasized content</xd:p>

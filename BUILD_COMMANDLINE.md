@@ -7,11 +7,12 @@
    | Prerequisite | Recommended version |
    |----|----------------|
    |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
-   |Apache Ant|1.10.13|
-   |Verovio Toolkit|3.15|
-   |Prince XML|15.1|
-   |Saxon HE*| 11.5 |
-   |Xerces*|Synchrosoft patched version 25.1.0.1|
+   |Apache Ant|1.10.14|
+   |Verovio Toolkit|4.2.1|
+   |Prince XML|15.3|
+   |Saxon HE*|12.5|
+   |TEI Stylesheets*|7.57.1|
+   |Xerces*|Synchrosoft patched version 26.1.0.1|
 
    \* automatically pulled during build execution
 
@@ -49,7 +50,7 @@
      This should return something similar to:
 
      ```shell
-     Apache Ant™ version 1.10.13 compiled on September 27 2020
+     Apache Ant(TM) version 1.10.14 compiled on August 16 2023
      ```
 
      We recommend using the latest stable release of Apache Ant™. If your system has an older version of Apache Ant™ installed you might still give it a try though. If the prompt returns an empty string, please refer to the [Apache Ant™ Installation Instructions](https://ant.apache.org/manual/install.html) or any other applicable installation instruction.
@@ -143,15 +144,17 @@ The following targets can be called using `ant <target>`:
 | target                | description     |
 |-----------------------|-----------------|
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
-| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized`. This target will be triggered before all `build-...` targets. |
+| `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`. |
+| `validate-source` | Validates the canonicalized source. This target will be triggered before all `build-...` targets. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
 | `build-customizations` | Builds the RNG schemata for all MEI customizations. |
 | `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
-| `init` | Initializes the build environment, i.e., checks if saxon and xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the `lib` folder. Checks if prince is available. |
+| `info`| Displays the versions of Ant and Java (JDK). |
+| `init` | Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available. |
 | `init-mei-classpath` | Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed. |
 | `compare-versions` | Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via `-Dsource`, `-Dold` and `-Doutput` input params. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
-| `reset` | Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files. |
+| `reset` | Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the TEI Stylesheets and the jar files. |

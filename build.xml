@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -18,6 +18,9 @@
   CONTACT: info@music-encoding.org
 -->
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <!-- import version properties -->
+    <property file="build.properties"/>
+    
     <property environment="env">
         <!-- set environment variable -->
     </property>
@@ -61,22 +64,32 @@
             <os family="windows"/>
         </not>
     </condition>
-    <property name="dir.build" value="build"/>
-    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${dir.build}/mei-source_canonicalized.xml"/>
-    <property name="dir.dist" value="dist"/>
-    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
-    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
-    <property name="dir.lib" value="lib"/>
-    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
-    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
-    <property name="saxon.download.version" value="SaxonHE11-5"/>
-    <property name="saxon.jar.file" value="saxon-he-11.5.jar"/>
-    <property name="xerces.version" value="25.1.0.1"/>
-    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
-    <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
     <condition property="verbose" value="true" else="false">
         <contains string="${sun.java.command}" substring="-v" />
     </condition>
+    <!-- directories -->
+    <property name="dir.build" value="build"/>
+    <property name="dir.dist" value="dist"/>
+    <property name="dir.lib" value="lib"/>
+    <property name="dir.validation" value="source/validation"/>
+    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
+    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
+    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
+    <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
+    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <!-- canonicalization -->
+    <property name="canonicalized.file.prefix" value="mei-source_canonicalized_v"/>
+    <property name="canonicalized.file.latest" value="${canonicalized.file.prefix}${meiversion.latest}.xml"/>
+    <property name="canonicalized.file.next" value="${canonicalized.file.prefix}${meiversion.next}.xml"/>
+    <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
+    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
+    <!-- jar dependencies -->
+    <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
+    <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
+    <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
+    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    
 
     <target name="help">
         <antcall target="echo-mei"/>
@@ -99,7 +112,7 @@
         <antcall target="echo-properties"/>
     </target>
 
-    <target name="clean" description="Deletes the following directories: `build`, `dist` and `temp`.">
+    <target name="clean" description="Deletes the following directories: `build`, `dist` and `temp`." depends="info">
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="temp"/>
@@ -110,7 +123,7 @@
     </target>
 
     <target name="echo-mei">
-      <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei"/>
+        <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei" />
         <echo message="${mei}"/>
     </target>
 
@@ -129,7 +142,7 @@
         <echo>Local github.sha: ${github.sha.local}</echo>
     </target>
 
-    <target name="get-local-git-branch" description="Retrieves the current git branch via commandline.">
+    <target name="get-local-git-branch" description="Retrieves the current git branch via command line.">
         <exec executable="git" outputproperty="github.branch.local">
             <arg value="branch"/>
             <arg value="--show-current"/>
@@ -137,13 +150,18 @@
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
-    <target name="reset" description="Resets the build environment. Same as `clean`, but additionaly deletes the `lib` directory with the Saxon and Xerces jar files.">
-        <delete dir="lib"/>
+    <target name="reset" description="Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the jar files.">
         <antcall target="clean"/>
+        <delete dir="lib"/>
+    </target>
+
+    <target name="info" description="Displays the versions of Ant and Java (JDK).">
+        <echo>Ant version: ${ant.version}</echo>
+        <echo>Java version (JDK): ${ant.java.version}</echo>
     </target>
     
-    <target name="init" description="Initializes the build environment, i.e., checks if saxon and xerces are available, and if not, downloads jar files for Saxon, Xerces and adds them to the lib folder. Checks if prince is available.">
-        <!-- check if xerces is available -->
+    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
+        <!-- check if Xerces is available -->
         <condition property="xerces-available">
             <or>
                 <available file="${dir.lib.xerces}/${xerces.jar.file}"/>
@@ -152,7 +170,7 @@
         </condition>
         <echo if:set="xerces-available" message="xerces available: ${xerces-available}"/>
         <echo unless:set="xerces-available" message="xerces available: false"/>
-        <!-- check if saxon is available -->
+        <!-- check if Saxon is available -->
         <condition property="saxon-available">
             <or>
                 <available file="${dir.lib.saxon}/${saxon.jar.file}"/>
@@ -161,33 +179,48 @@
         </condition>
         <echo if:set="saxon-available" message="saxon available: ${saxon-available}"/>
         <echo unless:set="saxon-available" message="saxon available: false"/>
-        <!-- check for prince -->
+        <!-- check if Schematron is available -->
+        <condition property="schematron-available">
+            <or>
+                <available file="${dir.lib.schematron}/${schematron.jar.file}"/>
+                <available classname="com.helger.schematron.ant.Schematron"/>
+            </or>
+        </condition>
+        <echo if:set="schematron-available" message="schematron available: ${schematron-available}"/>
+        <echo unless:set="schematron-available" message="schematron available: false"/>
+        <!-- check if Stylesheets are available -->
+        <fileset id="stylesheets.version.file" dir="${dir.lib.stylesheets}">
+            <patternset>
+                <include name="VERSION"/>
+            </patternset>
+            <contains text="${stylesheets.version}" />
+        </fileset>
+        <condition property="stylesheets-available">
+            <and>
+                <available file="${dir.lib.stylesheets}"/>
+                <resourcecount when="equal" count="1" refid="stylesheets.version.file"/>
+            </and>
+        </condition>
+        <echo if:set="stylesheets-available" message="stylesheets available: ${stylesheets-available}"/>
+        <echo unless:set="stylesheets-available" message="stylesheets available: false"/>
+        <!-- check if Prince is available -->
         <condition property="prince-available">
             <available file="prince" filepath="${env.PATH}" />
         </condition>
         <echo if:set="prince-available" message="prince available: ${prince-available}"/>
         <echo unless:set="prince-available" message="prince available: false"/>
 
+        <antcall target="stylesheets-prepare" unless:true="${stylesheets-available}"/>
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
+        <antcall target="schematron-download" unless:true="${schematron-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
 
         <echo>initialized</echo>
     </target>
 
-    <target name="init-mei-classpath" description="Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed." depends="init">
-        <path id="mei.classpath">
-            <fileset dir="lib" erroronmissingdir="false">
-                <include name="**/*.jar" />
-            </fileset>
-            <pathelement path="${java.class.path}"/>
-        </path>
-        <echo>mei.classpath set</echo>
-    </target>
-
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.download.version}/${saxon.download.version}J.zip" dest="temp/download"/>
-        <!-- TODO check for newer releases-->
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.edition.version}/${saxon.edition.version}J.zip" dest="temp/download"/>
     </target>
 
     <target name="saxon-prepare" depends="saxon-unzip" unless="${saxon-available}">
@@ -197,32 +230,85 @@
     <target name="saxon-unzip" depends="saxon-download" unless="${saxon-available}">
         <mkdir dir="${dir.lib.saxon}"/>
         <unzip src="temp/download" overwrite="true" dest="${dir.lib.saxon}"/>
+        <echo>downloaded saxon jar</echo>
+    </target>
+
+    <target name="schematron-download" unless="${schematron-available}">
+        <mkdir dir="${dir.lib.schematron}"/>
+        <get src="https://repo1.maven.org/maven2/com/helger/schematron/ph-schematron-ant-task/${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
+        <echo>downloaded schematron jar</echo>
+    </target>
+
+    <target name="stylesheets-download" unless="${stylesheets-available}">
+        <mkdir dir="temp"/>
+        <get src="https://github.com/TEIC/Stylesheets/releases/download/v${stylesheets.version}/tei-xsl-${stylesheets.version}.zip" dest="temp/download"/>
+    </target>
+
+    <target name="stylesheets-prepare" depends="stylesheets-unzip" unless="${stylesheets-available}">
+        <delete dir="temp/"/>
+    </target>
+
+    <target name="stylesheets-unzip" depends="stylesheets-download" unless="${stylesheets-available}">
+        <mkdir dir="${dir.lib.stylesheets}"/>
+        <unzip src="temp/download" overwrite="true" dest="${dir.lib.stylesheets}">
+            <patternset>
+                <include name="xml/tei/stylesheet/**"/>
+            </patternset>
+            <mapper>
+                <globmapper from="xml/tei/stylesheet/*" to="*"/>
+            </mapper>
+        </unzip>
+        <echo>downloaded tei stylesheets</echo>
     </target>
 
     <target name="xerces-download" unless="${xerces-available}">
         <mkdir dir="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-patched-xerces/${xerces.version}/${xerces.jar.file}" dest="${dir.lib.xerces}"/>
         <get src="https://www.oxygenxml.com/maven/com/oxygenxml/oxygen-basic-utilities/${xerces.version}/${oxygen.basic.utilites.jar.file}" dest="${dir.lib.xerces}"/>
+        <echo>downloaded xerces jars</echo>
     </target>
 
-    <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in build/mei-source_canonicalized. This target will be triggered before all `build-...` targets." depends="init-mei-classpath" >
+    <target name="init-mei-classpath" description="Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed." depends="init">
+        <path id="mei.classpath">
+            <fileset dir="lib" erroronmissingdir="false">
+                <include name="saxon/*.jar"/>
+                <include name="xerces/*.jar"/>
+                <include name="schematron/*.jar"/>
+            </fileset>
+            <pathelement path="${java.class.path}"/>
+        </path>
+        <echo>mei.classpath set</echo>
+    </target>
+
+    <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${basedir}/source/mei-source.xml"/>
             <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
-            <arg value="-o:${dir.build}/mei-source_canonicalized.xml"/>
+            <arg value="-o:${canonicalized.source.path}"/>
             <arg value="-xi:on"/>
         </java>
         <property name="canonicalize-source.done" value="true"/>
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>${odd.basename}</echo>
-        <ant dir="submodules/Stylesheets/odd/" antfile="build-to.xml" target="go" inheritall="true">
+    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source. This target will be triggered before all `build-...` targets.">
+        <echo unless:set="validate-source.done">validating source...</echo>
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
+        <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+            <fileset dir="${dir.build}">    
+                <include name="${canonicalized.file.next}" ></include>
+            </fileset>
+        </schematron>
+        <property name="validate-source.done" value="true"/>
+        <echo>canonicalized source validated: ${validate-source.done}</echo>
+    </target>
+
+    <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
@@ -231,29 +317,28 @@
         </ant>
     </target>
     
-    <target name="build-customization-specs" depends="canonicalize-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>${odd.basename}</echo>
+    <target name="build-customization-specs" depends="validate-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${customization.path}"></param>
         </antcall>
-        <ant dir="submodules/Stylesheets/html5" antfile="build-to.xml" target="odd" inheritall="true">
-            <property name="inputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.odd"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}_compiled.html"/>
+        <ant dir="${dir.lib.stylesheets}/html5" antfile="build-to.xml" target="odd" inheritall="true">
+            <property name="inputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.html"/>
             <property name="verbose" value="${verbose}"/>
             <property name="processODD">true</property>
             <reference refid="mei.classpath" torefid="classpath"/>
         </ant>
     </target>
 
-    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="canonicalize-source">
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo>building rng ${odd.basename} from ${customization.path}</echo>
+    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
-        <echo>    output: ${dir.dist.schemata}/${odd.basename}.rng</echo>
-        <ant dir="submodules/Stylesheets/relaxng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
+        <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
+        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${odd.basename}.rng"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
             <property name="verbose">true</property>
             <reference refid="mei.classpath" torefid="classpath"/>
@@ -261,12 +346,12 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="canonicalize-source" unless="${build-guidelines-html.done}">
-        <!-- TODO check dependency try with mei-source.xml -->
+    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="validate-source" unless="${build-guidelines-html.done}">
+        <!-- TODO: check dependency try with mei-source.xml -->
         <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
         <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
-        <basename property="odd.basename" file="${customization.path}" suffix=".xml"/>
-        <echo message="building HTML guidelines for ${odd.basename} from ${customization.path} on branch ${github.branch.local}"/>
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo message="building HTML guidelines for ${selectedSchema} from ${customization.path} on branch ${github.branch.local}"/>
         <echo>github.sha: ${github.sha}</echo>
         <echo>github.sha.local: ${github.sha.local}</echo>
         <condition property="hash" value="${github.sha}" else="${github.sha.local}">
@@ -281,7 +366,7 @@
         </condition>
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
-            <arg value="-s:${dir.build}/mei-source_canonicalized.xml"/>
+            <arg value="-s:${canonicalized.source.path}"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
             <arg value="output.folder=${basedir}/${dir.build}/"/>
@@ -314,7 +399,7 @@
         <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
         <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
         <property name="prince.output.path" value="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
-        <!-- run prince to convert HTML guidelines to PDF -->
+        <!-- run Prince to convert HTML guidelines to PDF -->
         <exec executable="prince" failonerror="true">
             <arg prefix="--log=" value="${dir.build}/prince.log"/>
             <arg prefix="--output=" value="${prince.output.path}"/>
@@ -354,7 +439,7 @@
         </copy>
     </target>
 
-    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="canonicalize-source">
+    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="validate-source">
         <antcall target="build-rng">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -375,7 +460,7 @@
         </antcall>
     </target>
 
-    <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="canonicalize-source">
+    <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
         </antcall>
@@ -396,9 +481,9 @@
         </antcall>
     </target>
 
-    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="canonicalize-source">
+    <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="validate-source">
         <!-- set source file -->
-        <property name="source.default" value="${dir.build}/mei-source_canonicalized.xml"/>
+        <property name="source.default" value="${canonicalized.source.path}"/>
         <echo level="verbose">source.default: ${source.default}</echo>
         <echo level="verbose">source user input: ${source}</echo>
 
@@ -408,11 +493,11 @@
         <echo>Using source.file: ${source.file}</echo>
 
         <!-- set old file to compare with -->
-        <property name="old.default" value="${dir.build}/mei-source_canonicalized_v4.0.1.xml"/>
+        <property name="old.default" value="${dir.build}/${canonicalized.file.latest}"/>
         <condition property="old.default-available" value="true">
                 <available file="${old.default}"/>
         </condition>
-        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/4.0.1/mei-source_canonicalized_v4.0.1.xml" dest="${old.default}" unless:true="${old.default-available}"/>
+        <get src="https://raw.githubusercontent.com/music-encoding/schema/main/${meiversion.latest}/${canonicalized.file.latest}" dest="${old.default}" unless:true="${old.default-available}"/>
 
         <echo level="verbose">old.default: ${old.default}</echo>
         <echo level="verbose">old user input: ${old}</echo>
@@ -452,7 +537,7 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="init-mei-classpath, canonicalize-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>

@@ -42,6 +42,7 @@
         <xd:return>the section element</xd:return>
     </xd:doc>
     <xsl:function name="tools:getMacroGroupSpecs" as="node()">
+        <xsl:message select="'Getting macro group specs'"/>
         <section id="macroGroupSpecs" class="specSection">
             <h1>Macro Group Specifications</h1>
             <xsl:for-each select="$macro.groups">
