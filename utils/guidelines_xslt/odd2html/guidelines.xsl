@@ -567,7 +567,7 @@
         <xsl:variable name="verovioClass" select="if($renderedLive) then(' verovio') else('')" as="xs:string"/>
         <xsl:variable name="id" select="generate-id(.)"/>
         <xsl:if test="$renderedLive">
-            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.mei.svg'"/>
+            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.svg'"/>
             <img alt="example" class="graphic liveExample" src="{tools:adjustImageUrl($imageUrl)}"/>
         </xsl:if>
         <div id="{$id}" xml:space="preserve" class="pre code {$validClass}{$verovioClass}">
