@@ -86,7 +86,7 @@
                     </xsl:for-each>
                 </ul>
             </xsl:when>
-            <xsl:when test="@rend = 'ordered'">
+            <xsl:when test="@rend = 'numbered'">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()"/></strong>
                 </xsl:if>
