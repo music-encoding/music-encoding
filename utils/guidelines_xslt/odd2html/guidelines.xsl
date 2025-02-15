@@ -74,7 +74,7 @@
     </xd:doc>
     <xsl:template match="tei:list" mode="guidelines">
         <xsl:choose>
-            <xsl:when test="@type = ('bulleted','simple')">
+            <xsl:when test="@rend = ('bulleted','simple')">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()" mode="#current"/></strong>
                 </xsl:if>
@@ -86,7 +86,7 @@
                     </xsl:for-each>
                 </ul>
             </xsl:when>
-            <xsl:when test="@type = 'ordered'">
+            <xsl:when test="@rend = 'ordered'">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()"/></strong>
                 </xsl:if>
@@ -98,7 +98,7 @@
                     </xsl:for-each>
                 </ol>
             </xsl:when>
-            <xsl:when test="@type = 'gloss'">
+            <xsl:when test="@rend = 'gloss'">
                 <dl>
                     <xsl:for-each select="tei:label">
                         <dt><span><xsl:apply-templates select="node()" mode="#current"/></span></dt>
