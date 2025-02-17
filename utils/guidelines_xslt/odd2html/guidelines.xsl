@@ -198,7 +198,7 @@
             <xsl:attribute name="class" select="'specDesc'"/>
             <xsl:choose>
                 <xsl:when test="not($specDesc/@atts)">
-                    <span class="specList-{local-name($spec)}"><a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a></span>
+                    <span class="specList-{local-name($spec)}"><a class="{tools:getLinkClasses($key)}" href="#{$key}">&lt;<xsl:value-of select="$key"/>&gt;</a></span>
                     <span class="specList-{local-name($spec)}-desc">
                         <xsl:apply-templates select="$spec/tei:desc/node()" mode="#current"/>
                     </span>
