@@ -363,7 +363,6 @@
         </xsl:choose>
     </xsl:template>
     
-    
     <xd:doc>
         <xd:desc>
             <xd:p>soCalled</xd:p>
@@ -463,6 +462,15 @@
         <span class="mentioned"><xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Quoted content</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:q|tei:quote" mode="guidelines">
+        <xsl:value-of select="'&quot;'"/><xsl:apply-templates select="node()" mode="#current"/><xsl:value-of select="'&quot;'"/>
+    </xsl:template>
+
     <xd:doc>
         <xd:desc>
             <xd:p>Emphasized content</xd:p>

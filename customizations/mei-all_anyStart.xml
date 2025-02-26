@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -30,6 +30,7 @@
           <resp>Authored by</resp>
           <name xml:id="PR">Perry Roland</name>
           <name xml:id="bwb">Benjamin W. Bohl</name>
+          <name xml:id="stm">Stefan Münnich</name>
         </respStmt>
       </titleStmt>
       <publicationStmt>
@@ -43,6 +44,14 @@
       </sourceDesc>
     </fileDesc>
     <revisionDesc>
+      <change n="3" when="2024-11-27" who="#bwb #stm">
+        <desc>
+          <list>
+            <item>rephrasing errors of schematron rules associated with @meiversion</item>
+            <item>changing context of schematron rule 'tempo_in_header_disallow_most_attrs' to tempo if it is not root element</item>
+          </list>
+        </desc>
+      </change>
       <change n="2" when="2021-11-05" who="#bwb">
         <desc>
           <list>
@@ -64,7 +73,7 @@
       <!-- This file is a superset of the other customizations. It permits the validation of MEI fragments, 
         whereas mei-all and the other customizations presume a smaller set of possible start elements: mei, 
         meiHead, meiCorpus, and music. -->
-      <schemaSpec ident="mei" ns="http://www.music-encoding.org/ns/mei" prefix="mei_" start="abbr
+      <schemaSpec ident="mei-all_anyStart" ns="http://www.music-encoding.org/ns/mei" prefix="mei_" start="abbr
         accessRestrict accid accMat acquisition actor add addDesc addName address addrLine altId
         ambitus ambNote analytic anchoredText annot app appInfo application argument arpeg arranger artic
         attacca attUsage audience author availability avFile back barLine barre beam beamSpan beatRpt
@@ -155,25 +164,27 @@
           <constraintSpec ident="meiVersion.root" scheme="schematron">
             <desc>Require meiversion attribute on the root element.</desc>
             <constraint>
-              <sch:rule context="root()">
-                <sch:assert test="/mei:*[@meiversion]">The root element must have the @meiversion attribute in order to indicate the MEI version of the snippet.</sch:assert>
+              <sch:rule context="/mei:*">
+                <sch:assert test="@meiversion">The document root element must have the @meiversion attribute in order to indicate the MEI version in use.</sch:assert>
               </sch:rule>
             </constraint>
           </constraintSpec>
           <constraintSpec ident="meiVersion.warning.anyStart" scheme="schematron" mode="add">
             <constraint>
               <sch:rule context="/mei:*">
-                <sch:report role="error" test="not(local-name(.) = ('mei', 'meiHead', 'meiCorpus', 'music')) and not(@meiversion = '5.1-dev+anyStart')">If the root element is any other than mei, meiHead, meiCorpus, or music the value of @meiversion must be '5.1-dev+anyStart'.</sch:report>
+                <sch:report role="error" test="not(local-name(.) = ('mei', 'meiHead', 'meiCorpus', 'music')) and not(@meiversion = '6.0-dev+anyStart')">If the root element is any other than mei, meiHead, meiCorpus, or music the value of @meiversion must be '6.0-dev+anyStart'.</sch:report>
               </sch:rule>
             </constraint>
           </constraintSpec>
           <attList>
             <attDef ident="meiversion" usage="rec" mode="change">
               <valList type="closed" mode="change">
-                <valItem ident="5.1-dev+basic" mode="delete"/>
-                <valItem ident="5.1-dev+CMN" mode="delete"/>
-                <valItem ident="5.1-dev+Mensural" mode="delete"/>
-                <valItem ident="5.1-dev+Neumes" mode="delete"/>
+                <valItem ident="6.0-dev"/>
+                <valItem ident="6.0-dev+anyStart"/>
+                <valItem ident="6.0-dev+basic" mode="delete"/>
+                <valItem ident="6.0-dev+CMN" mode="delete"/>
+                <valItem ident="6.0-dev+Mensural" mode="delete"/>
+                <valItem ident="6.0-dev+Neumes" mode="delete"/>
             </valList>
             </attDef>
           </attList>
@@ -210,6 +221,19 @@
             <memberOf key="att.metadataPointing"/>
           </classes>
         </elementSpec>
+          
+          <elementSpec ident="tempo" module="MEI.shared" mode="change">
+              <constraintSpec ident="tempo_in_header_disallow_most_attrs" scheme="schematron" mode="change">
+                <constraint>
+                  <sch:rule context="/*//mei:tempo[not(ancestor::mei:score or ancestor::mei:part)]">
+                    <sch:assert
+                      test="not(@*[name() != 'analog' and name() != 'class' and name() != 'label' and name() != 'mm' and name() != 'mm.dots' and name() != 'translit' and name() != 'type' and name() != 'mm.unit' and name() != 'n' and name() != 'xml:base' and name() != 'xml:id' and name() != 'xml:lang'])"
+                      >Only analog, class, label, mm, mm.dots, mm.unit, n, translit, type, xml:base, xml:id,
+                      and xml:lang attributes are allowed when tempo is not the document root element or a descendant of a score or part.</sch:assert>
+                  </sch:rule>
+                </constraint>
+    </constraintSpec>
+          </elementSpec>
 
       </schemaSpec>
     </body>
