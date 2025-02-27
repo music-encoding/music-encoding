@@ -98,7 +98,7 @@
                     </xsl:for-each>
                 </ol>
             </xsl:when>
-            <xsl:when test="@rend = 'gloss'">
+            <xsl:when test="@type= 'gloss'">
                 <dl>
                     <xsl:for-each select="tei:label">
                         <dt><span><xsl:apply-templates select="node()" mode="#current"/></span></dt>
