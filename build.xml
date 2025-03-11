@@ -279,6 +279,18 @@
         </path>
         <echo>mei.classpath set</echo>
     </target>
+    
+    <target name="canonicalize" description="Resolves xi:includes of a file submitted via -Dsource.path, e.g. a customiztaion or mei-source." depends="init-mei-classpath">
+        <basename property="source.basename" file="${source.path}" suffix=".xml"/>
+        <echo>canonicalizing file: ${source.path}</echo>
+        <echo>to: ${dir.build}/${source.basename}_canonicalized.xml</echo>
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-s:${source.path}"/>
+            <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
+            <arg value="-o:${dir.build}/${source.basename}_canonicalized.xml"/>
+            <arg value="-xi:on"/>
+        </java>
+    </target>
 
     <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
@@ -315,6 +327,40 @@
             <property name="suppressTEIexamples" value="true"/>
             <reference refid="mei.classpath" torefid="classpath"/>
         </ant>
+    </target>
+    
+    <target name="build-customization-guidelines" depends="init-mei-classpath, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
+        <!-- set selectedSchema from filename; N.B. has to match schemaSpec/@ident to make processing by TEI Stylesheets work correctly -->
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <!-- derive path for compiled ODD from filename -->
+        <property name="compiled.path" location="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+        <!-- set git variables -->
+        <condition property="hash" value="${github.sha}" else="${github.sha.local}">
+            <not>
+                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
+        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
+            <not>
+                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
+        <!-- generate customization’s compiled ODD -->
+        <antcall target="build-compiled-odd" inheritall="yes" />
+        <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
+        <antcall target="copy-guidelines-assets"/>
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-s:${compiled.path}"/>
+            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
+            <arg value="-xi:on"/>
+            <arg value="output.folder=${basedir}/${dir.build}/"/>
+            <arg value="hash=${hash}"/>
+            <arg value="branch=${branch}"/>
+            <arg value="basedir=${basedir.cross_platform}"/>
+            <arg value="compiledOddUri=${compiled.path}"/>
+        </java>
+        <antcall target="generate-images"/>
+        <antcall target="copy-generated-images"/>
     </target>
     
     <target name="build-customization-specs" depends="validate-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
