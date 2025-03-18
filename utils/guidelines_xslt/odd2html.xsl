@@ -107,19 +107,8 @@
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="version" as="xs:string">
-        <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
-        <xsl:choose>
-            <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
-                <xsl:variable name="git.path" select="substring-before($docUri,'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-                <xsl:value-of select="tokenize(//tei:edition, ' ')[last()]"/>
-            </xsl:when>
-            <xsl:when test="contains($docUri, '/customizations/')">
-                <xsl:value-of select="$source.file//tei:classSpec[@ident='att.meiVersion']//tei:valItem[not(@mode = 'delete')][contains(@ident, '+')][1]/@ident"/>
-            </xsl:when>
-        </xsl:choose>
-    </xsl:param>
-        
+    <xsl:param name="version" as="xs:string" select="tokenize(//tei:edition, ' ')[last()]" />
+    
     <xd:doc>
         <xd:desc>
             <xd:p>The git commit hash of the version this is generated from. Should not be set manually.</xd:p>
