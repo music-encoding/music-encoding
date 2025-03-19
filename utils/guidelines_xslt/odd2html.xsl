@@ -125,10 +125,12 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The base directory handed over from Ant. Should not be set when the XSLT is called locally.</xd:p>
+            <xd:p>The base directory of the music-encoding repository.</xd:p>
+            <xd:p>When called via the MEI Ant project (build.xml) it will be submitted.</xd:p>
+            <xd:p>When running the XSLT independently it is set in relation to this XSLT to the directory above the utils directory. Which if the music-encoding repository clone is intact, will be "music-encoding".</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="basedir" select="''" as="xs:string"/>
+    <xsl:param name="basedir" select="replace(static-base-uri(), '^(.*)/utils/.*', '$1')" as="xs:string"/>
     
     <xd:doc>
         <xd:desc>
