@@ -233,6 +233,11 @@
     </xd:doc>
     <xsl:template match="/">
         <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        
+        <xsl:if test="$isCompiledOdd">
+            <xsl:message>This is a compiled ODD file.</xsl:message>
+        </xsl:if>
+        
         <xsl:choose>
             <xsl:when test="$isCustomization">
                 <xsl:message select="'This is a customization.'"/>

@@ -26,6 +26,13 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>Determines whether this is operating on a compiled ODD file.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="isCompiledOdd" select="not(//tei:moduleRef)" as="xs:boolean"/>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>Determines whether this is operating on a customization or the full mei-source.xml file.</xd:p>
         </xd:desc>
     </xd:doc>
