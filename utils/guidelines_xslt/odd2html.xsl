@@ -150,6 +150,20 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>The path to the repository’s .git directory.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="git.path" as="xs:string">
+        <xsl:choose>
+            <xsl:when test="unparsed-text-available($basedir || '/.git/HEAD')">
+                <xsl:value-of select="$basedir|| '/.git/'"/>
+            </xsl:when>
+            <?TODO should we terminate if not in git? ?>
+        </xsl:choose>
+    </xsl:variable>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>The (computed) head branch of the repo for which documentation will be generated.</xd:p>
         </xd:desc>
     </xd:doc>
@@ -157,19 +171,7 @@
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
                 <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
-                <xsl:choose>
-                    <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
-                        <xsl:variable name="git.path" select="substring-before($docUri,'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-                        <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
-                    </xsl:when>
-                    <xsl:when test="contains($docUri, '/customizations/')">
-                        <xsl:variable name="git.path" select="substring-before($docUri,'/customizations/') || '/.git/'" as="xs:string"/>
-                        <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:message select="'Processing a file in a location not expected by odd2html.xsl. docUri: ' || $docUri" terminate="yes"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:value-of select="$branch"/>
@@ -185,20 +187,19 @@
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
+                <!-- the parameter $hash defaults to 'latest' consequently no real hash is being supplied in the call and this will try to retrieve it from the repository root’s .git directory -->
                 <xsl:choose>
-                    <xsl:when test="ends-with($docUri, '/source/mei-source.xml')">
-                        <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                    <xsl:when test="unparsed-text-available($git.path || $git.head)">
                         <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
                     </xsl:when>
-                    <xsl:when test="contains($docUri, '/customizations/')">
-                        <xsl:variable name="git.path" select="substring-before($docUri,'/customizations/') || '/.git/'" as="xs:string"/>
-                        <xsl:value-of select="unparsed-text($git.path || '/' || $git.head)"/>
-                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'#unknown-hash'"/>
+                    </xsl:otherwise>
                 </xsl:choose>
                 
             </xsl:when>
             <xsl:otherwise>
+                <!-- something has overridden the $has parameter so will use it -->
                 <xsl:value-of select="$hash"/>
             </xsl:otherwise>
         </xsl:choose>
