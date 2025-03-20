@@ -395,34 +395,25 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
-        <!-- TODO: check dependency try with mei-source.xml -->
-        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <echo message="building HTML guidelines for ${selectedSchema} from ${customization.path} on branch ${github.branch.local}"/>
-        <echo>github.sha: ${github.sha}</echo>
-        <echo>github.sha.local: ${github.sha.local}</echo>
-        <condition property="hash" value="${github.sha}" else="${github.sha.local}">
-            <not>
-                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
-            </not>
-        </condition>
-        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
-            <not>
-                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
-            </not>
-        </condition>
-        <antcall target="copy-guidelines-assets" inheritall="yes"/>
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
-            <arg value="-s:${canonicalized.source.path}"/>
-            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
-            <arg value="-xi:on"/>
-            <arg value="output.folder=${basedir}/${dir.build}/"/>
-            <arg value="hash=${hash}"/>
-            <arg value="branch=${branch}"/>
-            <arg value="basedir=${basedir.cross_platform}"/>
-        </java>
-        <antcall target="generate-images"/>
-        <antcall target="copy-generated-images"/>
+    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-all_anyStart.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-basic.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-CMN.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-Mensural.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines">
+            <param name="customization.path" value="${basedir}/customizations/mei-Neumes.xml"/>
+        </antcall>
     </target>
 
     <target name="build-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
@@ -435,6 +426,7 @@
                 <include name="MEI_Guidelines_*.html"/>
             </fileset>
         </pathconvert>
+        <echo message="${build.dir.filelist}"></echo>
         <!-- set the prince.input property -->
         <loadresource property="prince.input">
             <string value="${build.dir.filelist}"/>
