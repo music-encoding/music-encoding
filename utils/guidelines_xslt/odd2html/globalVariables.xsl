@@ -147,8 +147,8 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>A list of all relevant modules in MEI</xd:p>
-        </xd:desc>
+            <xd:p>A list of all relevant modules in the processed ODD</xd:p>
+        </xd:desc><?TODO all in all of MEI (source) or all in processed file? ?>
     </xd:doc>
     <xsl:variable name="modules" as="node()*">
         <xsl:choose>
@@ -169,7 +169,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>A list of all elements in MEI</xd:p>
+            <xd:p>A list of all elements relevant for the processed file.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:variable name="elements" as="node()*">

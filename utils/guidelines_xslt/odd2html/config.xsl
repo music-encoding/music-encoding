@@ -86,7 +86,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The folder, in which asset files are placed. Relative path.</xd:p>
+            <xd:p>The folder, in which asset files are placed. Relative path in build.folder.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:variable name="assets.folder.rel" select="'./assets/'" as="xs:string"/>
