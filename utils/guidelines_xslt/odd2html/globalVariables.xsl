@@ -48,6 +48,9 @@
             <xsl:when test="not($isCustomization)">
                 <xsl:sequence select="/"/>
             </xsl:when>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:sequence select="/"/>
+            </xsl:when>
             <xsl:otherwise>
                 <xsl:sequence select="doc($basedir || '/source/mei-source.xml')"/>
             </xsl:otherwise>
@@ -62,6 +65,9 @@
     <xsl:variable name="compiled.source" as="node()">
         <xsl:choose>
             <xsl:when test="not($isCustomization)">
+                <xsl:sequence select="/"/>
+            </xsl:when>
+            <xsl:when test="$isCompiledOdd">
                 <xsl:sequence select="/"/>
             </xsl:when>
             <xsl:otherwise>
@@ -152,6 +158,12 @@
     </xd:doc>
     <xsl:variable name="modules" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="$mei.source//tei:moduleSpec">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$mei.source//tei:moduleSpec[@ident = $mei.customization//tei:moduleRef/@key]">
                     <xsl:sort select="@ident" data-type="text"/>
@@ -174,6 +186,12 @@
     </xd:doc>
     <xsl:variable name="elements" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="//tei:elementSpec"><?NB could also use $mei.source?>
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$compiled.source//tei:elementSpec">
                     <xsl:sort select="@ident" data-type="text"/>
@@ -222,6 +240,12 @@
     </xd:doc>
     <xsl:variable name="att.classes" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="$mei.source//tei:classSpec[@type = 'atts']">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$compiled.source//tei:classSpec[@type = 'atts']">
                     <xsl:sort select="@ident" data-type="text"/>
@@ -270,6 +294,12 @@
     </xd:doc>
     <xsl:variable name="model.classes" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="$mei.source//tei:classSpec[@type = 'model']">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$compiled.source//tei:classSpec[@type = 'model']">
                     <xsl:sort select="@ident" data-type="text"/>
@@ -318,6 +348,12 @@
     </xd:doc>
     <xsl:variable name="data.types" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'dt']">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'dt']">
                     <xsl:sort select="@ident" data-type="text"/>
@@ -364,6 +400,12 @@
     </xd:doc>
     <xsl:variable name="macro.groups" as="node()*">
         <xsl:choose>
+            <xsl:when test="$isCompiledOdd">
+                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:sequence select="."/>
+                </xsl:for-each>
+            </xsl:when>
             <xsl:when test="$isCustomization">
                 <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'pe']">
                     <xsl:sort select="@ident" data-type="text"/>
