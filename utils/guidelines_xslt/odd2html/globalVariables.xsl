@@ -29,7 +29,9 @@
             <xd:p>Determines whether this is operating on a compiled ODD file.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="isCompiledOdd" select="not(//tei:moduleRef)" as="xs:boolean"/>
+    <xsl:variable name="isCompiledOdd" select="not(//tei:moduleRef[not(@url = '../source/svg11.rng')])" as="xs:boolean">
+        <!-- todo: relaxed test due to external svg module -->
+    </xsl:variable>
     
     <xd:doc>
         <xd:desc>
