@@ -416,28 +416,38 @@
         </antcall>
     </target>
 
-    <target name="build-customization-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
+    <target name="build-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
+         <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0+anyStart.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0+basic.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0+CMN.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0+Mensural.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" value="${dir.build}/MEI_Guidelines_v6.0+Neumes.html"/>
+        </antcall>
+    </target>
+    <target name="build-customization-guidelines-pdf" description="Builds the PDF version of the MEI guidelines for a customization submitted as prince.input param.">
         <!-- create output directory for PDF -->
         <mkdir dir="${dir.dist}/guidelines/pdf"/>
-        <!-- get HTML input file -->
-        <pathconvert property="build.dir.filelist" pathsep="${line.separator}">
-            <map from="${basedir}${file.separator}" to=""/>
-            <fileset dir="${dir.build}">
-                <include name="MEI_Guidelines_*.html"/>
-            </fileset>
-        </pathconvert>
-        <echo message="${build.dir.filelist}"></echo>
-        <!-- set the prince.input property -->
-        <loadresource property="prince.input">
-            <string value="${build.dir.filelist}"/>
-            <filterchain>
-                <headfilter lines="1"/>
-            </filterchain>
-        </loadresource>
         <!-- set the prince.output.filename and prince.output.path properties -->
         <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
         <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
         <property name="prince.output.path" value="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
+        
+        <echo message="calling prince with following parameters"/>
+        <echo message=".   prince.input=${prince.input}"/>
+        <echo message=".   prince.output.path=${prince.output.path}"/>
+        
         <!-- run Prince to convert HTML guidelines to PDF -->
         <exec executable="prince" failonerror="true">
             <arg prefix="--log=" value="${dir.build}/prince.log"/>
