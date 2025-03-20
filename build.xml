@@ -345,6 +345,8 @@
                 <equals arg1="${github.ref}" arg2="" forcestring="true"/>
             </not>
         </condition>
+        <!-- set output.folder for XSLT and others -->
+        <property name="output.folder" location="${dir.dist.guidelines}/${selectedSchema}" />
         <!-- generate customization’s compiled ODD -->
         <antcall target="build-compiled-odd" inheritall="yes" />
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
@@ -353,14 +355,14 @@
             <arg value="-s:${compiled.path}"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
             <arg value="-xi:on"/>
-            <arg value="output.folder=${basedir}/${dir.build}/"/>
+            <arg value="dist.folder=${output.folder}/"/><!-- NB: trailing slash needed for XSLT -->
             <arg value="hash=${hash}"/>
             <arg value="branch=${branch}"/>
             <arg value="basedir=${basedir.cross_platform}"/>
             <arg value="compiledOddUri=${compiled.path}"/>
         </java>
         <antcall target="generate-images"/>
-        <antcall target="copy-generated-images"/>
+        <antcall target="copy-generated-images" inheritall="yes"/>
     </target>
     
     <target name="build-customization-specs" depends="validate-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
@@ -408,7 +410,7 @@
                 <equals arg1="${github.ref}" arg2="" forcestring="true"/>
             </not>
         </condition>
-        <antcall target="copy-guidelines-assets"/>
+        <antcall target="copy-guidelines-assets" inheritall="yes"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${canonicalized.source.path}"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
@@ -456,7 +458,7 @@
         <copy todir="${dir.build}/assets">
             <fileset dir="source/assets"/>
         </copy>
-        <copy todir="${dir.dist.guidelines}/assets">
+        <copy todir="${output.folder}/assets"><!-- todo: check if needed for PDF -->
             <fileset dir="source/assets"/>
         </copy>
     </target>
@@ -476,7 +478,7 @@
     </target>
 
     <target name="copy-generated-images" description="Copies generated images to dist after they're created by running Docker image.">
-        <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
+        <copy todir="${output.folder}/assets/images/GeneratedImages">
             <fileset dir="${dir.build}/assets/images/GeneratedImages">
                 <include name="*.svg"/>
             </fileset>
