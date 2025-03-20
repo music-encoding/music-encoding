@@ -632,7 +632,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Split up classes into multipe tabs</xd:p>
+            <xd:p>Split up classes into multiple tabs</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="div['classes' = tokenize(normalize-space(@class),' ')]" mode="get.website">
