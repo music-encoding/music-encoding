@@ -51,12 +51,26 @@
         <xd:desc>
             <xd:p>Creates a section for a single moduleSpec</xd:p>
         </xd:desc>
-        <xd:param name="module">the module</xd:param>
+        <xd:param name="module">the tei:moduleSpec of an MEI module</xd:param>
         <xd:return>the section element</xd:return>
     </xd:doc>
-    <xsl:function name="tools:getModuleSpecPage" as="node()">
-        <xsl:param name="module" as="node()"/>
-        <xsl:variable name="module.content" select="$module/parent::tei:specGrp" as="node()"/>
+    <xsl:function name="tools:getModuleSpecPage" as="element(section)">
+        <xsl:param name="module" as="element()" />
+        <xsl:variable name="module.content" as="element(tei:specGrp)">
+            <xsl:choose>
+                <xsl:when test="$isCustomization">
+                    <xsl:element name="specGrp" namespace="http://www.tei-c.org/ns/1.0">
+                        <xsl:copy-of select="$module" />
+                        <xsl:copy-of select="$mei.customization//*[@module = $module/@ident]"/>
+                    </xsl:element>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:copy-of select="$module/parent::tei:specGrp"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:message select="'generating moduleSpecPage for:' || $module/@ident"></xsl:message>
         
         <section class="specPage moduleSpec">
             <h2 id="{$module/@ident}"><xsl:value-of select="$module/@ident"/></h2>
