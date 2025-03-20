@@ -148,6 +148,13 @@
     
     <xd:doc>
         <xd:desc>
+            <xd:p>The selected schema</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="selectedSchema" select="//tei:schemaSpec/@ident" as="xs:token"/>
+    
+    <xd:doc>
+        <xd:desc>
             <xd:p>The root tei:TEI element of the processed ODD</xd:p>
         </xd:desc>
     </xd:doc>
