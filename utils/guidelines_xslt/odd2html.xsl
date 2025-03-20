@@ -199,7 +199,7 @@
                 
             </xsl:when>
             <xsl:otherwise>
-                <!-- something has overridden the $has parameter so will use it -->
+                <!-- something has overridden the $hash parameter so will use it -->
                 <xsl:value-of select="$hash"/>
             </xsl:otherwise>
         </xsl:choose>
