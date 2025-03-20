@@ -146,6 +146,11 @@
     </xd:doc>
     <xsl:param name="retrieveContributorsOnline" select="false()" as="xs:boolean"/>
     
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The root tei:TEI element of the processed ODD</xd:p>
+        </xd:desc>
+    </xd:doc>
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
     <xd:doc>
