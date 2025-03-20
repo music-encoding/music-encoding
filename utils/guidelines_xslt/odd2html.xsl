@@ -16,8 +16,9 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Nov 11, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
-            <xd:p>This XSLT generates a single HTML file from the MEI ODD sources. This single HTML file 
-                may be used for further processing, either towards a PDF file, or towards a publication
+            <xd:p><xd:b>Contributor:</xd:b> Benjamin W. Bohl</xd:p>
+            <xd:p>This XSLT generates a single HTML file from the MEI ODD sources or a customization. This single HTML 
+                file may be used for further processing, either towards a PDF file, or towards a publication
                 on the MEI website, which requires a separation into multiple files.</xd:p>
             <xd:p>TODO: We should consider to have additional data dictionaries (just the specs part)
                 as separate files for each MEI customization.</xd:p>
