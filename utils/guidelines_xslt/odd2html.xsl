@@ -254,6 +254,9 @@
             <xsl:when test="$isCustomization">
                 <xsl:message select="'This is a customization.'"/>
                 <xsl:message select="'.   modules included: ' || string-join($mei.customization//tei:moduleRef/@key, ' ')"/>
+                <xsl:if test="not($isCompiledOdd)">
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                </xsl:if>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message select="'This is documentation for the full mei-source.xml'"/>
