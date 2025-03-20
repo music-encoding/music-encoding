@@ -49,7 +49,7 @@
                 <xsl:sequence select="/"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:sequence select="doc(substring-before(string(document-uri(/)), '/customizations/') || '/source/mei-source.xml')//tei:TEI"/>
+                <xsl:sequence select="doc($basedir || '/source/mei-source.xml')"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
