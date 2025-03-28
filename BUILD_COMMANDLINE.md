@@ -8,7 +8,7 @@
    |----|----------------|
    |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.14|
-   |Verovio Toolkit|4.2.1|
+   |Verovio Toolkit|5.0.0|
    |Prince XML|15.3|
    |Saxon HE*|12.5|
    |TEI Stylesheets*|7.57.1|
