@@ -18,7 +18,8 @@ Goal is to give hints for easier conversion to pureODD.
 
     <sch:pattern id="check_teiConstraintSpec_ident">
         <sch:rule context="tei:constraintSpec">
-            <sch:assert role="warning" test="@ident != preceding::tei:constraintSpec/@ident">The @ident on constraintSpec has to be unique across all of mei-source.xml.</sch:assert>
+          <sch:let name="precedingIdents" value="preceding::tei:constraintSpec/@ident"></sch:let>
+            <sch:assert role="warning" test="if ($precedingIdents != ()) then @ident != $precedingIdents else true()">The @ident (<sch:value-of select="@ident"/>) on constraintSpec has to be unique across all of mei-source.xml. (<sch:value-of select="$precedingIdents"/>)</sch:assert>
         </sch:rule>
     </sch:pattern>
 
