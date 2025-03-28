@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Author: Benjamin W. Bohl
 
@@ -5,8 +6,6 @@ This schematron is intended to be run through Apache Ant as merge test.
 Goal is to give hints for easier conversion to pureODD.
 
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
