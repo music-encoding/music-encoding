@@ -135,7 +135,7 @@
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
             </xsl:when>
             <xsl:otherwise>
-                <span class="missingLink"><xsl:value-of select="$text"/> [not available in this version of MEI]</span>
+                <span class="missingLink"><xsl:value-of select="$text"/> [not available in this MEI customization]</span>
                 <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
             </xsl:otherwise>
         </xsl:choose>
@@ -155,7 +155,7 @@
             <xsl:otherwise>
                 <xsl:message terminate="no" select="'ERROR: Unable to identify class ' || $text || ' from tei:ident element. No link created.'"/>
                 <span class="ident">
-                    <xsl:apply-templates select="node()" mode="#current"/> [not available in this version of MEI]
+                    <xsl:apply-templates select="node()" mode="#current"/> [not available in this MEI customization]
                 </span>
             </xsl:otherwise>
         </xsl:choose>
