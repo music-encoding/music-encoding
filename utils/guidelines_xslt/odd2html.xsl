@@ -17,7 +17,7 @@
             <xd:p><xd:b>Created on:</xd:b> Nov 11, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
             <xd:p><xd:b>Contributor:</xd:b> Benjamin W. Bohl</xd:p>
-            <xd:p>This XSLT generates a single HTML file from the MEI ODD sources or a customization. This single HTML 
+            <xd:p>This XSLT generates a single HTML file from a compiled ODD. This single HTML 
                 file may be used for further processing, either towards a PDF file, or towards a publication
                 on the MEI website, which requires a separation into multiple files.</xd:p>
             <xd:p>TODO: We should consider to have additional data dictionaries (just the specs part)
@@ -135,13 +135,6 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>If operating on a customization, it is expected to pass in the URI of a compiled ODD of that customization.</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:param name="compiledOddUri" as="xs:string?"/>
-    
-    <xd:doc>
-        <xd:desc>
             <xd:p>Whether or not to retrieve contributors from GitHub, in addition to the ones stored in the MEI sources.</xd:p>
         </xd:desc>
     </xd:doc>
@@ -150,6 +143,8 @@
     <xd:doc>
         <xd:desc>
             <xd:p>The selected schema</xd:p>
+            <xd:p>Can be submitted externally defaults to //tei:schemaSpec/@ident.</xd:p>
+            <xd:p>N.B. Pobably will fail if there are mutliple //tei:schemaSpec/@ident available.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:param name="selectedSchema" select="//tei:schemaSpec/@ident" as="xs:token"/>
@@ -263,6 +258,9 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:message select="'This is documentation for the full mei-source.xml'"/>
+              <xsl:if test="not($isCompiledOdd)">
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>

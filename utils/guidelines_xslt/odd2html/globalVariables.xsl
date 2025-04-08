@@ -73,7 +73,9 @@
                 <xsl:sequence select="/"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:sequence select="doc($compiledOddUri)//tei:TEI"/>
+                <xsl:if test="not($isCompiledOdd)">
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
