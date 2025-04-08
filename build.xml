@@ -334,8 +334,12 @@
                 <equals arg1="${github.ref}" arg2="" forcestring="true"/>
             </not>
         </condition>
-        <!-- set output.folder for XSLT and others -->
-        <property name="output.folder" location="${dir.dist.guidelines}/${selectedSchema}" />
+        <!-- set output.folder for XSLT and others
+             N.B. don’t use @location for setting this because on Windows machines this will result in a path with
+                  backslashes; the XSLT appends locatoion steps to it usinf forward slashes and thus will not be able to handle it
+                  using @value will just submit this as string literals and not change the separator.
+        -->
+        <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}" />
         <!-- generate customization’s compiled ODD -->
         <antcall target="build-compiled-odd" inheritall="yes" />
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
