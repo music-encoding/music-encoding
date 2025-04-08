@@ -280,18 +280,6 @@
         <echo>mei.classpath set</echo>
     </target>
     
-    <target name="canonicalize" description="Resolves xi:includes of a file submitted via -Dsource.path, e.g. a customization or mei-source." depends="init-mei-classpath">
-        <basename property="source.basename" file="${source.path}" suffix=".xml"/>
-        <echo>canonicalizing file: ${source.path}</echo>
-        <echo>to: ${dir.build}/${source.basename}_canonicalized.xml</echo>
-        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
-            <arg value="-s:${source.path}"/>
-            <arg value="-xsl:${basedir}/utils/canonicalization/copy.xsl"/>
-            <arg value="-o:${dir.build}/${source.basename}_canonicalized.xml"/>
-            <arg value="-xi:on"/>
-        </java>
-    </target>
-
     <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
