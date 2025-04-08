@@ -251,7 +251,7 @@
             </xsl:when>
             <xsl:when test="not($tocInfo)">
                 <xsl:message terminate="no" select="'ERROR: Could not retrieve chapter with @xml:id ' || $chapter.id || ' (referenced from a //tei:ptr/@target inside chapter ' || ancestor::tei:div[1]/@xml:id || '). Please check!'"/>
-                <span class="wrong_ptr"><xsl:value-of select="@target"/> [not available in this version of MEI]</span>
+                <span class="missingPtr"><xsl:value-of select="@target"/> [not available in this MEI customization]</span>
             </xsl:when>
             <xsl:otherwise>
                 <a class="link_ptr chapterLink" title="{$tocInfo/@head}" href="#{$chapter.id}"><xsl:value-of select="$tocInfo/@number || ' ' || $tocInfo/@head"/></a>
