@@ -274,7 +274,7 @@
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
-                <xsl:apply-templates select="$chapters" mode="guidelines"/>                
+                <xsl:apply-templates select="$chapters" mode="guidelines"/>
             </main>
         </xsl:variable>
         <xsl:variable name="moduleSpecs" select="tools:getModuleSpecs()" as="node()"/>
