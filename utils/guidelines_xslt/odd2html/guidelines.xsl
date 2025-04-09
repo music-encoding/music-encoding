@@ -74,7 +74,7 @@
     </xd:doc>
     <xsl:template match="tei:list" mode="guidelines">
         <xsl:choose>
-            <xsl:when test="@type = ('bulleted','simple')">
+            <xsl:when test="@rend = ('bulleted','simple')">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()" mode="#current"/></strong>
                 </xsl:if>
@@ -86,7 +86,7 @@
                     </xsl:for-each>
                 </ul>
             </xsl:when>
-            <xsl:when test="@type = 'ordered'">
+            <xsl:when test="@rend = 'numbered'">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()"/></strong>
                 </xsl:if>
@@ -567,7 +567,7 @@
         <xsl:variable name="verovioClass" select="if($renderedLive) then(' verovio') else('')" as="xs:string"/>
         <xsl:variable name="id" select="generate-id(.)"/>
         <xsl:if test="$renderedLive">
-            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.mei.svg'"/>
+            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.svg'"/>
             <img alt="example" class="graphic liveExample" src="{tools:adjustImageUrl($imageUrl)}"/>
         </xsl:if>
         <div id="{$id}" xml:space="preserve" class="pre code {$validClass}{$verovioClass}">
