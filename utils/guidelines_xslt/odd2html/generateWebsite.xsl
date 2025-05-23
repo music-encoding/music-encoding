@@ -74,7 +74,7 @@
             <map xmlns="http://www.w3.org/2005/xpath-functions">
                 <array key="pages">
                     <!-- all elements with a class starting with div -->
-                    <?TODO probably tokenize @class fist to make sure it’s stable even if element has more classes ?>
+                    <?TODO probably tokenize @class first to make sure it’s stable even if element has more classes ?>
                     <xsl:for-each select="$input//*[matches(@class,'^div\d$')]">
                         <!-- the text of the element except first level heading -->
                         <xsl:variable name="text" select="normalize-space(string-join(child::*[not(local-name() = ('h1','h2','h3','h4','h5','h6')) and not(@class and matches(@class,'^div\d$'))]//text(),' '))" as="xs:string?"/>
