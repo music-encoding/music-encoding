@@ -375,7 +375,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
-        <!-- write alltribute classes overview page -->
+        <!-- write attribute classes overview page -->
         <xsl:result-document href="{$web.output}attribute-classes.html" method="html">
             
             <xsl:variable name="attClassSpecs" select="$input//section[@class='specPage attClassSpec']/h2[1]" as="node()*"/>
