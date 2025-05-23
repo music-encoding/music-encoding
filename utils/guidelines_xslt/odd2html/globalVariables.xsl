@@ -74,7 +74,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <xsl:if test="not($isCompiledOdd)">
-                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized sources are processable, please create a respective version of your ODD first.</xsl:message>
                 </xsl:if>
             </xsl:otherwise>
         </xsl:choose>
