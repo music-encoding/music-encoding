@@ -474,10 +474,8 @@
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:if test="$retrieveContributorsOnline">
-                    <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
-                </xsl:if>
+                <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
+                <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
             <xsl:variable name="unique.contributors" as="node()*">

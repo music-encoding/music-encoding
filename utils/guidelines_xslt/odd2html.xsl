@@ -133,12 +133,6 @@
     </xd:doc>
     <xsl:param name="basedir" select="replace(static-base-uri(), '^(.*)/utils/.*', '$1')" as="xs:string"/>
     
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Whether or not to retrieve contributors from GitHub, in addition to the ones stored in the MEI sources.</xd:p>
-        </xd:desc>
-    </xd:doc>
-    <xsl:param name="retrieveContributorsOnline" select="false()" as="xs:boolean"/>
     
     <xd:doc>
         <xd:desc>
