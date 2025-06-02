@@ -573,5 +573,31 @@
         <property name="${build-guidelines-html.done}" value="true"/>
         <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>
     </target>
+    
+    <target name="generate-guidelines-index-page" depends="init-mei-classpath">
+        
+        <path id="dev-index">
+            <fileset dir="${dir.dist.guidelines}">
+                <include name="*/index.html"/>
+                <!--<exclude name="${filename.volume}"/>
+                <contains text='bazga:type="bazga:work"'/>-->
+            </fileset>
+        </path>
+        
+        <echo message="${toString:dev-index}" />
+        
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-it:initial-template"/>
+            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html/generateWebsiteIndexPage.xsl"/>
+            <arg value="-xi:off"/>
+            <arg value="output.folder=${dir.dist.guidelines}"/>
+            <arg value="customizationIndexPages=${toString:dev-index}" />
+        </java>
+        
+        <antcall target="copy-guidelines-assets">
+            <param name="output.folder" value="${dir.dist.guidelines}" />
+        </antcall>
+        
+    </target>
 
 </project>
