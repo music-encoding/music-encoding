@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl" xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="xs math xd" version="3.0">
     <xd:doc scope="stylesheet">
         <xd:desc>
@@ -11,9 +11,12 @@
     <xsl:import href="../odd2html.xsl"/>
 
     <xsl:param name="customizationIndexPages" as="xs:string"/>
+    
     <xsl:param name="output.folder" as="xs:string"/>
+    
     <xsl:variable name="source.file" select="doc('../../../source/mei-source.xml')/tei:TEI" as="node()"/>
-    <xsl:param name="version" as="xs:string" select="$source.file//tei:editionStmt/tei:edition" />
+    
+    <xsl:param name="version" as="xs:string" select="$source.file//tei:editionStmt/tei:edition"/>
 
     <xsl:template name="initial-template">
 
@@ -25,7 +28,6 @@
                     <xsl:attribute name="class">columns filter-body customizations</xsl:attribute>
 
                     <xsl:for-each select="tokenize($customizationIndexPages, ';')">
-
                         <xsl:variable name="customizationName" select="tokenize(., '/')[1]"/>
 
                         <xsl:element name="div">
@@ -41,7 +43,6 @@
                                         <xsl:value-of select="$customizationName"/>
                                     </xsl:element>
                                     <xsl:element name="div">
-
                                         <xsl:attribute name="class">card-subtitle text-gray</xsl:attribute>
                                         <xsl:text>some subtitle</xsl:text>
                                     </xsl:element>
@@ -58,9 +59,11 @@
                                         <xsl:attribute name="class">chip</xsl:attribute>
                                         <xsl:text>some-tag</xsl:text>
                                     </xsl:element>
+
                                 </xsl:element>
 
                             </xsl:element>
+
                         </xsl:element>
 
                     </xsl:for-each>
@@ -69,15 +72,14 @@
 
             </xsl:variable>
 
-
-        <xsl:call-template name="getSinglePage">
-            <xsl:with-param name="contents" select="$contents" as="node()*" />
-            <xsl:with-param name="media" select="'screen'" />
-            <xsl:with-param name="reducedLevels" select="xs:boolean('true')" />
+            <xsl:call-template name="getSinglePage">
+                <xsl:with-param name="contents" select="$contents" as="node()*"/>
+                <xsl:with-param name="media" select="'screen'"/>
+                <xsl:with-param name="reducedLevels" select="xs:boolean('true')"/>
+            </xsl:call-template>
             
-        </xsl:call-template>
         </xsl:result-document>
-
+        
     </xsl:template>
-
+    
 </xsl:stylesheet>
