@@ -70,7 +70,7 @@
             <body class="simple" id="TOP">
                 
                 <xsl:choose>
-                    <!-- a lot of adjustments is necessary for website generation -->
+                    <!-- a lot of adjustments are necessary for website generation -->
                     <xsl:when test="$media = 'screen'">
                         
                         <xsl:variable name="pageMenu" as="node()?">
