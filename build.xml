@@ -575,23 +575,34 @@
     </target>
     
     <target name="generate-guidelines-index-page" depends="init-mei-classpath">
-        
-        <path id="dev-index">
+        <!-- create a path that includes the customization index pages -->
+        <path id="customizationIndexPath" >
             <fileset dir="${dir.dist.guidelines}">
                 <include name="*/index.html"/>
-                <!--<exclude name="${filename.volume}"/>
-                <contains text='bazga:type="bazga:work"'/>-->
             </fileset>
         </path>
-        
-        <echo message="${toString:dev-index}" />
+
+        <!-- convert path to a semicolon-separated string -->
+        <pathconvert property="customizationIndexPages.raw" refid="customizationIndexPath" pathsep=";"/>
+
+        <loadresource property="customizationIndexPages">
+            <string value="${customizationIndexPages.raw}"/>
+            <filterchain>
+                 <!-- Replace backslashes with forward slashes for cross-platform compatibility -->
+                <replaceregex pattern="\\" replace="/" flags="g"/>
+                <!-- Remove everything up to and including ${dir.dist.guidelines}/ -->
+                <replaceregex pattern="[^;]*${dir.dist.guidelines}/" replace="" flags="g"/>
+            </filterchain>
+        </loadresource>
+
+        <echo message="Generating guidelines index including: ${customizationIndexPages}"/>
         
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-it:initial-template"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html/generateWebsiteIndexPage.xsl"/>
             <arg value="-xi:off"/>
             <arg value="output.folder=${dir.dist.guidelines}"/>
-            <arg value="customizationIndexPages=${toString:dev-index}" />
+            <arg value="customizationIndexPages=${customizationIndexPages}" />
         </java>
         
         <antcall target="copy-guidelines-assets">

@@ -24,10 +24,9 @@
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body customizations</xsl:attribute>
 
-                    <xsl:for-each select="tokenize($customizationIndexPages, ':')">
+                    <xsl:for-each select="tokenize($customizationIndexPages, ';')">
 
-                        <xsl:variable name="customizationUri" select="substring-after(., $output.folder || '/')"/>
-                        <xsl:variable name="customizationName" select="tokenize($customizationUri, '/')[1]"/>
+                        <xsl:variable name="customizationName" select="tokenize(., '/')[1]"/>
 
                         <xsl:element name="div">
                             <xsl:attribute name="class">column col-4 col-sm-12 col-lg-6 filter-item</xsl:attribute>
@@ -52,7 +51,7 @@
                                     <xsl:attribute name="class">card-footer</xsl:attribute>
                                     <xsl:element name="a">
                                         <xsl:attribute name="class">btn float-right btn-sm</xsl:attribute>
-                                        <xsl:attribute name="href" select="$customizationUri"/>
+                                        <xsl:attribute name="href" select="."/>
                                         <xsl:text>More…</xsl:text>
                                     </xsl:element>
                                     <xsl:element name="label">
