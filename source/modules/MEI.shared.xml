@@ -125,6 +125,77 @@
       </rng:zeroOrMore>
     </content>
   </macroSpec>
+  <macroSpec ident="macro.watermark" module="MEI.shared" type="pe">
+    <desc xml:lang="en">Groups elements that contain meta-data about a watermark.</desc>
+    <content>
+      <rng:optional>
+        <rng:ref name="model.addressLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.annotLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.biblLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.dateLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.dimLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.figureLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.geogNamePart"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.identifierLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.locrefLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.measurementLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.nameLike.geogName"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.qLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.relationLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.rendLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="model.titleLike"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="biblList"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="dimensions"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="extent"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="heraldry"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="locus"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="locusGrp"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="term"/>
+      </rng:optional>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.BETYPE" module="MEI.shared" type="dt">
     <desc xml:lang="en">Datatypes for values in begin, end, abstype and inttype attributes.</desc>
     <content>
@@ -2818,6 +2889,27 @@
           </valItem>
           <valItem ident="fine">
             <desc xml:lang="en">Fine. (text)</desc>
+          </valItem>
+          <valItem ident="daCapoAlFine">
+            <desc xml:lang="en">D.C. al Fine. (text)</desc>
+          </valItem>
+          <valItem ident="dalSegnoAlFine">
+            <desc xml:lang="en">D.S. al Fine. (text)</desc>
+          </valItem>
+          <valItem ident="daCapoAlCoda">
+            <desc xml:lang="en">D.C. al Coda. (text)</desc>
+          </valItem>
+          <valItem ident="dalSegnoAlCoda">
+            <desc xml:lang="en">D.S. al Coda. (text)</desc>
+          </valItem>
+          <valItem ident="repeatLeft">
+            <desc xml:lang="en">Left repeat barline as a separate symbol disconnected from staff lines (SMuFL E04C or Unicode 1D106)</desc>
+          </valItem>
+          <valItem ident="repeatRight">
+            <desc xml:lang="en">Right repeat barline as a separate symbol disconnected from staff lines (SMuFL E04D or Unicode 1D107)</desc>
+          </valItem>
+          <valItem ident="repeatRightLeft">
+            <desc xml:lang="en">Right and left repeat barline as a separate symbol disconnected from staff lines (SMuFL E042)</desc>
           </valItem>
         </valList>
       </attDef>
@@ -5700,10 +5792,11 @@
       <memberOf key="model.respLikePart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
+     <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.nameLike.agent"/>
+          <rng:ref name="name"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -6577,15 +6670,9 @@
         <rng:optional>
           <rng:choice>
             <rng:group>
-              <rng:choice>
-                <rng:ref name="model.respLikePart"/>
-                <rng:ref name="respStmt"/>
-              </rng:choice>
+              <rng:ref name="model.respLikePart"/>
               <rng:zeroOrMore>
-                <rng:choice>
-                  <rng:ref name="model.respLikePart"/>
-                  <rng:ref name="respStmt"/>
-                </rng:choice>
+                <rng:ref name="model.respLike"/>
               </rng:zeroOrMore>
               <rng:oneOrMore>
                 <rng:ref name="model.titleLike"/>
@@ -6604,9 +6691,8 @@
               </rng:oneOrMore>
               <rng:zeroOrMore>
                 <rng:choice>
-                  <rng:ref name="model.respLikePart"/>
+                  <rng:ref name="model.respLike"/>
                   <rng:ref name="model.identifierLike"/>
-                  <rng:ref name="respStmt"/>
                 </rng:choice>
               </rng:zeroOrMore>
             </rng:group>
@@ -6633,7 +6719,6 @@
           <rng:choice>
             <rng:ref name="imprint"/>
             <rng:ref name="extent"/>
-            <rng:ref name="biblScope"/>
           </rng:choice>
         </rng:zeroOrMore>
       </rng:group>
@@ -7481,26 +7566,44 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
+      <rng:choice>
+        <rng:group>
+          <rng:oneOrMore>
+            <rng:oneOrMore>
+              <rng:ref name="resp"/>
+            </rng:oneOrMore>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="model.nameLike.agent"/>
+                <rng:ref name="name"/>
+              </rng:choice>
+            </rng:oneOrMore>
+          </rng:oneOrMore>
+        </rng:group>
+        <rng:group>
+          <rng:oneOrMore>
+            <rng:oneOrMore>
+              <rng:choice>
+                <rng:ref name="model.nameLike.agent"/>
+                <rng:ref name="name"/>
+              </rng:choice>
+            </rng:oneOrMore>
+            <rng:oneOrMore>
+              <rng:ref name="resp"/>
+            </rng:oneOrMore>
+          </rng:oneOrMore>
+        </rng:group>
+        <rng:oneOrMore>
+          <rng:choice>
+            <rng:ref name="model.nameLike.agent"/>
+            <rng:ref name="name"/>
+          </rng:choice>
+        </rng:oneOrMore>
+      </rng:choice>
       <rng:zeroOrMore>
-        <rng:choice>
-          <rng:ref name="name"/>
-          <rng:ref name="resp"/>
-          <rng:ref name="model.nameLike.agent"/>
-        </rng:choice>
+        <rng:ref name="annot"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_respStmt" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:respStmt[not(ancestor::mei:change)]">
-          <sch:assert
-            test="(mei:resp and (mei:name or mei:corpName or mei:persName)) or
-            count(mei:*[@role]) = count(mei:*) and count(mei:*) &gt; 0"
-            role="warning">At least one element pair (a resp element and a name-like element) is
-            recommended. Alternatively, each name-like element may have a @role
-            attribute.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-respStmt.html">respStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
