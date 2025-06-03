@@ -426,7 +426,7 @@
         <xd:desc>
             <xd:p>Generates a list of contributors for the back of the Guidelines PDF</xd:p>
         </xd:desc>
-        <xd:return></xd:return>
+        <xd:return>an html:section containing the contributors</xd:return>
     </xd:doc>
     <xsl:function name="tools:generateContributorsList" as="node()+">
         <xsl:message select="'Generating contributors list'"/>
