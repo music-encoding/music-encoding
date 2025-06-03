@@ -25,7 +25,7 @@
             <xsl:variable name="contents">
 
                 <xsl:element name="div">
-                    <xsl:attribute name="class">columns filter-body customizations</xsl:attribute>
+                    <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
 
                     <xsl:for-each select="tokenize($customizationIndexPages, ';')">
                         <xsl:variable name="customizationName" select="tokenize(., '/')[1]"/>
