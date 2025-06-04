@@ -25,12 +25,12 @@
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
 
             <xsl:variable name="all-customizations" select="tokenize($customizationIndexPages, ';')"/>
-            <xsl:variable name="testing-customizations"
+            <xsl:variable name="universal-customizations"
                 select="$all-customizations[
                     doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
                     //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing'
                 ]"/>
-            <xsl:variable name="other-customizations"
+            <xsl:variable name="special-customizations"
                 select="$all-customizations[
                     not(doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
                     //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing')
@@ -38,24 +38,27 @@
 
             <xsl:variable name="contents">
 
-                <xsl:element name="h2">Guidelines for the MEI customizations</xsl:element>
+                <xsl:element name="h2">Guidelines for the MEI Customizations</xsl:element>
                 
+                <xsl:element name="h4">Special Purpose Customizations</xsl:element>
+
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
 
-                    <xsl:for-each select="$other-customizations">
+
+                    <xsl:for-each select="$special-customizations">
                             <xsl:call-template name="generate-customization-card">
                                 <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
                             </xsl:call-template>
                     </xsl:for-each>
                 </xsl:element>
 
-                <xsl:element name="h3">Special purpose customizations</xsl:element>
+                <xsl:element name="h4">All-Inclusive MEI Customizations (Use Only for Testing or Validation)</xsl:element>
 
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
 
-                    <xsl:for-each select="$testing-customizations">
+                    <xsl:for-each select="$universal-customizations">
                             <xsl:call-template name="generate-customization-card">
                                 <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
                             </xsl:call-template>
