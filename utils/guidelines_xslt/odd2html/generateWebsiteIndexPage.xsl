@@ -24,62 +24,41 @@
 
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
 
+            <xsl:variable name="all-customizations" select="tokenize($customizationIndexPages, ';')"/>
+            <xsl:variable name="testing-customizations"
+                select="$all-customizations[
+                    doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
+                    //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing'
+                ]"/>
+            <xsl:variable name="other-customizations"
+                select="$all-customizations[
+                    not(doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
+                    //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing')
+                ]"/>
+
             <xsl:variable name="contents">
+
+                <xsl:element name="h2">Guidelines for the MEI customizations</xsl:element>
+                
+                <xsl:element name="div">
+                    <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
+
+                    <xsl:for-each select="$other-customizations">
+                            <xsl:call-template name="generate-customization-card">
+                                <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
+                            </xsl:call-template>
+                    </xsl:for-each>
+                </xsl:element>
+
+                <xsl:element name="h3">Special purpose customizations</xsl:element>
 
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
 
-                    <xsl:for-each select="tokenize($customizationIndexPages, ';')">
-                        
-                        <xsl:variable name="customizationName" select="tokenize(., '/')[1]"/>
-                        
-                        <xsl:variable name="customization.file" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
-
-                        <xsl:element name="div">
-                            <xsl:attribute name="class">column col-4 col-sm-12 col-lg-6 filter-item</xsl:attribute>
-
-                            <xsl:element name="div">
-                                <xsl:attribute name="class">card project</xsl:attribute>
-
-                                <xsl:element name="div">
-                                    <xsl:attribute name="class">card-header</xsl:attribute>
-                                    <xsl:element name="div">
-                                        <xsl:attribute name="class">card-title h5</xsl:attribute>
-                                        <xsl:value-of select="($customization.file//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], $customizationName)[1]"/>
-                                    </xsl:element>
-                                    <xsl:element name="div">
-                                        <xsl:attribute name="class">card-subtitle text-gray</xsl:attribute>
-                                        <xsl:apply-templates select="$customization.file//tei:fileDesc/tei:titleStmt/tei:title[@type='main']"/>
-                                    </xsl:element>
-                                </xsl:element>
-                                
-                                <xsl:element name="div">
-                                    <xsl:attribute name="class">card-body</xsl:attribute>
-                                    <xsl:apply-templates select="$customization.file//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
-                                </xsl:element>
-                                
-                                <xsl:element name="div">
-                                    <xsl:attribute name="class">card-footer</xsl:attribute>
-                                    <xsl:element name="a">
-                                        <xsl:attribute name="class">btn float-right btn-sm</xsl:attribute>
-                                        <xsl:attribute name="href" select="."/>
-                                        <xsl:text>Proceed to Guidelines…</xsl:text>
-                                    </xsl:element>
-                                    
-                                    <xsl:for-each select="$customization.file//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
-                                        <xsl:element name="label">
-                                            <xsl:attribute name="class">chip</xsl:attribute>
-                                            <xsl:value-of select="."/>
-                                        </xsl:element>
-                                    </xsl:for-each>
-                                    
-
-                                </xsl:element>
-
-                            </xsl:element>
-
-                        </xsl:element>
-
+                    <xsl:for-each select="$testing-customizations">
+                            <xsl:call-template name="generate-customization-card">
+                                <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
+                            </xsl:call-template>
                     </xsl:for-each>
 
                 </xsl:element>
@@ -95,6 +74,42 @@
             
         </xsl:result-document>
         
+    </xsl:template>
+
+    <xsl:template name="generate-customization-card">
+        <xsl:param name="customizationName" as="xs:string"/>
+        <xsl:variable name="customization.file" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
+        <xsl:element name="div">
+            <xsl:attribute name="class">column col-4 col-sm-12 col-lg-6 filter-item</xsl:attribute>
+            <xsl:element name="div">
+                <xsl:attribute name="class">card project</xsl:attribute>
+                <xsl:element name="div">
+                    <xsl:attribute name="class">card-header</xsl:attribute>
+                    <xsl:element name="div">
+                        <xsl:attribute name="class">card-title h5</xsl:attribute>
+                        <xsl:value-of select="($customization.file//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], $customizationName)[1]"/>
+                    </xsl:element>
+                    <xsl:element name="div">
+                        <xsl:attribute name="class">card-subtitle text-gray</xsl:attribute>
+                        <xsl:apply-templates select="$customization.file//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
+                    </xsl:element>
+                </xsl:element>
+                <xsl:element name="div">
+                    <xsl:attribute name="class">card-footer</xsl:attribute>
+                    <xsl:element name="a">
+                        <xsl:attribute name="class">btn float-right btn-sm</xsl:attribute>
+                        <xsl:attribute name="href" select="."/>
+                        <xsl:text>Proceed to Guidelines…</xsl:text>
+                    </xsl:element>
+                    <xsl:for-each select="$customization.file//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
+                        <xsl:element name="label">
+                            <xsl:attribute name="class">chip</xsl:attribute>
+                            <xsl:value-of select="."/>
+                        </xsl:element>
+                    </xsl:for-each>
+                </xsl:element>
+            </xsl:element>
+        </xsl:element>
     </xsl:template>
     
     <xd:doc>
