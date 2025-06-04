@@ -92,7 +92,7 @@
                         
                         
                         <xsl:sequence select="$websiteMenu"/>
-                        <div class="container container-fluid content">
+                        <div class="container content">
                             <div class="columns specsLayout">
                                 <div class="top-navigation column col-md-12 show-md">
                                     <div class="top-navigation-header columns">
