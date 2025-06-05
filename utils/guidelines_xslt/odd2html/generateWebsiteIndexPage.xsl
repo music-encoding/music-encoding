@@ -88,7 +88,7 @@
 
     <xsl:template name="generate-customization-card">
         <xsl:param name="customization" as="map(*)" required="yes"/>
-        <xsl:param name="customization.node" select="map:get($customization, 'node')" as="node()"/>
+        <xsl:param name="customizationNode" select="map:get($customization, 'node')" as="node()"/>
         <xsl:element name="div">
             <xsl:attribute name="class">column col-4 col-sm-12 col-lg-6 filter-item</xsl:attribute>
             <xsl:element name="div">
@@ -97,11 +97,11 @@
                     <xsl:attribute name="class">card-header</xsl:attribute>
                     <xsl:element name="div">
                         <xsl:attribute name="class">card-title h5</xsl:attribute>
-                        <xsl:value-of select="($customization.node//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], map:get($customization, 'name'))[1]"/>
+                        <xsl:value-of select="($customizationNode//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], map:get($customization, 'name'))[1]"/>
                     </xsl:element>
                     <xsl:element name="div">
                         <xsl:attribute name="class">card-subtitle text-gray</xsl:attribute>
-                        <xsl:apply-templates select="$customization.node//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
+                        <xsl:apply-templates select="$customizationNode//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
                     </xsl:element>
                 </xsl:element>
                 <xsl:element name="div">
@@ -111,7 +111,7 @@
                         <xsl:attribute name="href" select="map:get($customization, 'path')"/>
                         <xsl:text>Proceed to Guidelines…</xsl:text>
                     </xsl:element>
-                    <xsl:for-each select="$customization.node//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
+                    <xsl:for-each select="$customizationNode//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
                         <xsl:element name="label">
                             <xsl:attribute name="class">chip</xsl:attribute>
                             <xsl:value-of select="."/>
