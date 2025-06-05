@@ -20,6 +20,25 @@
     
     <xsl:variable name="isCompiledOdd" select="xs:boolean('false')" as="xs:boolean" />
     
+    <xsl:variable name="all-customizations" as="map(*)*" >
+        
+        <xsl:for-each select="tokenize($customizationIndexPages, ';')">
+            
+            <xsl:variable name="path" select="." as="xs:string"/>
+            <xsl:variable name="customizationName" select="tokenize(., '/')[1]" as="xs:string"/>
+            <xsl:variable name="node" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
+            
+            <xsl:map>
+                <xsl:map-entry key="'name'" select="$customizationName"/>
+                <xsl:map-entry key="'node'" select="$node"/>
+                <xsl:map-entry key="'path'" select="."/>
+                <xsl:map-entry key="'group'" select="mei:getCustomizationGroupingKey($node)"/>
+            </xsl:map>
+            
+        </xsl:for-each>
+        
+    </xsl:variable>
+    
     <xsl:function name="mei:getCustomizationGroupHeading">
         
         <xsl:param name="groupingKey" as="xs:integer" required="yes"/>
@@ -54,25 +73,6 @@
 
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
 
-        <xsl:variable name="all-customizations" as="map(*)*" >
-            
-            <xsl:for-each select="tokenize($customizationIndexPages, ';')">
-                
-                <xsl:variable name="path" select="." as="xs:string"/>
-                <xsl:variable name="customizationName" select="tokenize(., '/')[1]" as="xs:string"/>
-                <xsl:variable name="node" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
-                
-                <xsl:map>
-                    <xsl:map-entry key="'name'" select="$customizationName"/>
-                    <xsl:map-entry key="'node'" select="$node"/>
-                    <xsl:map-entry key="'path'" select="."/>
-                    <xsl:map-entry key="'group'" select="mei:getCustomizationGroupingKey($node)"/>
-                </xsl:map>
-                
-            </xsl:for-each>
-            
-        </xsl:variable>
-            
         <xsl:variable name="contents">
 
             <xsl:element name="h2">Guidelines for the MEI Customizations</xsl:element>
