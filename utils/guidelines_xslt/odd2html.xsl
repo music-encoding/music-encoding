@@ -137,7 +137,7 @@
     <xd:doc>
         <xd:desc>
             <xd:p>The selected schema</xd:p>
-            <xd:p>Can be submitted externally defaults to //tei:schemaSpec/@ident.</xd:p>
+            <xd:p>Can be submitted externally, defaults to //tei:schemaSpec/@ident.</xd:p>
             <xd:p>N.B. Pobably will fail if there are mutliple //tei:schemaSpec/@ident available.</xd:p>
         </xd:desc>
     </xd:doc>
