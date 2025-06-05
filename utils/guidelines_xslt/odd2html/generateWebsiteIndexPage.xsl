@@ -36,28 +36,10 @@
 
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
 
-
-            <xsl:variable name="contents">
-
-                <xsl:element name="h2">Guidelines for the MEI Customizations</xsl:element>
         <xsl:variable name="all-customizations" as="map(*)*" >
             
             <xsl:for-each select="tokenize($customizationIndexPages, ';')">
                 
-                <xsl:element name="h4">Special Purpose Customizations</xsl:element>
-
-                <xsl:element name="div">
-                    <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
-
-
-                    <xsl:for-each select="$special-customizations">
-                            <xsl:call-template name="generate-customization-card">
-                                <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
-                            </xsl:call-template>
-                    </xsl:for-each>
-                </xsl:element>
-
-                <xsl:element name="h4">All-Inclusive MEI Customizations (Use Only for Testing or Validation)</xsl:element>
                 <xsl:variable name="path" select="." as="xs:string"/>
                 <xsl:variable name="customizationName" select="tokenize(., '/')[1]" as="xs:string"/>
                 <xsl:variable name="node" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
@@ -72,19 +54,28 @@
             </xsl:for-each>
             
         </xsl:variable>
+            
+        <xsl:variable name="contents">
 
+            <xsl:element name="h2">Guidelines for the MEI Customizations</xsl:element>
+            
+            <xsl:for-each-group select="$all-customizations" group-by="map:get(.,'group')">
+                
+                <xsl:sort select="current-grouping-key()" order="ascending" />
+                
+                <xsl:element name="h4"><xsl:value-of select="mei:getCustomizationGroupHeading(current-grouping-key())"/></xsl:element>
+                
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
-
-                    <xsl:for-each select="$universal-customizations">
-                            <xsl:call-template name="generate-customization-card">
-                                <xsl:with-param name="customizationName" select="tokenize(., '/')[1]"/>
-                            </xsl:call-template>
+                    <xsl:for-each select="current-group()">
+                        <xsl:call-template name="generate-customization-card">
+                            <xsl:with-param name="customization" select="." />
+                        </xsl:call-template>
                     </xsl:for-each>
-
                 </xsl:element>
+            </xsl:for-each-group>
 
-            </xsl:variable>
+        </xsl:variable>
 
             <xsl:call-template name="getSinglePage">
                 <xsl:with-param name="contents" select="$contents" as="node()*"/>
