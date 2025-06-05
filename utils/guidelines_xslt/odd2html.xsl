@@ -145,9 +145,11 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The root tei:TEI element of the processed ODD</xd:p>
+            <xd:p>Whether Contributors should be retrieved live from GitHub. Please consider that this may result in excessive API calls.</xd:p>
         </xd:desc>
     </xd:doc>
+    <xsl:param name="retrieve-contributors" select="false()" as="xs:boolean"/>
+    
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
     
     <xd:doc>
@@ -279,6 +281,7 @@
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
         
         <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
+        <xsl:variable name="contributors" select="tools:generateContributorsList()" as="node()+"/>
             
         
         
@@ -295,6 +298,7 @@
             <xsl:sequence select="$dataTypeSpecs"/>
             
             <xsl:sequence select="$indizes"/>
+            <xsl:sequence select="$contributors"/>
         </xsl:variable>
                 
         <!-- generate a single-page HTML version of the Guidelines -->

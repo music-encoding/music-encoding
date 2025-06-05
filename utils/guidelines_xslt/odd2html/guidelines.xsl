@@ -73,7 +73,7 @@
     </xd:doc>
     <xsl:template match="tei:list" mode="guidelines">
         <xsl:choose>
-            <xsl:when test="@type = ('bulleted','simple')">
+            <xsl:when test="@rend = ('bulleted','simple')">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()" mode="#current"/></strong>
                 </xsl:if>
@@ -85,7 +85,7 @@
                     </xsl:for-each>
                 </ul>
             </xsl:when>
-            <xsl:when test="@type = 'ordered'">
+            <xsl:when test="@rend = 'numbered'">
                 <xsl:if test="child::tei:head">
                     <strong class="listHead"><xsl:apply-templates select="child::tei:head/node()"/></strong>
                 </xsl:if>
@@ -129,10 +129,10 @@
         <xsl:variable name="text" select="string(text())" as="xs:string"/>
         <xsl:choose>
             <xsl:when test="@scheme = 'TEI' and unparsed-text-available('https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-' || $text || '.html')">
-                <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">tei:<xsl:value-of select="$text"/></a>
+                <a class="link_odd_elementSpec" href="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-{$text}.html">&lt;tei:<xsl:value-of select="$text"/>&gt;</a>
             </xsl:when>
             <xsl:when test="$text = $elements/@ident">
-                <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
+                <a class="{tools:getLinkClasses($text)}" href="#{$text}">&lt;<xsl:value-of select="$text"/>&gt;</a>
             </xsl:when>
             <xsl:otherwise>
                 <span class="missingLink"><xsl:value-of select="$text"/> [not available in this MEI customization]</span>
@@ -198,7 +198,7 @@
             <xsl:attribute name="class" select="'specDesc'"/>
             <xsl:choose>
                 <xsl:when test="not($specDesc/@atts)">
-                    <span class="specList-{local-name($spec)}"><a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a></span>
+                    <span class="specList-{local-name($spec)}"><a class="{tools:getLinkClasses($key)}" href="#{$key}">&lt;<xsl:value-of select="$key"/>&gt;</a></span>
                     <span class="specList-{local-name($spec)}-desc">
                         <xsl:apply-templates select="$spec/tei:desc/node()" mode="#current"/>
                     </span>
@@ -210,7 +210,7 @@
                                 <xsl:variable name="current.att" select="." as="xs:string"/>
                                 <tr>
                                     <td class="Attribute">
-                                        <span class="att"><xsl:value-of select="$current.att"/></span> (<a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a>)
+                                        <span class="att">@<xsl:value-of select="$current.att"/></span> (<a class="{tools:getLinkClasses($key)}" href="#{$key}"><xsl:value-of select="$key"/></a>)
                                     </td>
                                     <td>
                                         <xsl:choose>
@@ -336,7 +336,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:att" mode="guidelines">
-        <span class="att"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <span class="att">@<xsl:apply-templates select="node()" mode="#current"/></span>
     </xsl:template>
     
     <xd:doc>
@@ -567,7 +567,7 @@
         <xsl:variable name="verovioClass" select="if($renderedLive) then(' verovio') else('')" as="xs:string"/>
         <xsl:variable name="id" select="generate-id(.)"/>
         <xsl:if test="$renderedLive">
-            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.mei.svg'"/>
+            <xsl:variable name="imageUrl" select="$assets.folder.generated.images.rel || $id || '.svg'"/>
             <img alt="example" class="graphic liveExample" src="{tools:adjustImageUrl($imageUrl)}"/>
         </xsl:if>
         <div id="{$id}" xml:space="preserve" class="pre code {$validClass}{$verovioClass}">

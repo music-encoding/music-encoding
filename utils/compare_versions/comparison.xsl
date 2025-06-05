@@ -269,7 +269,7 @@
                     or count($changed.atts) gt 0">
                     <tr class="c" id="{$current.element}">
                         <td class="element ident">
-                            <xsl:value-of select="$current.element"/>
+                            %lt;<xsl:value-of select="$current.element"/>%gt;
                         </td>
                         <td class="module">
                             <xsl:value-of select="$new.element/@module"/>
@@ -418,7 +418,7 @@
                 <tr class="a" id="{$current.element}">
                     <td class="element ident">
                         <a href="{$new.guidelines}/elements/{$current.element}.html" target="_blank">
-                            <xsl:value-of select="$current.element"/>
+                            &lt;<xsl:value-of select="$current.element"/>&gt;
                         </a>
                     </td>
                     <td class="module">
@@ -440,7 +440,7 @@
                 <xsl:variable name="elementSpec" select="$old.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="r" id="{$current.element}">
                     <td class="element ident">
-                        <xsl:value-of select="$current.element"/>
+                        &lt;<xsl:value-of select="$current.element"/>&gt;
                     </td>
                     <td class="module">
                         <xsl:value-of select="$elementSpec/@module"/>
@@ -465,7 +465,7 @@
                 <xsl:variable name="elementSpec" select="$new.file//tei:elementSpec[@ident = $current.element]" as="node()"/>
                 <tr class="u">
                     <td class="element ident">
-                        <xsl:value-of select="$current.element"/>
+                        &lt;<xsl:value-of select="$current.element"/>&gt;
                     </td>
                     <td class="module unchanged">
                         <xsl:value-of select="$elementSpec/@module"/>

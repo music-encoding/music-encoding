@@ -8,11 +8,11 @@
    |----|----------------|
    |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.14|
-   |Verovio Toolkit|4.2.1|
+   |Verovio Toolkit|5.0.0|
    |Prince XML|15.3|
-   |Saxon HE*|12.5|
-   |TEI Stylesheets*|7.57.1|
-   |Xerces*|Synchrosoft patched version 26.1.0.1|
+   |Saxon HE*|12.7|
+   |TEI Stylesheets*|7.58.0|
+   |Xerces*|Synchrosoft patched version 27.1.0.2|
 
    \* automatically pulled during build execution
 
