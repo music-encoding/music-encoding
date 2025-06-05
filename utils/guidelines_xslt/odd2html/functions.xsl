@@ -78,7 +78,7 @@
             <xsl:variable name="origElemCustomization" select="$mei.customization//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
             
             <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div[@type = 'div1']) + 1) else(count($origElemCustomization/preceding-sibling::tei:div[@type = 'div1']) + 1)" as="xs:integer"/>
-            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$level1prefix || $parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
+            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$chapter.prefix || $parent.chapter.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
                 <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $level1prefix || $parent.number || $index || '.', '')"/>    
             </chapter>            
         </xsl:for-each>
