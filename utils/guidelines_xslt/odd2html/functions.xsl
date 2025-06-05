@@ -56,7 +56,7 @@
         <xsl:sequence select="$out"/>
     </xsl:function>
     
-    <!--<xd:doc>
+    <xd:doc>
         <xd:desc>
             <xd:p>Builds a flat list of chapter elements that can be used for building tocs etc. Recursively called on child chapters.</xd:p>
         </xd:desc>
@@ -64,26 +64,22 @@
         <xd:param name="level">The current level of nesting. Increased by one with every recursive call</xd:param>
         <xd:param name="parent.number">The number of parent chapters, to which the current index will be appended</xd:param>
         <xd:return>A list of chapter elements</xd:return>
-    </xd:doc>-->
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:param name="node"></xd:param>
-        <xd:param name="level"></xd:param>
-        <xd:param name="parent.number"></xd:param>
-        <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:buildChapterList" as="node()*">
         <xsl:param name="node" as="node()"/>
         <xsl:param name="level" as="xs:integer"/>
-        <xsl:param name="parent.number" as="xs:string"/>
+        <xsl:param name="parent.chapter.number" as="xs:string"/>
+        <xsl:param name="chapter.prefix" as="xs:string"/>
         
         <xsl:for-each select="$node/child::tei:div">
             <xsl:variable name="current.div" select="." as="node()"/>
-            <xsl:variable name="index" select="position()" as="xs:integer"/>
-            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
-                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $parent.number || $index || '.')"/>    
+            
+            <xsl:variable name="origElemSource" select="$mei.source//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            <xsl:variable name="origElemCustomization" select="$mei.customization//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            
+            <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div[@type = 'div1']) + 1) else(count($origElemCustomization/preceding-sibling::tei:div[@type = 'div1']) + 1)" as="xs:integer"/>
+            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$chapter.prefix || $parent.chapter.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
+                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, chapter.prefix || $parent.chapter.number || $index || '.', '')"/>    
             </chapter>            
         </xsl:for-each>
     </xsl:function>
