@@ -107,8 +107,8 @@
     </xsl:template>
 
     <xsl:template name="generate-customization-card">
-        <xsl:param name="customizationName" as="xs:string"/>
         <xsl:variable name="customization.file" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
+        <xsl:param name="customization" as="map(*)" required="yes"/>
         <xsl:element name="div">
             <xsl:attribute name="class">column col-4 col-sm-12 col-lg-6 filter-item</xsl:attribute>
             <xsl:element name="div">
