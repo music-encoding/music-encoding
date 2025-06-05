@@ -117,11 +117,11 @@
                     <xsl:attribute name="class">card-header</xsl:attribute>
                     <xsl:element name="div">
                         <xsl:attribute name="class">card-title h5</xsl:attribute>
-                        <xsl:value-of select="($customization.file//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], $customizationName)[1]"/>
+                        <xsl:value-of select="($customization.node//tei:fileDesc/tei:titleStmt/tei:title[@type='short'], map:get($customization, 'name'))[1]"/>
                     </xsl:element>
                     <xsl:element name="div">
                         <xsl:attribute name="class">card-subtitle text-gray</xsl:attribute>
-                        <xsl:apply-templates select="$customization.file//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
+                        <xsl:apply-templates select="$customization.node//tei:profileDesc/tei:abstract/tei:p" mode="guidelines"/>
                     </xsl:element>
                 </xsl:element>
                 <xsl:element name="div">
@@ -131,7 +131,7 @@
                         <xsl:attribute name="href" select="."/>
                         <xsl:text>Proceed to Guidelines…</xsl:text>
                     </xsl:element>
-                    <xsl:for-each select="$customization.file//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
+                    <xsl:for-each select="$customization.node//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
                         <xsl:element name="label">
                             <xsl:attribute name="class">chip</xsl:attribute>
                             <xsl:value-of select="."/>
