@@ -128,7 +128,7 @@
                     <xsl:attribute name="class">card-footer</xsl:attribute>
                     <xsl:element name="a">
                         <xsl:attribute name="class">btn float-right btn-sm</xsl:attribute>
-                        <xsl:attribute name="href" select="."/>
+                        <xsl:attribute name="href" select="map:get($customization, 'path')"/>
                         <xsl:text>Proceed to Guidelines…</xsl:text>
                     </xsl:element>
                     <xsl:for-each select="$customization.node//tei:profileDesc/tei:textClass/tei:keywords/tei:term">
