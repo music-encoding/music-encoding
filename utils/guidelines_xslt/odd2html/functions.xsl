@@ -56,7 +56,7 @@
         <xsl:sequence select="$out"/>
     </xsl:function>
     
-    <!--<xd:doc>
+    <xd:doc>
         <xd:desc>
             <xd:p>Builds a flat list of chapter elements that can be used for building tocs etc. Recursively called on child chapters.</xd:p>
         </xd:desc>
@@ -64,15 +64,6 @@
         <xd:param name="level">The current level of nesting. Increased by one with every recursive call</xd:param>
         <xd:param name="parent.number">The number of parent chapters, to which the current index will be appended</xd:param>
         <xd:return>A list of chapter elements</xd:return>
-    </xd:doc>-->
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:param name="node"></xd:param>
-        <xd:param name="level"></xd:param>
-        <xd:param name="parent.number"></xd:param>
-        <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:buildChapterList" as="node()*">
         <xsl:param name="node" as="node()"/>
