@@ -20,6 +20,24 @@
     
     <xsl:variable name="isCompiledOdd" select="xs:boolean('false')" as="xs:boolean" />
     
+    <xsl:function name="mei:getCustomizationGroupHeading">
+        
+        <xsl:param name="groupingKey" as="xs:integer" required="yes"/>
+        
+        <xsl:choose>
+            <xsl:when test="$groupingKey = 1">
+                <xsl:text>Special Purpose Customizations</xsl:text>
+            </xsl:when>
+            <xsl:when test="$groupingKey = 2">
+                <xsl:text>All-Inclusive MEI Customizations (Use Only for Testing or Validation)</xsl:text>
+            </xsl:when>
+            <xsl:when test="$groupingKey = 3">
+                <xsl:text>Other Customzations</xsl:text>
+            </xsl:when>
+        </xsl:choose>
+        
+    </xsl:function>
+    
     <xsl:function name="mei:getCustomizationGroupingKey" as="xs:integer">
         
         <xsl:param name="customization" required="yes"/>
