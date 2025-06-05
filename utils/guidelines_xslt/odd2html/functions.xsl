@@ -77,8 +77,8 @@
     <xsl:function name="tools:buildChapterList" as="node()*">
         <xsl:param name="node" as="node()"/>
         <xsl:param name="level" as="xs:integer"/>
-        <xsl:param name="parent.number" as="xs:string"/>
-        <xsl:param name="level1prefix" as="xs:string"/>
+        <xsl:param name="parent.chapter.number" as="xs:string"/>
+        <xsl:param name="chapter.prefix" as="xs:string"/>
         
         <xsl:for-each select="$node/child::tei:div">
             <xsl:variable name="current.div" select="." as="node()"/>
