@@ -51,7 +51,7 @@
                 <xsl:text>All-Inclusive MEI Customizations (Use Only for Testing or Validation)</xsl:text>
             </xsl:when>
             <xsl:when test="$groupingKey = 3">
-                <xsl:text>Other Customzations</xsl:text>
+                <xsl:text>Other Customizations</xsl:text>
             </xsl:when>
         </xsl:choose>
         
