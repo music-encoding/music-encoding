@@ -20,6 +20,18 @@
     
     <xsl:variable name="isCompiledOdd" select="xs:boolean('false')" as="xs:boolean" />
     
+    <xsl:function name="mei:getCustomizationGroupingKey" as="xs:integer">
+        
+        <xsl:param name="customization" required="yes"/>
+        
+        <xsl:choose>
+            <xsl:when test="$customization//tei:profileDesc/tei:textClass/tei:keywords/tei:term = ('repertoire', 'interchange', 'interoperability')">1</xsl:when>
+            <xsl:when test="$customization//tei:profileDesc/tei:textClass/tei:keywords/tei:term = ('testing', 'validation')">2</xsl:when>
+            <xsl:otherwise>3</xsl:otherwise>
+        </xsl:choose>
+        
+    </xsl:function>
+    
     <xsl:template name="initial-template">
 
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
