@@ -121,7 +121,8 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:gi" mode="guidelines">
-        <xsl:variable name="text" select="string(text())" as="xs:string"/>        <xsl:value-of select="."/>
+        <xsl:variable name="text" select="string(text())" as="xs:string"/>
+        <xsl:value-of select="."/>
     </xsl:template>
     
 </xsl:stylesheet>
