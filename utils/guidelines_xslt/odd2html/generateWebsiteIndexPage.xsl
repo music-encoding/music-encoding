@@ -24,21 +24,13 @@
 
         <xsl:result-document href="{string-join(($output.folder, 'index.html'), '/')}">
 
-            <xsl:variable name="all-customizations" select="tokenize($customizationIndexPages, ';')"/>
-            <xsl:variable name="universal-customizations"
-                select="$all-customizations[
-                    doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
-                    //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing'
-                ]"/>
-            <xsl:variable name="special-customizations"
-                select="$all-customizations[
-                    not(doc('../../../customizations/' || tokenize(., '/')[1] || '.xml')
-                    //tei:profileDesc/tei:textClass/tei:keywords/tei:term = 'testing')
-                ]"/>
 
             <xsl:variable name="contents">
 
                 <xsl:element name="h2">Guidelines for the MEI Customizations</xsl:element>
+        <xsl:variable name="all-customizations" as="map(*)*" >
+            
+            <xsl:for-each select="tokenize($customizationIndexPages, ';')">
                 
                 <xsl:element name="h4">Special Purpose Customizations</xsl:element>
 
@@ -54,6 +46,20 @@
                 </xsl:element>
 
                 <xsl:element name="h4">All-Inclusive MEI Customizations (Use Only for Testing or Validation)</xsl:element>
+                <xsl:variable name="path" select="." as="xs:string"/>
+                <xsl:variable name="customizationName" select="tokenize(., '/')[1]" as="xs:string"/>
+                <xsl:variable name="node" select="doc('../../../customizations/' || $customizationName || '.xml')/tei:TEI" as="node()"/>
+                
+                <xsl:map>
+                    <xsl:map-entry key="'name'" select="$customizationName"/>
+                    <xsl:map-entry key="'node'" select="$node"/>
+                    <xsl:map-entry key="'path'" select="."/>
+                    <xsl:map-entry key="'group'" select="mei:getCustomizationGroupingKey($node)"/>
+                </xsl:map>
+                
+            </xsl:for-each>
+            
+        </xsl:variable>
 
                 <xsl:element name="div">
                     <xsl:attribute name="class">columns filter-body projects</xsl:attribute>
