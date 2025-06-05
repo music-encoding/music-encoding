@@ -108,7 +108,7 @@
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="version" as="xs:string" select="tokenize(//tei:edition, ' ')[last()]" />
+    <xsl:param name="version" select="tokenize(//tei:edition, ' ')[last()]"  as="xs:string"/>
     
     <xd:doc>
         <xd:desc>
