@@ -24,9 +24,9 @@
   <teiHeader>
     <fileDesc>
       <titleStmt>
-          <title level="m" type="main">Music Encoding Initiative Guidelines</title>
-          <title level="a" type="main">All Customization</title>
-          <title level="a" type="short">MEI All</title>
+        <title level="m" type="main">Music Encoding Initiative Guidelines</title>
+          <title level="a" type="main">Common Music Notation (CMN) Customization</title>
+          <title level="a" type="short">MEI CMN</title>
         <respStmt>
           <resp>Authored by</resp>
           <name xml:id="PR" role="pbd">Perry Roland</name>
@@ -41,7 +41,7 @@
         </respStmt>
       </titleStmt>
       <editionStmt>
-        <edition>MEI 6.0-dev</edition>
+        <edition>MEI 6.0-dev+cmn</edition>
       </editionStmt>
       <publicationStmt>
         <publisher>Music Encoding Initiative (MEI) Board</publisher>
@@ -53,23 +53,24 @@
         <p/>
       </sourceDesc>
     </fileDesc>
-    <profileDesc>
-        <abstract><p>A customization integrating all aspects of MEI.</p></abstract>
-        <textClass>
-            <keywords>
-                <term>validation</term>
-                <term>testing</term>
-            </keywords>
-        </textClass>
-    </profileDesc>
+      <profileDesc>
+          <abstract>
+              <p>A customization for encoding <hi rend="italic">Common Music Notation</hi> (CMN).</p>
+          </abstract>
+          <textClass>
+              <keywords>
+                  <term>repertoire</term>
+              </keywords>
+          </textClass>
+      </profileDesc>
     <revisionDesc>
-      <change n="3" when="2025-05-03" who="#BWB">
+      <change n="5" when="2025-05-03" who="#BWB">
         <desc>Restructure titles in titleStmt (series, main, short). Add abstract and textClass.</desc>
       </change>
-      <change n="2" when="2025-02-07" who="#JK">
+      <change n="4" when="2025-02-07" who="#JK">
         <desc>Adjusting to allow documentation of this customization.</desc>
       </change>
-      <change n="1" when="2014-12-04" who="#PR">
+      <change n="1" notAfter="2025-02-07" who="#PR">
         <desc>Creation of the initial ODD.</desc>
       </change>
     </revisionDesc>
@@ -80,11 +81,12 @@
     </front>
     <body>
       <div xml:id="customizationDocs" type="customizationDocs">
-        <!--MEI All needs no separate documentation… <head>MEI All</head>
-        <div xml:id="mei-allDocs" type="div1">
-          <head>Preface</head>
-          <p>This is the specific documentation for the MEI All customization…</p>
-        </div>-->
+        <head>MEI CMN</head>
+        <div xml:id="mei-cmnDocs" type="div1">
+          <head>MEI for Common Western Music Notation (CMN)</head>
+          <p>This customization of MEI is meant to encode music notation following the principles of
+            common western music notation (CMN) only.</p>
+        </div>
       </div>
       <div xml:id="mei-generalDocs" type="sourceRefs">
         <head>General Documentation of MEI</head>
@@ -92,8 +94,8 @@
         <xi:include href="../source/docs/02-shared.xml" xpointer="shared"/>
         <xi:include href="../source/docs/03-metadata.xml" xpointer="metadata"/>
         <xi:include href="../source/docs/04-cmn.xml" xpointer="cmn"/>
-        <xi:include href="../source/docs/05-mensural.xml" xpointer="mensural"/>
-        <xi:include href="../source/docs/06-neumes.xml" xpointer="neumes"/>
+        <!--<xi:include href="../source/docs/05-mensural.xml" xpointer="mensural"/>-->
+        <!--<xi:include href="../source/docs/06-neumes.xml" xpointer="neumes"/>-->
         <xi:include href="../source/docs/07-tablature.xml" xpointer="tablature"/>
         <xi:include href="../source/docs/08-lyricsperfdir.xml" xpointer="lyricsperfdir"/>
         <xi:include href="../source/docs/09-textencoding.xml" xpointer="textencoding"/>
@@ -107,7 +109,7 @@
     <back>
       <div>
         <!-- Limit the set of possible start elements -->
-        <schemaSpec ident="mei-all" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
+        <schemaSpec ident="mei-cmn" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
           start="mei meiHead meiCorpus music">
 
           <!-- Declare MEI and XLink namespaces for use in Schematron -->
@@ -119,6 +121,7 @@
           </constraintSpec>
 
           <!-- Include all modules -->
+          <!-- Deactivate the mensural and neumes modules -->
           <moduleRef key="MEI"/>
           <moduleRef key="MEI.analytical"/>
           <moduleRef key="MEI.cmn"/>
@@ -137,11 +140,11 @@
           <moduleRef key="MEI.harmony"/>
           <moduleRef key="MEI.header"/>
           <moduleRef key="MEI.lyrics"/>
-          <moduleRef key="MEI.mensural"/>
+          <!--<moduleRef key="MEI.mensural"/>-->
           <moduleRef key="MEI.midi"/>
           <moduleRef key="MEI.msDesc"/>
           <moduleRef key="MEI.namesdates"/>
-          <moduleRef key="MEI.neumes"/>
+          <!--<moduleRef key="MEI.neumes"/>-->
           <moduleRef key="MEI.performance"/>
           <moduleRef key="MEI.ptrref"/>
           <moduleRef key="MEI.shared"/>
@@ -164,14 +167,32 @@
               <attDef ident="meiversion" usage="rec" mode="change">
                 <valList type="closed" mode="change">
                   <valItem ident="6.0-dev"/>
+                  <valItem ident="6.0-dev+cmn"/>
                   <valItem ident="6.0-dev+anyStart" mode="delete"/>
                   <valItem ident="6.0-dev+basic" mode="delete"/>
-                  <valItem ident="6.0-dev+CMN" mode="delete"/>
-                  <valItem ident="6.0-dev+Mensural" mode="delete"/>
-                  <valItem ident="6.0-dev+Neumes" mode="delete"/>
-                </valList>
+                  <valItem ident="6.0-dev+mensural" mode="delete"/>
+                  <valItem ident="6.0-dev+neumes" mode="delete"/>
+              </valList>
               </attDef>
             </attList>
+          </classSpec>
+
+          <!-- Disable mensural- and neume-specific model classes in the shared module -->
+          <!-- <classSpec ident="model.scorePart.mensuralAndNeumes" module="MEI.shared" type="model"
+            mode="delete"/> -->
+          <classSpec ident="model.sectionPart.mensuralAndNeumes" module="MEI.shared" type="model"
+            mode="delete"/>
+          <classSpec ident="model.staffPart.mensuralAndNeumes" module="MEI.shared" type="model"
+            mode="delete"/>
+          <classSpec ident="model.layerPart.mensuralAndNeumes" module="MEI.shared" type="model"
+            mode="delete"/>
+
+          <!-- Move model.noteModifierLike from layerPart.mensuralAndNeumes to editTransPart.music -->
+          <classSpec ident="model.noteModifierLike" module="MEI.shared" type="model" mode="replace">
+            <desc>Groups elements that modify note-like features.</desc>
+            <classes>
+              <memberOf key="model.editTransPart.music"/>
+            </classes>
           </classSpec>
 
         </schemaSpec>
