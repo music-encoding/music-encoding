@@ -632,7 +632,7 @@
         <item class="attribute" ident="{$current.att/@ident}" module="{$module}">
             <link><xsl:value-of select="$current.att/@ident"/></link>
             <desc>
-                <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}">@<xsl:value-of select="$current.att/@ident"/></span>
+                <span class="ident attribute" title="{replace(normalize-space(string-join($desc,' ')), ' ([,.])', '$1')}">@<xsl:value-of select="$current.att/@ident"/></span>
                 <xsl:if test="$usage">
                     <span class="attributeUsage">(<xsl:value-of select="$usage"/>)</span>
                 </xsl:if>
