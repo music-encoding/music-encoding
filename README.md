@@ -30,7 +30,7 @@ This repository contains all the source code of the MEI Schema and Guidelines:
 
 ## Validating MEI files against an MEI Schema
 
-One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviors. To validate an MEI file you need an XML validation engine. XML Authoring tools, such as [oXygen](http://www.oxygenxml.com), might have built-in validation tools. There are also several command line utilities, including [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html) and [jing](http://www.thaiopensource.com/relaxng/jing.html).
+One of the core strengths of the MEI Schema is that it allows an individual to validate an MEI file against an XML Schema to ensure the MEI file conforms to expected encodings and behaviors. To validate an MEI file you need an XML validation engine. XML Authoring tools, such as [oXygen](https://www.oxygenxml.com), might have built-in validation tools. There are also several command line utilities, including [xmllint](https://gnome.pages.gitlab.gnome.org/libxml2/xmllint.html) and [jing](https://relaxng.org/jclark/jing.html).
 
 For example, you might validate an MEI file from the [sample-encodings](https://github.com/music-encoding/sample-encodings/) project using the `xmllint` command line tool:
 
