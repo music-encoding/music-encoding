@@ -8,7 +8,7 @@
 
 The Music Encoding Initiative (MEI) is an open-source effort to define a system for encoding musical documents in a machine-readable structure. MEI brings together specialists from various music research communities, including technologists, librarians, historians, and theorists in a common effort to define best practices for representing a broad range of musical documents and structures. The results of these discussions are formalized in the MEI Source and customizations, a core set of rules for recording physical and intellectual characteristics of music notation documents expressed in TEI’s ODD language (One Document Does-it-all, cf. amongst others: Viglianti, 2019). As such, the MEI Source contains both, the specifications that can be compiled to [schema](https://music-encoding.org/schema/) formats for [validating](#validating-mei-files-against-an-mei-schema) XML files, and documentation in prose, the [MEI Guidelines](https://music-encoding.org/guidelines), which provide detailed explanations of the components of the MEI model and best practices suggestions.
 
-The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-CMN, mei-Mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)). This repository already includes several customizations. While these can form an ideal starting point for creating your own customizations, you should also understand [customization](#customizing-mei) and [building](#building-mei) processes.
+The MEI Source is not a schema in itself; rather, it can be used to build customized schemas, such as mei-cmn, mei-mensural, mei-all, etc. (also see [Customizing MEI](#customizing-mei)). This repository already includes several customizations. While these can form an ideal starting point for creating your own customizations, you should also understand [customization](#customizing-mei) and [building](#building-mei) processes.
 
 In this document, you will learn how to contribute to the development of MEI by building the schema and guidelines (you should also consider consulting the tutorial on ["Understanding ODD"](https://music-encoding.org/tutorials/understanding-odd.html)). For the pre-built schemas of the latest release of MEI, please consult the ["schemas" section](https://music-encoding.org/resources/schemas.html) of the music-encoding website.
 
@@ -35,22 +35,22 @@ One of the core strengths of the MEI Schema is that it allows an individual to v
 For example, you might validate an MEI file from the [sample-encodings](https://github.com/music-encoding/sample-encodings/) project using the `xmllint` command line tool:
 
    ```shell
-   xmllint --noout --relaxng schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+   xmllint --noout --relaxng dist/schemata/mei-cmn.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
    ```
 
 Or, the same command using `jing`.
 
   ```shell
-  jing schemata/mei-CMN.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
+  jing dist/schemata/mei-cmn.rng "sample-encodings/MEI 3.0/Music/Complete\ examples/Bach_Ein_festeBurg.mei"
   ```
 
 ## Customizing MEI
 
 The MEI model may be customized to express and validate different types of music documents. Customizations are configured with individual ODD files. This repository already includes several customizations:
 
-* [mei-CMN](customizations/mei-CMN.xml): Validates MEI files that express common Western music notation.
-* [mei-Mensural](customizations/mei-Mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
-* [mei-Neumes](customizations/mei-Neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
+* [mei-cmn](customizations/mei-cmn.xml): Validates MEI files that express common Western music notation.
+* [mei-mensural](customizations/mei-mensural.xml): Validates MEI files that express white Mensural notation (will raise validation errors if elements like "measure" exist in the MEI encoding).
+* [mei-neumes](customizations/mei-neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
 * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
 * [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI element as the root element.
 * [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different profiles of MEI, and other encoding schemes

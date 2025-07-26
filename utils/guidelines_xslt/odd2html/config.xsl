@@ -86,7 +86,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The folder, in which asset files are placed. Relative path.</xd:p>
+            <xd:p>The folder, in which asset files are placed. Relative path in build.folder.</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:variable name="assets.folder.rel" select="'./assets/'" as="xs:string"/>
@@ -136,7 +136,9 @@
             <xd:p>The dist folder, in which the final results of the XSLT are stored.</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:variable name="dist.folder" select="$cleaned.basedir || 'dist/guidelines/web/'" as="xs:string"/>
+    <xsl:param name="dist.folder" select="$cleaned.basedir || 'dist/guidelines/web/' || $selectedSchema || '/'" as="xs:string">
+        <!-- todo: why do we need $cleaned.basedir? -->
+    </xsl:param>
 
     <xd:doc>
         <xd:desc>
