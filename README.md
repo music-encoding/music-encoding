@@ -53,7 +53,7 @@ The MEI model may be customized to express and validate different types of music
 * [mei-neumes](customizations/mei-neumes.xml): Validates MEI files that express Neume notation (like Mensural, will raise validation errors if elements that are not part of neume notation exist in an encoding.)
 * [mei-all](customizations/mei-all.xml): The full MEI Schema. This is the most permissive customization of MEI.
 * [mei-all_anyStart](customizations/mei-all_anyStart.xml): A customization of mei-all, allowing every MEI element as the root element.
-* [mei-basic](customizations/mei-basic.xml): The purpose of mei-Basic is to serve as common ground for data interchange, both between projects using different customizations of MEI, and other encoding schemes
+* [mei-basic](customizations/mei-basic.xml): The purpose of MEI Basic is to serve as common ground for data interchange, both between projects using different customizations of MEI, and other encoding schemes.
 
 ### Why Customizations?
 
