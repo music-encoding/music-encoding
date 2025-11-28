@@ -15,6 +15,7 @@
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Jul 8, 2021</xd:p>
+            <xd:p><xd:b>Modified on:</xd:b> Nov 28, 2025</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
             <xd:p>This XSLT is part of odd2html.xsl. It holds basic functions, which are
                 used to adjust input parameters like image paths.</xd:p>
