@@ -35,7 +35,7 @@
         
         <xsl:variable name="web.output" select="$dist.folder" as="xs:string"/>
         
-        <!-- index page -->
+        <!-- write index page redirecting to content/index.html -->
         <xsl:result-document href="{$web.output}index.html">
             <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
             <html lang="en">
@@ -48,6 +48,7 @@
             </html>
         </xsl:result-document>
         
+        <!-- write pages for toplevel chapters -->
         <xsl:for-each select="$input//section[@class='div1']">
             <xsl:variable name="current.chapter" select="." as="node()"/>
             <xsl:variable name="id" select="$current.chapter/h1[1]/@id" as="xs:string"/>
@@ -68,17 +69,28 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- create search index -->
         <xsl:variable name="search.index" as="node()*">
             <map xmlns="http://www.w3.org/2005/xpath-functions">
                 <array key="pages">
+                    <!-- all elements with a class starting with div -->
+                    <?TODO probably tokenize @class first to make sure it’s stable even if element has more classes ?>
                     <xsl:for-each select="$input//*[matches(@class,'^div\d$')]">
+                        <!-- the text of the element except first level heading -->
                         <xsl:variable name="text" select="normalize-space(string-join(child::*[not(local-name() = ('h1','h2','h3','h4','h5','h6')) and not(@class and matches(@class,'^div\d$'))]//text(),' '))" as="xs:string?"/>
+                        <!-- first level heading -->
                         <xsl:variable name="h" select="child::*[local-name() = ('h1','h2','h3','h4','h5','h6')]" as="node()"/>
+                        <!-- the id of the page available on first level heading -->
                         <xsl:variable name="id" select="$h/@id" as="xs:string"/>
+                        <!-- the title including the headingNumber -->
                         <xsl:variable name="title" select="$h/span[@class='head']/text()" as="xs:string"/>
+                        <!-- the designated output path (directory) = the parent section’s id -->
                         <xsl:variable name="path" select="$h/ancestor::section[@class='div1']/h1/@id" as="xs:string"/>
+                        <!-- if processing a section '' else #$id -->
                         <xsl:variable name="hash" select="if($path eq $id) then() else('#' || $id)" as="xs:string?"/>
+                        <!-- the putput file url -->
                         <xsl:variable name="url" select="'/content/' || $path || '.html' || $hash" as="xs:string"/>
+                        <!-- the map created for each page -->
                         <map>
                             <string key="text"><xsl:value-of select="$text"/></string>
                             <string key="title"><xsl:value-of select="$title"/></string>
@@ -93,10 +105,12 @@
         <xsl:variable name="quot" as="xs:string">"</xsl:variable>
         <xsl:variable name="json.string" select="replace(replace(replace(xml-to-json($search.index),'\\/','/'),'\{', $newline || '{'),'(' || $quot || '(text|title|url|tags)' || $quot || ')',$newline || '  $1')" as="xs:string"/>
         
+        <!-- write searchIndex to file -->
         <xsl:result-document href="{$web.output}assets/js/searchIndex.js" method="text" omit-xml-declaration="yes">
             const searchIndex = <xsl:sequence select="json:xml-to-json(search:getIndex())"/>
         </xsl:result-document>
         
+        <!-- write index.html to file -->
         <xsl:result-document href="{$web.output}content/index.html" method="html">
             <xsl:variable name="chapter.overview" as="node()*">
                 <h1>MEI Guidelines (<xsl:value-of select="$version"/>)</h1>
@@ -112,6 +126,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process moduleSpecs -->
         <xsl:for-each select="$input//section[@class='specPage moduleSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -132,6 +147,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- write modules overview page -->
         <xsl:result-document href="{$web.output}modules.html" method="html">
             <xsl:variable name="modules.overview" as="node()*">
                 <div class="specPage overview">
@@ -151,6 +167,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process elementSpecs -->
         <xsl:for-each select="$input//section[@class='specPage elementSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -171,6 +188,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- wite elements overview page -->
         <xsl:result-document href="{$web.output}elements.html" method="html">
             
             <xsl:variable name="elementSpecs" select="$input//section[@class='specPage elementSpec']/h2[1]" as="node()*"/>
@@ -198,7 +216,7 @@
                             <div class="statement compact list">
                                 <xsl:for-each select="$elementSpecs[starts-with(@id, $current.letter)]">
                                     <xsl:sort select="@id"/>
-                                    <a class="overviewLink element" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./elements/{@id}.html"><xsl:value-of select="@id"/></a>
+                                    <a class="overviewLink element" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}" data-initial="{$current.letter}" data-ident="{@id}" href="./elements/{@id}.html">&lt;<xsl:value-of select="@id"/>&gt;</a>
                                 </xsl:for-each>
                             </div>
                         </div>
@@ -212,6 +230,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process model classes -->
         <xsl:for-each select="$input//section[@class='specPage modelClassSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -232,6 +251,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- write model classe overview page -->
         <xsl:result-document href="{$web.output}model-classes.html" method="html">
             
             <xsl:variable name="modelSpecs" select="$input//section[@class='specPage modelClassSpec']/h2[1]" as="node()*"/>
@@ -272,6 +292,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process macro groups -->
         <xsl:for-each select="$input//section[@class='specPage macroGroupSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -292,6 +313,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- write macro groups overview page -->
         <xsl:result-document href="{$web.output}macro-groups.html" method="html">
             
             <xsl:variable name="macroGroupSpecs" select="$input//section[@class='specPage macroGroupSpec']/h2[1]" as="node()*"/>
@@ -332,6 +354,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process attribute classes -->
         <xsl:for-each select="$input//section[@class='specPage attClassSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -352,6 +375,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- write attribute classes overview page -->
         <xsl:result-document href="{$web.output}attribute-classes.html" method="html">
             
             <xsl:variable name="attClassSpecs" select="$input//section[@class='specPage attClassSpec']/h2[1]" as="node()*"/>
@@ -392,6 +416,7 @@
             </xsl:call-template>
         </xsl:result-document>
         
+        <!-- process data types -->
         <xsl:for-each select="$input//section[@class='specPage dataTypeSpec']">
             <xsl:variable name="current.page" select="." as="node()"/>
             <xsl:variable name="id" select="$current.page/h2[1]/@id" as="xs:string"/>
@@ -412,6 +437,7 @@
             </xsl:result-document>
         </xsl:for-each>
         
+        <!-- write data types overview page -->
         <xsl:result-document href="{$web.output}data-types.html" method="html">
             
             <xsl:variable name="dataTypeSpecs" select="$input//section[@class='specPage dataTypeSpec']/h2[1]" as="node()*"/>
@@ -632,7 +658,7 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>Split up classes into multipe tabs</xd:p>
+            <xd:p>Split up classes into multiple tabs</xd:p>
         </xd:desc>
     </xd:doc>
     <xsl:template match="div['classes' = tokenize(normalize-space(@class),' ')]" mode="get.website">
@@ -823,7 +849,7 @@
             </span>
             <xsl:for-each select="child::item[@class='attribute']">
                 <div class="attributeRef">
-                    <span class="ident attribute"><xsl:value-of select="child::link/text()"/></span>
+                    <span class="ident attribute">@<xsl:value-of select="child::link/text()"/></span>
                     <span class="desc"><xsl:apply-templates select="child::desc/node()" mode="get.website"/></span>
                 </div>
             </xsl:for-each>
@@ -977,7 +1003,7 @@
         <!-- 
             <li class="specDesc">
                 <span class="specList-elementSpec">
-                    <a class="link_odd link_odd_elementSpec" href="../elements/app.html">app</a>
+                    <a class="link_odd link_odd_elementSpec" href="../elements/app.html">&lt;app&gt;</a>
                 </span>(apparatus) – Contains one or more alternative encodings.
             </li> -->
         <!-- 
@@ -985,7 +1011,7 @@
               <table class="specDesc">
                  <tbody>
                     <tr>
-                       <td class="Attribute"><span class="att"><a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
+                       <td class="Attribute"><span class="att">@<a class="link_odd link_odd_attClass" href="../attribute-classes/att.evidence.html">cert</a></span></td>
                        <td>Signifies the degree of certainty or precision associated with a feature.</td>
                     </tr>
                  </tbody>

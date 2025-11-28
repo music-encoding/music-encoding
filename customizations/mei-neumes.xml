@@ -25,8 +25,8 @@
     <fileDesc>
       <titleStmt>
           <title level="m" type="main">Music Encoding Initiative Guidelines</title>
-          <title level="a" type="main">All Customization</title>
-          <title level="a" type="short">MEI All</title>
+          <title level="a" type="main">Neumes Customization</title>
+          <title level="a" type="short">MEI Neumes</title>
         <respStmt>
           <resp>Authored by</resp>
           <name xml:id="PR" role="pbd">Perry Roland</name>
@@ -41,7 +41,7 @@
         </respStmt>
       </titleStmt>
       <editionStmt>
-        <edition>MEI 6.0-dev</edition>
+        <edition>MEI 6.0-dev+neumes</edition>
       </editionStmt>
       <publicationStmt>
         <publisher>Music Encoding Initiative (MEI) Board</publisher>
@@ -54,14 +54,15 @@
       </sourceDesc>
     </fileDesc>
     <profileDesc>
-        <abstract><p>A customization integrating all aspects of MEI.</p></abstract>
-        <textClass>
-            <keywords>
-                <term>validation</term>
-                <term>testing</term>
-            </keywords>
-        </textClass>
-    </profileDesc>
+      <abstract>
+        <p>A customization for encoding neume notation.</p>
+      </abstract>
+      <textClass>
+        <keywords>
+            <term>repertoire</term>
+        </keywords>
+      </textClass>
+      </profileDesc>
     <revisionDesc>
       <change n="3" when="2025-05-03" who="#BWB">
         <desc>Restructure titles in titleStmt (series, main, short). Add abstract and textClass.</desc>
@@ -69,7 +70,7 @@
       <change n="2" when="2025-02-07" who="#JK">
         <desc>Adjusting to allow documentation of this customization.</desc>
       </change>
-      <change n="1" when="2014-12-04" who="#PR">
+      <change n="1" notAfter="2025-02-07" who="#PR">
         <desc>Creation of the initial ODD.</desc>
       </change>
     </revisionDesc>
@@ -80,19 +81,20 @@
     </front>
     <body>
       <div xml:id="customizationDocs" type="customizationDocs">
-        <!--MEI All needs no separate documentation… <head>MEI All</head>
-        <div xml:id="mei-allDocs" type="div1">
-          <head>Preface</head>
-          <p>This is the specific documentation for the MEI All customization…</p>
-        </div>-->
+        <head>MEI for Neumes</head>
+        <div xml:id="mei-neumesDocs" type="div1">
+          <head>MEI for Neumes</head>
+          <p>This customization of MEI is meant to encode music notation following the principles of
+            neume notation.</p>
+        </div>
       </div>
       <div xml:id="mei-generalDocs" type="sourceRefs">
         <head>General Documentation of MEI</head>
         <xi:include href="../source/docs/01-introduction.xml" xpointer="introduction"/>
         <xi:include href="../source/docs/02-shared.xml" xpointer="shared"/>
         <xi:include href="../source/docs/03-metadata.xml" xpointer="metadata"/>
-        <xi:include href="../source/docs/04-cmn.xml" xpointer="cmn"/>
-        <xi:include href="../source/docs/05-mensural.xml" xpointer="mensural"/>
+        <!--<xi:include href="../source/docs/04-cmn.xml" xpointer="cmn"/>-->
+        <!--<xi:include href="../source/docs/05-mensural.xml" xpointer="mensural"/>-->
         <xi:include href="../source/docs/06-neumes.xml" xpointer="neumes"/>
         <xi:include href="../source/docs/07-tablature.xml" xpointer="tablature"/>
         <xi:include href="../source/docs/08-lyricsperfdir.xml" xpointer="lyricsperfdir"/>
@@ -107,7 +109,7 @@
     <back>
       <div>
         <!-- Limit the set of possible start elements -->
-        <schemaSpec ident="mei-all" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
+        <schemaSpec ident="mei-neumes" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
           start="mei meiHead meiCorpus music">
 
           <!-- Declare MEI and XLink namespaces for use in Schematron -->
@@ -119,10 +121,11 @@
           </constraintSpec>
 
           <!-- Include all modules -->
+          <!-- Deactivate the CMN, cmnOrnaments, fingering, mensural, and stringtab modules -->
           <moduleRef key="MEI"/>
           <moduleRef key="MEI.analytical"/>
-          <moduleRef key="MEI.cmn"/>
-          <moduleRef key="MEI.cmnOrnaments"/>
+          <!--<moduleRef key="MEI.cmn"/>-->
+          <!--<moduleRef key="MEI.cmnOrnaments"/>-->
           <moduleRef key="MEI.corpus"/>
           <moduleRef key="MEI.critapp"/>
           <moduleRef key="MEI.drama"/>
@@ -130,14 +133,14 @@
           <moduleRef key="MEI.externalsymbols"/>
           <moduleRef key="MEI.facsimile"/>
           <moduleRef key="MEI.figtable"/>
-          <moduleRef key="MEI.fingering"/>
+          <!--<moduleRef key="MEI.fingering"/>-->
           <moduleRef key="MEI.frbr"/>
           <moduleRef key="MEI.genetic"/>
           <moduleRef key="MEI.gestural"/>
           <moduleRef key="MEI.harmony"/>
           <moduleRef key="MEI.header"/>
           <moduleRef key="MEI.lyrics"/>
-          <moduleRef key="MEI.mensural"/>
+          <!--<moduleRef key="MEI.mensural"/>-->
           <moduleRef key="MEI.midi"/>
           <moduleRef key="MEI.msDesc"/>
           <moduleRef key="MEI.namesdates"/>
@@ -145,13 +148,14 @@
           <moduleRef key="MEI.performance"/>
           <moduleRef key="MEI.ptrref"/>
           <moduleRef key="MEI.shared"/>
-          <moduleRef key="MEI.stringtab"/>
+          <!--<moduleRef key="MEI.stringtab"/>-->
           <moduleRef key="MEI.text"/>
           <moduleRef key="MEI.usersymbols"/>
           <moduleRef key="MEI.visual"/>
 
           <!-- Include SVG -->
-          <moduleRef url="../source/svg11.rng" prefix="svg_">
+          <moduleRef url="../source/svg11.rng"
+            prefix="svg_">
             <content>
               <rng:define name="mei_model.graphicLike" combine="choice">
                 <rng:ref name="svg_svg"/>
@@ -164,16 +168,38 @@
               <attDef ident="meiversion" usage="rec" mode="change">
                 <valList type="closed" mode="change">
                   <valItem ident="6.0-dev"/>
+                  <valItem ident="6.0-dev+neumes"/>
                   <valItem ident="6.0-dev+anyStart" mode="delete"/>
                   <valItem ident="6.0-dev+basic" mode="delete"/>
-                  <valItem ident="6.0-dev+CMN" mode="delete"/>
-                  <valItem ident="6.0-dev+Mensural" mode="delete"/>
-                  <valItem ident="6.0-dev+Neumes" mode="delete"/>
-                </valList>
+                  <valItem ident="6.0-dev+cmn" mode="delete"/>
+                  <valItem ident="6.0-dev+mensural" mode="delete"/>
+              </valList>
               </attDef>
             </attList>
           </classSpec>
 
+          <!-- Remove dur attributes -->
+          <classSpec ident="att.duration.log" module="MEI.shared" type="atts" mode="delete"/>
+          <classSpec ident="att.duration.additive" module="MEI.shared" type="atts" mode="delete"/>
+          <classSpec ident="att.augmentDots" module="MEI.shared" type="atts" mode="delete"/>
+
+          <!-- Disallow events within layer -->
+          <!-- <classSpec ident="model.eventLike" module="MEI.shared" type="model" mode="replace">
+            <desc>groups event elements that occur in all notational repertoires.</desc>
+            <classes>
+              <memberOf key="model.syllablePart"/>
+              <memberOf key="model.rdgPart.critapp"/>
+            </classes>
+          </classSpec> -->
+
+          <!-- Disallow neume events within layer; only permitted in mei-all customization -->
+          <classSpec ident="model.eventLike.neumes" module="MEI.neumes" type="model" mode="replace">
+            <desc>groups event elements that occur in the neume repertoire.</desc>
+            <classes>
+              <memberOf key="model.syllablePart"/>
+              <memberOf key="model.rdgPart.music"/>
+            </classes>
+          </classSpec>
         </schemaSpec>
       </div>
     </back>
