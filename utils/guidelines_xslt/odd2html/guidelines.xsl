@@ -396,7 +396,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:bibl" mode="guidelines">
-        <span class="bibl"><xsl:apply-templates select="node()" mode="#current"/></span>
+        <cite><xsl:apply-templates select="node()" mode="#current"/></cite>
     </xsl:template>
     
     <xd:doc>
