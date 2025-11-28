@@ -79,8 +79,8 @@
             
             <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div) + 1) else(count($origElemCustomization/preceding-sibling::tei:div) + 1)" as="xs:integer"/>
             <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$chapter.prefix || $parent.chapter.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
-                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, chapter.prefix || $parent.chapter.number || $index || '.', '')"/>    
-            </chapter>            
+                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, chapter.prefix || $parent.chapter.number || $index || '.', '')"/>
+            </chapter>
         </xsl:for-each>
     </xsl:function>
     
@@ -143,10 +143,10 @@
                 Music Encoding Initiative
                 <small class="out">Guidelines</small>
             </h1>
-            <img id="meiLogo" src="images/meilogo.png"/>    
+            <img id="meiLogo" src="images/meilogo.png"/>
             <div class="bottom">
                 <div class="versionDiv">Version <span id="version"><xsl:value-of select="$version"/></span> <span class="gitLinkWrapper">(<a id="gitVersionLink" href="{$git.link}">#<xsl:value-of select="$git.short"/></a>)</span></div>
-                <div class="generationDiv">generated on <span id="generationDate"><xsl:value-of select="format-date(current-date(), '[D1] [MNn] [Y1]')"/></span></div>                
+                <div class="generationDiv">generated on <span id="generationDate"><xsl:value-of select="format-date(current-date(), '[D1] [MNn] [Y1]')"/></span></div>
             </div>
         </section>
         <section class="imprintPage">
@@ -182,7 +182,7 @@
             <!-- TODO: Do we have front pages that need to be included? -->
             <ul class="toc toc_body">
                 <xsl:for-each select="$all.chapters">
-                    <xsl:sequence select="tools:generateTocChapterItem(.)"/>    
+                    <xsl:sequence select="tools:generateTocChapterItem(.)"/>
                 </xsl:for-each>
             </ul>
             <ul class="toc toc_back">
@@ -227,10 +227,10 @@
                         </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#dataTypeIndex">Index of Data Types</a>
-                        </li>     
+                        </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#contributorList">Contributors</a>
-                        </li>     
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -260,7 +260,7 @@
             <xsl:if test="$chapter/child::chapter">
                 <ul class="toc">
                     <xsl:for-each select="$chapter/child::chapter">
-                        <xsl:sequence select="tools:generateTocChapterItem(.)"/>    
+                        <xsl:sequence select="tools:generateTocChapterItem(.)"/>
                     </xsl:for-each>
                 </ul>
             </xsl:if>
@@ -434,7 +434,7 @@
                 explicitly mentioned in chapter <a href="#acknowledgments">1.1.1 Acknowledgments</a> of these Guidelines. However, we 
                 believe it is important to give proper recognition to everyone contributing to this community effort. Without 
                 their continued commitment, MEI would not be possible. 
-            </p>            
+            </p>
             <xsl:sequence select="tools:getContributors()"/>
             <p>
                 This list is automatically compiled from all contributors to the 
@@ -471,7 +471,7 @@
             <xsl:variable name="raw.contributors" as="node()*">
                 <xsl:if test="$retrieve-contributors">
                     <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
+                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
                 </xsl:if>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
@@ -498,8 +498,8 @@
                         <string key="viaf"></string>
                         <string key="orcid"></string>
                         <string key="avatar"><xsl:value-of select="$user.data/json:string[@key = 'avatar_url']"/></string>
-                    </map>                    
-                </xsl:for-each>    
+                    </map>
+                </xsl:for-each>
             </array>
             
         </xsl:variable>
@@ -557,8 +557,8 @@
                                     <img class="contibutorAvatar" src="images/ORCID_iD.svg"/>
                                     <span><xsl:value-of select="substring-after($current.contributor/json:string[@key = 'orcid']/text(),'https://orcid.org/')"/></span>
                                 </a>
-                            </xsl:if>                            
-                        </td>                        
+                            </xsl:if>
+                        </td>
                         <td class="viaf">
                             <xsl:if test="$current.contributor/json:string[@key = 'viaf']/text() and string-length($current.contributor/json:string[@key = 'viaf']/text()) gt 0">
                                 <a class="contributorLink viafLink" href="{$current.contributor/json:string[@key = 'viaf']/text()}">

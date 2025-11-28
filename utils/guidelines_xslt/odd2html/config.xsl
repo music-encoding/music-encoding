@@ -64,7 +64,7 @@
                 <!-- todo: add some validation if that given $basedir really exists? -->
                 <xsl:value-of select="$basedir || '/'"/>
             </xsl:otherwise>
-        </xsl:choose>    
+        </xsl:choose>
     </xsl:variable>
 
     <xd:doc>
