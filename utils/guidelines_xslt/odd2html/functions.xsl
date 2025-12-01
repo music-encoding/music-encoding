@@ -56,7 +56,7 @@
         <xsl:sequence select="$out"/>
     </xsl:function>
     
-    <!--<xd:doc>
+    <xd:doc>
         <xd:desc>
             <xd:p>Builds a flat list of chapter elements that can be used for building tocs etc. Recursively called on child chapters.</xd:p>
         </xd:desc>
@@ -64,26 +64,22 @@
         <xd:param name="level">The current level of nesting. Increased by one with every recursive call</xd:param>
         <xd:param name="parent.number">The number of parent chapters, to which the current index will be appended</xd:param>
         <xd:return>A list of chapter elements</xd:return>
-    </xd:doc>-->
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:param name="node"></xd:param>
-        <xd:param name="level"></xd:param>
-        <xd:param name="parent.number"></xd:param>
-        <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:buildChapterList" as="node()*">
         <xsl:param name="node" as="node()"/>
         <xsl:param name="level" as="xs:integer"/>
-        <xsl:param name="parent.number" as="xs:string"/>
+        <xsl:param name="parent.chapter.number" as="xs:string"/>
+        <xsl:param name="chapter.prefix" as="xs:string"/>
         
         <xsl:for-each select="$node/child::tei:div">
             <xsl:variable name="current.div" select="." as="node()"/>
-            <xsl:variable name="index" select="position()" as="xs:integer"/>
-            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
-                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $parent.number || $index || '.')"/>    
+            
+            <xsl:variable name="origElemSource" select="$mei.source//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            <xsl:variable name="origElemCustomization" select="$mei.customization//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            
+            <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div[@type = 'div1']) + 1) else(count($origElemCustomization/preceding-sibling::tei:div[@type = 'div1']) + 1)" as="xs:integer"/>
+            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$chapter.prefix || $parent.chapter.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
+                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, chapter.prefix || $parent.chapter.number || $index || '.', '')"/>    
             </chapter>            
         </xsl:for-each>
     </xsl:function>
@@ -378,12 +374,6 @@
         </xd:desc>
         <xd:return></xd:return>
     </xd:doc>
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:return></xd:return>
-    </xd:doc>
     <xsl:function name="tools:generateIndizes" as="node()+">
         <xsl:message select="'Generating indices'"/>
         <section id="elementIndex" class="backIndex">
@@ -426,6 +416,16 @@
                 </div>
             </xsl:for-each>
         </section>
+    </xsl:function>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Generates a list of contributors for the back of the Guidelines PDF</xd:p>
+        </xd:desc>
+        <xd:return>an html:section containing the contributors</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:generateContributorsList" as="node()+">
+        <xsl:message select="'Generating contributors list'"/>
         <section id="contributorList" class="backIndex">
             <h1>Contributors</h1>
             <p>
@@ -452,7 +452,6 @@
                 bridges between different musical repertoires and styles, historical periods, cultural backgrounds, musical domains, 
                 research interests, and methodical concepts by reasoning about a common encoding framework like MEI. 
             </p>
-            
         </section>
     </xsl:function>
     
@@ -464,13 +463,16 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:getContributors" as="node()*">
+        <xsl:message select="'Getting contributors'"/>
         <xsl:variable name="spec.repo.contributors" select="'https://api.github.com/repos/music-encoding/music-encoding/contributors'" as="xs:string"/>
         <xsl:variable name="docs.repo.contributors" select="'https://api.github.com/repos/music-encoding/guidelines/contributors'" as="xs:string"/>
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
+                <xsl:if test="$retrieve-contributors">
+                    <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
+                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>    
+                </xsl:if>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
             <xsl:variable name="unique.contributors" as="node()*">
