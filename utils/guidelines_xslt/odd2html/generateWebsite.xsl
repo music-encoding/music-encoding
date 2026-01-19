@@ -157,7 +157,7 @@
                         <p class="mainToc">
                             <a href="./modules/{@id}.html" title="{normalize-space(string-join(parent::section/div[@class='specs']/div[@class='desc']/text(),' '))}"><xsl:value-of select="normalize-space(string-join(.//text(),' '))"/></a>
                         </p>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -220,7 +220,7 @@
                                 </xsl:for-each>
                             </div>
                         </div>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -282,7 +282,7 @@
                                 </xsl:for-each>
                             </div>
                         </div>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -344,7 +344,7 @@
                                 </xsl:for-each>
                             </div>
                         </div>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -406,7 +406,7 @@
                                 </xsl:for-each>
                             </div>
                         </div>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -468,7 +468,7 @@
                                 </xsl:for-each>
                             </div>
                         </div>
-                    </xsl:for-each>    
+                    </xsl:for-each>
                 </div>
             </xsl:variable>
             <xsl:call-template name="getSinglePage">
@@ -551,9 +551,9 @@
                                             </xsl:if>
                                         </xsl:for-each>
                                     </xsl:when>
-                                </xsl:choose>                                       
+                                </xsl:choose>
                             </page>
-                        </xsl:if>                        
+                        </xsl:if>
                     </xsl:for-each>
                 </xsl:variable>
                 
@@ -566,7 +566,7 @@
                             </a>
                             <div class="hide-lg">
                                 <xsl:for-each select="$menu/self::page">
-                                    <div class="dropdown dropdownCustomMenuToggle">                                    
+                                    <div class="dropdown dropdownCustomMenuToggle">
                                         <a href="{if(child::page) then('#') else('https://music-encoding.org' || @url)}" class="btn btn-link dropdown-toggle top-menu-link" tabindex="{position()}">
                                             <xsl:value-of select="@label"/> <xsl:if test="child::page"> <i class="icon icon-caret"></i></xsl:if>
                                         </a>
@@ -582,7 +582,7 @@
                                             </ul>
                                         </xsl:if>
                                     </div>
-                                </xsl:for-each>    
+                                </xsl:for-each>
                             </div>
                         </div>
                         <div class="navbar-section" id="socialLinks">
@@ -717,7 +717,7 @@
                             </xsl:if>
                             <xsl:sequence select="node()"/>
                         </xsl:copy>
-                    </xsl:for-each>        
+                    </xsl:for-each>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates select="group" mode="get.website.classTab"/>
@@ -789,8 +789,8 @@
                             <xsl:apply-templates select="node()" mode="get.website"/>
                         </xsl:copy></xsl:for-each>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </div>        
+            </xsl:choose>
+        </div>
     </xsl:function>
     
     <xd:doc>
@@ -806,8 +806,8 @@
         <xsl:param name="facet.type" as="xs:string"/>
         
         <div id="{$facet.type}_class" class="facetTabbedContent class" data-label="by class">
-            <xsl:apply-templates select="$div/node()" mode="get.website.classTab"/>      
-        </div>        
+            <xsl:apply-templates select="$div/node()" mode="get.website.classTab"/>
+        </div>
     </xsl:function>
         
     <xd:doc>
@@ -827,7 +827,7 @@
             </div>
             <div class="classContent">
                 <xsl:apply-templates select="child::item" mode="#current"/>
-                <xsl:apply-templates select="child::group" mode="#current"/>                
+                <xsl:apply-templates select="child::group" mode="#current"/>
             </div>
         </div>
     </xsl:template>
@@ -841,8 +841,8 @@
         <div class="def">
             <xsl:if test="not(@class='attribute')">
                 <span class="ident" title="{normalize-space(string-join(child::desc//text(),' '))}">
-                    <xsl:apply-templates select="child::link/node()" mode="get.website"/>        
-                </span>    
+                    <xsl:apply-templates select="child::link/node()" mode="get.website"/>
+                </span>
             </xsl:if>
             <span class="desc">
                 <xsl:apply-templates select="child::desc/node()" mode="get.website"/>
@@ -896,11 +896,11 @@
                         <xsl:for-each select="$current.items">
                             <xsl:sort select="@ident"/>
                             <xsl:apply-templates select="." mode="get.website.classTab"/>
-                        </xsl:for-each>                        
+                        </xsl:for-each>
                     </div>
                 </div>
             </xsl:for-each>
-        </div>        
+        </div>
     </xsl:function>
     
     <xd:doc>
@@ -939,8 +939,8 @@
                         <span class="step end"><xsl:value-of select="$end"/></span>
                     </div>
                 </div>
-            </xsl:for-each>           
-        </div>        
+            </xsl:for-each>
+        </div>
     </xsl:function>
     
     <xd:doc>
@@ -975,7 +975,7 @@
                 </xsl:when>
                 <xsl:when test="'link_odd_dataType' = $classes">
                     <xsl:value-of select="replace(.,'#','../data-types/') || '.html'"/>
-                </xsl:when>     
+                </xsl:when>
                 <xsl:when test="'chapterLink' = $classes">
                     <xsl:variable name="chapter.id" select="replace(.,'#','')" as="xs:string"/>
                     <!--<xsl:variable name="first.level.chapter" select="$mei.source//tei:div[@type='div1' and .//@xml.id = $chapter.id]/@xml:id" as="xs:string?"/>-->
@@ -989,7 +989,7 @@
                 <xsl:otherwise>
                     <xsl:value-of select="."/>
                 </xsl:otherwise>
-            </xsl:choose>    
+            </xsl:choose>
         </xsl:variable>
         <xsl:attribute name="href" select="$target"/>
     </xsl:template>
