@@ -77,7 +77,7 @@
             
             <div class="specs">
                 <div class="desc">
-                    <xsl:apply-templates select="$module/tei:desc/node()" mode="guidelines"/>                    
+                    <xsl:apply-templates select="$module/tei:desc/node()" mode="guidelines"/>
                 </div>
                 <div class="contentListBox">
                     <h3>Elements in <xsl:value-of select="$module/@ident"/></h3>
@@ -108,7 +108,7 @@
                             </xsl:for-each>
                         </xsl:variable>
                         <xsl:for-each select="$items">
-                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
+                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>
                         </xsl:for-each>
                         <xsl:if test="count($items) = 0">
                             <span class="placeholder">– no model classes defined in <xsl:value-of select="$module/@ident"/> – </span>
@@ -126,7 +126,7 @@
                             </xsl:for-each>
                         </xsl:variable>
                         <xsl:for-each select="$items">
-                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
+                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>
                         </xsl:for-each>
                         <xsl:if test="count($items) = 0">
                             <span class="placeholder">– no macro groups defined in <xsl:value-of select="$module/@ident"/> – </span>
@@ -144,7 +144,7 @@
                             </xsl:for-each>
                         </xsl:variable>
                         <xsl:for-each select="$items">
-                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
+                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>
                         </xsl:for-each>
                         <xsl:if test="count($items) = 0">
                             <span class="placeholder">– no attribute classes defined in <xsl:value-of select="$module/@ident"/> – </span>
@@ -162,7 +162,7 @@
                             </xsl:for-each>
                         </xsl:variable>
                         <xsl:for-each select="$items">
-                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>        
+                            <a class="{tools:getLinkClasses(@ident)}" href="#{@ident}" title="{normalize-space(string-join(child::tei:desc//text(),' '))}"><xsl:value-of select="@ident"/></a><xsl:if test="position() lt count($items)">, </xsl:if>
                         </xsl:for-each>
                         <xsl:if test="count($items) = 0">
                             <span class="placeholder">– no data types defined in <xsl:value-of select="$module/@ident"/> – </span>

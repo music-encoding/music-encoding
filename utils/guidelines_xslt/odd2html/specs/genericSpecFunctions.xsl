@@ -115,7 +115,7 @@
                 <label class="classLabel">
                     <xsl:choose>
                         <xsl:when test="$label = ($elements/@ident, $att.classes/@ident, $model.classes/@ident, $data.types/@ident, $macro.groups/@ident)">
-                            <a class="{tools:getLinkClasses($label)}" href="#{$label}"><xsl:value-of select="$label"/></a>        
+                            <a class="{tools:getLinkClasses($label)}" href="#{$label}"><xsl:value-of select="$label"/></a>
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:value-of select="$label"/>
@@ -144,7 +144,7 @@
             <link>
                 <xsl:choose>
                     <xsl:when test="$label = ($elements/@ident, $att.classes/@ident, $model.classes/@ident, $data.types/@ident, $macro.groups/@ident)">
-                        <a class="{tools:getLinkClasses($label)}" href="#{$label}"><xsl:value-of select="$label"/></a>        
+                        <a class="{tools:getLinkClasses($label)}" href="#{$label}"><xsl:value-of select="$label"/></a>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="$label"/>
@@ -153,7 +153,7 @@
             </link>
             <desc><xsl:sequence select="$desc"/></desc>
             <xsl:sequence select="$content"/>
-        </group>        
+        </group>
     </xsl:function>
     
     <xd:doc>
@@ -200,7 +200,7 @@
                                 <xsl:variable name="current.elem" select="." as="xs:string"/>
                                 
                                 <div class="elementRef">
-                                    <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a>        
+                                    <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}"><xsl:value-of select="$current.elem"/></a>
                                     <span class="elementDesc">
                                         <xsl:apply-templates select="$elements/self::tei:elementSpec[@ident = $current.elem]/tei:desc" mode="guidelines"/>
                                     </span>
@@ -236,7 +236,7 @@
                     <tab id="module" label="by module"><xsl:sequence select="$members.by.module"/></tab>
                 </xsl:variable>
                 
-                <xsl:sequence select="tools:getTabbedFacet('members','Members',$contents)"/>   -->     
+                <xsl:sequence select="tools:getTabbedFacet('members','Members',$contents)"/>   -->
                 
                 <div class="facet members">
                     <div class="label">Members</div>
@@ -426,7 +426,7 @@
                         <xsl:variable name="current.attribute" select="." as="node()"/>
                         <item class="attribute" ident="{$current.attribute/@ident}" module="{$current.element/@module}">
                             <link><xsl:value-of select="$current.attribute/@ident"/></link>
-                            <desc><xsl:apply-templates select="$current.attribute/tei:desc" mode="guidelines"/></desc>                    
+                            <desc><xsl:apply-templates select="$current.attribute/tei:desc" mode="guidelines"/></desc>
                         </item>
                     </xsl:for-each>
 
@@ -1159,7 +1159,7 @@
             </xsl:for-each>
             <xsl:if test="not($is.element) and not($is.macroGroup)">
                 <xsl:sequence select="tools:processAncestorModels($object)"/>
-            </xsl:if>            
+            </xsl:if>
         </xsl:variable>
         
         <xsl:if test="not($is.element) or count($direct.parents) gt 0">
@@ -1167,8 +1167,8 @@
         </xsl:if>
         
         <xsl:if test="$is.element">
-            <xsl:sequence select="tools:processAncestorModels($object)"/>  
-        </xsl:if>      
+            <xsl:sequence select="tools:processAncestorModels($object)"/>
+        </xsl:if>
         
     </xsl:function>
 
@@ -1188,7 +1188,7 @@
             <xsl:sequence select="$macro.parents"/>
         </xsl:variable>
         <xsl:for-each select="$ancestor.models">
-            <xsl:sequence select="tools:getParentsByModel(.)"/>    
+            <xsl:sequence select="tools:getParentsByModel(.)"/>
         </xsl:for-each>
     </xsl:function>
     
@@ -1225,7 +1225,7 @@
         
         <xsl:variable name="inheriting.models" select="$model.classes/self::tei:classSpec[.//tei:memberOf/@key = $className]/@ident" as="xs:string*"/>
         <xsl:for-each select="$inheriting.models">
-            <xsl:sequence select="tools:getChildren(.)"/>    
+            <xsl:sequence select="tools:getChildren(.)"/>
         </xsl:for-each>
         
     </xsl:function>
@@ -1256,7 +1256,7 @@
                 </xsl:if>
                 <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>
                 <xsl:for-each select="$macroSpec//tei:content//rng:ref[starts-with(@name,'model.')]">
-                    <xsl:sequence select="tools:getChildren(@name)"/>    
+                    <xsl:sequence select="tools:getChildren(@name)"/>
                 </xsl:for-each>
             </xsl:for-each>
         </xsl:variable>
@@ -1335,7 +1335,7 @@
                     <tab id="module" label="by module"><xsl:sequence select="$children.by.module"/></tab>
                 </xsl:variable>
                 
-                <xsl:sequence select="tools:getTabbedFacet('mayContain','May Contain',$contents)"/>    -->    
+                <xsl:sequence select="tools:getTabbedFacet('mayContain','May Contain',$contents)"/>    -->
                 
                 <div class="facet mayContain">
                     <div class="label">May Contain</div>
@@ -1404,7 +1404,7 @@
                 <xsl:if test="$allows.text">
                     <!--<div class="textualContent" title="textual content">
                         textual content
-                    </div>-->                    
+                    </div>-->
                     <text/>
                 </xsl:if>
                 <xsl:for-each select="$relevant.elements">
@@ -1432,7 +1432,7 @@
                         <xsl:sequence select="$macro.groups/self::tei:macroSpec[@ident = $object/tei:content//rng:ref/@name and not(@ident = $object/@ident)]"/>
                     </xsl:variable>
                     <xsl:for-each select="$inheriting.models">
-                        <xsl:sequence select="tools:getChildrenByModel(.)"/>    
+                        <xsl:sequence select="tools:getChildrenByModel(.)"/>
                     </xsl:for-each>
                 </xsl:if>
             </xsl:variable>
@@ -1445,7 +1445,7 @@
                 <xsl:sequence select="$macro.groups/self::tei:macroSpec[@ident = $object/tei:content//rng:ref/@name]"/>
             </xsl:variable>
             <xsl:for-each select="$inheriting.models">
-                <xsl:sequence select="tools:getChildrenByModel(.)"/>    
+                <xsl:sequence select="tools:getChildrenByModel(.)"/>
             </xsl:for-each>
         </xsl:if>
     </xsl:function>
