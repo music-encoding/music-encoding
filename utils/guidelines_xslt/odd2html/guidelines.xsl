@@ -136,7 +136,7 @@
             </xsl:when>
             <xsl:otherwise>
                 <span class="missingLink"><xsl:value-of select="$text"/> [not available in this MEI customization]</span>
-                <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>                
+                <xsl:message terminate="no" select="'WARNING: Unable to retrieve definition of element ' || $text || '. No link created. Please check spelling…'"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -169,7 +169,7 @@
     </xd:doc>
     <xsl:template match="tei:specList" mode="guidelines">
         <ul class="specList">
-            <xsl:apply-templates select="node() | @*" mode="#current"/>            
+            <xsl:apply-templates select="node() | @*" mode="#current"/>
         </ul>
     </xsl:template>
     
@@ -231,7 +231,7 @@
                         </tbody>
                     </table>
                 </xsl:otherwise>
-            </xsl:choose>    
+            </xsl:choose>
         </xsl:element>
         
     </xsl:template>
@@ -271,7 +271,7 @@
                 <xsl:variable name="tocInfo" select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapter.id]" as="node()?"/>
                 <xsl:choose>
                     <xsl:when test="exists($tocInfo)">
-                        <a class="link_ref chapterLink" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></a>                        
+                        <a class="link_ref chapterLink" title="{$tocInfo/@number || ' ' || $tocInfo/@head}" href="#{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></a>
                     </xsl:when>
                     <xsl:otherwise>
                         <span class="wrong_ref" data-target="{$chapter.id}"><xsl:apply-templates select="node()" mode="#current"/></span>
@@ -583,7 +583,7 @@
                         <xsl:choose>
                             <xsl:when test="exists($pi.start) and exists($pi.end)">
                                 <xsl:message select="'CUTTING EXAMPLE'"/>
-                                <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
+                                <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:apply-templates select="child::node()" mode="preserveSpace"/>
@@ -600,7 +600,7 @@
                             </xsl:call-template>
                         </xsl:if>-->
                     </xsl:otherwise>
-               </xsl:choose>            
+               </xsl:choose>
             </code>
             <!-- TODO: Insert code for switching tabs between code and rendered image -->
         </div>
