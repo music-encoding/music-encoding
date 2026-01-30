@@ -32,7 +32,7 @@
     
     <xsl:template match="/processing-instruction('xml-model')" mode="cleanup">
         <xsl:variable name="pi-value.tokens" select="tokenize(., ' ')"/>
-        <xsl:variable name="pi-href" select="replace($pi-value.tokens[1], '&quot;validation/', '../../../source/&quot;validation/' )"/>
+        <xsl:variable name="pi-href" select="replace($pi-value.tokens[1], '&quot;validation/', '&quot;../source/validation/')"/>
         <xsl:text>&#xa;</xsl:text>
         <xsl:processing-instruction name="xml-model">
             <xsl:value-of select="$pi-href, $pi-value.tokens[position() > 1]" separator=" "/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -19,8 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI">
   <moduleSpec ident="MEI">
     <desc xml:lang="en">Data type definitions.</desc>
@@ -106,6 +105,18 @@
         </valItem>
         <valItem ident="nd">
           <desc xml:lang="en">Natural note lowered by quarter tone (natural modified by arrow).</desc>
+        </valItem>
+        <valItem ident="xu">
+          <desc xml:lang="en">Double sharp note raised by quarter tone (double sharp modified by arrow).</desc>
+        </valItem>
+        <valItem ident="xd">
+          <desc xml:lang="en">Double sharp note lowered by quarter tone (double sharp modified by arrow).</desc>
+        </valItem>
+        <valItem ident="ffu">
+          <desc xml:lang="en">Double flat note raised by quarter tone (double flat modified by arrow).</desc>
+        </valItem>
+        <valItem ident="ffd">
+          <desc xml:lang="en">Double flat note lowered by quarter tone (double flat modified by arrow).</desc>
         </valItem>
         <!-- 1qf, 3qf, 1qs, 3qs represent fixed symbols (Gould, p. 96) -->
         <valItem ident="1qf">
@@ -226,6 +237,12 @@
         </valItem>
         <valItem ident="fd">
           <desc xml:lang="en">Three quarter-tones flat.</desc>
+        </valItem>
+        <valItem ident="xu">
+          <desc xml:lang="en">Five quarter-tones sharp.</desc>
+        </valItem>
+        <valItem ident="ffd">
+          <desc xml:lang="en">Five quarter-tones flat.</desc>
         </valItem>
       </valList>
     </content>
@@ -419,16 +436,16 @@
         </valItem>
         <valItem ident="dblheavy">
           <desc xml:lang="en">Heavy double bar line (SMuFL E035).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="dblsegno">
           <desc xml:lang="en">Segno serpent with vertical lines (SMuFL E04B).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="end">
           <desc xml:lang="en">End bar line (SMuFL E032 and Unicode 1D102).</desc>
         </valItem>
         <valItem ident="heavy">
           <desc xml:lang="en">Heavy bar line (SMuFL E034).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="invis">
           <desc xml:lang="en">Bar line not rendered.</desc>
         </valItem>
@@ -475,15 +492,18 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.BEAT" module="MEI" type="dt">
-    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, [0-9]+(\.?[0-9]*)? The value must fall between 0 and the numerator
-      of the time signature + 1, where 0 represents the left bar line and the upper boundary
-      represents the right bar line. For example, in 12/8 the value must be in the range from 0 to
-      13.</desc>
+    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, a decimal number.</desc>
     <content>
       <rng:data type="decimal">
         <rng:param name="minInclusive">0</rng:param>
       </rng:data>
     </content>
+    <remarks xml:lang="en">
+      <p>The value must fall between 0 and the numerator of the time signature + 1,
+        where 0 represents the left bar line and the upper boundary represents the right bar line.
+        For example, in 12/8 the value must be in the range from 0 to 13.
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.BEATRPT.REND" module="MEI" type="dt">
     <desc xml:lang="en">Visual and performance information for a repeated beat symbol.</desc>
@@ -524,6 +544,25 @@
         </valItem>
         <valItem ident="false">
           <desc xml:lang="en">False.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.CANCELACCID" module="MEI" type="dt">
+    <desc xml:lang="en">Indicates where cancellation accidentals are shown in a key signature.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="none">
+          <desc xml:lang="en">Do not show cancellation accidentals.</desc>
+        </valItem>
+        <valItem ident="before">
+          <desc xml:lang="en">Show cancellation accidentals before the new key accidentals.</desc>
+        </valItem>
+        <valItem ident="after">
+          <desc xml:lang="en">Show cancellation accidentals after the new key accidentals ("Old style" or "French")</desc>
+        </valItem>
+        <valItem ident="before-bar">
+          <desc xml:lang="en">Show cancellation accidentals before the barline (also known as "Russian").</desc>
         </valItem>
       </valList>
     </content>
@@ -1629,14 +1668,24 @@
     </content>
   </macroSpec>-->
   <macroSpec ident="data.INTERVAL.HARMONIC" module="MEI" type="dt">
-    <desc xml:lang="en">A token indicating diatonic interval quality and size.</desc>
+    <desc xml:lang="en">A token indicating diatonic interval quality and size in shorthand notation.</desc>
     <content>
-      <rng:choice>
-        <rng:data type="token">
-          <rng:param name="pattern">[AdMmP][0-9]+</rng:param>
-        </rng:data>
-      </rng:choice>
+      <rng:data type="token">
+        <rng:param name="pattern">[AdMmP][1-9][0-9]*</rng:param>
+      </rng:data>
     </content>
+    <remarks xml:lang="en">
+      <p>
+        <list>
+          <head>Interval qualities:</head>
+          <item>A = augmented,</item>
+          <item>d = diminished,</item>
+          <item>M = major,</item>
+          <item>m = minor,</item>
+          <item>P = perfect</item>
+        </list>
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
     <desc xml:lang="en">A token indicating direction of the interval but not its precise value, a diatonic
@@ -2988,6 +3037,21 @@
         <valItem ident="tab">
           <desc xml:lang="en">Tablature notation.</desc>
         </valItem>
+        <valItem ident="tab.staff-like">
+          <desc xml:lang="en">"Notehead" notation: a hybrid between staff and tablature notation consisting of solid, stemless noteheads on a CMN staff with tablature rhythm flags placed above the staff.</desc>
+        </valItem>
+        <valItem ident="tab.guitar">
+          <desc xml:lang="en">Tablature notation for guitars (includes "spanish" lute tablature). Frets are indicated using numbers. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.french">
+          <desc xml:lang="en">"French" tablature notation for lutes. Frets are indicated using letters. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.italian">
+          <desc xml:lang="en">"Italian" tablature notation for lutes. Frets are indicated using numbers. Courses closest to the player's feet are at the bottom of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.german">
+          <desc xml:lang="en">"German" tablature notation for lutes. Fret and course information is conveyed solely by choice of symbol (vertical position is not used for this).</desc>
+        </valItem>
       </valList>
     </content>
   </macroSpec>
@@ -3052,8 +3116,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.OCTAVE" module="MEI" type="dt">
-    <desc xml:lang="en">Oct attribute values. The default values conform to Acoustical Society of America
-      representation. Read, p. 44.</desc>
+    <desc xml:lang="en">Octave number. The default values conform to the Scientific Pitch Notation (SPN).</desc>
     <content>
       <rng:data type="nonNegativeInteger">
         <rng:param name="maxInclusive">9</rng:param>
@@ -3175,9 +3238,7 @@
   <macroSpec ident="data.PGSCALE" module="MEI" type="dt">
     <desc xml:lang="en">Page scale factor; a percentage of the values in page.height and page.width.</desc>
     <content>
-      <rng:choice>
-        <rng:ref name="data.PERCENT"/>
-      </rng:choice>
+      <rng:ref name="data.PERCENT"/>
     </content>
   </macroSpec>
   <macroSpec ident="data.PITCHCLASS" module="MEI" type="dt">
@@ -3381,7 +3442,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.STAFFLOC" module="MEI" type="dt">
-    <desc xml:lang="en">Staff location. The value '0' indicates the bottom line of the current staff; positive
+    <desc xml:lang="en">Staff location. The value <val>0</val> indicates the bottom line of the current staff; positive
       values are used for positions above the bottom line and negative values for the positions
       below. For example, in treble clef, 1 = F4, 2 = G4, 3 = A4, etc. and -1 = D4, -2 = C4, and so
       on.</desc>
@@ -3537,7 +3598,7 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.STRINGNUMBER" module="MEI" type="dt">
-    <desc xml:lang="en">In string tablature, the number of the string to be played, <abbr>i.e.</abbr>, [1-9]+.</desc>
+    <desc xml:lang="en">This datatype is deprecated in favor of data.COURSENUMBER and will be removed in a future version. In string tablature, the number of the string to be played.</desc>
     <content>
       <rng:data type="positiveInteger"/>
     </content>
