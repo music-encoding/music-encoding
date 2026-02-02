@@ -41,19 +41,19 @@
                 <xsl:choose>
                     <xsl:when test="exists($pi.start) and exists($pi.end)">
                         <!--<xsl:message select="'CUTTING EXAMPLE'"/>-->
-                        <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>        
+                        <xsl:apply-templates select="$pi.start/following-sibling::node()[following::processing-instruction('edit-end')]" mode="preserveSpace"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:apply-templates select="$xml" mode="preserveSpace"/>
                     </xsl:otherwise>
                 </xsl:choose>
-                <!--<xsl:apply-templates select="$xml" mode="preserveSpace"/>-->        
+                <!--<xsl:apply-templates select="$xml" mode="preserveSpace"/>-->
                 <xsl:catch>
                     <xsl:message select="'ERROR: Unable to parse the following XML snippet, which is apparently not well-formed:'"/>
                     <xsl:message select="$input"/>
                     <xsl:copy-of select="$input"/>
                 </xsl:catch>
-            </xsl:try>    
+            </xsl:try>
         </xsl:variable>
         <xsl:sequence select="$output"/>
     </xsl:function>
@@ -102,13 +102,13 @@
                             <div class="indent indent{$indent.level + 2}"><xsl:value-of select="substring(text(),$indent.threshold * 2 + 1,$indent.threshold * 2)"/></div>
                         </xsl:when>
                         <xsl:when test="string-length(text()) gt $indent.threshold * 1">
-                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),1,100)"/></div>        
+                            <div class="indent indent{$indent.level + 1}"><xsl:value-of select="substring(text(),1,100)"/></div>
                         </xsl:when>
                     </xsl:choose>
                     <span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></div>
             </xsl:when>
             <xsl:otherwise>
-                <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:apply-templates select="$element/@*" mode="#current"/><xsl:if test="not($element/node())">/</xsl:if>&gt;</span><xsl:apply-templates select="$element/node()" mode="#current"><xsl:with-param name="indent" select="$indent.level + 1" as="xs:integer"/></xsl:apply-templates><xsl:if test="$element/node()"><span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></xsl:if></div>
+                <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="element">&lt;<xsl:value-of select="name($element)"/><xsl:if test="$indent.level = 1 and namespace-uri()"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="'xmlns'"/>=</span><span class="attributevalue">"<xsl:value-of select="namespace-uri()"/>"</span></xsl:if><xsl:apply-templates select="$element/@*" mode="#current"/><xsl:if test="not($element/node())">/</xsl:if>&gt;</span><xsl:apply-templates select="$element/node()" mode="#current"><xsl:with-param name="indent" select="$indent.level + 1" as="xs:integer"/></xsl:apply-templates><xsl:if test="$element/node()"><span data-indentation="{$indent.level}" class="element">&lt;/<xsl:value-of select="name($element)"/>&gt;</span></xsl:if></div>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -123,7 +123,7 @@
         <xsl:param name="indent" as="xs:integer?"/>
         <xsl:variable name="indent.level" select="if($indent) then($indent) else(1)" as="xs:integer"/>
         <xsl:variable name="element" select="." as="node()"/>
-        <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="comment">&lt;!--<xsl:value-of select="."/>--&gt;</span></div>   
+        <div class="indent indent{$indent.level}"><span data-indentation="{$indent.level}" class="comment">&lt;!--<xsl:value-of select="."/>--&gt;</span></div>
     </xsl:template>
     
     <xd:doc>

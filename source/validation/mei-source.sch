@@ -14,12 +14,8 @@
     <sch:pattern id="check_gi_scheme_MEI_references">
         <sch:rule context="tei:gi[@scheme = 'MEI']">
             <sch:let name="ident_vals" value="//tei:elementSpec/@ident/string()"/>
-            <sch:assert role="error"
-                test="
-                    some $ident in $ident_vals
-                        satisfies ($ident = text()/string())"
-                >A &lt;gi scheme="MEI"&gt;<sch:value-of select="text()"/>&lt;/gi&gt; references an element unknown to
-                MEI. It has to match an //elementSpec/@ident.</sch:assert>
+            <sch:assert role="error" test=" some $ident in $ident_vals satisfies ($ident = text()/string())">
+                A &lt;gi scheme="MEI"&gt;<sch:value-of select="text()"/>&lt;/gi&gt; references an element unknown to MEI. It has to match an //elementSpec/@ident.</sch:assert>
         </sch:rule>
         <sch:p>A &lt;gi&gt; in the MEI scheme must reference a value from &lt;elementSpec&gt;/@ident.</sch:p>
     </sch:pattern>
@@ -109,11 +105,8 @@
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
             <sch:let name="div_IDs" value="//tei:div/@xml:id/string()"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
-            <sch:assert role="error"
-                test="
-                    some $id in $div_IDs
-                        satisfies ($id = $target)">The
-                &lt;<sch:name/>&gt; points to a &lt;div&gt;/xml:id which wasn't declared.</sch:assert>
+            <sch:assert role="error" test="some $id in $div_IDs satisfies ($id = $target)">
+                The &lt;<sch:name/>&gt; points to <sch:value-of select="@target"/> which wasn't declared in a &lt;div&gt;/xml:id.</sch:assert>
         </sch:rule>
     </sch:pattern>
 

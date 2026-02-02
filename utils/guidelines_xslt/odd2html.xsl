@@ -16,8 +16,9 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Nov 11, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
-            <xd:p>This XSLT generates a single HTML file from the MEI ODD sources. This single HTML file 
-                may be used for further processing, either towards a PDF file, or towards a publication
+            <xd:p><xd:b>Contributor:</xd:b> Benjamin W. Bohl</xd:p>
+            <xd:p>This XSLT generates a single HTML file from a compiled ODD. This single HTML 
+                file may be used for further processing, either towards a PDF file, or towards a publication
                 on the MEI website, which requires a separation into multiple files.</xd:p>
             <xd:p>TODO: We should consider to have additional data dictionaries (just the specs part)
                 as separate files for each MEI customization.</xd:p>
@@ -107,8 +108,8 @@
             <xd:p>The version of the Guidelines</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="version" select="//tei:classSpec[@ident = ('att.meiversion','att.meiVersion')]//tei:defaultVal/text()" as="xs:string"/>
-        
+    <xsl:param name="version" select="tokenize(//tei:edition, ' ')[last()]"  as="xs:string"/>
+    
     <xd:doc>
         <xd:desc>
             <xd:p>The git commit hash of the version this is generated from. Should not be set manually.</xd:p>
@@ -125,12 +126,45 @@
     
     <xd:doc>
         <xd:desc>
-            <xd:p>The base directory handed over from Ant. Should not be set when the XSLT is called locally.</xd:p>
+            <xd:p>The base directory of the music-encoding repository.</xd:p>
+            <xd:p>When called via the MEI Ant project (build.xml) it will be submitted.</xd:p>
+            <xd:p>When running the XSLT independently it is set in relation to this XSLT to the directory above the utils directory. Which if the music-encoding repository clone is intact, will be "music-encoding".</xd:p>
         </xd:desc>
     </xd:doc>
-    <xsl:param name="basedir" select="''" as="xs:string"/>
+    <xsl:param name="basedir" select="replace(static-base-uri(), '^(.*)/utils/.*', '$1')" as="xs:string"/>
+    
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The selected schema</xd:p>
+            <xd:p>Can be submitted externally, defaults to //tei:schemaSpec/@ident.</xd:p>
+            <xd:p>N.B. Pobably will fail if there are mutliple //tei:schemaSpec/@ident available.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="selectedSchema" select="//tei:schemaSpec/@ident" as="xs:token"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Whether Contributors should be retrieved live from GitHub. Please consider that this may result in excessive API calls.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:param name="retrieve-contributors" select="false()" as="xs:boolean"/>
     
     <xsl:variable name="source.file" select="/tei:TEI" as="node()"/>
+    
+    <xd:doc>
+        <xd:desc>
+            <xd:p>The path to the repository’s .git directory.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:variable name="git.path" as="xs:string">
+        <xsl:choose>
+            <xsl:when test="unparsed-text-available($basedir || '/.git/HEAD')">
+                <xsl:value-of select="$basedir|| '/.git/'"/>
+            </xsl:when>
+            <?TODO should we terminate if not in git? ?>
+        </xsl:choose>
+    </xsl:variable>
     
     <xd:doc>
         <xd:desc>
@@ -140,7 +174,7 @@
     <xsl:variable name="git.head" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
+                <xsl:variable name="docUri" select="document-uri(/)" as="xs:string"/>
                 <xsl:value-of select="normalize-space(substring-after(unparsed-text($git.path || 'HEAD'),'ref: '))"/>
             </xsl:when>
             <xsl:otherwise>
@@ -157,10 +191,19 @@
     <xsl:variable name="retrieved.hash" as="xs:string">
         <xsl:choose>
             <xsl:when test="$hash eq 'latest'">
-                <xsl:variable name="git.path" select="substring-before(string(document-uri(/)),'/source/mei-source.xml') || '/.git/'" as="xs:string"/>
-                <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+                <!-- the parameter $hash defaults to 'latest' consequently no real hash is being supplied in the call and this will try to retrieve it from the repository root’s .git directory -->
+                <xsl:choose>
+                    <xsl:when test="unparsed-text-available($git.path || $git.head)">
+                        <xsl:value-of select="unparsed-text($git.path || $git.head) || ''"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="'#unknown-hash'"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                
             </xsl:when>
             <xsl:otherwise>
+                <!-- something has overridden the $hash parameter so will use it -->
                 <xsl:value-of select="$hash"/>
             </xsl:otherwise>
         </xsl:choose>
@@ -194,6 +237,28 @@
     </xd:doc>
     <xsl:template match="/">
         <xsl:message select="'Processing MEI v' || $version || ' from branch ' || $git.head ||' at revision ' || $retrieved.hash || ' with odd2html.xsl on ' || substring(string(current-date()),1,10)"/>
+        
+        <xsl:if test="$isCompiledOdd">
+            <xsl:message>This is a compiled ODD file.</xsl:message>
+        </xsl:if>
+        
+        <xsl:choose>
+            <xsl:when test="$isCustomization">
+                <xsl:message select="'This is a customization.'"/>
+                <xsl:if test="not($isCompiledOdd)">
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                </xsl:if>
+                <xsl:message select="'.   document-uri: ' || document-uri(root())"/>
+                <xsl:message select="'.   modules included: ' || string-join(($modules//@key, $modules//@ident), ' ')"/>
+                <xsl:message select="'.   basedir: ' || $basedir"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:message select="'This is documentation for the full mei-source.xml'"/>
+              <xsl:if test="not($isCompiledOdd)">
+                    <xsl:message terminate="yes">ERROR:currently only compiled ODDs or canonicalized source are processable, please create a respective version of your ODD first.</xsl:message>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
         <xsl:message select="'.   chapters: ' || count($chapters) || ' (' || count($all.chapters/descendant-or-self::chapter) || ' subchapters)'"/>
         <xsl:message select="'.   elements: ' || count($elements)"/>
         <xsl:message select="'.   model classes: ' || count($model.classes)"/>
@@ -205,7 +270,7 @@
         <xsl:variable name="toc" select="tools:generateToc()" as="node()"/>
         <xsl:variable name="guidelines" as="node()">
             <main>
-                <xsl:apply-templates select="$mei.source//tei:body/child::tei:div" mode="guidelines"/>                
+                <xsl:apply-templates select="$chapters" mode="guidelines"/>
             </main>
         </xsl:variable>
         <xsl:variable name="moduleSpecs" select="tools:getModuleSpecs()" as="node()"/>
@@ -216,6 +281,7 @@
         <xsl:variable name="dataTypeSpecs" select="tools:getDataTypeSpecs()" as="node()"/>
         
         <xsl:variable name="indizes" select="tools:generateIndizes()" as="node()+"/>
+        <xsl:variable name="contributors" select="tools:generateContributorsList()" as="node()+"/>
             
         
         
@@ -232,6 +298,7 @@
             <xsl:sequence select="$dataTypeSpecs"/>
             
             <xsl:sequence select="$indizes"/>
+            <xsl:sequence select="$contributors"/>
         </xsl:variable>
                 
         <!-- generate a single-page HTML version of the Guidelines -->

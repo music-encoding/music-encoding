@@ -17,6 +17,9 @@ on:
     tags:
       - 'v[1-9][0-9]?.[0-9]'
 
+permissions:
+  contents: read
+
 env:
   REPO_OWNER: music-encoding
   IS_DEV_OR_TAG: false # will be set dynamically in steps below
@@ -56,7 +59,7 @@ jobs:
 
       ### BUIDLING THE SCHEMA AND THE GUIDELINES ###
       - name: Checkout main repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # Whether to checkout submodules: `true` to checkout submodules or `recursive` to
           # recursively checkout submodules.
@@ -72,13 +75,13 @@ jobs:
 
       ### UPLOADING THE ARTIFACTS ###
       - name: Upload PDF
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: pdf
           path: ${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_*.pdf
 
       - name: Upload Prince XML log
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: prince_log
           path: ${{ github.workspace }}/build/prince.log
@@ -112,7 +115,7 @@ jobs:
       ### PUBLISHING THE SCHEMA ###
       - name: Checkout SCHEMA_REPO into SCHEMA_DIR
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # repository to check out
           repository: ${{ env.SCHEMA_REPO }}
@@ -176,7 +179,7 @@ jobs:
       ### PUBLISHING THE GUIDELINES ###
       - name: Checkout GUIDELINES_REPO into GUIDELINES_DIR
         if: github.repository_owner == env.REPO_OWNER && env.IS_DEV_OR_TAG == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # repository to check out
           repository: ${{ env.GUIDELINES_REPO }}
@@ -242,7 +245,7 @@ jobs:
       # but then the version would have to be determined programatically
       - name: Create release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5 # ratchet:ncipollo/release-action@v1.14.0
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
         with:
           allowUpdates: false
           artifacts: "${{ github.workspace }}/dist/guidelines/pdf/MEI_Guidelines_${{ github.ref_name }}.pdf"

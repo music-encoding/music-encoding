@@ -18,6 +18,9 @@
   CONTACT: info@music-encoding.org
 -->
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    <!-- import version properties -->
+    <property file="build.properties"/>
+    
     <property environment="env">
         <!-- set environment variable -->
     </property>
@@ -61,34 +64,32 @@
             <os family="windows"/>
         </not>
     </condition>
-    <property name="meiversion.latest" value="5.0"/>
-    <property name="meiversion.next" value="5.1-dev"/>
+    <condition property="verbose" value="true" else="false">
+        <contains string="${sun.java.command}" substring="-v" />
+    </condition>
+    <!-- directories -->
     <property name="dir.build" value="build"/>
+    <property name="dir.dist" value="dist"/>
+    <property name="dir.lib" value="lib"/>
+    <property name="dir.validation" value="source/validation"/>
+    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
+    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
+    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
+    <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
+    <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
+    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <!-- canonicalization -->
     <property name="canonicalized.file.prefix" value="mei-source_canonicalized_v"/>
     <property name="canonicalized.file.latest" value="${canonicalized.file.prefix}${meiversion.latest}.xml"/>
     <property name="canonicalized.file.next" value="${canonicalized.file.prefix}${meiversion.next}.xml"/>
     <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
     <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
-    <property name="dir.dist" value="dist"/>
-    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
-    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
-    <property name="dir.lib" value="lib"/>
-    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
-    <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
-    <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
-    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
-    <property name="dir.validation" value="source/validation"/>
-    <property name="saxon.version" value="SaxonHE12-5"/>
-    <property name="saxon.jar.file" value="saxon-he-12.5.jar"/>
-    <property name="schematron.version" value="8.0.0"/>
-    <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
-    <property name="stylesheets.version" value="7.57.1"/>
-    <property name="xerces.version" value="26.1.0.1"/>
-    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    <!-- jar dependencies -->
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
-    <condition property="verbose" value="true" else="false">
-        <contains string="${sun.java.command}" substring="-v" />
-    </condition>
+    <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
+    <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
+    <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
+    
 
     <target name="help">
         <antcall target="echo-mei"/>
@@ -111,7 +112,7 @@
         <antcall target="echo-properties"/>
     </target>
 
-    <target name="clean" description="Deletes the following directories: `build`, `dist` and `temp`.">
+    <target name="clean" description="Deletes the following directories: `build`, `dist` and `temp`." depends="info">
         <delete dir="build"/>
         <delete dir="dist"/>
         <delete dir="temp"/>
@@ -149,12 +150,17 @@
         <echo>Local github.branch: ${github.branch.local}</echo>
     </target>
 
-    <target name="reset" description="Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the TEI Stylesheets and the jar files.">
-        <delete dir="lib"/>
+    <target name="reset" description="Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the jar files.">
         <antcall target="clean"/>
+        <delete dir="lib"/>
+    </target>
+
+    <target name="info" description="Displays the versions of Ant and Java (JDK).">
+        <echo>Ant version: ${ant.version}</echo>
+        <echo>Java version (JDK): ${ant.java.version}</echo>
     </target>
     
-    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available.">
+    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
         <!-- check if Xerces is available -->
         <condition property="xerces-available">
             <or>
@@ -214,7 +220,7 @@
 
     <target name="saxon-download" unless="${saxon-available}">
         <mkdir dir="temp"/>
-        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.version}/${saxon.version}J.zip" dest="temp/download"/>
+        <get src="https://github.com/Saxonica/Saxon-HE/releases/download/${saxon.edition.version}/${saxon.edition.version}J.zip" dest="temp/download"/>
     </target>
 
     <target name="saxon-prepare" depends="saxon-unzip" unless="${saxon-available}">
@@ -273,7 +279,7 @@
         </path>
         <echo>mei.classpath set</echo>
     </target>
-
+    
     <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
@@ -295,10 +301,23 @@
             </fileset>
         </schematron>
         <property name="validate-source.done" value="true"/>
-        <echo>source validated: ${validate-source.done}</echo>
+        <echo>canonicalized source validated: ${validate-source.done}</echo>
+    </target>
+    
+    <target name="validate-purification" depends="canonicalize-source" description="Validates the canonicalized source with mei-purify.sch. This target will be triggered before all `build-...` targets.">
+        <echo unless:set="validate-purification.done">validating purification of source...</echo>
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
+        <schematron unless:set="validate-purification.done" schematronFile="${dir.validation}/mei-purify.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+            <fileset dir="${dir.build}">    
+                <include name="${canonicalized.file.next}" ></include>
+            </fileset>
+        </schematron>
+        <property name="validate-purification.done" value="true"/>
+        <echo>purification of canonicalized source validated: ${validate-purification.done}</echo>
     </target>
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+        <!-- NB: do not use on mei-source.xml as the egXMLs will be corrupted in the output -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
@@ -311,20 +330,45 @@
         </ant>
     </target>
     
-    <target name="build-customization-specs" depends="validate-source" description="Builds the specs for a customization submitted as absolute path with -Dcustomization.path input param.">
+    <target name="build-customization-guidelines-html" depends="init-mei-classpath, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
+        <!-- set selectedSchema from filename; N.B. has to match schemaSpec/@ident to make processing by TEI Stylesheets work correctly -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${customization.path}"></param>
-        </antcall>
-        <ant dir="${dir.lib.stylesheets}/html5" antfile="build-to.xml" target="odd" inheritall="true">
-            <property name="inputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.html"/>
-            <property name="verbose" value="${verbose}"/>
-            <property name="processODD">true</property>
-            <reference refid="mei.classpath" torefid="classpath"/>
-        </ant>
+        <!-- derive path for compiled ODD from filename -->
+        <property name="compiled.path" location="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+        <!-- set git variables -->
+        <condition property="hash" value="${github.sha}" else="${github.sha.local}">
+            <not>
+                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
+        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
+            <not>
+                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
+            </not>
+        </condition>
+        <!-- set output.folder for XSLT and others
+             N.B. don’t use @location for setting this because on Windows machines this will result in a path with
+                  backslashes; the XSLT appends location steps to it using forward slashes and thus will not be able to handle it
+                  using @value will just submit this as string literals and not change the separator.
+        -->
+        <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}" />
+        <!-- generate customization’s compiled ODD -->
+        <antcall target="build-compiled-odd" inheritall="yes" />
+        <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
+        <antcall target="copy-guidelines-assets"/>
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
+            <arg value="-s:${compiled.path}"/>
+            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
+            <arg value="-xi:on"/>
+            <arg value="dist.folder=${output.folder}/"/><!-- NB: trailing slash needed for XSLT -->
+            <arg value="hash=${hash}"/>
+            <arg value="branch=${branch}"/>
+            <arg value="basedir=${basedir.cross_platform}"/>
+        </java>
+        <antcall target="generate-images"/>
+        <antcall target="copy-generated-images" inheritall="yes"/>
     </target>
-
+    
     <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
@@ -340,59 +384,99 @@
         </ant>
     </target>
 
-    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines." depends="validate-source" unless="${build-guidelines-html.done}">
-        <!-- TODO: check dependency try with mei-source.xml -->
-        <antcall target="get-local-git-sha" if:blank="${github.sha}"/>
-        <antcall target="get-local-git-branch" if:blank="${github.ref}"/>
-        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <echo message="building HTML guidelines for ${selectedSchema} from ${customization.path} on branch ${github.branch.local}"/>
-        <echo>github.sha: ${github.sha}</echo>
-        <echo>github.sha.local: ${github.sha.local}</echo>
-        <condition property="hash" value="${github.sha}" else="${github.sha.local}">
-            <not>
-                <equals arg1="${github.sha}" arg2="" forcestring="true"/>
-            </not>
-        </condition>
-        <condition property="branch" value="${github.ref-name}" else="${github.branch.local}">
-            <not>
-                <equals arg1="${github.ref}" arg2="" forcestring="true"/>
-            </not>
-        </condition>
-        <antcall target="copy-guidelines-assets"/>
+    <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-all.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-basic.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-cmn.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-mensural.xml"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-html">
+            <param name="customization.path" location="customizations/mei-neumes.xml"/>
+        </antcall>
+        <!-- call build for the index page that offers links to the customization-specific guidelines -->
+        <antcall target="build-guidelines-html-index-page"/>
+    </target>
+    
+    <target name="build-guidelines-html-index-page" depends="init-mei-classpath">
+        <!-- create a path that includes the customization index pages -->
+        <path id="customizationIndexPath" >
+            <fileset dir="${dir.dist.guidelines}">
+                <include name="*/index.html"/>
+            </fileset>
+        </path>
+
+        <!-- convert path to a semicolon-separated string -->
+        <pathconvert property="customizationIndexPages.raw" refid="customizationIndexPath" pathsep=";"/>
+
+        <loadresource property="customizationIndexPages">
+            <string value="${customizationIndexPages.raw}"/>
+            <filterchain>
+                 <!-- Replace backslashes with forward slashes for cross-platform compatibility -->
+                <replaceregex pattern="\\" replace="/" flags="g"/>
+                <!-- Remove everything up to and including ${dir.dist.guidelines}/ -->
+                <replaceregex pattern="[^;]*${dir.dist.guidelines}/" replace="" flags="g"/>
+            </filterchain>
+        </loadresource>
+
+        <echo message="Generating guidelines index including: ${customizationIndexPages}"/>
+        
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
-            <arg value="-s:${canonicalized.source.path}"/>
-            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
-            <arg value="-xi:on"/>
-            <arg value="output.folder=${basedir}/${dir.build}/"/>
-            <arg value="hash=${hash}"/>
-            <arg value="branch=${branch}"/>
-            <arg value="basedir=${basedir.cross_platform}"/>
+            <arg value="-it:initial-template"/>
+            <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html/generateWebsiteIndexPage.xsl"/>
+            <arg value="-xi:off"/>
+            <arg value="output.folder=${dir.dist.guidelines}"/>
+            <arg value="customizationIndexPages=${customizationIndexPages}" />
         </java>
-        <antcall target="generate-images"/>
-        <antcall target="copy-generated-images"/>
+        
+        <antcall target="copy-guidelines-assets">
+            <param name="output.folder" value="${dir.dist.guidelines}" />
+        </antcall>
+        
     </target>
 
     <target name="build-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
+         <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+anyStart.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+basic.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+cmn.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+mensural.html"/>
+        </antcall>
+        <antcall target="build-customization-guidelines-pdf">
+            <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+neumes.html"/>
+        </antcall>
+    </target>
+    
+    <target name="build-customization-guidelines-pdf" description="Builds the PDF version of the MEI guidelines for a customization submitted as prince.input param.">
         <!-- create output directory for PDF -->
         <mkdir dir="${dir.dist}/guidelines/pdf"/>
-        <!-- get HTML input file -->
-        <pathconvert property="build.dir.filelist" pathsep="${line.separator}">
-            <map from="${basedir}${file.separator}" to=""/>
-            <fileset dir="${dir.build}">
-                <include name="MEI_Guidelines_*.html"/>
-            </fileset>
-        </pathconvert>
-        <!-- set the prince.input property -->
-        <loadresource property="prince.input">
-            <string value="${build.dir.filelist}"/>
-            <filterchain>
-                <headfilter lines="1"/>
-            </filterchain>
-        </loadresource>
         <!-- set the prince.output.filename and prince.output.path properties -->
         <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
         <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
-        <property name="prince.output.path" value="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
+        <property name="prince.output.path" location="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
+        
+        <echo message="calling prince with following parameters"/>
+        <echo message=".   prince.input=${prince.input}"/>
+        <echo message=".   prince.output.path=${prince.output.path}"/>
+        
         <!-- run Prince to convert HTML guidelines to PDF -->
         <exec executable="prince" failonerror="true">
             <arg prefix="--log=" value="${dir.build}/prince.log"/>
@@ -406,7 +490,7 @@
         <copy todir="${dir.build}/assets">
             <fileset dir="source/assets"/>
         </copy>
-        <copy todir="${dir.dist.guidelines}/assets">
+        <copy todir="${output.folder}/assets"><!-- todo: check if needed for PDF -->
             <fileset dir="source/assets"/>
         </copy>
     </target>
@@ -426,7 +510,7 @@
     </target>
 
     <target name="copy-generated-images" description="Copies generated images to dist after they're created by running Docker image.">
-        <copy todir="${dir.dist.guidelines}/assets/images/GeneratedImages">
+        <copy todir="${output.folder}/assets/images/GeneratedImages">
             <fileset dir="${dir.build}/assets/images/GeneratedImages">
                 <include name="*.svg"/>
             </fileset>
@@ -435,43 +519,43 @@
 
     <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="validate-source">
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
+            <param name="customization.path" location="customizations/mei-all.xml"/>
         </antcall>
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-all_anyStart.xml"/>
+            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
         </antcall>
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-basic.xml"/>
+            <param name="customization.path" location="customizations/mei-basic.xml"/>
         </antcall>
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-CMN.xml"/>
+            <param name="customization.path" location="customizations/mei-cmn.xml"/>
         </antcall>
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-Mensural.xml"/>
+            <param name="customization.path" location="customizations/mei-mensural.xml"/>
         </antcall>
         <antcall target="build-rng">
-            <param name="customization.path" value="${basedir}/customizations/mei-Neumes.xml"/>
+            <param name="customization.path" location="customizations/mei-neumes.xml"/>
         </antcall>
     </target>
 
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-all.xml"/>
+            <param name="customization.path" location="customizations/mei-all.xml"/>
         </antcall>
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-all_anyStart.xml"/>
+            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
         </antcall>
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-basic.xml"/>
+            <param name="customization.path" location="customizations/mei-basic.xml"/>
         </antcall>
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-CMN.xml"/>
+            <param name="customization.path" location="customizations/mei-cmn.xml"/>
         </antcall>
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-Mensural.xml"/>
+            <param name="customization.path" location="customizations/mei-mensural.xml"/>
         </antcall>
         <antcall target="build-compiled-odd">
-            <param name="customization.path" value="${basedir}/customizations/mei-Neumes.xml"/>
+            <param name="customization.path" location="customizations/mei-neumes.xml"/>
         </antcall>
     </target>
 

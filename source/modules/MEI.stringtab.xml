@@ -44,14 +44,16 @@
           <desc xml:lang="en">Open D tuning for guitars. D2 A2 D3 F3s A3 D4.</desc>
         </valItem>
         <valItem ident="guitar.open.G">
-          <desc xml:lang="en">Open G tuning for guitars. D2 G2 D2 G2 B3 D4.</desc>
+          <desc xml:lang="en">Open G tuning for guitars. D2 G2 D3 G3 B3 D4.</desc>
         </valItem>
         <valItem ident="guitar.open.A">
           <desc xml:lang="en">Open A tuning for guitars. E2 A2 E3 A3 C4s E4.</desc>
         </valItem>
         <valItem ident="lute.renaissance.6">
-          <desc xml:lang="en">Renaissance tuning for lutes with 6 courses. G2 C3
-            F3 A3 D4 G4.</desc>
+          <desc xml:lang="en">Renaissance tuning for lutes with 6 courses. G2 C3 F3 A3 D4 G4.</desc>
+        </valItem>
+        <valItem ident="lute.baroque.d.major">
+          <desc xml:lang="en">Baroque tuning for lutes with 6 stable courses, and additional bass courses tuned to the key of D Major. A2 D3 F3s A3 D4 F4s for the main six courses, and bass courses descending in pitch from G2, F2s, etc., depending on the size of the instrument.</desc>
         </valItem>
         <valItem ident="lute.baroque.d.minor">
           <desc xml:lang="en">Baroque tuning for lutes with 6 stable courses, and additional bass courses tuned to the key of D minor. A2 D3 F3 A3 D4 F4 for the main six courses, and bass courses descending in pitch from G2, F2, etc., depending on the size of the instrument. </desc>
@@ -168,6 +170,8 @@
   <classSpec ident="att.tabDurSym.log" module="MEI.stringtab" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
+      <memberOf key="att.augmentDots"/>
+      <memberOf key="att.duration.log"/>
       <memberOf key="att.layerIdent"/>
       <memberOf key="att.partIdent"/>
     </classes>
@@ -251,13 +255,13 @@
       <memberOf key="att.tabDurSym.vis"/>
       <memberOf key="att.tabDurSym.ges"/>
       <memberOf key="att.tabDurSym.anl"/>
+      <memberOf key="model.eventLike"/>
     </classes>
     <content>
       <empty/>
     </content>
-    <!-- TODO Add constraint: note(s) and rest(s) should be mutually exclusive -->
     <remarks xml:lang="en">
-      <p>The presence of a <gi scheme="MEI">tabDurSym</gi> indicates that there is a symbol rendered for the parent <gi scheme="MEI">tabGrp</gi>. If no additional attributes like <att>altsym</att>are given, a default symbol conforming to the current notation style or font is to be used. The absence of this elements indicates that the last provided duration symbol equally applies to the current tab group.</p>
+      <p>The presence of a <gi scheme="MEI">tabDurSym</gi> indicates that there is a symbol rendered for the parent <gi scheme="MEI">tabGrp</gi>. If no additional attributes like <att>altsym</att> are given, a default symbol conforming to the current notation style or font is to be used. The absence of this elements indicates that the last provided duration symbol equally applies to the current tab group.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="tabGrp" module="MEI.stringtab">
@@ -275,16 +279,31 @@
       <rng:optional>
         <rng:ref name="tabDurSym"/>
       </rng:optional>
-      <rng:zeroOrMore>
+      <rng:interleave>
         <rng:choice>
-          <!-- alternative: model.chordPart – This would give note and artic -->
-          <rng:ref name="note"/>
-          <rng:ref name="model.transcriptionLike"/>
-          <rng:ref name="model.editLike"/>
-          <rng:ref name="model.appLike"/>
-          <rng:ref name="rest"/>
+          <rng:zeroOrMore>
+            <rng:ref name="note"/>
+          </rng:zeroOrMore>
+          <rng:optional>
+            <rng:ref name="rest"/>
+          </rng:optional>
         </rng:choice>
-      </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <!-- alternative: model.chordPart – This would give note and artic -->
+            <rng:ref name="model.transcriptionLike"/>
+            <rng:ref name="model.editLike"/>
+            <rng:ref name="model.appLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:interleave>
     </content>
+    <constraintSpec ident="check_tabGrp_in_beam" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:tabGrp[ancestor::mei:beam]">
+          <sch:assert test="count(mei:tabDurSym) = 1" role="warning">A tabGrp inside of a beam must contain one tabDurSym.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
 </specGrp>
