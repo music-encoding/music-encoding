@@ -1034,14 +1034,47 @@
                         <specDesc key="annot"/>
                      </specList>
                   </p>
-                  <p>This element may be contained by a wide range of other elements and may contain a large number of other elements. While this offers great flexibility in addressing the wide variety of textual features that might occur within an annotation, it may lead to markup that cannot be effectively processed mechanistically.</p>
-                  <p>In all cases, <gi scheme="MEI">annot</gi> provides a comment upon a feature of the encoding, but never contains textual transcription. Depending on its context, an annotation will deal with either its parent element, or, more usually, with the element(s) specified in its <att>plist</att> attribute. This attribute uses URI references to link to one or more other elements using their <att>xml:id</att> attribute values, as in the following example:</p>
+                  <p>This element can be contained by a wide range of other elements and may contain a large number of other elements. Its meaning also depends on the context in which it appears (see, for example, <ptr target="#headerNotesStatement"/> and <ptr target="#edittransOmission"/>). While this offers great flexibility in addressing the wide variety of textual features that might occur within an annotation, it may lead to markup that is hard or impossible to interpret automatically. Use of the <att>func</att> (see below) and/or <att>type</att> attributes (see <ptr target="#sharedClassificationAttributes"/>) is encouraged to reduce ambiguity and support processing within a specific context, such as engraving a score.</p>
+                  <p><gi scheme="MEI">annot</gi> may comment on a feature of the encoding, or it may provide information or comments about the material represented by the encoding.</p>
+                  <p>We can use the <att>func</att> attribute to distinguish annotations suitable for display (e.g. via an engraving tool). This may be used to process annotations about the (encoded) structure of the MEI document separately from those about its content. For example:</p>
                   <p>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-sample011.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-annot01.txt" parse="text"/></egXML>
                      </figure>
                   </p>
+                  <p>The area of music to be annotated by an <gi scheme="MEI">annot</gi> element is selected using the same mechanism as as for control events (<ptr target="#eventsControlevents"/>) – they can be identified using a <att>plist</att> of element identifiers, or they can be specified as a range, delimited by time points (<att>tstamp</att>, <att>tstamp2</att>, <att>dur</att>) or elements (<att>startid</att>, <att>endid</att>).</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-annot02.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>These delimiters for ranges are horizontal – they dictate start and end points in the score. Vertical positions may also be specified. For single-voice regions, staff (<att>staff</att>) and layer (<att>layer</att>) may be specified, and for multiple-voice examples, staff on its own can be used to specify multiple staves (<att>staff</att>). </p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-annot03.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+
+                  <p>Where no staff is specified, the region’s application is ambiguous. Where starting and ending elements are in the same layer, it is reasonable to assume that the annotation applies to just that, but in other cases, one might infer that the annotation applies to the full score. Where possible such ambiguity should be avoided.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-annot05.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>        
+                  <p>There are cases that this approach does not support. One occurs where the annotation applies to two or more individual layers in multiple staves (for example, the second flute and second oboe part in an orchestral score). A second case is where the region being indicated has different start and end times in different parts, for example, entries of a fugal subject in a polyphonic texture. Both of these cases can be resolved by breaking them down into annotations that can themselves be indicated, and then combining these separate annotations, for example:</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/shared/shared-annot04.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>There are some contexts in which rather than using <hi rend="italics">ControlEvent</hi > attributes an annotation concerns either its parent element or some aspect of the encoding process as a whole. These cases are outlined in the relevant sections of the guidelines.</p>
+                  <p>Annotation often involves associating information or observations to a part of a document. This associated content may be included as a child of the <gi scheme="MEI">annot</gi> element. If the associated information is textual, this may simply take the form of text (as in the example above/below). Other associated information may be placed as a child of the <gi scheme="MEI">annot</gi>, here it can be represented using MEI or, if it is a web resource, it can be added by url using the <gi scheme="MEI">ptr</gi> element (<ptr target="#ptrRef"/>).</p>
+                  <p>Annotation takes many forms, and not all of these can or should be represented in MEI using <gi scheme="MEI">annot</gi>. Performance annotations, such as fingering or articulation have specialised elements already (e.g. <gi scheme="MEI">fing</gi>, <gi scheme="MEI">artic</gi>), as do some analytical annotations (e.g. <gi scheme="MEI">harm</gi> for harmonic labels). Thus, there is no all-encompassing and distinct ‘annotation’ concept in MEI, and <gi scheme="MEI">annot</gi> should be considered one of many ways of expressing annotations.</p>
                </div>
             </div>
          </div>
