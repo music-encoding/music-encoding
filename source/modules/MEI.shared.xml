@@ -79,6 +79,47 @@
       </rng:optional>
     </content>
   </macroSpec>
+  <macroSpec ident="macro.profileDescPart" module="MEI.shared" type="pe">
+    <desc xml:lang="en">Groups elements that capture a portion of a bibliographic
+      description.</desc>
+    <content>
+      <interleave>
+        <optional>
+          <ref name="mei_audience"/>
+        </optional>
+        <optional>
+          <ref name="mei_classification"/>
+        </optional>
+        <optional>
+          <ref name="mei_contents"/>
+        </optional>
+        <optional>
+          <ref name="mei_context"/>
+        </optional>
+        <optional>
+          <ref name="mei_creation"/>
+        </optional>
+        <optional>
+          <ref name="mei_dedication"/>
+        </optional>
+        <optional>
+          <ref name="mei_history"/>
+        </optional>
+        <optional>
+          <ref name="mei_langUsage"/>
+        </optional>
+        <optional>
+          <ref name="mei_otherChar"/>
+        </optional>
+        <optional>
+          <ref name="mei_perfDuration"/>
+        </optional>
+        <optional>
+          <ref name="mei_perfMedium"/>
+        </optional>
+      </interleave>
+    </content>
+  </macroSpec>
   <macroSpec ident="macro.struc-unstrucContent" module="MEI.shared" type="pe">
     <desc xml:lang="en">Provides a choice between structured and unstructured/mixed content.</desc>
     <content>
@@ -462,6 +503,19 @@
       <memberOf key="att.timestamp.log"/>
       <memberOf key="att.timestamp2.log"/>
     </classes>
+    <attList>
+      <attDef ident="func" usage="opt">
+        <desc xml:lang="en">Indicates the function intended for this annotation. In particular,
+          to distinguish annotations suitable for display (e.g. via an engraving tool), the value 
+          "display" may be used.</desc>
+        <valList type="semi">
+          <valItem ident="display">
+            <desc xml:lang="en">Indicates that the annotation is suitable for display 
+              (e.g. via an engraving tool)</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.artic.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
@@ -1102,6 +1156,69 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.docStatus" module="MEI.shared" type="atts">
+    <desc versionDate="2025-11-27" xml:lang="en">Attributes for describing the status of a document.</desc>
+    <attList>
+      <attDef ident="status" usage="opt">
+        <desc versionDate="2025-11-27" xml:lang="en">Used to describe the status of a document (currently or at the time indicated by a date).</desc>
+        <datatype>
+            <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="draft">
+            <desc>Initial or preliminary version of the document.</desc>
+          </valItem>
+          <valItem ident="in-process">
+            <desc>Document is under development.</desc>
+          </valItem>
+          <valItem ident="candidate">
+            <desc>Content of the document is ready for review.</desc>
+          </valItem>
+          <valItem ident="approved">
+            <desc>Content of the document is reviewed and ready to be published.</desc>
+          </valItem>
+          <valItem ident="published">
+            <desc>Document is published.</desc>
+          </valItem>
+          <valItem ident="withdrawn">
+            <desc>Publication of the document has been reversed.</desc>
+          </valItem>
+          <valItem ident="embargoed">
+            <desc>Document cannot be published (in full or in part) due to an embargo.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+    <exemplum>
+      <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="true">
+        <revisionDesc>
+          <change isodate="2025-11-27" resp="#DR" status="embargoed">
+            <changeDesc>
+              <p>The rightholder didn't gave publishing permission. This document has embargoed access until 2027-01-01.</p>
+            </changeDesc>
+          </change>
+          <change isodate="2025-10-16" resp="#CG" status="approved">
+            <changeDesc>
+              <p>The document has been proofread. It's ready for publishing</p>
+            </changeDesc>
+          </change>
+          <change isodate="2025-10-05" resp="#DR" status="candidate">
+            <changeDesc>
+              <p>The content of the document is elaborated and the document is now a candidate for publishing. It can be proofread.</p>
+            </changeDesc>
+          </change>
+          <change isodate="2025-10-01" resp="#DR" status="draft">
+            <changeDesc>
+              <p>Creation of the document.</p>
+            </changeDesc>
+          </change>
+        </revisionDesc>
+      </egXML>
+    </exemplum>
+    <remarks>
+      <p>The model of this attribute class is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-att.docStatus.html">att.docStatus</ref> class of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </classSpec>
   <classSpec ident="att.mdiv.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -1698,6 +1815,7 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.layerDef.log.cmn"/>
       <memberOf key="att.octaveDefault"/>
       <memberOf key="att.transposition"/>
@@ -3150,6 +3268,7 @@
     <classes>
       <memberOf key="att.cleffing.log"/>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.keySigDefault.log"/>
       <memberOf key="att.meterSigDefault.log"/>
       <memberOf key="att.octaveDefault"/>
@@ -3299,6 +3418,7 @@
     <classes>
       <memberOf key="att.cleffing.log"/>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.keySigDefault.log"/>
       <memberOf key="att.meterSigDefault.log"/>
       <memberOf key="att.notationType"/>
@@ -4211,7 +4331,7 @@
   <classSpec ident="model.addressLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements used to represent a postal address.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
       <memberOf key="model.pubStmtPart"/>
       <memberOf key="model.eventPart"/>
     </classes>
@@ -4219,13 +4339,13 @@
   <classSpec ident="model.annotLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups annotation-like elements.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
   </classSpec>
   <classSpec ident="model.biblLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements containing a bibliographic description.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
   </classSpec>
   <classSpec ident="model.biblPart" module="MEI.shared" type="model">
@@ -4252,7 +4372,7 @@
   <classSpec ident="model.dateLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements containing date expressions.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
       <memberOf key="model.pubStmtPart"/>
       <memberOf key="model.eventPart"/>
       <memberOf key="model.titlePagePart"/>
@@ -4278,7 +4398,7 @@
   <classSpec ident="model.editorialLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups editorial intervention elements.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
       <memberOf key="model.choicePart"/>
     </classes>
   </classSpec>
@@ -4302,7 +4422,7 @@
   <classSpec ident="model.identifierLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups identifier-like elements.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
       <memberOf key="model.pubStmtPart"/>
       <memberOf key="model.titlePagePart"/>
     </classes>
@@ -4358,7 +4478,7 @@
     <desc xml:lang="en">Groups elements that function like line beginnings.</desc>
     <classes>
       <memberOf key="model.milestoneLike.text"/>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.bare"/>
     </classes>
   </classSpec>
   <classSpec ident="model.mdivLike" module="MEI.shared" type="model">
@@ -4367,7 +4487,7 @@
   <classSpec ident="model.measurementLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that represent a measurement.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
   </classSpec>
   <classSpec ident="model.meterSigLike" module="MEI.shared" type="model">
@@ -4434,12 +4554,13 @@
   <classSpec ident="model.rendLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that mark typographical features.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.bare"/>
     </classes>
   </classSpec>
   <classSpec ident="model.repositoryLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that denote a corporate entity that holds a bibliographic item.</desc>
     <classes>
+      <memberOf key="model.biblPart"/>
       <memberOf key="model.nameLike.place"/>
     </classes>
   </classSpec>
@@ -4547,6 +4668,20 @@
       <memberOf key="model.paracontentPart"/>
     </classes>
   </classSpec>
+  <classSpec ident="model.textPhraseLike.bare" module="MEI.shared" type="model">
+    <desc xml:lang="en">Groups rudimentary textual elements that occur at the level of individual words or
+      phrases.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.basic"/>
+    </classes>
+  </classSpec>
+  <classSpec ident="model.textPhraseLike.basic" module="MEI.shared" type="model">
+    <desc xml:lang="en">Groups basic textual elements that occur at the level of individual words or
+      phrases.</desc>
+    <classes>
+      <memberOf key="model.textPhraseLike.limited"/>
+    </classes>
+  </classSpec>
   <classSpec ident="model.textPhraseLike.limited" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups textual elements that occur at the level of individual words or phrases. This class
       is equivalent to the model.textPhraseLike class without the pb element.</desc>
@@ -4559,7 +4694,7 @@
   <classSpec ident="model.titleLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that denote the name of a bibliographic item.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
       <memberOf key="model.titlePagePart"/>
     </classes>
   </classSpec>
@@ -4726,8 +4861,7 @@
   </elementSpec>
   <elementSpec ident="annot" module="MEI.shared">
     <gloss xml:lang="en">annotation</gloss>
-    <desc xml:lang="en">Provides a statement explaining the text or indicating the basis for an
-      assertion.</desc>
+    <desc xml:lang="en">Associates a statement or other information with a part of the encoding.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.audience"/>
@@ -4773,17 +4907,13 @@
       </constraint>
     </constraintSpec>
     <remarks xml:lang="en">
-      <p>The <gi scheme="MEI">annot</gi> element can be used for both general comments and for
-        annotations of the musical text. It provides a way to group participating *events* and/or
-        *control events*, for example, the notes that form a descending bass line, and provide a
-        label for and comment regarding the group. Participating entities may be identified in the
-        <att>plist</att> attribute. An editorial or analytical comment or observation may be
-        included directly within the <gi scheme="MEI">annot</gi> element. The starting point of the
-        annotation may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
-        <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
-        recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. The
-        <att>resp</att> attribute records the editor(s) responsible for identifying or creating the
-        annotation.</p>
+      <p>The <gi scheme="MEI">annot</gi> element associates elements or regions in an encoding with
+        additional information. Its meaning depends on the context in which it appears. The region
+        of the score to which it applies can be specified in the same way as for *control events*.
+        The <att>resp</att> attribute records the editor(s) responsible for identifying or creating 
+        the annotation. <att>func</att> and <att>type</att> attributes can be used to clarify the
+        nature and interpretation of the annotation.
+      </p>
     </remarks>
   </elementSpec>
   <elementSpec ident="artic" module="MEI.shared">
@@ -4919,6 +5049,65 @@
     </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-listBibl.html">listBibl</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="biblFull" module="MEI.shared">
+    <gloss versionDate="2022-05-18" xml:lang="en">structured bibliographic description</gloss>
+    <desc xml:lang="en">Contains a structured bibliographic description in which many, 
+      but not all, components must appear in a specified order.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="model.biblLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.identifierLike"/>
+      </rng:zeroOrMore>
+      <rng:ref name="titleStmt"/>
+      <rng:optional>
+        <rng:ref name="editionStmt"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="physDesc"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="physLoc"/>
+      </rng:optional>
+      <rng:ref name="pubStmt"/>
+      <rng:zeroOrMore>
+        <rng:ref name="seriesStmt"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="notesStmt"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="sourceDesc"/>
+      </rng:optional>
+      <rng:interleave>
+        <rng:optional>
+          <rng:ref name="macro.profileDescPart"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="relatedItem"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+      </rng:interleave>
+      <rng:zeroOrMore>
+        <rng:ref name="extMeta"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks xml:lang="en">
+      <p>This element shares its name with the Text Encoding Initiative (TEI) 
+        <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-biblFull.html">biblFull</ref> 
+        element. Its content model is different, however. The MEI element accommodates a greater
+        number of sub-elements necessary for the description of music-related bibliographic
+        objects.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="biblScope" module="MEI.shared">
@@ -5339,7 +5528,6 @@
       <memberOf key="att.datable"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.biblPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -5556,7 +5744,7 @@
       <memberOf key="att.lang"/>
       <memberOf key="att.measurement"/>
       <memberOf key="model.physDescPart"/>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
@@ -6038,7 +6226,7 @@
       <memberOf key="att.lang"/>
       <memberOf key="att.quantity"/>
       <memberOf key="model.physDescPart"/>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -6665,6 +6853,7 @@
       <memberOf key="att.id"/>
       <memberOf key="att.meiVersion"/>
       <memberOf key="att.responsibility"/>
+      <memberOf key="att.docStatus"/>
     </classes>
     <content>
       <rng:ref name="meiHead"/>
@@ -6771,6 +6960,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.meiVersion"/>
       <memberOf key="att.metadataPointing"/>
+      <memberOf key="att.docStatus"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -6795,6 +6985,7 @@
       <memberOf key="att.responsibility"/>
       <memberOf key="model.eventPart"/>
       <memberOf key="model.nameLike"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7268,7 +7459,6 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
-      <memberOf key="model.biblPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7804,6 +7994,9 @@
         <rng:ref name="model.symbolTableLike"/>
       </rng:zeroOrMore>
       <rng:optional>
+        <rng:ref name="clef"/>
+      </rng:optional>
+      <rng:optional>
         <rng:ref name="model.keySigLike"/>
       </rng:optional>
       <rng:optional>
@@ -8317,7 +8510,7 @@
       <memberOf key="att.symbol.ges"/>
       <memberOf key="att.symbol.log"/>
       <memberOf key="att.symbol.vis"/>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.bare"/>
     </classes>
     <content>
       <empty/>
@@ -8394,10 +8587,11 @@
     <desc xml:lang="en">Keyword or phrase which describes a resource.</desc>
     <classes>
       <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
     <content>
       <rng:zeroOrMore>

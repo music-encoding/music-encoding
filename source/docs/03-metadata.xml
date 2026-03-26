@@ -100,6 +100,7 @@
                <head>Introduction</head>
                <p>Metadata means "data about data", <abbr>i.e.</abbr>, information about various aspects of an encoding at hand. There are many different types of metadata, which MEI tries to order according to their respective scope or perspective, as described in <ptr target="#headerstructure"/>. MEI’s approach to metadata is heavily influenced by other existing standards and models, such as TEI, MARC, and FRBR. It attempts to reflect both current library practice and common scholarly methods, for example in the field of source descriptions (see chapter <ptr target="#msdesc"/>).</p>
                <p>This chapter thus addresses the description of an encoded item so that the musical text, as well as its sources, encoding, and revisions are all thoroughly documented. Such documentation is necessary for scholars using the texts, for software processing them, and for catalogers in libraries and archives. Together these descriptions and declarations provide an electronic analog to the title page attached to a printed work. They also constitute an equivalent for the content of the code books or introductory manuals customarily accompanying electronic data sets.</p>
+               <p>For large encoding projects, the Functional Requirements for Bibliographic Records (<abbr>FRBR</abbr>) capabilities of MEI provides most flexibility and descriptive capabilities. However, MEI also provides simpler, non-FRBR methods for source description for those cases where the FRBR capbilities are not needed. These are further discussed in <ptr target="#nonfrbrsourcedescription" />.</p>
             </div>
             <div xml:id="headerstructure" type="div2">
                <head>Structure of the MEI Header</head>
@@ -119,6 +120,19 @@
                   <item>This concept is covered in section <ptr target="#headerusecases"/>.</item>
                   <item>A <hi rend="italic">revision history</hi>, tagged <gi scheme="MEI">revisionDesc</gi>, which allows the encoder to provide a history of changes made during the development of the electronic text. The revision history is important for version control and for resolving questions about the history of a file. The MEI elements used to encode the revision description are described in section <ptr target="#headerRevisionDescription"/>.</item>
                </list>
+               <div xml:id="nonfrbrsourcedescription" type="div3">
+                  <head>Non-FRBR Source Description</head>
+                  <p>MEI allows two methodologies to be used when doing metadata capture and source description. The <abbr>FRBR</abbr> methodology (<ptr target="#FRBR"/>) gives encoders a mechanism for building detailed descriptions of bibliographic entities. Most bibliographic-based projects should favor the FRBR method.</p>
+                  <p>However, there are cases where detailed bibliographic analysis at the level required by the FRBR module is not possible or desirable. These may include situations such as retro-conversion of non-FRBR catalogues, or capturing the output of notation encoding software where only minimal source description capabilities are available. In these cases, encoders may capture metadata in the MEI header without using FRBR encoding entities and instead choose a simplified methodology for source description.</p>
+                  <p>The <gi scheme="MEI">sourceDesc</gi> element as a child of the <gi scheme="MEI">fileDesc</gi> element may be used to capture simple bibliographic descriptions. An example is given below.</p>
+                  <p><gi scheme="MEI">source</gi> may use <gi scheme="MEI">bibl</gi>, <gi scheme="MEI">biblStruct</gi>, or <gi scheme="MEI">biblFull</gi>. The first two permit bibliographic citation for the souce, while <gi scheme="MEI">biblFull</gi> allows bibliographic description. In other words, <gi scheme="MEI">bibl</gi> and <gi scheme="MEI">biblStruct</gi> are not as fully-featured as <gi scheme="MEI">biblFull</gi>.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample080.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
             </div>
             <div xml:id="commonconcepts" type="div2">
                <head>Common Metadata Concepts</head>
@@ -700,6 +714,13 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample077.txt" parse="text"/></egXML>
                      </figure>
                   </p>
+                  <p>Within the change log the status of the document and its content can be recorded using the <att>status</att> attribute. This indicates the status a document became at a specific change. If the status of the document differs from the newest <gi scheme="MEI">change</gi> record, the status of the document can also be recorded in the root element of the file (<gi scheme="MEI">mei</gi>, <gi scheme="MEI">meiHead</gi>, <gi scheme="MEI">meiCorpus</gi>, <gi scheme="MEI">music</gi>). <att>status</att> is only available in <gi scheme="MEI">change</gi> and the root elements of regular MEI, also in <label>mei-all_anyStart</label> (see <ptr target="#meiCustomizations"/>).</p>
+                  <p>
+                     <figure>
+                        <head></head>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample097.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
                </div>
             </div>
             <div xml:id="FRBR" type="div2">
@@ -891,8 +912,8 @@
                      <specDesc key="work"/>
                   </specList>
                </p>
-               <p>All the components of <gi scheme="MEI">work</gi> are optional, but they must occur in the following order:</p>
-               <list rend="numbered">
+               <p>All the components of <gi scheme="MEI">work</gi> are optional. They may occur in any order.</p>
+               <list rend="bulleted">
                   <item>
                      <gi scheme="MEI">identifier</gi>
                   </item>
@@ -900,8 +921,7 @@
                      <gi scheme="MEI">title</gi>
                   </item>
                   <item>
-                     <gi scheme="MEI">respStmt</gi>
-                  </item>
+                     <gi scheme="MEI">respStmt</gi></item>
                   <item>
                      <gi scheme="MEI">incip</gi>
                   </item>
@@ -1329,7 +1349,9 @@
                   </specList>
                </p>
                <p>Many of these elements are already described in chapter <ptr target="#headerstructure"/>, especially in <ptr target="#headerWorkDescription"/>.</p>
-               <p>The <gi scheme="MEI">manifestationList</gi> is available to create lists of physical sources representing a work, for instance for use in a thematic catalog or a critical edition. The <gi scheme="MEI">manifestation</gi> child element corresponds to the <ptr target="#FRBR"/> level of the same name, that is, it describes embodiments of certain expressions of a work. The list below reflects the order in which the optional components of manifestation must occur. <specList>
+               <p>The <gi scheme="MEI">manifestationList</gi> is available to create lists of physical sources representing a work, for instance for use in a thematic catalog or a critical edition. The <gi scheme="MEI">manifestation</gi> child element corresponds to the <ptr target="#FRBR"/> level of the same name, that is, it describes embodiments of certain expressions of a work. The components of manifestation may occur in any order.
+                  </p>
+               <p><specList>
                      <specDesc key="locus"/>
                   </specList>
                   <specList>
