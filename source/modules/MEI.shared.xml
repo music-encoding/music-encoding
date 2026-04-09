@@ -79,6 +79,46 @@
       </rng:optional>
     </content>
   </macroSpec>
+  <macroSpec ident="macro.profileDescPart" module="MEI.shared" type="pe">
+    <desc xml:lang="en">Groups elements that capture a portion of a bibliographic description.</desc>
+    <content>
+      <rng:interleave>
+        <rng:optional>
+          <rng:ref name="audience"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classification"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="context"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="dedication"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="otherChar"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfDuration"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfMedium"/>
+        </rng:optional>
+      </rng:interleave>
+    </content>
+  </macroSpec>
   <macroSpec ident="macro.struc-unstrucContent" module="MEI.shared" type="pe">
     <desc xml:lang="en">Provides a choice between structured and unstructured/mixed content.</desc>
     <content>
@@ -462,6 +502,19 @@
       <memberOf key="att.timestamp.log"/>
       <memberOf key="att.timestamp2.log"/>
     </classes>
+    <attList>
+      <attDef ident="func" usage="opt">
+        <desc xml:lang="en">Indicates the function intended for this annotation. In particular,
+          to distinguish annotations suitable for display (e.g. via an engraving tool), the value 
+          "display" may be used.</desc>
+        <valList type="semi">
+          <valItem ident="display">
+            <desc xml:lang="en">Indicates that the annotation is suitable for display 
+              (e.g. via an engraving tool)</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.artic.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
@@ -1761,6 +1814,7 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.layerDef.log.cmn"/>
       <memberOf key="att.octaveDefault"/>
       <memberOf key="att.transposition"/>
@@ -3213,6 +3267,7 @@
     <classes>
       <memberOf key="att.cleffing.log"/>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.keySigDefault.log"/>
       <memberOf key="att.meterSigDefault.log"/>
       <memberOf key="att.octaveDefault"/>
@@ -3362,6 +3417,7 @@
     <classes>
       <memberOf key="att.cleffing.log"/>
       <memberOf key="att.duration.default"/>
+      <memberOf key="att.duration.ratio"/>
       <memberOf key="att.keySigDefault.log"/>
       <memberOf key="att.meterSigDefault.log"/>
       <memberOf key="att.notationType"/>
@@ -4503,6 +4559,7 @@
   <classSpec ident="model.repositoryLike" module="MEI.shared" type="model">
     <desc xml:lang="en">Groups elements that denote a corporate entity that holds a bibliographic item.</desc>
     <classes>
+      <memberOf key="model.biblPart"/>
       <memberOf key="model.nameLike.place"/>
     </classes>
   </classSpec>
@@ -4803,8 +4860,7 @@
   </elementSpec>
   <elementSpec ident="annot" module="MEI.shared">
     <gloss xml:lang="en">annotation</gloss>
-    <desc xml:lang="en">Provides a statement explaining the text or indicating the basis for an
-      assertion.</desc>
+    <desc xml:lang="en">Associates a statement or other information with a part of the encoding.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.audience"/>
@@ -4850,17 +4906,13 @@
       </constraint>
     </constraintSpec>
     <remarks xml:lang="en">
-      <p>The <gi scheme="MEI">annot</gi> element can be used for both general comments and for
-        annotations of the musical text. It provides a way to group participating *events* and/or
-        *control events*, for example, the notes that form a descending bass line, and provide a
-        label for and comment regarding the group. Participating entities may be identified in the
-        <att>plist</att> attribute. An editorial or analytical comment or observation may be
-        included directly within the <gi scheme="MEI">annot</gi> element. The starting point of the
-        annotation may be indicated by either a <att>tstamp</att>, <att>tstamp.ges</att>,
-        <att>tstamp.real</att> or <att>startid</att> attribute, while the ending point may be
-        recorded by either a <att>dur</att>, <att>dur.ges</att> or <att>endid</att> attribute. The
-        <att>resp</att> attribute records the editor(s) responsible for identifying or creating the
-        annotation.</p>
+      <p>The <gi scheme="MEI">annot</gi> element associates elements or regions in an encoding with
+        additional information. Its meaning depends on the context in which it appears. The region
+        of the score to which it applies can be specified in the same way as for *control events*.
+        The <att>resp</att> attribute records the editor(s) responsible for identifying or creating 
+        the annotation. <att>func</att> and <att>type</att> attributes can be used to clarify the
+        nature and interpretation of the annotation.
+      </p>
     </remarks>
   </elementSpec>
   <elementSpec ident="artic" module="MEI.shared">
@@ -4996,6 +5048,65 @@
     </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-listBibl.html">listBibl</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="biblFull" module="MEI.shared">
+    <gloss versionDate="2022-05-18" xml:lang="en">structured bibliographic description</gloss>
+    <desc xml:lang="en">Contains a structured bibliographic description in which many, 
+      but not all, components must appear in a specified order.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.pointing"/>
+      <memberOf key="model.biblLike"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.identifierLike"/>
+      </rng:zeroOrMore>
+      <rng:ref name="titleStmt"/>
+      <rng:optional>
+        <rng:ref name="editionStmt"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="physDesc"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="physLoc"/>
+      </rng:optional>
+      <rng:ref name="pubStmt"/>
+      <rng:zeroOrMore>
+        <rng:ref name="seriesStmt"/>
+      </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="notesStmt"/>
+      </rng:optional>
+      <rng:optional>
+        <rng:ref name="sourceDesc"/>
+      </rng:optional>
+      <rng:interleave>
+        <rng:optional>
+          <rng:ref name="macro.profileDescPart"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="relatedItem"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+      </rng:interleave>
+      <rng:zeroOrMore>
+        <rng:ref name="extMeta"/>
+      </rng:zeroOrMore>
+    </content>
+    <remarks xml:lang="en">
+      <p>This element shares its name with the Text Encoding Initiative (TEI) 
+        <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-biblFull.html">biblFull</ref> 
+        element. Its content model is different, however. The MEI element accommodates a greater
+        number of sub-elements necessary for the description of music-related bibliographic
+        objects.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="biblScope" module="MEI.shared">
@@ -5416,7 +5527,6 @@
       <memberOf key="att.datable"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.biblPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7348,7 +7458,6 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
-      <memberOf key="model.biblPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -7883,6 +7992,9 @@
       <rng:zeroOrMore>
         <rng:ref name="model.symbolTableLike"/>
       </rng:zeroOrMore>
+      <rng:optional>
+        <rng:ref name="clef"/>
+      </rng:optional>
       <rng:optional>
         <rng:ref name="model.keySigLike"/>
       </rng:optional>
@@ -8474,6 +8586,7 @@
     <desc xml:lang="en">Keyword or phrase which describes a resource.</desc>
     <classes>
       <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
       <memberOf key="att.lang"/>
