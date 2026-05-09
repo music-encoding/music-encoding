@@ -71,7 +71,7 @@
             <h2 id="{$data.type/@ident}"><xsl:value-of select="$data.type/@ident"/></h2>
             <div class="specs">
                 <div class="desc">
-                    <xsl:apply-templates select="$data.type/tei:desc/node()" mode="guidelines"/>                    
+                    <xsl:apply-templates select="$data.type/tei:desc/node()" mode="guidelines"/>
                 </div>
                 <xsl:sequence select="$moduleFacet"/>
                 <xsl:sequence select="$usedByFacet"/>
