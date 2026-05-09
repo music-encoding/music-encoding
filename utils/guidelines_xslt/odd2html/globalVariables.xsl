@@ -353,19 +353,19 @@
     <xsl:variable name="data.types" as="node()*">
         <xsl:choose>
             <xsl:when test="$isCompiledOdd">
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'dt']">
+                <xsl:for-each select="$mei.source//tei:dataSpec|$mei.source//tei:dataSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:when test="$isCustomization">
-                <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'dt']">
+                <xsl:for-each select="$compiled.source//tei:dataSpec|$mei.source//tei:dataSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'dt']">
+                <xsl:for-each select="$mei.source//tei:dataSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
@@ -405,19 +405,19 @@
     <xsl:variable name="macro.groups" as="node()*">
         <xsl:choose>
             <xsl:when test="$isCompiledOdd">
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$mei.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:when test="$isCustomization">
-                <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$compiled.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$mei.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>

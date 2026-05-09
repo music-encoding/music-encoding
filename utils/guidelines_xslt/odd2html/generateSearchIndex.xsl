@@ -32,7 +32,7 @@
         </xsl:variable>
         
         <xsl:variable name="macros" as="element(json:map)*">
-            <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+            <xsl:for-each select="$mei.source//tei:macroSpec">
                 <xsl:variable name="current.macro.group" select="." as="element(tei:macroSpec)"/>
                 <map xmlns="http://www.w3.org/2005/xpath-functions">
                     <string key="ident"><xsl:value-of select="$current.macro.group/@ident"/></string>
@@ -71,8 +71,8 @@
         </xsl:variable>
         
         <xsl:variable name="datatypes" as="element(json:map)*">
-            <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'dt']">
-                <xsl:variable name="current.data.type" select="." as="element(tei:macroSpec)"/>
+            <xsl:for-each select="$mei.source//tei:dataSpec">
+                <xsl:variable name="current.data.type" select="." as="element(tei:dataSpec)"/>
                 <map xmlns="http://www.w3.org/2005/xpath-functions">
                     <string key="ident"><xsl:value-of select="$current.data.type/@ident"/></string>
                     <string key="desc"><xsl:value-of select="normalize-space(string-join($current.data.type/tei:desc//text(),' '))"/></string>
