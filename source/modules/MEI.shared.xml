@@ -3464,8 +3464,31 @@
   <classSpec ident="att.staffGrp.log" module="MEI.shared" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
   </classSpec>
+  <classSpec ident="att.staffGrpIdent" module="MEI.shared" type="atts">
+    <desc xml:lang="en">Attributes for identifying the staff group associated with the current feature.</desc>
+    <attList>
+      <attDef ident="staffgrp" usage="opt">
+        <desc xml:lang="en">Signifies the staff group to which a control event applies. Mandatory when applicable.</desc>
+        <datatype maxOccurs="unbounded"> 
+          <rng:data type="positiveInteger"/>
+        </datatype>
+        <constraintSpec ident="check_staffgrpTarget" scheme="schematron">
+          <constraint>
+            <sch:rule context="@staffgrp">
+              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@staffgrp attribute
+                should have content.</sch:assert>
+              <sch:assert role="warning"
+                test="every $i in tokenize(., '\s+') satisfies $i=//mei:staffGrp/@n">Each
+                value in @staffgrp should correspond to the @n attribute of a staffGrp
+                element.</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.staffIdent" module="MEI.shared" type="atts">
-    <desc xml:lang="en">Attributes for identifying the staff associated with the current feature.</desc>
+    <desc xml:lang="en">Attributes for identifying the staff or staff group associated with the current feature.</desc>
     <attList>
       <attDef ident="staff" usage="opt">
         <desc xml:lang="en">Signifies the staff on which a notated event occurs or to which a control event
@@ -4870,6 +4893,7 @@
       <memberOf key="att.lang"/>
       <memberOf key="att.plist"/>
       <memberOf key="att.source"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="att.targetEval"/>
       <memberOf key="att.annot.anl"/>
       <memberOf key="att.annot.ges"/>
@@ -5784,6 +5808,7 @@
       <memberOf key="att.dir.ges"/>
       <memberOf key="att.dir.log"/>
       <memberOf key="att.dir.vis"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="model.controlEventLike"/>
     </classes>
     <content>
@@ -5840,8 +5865,8 @@
   </elementSpec>
   <elementSpec ident="div" module="MEI.shared">
     <gloss xml:lang="en">division</gloss>
-    <desc xml:lang="en">Major structural division of text, such as a preface, chapter or
-      section.</desc>
+    <desc xml:lang="en">Major structural division of text, such as a preface, chapter,
+      section, or a text division within the score.</desc>
     <classes>
       <memberOf key="att.basic"/>
       <memberOf key="att.classed"/>
@@ -5874,6 +5899,17 @@
       </rng:zeroOrMore>
     </content>
     <attList>
+      <attDef ident="flow" usage="opt">
+        <desc xml:lang="en">Specifies how the element is treated in terms of page flow: as inline element like a measure, or as block element like a system.</desc>
+        <valList type="closed">
+          <valItem ident="inline">
+            <desc xml:lang="en">A measure-like division.</desc>
+          </valItem>
+          <valItem ident="block">
+            <desc xml:lang="en">A system-like division.</desc>
+          </valItem>
+        </valList>
+      </attDef>
       <attDef ident="type" usage="opt">
         <desc xml:lang="en">Characterizes the textual division in some sense, using any convenient classification
           scheme or typology that employs single-token labels.</desc>
@@ -7176,8 +7212,10 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.facsimile"/>
+      <memberOf key="att.horizontalAlign"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.metadataPointing"/>
+      <memberOf key="att.verticalAlign"/>
       <memberOf key="att.xy"/>
       <memberOf key="model.pLike"/>
     </classes>
@@ -8424,7 +8462,12 @@
     <gloss xml:lang="en">staff group</gloss>
     <desc xml:lang="en">A group of bracketed or braced staves.</desc>
     <classes>
-      <memberOf key="att.common"/>
+      <memberOf key="att.basic"/>
+      <memberOf key="att.labelled"/>
+      <memberOf key="att.linking"/>
+      <memberOf key="att.nInteger"/>
+      <memberOf key="att.responsibility"/>
+      <memberOf key="att.typed"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.metadataPointing"/>
       <memberOf key="att.staffGrp.anl"/>
@@ -8542,6 +8585,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="att.tempo.anl"/>
       <memberOf key="att.tempo.ges"/>
       <memberOf key="att.tempo.log"/>
