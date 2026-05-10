@@ -173,7 +173,7 @@
                 <a class="{tools:getLinkClasses($text)}" href="#{$text}"><xsl:value-of select="$text"/></a>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:message terminate="no" select="'ERROR: Unable to identify class ' || $text || ' from tei:ident element. No link created.'"/>
+                <xsl:message terminate="no" select="'ERROR: Unable to identify datatype' || $text || ' from tei:ident element. No link created.'"/>
                 <span class="ident">
                     <xsl:apply-templates select="node()" mode="#current"/> [not available in this MEI customization]
                 </span>
