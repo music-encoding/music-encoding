@@ -60,7 +60,7 @@
     <xsl:function name="tools:getDataTypeSpecPage" as="node()">
         <xsl:param name="data.type" as="node()"/>
         
-        <xsl:variable name="refs" select="tools:getReferencesFacet(tools:getReferencingChapters($data.type/@ident, 'modelClass'))" as="node()?"/>
+        <xsl:variable name="refs" select="tools:getReferencesFacet(tools:getReferencingChapters($data.type/@ident, 'dataType'))" as="node()?"/>
         <xsl:variable name="moduleFacet" select="tools:getModuleFacet($data.type)" as="node()"/>
         <xsl:variable name="usedByFacet" select="tools:getDatatypeUsersFacet($data.type)" as="node()"/>
         <xsl:variable name="toleratedValuesFacet" select="tools:getToleratedValuesFacet($data.type)" as="node()?"/>
