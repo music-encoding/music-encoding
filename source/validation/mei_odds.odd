@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!--<?xml-model href="p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>-->
+<!--<?xml-model href="p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TEI xmlns="http://www.tei-c.org/ns/1.0"  xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:sch1x="http://www.ascc.net/xml/schematron" xmlns:teix="http://www.tei-c.org/ns/Examples" xmlns:xi="http://www.w3.org/2001/XInclude" >
   <teiHeader>
     <fileDesc>
       <titleStmt>
         <title>TEI for authoring MEI ODD</title>
-        <author>Sebastian Rahtz</author>
-        <author>Raff Viglianti</author>
+        <!--<author>Sebastian Rahtz</author>
+        <author>Raff Viglianti</author>-->
         <author>Benjamin W. Bohl</author>
       </titleStmt>
+      <editionStmt>
+        <edition>2.0.0</edition>
+      </editionStmt>
       <publicationStmt>
         <publisher>Music Encoding Initiative</publisher>
         <availability status="free">
-          <licence target="http://creativecommons.org/licenses/by-sa/3.0/"> Distributed under a Creative Commons Attribution-ShareAlike 3.0 Unported License </licence>
+          <p>This document is dual-licensed.</p>
+          <licence target="http://creativecommons.org/licenses/by-sa/3.0/">Distributed under a Creative Commons Attribution-ShareAlike 3.0 Unported License</licence>
           <licence target="http://www.opensource.org/licenses/BSD-2-Clause">
             <p>Copyright 2013 TEI Consortium.</p>
             <p>All rights reserved.</p>
@@ -28,7 +34,7 @@
         </availability>
       </publicationStmt>
       <sourceDesc>
-        <p>Written based on https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.odd</p>
+        <p>Written based on <?TODO not true! ?> https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.odd</p>
       </sourceDesc>
     </fileDesc>
   </teiHeader>
@@ -36,23 +42,232 @@
     <front>
       <div>
         <head>Foreword</head>
-        <p>This customization is based on the TEI mei_odds.odd customization for authoring TEI ODDs and is being modified to accomodate the authoring of MEI ODD files.</p>
+        <p>This customization is based on the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/custom/odd/tei_odds.odd">TEI 4.9.0 release of the tei_odds.odd customization</ref> for authoring TEI ODDs and is being modified to accomodate the authoring of MEI ODD files.</p>
+        <p>Aside from the overdue modernization of the MEI ODDs Schema, a major reason for updating to tei:4.9.0 was the introduction of <gi>constraintDecl</gi> which allows Schematron query language binding and schematron namespace declarations.</p><?TODO evaluate 4.10.0 and 4.11.0 ?>
       </div>
     </front>
     <body>
-      <div>
+      <div xml:id="documentation_structuralModifications">
         <head>Structural modifications</head>
-        <p>A major structural modification to the tei:4.9.0 definition of tei_odds is moving the <gi>schemaSpec</gi> to the <gi>back</gi> to free the <gi>body</gi> andmake space for a documentation of this <term>ODD</term>.</p>
+        <p>A major structural modification to the definition of this customization is moving the <gi>schemaSpec</gi> to the <gi>back</gi> to free the <gi>body</gi> and make space for a documentation of this <term>ODD</term>. Although not required by TEI it, makes for a clearer separation of the two.</p>
+        <p>Moreover, all the <gi>moduleRef</gi> elements have been moved into <gi>specGrp</gi> elements inside the respective sections in this documentation. This was done to facilitate accompanying the modification with some easier to read documentaiton and explanations. Theses definition now are included via <gi>specGrpRef</gi> elements into the <gi>schemaSpec</gi>.</p>
       </div>
-      <div>
-        <head>Modifications to <gi>schemaSpec</gi></head>
-        <specGrp xml:id="mod_schemaSpec">
-          
+      <div xml:id="documentation_schemaSpac">
+        <head>Modifications to the schemaSpec</head>
+        <specGrp xml:id="mod_element_schemaSpec">
+          <?TODO enforce schemaSpec in back (?for customizations only?)?>
         </specGrp>
         <list rend="bulleted">
           <item><att>source</att> has been set to <val>tei:4.9.0</val>.</item>
-          <item>The available <att>start</att> elements have been reduced to those used in the MEI ODDs, i.e., <gi>TEI</gi> and <gi>specGrp</gi>.</item>
+          <item>The available <att>start</att> elements have been reduced to those used in the current MEI ODD files, i.e., <gi>TEI</gi> and <gi>specGrp</gi>.</item>
+          <item>The <ident type="module">gaiji</ident> module has been excluded (for now).</item>
+          <item>The <ident type="module">dictionaries</ident> module has been excluded.</item>
         </list>
+      </div>
+      <div>
+        <head>Modification to the moduleRef elements</head>
+        <p>As already describe in <ptr target="#documentation_structuralModifications" /> The <gi>moduleRef</gi> elements were moved due to major structural changes to the customization file.</p>
+        <p>One of the most prominent changes to previous version of the MEI ODD schema is the drilled down inclusion of TEI modules and their respective elements. While there is a more detailed description of each module’s modifications below, there are some general principles that were applied:
+        <list>
+          <item>Only include elements currently used in MEI module definitions and guidelines</item>
+          <item>Only include modules required due to elements, attribute classes or module classes they define</item>
+        </list>
+        </p>
+        <p>Please be aware that the following does not list all modules defined by the TEI all ODD but just those, that are still included in the MEI ODD schema or had been included in the preceeding version.</p>
+        <div>
+          <head>Modifications to the TEI header module</head>
+          <specGrp xml:id="mod_module_header">
+            <moduleRef key="header" include="availability change distributor edition editionStmt fileDesc license publicationStmt sourceDesc tagsDecl teiHeader titleStmt"/>
+            <classSpec module="header" type="atts" ident="att.citeStructurePart" mode="delete" />
+            <classSpec module="header" type="atts" ident="att.patternReplacement" mode="delete" />
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI core module</head>
+          <specGrp xml:id="mod_module_core">
+            <moduleRef key="core" include="abbr desc emph foreign gloss graphic head hi item label list name note p ptr q quote ref resp respStmt term title"/>
+            <classSpec module="core" type="atts" ident="att.milestoneUnit" mode="delete" />
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI tei module</head>
+          <specGrp xml:id="mod_module_tei">
+            
+            <moduleRef key="tei"/>
+            <?TODO mei-source.xml: edition back ?>
+            <?TODO modules: seems to be all adequate errors ?>
+            <?TODO drill down kept Attribute Classes ?>
+            
+            <classSpec module="tei" type="atts" ident=" att.anchoring" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.ascribed" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.breaking" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.cReferencing" mode="delete" />
+            <!--<classSpec module="tei" type="atts" ident=" att.canonical" mode="delete" />-->
+            <classSpec module="tei" type="atts" ident=" att.citing" mode="delete" >
+              <?TODO consider for later use ?>
+            </classSpec>
+            <classSpec module="tei" type="atts" ident=" att.cmc" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.datable.w3c" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.datcat" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.declarable" mode="delete" />
+            <classSpec module="tei" type="atts" ident=" att.declaring" mode="delete" />
+            
+  
+            <classSpec module="tei" type="atts" ident="att.docStatus" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.duration.w3c" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.editLike" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.edition" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.fragmentable" mode="delete"/>
+            <!--<classSpec module="tei" type="atts" ident="att.global.rendition" mode="delete">
+              <!-\- keep to have @rend on e.g. egXML -\->
+            </classSpec>-->
+            <classSpec module="tei" type="atts" ident="att.global.responsibility" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.global.source" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.indentation" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.internetMedia" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.interpLike" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.measurement" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.notated" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.placement" mode="delete"/>
+            <!--<classSpec module="tei" type="atts" ident="att.pointing" mode="delete"/>-->
+            <classSpec module="tei" type="atts" ident="att.ranging" mode="delete"/>
+            <!--<classSpec module="tei" type="atts" ident="att.resourced" mode="delete"/>-->
+            <classSpec module="tei" type="atts" ident="att.scope" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.scoping" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.sortable" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.spanning" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.styleDef" mode="delete"/>
+            <!--<classSpec module="tei" type="atts" ident="att.typed" mode="delete"/>-->
+            <classSpec module="tei" type="atts" ident="att.written" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.ascribed.directed" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.datable" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.dimensions" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.divLike" mode="delete"/>
+            <classSpec module="tei" xml:id="GLOBAL" type="atts" ident="att.global" mode="change">
+              <classes mode="change">
+                <memberOf key="att.global.analytic" mode="delete"/>
+                <memberOf key="att.global.change" mode="delete"/>
+                <memberOf key="att.global.facs" mode="delete"/>
+                <memberOf key="att.global.linking"/>
+                
+                <memberOf key="att.global.rendition"/>
+                <memberOf key="att.global.responsibility" mode="delete"/>
+                <memberOf key="att.global.source" mode="delete"/>
+              </classes>
+            </classSpec>
+            <classSpec module="tei" type="atts" ident="att.handFeatures" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.media" mode="delete">
+              <?TODO there are two occurences each, of @widht and @height in the specs which I think don’t make sense?>
+            </classSpec>
+            <!--<classSpec module="tei" type="atts" ident="att.naming" mode="delete">
+              <!-\- keep to propagate att.canonical to tei:name -\->
+            </classSpec>-->
+            <classSpec module="tei" type="atts" ident="att.pointing.group" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.segLike" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.transcriptional" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.damaged" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.timed" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.formula" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.locatable" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.partials" mode="delete"/>
+            <!--<classSpec module="tei" type="atts" ident="att.personal" mode="delete">
+              <!-\- keep to propagate att.naming and att.personal to tei:name -\->
+            </classSpec>-->
+            <classSpec module="tei" type="atts" ident="att.calendarSystem" mode="delete"/>
+            <classSpec module="tei" type="atts" ident="att.duration.iso" mode="delete"/>
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI gaiji module</head>
+          <p>The module has been removed from the customization (for now).</p>
+        </div>
+        <div>
+          <head>Modifications to the TEI textstructure module</head>
+          <specGrp xml:id="mod_module_textstructure">
+            <moduleRef key="textstructure" include="TEI back body div text">
+              <!-- N.B. doesn’t define Attribute Classes -->
+            </moduleRef>
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI tagdocs module</head>
+          <p>As the members of this module are crucial for writing TEI ODD, it is the only module included without restrictions.</p>
+          <specGrp xml:id="mod_module_tagdocs">
+            <moduleRef key="tagdocs">
+              <!-- N.B. all Attribute Classe from tagdocs should be available when defining schemata with ODDs -->
+            </moduleRef>
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI dictionaries module</head>
+          <p>The module has been removed from the customization.</p>
+        </div>
+        <div>
+          <head>Modifications to the TEI linking module</head>
+          <p>No elements from this module are included, the sole resason for the module inclusion is its definition of <ident type="class">att.global.linking</ident>.</p>
+          <specGrp xml:id="mod_modules_linking">
+            <moduleRef key="linking" include="" />
+          </specGrp>
+        </div>
+        <div>
+          <head>Modifications to the TEI figures module</head>
+          <p>The elements allowed from this modules are <gi>cell</gi>, <gi>figDesc</gi>, <gi>figure</gi>, <gi>formula</gi>, <gi>row</gi>, and <gi>table</gi>. The only attribute class defined in this module (<ident type="class">att.tableDecoration</ident> has been removed for now, because so far, it is not being used in the MEI ODD files.</p>
+          <specGrp xml:id="mod_module_figures">
+            <moduleRef key="figures" include="cell figDesc figure formula row table">
+              <!-- N.B. only defines Attribute Class att.tableDecoration which could make sense when writing guidelines -->
+            </moduleRef>
+            <classSpec ident="att.tableDecoration" module="figures" mode="delete" type="atts" />
+          </specGrp>
+        </div>
+      </div>
+      <div>
+        <head>A new module: xinclude</head>
+        <p>The <ident type="file">mei-source.xml</ident> file relies on XInclude to reference the individual ODD files of the MEI Guidelines chapters and module definitions. To facilitate the validation of <ident type="file">mei-source.xml</ident> even without active resolution of XInclude statements, the definition of the <gi scheme="xi">include</gi> element was borrowed from the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd">TEI XInclude customization</ref> by the means of <soCalled>ODD chaining</soCalled>.</p>
+        <specGrp xml:id="add_element_xi-include">
+          <elementRef key="include" source="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd" />
+        </specGrp>
+        <p>Because a stray element without module assignment did not seem adequate a corresponding <ident type="module">xinclude</ident> module was added.</p>
+        <specGrp xml:id="add_module_xinclude">
+          <moduleSpec ident="xinclude">
+            <desc xml:lang="en" versionDate="2026-05-08">Groups elements from the XInclude namespace.</desc>
+          </moduleSpec>
+          <specGrpRef target="#add_element_xi-include"/>
+          <specGrpRef target="#mod_element_xi-include"/>
+        </specGrp>
+        <p>The <gi scheme="xi">include</gi> element then was modified (and this is where the actual <soCalled>ODD chaining</soCalled> happens), to be member of the <ident type="module">xinclude</ident> module. Moreover the definition of the <gi scheme="xi">include</gi> element was drilled down to what is actually in use in the MEI ODD files:
+        <list>
+          <item>available on the div-level, i.e., member of the <ident type="class">model.divLike</ident> to allow inclusion of the guidelines chapters</item>
+          <item>available on the div-level, i.e., member of the <ident type="class">model.oddRef</ident> to allow inclusion of the module definitions</item>
+          <item>no content, because MEI ODD files do not encode, e.g., a <gi scheme="xi">fallback</gi></item>
+          <item>require the presence of a <att>href</att></item>
+        </list></p>
+        <specGrp xml:id="mod_element_xi-include">
+          <elementSpec ident="include" ns="http://www.w3.org/2001/XInclude" xmlns:xi="http://www.w3.org/2001/XInclude" mode="change">
+            <classes mode="replace">
+              <memberOf key="model.divLike"/>
+              <memberOf key="model.oddRef" />
+            </classes>
+            <content>
+              <empty/>
+            </content>
+            <attList>
+              <attDef ident="href" mode="change" usage="req" />
+            </attList>
+          </elementSpec>
+        </specGrp>
+      </div>
+      <div>
+        <head>Future Considerations</head>
+        <p>The work on the MEI ODDs surfaced some ideas and future needs:
+          <list>
+            <item>Improve bibliographic references and citation by allowing<gi>bibl</gi>, <gi>cit</gi> from the core module</item>
+            <item>Improve index generation by allowing <gi>divGen</gi> and adding some custom types to the XSLTs responsible for generating the guidelines</item>
+            <item>Improve encoding of terms by allowing <gi>gloss</gi></item>
+            <item>Improve referencing values from code examples by allowing <gi>mentioned</gi></item>
+            <item>Improve citeability by adding and implementing <gi>citeStructure</gi></item>
+            <item>Improve encoding of tables by adding <ident type="class">att.tableDecoration</ident> from the <ident type="module">gaiji</ident> module</item>
+          </list>
+          </p>
       </div>
     </body>
     <back>
@@ -63,39 +278,19 @@
           <sch:ns prefix="sch1x" uri="http://www.ascc.net/xml/schematron"/>
         </constraintDecl>
 
-        <moduleRef url="http://relaxng.org/relaxng.rng"/>
-        <moduleRef key="header"/>
-        <moduleRef key="core"/>
-        <moduleRef key="tei"/>
-        <moduleRef key="gaiji"/>
-        <moduleRef key="textstructure"/>
-        <moduleRef key="tagdocs"/>
-        <moduleRef key="dictionaries"/>
-        <moduleRef key="linking"/>
-        <moduleRef key="figures"/>
-
-        <!-- delete teiCorpus -->
-        <elementSpec ident="teiCorpus" mode="delete" module="core"/>
-
-
-
-
-        <!-- XI:INCLUDE definitions from https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd -->
-
-        <elementRef key="include" source="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd" />
+        <moduleRef url="https://www.tei-c.org/release/xml/tei/Exemplars/relaxng.rng"/>
         
-        <elementSpec ident="include" ns="http://www.w3.org/2001/XInclude" xmlns:xi="http://www.w3.org/2001/XInclude" mode="change">
-          <classes mode="replace">
-            <memberOf key="model.divLike"/>
-            <memberOf key="model.oddRef" />
-          </classes>
-          <content>
-            <empty/>
-          </content>
-          <attList>
-            <attDef ident="href" mode="change" usage="req" />
-          </attList>
-        </elementSpec>
+        <specGrpRef target="#mod_module_header"/>
+        <specGrpRef target="#mod_module_core"/>
+        <specGrpRef target="#mod_module_tei"/>
+        <!--<moduleRef key="gaiji"/>-->
+        <specGrpRef target="#mod_module_textstructure"/>
+        <specGrpRef target="#mod_module_tagdocs"/>
+        <!--<moduleRef key="dictionaries"/>-->
+        <specGrpRef target="#mod_module_linking"/>
+        <specGrpRef target="#mod_module_figures"/>
+        <specGrpRef target="#add_module_xinclude"/>
+        
       </schemaSpec>
     </back>
   </text>
