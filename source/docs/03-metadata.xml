@@ -98,8 +98,9 @@
             <head>Metadata in MEI</head>
             <div xml:id="headerintro" type="div2">
                <head>Introduction</head>
-               <p>Metadata means "data about data", <abbr>i.e.</abbr>, information about various aspects of an encoding at hand. There are many different types of metadata, which MEI tries to order according to their respective scope or perspective, as described in <ptr target="#headerstructure"/>. MEI’s approach to metadata is heavily influenced by other existing standards and models, such as TEI, MARC, and FRBR. It attempts to reflect both current library practice and common scholarly methods, for example in the field of source descriptions (see chapter <ptr target="#msdesc"/>).</p>
+               <p>Metadata means <q>data about data</q>, <abbr>i.e.</abbr>, information about various aspects of an encoding at hand. There are many different types of metadata, which MEI tries to order according to their respective scope or perspective, as described in <ptr target="#headerstructure"/>. MEI’s approach to metadata is heavily influenced by other existing standards and models, such as TEI, MARC, and FRBR. It attempts to reflect both current library practice and common scholarly methods, for example in the field of source descriptions (see chapter <ptr target="#msdesc"/>).</p>
                <p>This chapter thus addresses the description of an encoded item so that the musical text, as well as its sources, encoding, and revisions are all thoroughly documented. Such documentation is necessary for scholars using the texts, for software processing them, and for catalogers in libraries and archives. Together these descriptions and declarations provide an electronic analog to the title page attached to a printed work. They also constitute an equivalent for the content of the code books or introductory manuals customarily accompanying electronic data sets.</p>
+               <p>For large encoding projects, the Functional Requirements for Bibliographic Records (<abbr>FRBR</abbr>) capabilities of MEI provides most flexibility and descriptive capabilities. However, MEI also provides simpler, non-FRBR methods for source description for those cases where the FRBR capbilities are not needed. These are further discussed in <ptr target="#nonfrbrsourcedescription" />.</p>
             </div>
             <div xml:id="headerstructure" type="div2">
                <head>Structure of the MEI Header</head>
@@ -119,6 +120,19 @@
                   <item>This concept is covered in section <ptr target="#headerusecases"/>.</item>
                   <item>A <hi rend="italic">revision history</hi>, tagged <gi scheme="MEI">revisionDesc</gi>, which allows the encoder to provide a history of changes made during the development of the electronic text. The revision history is important for version control and for resolving questions about the history of a file. The MEI elements used to encode the revision description are described in section <ptr target="#headerRevisionDescription"/>.</item>
                </list>
+               <div xml:id="nonfrbrsourcedescription" type="div3">
+                  <head>Non-FRBR Source Description</head>
+                  <p>MEI allows two methodologies to be used when doing metadata capture and source description. The <abbr>FRBR</abbr> methodology (<ptr target="#FRBR"/>) gives encoders a mechanism for building detailed descriptions of bibliographic entities. Most bibliographic-based projects should favor the FRBR method.</p>
+                  <p>However, there are cases where detailed bibliographic analysis at the level required by the FRBR module is not possible or desirable. These may include situations such as retro-conversion of non-FRBR catalogues, or capturing the output of notation encoding software where only minimal source description capabilities are available. In these cases, encoders may capture metadata in the MEI header without using FRBR encoding entities and instead choose a simplified methodology for source description.</p>
+                  <p>The <gi scheme="MEI">sourceDesc</gi> element as a child of the <gi scheme="MEI">fileDesc</gi> element may be used to capture simple bibliographic descriptions. An example is given below.</p>
+                  <p><gi scheme="MEI">source</gi> may use <gi scheme="MEI">bibl</gi>, <gi scheme="MEI">biblStruct</gi>, or <gi scheme="MEI">biblFull</gi>. The first two permit bibliographic citation for the souce, while <gi scheme="MEI">biblFull</gi> allows bibliographic description. In other words, <gi scheme="MEI">bibl</gi> and <gi scheme="MEI">biblStruct</gi> are not as fully-featured as <gi scheme="MEI">biblFull</gi>.</p>
+                  <p>
+                     <figure>
+                        <head/>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample080.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+               </div>
             </div>
             <div xml:id="commonconcepts" type="div2">
                <head>Common Metadata Concepts</head>
@@ -135,19 +149,15 @@
                   <p>
                      <specList>
                         <specDesc key="title"/>
-                        <specDesc key="arranger"/>
-                        <specDesc key="author"/>
-                        <specDesc key="composer"/>
                         <specDesc key="contributor"/>
+                        <specDesc key="creator"/>
                         <specDesc key="editor"/>
                         <specDesc key="funder"/>
-                        <specDesc key="librettist"/>
-                        <specDesc key="lyricist"/>
                         <specDesc key="sponsor"/>
                         <specDesc key="respStmt"/>
                      </specList>
                   </p>
-                  <p>The <gi scheme="MEI">title</gi> element contains the chief name of the electronic work. Its content takes the form considered appropriate by its creator. The element may be repeated, if the work has more than one title (perhaps in different languages). Where the electronic work is derived from an existing source text, it is strongly recommended that the title for the former should be derived from the latter, but clearly distinguishable from it, for example by the addition of a phrase such as ‘: an electronic transcription’ or ‘a digital edition’. This will distinguish the electronic work from the source text in citations and in catalogs, which contain descriptions of both types of material.</p>
+                  <p>The <gi scheme="MEI">title</gi> element contains the chief name of the electronic work. Its content takes the form considered appropriate by its creator. The element may be repeated, if the work has more than one title (perhaps in different languages). Where the electronic work is derived from an existing source text, it is strongly recommended that the title for the former should be derived from the latter, but clearly distinguishable from it, for example by the addition of a phrase such as <q>: an electronic transcription</q> or <q>a digital edition</q>. This will distinguish the electronic work from the source text in citations and in catalogs, which contain descriptions of both types of material.</p>
                   <p>
                      <figure>
                         <head>Encoding of title informations</head>
@@ -162,7 +172,7 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample021.txt" parse="text"/></egXML>
                      </figure>
                   </p>
-                  <p>The electronic work will also have an external name (its ‘filename’ or ‘data set name’) or reference number on the computer system where it resides at any time. This name is likely to change frequently, as new copies of the file are made on the computer system. Its form is entirely dependent on the particular computer system in use and thus cannot always easily be transferred from one system to another. Moreover, a given work may be composed of many files. For these reasons, these Guidelines strongly recommend that such names should not be used as the title for any electronic work.</p>
+                  <p>The electronic work will also have an external name (its <emph>filename</emph> or <emph>data set name</emph>) or reference number on the computer system where it resides at any time. This name is likely to change frequently, as new copies of the file are made on the computer system. Its form is entirely dependent on the particular computer system in use and thus cannot always easily be transferred from one system to another. Moreover, a given work may be composed of many files. For these reasons, these Guidelines strongly recommend that such names should not be used as the title for any electronic work.</p>
                   <p>Helpful guidance on the formulation of useful descriptive titles in difficult cases may be found in the Anglo-American Cataloguing Rules (Gorman and Winkler, 1978, chapter 25) or in equivalent national-level bibliographical documentation.</p>
                   <p>It is important to keep in mind that the <gi scheme="MEI">titleStmt</gi> element provides <hi rend="italic">structured</hi> metadata. Preserving the exact rendition of a title page is possible using the <gi scheme="MEI">titlePage</gi> element (see <ptr target="#textTitlePages"/>).</p>
                   <p>The title of a <gi scheme="MEI">work</gi> is given by using the <gi scheme="MEI">title</gi> element directly, as many other child elements of <gi scheme="MEI">titleStmt</gi> are available on work directly.</p>
@@ -177,6 +187,7 @@
                         <specDesc key="change"/>
                         <specDesc key="edition"/>
                         <specDesc key="editionStmt"/>
+                        <specDesc key="expression"/>
                         <specDesc key="genState"/>
                         <specDesc key="imprint"/>
                         <specDesc key="monogr"/>
@@ -184,6 +195,7 @@
                         <specDesc key="series"/>
                         <specDesc key="seriesStmt"/>
                         <specDesc key="titleStmt"/>
+                        <specDesc key="work"/>
                      </specList>
                   </p>
                   <p>At a minimum, the creator of the musical text and the creator of the file should be identified. If the bibliographic description is for a corpus, identify the creator of the corpus. Optionally also include the names of others involved in the transcription or elaboration of the text, sponsors, and funding agencies. The name of the person responsible for physical data input need not normally be recorded, unless that person is also intellectually responsible for some aspect of the creation of the file.</p>
@@ -224,7 +236,7 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample025.txt" parse="text"/></egXML>
                      </figure>
                   </p>
-                  <p>Values from the MARC relator code list (<ref target="http://www.loc.gov/marc/relators/relacode.html">http://www.loc.gov/marc/relators/relacode.html</ref>) or term list (<ref target="http://www.loc.gov/marc/relators/relaterm.html">http://www.loc.gov/marc/relators/relaterm.html</ref>) are recommended for <att>role</att>, where applicable.</p>
+                  <p>Values from the MARC relator code list (<ref target="http://www.loc.gov/marc/relators/relacode.html">http://www.loc.gov/marc/relators/relacode.html</ref>) or term list (<ref target="http://www.loc.gov/marc/relators/relaterm.html">http://www.loc.gov/marc/relators/relaterm.html</ref>) are recommended for <att>role</att>, where applicable. A preset of these relators are available as datatypes of <ident type="macro">data.RELATORS</ident> as a basic (<ident type="macro">data.MARCRELATORS.basic</ident>) and extended (<ident type="macro">data.MARCRELATORS.extended</ident>) setup.</p>
                   <p>Where it is necessary to group responsibilities and names, multiple responsibility statements may be used. For example:</p>
                   <p>
                      <figure>
@@ -239,10 +251,10 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample027.txt" parse="text"/></egXML>
                      </figure>
                   </p>
-                  <p>However, eliminating explanatory text and relying on standardized values for <att>role</att>, as in the following example, allows data creation and processing tools of the greatest simplicity.</p>
+                  <p>However, eliminating explanatory text and relying on standardized values for <att>role</att>, as in the following example (using the MARC relator code list), allows data creation and processing tools of the greatest simplicity.</p>
                   <p>
                      <figure>
-                        <head>Standardized values for <att>role</att></head>
+                        <head>Standardized values for <att>role</att> (data.RELATORS)</head>
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample028.txt" parse="text"/></egXML>
                      </figure>
                   </p>
@@ -250,7 +262,23 @@
                <div xml:id="headerAssociatingMetadataAndData" type="div3">
                   <head>Associating Metadata and Data</head>
                   <p>In the MEI header, the <att>data</att> attribute may be used to associate metadata with related notational elements.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="att.pointing" atts="data"/>
+                     </specList>
+                  </p>
                   <p>Similarly, in the body of the MEI document, the <att>decls</att> attribute may be used to associate parts of the encoded text with related metadata.</p>
+                  <p>
+                     <specList>
+                        <specDesc key="att.metadataPointing" atts="decls"/>
+                     </specList>
+                  </p>
+                  <p>
+                     <figure>
+                        <head>Example of associating metadata and data</head>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="feasible"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample099.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
                   <p>The most useful associations of this type are between the bibliographic description of a source and the material taken from it.</p>
                </div>
             </div>
@@ -299,12 +327,12 @@
                            <specDesc key="respStmt"/>
                         </specList>
                      </p>
-                     <p>For printed texts, the term ‘edition’ applies to the set of all the identical copies of an item produced from one master copy and issued by a particular publishing agency or a group of such agencies. A change in the identity of the distributing body or bodies does not normally constitute a change of edition, while a change in the master copy does.</p>
+                     <p>For printed texts, the term <emph>edition</emph> applies to the set of all the identical copies of an item produced from one master copy and issued by a particular publishing agency or a group of such agencies. A change in the identity of the distributing body or bodies does not normally constitute a change of edition, while a change in the master copy does.</p>
                      <p>For electronic texts, the notion of a master copy is not entirely appropriate, since they are far more easily copied and modified than printed ones; nonetheless, the term edition may be used for a particular state of a machine-readable text at which substantive changes are made and fixed. Synonymous terms used in these Guidelines are version, level, and release. The words revision and update, by contrast, are used for minor changes to a file which do not amount to a new edition.</p>
                      <p>No simple rule can specify how substantive changes have to be before they are regarded as producing a new edition, rather than a simple update. The general principle proposed here is that the production of a new edition entails a significant change in the intellectual content of the file, rather than its encoding or appearance. The addition of analytic coding to a text would thus constitute a new edition, while automatic conversion from one coded representation to another would not. Changes relating to the character code or physical storage details, corrections of misspellings, simple changes in the arrangement of the contents and changes in the output format do not normally constitute a new edition, whereas the addition of new information (<abbr>e.g.</abbr>, annotations, sound or images, links to external data) almost always does.</p>
                      <p>Clearly, there will always be borderline cases and the matter is somewhat arbitrary. The simplest rule is: if you think that your file is a new edition, then call it such. An edition statement is optional for the first release of a computer file; it is mandatory for each later release, though this requirement cannot be enforced.</p>
                      <p>Note that all changes in a file, whether or not they are regarded as constituting a new edition or simply a revision, should be independently noted in the revision description section of the file header (see section <ptr target="#headerRevisionDescription"/>).</p>
-                     <p>The edition element should contain phrases describing the edition or version, including the word 'edition', 'version', or an equivalent term, together with a number or date, or terms indicating difference from other editions such as 'new edition', 'revised edition', etc. Any dates that occur within the edition statement should be marked with the <gi scheme="MEI">date</gi> element. The <att>n</att> attribute of the edition element may be used as elsewhere to supply any formal identification (such as a version number) for the edition.</p>
+                     <p>The edition element should contain phrases describing the edition or version, including the word <emph>edition</emph>, <emph>version</emph>, or an equivalent term, together with a number or date, or terms indicating difference from other editions such as <emph>new edition</emph>, <emph>revised edition</emph>, etc. Any dates that occur within the edition statement should be marked with the <gi scheme="MEI">date</gi> element. The <att>n</att> attribute of the edition element may be used as elsewhere to supply any formal identification (such as a version number) for the edition.</p>
                      <p>One or more <gi scheme="MEI">respStmt</gi> elements may also be used to supply statements of responsibility for the edition in question. These may refer to individuals or corporate bodies and can indicate functions such as that of a reviser, or can name the person or body responsible for the provision of supplementary matter, of appendices, etc., in a new edition.</p>
                      <p>Some examples follow:</p>
                      <p>
@@ -328,10 +356,10 @@
                      </p>
                      <p>The <gi scheme="MEI">extent</gi> element describes the approximate size of a text as stored on some carrier medium, whether digital or non-digital, specified in any convenient units.</p>
                      <p>For printed books, information about the carrier, such as the kind of medium used and its size, are of great importance in cataloging procedures. The print-oriented rules for bibliographic description of an item’s medium and extent need some re-interpretation when applied to electronic media. An electronic file exists as a distinct entity quite independently of its carrier and remains the same intellectual object whether it is stored as file on a hard disc drive, a CD-ROM, a set of USB devices, or in the internet. Since, moreover, these Guidelines are specifically aimed at facilitating transparent document storage and interchange, any purely machine-dependent information should be irrelevant as far as the file header is concerned.</p>
-                     <p>This is particularly true of information about file-type although library-oriented rules for cataloging often distinguish two types of computer file: ‘data’ and ‘programs’. This distinction is quite difficult to draw in some cases, for example, hypermedia or texts with built-in search and retrieval software.</p>
+                     <p>This is particularly true of information about file-type although library-oriented rules for cataloging often distinguish two types of computer file: <emph>data</emph> and <emph>programs</emph>. This distinction is quite difficult to draw in some cases, for example, hypermedia or texts with built-in search and retrieval software.</p>
                      <p>Although it is equally system-dependent, some measure of the size of the computer file may be of use for cataloging and other practical purposes. Because the measurement and expression of file size is fraught with difficulties, only very general recommendations are possible; the element <gi scheme="MEI">extent</gi> should contain a phrase indicating the size or approximate size of the computer file in one of the following ways:</p>
                      <list rend="bulleted">
-                        <item>in bytes of a specified length (<abbr>e.g.</abbr>, ‘4000 bytes’)</item>
+                        <item>in bytes of a specified length (<abbr>e.g.</abbr>, <val>4000 bytes</val>)</item>
                         <item>as falling within a range of values, for example:</item>
                         <item>less than 1 Mb</item>
                         <item>between 1 Mb and 5 Mb</item>
@@ -440,7 +468,7 @@
                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample036.txt" parse="text"/></egXML>
                         </figure>
                      </p>
-                     <p>The <gi scheme="MEI">identifier</gi> element may be used to supply any identifying number associated with the series, including both standard numbers such as an ISSN and particular issue numbers. Its <att>type</att> attribute is used to categorize the number further, taking the value 'ISSN' for an ISSN, for example.</p>
+                     <p>The <gi scheme="MEI">identifier</gi> element may be used to supply any identifying number associated with the series, including both standard numbers such as an ISSN and particular issue numbers. Its <att>type</att> attribute is used to categorize the number further, taking the value <val>ISSN</val> for an ISSN, for example.</p>
                      <p>
                         <figure>
                            <head>Example of <gi scheme="MEI">seriesStmt</gi> with <gi scheme="MEI">identifier</gi></head>
@@ -472,7 +500,7 @@
                   </div>
                   <div xml:id="headerNotesStatement" type="div4">
                      <head>Notes Statement</head>
-                     <p>The <gi scheme="MEI">notesStmt</gi> element is the sixth component of the <gi scheme="MEI">fileDesc</gi> element and is optional. If used, it contains one or more <gi scheme="MEI">annot</gi> elements, each containing a single piece of descriptive information of the kind treated as ‘general notes’ in traditional bibliographic descriptions.</p>
+                     <p>The <gi scheme="MEI">notesStmt</gi> element is the sixth component of the <gi scheme="MEI">fileDesc</gi> element and is optional. If used, it contains one or more <gi scheme="MEI">annot</gi> elements, each containing a single piece of descriptive information of the kind treated as <q>general notes</q> in traditional bibliographic descriptions.</p>
                      <p>
                         <specList>
                            <specDesc key="notesStmt"/>
@@ -481,16 +509,16 @@
                      <p>Some information found in the notes area in conventional bibliography has been assigned specific elements in these Guidelines; in particular the following items should be tagged as indicated, rather than as general notes:</p>
                      <list rend="bulleted">
                         <item>the nature, scope, artistic form, or purpose of the work; also the genre or other intellectual category to which it may belong. These should be formally described within the <gi scheme="MEI">workList</gi> element (section <ptr target="#headerWorkDescription"/>).</item>
-                        <item>bibliographic details relating to the source or sources of an electronic text: <abbr>e.g.</abbr>, ‘Transcribed from a facsimile of the 1743 publication’. These should be formally described in the <gi scheme="MEI">sourceDesc</gi> element (section <ptr target="#headerSourceDescription"/>).</item>
+                        <item>bibliographic details relating to the source or sources of an electronic text: <abbr>e.g.</abbr>, <q>Transcribed from a facsimile of the 1743 publication</q>. These should be formally described in the <gi scheme="MEI">sourceDesc</gi> element (section <ptr target="#headerSourceDescription"/>).</item>
                         <item>further information relating to publication, distribution, or release of the text, including sources from which the text may be obtained, any restrictions on its use or formal terms on its availability. These should be placed in the appropriate division of the <gi scheme="MEI">pubStmt</gi> element (section <ptr target="#headerPublicationDistribution"/>).</item>
                         <item>publicly documented numbers associated <hi rend="italic">with the file</hi> should be placed in an <gi scheme="MEI">altId</gi> element within the <gi scheme="MEI">meiHead</gi> element. International Standard Serial Numbers (ISSN), International Standard Book Numbers (ISBN), and other internationally agreed upon standard numbers that uniquely identify an item, should be treated in the same way, rather than as specialized bibliographic notes. As described elsewhere, identifiers <hi rend="italic">for sources of the file</hi> should be recorded within the <gi scheme="MEI">sourceDesc</gi>.</item>
                      </list>
                      <p>Nevertheless, the <gi scheme="MEI">notesStmt</gi> element may be used to record potentially significant details about the file and its features, for example:</p>
                      <list rend="bulleted">
-                        <item>dates, when they are relevant to the content or condition of the computer file: <abbr>e.g.</abbr>, ‘manual dated 2010’, ‘file validated Apr 2011’</item>
-                        <item>names of persons or bodies connected with the technical production, administration, or consulting functions of the effort which produced the file, if these are not named in statements of responsibility in the title or edition statements of the file description: <abbr>e.g.</abbr>, ‘Historical commentary provided by members of the Big Symphony Orchestra’</item>
-                        <item>availability of the file in an additional medium or information not already recorded about the availability of documentation: <abbr>e.g.</abbr>, ‘User manual is loose-leaf in eleven paginated sections’</item>
-                        <item>language of work and abstract, if not encoded in the <gi scheme="MEI">langUsage</gi> element, <abbr>e.g.</abbr>, ‘Text in English with stage directions in French and German’</item>
+                        <item>dates, when they are relevant to the content or condition of the computer file: <abbr>e.g.</abbr>, <q>manual dated 2010</q>, <q>file validated Apr 2011</q></item>
+                        <item>names of persons or bodies connected with the technical production, administration, or consulting functions of the effort which produced the file, if these are not named in statements of responsibility in the title or edition statements of the file description: <abbr>e.g.</abbr>, <q>Historical commentary provided by members of the Big Symphony Orchestra</q></item>
+                        <item>availability of the file in an additional medium or information not already recorded about the availability of documentation: <abbr>e.g.</abbr>, <q>User manual is loose-leaf in eleven paginated sections</q></item>
+                        <item>language of work and abstract, if not encoded in the <gi scheme="MEI">langUsage</gi> element, <abbr>e.g.</abbr>, <q>Text in English with stage directions in French and German</q></item>
                      </list>
                      <p>Each such item of information may be tagged using the general-purpose <gi scheme="MEI">annot</gi> element. Groups of annotations are contained within the <gi scheme="MEI">notesStmt</gi> element, as in the following example:</p>
                      <p>
@@ -509,20 +537,39 @@
                   </div>
                   <div xml:id="headerSourceDescription" type="div4">
                      <head>Source Description</head>
-                     <p>The <gi scheme="MEI">sourceDesc</gi> element is the seventh and final component of the <gi scheme="MEI">fileDesc</gi> element. In MEI, <gi scheme="MEI">sourceDesc</gi> is a grouping element containing one or more <gi scheme="MEI">source</gi> elements, each of which records details of a source from which the computer file is derived. This might be a printed text or manuscript, another computer file, an audio or video recording, or a combination of these. An electronic file may also have no source, if what is being cataloged is an original text created in electronic form.</p>
+                     <p>The <gi scheme="MEI">sourceDesc</gi> element is the seventh and final
+                        component of the <gi scheme="MEI">fileDesc</gi> element. It records
+                        information about sources that have been used to create the MEI encoding,
+                        such as a printed text or manuscript, another computer file, an audio or
+                        video recording, or a combination of these.</p>
                      <p>
                         <specList>
                            <specDesc key="sourceDesc"/>
                            <specDesc key="source"/>
+                           <specDesc key="p"/>
                         </specList>
                      </p>
-                     <p>The <gi scheme="MEI">source</gi> element may contain</p>
+                     <p><gi scheme="MEI">sourceDesc</gi> may contain one or more <gi scheme="MEI"
+                        >source</gi> elements, each of which records details about a single
+                        source. Alternatively, it may contain a paragraph that provides a brief
+                        textual explanation regarding the sources used. This is particularly
+                        useful when the MEI file represents an original work created in electronic
+                        form.</p>
+                     <p>
+                        <figure>
+                           <head/>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve">
+                    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample098.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The <gi scheme="MEI">source</gi> element may contain:</p>
                      <p>
                         <specList>
                            <specDesc key="head"/>
                            <specDesc key="locusGrp"/>
                            <specDesc key="locus"/>
                            <specDesc key="bibl"/>
+                           <specDesc key="biblFull"/>
                            <specDesc key="biblStruct"/>
                         </specList>
                      </p>
@@ -564,8 +611,8 @@
                            <specDesc key="application" atts="version"/>
                         </specList>
                      </p>
-                     <p>Each <gi scheme="MEI">application</gi> element identifies the current state of one software application with regard to the current file. This element is a member of the att.datable class, which provides a variety of attributes for associating this state with a date and time, or a temporal range. The <att>xml:id</att> and <att>version</att> attributes should be used to uniquely identify the application and its major version number (for example, 'Music Markup Tool 1.5'). It is not intended that a software application should add a new <gi scheme="MEI">application</gi> element each time it touches the file.</p>
-                     <p>The following example shows how these elements might be used to record the fact that version 1.5 of an application called ‘Music Markup Tool’ has an interest in two parts of a document. The parts concerned are accessible at the URLs given as targets of the two <gi scheme="MEI">ptr</gi> elements. When used on <gi scheme="MEI">application</gi>, the <att>date</att> attribute specifies when the application was employed, in this case June 6, 2011. Version information for the application should be placed in <att>version</att>.</p>
+                     <p>Each <gi scheme="MEI">application</gi> element identifies the current state of one software application with regard to the current file. This element is a member of the att.datable class, which provides a variety of attributes for associating this state with a date and time, or a temporal range. The <att>xml:id</att> and <att>version</att> attributes should be used to uniquely identify the application and its major version number (for example, <q>Music Markup Tool 1.5</q>). It is not intended that a software application should add a new <gi scheme="MEI">application</gi> element each time it touches the file.</p>
+                     <p>The following example shows how these elements might be used to record the fact that version 1.5 of an application called <q>Music Markup Tool</q> has an interest in two parts of a document. The parts concerned are accessible at the URLs given as targets of the two <gi scheme="MEI">ptr</gi> elements. When used on <gi scheme="MEI">application</gi>, the <att>date</att> attribute specifies when the application was employed, in this case June 6, 2011. Version information for the application should be placed in <att>version</att>.</p>
                      <p>
                         <figure>
                            <head>Example of <gi scheme="MEI">application</gi></head>
@@ -582,7 +629,7 @@
                         <label>correction</label>
                         <item>States how and under what circumstances corrections have been made in the text. <att>corrlevel</att> indicates the degree of correction applied to the text. <att>method</att> indicates the method employed to mark corrections and normalizations. Was the text corrected during or after data capture? If so, were corrections made silently or are they marked using the tags described in chapter <ptr target="#editTrans"/>? What principles have been adopted with respect to omissions, truncations, dubious corrections, alternate readings, false starts, repetitions, etc.?</item>
                         <label>interpretation</label>
-                        <item>Describes the scope of any analytic or interpretive information added to the transcription of the music. Has any analytic or ‘interpretive’ information been provided — that is, information which is felt to be non-obvious, or potentially contentious? If so, how was it generated? How was it encoded?</item>
+                        <item>Describes the scope of any analytic or interpretive information added to the transcription of the music. Has any analytic or <hi rend="italic">interpretive</hi> information been provided — that is, information which is felt to be non-obvious, or potentially contentious? If so, how was it generated? How was it encoded?</item>
                         <label>normalization</label>
                         <item>Indicates the extent of normalization or regularization of the original source carried out in converting it to electronic form. <att>method</att> indicates the method employed to mark corrections and normalizations. Was the text normalized, for example by regularizing any non-standard enharmonic spellings, etc.? If so, were normalizations performed silently or are they marked using the tags described in chapter <ptr target="#editTrans"/>? What authority was used for the regularization? Also, what principles were used when normalizing numbers to provide the standard values for the value attribute described in sections <ptr target="#sharedNames"/>–<ptr target="sharedAddresses"/> and what format is used for them?</item>
                         <label>segmentation</label>
@@ -702,6 +749,13 @@
                      <figure>
                         <head>Shorter form for recording changes</head>
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample077.txt" parse="text"/></egXML>
+                     </figure>
+                  </p>
+                  <p>Within the change log the status of the document and its content can be recorded using the <att>status</att> attribute. This indicates the status a document became at a specific change. If the status of the document differs from the newest <gi scheme="MEI">change</gi> record, the status of the document can also be recorded in the root element of the file (<gi scheme="MEI">mei</gi>, <gi scheme="MEI">meiHead</gi>, <gi scheme="MEI">meiCorpus</gi>, <gi scheme="MEI">music</gi>). <att>status</att> is only available in <gi scheme="MEI">change</gi> and the root elements of regular MEI, also in <label>mei-all_anyStart</label> (see <ptr target="#meiCustomizations"/>).</p>
+                  <p>
+                     <figure>
+                        <head></head>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample097.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                </div>
@@ -895,15 +949,16 @@
                      <specDesc key="work"/>
                   </specList>
                </p>
-               <p>All the components of <gi scheme="MEI">work</gi> are optional, but they must occur in the following order:</p>
-               <list rend="numbered">
+               <p>All the components of <gi scheme="MEI">work</gi> are optional. They may occur in any order.</p>
+               <list rend="bulleted">
                   <item>
                      <gi scheme="MEI">identifier</gi>
                   </item>
                   <item>
                      <gi scheme="MEI">title</gi>
                   </item>
-                  <item>Responsibility-like elements including <gi scheme="MEI">composer</gi>, <gi scheme="MEI">lyricist</gi>, <gi scheme="MEI">contributor</gi> and others</item>
+                  <item>
+                     <gi scheme="MEI">respStmt</gi></item>
                   <item>
                      <gi scheme="MEI">incip</gi>
                   </item>
@@ -957,14 +1012,12 @@
                      <specList>
                         <specDesc key="identifier"/>
                         <specDesc key="title"/>
-                        <specDesc key="arranger"/>
-                        <specDesc key="author"/>
-                        <specDesc key="composer"/>
                         <specDesc key="contributor"/>
+                        <specDesc key="creator"/>
+                        <specDesc key="dedication"/>
                         <specDesc key="editor"/>
                         <specDesc key="funder"/>
-                        <specDesc key="librettist"/>
-                        <specDesc key="lyricist"/>
+                        <specDesc key="respStmt"/>
                         <specDesc key="sponsor"/>
                      </specList>
                   </p>
@@ -1043,7 +1096,7 @@
                   </p>
                   <p>The <gi scheme="MEI">creation</gi> element is intended to contain a brief, machine-processable statement of the circumstances of the work’s creation. Its content is limited to text and the <gi scheme="MEI">date</gi> and <gi scheme="MEI">geogName</gi> elements.</p>
                   <p>The <gi scheme="MEI">history</gi> element is a container for additional non-bibliographic details relating to a work. It may use the <gi scheme="MEI">eventList</gi> element to provide a list of key events in the creation and performance history of the work. The <gi scheme="MEI">eventList</gi> element is comprised of <gi scheme="MEI">event</gi> elements containing a brief description of the associated event, including dates and locations where the event took place. An event list may use the <att>type</att> attribute to distinguish between multiple event lists with different functions, such as a list of events in the compositional process and a list of performance dates.</p>
-                  <p>Event lists and other text components, such as paragraphs, tables, lists, and text divisions (<gi scheme="MEI">div</gi>) may be interleaved when an 'essay-like' work history is desired.</p>
+                  <p>Event lists and other text components, such as paragraphs, tables, lists, and text divisions (<gi scheme="MEI">div</gi>) may be interleaved when an <q>essay-like</q> work history is desired.</p>
                   <p>The <gi scheme="MEI">event</gi> element permits either a text-centric or a data-centric model. The text-centric model is provided for prose descriptions, while the data-centric model accommodates event descriptions that consist of a collection of descriptive phrases. In the text-centric model, paragraphs, tables, and lists may be used. In the data-centric model, however, only certain phrase-level elements, may appear.</p>
                </div>
                <div xml:id="headerWorkLanguage" type="div3">
@@ -1077,7 +1130,7 @@
                   <p>The <gi scheme="MEI">perfMedium</gi> element provides the possibility of describing a work in terms of its medium of performance; that is, the performing forces required. In the case of a dramatic work, the dramatis personae and associated voice qualities may be enumerated using <gi scheme="MEI">castList</gi>. The <gi scheme="MEI">perfResList</gi> element describes the necessary instrumental and vocal resources.</p>
                   <div xml:id="headerWorkCast" type="div4">
                      <head>Cast Lists</head>
-                     <p>A cast list is a specialized form of list, conventionally found at the start or end of a dramatic work, usually listing all the speaking/singing and non-speaking/singing roles in the play, often with additional description (‘Cataplasma, a maker of Periwigges and Attires’) or the name of an actor or actress (‘Old Lady Squeamish. Mrs Rutter’).</p>
+                     <p>A cast list is a specialized form of list, conventionally found at the start or end of a dramatic work, usually listing all the speaking/singing and non-speaking/singing roles in the play, often with additional description (<hi rend="italic">Cataplasma, a maker of Periwigges and Attires</hi>) or the name of an actor or actress (<hi rend="italic">Old Lady Squeamish. Mrs Rutter</hi>).</p>
                      <p>
                         <specList>
                            <specDesc key="castList"/>
@@ -1153,7 +1206,7 @@
                         </figure>
                      </p>
                      <p>The preceding example also demonstrates how instrumental doublings can be accommodate through the use of nested <gi scheme="MEI">perfRes</gi> elements. Only the outer-most perfRes element should use the <att>count</att> attribute. Its value should reflect the total number of performers, not the number of instruments played.</p>
-                     <p>The <gi scheme="MEI">perfRes</gi> element provides the <att>codedval</att> attribute, which can be used to record a coded value that represents the string value stored as the element’s content. It is recommended that coded values be taken from a standardized list, such as the <ref target="http://www.urfm.braidense.it/risorse/searchmedium_en.php">International Association of Music Libraries' Medium of Performance Codes List</ref> or the <ref target="http://www.loc.gov/standards/valuelist/marcmusperf.html">MARC Instruments and Voices Code List</ref>.</p>
+                     <p>The <gi scheme="MEI">perfRes</gi> element provides the <att>codedval</att> attribute, which can be used to record a coded value that represents the string value stored as the element’s content. It is recommended that coded values be taken from a standardized list, such as the <ref target="http://www.urfm.braidense.it/risorse/searchmedium_en.php">International Association of Music Libraries’ Medium of Performance Codes List</ref> or the <ref target="http://www.loc.gov/standards/valuelist/marcmusperf.html">MARC Instruments and Voices Code List</ref>.</p>
                      <p>
                         <figure>
                            <head><gi scheme="MEI">perfRes</gi> element provides the <att>codedval</att> attribute</head>
@@ -1333,7 +1386,9 @@
                   </specList>
                </p>
                <p>Many of these elements are already described in chapter <ptr target="#headerstructure"/>, especially in <ptr target="#headerWorkDescription"/>.</p>
-               <p>The <gi scheme="MEI">manifestationList</gi> is available to create lists of physical sources representing a work, for instance for use in a thematic catalog or a critical edition. The <gi scheme="MEI">manifestation</gi> child element corresponds to the <ptr target="#FRBR"/> level of the same name, that is, it describes embodiments of certain expressions of a work. The list below reflects the order in which the optional components of manifestation must occur. <specList>
+               <p>The <gi scheme="MEI">manifestationList</gi> is available to create lists of physical sources representing a work, for instance for use in a thematic catalog or a critical edition. The <gi scheme="MEI">manifestation</gi> child element corresponds to the <ptr target="#FRBR"/> level of the same name, that is, it describes embodiments of certain expressions of a work. The components of manifestation may occur in any order.
+                  </p>
+               <p><specList>
                      <specDesc key="locus"/>
                   </specList>
                   <specList>
@@ -1407,7 +1462,7 @@
                       </specList>
                    </p>
                      <p>The element <gi scheme="MEI">condition</gi> may contain either plain text or elements that can be used to structure the description (<abbr>e.g.</abbr>, for linking) in order to describe the state or condition of a source.</p>
-                     <p>The highest hierarchical level to describe the condition, in general, is at <gi scheme="MEI">physDesc</gi>. For a detailed description of special interest, the element <gi scheme="MEI">condition</gi> can also be used on lower hierarchical levels (see section “contained by” in the element definition).</p>
+                     <p>The highest hierarchical level to describe the condition, in general, is at <gi scheme="MEI">physDesc</gi>. For a detailed description of special interest, the element <gi scheme="MEI">condition</gi> can also be used on lower hierarchical levels (see section <q>contained by</q> in the element definition).</p>
                      <p>The <gi scheme="MEI">condition</gi> element as a direct child of <gi scheme="MEI">physDesc</gi> should be used to describe the condition of a source. To describe the condition of parts of a source (<abbr>e.g.</abbr>, the binding) the <gi scheme="MEI">condition</gi> element can also be used for a detailed description of that aspect (<abbr>e.g.</abbr>, within <gi scheme="MEI">binding</gi> ). The detail provided, and the structure of these descriptions, depend on your own encoding guidelines.</p>
                <p><specList>
                         <specDesc key="colophon"/>
@@ -1423,10 +1478,9 @@
                         </specList>
                      </p>
                      <p>The <gi scheme="MEI">titlePage</gi> element, modelled after a similar element in the Encoded Archival Description (EAD), may occur within the textual matter preceding or following the musical content of the encoding. Since a diplomatic transcription of the title page is often necessary to accurately identify musical material contained within a source, the <gi scheme="MEI">titlePage</gi> element may also be used within the metadata header as a child of the <gi scheme="MEI">physDesc</gi> element.</p>
-                     <p>Detailed analysis of the title page and other preliminaries of older printed books and manuscripts is of major importance in descriptive bibliography and the cataloging of printed books. The following elements are suggested as a means of encoding the major features of most title pages for faithful rendition:</p>
+                     <p>Detailed analysis of the title page and other preliminaries of older printed books and manuscripts is important in descriptive bibliography. The following elements are suggested as a means of encoding the structural features of most title pages:</p>
                      <p>
                         <specList>
-                           <specDesc key="titlePage"/>
                            <specDesc key="p"/>
                            <specDesc key="table"/>
                            <specDesc key="list"/>
@@ -1434,7 +1488,7 @@
                            <specDesc key="lg"/>
                         </specList>
                      </p>
-                     <p>The following example shows the encoding of the title page of <name ref="https://en.wikipedia.org/wiki/Ralph_Vaughan_Williams">Vaughan Williams'</name> <hi rend="italic">On Wenlock Edge</hi>. Note the use of the <gi scheme="MEI">lb</gi> element to mark the beginning of new lines present in the original.</p>
+                     <p>The following example shows the encoding of the title page of <name ref="https://en.wikipedia.org/wiki/Ralph_Vaughan_Williams">Vaughan Williams’</name> <hi rend="italic">On Wenlock Edge</hi>. Note the use of the <gi scheme="MEI">lb</gi> element to mark the beginning of new lines present in the original.</p>
                      <p>
                         <figure>
                            <head>Example of <gi scheme="MEI">titlePage</gi> describing Vaughan Williams' <hi rend="italic">On Wenlock Edge</hi></head>
@@ -1442,6 +1496,13 @@
                         </figure>
                      </p>
                      <p>The physical appearance of title page information is often of considerable importance. One approach to capturing the appearance is to use the <gi scheme="MEI">rend</gi> element, described in chapter <ptr target="#sharedTextRendition"/> to specify the placement of each of the components of the title page. Another would be to employ a CSS stylesheet. Finally, a module customized for the description of typographic entities such as pages, lines, rules, etc., bearing special-purpose attributes to describe line-height, leading, degree of kerning, font, etc. could be employed.</p>
+                     <p>A title page can also contain an <gi scheme="MEI">epigraph</gi>, which is a short quotation or motto placed at the beginning of a text (or a major division of it) to set a tone, theme, or interpretive frame. An epigraph typically consists of the quoted text plus (when known) a citation/attribution.</p>
+                     <p>
+                        <figure>
+                           <head>Example of <gi scheme="MEI">epigraph</gi></head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample102.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
                   </div>
                   <div xml:id="physicalProperties" type="div4">
                      <head>Physical Properties</head>
@@ -1463,7 +1524,7 @@
                      <p><specList>
                         <specDesc key="extent"/>
                      </specList></p>
-                     <p>The element <gi scheme="MEI">extent</gi> is used to express size in units such as ‘number of pages’, ‘number of folios’, ‘records’, ‘bytes’, ‘physical components’, etc. For specifying the physical dimensions of the material—for example, height and width—the use of the <gi scheme="MEI">dimensions</gi> element is recommended.</p>
+                     <p>The element <gi scheme="MEI">extent</gi> is used to express size in units such as <q>number of pages</q>, <q>number of folios</q>, <q>records</q>, <q>bytes</q>, <q>physical components</q>, etc. For specifying the physical dimensions of the material—for example, height and width—the use of the <gi scheme="MEI">dimensions</gi> element is recommended.</p>
                      <p>
                         <figure>
                            <head>Example of <gi scheme="MEI">extent</gi></head>
@@ -1505,7 +1566,7 @@
                            <specDesc key="watermark"/>
                         </specList>
                      </p>
-                     <p> The element <gi scheme="MEI">watermark</gi> can be used to describe watermarks or similar devices of filigranology. It is important to distinguish whether the watermark to be described consists of only one sign or is composed of main and countermarks. The completeness of the watermark, its positioning on the page, and the time period of the paper's production and use also play a role.</p>
+                     <p> The element <gi scheme="MEI">watermark</gi> can be used to describe watermarks or similar devices of filigranology. It is important to distinguish whether the watermark to be described consists of only one sign or is composed of main and countermarks. The completeness of the watermark, its positioning on the page, and the time period of the paper’s production and use also play a role.</p>
                      <p>It is recommended to use at least the elements <gi scheme="MEI">title</gi>, <gi scheme="MEI">date</gi>, <gi scheme="MEI">annot</gi> and <gi scheme="MEI">locus</gi> in the description:</p>
                      <p>
                         <figure>
@@ -1548,10 +1609,23 @@
                         </figure>
                      </p>
                      <p><specList>
+                           <specDesc key="physMedium"/>
+                     </specList></p>
+                     <p><gi scheme="MEI">physMedium</gi> is intended to capture technical metadata in a narrative form. One should think of this element as a container for notes on or a synopsis of the physical characteristics of an item rather than a place to capture the characteristics themselves. It can be used instead of or in addition to the structured sub-elements of <gi scheme="MEI">physDesc</gi>. When more detailed, granular description is required, prefer the dedicated sub-elements (e.g. <gi scheme="MEI">supportDesc</gi>, <gi scheme="MEI">extent</gi>, <gi scheme="MEI">dimensions</gi>, <gi scheme="MEI">handList</gi>, <gi scheme="MEI">bindingDesc</gi>), using <gi scheme="MEI">physMedium</gi> to summarise or annotate them. For example,</p>
+                     <p>
+                        <figure>
+                           <head>Example of <gi scheme="MEI">physMedium</gi></head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve">
+      <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample100.txt" parse="text"/>
+    </egXML>
+                        </figure>
+                     </p>
+                     <p>In exceptional cases, more than one <gi scheme="MEI">physMedium</gi> element may be used (for example, to keep clearly distinct notes separated). However, authors should not treat multiple <gi scheme="MEI">physMedium</gi> elements as the default mechanism for modelling different materials; where possible, record multiple materials within a single <gi scheme="MEI">physMedium</gi> using internal structure and/or employ the appropriate structured sub-elements of <gi scheme="MEI">physDesc</gi>.</p>
+                     <p><specList>
                         <specDesc key="scoreFormat"/>
                      </specList></p>
                      <p>The <gi scheme="MEI">scoreFormat</gi> element is a form of classification. This element is part of <gi scheme="MEI">physDesc</gi> because within the MARC21 standard, the format of the music (score, piano score, etc.) is defined as a physical property.</p>
-                     <p>For describing the <gi scheme="MEI">scoreFormat</gi> a standard value list can be used, e.g., MARC21 (see “20 - Format of music (006/03)”, <ref target="https://www.loc.gov/marc/bibliographic/bd008m.html">https://www.loc.gov/marc/bibliographic/bd008m.html</ref>) or RDA (see <ref target="https://www.rdaregistry.info/termList/formatNoteMus/">https://www.rdaregistry.info/termList/formatNoteMus/</ref>). The values can be kept using the attributes <att>authority</att> and <att>authURI</att>.</p>
+                     <p>For describing the <gi scheme="MEI">scoreFormat</gi> a standard value list can be used, e.g., MARC21 (see <q>20 - Format of music (006/03)</q>, <ref target="https://www.loc.gov/marc/bibliographic/bd008m.html">https://www.loc.gov/marc/bibliographic/bd008m.html</ref>) or RDA (see <ref target="https://www.rdaregistry.info/termList/formatNoteMus/">https://www.rdaregistry.info/termList/formatNoteMus/</ref>). The values can be kept using the attributes <att>authority</att> and <att>authURI</att>.</p>
                      <p>
                         <figure>
                            <head>Example of <gi scheme="MEI">scoreFormat</gi></head>
@@ -1597,7 +1671,7 @@
                      <p>Multiple signatures (groups of nested pages, also known as "gatherings" or "quires") bound together can be reflected by encoding a sequence of <gi scheme="MEI">bifolium</gi> elements (with their respective contents). If the binding of a source is unknown, but <gi scheme="MEI">foliaDesc</gi> is needed for other reasons, it is recommended to use a sequence of <gi scheme="MEI">folium</gi> elements only, with no indication of nesting at all.</p>
                      <div xml:id="linkingsurfaces" type="div4">
                         <head>Linking surface elements</head>
-                        <p>The <gi scheme="MEI">surface</gi> element and it's children are used to relate musical content with digitizations and specific image zones on them (see <ptr target="#facsimileElements"/>). <gi scheme="MEI">surface</gi> elements are always encoded in sequence within <gi scheme="MEI">facsimile</gi>, and thus lack the expressiveness of <gi scheme="MEI">foliaDesc</gi>. However, it is possible to relate these two concepts.</p>
+                        <p>The <gi scheme="MEI">surface</gi> element and it’s children are used to relate musical content with digitizations and specific image zones on them (see <ptr target="#facsimileElements"/>). <gi scheme="MEI">surface</gi> elements are always encoded in sequence within <gi scheme="MEI">facsimile</gi>, and thus lack the expressiveness of <gi scheme="MEI">foliaDesc</gi>. However, it is possible to relate these two concepts.</p>
                         <p>
                            <gi scheme="MEI">folium</gi> offers two specific attributes:</p>
                         <p>
@@ -1689,7 +1763,7 @@
                               <specDesc key="cutout" atts="removed.by"/>
                            </specList>
                         </p>
-                        <p>The dimensions (<att>width</att>, <att>height</att>) of the parent element (e.g., <gi scheme="MEI">folium</gi>) indicate the size of the bounding box of the remaining part of the page. That is, if the complete lower half of a page has been cut, the <att>width</att> and <att>height</att> attributes describe the remaining upper half. If, in contrast, only the lower right quarter of the page has been cut, these attributes still indicate the size of the full page (assuming that the removed section was a regular rectangle).The dimensions (<att>width</att>, <att>heigh</att>) on cutout itself are only to be used when there is a "gap" in the manuscript that allows to specify the dimensions of that missing part. In this case, the bounding box dimensions are given, together with <att>x</att> and <att>y</att> to indicate the upper left point on the original page. If, however, the removed section is available by itself, then a corresponding <gi scheme="MEI">folium</gi> (or <gi scheme="MEI">bifolium</gi>) should be placed inside the cutout element, and should provide it's own dimensions using <att>width</att> and <att>height</att> there. In this case, <att>width</att> and <att>height</att> on cutout is expendable.</p>
+                        <p>The dimensions (<att>width</att>, <att>height</att>) of the parent element (e.g., <gi scheme="MEI">folium</gi>) indicate the size of the bounding box of the remaining part of the page. That is, if the complete lower half of a page has been cut, the <att>width</att> and <att>height</att> attributes describe the remaining upper half. If, in contrast, only the lower right quarter of the page has been cut, these attributes still indicate the size of the full page (assuming that the removed section was a regular rectangle).The dimensions (<att>width</att>, <att>heigh</att>) on cutout itself are only to be used when there is a <emph>gap</emph> in the manuscript that allows to specify the dimensions of that missing part. In this case, the bounding box dimensions are given, together with <att>x</att> and <att>y</att> to indicate the upper left point on the original page. If, however, the removed section is available by itself, then a corresponding <gi scheme="MEI">folium</gi> (or <gi scheme="MEI">bifolium</gi>) should be placed inside the cutout element, and should provide it’s own dimensions using <att>width</att> and <att>height</att> there. In this case, <att>width</att> and <att>height</att> on cutout is expendable.</p>
                         <p>The genetic aspect of applying patches or cutting out parts of a page is described in <ptr target="#genetic"/>.</p>
                      </div>
                   </div>
@@ -1700,7 +1774,18 @@
                            <specDesc key="layoutDesc"/>
                            <specDesc key="supportDesc"/>
                         </specList>
-                        </p>
+                     </p>
+                     <p>Distinguish the elements: If the issue is primarily page organization (columns/ruled lines/staves and how writing fits into the page design), use <gi scheme="MEI">layoutDesc</gi>. If you are describing the physical carrier (paper/parchment and its features), use <gi scheme="MEI">supportDesc</gi>.</p>
+                     <p>
+                        The <gi scheme="MEI">layoutDesc</gi> element is used to describe the layout of text and/or music on the page, i.e., the organization of the writing/printing space and recurring page design features. This is the place to document layout regimes such as single vs. multiple columns, changes in layout across sections, typical distribution of music/text blocks, and other page-planning evidence (including recurring ruling patterns, staff ruling regimes, or typical line/staff counts when those are stable enough to be meaningful). 
+                     </p>
+                     <p>
+                        <gi scheme="MEI">layoutDesc</gi> should describe the architecture of a page. If the manuscript exhibits multiple distinct layout patterns (e.g., different quires, different campaigns, or later additions with a different layout), document these differences explicitly in separate statements. See also <gi scheme="MEI">accMat</gi>, <gi scheme="MEI">addDesc</gi> and <gi scheme="MEI">decoDesc</gi>, <gi scheme="MEI">sealDesc</gi> or <gi scheme="MEI">supportDesc</gi>.
+                     </p>
+                     <p>
+                        The element <gi scheme="MEI">supportDesc</gi> is used to describe the material support (the carrier) of the item, i.e., what the leaves/pages are made of and relevant physical characteristics of that support. This includes the predominant material (optionally expressed via <att>material</att>, e.g., paper/parchment/mixed) as well as descriptive statements about features that materially affect identification and handling of the source (e.g., thickness, preparation, damage, repairs, discoloration). To record these in more detail, use the structured elements in <gi scheme="MEI">physDesc</gi>. There you can also record information on watermarks using the intended <gi scheme="MEI">watermarkDesc</gi> element. For recording the order of leaves and pages, MEI provides an element called <gi scheme="MEI">foliation</gi>.</p>
+                     <p><gi scheme="MEI">supportDesc</gi> is the correct place for information that helps answer questions such as: Is the object paper or parchment? Is it mixed? Are there distinguishing physical features of the support itself? When helpful, include extent-style statements (number of leaves/pages) and concise notes on the condition as it relates to the support.
+                     </p>
                   </div>
                   <div xml:id="scriptDesc" type="div4">
                      <head>Description of Script</head>
@@ -1709,6 +1794,9 @@
                            <specDesc key="scriptDesc"/>
                         </specList>
                      </p>
+                     <p>The scripts and hands used in the item can be described in <gi scheme="MEI">scriptDesc</gi>. The description records what is necessary to characterize the writing (or multiple writings) in a way that supports identification, dating, localization, and interpretation. Typical statements include the general script type(s), notable features (e.g., ductus, letterforms at a high level), and the presence of multiple hands or later additions. When an item mixes script types, the distribution may be captured (e.g., “rubrics in a more formal display script, main text in cursive”).
+                        </p>
+                     <p><gi scheme="MEI">scriptDesc</gi> is suitable for a brief summary (“main text in one cursive hand; later additions in a second hand”). For a more detailed account where required (e.g., distinguishing the main hand from a correcting hand, or different inks corresponding to different hands), the structured elements <gi scheme="MEI">handList</gi> and <gi scheme="MEI">hand</gi> may be used.</p>
                   </div>
                   <div xml:id="addDesc" type="div4">
                      <head>Additional Elements for Source Description</head>
@@ -1728,6 +1816,7 @@
                            </figure>
                         </p>
                         <p>For <gi scheme="MEI">captureMode</gi> see <ptr target="#audioAndOther"/>.</p>
+                        <p>Typographic and typeface features of printed sources (or printed parts within otherwise mixed sources) can be described in <gi scheme="MEI">typeDesc</gi>. This includes the identification of typefaces/font styles where possible, the use of multiple typefaces (e.g., contrasting display type on title pages vs. text type), and notable printing characteristics that help characterize the artifact (e.g., consistent use of a particular type family, mixtures that may indicate printing campaigns, or typographic features that support dating/localization).</p>
                      </div>
                      <div xml:id="sourcesAdditions" type="div5">
                         <head>Handwriting, Additions, Accompaning</head>
@@ -1738,8 +1827,16 @@
                               <specDesc key="handList"/>
                            </specList>
                         </p>
-                        <p>In documents (handwritten or printed) there can be various kinds of entries, additions, corrections, marginalia and revisions; all these interventions in the “original” manuscript can be documented under <gi scheme="MEI">addDesc</gi>. However, it is important to understand that these are not additions to the musical text directly. These additions to the document can come from the composer himself, copyists, typesetters, publishers, previous owners, or librarians. These entries are usually indicated in the continuous text with an indication of the location within the document as well as the means of writing used. E.g. “Auf fol. 109v links mit Bleistift von Schindler „NB (Sch.) Hier fehlen 8 Takte (auch im Chor). jedoch die eine spätere […]“” (see <ref target="https://digital.staatsbibliothek-berlin.de/werkansicht?PPN=PPN756658373&amp;PHYSID=PHYS_0398&amp;DMDID=DMDLOG_0005">facsimile</ref>).
+                        <p>
+                           <gi scheme="MEI">accMat</gi> can be used to describe accompanying material that is physically or historically closely associated with the described item, e.g., loose or bound-in documents, fragments, later additions, inserts, or other non-contemporaneous materials kept with the source. It is important to record enough detail to identify what the accompanying material is and how it relates to the item (optionally including extent, content summary, dates, provenance notes, etc.).
                         </p>
+                        <p>
+                           <figure>
+                              <head>Example of using <gi scheme="MEI">accMat</gi></head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample103.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                        <p>In documents (handwritten or printed) there can be various kinds of entries, additions, corrections, marginalia and revisions; all these interventions in the <q>original</q> manuscript can be documented under <gi scheme="MEI">addDesc</gi>. However, it is important to understand that these are not additions to the musical text directly. These additions to the document can come from the composer himself, copyists, typesetters, publishers, previous owners, or librarians. These entries are usually indicated in the continuous text with an indication of the location within the document as well as the means of writing used. E.g. <quote>Auf fol. 109v links mit Bleistift von Schindler „NB (Sch.) Hier fehlen 8 Takte (auch im Chor). jedoch die eine spätere […]“</quote> (see <ref target="https://digital.staatsbibliothek-berlin.de/werkansicht?PPN=PPN756658373&amp;PHYSID=PHYS_0398&amp;DMDID=DMDLOG_0005">facsimile</ref>).</p>
                         <p>This entry could be encoded as follows:</p>
                         <p>
                            <figure>
@@ -1792,6 +1889,7 @@
                               <specDesc key="secFolio"/>
                            </specList>
                         </p>
+                        <p>The <gi scheme="MEI">catchwords</gi> element is used to mark up (catch-)phrases that indicate the text on the following page. This is common in librettos, e.g., G. F. Handel: Giulio Cesare in Egitto (<ref target="https://archive.org/details/giuliocesareineg00hand/page/12/mode/2up">p. 12-13</ref>) or printed music books, e.g., in Brasenose College UB/S III 18/1 (<ref target="https://digital.bodleian.ox.ac.uk/objects/aeb0a34b-c27c-47be-a69c-1ff818810e50/surfaces/25cf11f5-65fe-40ea-9925-4ec5eb6448c4/">fol. B1r</ref>).</p>
                      </div>
                </div>
                </div>

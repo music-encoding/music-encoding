@@ -19,6 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI">
   <moduleSpec ident="MEI">
@@ -548,6 +549,22 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.BOOLEAN.unknown" module="MEI" type="dt">
+    <desc xml:lang="en">Boolean attribute values and "unknown".</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="true">
+          <desc xml:lang="en">True.</desc>
+        </valItem>
+        <valItem ident="false">
+          <desc xml:lang="en">False.</desc>
+        </valItem>
+        <valItem ident="unknown">
+          <desc xml:lang="en">Unknown.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.CANCELACCID" module="MEI" type="dt">
     <desc xml:lang="en">Indicates where cancellation accidentals are shown in a key signature.</desc>
     <content>
@@ -601,19 +618,22 @@
     <content>
       <valList type="closed">
         <valItem ident="G">
-          <desc xml:lang="en">G clef (Unicode 1D11E).</desc>
+          <desc xml:lang="en">G clef (<abbr>e.g.</abbr>, Unicode 1D11E).</desc>
         </valItem>
         <valItem ident="GG">
-          <desc xml:lang="en">Double G clef. Sounds one octave lower than G clef. (See remarks on usage below.)</desc>
-        </valItem>
-        <valItem ident="F">
-          <desc xml:lang="en">F clef (Unicode 1D122).</desc>
+          <desc xml:lang="en">Double G clef. Sounds one octave lower than G clef. (<abbr>e.g.</abbr>, SMuFL E055) See remarks on usage below.</desc>
         </valItem>
         <valItem ident="C">
-          <desc xml:lang="en">C clef (Unicode 1D121).</desc>
+          <desc xml:lang="en">C clef (<abbr>e.g.</abbr>, Unicode 1D121).</desc>
+        </valItem>
+        <valItem ident="F">
+          <desc xml:lang="en">F clef (<abbr>e.g.</abbr>, Unicode 1D122).</desc>
+        </valItem>
+        <valItem ident="gamma">
+          <desc xml:lang="en">Gamma clef depicting the locus of gamma-ut</desc>
         </valItem>
         <valItem ident="perc">
-          <desc xml:lang="en">Drum clef (Unicode 1D125 or Unicode 1D126).</desc>
+          <desc xml:lang="en">Drum clef (<abbr>e.g.</abbr>, Unicode 1D125 or Unicode 1D126).</desc>
         </valItem>
         <valItem ident="TAB">
           <desc xml:lang="en">Tablature "clef"; <abbr>i.e.</abbr>, usually "TAB" rendered vertically.</desc>
@@ -1846,12 +1866,13 @@
           <desc xml:lang="en">90 degree turn up (similar to Unicode 231F at end of line, 231E at start).</desc>
         </valItem>
         <valItem ident="angleright">
-          <desc xml:lang="en">90 degree turn right (syntactic sugar for "angledown" for vertical or angled
-            lines).</desc>
+          <desc xml:lang="en">90 degree turn right (syntactic sugar for "angledown" for vertical or angled lines).</desc>
         </valItem>
         <valItem ident="angleleft">
-          <desc xml:lang="en">90 degree turn left (syntactic sugar for "angleup" for vertical or angled
-            lines).</desc>
+          <desc xml:lang="en">90 degree turn left (syntactic sugar for "angleup" for vertical or angled lines).</desc>
+        </valItem>
+        <valItem ident="angleboth">
+          <desc xml:lang="en">90 degree turn left and right (T-shaped anchor).</desc>
         </valItem>
         <valItem ident="arrow">
           <desc xml:lang="en">Filled, triangular arrowhead (similar to Unicode U+25C0 or SMuFL U+EB78).</desc>
@@ -1863,12 +1884,10 @@
           <desc xml:lang="en">Unfilled, triangular arrowhead (similar to Unicode U+25C1 or SMuFL U+EB82).</desc>
         </valItem>
         <valItem ident="harpoonleft">
-          <desc xml:lang="en">Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode
-            U+21BD).</desc>
+          <desc xml:lang="en">Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode U+21BD).</desc>
         </valItem>
         <valItem ident="harpoonright">
-          <desc xml:lang="en">Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode
-            U+21BC).</desc>
+          <desc xml:lang="en">Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode U+21BC).</desc>
         </valItem>
         <valItem ident="H">
           <desc xml:lang="en">Hauptstimme (Unicode U+1D1A6 or SMuFL U+E860).</desc>
@@ -3037,6 +3056,9 @@
         <valItem ident="tab">
           <desc xml:lang="en">Tablature notation.</desc>
         </valItem>
+        <valItem ident="tab.staff-like">
+          <desc xml:lang="en">"Notehead" notation: a hybrid between staff and tablature notation consisting of solid, stemless noteheads on a CMN staff with tablature rhythm flags placed above the staff.</desc>
+        </valItem>
         <valItem ident="tab.guitar">
           <desc xml:lang="en">Tablature notation for guitars (includes "spanish" lute tablature). Frets are indicated using numbers. Courses closest to the player's feet are at the top of the staff.</desc>
         </valItem>
@@ -3380,7 +3402,7 @@
         <rng:param name="pattern">[i|m|t][1-6]</rng:param>
       </rng:data>
     </content>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
 <note slur="i1 i2"/>
 <note slur="t1"/>

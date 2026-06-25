@@ -89,14 +89,14 @@
                <head>The Staff Definition</head>
                <div xml:id="tablature-def" type="div3">
                   <head>Defining the Notation</head>
-                  <p>Tablatures come in a variety of types or notations, varying according to instrument but also according to historical context. The notation used is defined on the <gi scheme="MEI">staffDef</gi> element using the <att>notationtype</att> attribute. Possible values are: <val>tab.guitar</val>, <val>tab.lute.italian</val>, <val>tab.lute.french</val> and <val>tab.lute.german</val>.</p>
+                  <p>Tablatures come in a variety of types or notations, varying according to instrument but also according to historical context. The notation used is defined on the <gi scheme="MEI">staffDef</gi> element using the <att>notationtype</att> attribute. Possible values are: <val>tab.guitar</val>, <val>tab.lute.italian</val>, <val>tab.lute.french</val>, <val>tab.lute.german</val> and <val>tab.staff-like</val>.</p> 
                   <p>The <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi> element is used to define the number of horizontal lines used in a staff.</p>
                   <p>
                      <figure>
                         <head/>
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample011.txt" parse="text"/></egXML>
                      </figure>
-                  </p>
+                  </p>  
                </div>
                <div xml:id="tablature-tuning" type="div3">
                   <head>The Instrument Setup and Tuning</head>
@@ -181,11 +181,23 @@
                   </figure>
                </p>
                </div>
+               <div xml:id="tab-staff-like" type="div3">
+               <head>Special Case: 'Notehead' Notation</head>
+                  <p>A special kind of <att>notationtype</att> is <val>tab.staff-like</val>, also referred to as 'notehead notation'. This notationtype is a hybrid between CMN and tablature that uses solid, stemless noteheads on a CMN staff, with tablature rhythm flags placed above the staff. It provides only pitch and onset information, and gives no interpretation of note duration or voice leading; as such, it faithfully transcribes tablature into a staff-like form.</p>
+                  <p><val>tab.staff-like</val> differs from the other tablature <att>notationtype</att>s in the following ways. The <gi scheme="MEI">staffDef</gi> and <gi scheme="MEI">note</gi> are structured following the conventions of the Common Music Notation repertoire (see <ptr target="#cmnDefs"/>): in <gi scheme="MEI">staffDef</gi>, the attribute <att>lines</att> always has value <val>5</val> and the elements <gi scheme="MEI">clef</gi> and <gi scheme="MEI">keySig</gi> are required. The element <gi scheme="MEI">note</gi> requires the attributes <att>pitch</att> and <att>oct</att>. Unlike in other tablature notation types, the element <gi scheme="MEI">tuning</gi> in <gi scheme="MEI">staffDef</gi> and the attributes <att>tab.course</att> and <att>tab.fret</att> on <gi scheme="MEI">note</gi> are now optional.</p>
+                  <p>
+                     <figure>
+                        <head />
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code"
+                           xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/tablature/tablature-sample018.txt" parse="text"/></egXML>
+                     </figure>
+                  </p> 
+               </div>
                <div xml:id="tablature-vertical-org" type="div3">
                   <head>Vertical Organisation in German Lute Tablature</head>
-                  <p>Unlike other types of lute tablature, German lute tablature encodes the course and the fret information simultaneously, and in that sense is different from the staff-based (<abbr>i.e.</abbr>, Italian and French) lute tablature types. Vertical positioning thus does not correspond to the course to be played, and may instead reflect aesthetic or layout conventions or, in some cases, indicate voice leading. Mechanisms for encoding vertical organisation of the tablature notes in horizontal strands (<abbr>i.e.</abbr>, ‘rows’ or ‘lines’) are thus required.</p>
+                  <p>Unlike other types of lute tablature, German lute tablature encodes the course and the fret information simultaneously, and in that sense is different from the staff-based (<abbr>i.e.</abbr>, Italian and French) lute tablature types. Vertical positioning thus does not correspond to the course to be played, and may instead reflect aesthetic or layout conventions or, in some cases, indicate voice leading. Mechanisms for encoding vertical organisation of the tablature notes in horizontal strands (<abbr>i.e.</abbr>, <q>rows</q> or <q>lines</q>) are thus required.</p>
                   <list rend="bulleted">
-                     <item>The <att>tab.align</att> attribute on <gi scheme="MEI">staffDef</gi> specifies the vertical alignment of the tablature notes. It typically takes two of the four data.VERTICALALIGNMENT values (<val>top</val> and <val>bottom</val>), and can be used to encode a consistent alignment of the tablature notes towards the top row or the bottom row. As with <att>valign</att>, <val>top</val> is the default value for <att>tab.align</att>. Therefore, in practice, <att>tab.align</att> is only required in the ‘bottom’ scenario.</item>
+                     <item>The <att>tab.align</att> attribute on <gi scheme="MEI">staffDef</gi> specifies the vertical alignment of the tablature notes. It typically takes two of the four data.VERTICALALIGNMENT values (<val>top</val> and <val>bottom</val>), and can be used to encode a consistent alignment of the tablature notes towards the top row or the bottom row. As with <att>valign</att>, <val>top</val> is the default value for <att>tab.align</att>. Therefore, in practice, <att>tab.align</att> is only required in the <q>bottom</q> scenario.</item>
                      <item>The <att>lines</att> attribute, also on <gi scheme="MEI">staffDef</gi>, is used to specify the number of horizontal strands. These lines are conceptual rather than visible. Following general MEI practice, lines are counted from bottom to top, starting at 1.</item>
                      <item>In specific cases, <att>tab.anchorline</att> is also needed on <gi scheme="MEI">staffDef</gi>. It is used where the vertical alignment of tablature notes is consistent but cannot be identified using a typical value of <att>tab.align</att> (<abbr>i.e.</abbr>, <val>top</val> or <val>bottom</val>). It specifies the horizontal strand corresponding to the <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi> that anchors the vertical position of notes. Note that the usage of <att>tab.anchorline</att> always implies top alignment (see examples below).</item>
                      <item>The <att>tab.line</att> attribute on <gi scheme="MEI">note</gi>, which also corresponds to the <att>lines</att> attribute on the <gi scheme="MEI">staffDef</gi>, is used to indicate position of the note on one of these strands — where this deviates from the default positioning suggested by <att>tab.align</att> and/or <att>tab.anchorline</att>.</item>
