@@ -165,10 +165,10 @@
                      | rng:name | rng:nsName | rng:param | rng:value">
     <xsl:message><xsl:value-of select="name(.)"/>/@<xsl:value-of select="@name"/> TODO</xsl:message>
     <junk was="{name(.)}">
-      <xsl:apply-templates/>
+      <xsl:apply-templates select="@*,*"/>
     </junk>
   </xsl:template>
-
+  
   <xsl:template match="rng:*">
     <xsl:message><xsl:value-of select="name(.)"/> unprocessed</xsl:message>
     <xsl:processing-instruction name="tei-purify">an unprocessed <xsl:value-of select="name(.)"/> started here</xsl:processing-instruction>
