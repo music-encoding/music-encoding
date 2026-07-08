@@ -39,6 +39,38 @@
     ]">
     <xsl:copy-of select="."/>
   </xsl:template>
+  
+  <xsl:template match="content">
+    
+    <xsl:variable name="childCount" select="count(*)"/>
+    
+    <xsl:choose>
+      <xsl:when test="$childCount = 0">
+        <xsl:copy>
+          <xsl:apply-templates select="@*" />
+          <xsl:call-template name="purify:alert">
+            <xsl:with-param name="message" tunnel="yes">inferred empty element</xsl:with-param>
+          </xsl:call-template>
+          <empty/>
+        </xsl:copy>
+      </xsl:when>
+      <xsl:when test="$childCount = 1">
+          <xsl:next-match />
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:apply-templates select="@*" />
+          <xsl:call-template name="purify:alert">
+            <xsl:with-param name="message" tunnel="yes">inferred sequence element - thoroughly inspect against source and compare generated schema</xsl:with-param>
+          </xsl:call-template>
+          <xsl:element name="sequence">
+            <xsl:apply-templates />
+          </xsl:element>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+    
+  </xsl:template>
 
   <xsl:template match="exemplum">
     <xsl:copy-of select="."/>
