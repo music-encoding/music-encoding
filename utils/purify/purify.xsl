@@ -30,7 +30,6 @@
   <xsl:template match="content[
       descendant::rng:anyName
     | descendant::rng:attribute
-    | descendant::rng:data
     | descendant::rng:element
     | descendant::rng:except
     | descendant::rng:name
@@ -153,7 +152,17 @@
   </xsl:template>
   
   <xsl:template match="datatype/rng:data">
-    <dataRef name="{./@type}"/>
+    <dataRef name="{./@type}">
+      <xsl:apply-templates />
+    </dataRef>
+  </xsl:template>
+  
+  <xsl:template match="rng:param[parent::rng:data]">
+      <xsl:element name="dataFacet">
+        <xsl:attribute name="name" select="@name" />
+        <xsl:attribute name="value" select="normalize-space(.)" />
+      </xsl:element>
+  </xsl:template>
   </xsl:template>
   
   <!-- ********************************************* -->
