@@ -143,6 +143,13 @@
 
   <xsl:template match="rng:empty"/>
   
+  
+  <xsl:template match="rng:interleave">
+    <interleave>
+      <xsl:apply-templates />
+    </interleave>
+  </xsl:template>
+  
   <!-- ********************************************* -->
   <!-- Convert datatypes .                           -->
   <!-- ********************************************* -->
