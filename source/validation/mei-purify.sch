@@ -23,6 +23,12 @@ Goal is to give hints for easier conversion to pureODD.
         </sch:rule>
     </sch:pattern>
 
+    <sch:pattern id="check_teiContent">
+        <sch:rule context="tei:content">
+            <sch:report role="warning" test="count(*) gt 1">The content definition must not contain more than one element.</sch:report>
+        </sch:rule>
+    </sch:pattern>
+
     <sch:pattern id="check_teiDatatype">
         <sch:rule context="tei:datatype">
             <sch:report role="warning" test="rng:choice">An &lt;tei:datatype&gt; must not contain an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
