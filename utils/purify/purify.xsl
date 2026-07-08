@@ -237,6 +237,14 @@
   <xsl:template match="@type[parent::macroSpec]" />
   
   <!-- ********************************************* -->
+  <!-- Process constraintSpecs.                      -->
+  <!-- ********************************************* -->
+
+  <xsl:template match="@scheme[parent::constraintSpec]">
+    <xsl:attribute name="scheme">schematron</xsl:attribute>
+  </xsl:template>
+
+  <!-- ********************************************* -->
   <!-- Warn about the stuff we couldn't handle.      -->
   <!-- ********************************************* -->
 
