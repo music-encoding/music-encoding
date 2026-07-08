@@ -223,7 +223,18 @@
         <xsl:attribute name="value" select="normalize-space(.)" />
       </xsl:element>
   </xsl:template>
+  
+  <xsl:template match="macroSpec[@type='dt']">
+    <xsl:element name="dataSpec">
+      <xsl:apply-templates select="@*,*"/>
+    </xsl:element>
   </xsl:template>
+  
+  <!-- ********************************************* -->
+  <!-- Process macroSpecs.                           -->
+  <!-- ********************************************* -->
+  
+  <xsl:template match="@type[parent::macroSpec]" />
   
   <!-- ********************************************* -->
   <!-- Warn about the stuff we couldn't handle.      -->
