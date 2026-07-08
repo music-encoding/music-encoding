@@ -243,5 +243,41 @@
       </xsl:when>
     </xsl:choose>
   </xsl:template>
+  
+  <!-- ************************************** -->
+  <!-- subroutines to log and insert messages -->
+  <!-- ************************************** -->
+  
+  <xsl:template name="purify:add-processing-instruction">
+    <xsl:param name="message" as="xs:string" tunnel="yes" />
+    <xsl:processing-instruction name="PURIFY"><xsl:copy-of select="$message"/></xsl:processing-instruction>
+  </xsl:template>
+  
+  <xsl:template name="purify:add-comment">
+    <xsl:param name="message" as="xs:string" tunnel="yes" />
+    <xsl:comment>PURIFY: <xsl:copy-of select="$message"/></xsl:comment>
+  </xsl:template>
+
+  <xsl:template name="purify:add-todo">
+    <xsl:param name="message" as="xs:string" tunnel="yes" />
+    <xsl:comment>TODO: purify <xsl:copy-of select="$message"/></xsl:comment>
+  </xsl:template>
+
+  <xsl:template name="purify:log-message">
+    <xsl:param name="message" as="xs:string" tunnel="yes" />
+    <xsl:param name="terminate" as="xs:string" select="xs:string('no')" tunnel="yes" />
+    <xsl:message terminate="{$terminate}">PURIFY: <xsl:copy-of select="$message"/></xsl:message>
+    <!-- (line <xsl:value-of select="saxon:line-number(.)"/>) only available in Saxon-PE or Saxon-EE -->
+  </xsl:template>
+  
+  <xsl:template name="purify:alert">
+    <xsl:param name="message" as="xs:string" required="yes" tunnel="yes" />
+    <xsl:param name="terminate" as="xs:string" select="xs:string('no')"  tunnel="yes" />
+    
+    <xsl:call-template name="purify:log-message" />
+    <xsl:call-template name="purify:add-comment" />
+    <xsl:call-template name="purify:add-processing-instruction" />
+    
+  </xsl:template>
 
 </xsl:stylesheet>
