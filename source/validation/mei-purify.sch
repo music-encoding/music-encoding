@@ -2,8 +2,16 @@
 <!--
 Author: Benjamin W. Bohl
 
-This schematron is intended to be run through Apache Ant as merge test.
-Goal is to give hints for easier conversion to pureODD.
+This schematron is intended to be run associated with the MEI source files:
+  * mei-source.xml
+  * modules/
+  * guidelines
+
+This is being done automatically through Apache Ant and GitHub Actions for each pull request.
+Moreover it is associated with the above files to be part of the standard validation
+if editors support schematron validation.
+
+The intent of this schematron is to give hints for preparing the conversion to pureODD.
 
 -->
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
@@ -12,7 +20,7 @@ Goal is to give hints for easier conversion to pureODD.
 
     <sch:pattern id="check_rngChoice">
         <sch:rule context="rng:choice">
-            <sch:assert role="warning" test="count(*) > 1">An &lt;rng:choice&gt; element hast to contain more than one option to choose from.</sch:assert>
+            <sch:assert role="warning" test="count(*) > 1">A &lt;rng:choice&gt; element has to contain more than one option to choose from.</sch:assert>
         </sch:rule>
     </sch:pattern>
 
@@ -31,7 +39,7 @@ Goal is to give hints for easier conversion to pureODD.
 
     <sch:pattern id="check_teiDatatype">
         <sch:rule context="tei:datatype">
-            <sch:report role="warning" test="rng:choice">An &lt;tei:datatype&gt; must not contain an rng:choice as child. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
+            <sch:report role="warning" test="rng:choice">A &lt;tei:datatype&gt; must not contain a &lt;rng:choice&gt; as a child element. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
         </sch:rule>
     </sch:pattern>
 
