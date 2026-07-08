@@ -37,9 +37,15 @@ The intent of this schematron is to give hints for preparing the conversion to p
         </sch:rule>
     </sch:pattern>
 
-    <sch:pattern id="check_teiDatatype">
+    <sch:pattern id="check_teiDatatype_choice">
         <sch:rule context="tei:datatype">
             <sch:report role="warning" test="rng:choice">Purification Warning: A &lt;tei:datatype&gt; must not contain a &lt;rng:choice&gt; as a child element. If you need alternative values from other datatypes or want to extend a datatype, please define a new datatype and reference it.</sch:report>
+        </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_teiDatatype_text">
+        <sch:rule context="tei:datatype">
+            <sch:report role="warning" test="rng:text">Purification Warning: Although valid &lt;tei:datatype&gt; should not contain a &lt;rng:text&gt; as a child element, as &lt;rng:data type="[xs-datatype]" /&gt; is preferred.</sch:report>
         </sch:rule>
     </sch:pattern>
 
