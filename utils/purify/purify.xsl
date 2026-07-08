@@ -5,6 +5,17 @@
 
   <xsl:output method="xml" indent="yes"/>
   
+  <xsl:param name="schema-prefix" as="xs:token" select="xs:token('tei')" />
+  
+  <xsl:function name="purify:is-xs-datatype" as="xs:boolean">
+    <xsl:param name="name" as="xs:token" required="yes"/>
+    
+    <!-- TODO checkc against xs datatypes -->
+    
+    <xsl:sequence select="xs:boolean( $name = ('nonNegativeInteger'))"/>
+    
+  </xsl:function>
+  
   <!-- ****************************************************************** -->
   <!-- Overall, this is an identity transform: here we copy over anything -->
   <!-- and everything that is not an ODD element matched below.           -->
@@ -34,9 +45,11 @@
     | descendant::rng:except
     | descendant::rng:name
     | descendant::rng:nsName
-    | descendant::rng:param
     | descendant::rng:value
     ]">
+    <xsl:call-template name="purify:alert">
+      <xsl:with-param name="message" tunnel="yes">strange content child elements - purify manually</xsl:with-param>
+    </xsl:call-template>
     <xsl:copy-of select="."/>
   </xsl:template>
   
@@ -140,7 +153,7 @@
     <textNode/>
   </xsl:template>
 
-  <xsl:template match="rng:choice">
+  <xsl:template match="rng:choice[not(parent::datatype)]">
     <alternate>
       <xsl:call-template name="maxmin"/>
       <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
@@ -187,11 +200,19 @@
   <!-- ********************************************* -->
    
   <xsl:template match="datatype/rng:ref">
-    <dataRef key="{concat('tei',./@name)}"/>
+     <dataRef key="{concat($schema-prefix,./@name)}">
+       <xsl:apply-templates />
+     </dataRef>
   </xsl:template>
   
-  <xsl:template match="datatype/rng:data">
+  <xsl:template match="rng:data[ancestor::content or ancestor::datatype]">
     <dataRef name="{./@type}">
+      <xsl:apply-templates />
+    </dataRef>
+  </xsl:template>
+  
+  <xsl:template match="rng:text[parent::datatype]">
+    <dataRef name="string">
       <xsl:apply-templates />
     </dataRef>
   </xsl:template>
@@ -209,19 +230,29 @@
   <!-- ********************************************* -->
 
   
-  <xsl:template match="rng:anyName | rng:attribute | rng:data | rng:element | rng:except
-                     | rng:name | rng:nsName | rng:param | rng:value">
-    <xsl:message><xsl:value-of select="name(.)"/>/@<xsl:value-of select="@name"/> TODO</xsl:message>
+  <xsl:template match="rng:anyName | rng:attribute | rng:element | rng:except
+                     | rng:name | rng:nsName | rng:value">
+    <xsl:variable name="message" as="xs:string" select="string-join((name(.),for $att in @* return string-join(('@' || name(), .), ':')), ' ')" />
+    <xsl:call-template name="purify:alert">
+      <xsl:with-param name="message" select="$message" tunnel="yes" />
+    </xsl:call-template>
+    <!--<xsl:message>Purify: TODO</xsl:message>-->
     <junk was="{name(.)}">
       <xsl:apply-templates select="@*,*"/>
     </junk>
   </xsl:template>
   
-  <xsl:template match="rng:*">
-    <xsl:message><xsl:value-of select="name(.)"/> unprocessed</xsl:message>
-    <xsl:processing-instruction name="tei-purify">an unprocessed <xsl:value-of select="name(.)"/> started here</xsl:processing-instruction>
+  <xsl:template match="rng:* | alternate[parent::datatype]">
+    <xsl:call-template name="purify:alert">
+      <xsl:with-param name="message" tunnel="yes">unprocessed <xsl:value-of select="name(.)"/> - fix in source</xsl:with-param>
+    </xsl:call-template>
+    <xsl:call-template name="purify:add-processing-instruction">
+      <xsl:with-param name="message" tunnel="yes">an unprocessed <xsl:value-of select="name(.)"/> started here</xsl:with-param>
+    </xsl:call-template>
     <xsl:apply-templates/>
-    <xsl:processing-instruction name="tei-purify">an unprocessed <xsl:value-of select="name(.)"/> ended here</xsl:processing-instruction>
+    <xsl:call-template name="purify:add-processing-instruction">
+      <xsl:with-param name="message" tunnel="yes">an unprocessed <xsl:value-of select="name(.)"/> ended here</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- *********************************************** -->
