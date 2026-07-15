@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.gestural">
   <moduleSpec ident="MEI.gestural">
     <desc xml:lang="en">Gestural component declarations.</desc>
@@ -74,6 +92,18 @@
     <classes>
       <memberOf key="att.timestamp2.ges"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.attacking" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Attributes whether an element is performed "attacca".</desc>
+    <attList>
+      <attDef ident="attacca" usage="opt">
+        <desc xml:lang="en">Indicates that the performance of the next musical division should begin immediately
+          following this one.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.barLine.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
@@ -156,6 +186,9 @@
   <classSpec ident="att.clefGrp.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
   </classSpec>
+  <classSpec ident="att.course.ges" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Gestural domain attributes.</desc>
+  </classSpec>
   <classSpec ident="att.cpMark.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
     <classes>
@@ -171,15 +204,9 @@
   </classSpec>
   <classSpec ident="att.mdiv.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
-    <attList>
-      <attDef ident="attacca">
-        <desc xml:lang="en">Indicates that the performance of the next musical division should begin immediately
-          following this one.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
+    <classes>
+      <memberOf key="att.attacking"/>
+    </classes>
   </classSpec>
   <classSpec ident="att.damp.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
@@ -199,9 +226,9 @@
       duration.</desc>
     <attList>
       <attDef ident="dur.ges" usage="opt">
-        <desc xml:lang="en">Records performed duration information that differs from the written duration.</desc>
+        <desc xml:lang="en">Records performed duration information that differs from the written duration; @dur.ges allows the same datatypes as @dur. Values of @dur.ges that require dots should also use @dots.ges.</desc>
         <datatype>
-          <rng:ref name="data.DURATION.gestural"/>
+          <rng:ref name="data.DURATION.GESTURAL"/>
         </datatype>
       </attDef>
       <attDef ident="dots.ges" usage="opt">
@@ -454,28 +481,8 @@
       <memberOf key="att.duration.ges"/>
       <memberOf key="att.instrumentIdent"/>
       <memberOf key="att.midiVelocity"/>
+      <memberOf key="att.pitch.ges"/>
     </classes>
-    <attList>
-      <attDef ident="oct.ges" usage="opt">
-        <desc xml:lang="en">Records performed octave information that differs from the written value.</desc>
-        <datatype>
-          <rng:ref name="data.OCTAVE"/>
-        </datatype>
-      </attDef>
-      <attDef ident="pname.ges" usage="opt">
-        <desc xml:lang="en">Contains a performed pitch name that differs from the written value.</desc>
-        <datatype>
-          <rng:ref name="data.PITCHNAME.GES"/>
-        </datatype>
-      </attDef>
-      <attDef ident="pnum" usage="opt">
-        <gloss versionDate="2022-10-30" xml:lang="en">pitch number</gloss>
-        <desc xml:lang="en">Holds a pitch-to-number mapping, a base-40 or MIDI note number, for example.</desc>
-        <datatype>
-          <rng:ref name="data.PITCHNUMBER"/>
-        </datatype>
-      </attDef>
-    </attList>
   </classSpec>
   <classSpec ident="att.ncGrp.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
@@ -498,6 +505,7 @@
       <memberOf key="att.instrumentIdent"/>
       <memberOf key="att.midiVelocity"/>
       <memberOf key="att.note.ges.mensural"/>
+      <memberOf key="att.pitch.ges"/>
       <memberOf key="att.stringtab"/>
     </classes>
     <constraintSpec ident="extremis_disallows_gestural_pitch" scheme="schematron">
@@ -526,25 +534,6 @@
             <att>oct</att> or <att>ploc</att> and <att>oloc</att> or <att>loc</att> attributes is
             necessary to record the written pitch and octave of the symbol for this note.</p>
         </remarks>
-      </attDef>
-      <attDef ident="oct.ges" usage="opt">
-        <desc xml:lang="en">Records performed octave information that differs from the written value.</desc>
-        <datatype>
-          <rng:ref name="data.OCTAVE"/>
-        </datatype>
-      </attDef>
-      <attDef ident="pname.ges" usage="opt">
-        <desc xml:lang="en">Contains a performed pitch name that differs from the written value.</desc>
-        <datatype>
-          <rng:ref name="data.PITCHNAME.GES"/>
-        </datatype>
-      </attDef>
-      <attDef ident="pnum" usage="opt">
-        <gloss versionDate="2022-10-30" xml:lang="en">pitch number</gloss>
-        <desc xml:lang="en">Holds a pitch-to-number mapping, a base-40 or MIDI note number, for example.</desc>
-        <datatype>
-          <rng:ref name="data.PITCHNUMBER"/>
-        </datatype>
       </attDef>
     </attList>
   </classSpec>
@@ -610,6 +599,30 @@
       <memberOf key="att.timestamp2.ges"/>
     </classes>
   </classSpec>
+  <classSpec ident="att.pitch.ges" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Gestural attributes about pitch.</desc>
+    <attList>
+      <attDef ident="oct.ges" usage="opt">
+        <desc xml:lang="en">Records performed octave information that differs from the written value.</desc>
+        <datatype>
+          <rng:ref name="data.OCTAVE"/>
+        </datatype>
+      </attDef>
+      <attDef ident="pname.ges" usage="opt">
+        <desc xml:lang="en">Contains a performed pitch name that differs from the written value.</desc>
+        <datatype>
+          <rng:ref name="data.PITCHNAME.GESTURAL"/>
+        </datatype>
+      </attDef>
+      <attDef ident="pnum" usage="opt">
+        <gloss xml:lang="en">pitch number</gloss>
+        <desc xml:lang="en">Holds a pitch-to-number mapping, a base-40 or MIDI note number, for example.</desc>
+        <datatype>
+          <rng:ref name="data.PITCHNUMBER"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="att.plica.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes that describe the properties of a plica in the mensural repertoire.</desc>
   </classSpec>
@@ -666,15 +679,9 @@
   </classSpec>
   <classSpec ident="att.section.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
-    <attList>
-      <attDef ident="attacca">
-        <desc xml:lang="en">Indicates that the performance of the next section should begin immediately following
-          this one.</desc>
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
+    <classes>
+      <memberOf key="att.attacking"/>
+    </classes>
   </classSpec>
   <classSpec ident="att.signifLet.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
@@ -762,6 +769,16 @@
   <classSpec ident="att.symbol.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
   </classSpec>
+  <classSpec ident="att.tabDurSym.ges" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Gestural domain attributes.</desc>
+  </classSpec>
+  <classSpec ident="att.tabGrp.ges" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Gestural domain attributes.</desc>
+    <classes>
+      <!-- Would that be helpful? <memberOf key="att.articulation.gestural"/>-->
+      <memberOf key="att.duration.ges"/>
+    </classes>
+  </classSpec>
   <classSpec ident="att.tempo.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>
     <classes>
@@ -817,6 +834,9 @@
       <memberOf key="att.duration.ges"/>
       <memberOf key="att.timestamp2.ges"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.tuning.ges" module="MEI.gestural" type="atts">
+    <desc xml:lang="en">Gestural domain attributes.</desc>
   </classSpec>
   <classSpec ident="att.tuplet.ges" module="MEI.gestural" type="atts">
     <desc xml:lang="en">Gestural domain attributes.</desc>

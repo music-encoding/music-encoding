@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.midi">
   <moduleSpec ident="MEI.midi">
     <desc xml:lang="en">MIDI component declarations.</desc>
@@ -101,8 +119,8 @@
     </constraintSpec>
     <attList>
       <attDef ident="midi.instrnum" usage="opt">
-        <desc xml:lang="en">Captures the General MIDI instrument number. Use an integer for a 0-based value. An
-          integer preceded by "in" indicates a 1-based value.</desc>
+        <desc xml:lang="en">Captures the General MIDI instrument number. Use an integer for a 0-based value.
+          Use an integer followed by an "o" (oh) for a 1-based value.</desc>
         <datatype>
           <rng:ref name="data.MIDIVALUE"/>
         </datatype>
@@ -114,9 +132,10 @@
         </datatype>
       </attDef>
       <attDef ident="midi.pan" usage="opt">
-        <desc xml:lang="en">Sets the instrument’s position in a stereo field. MIDI values of 0 and 1 both pan
-          left, 127 or 128 pans right, and 63 or 64 pans to the center. Positve percentage values
-          pan to the right, negative ones to the left. 0% is centered.</desc>
+        <desc xml:lang="en">Sets the instrument’s position in a stereo field. Values of 0 and 
+          1 both pan left, 127 and 128o both pan right, and 63 and 64o both pan to the center.
+          Positive percentage values pan to the right, negative ones to the left, and 0% pans
+          to the center.</desc>
         <datatype>
           <rng:ref name="data.MIDIVALUE_PAN"/>
         </datatype>
@@ -145,7 +164,7 @@
     <desc xml:lang="en">Attributes that record MIDI numbers.</desc>
     <attList>
       <attDef ident="num" usage="req">
-        <gloss versionDate="2022-10-30" xml:lang="en">number</gloss>
+        <gloss xml:lang="en">number</gloss>
         <desc xml:lang="en">MIDI number in the range set by data.MIDIVALUE.</desc>
         <datatype>
           <rng:ref name="data.MIDIVALUE"/>
@@ -230,7 +249,7 @@
     </classes>
   </classSpec>
   <elementSpec ident="cc" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">control change</gloss>
+    <gloss xml:lang="en">control change</gloss>
     <desc xml:lang="en">MIDI parameter/control change.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -239,7 +258,7 @@
       <memberOf key="att.midiValue"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The <att>num</att> attribute specifies a MIDI parameter number, while <att>val</att>
@@ -247,14 +266,14 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="chan" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">channel</gloss>
+    <gloss xml:lang="en">channel</gloss>
     <desc xml:lang="en">MIDI channel assignment.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.midi.event"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <attList>
       <attDef ident="num" usage="req">
@@ -266,7 +285,7 @@
     </attList>
   </elementSpec>
   <elementSpec ident="chanPr" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">channel pressure</gloss>
+    <gloss xml:lang="en">channel pressure</gloss>
     <desc xml:lang="en">MIDI channel pressure/after touch.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -274,7 +293,7 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>The value of the <att>num</att> attribute must be in the range 0-127.</p>
@@ -305,7 +324,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="instrDef" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">instrument definition</gloss>
+    <gloss xml:lang="en">instrument definition</gloss>
     <desc xml:lang="en">MIDI instrument declaration.</desc>
     <classes>
       <memberOf key="att.basic"/>
@@ -322,7 +341,7 @@
       <memberOf key="model.instrDefLike"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <remarks xml:lang="en">
       <p>This element provides a starting or default instrument declaration for a staff, a group of
@@ -331,7 +350,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="instrGrp" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">instrument group</gloss>
+    <gloss xml:lang="en">instrument group</gloss>
     <desc xml:lang="en">Collects MIDI instrument definitions.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -406,7 +425,7 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="noteOn" module="MEI.midi">
@@ -417,7 +436,7 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="port" module="MEI.midi">
@@ -428,11 +447,11 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="prog" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">program</gloss>
+    <gloss xml:lang="en">program</gloss>
     <desc xml:lang="en">MIDI program change.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -440,18 +459,18 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
   </elementSpec>
   <elementSpec ident="seqNum" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">sequence number</gloss>
+    <gloss xml:lang="en">sequence number</gloss>
     <desc xml:lang="en">MIDI sequence number.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.midi.event"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <attList>
       <attDef ident="num" usage="req">
@@ -465,7 +484,7 @@
     </attList>
   </elementSpec>
   <elementSpec ident="trkName" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">track name</gloss>
+    <gloss xml:lang="en">track name</gloss>
     <desc xml:lang="en">MIDI track/sequence name.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -477,7 +496,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="vel" module="MEI.midi">
-    <gloss versionDate="2022-05-18" xml:lang="en">velocity</gloss>
+    <gloss xml:lang="en">velocity</gloss>
     <desc xml:lang="en">MIDI Note-on/off velocity.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -485,7 +504,7 @@
       <memberOf key="att.midiNumber"/>
     </classes>
     <content>
-      <rng:empty/>
+      <empty/>
     </content>
     <attList>
       <attDef ident="form" usage="req">

@@ -1,0 +1,54 @@
+name: PR Source Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  merge_group:
+    types: [checks_requested]
+
+permissions:
+  contents: read
+
+env:
+  BUILD_FILE: music-encoding/build.xml
+  DOCKER_IMAGE: ghcr.io/music-encoding/docker-mei:latest
+
+jobs:
+  validate-source:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+    - name: Checkout head ref of repository (PR)
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        repository: ${{github.event.pull_request.head.repo.full_name}}
+        ref: ${{github.event.pull_request.head.ref}}
+        fetch-depth: 0
+
+    - name: Run validation with Docker image on PR
+      run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ${{ env.DOCKER_IMAGE }} ant validate-source -noinput -buildfile ${{ env.BUILD_FILE }}
+
+  validate-purification:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pull-requests: read
+    
+    steps:
+    - name: Checkout head ref of repository (PR)
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        repository: ${{github.event.pull_request.head.repo.full_name}}
+        ref: ${{github.event.pull_request.head.ref}}
+        fetch-depth: 0
+
+    - name: Register schematron problem matcher
+      run: echo "::add-matcher::.github/problem_matchers/schematron-problem-matcher.json"
+
+    - name: Run purification check with Docker image on PR
+      run: docker run --rm -v $(pwd):/opt/docker-mei/music-encoding ${{ env.DOCKER_IMAGE }} ant validate-purification -noinput -buildfile ${{ env.BUILD_FILE }}

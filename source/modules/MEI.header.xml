@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.header">
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" 
+  xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.header">
   <moduleSpec ident="MEI.header">
     <desc xml:lang="en">Metadata header component declarations.</desc>
   </moduleSpec>
@@ -55,6 +73,30 @@
       <rng:zeroOrMore>
         <rng:ref name="seriesStmt"/>
       </rng:zeroOrMore>
+    </content>
+  </macroSpec>
+  <macroSpec ident="macro.histAccount" module="MEI.header" type="pe">
+    <desc xml:lang="en">Content model for elements that can be used to describe historical account.</desc>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="eventList"/>
+              <rng:ref name="model.pLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </macroSpec>
   <classSpec ident="att.bifoliumSurfaces" module="MEI.header" type="atts">
@@ -171,7 +213,7 @@
     <desc xml:lang="en">Attributes that define the characteristics and components of the bibliographic
       description.</desc>
     <attList>
-      <attDef ident="recordtype">
+      <attDef ident="recordtype" usage="opt">
         <valList type="closed">
           <valItem ident="a">
             <desc xml:lang="en">Language material.</desc>
@@ -288,7 +330,8 @@
     </remarks>
   </classSpec>
   <classSpec ident="att.regularMethod" module="MEI.header" type="atts">
-    <desc xml:lang="en">Attributes that describe correction and normalization methods.</desc>
+    <gloss xml:lang="en" versionDate="2024-07-22">regularization method</gloss>
+    <desc xml:lang="en" versionDate="2024-07-22">Attributes that describe correction and normalization methods.</desc>
     <attList>
       <attDef ident="method" usage="opt">
         <desc xml:lang="en">Indicates the method employed to mark corrections and normalizations.</desc>
@@ -296,8 +339,8 @@
           <valItem ident="silent">
             <desc xml:lang="en">Corrections and normalizations made silently.</desc>
           </valItem>
-          <valItem ident="tags">
-            <desc xml:lang="en">Corrections and normalizations indicated using elements.</desc>
+          <valItem ident="markup">
+            <desc xml:lang="en">Corrections and normalizations represented using markup.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -347,7 +390,7 @@
     <desc xml:lang="en">Collects work-like elements.</desc>
   </classSpec>
   <elementSpec ident="accessRestrict" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">access restriction</gloss>
+    <gloss xml:lang="en">access restriction</gloss>
     <desc xml:lang="en">Describes the conditions that affect the accessibility of
       material.</desc>
     <classes>
@@ -365,8 +408,6 @@
         element with <gi scheme="MEI">useRestrict</gi> (usage restrictions), which captures
         information about limitations on the <hi rend="bold">use</hi> of material, such as those
         afforded by copyright.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-accessrestrict">accessrestrict</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
@@ -380,32 +421,14 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-acquisition.html">acquisition</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="altId" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">alternative identifier</gloss>
+    <gloss xml:lang="en">alternative identifier</gloss>
     <desc xml:lang="en">May contain a bibliographic identifier that does not fit within
       the meiHead element’s id attribute, for example because the identifier does not fit the
       definition of an XML id or because multiple identifiers are needed.</desc>
@@ -428,7 +451,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="appInfo" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">application information</gloss>
+    <gloss xml:lang="en">application information</gloss>
     <desc xml:lang="en">Groups information about applications which have acted upon
       the MEI file.</desc>
     <classes>
@@ -507,7 +530,7 @@
         </datatype>
       </attDef>
       <attDef ident="context" usage="opt">
-        <desc xml:lang="en">Circumstances in which the element appears, an XPath expression.</desc>
+        <desc xml:lang="en">Circumstances in which the attribute appears, an XPath expression.</desc>
         <datatype>
           <rng:data type="string"/>
         </datatype>
@@ -536,7 +559,7 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
       <memberOf key="model.pubStmtPart"/>
-      <memberOf key="model.titlePagePart"/>
+      <memberOf key="model.imprintPart"/>
     </classes>
     <content>
       <rng:ref name="macro.availabilityPart"/>
@@ -544,8 +567,6 @@
     <remarks xml:lang="en">
       <p>When used within the <gi scheme="MEI">fileDesc</gi> element, <gi scheme="MEI"
         >availability</gi> indicates access to the MEI-encoded document itself.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-availability.html">availability</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
@@ -594,7 +615,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="captureMode" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">capture mode</gloss>
+    <gloss xml:lang="en">capture mode</gloss>
     <desc xml:lang="en">The means used to record notation, sound, or images in the production of
       a source/manifestation (<abbr>e.g.</abbr>, analogue, acoustic, electric, digital, optical etc.).</desc>
     <classes>
@@ -609,7 +630,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="carrierForm" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">carrier form</gloss>
+    <gloss xml:lang="en">carrier form</gloss>
     <desc xml:lang="en">The specific class of material to which the physical carrier of the
       source/manifestation belongs (<abbr>e.g.</abbr>, sound cassette, videodisc, microfilm cartridge,
       transparency, etc.). The carrier for a manifestation comprising multiple physical components
@@ -662,8 +683,9 @@
     </constraintSpec>
   </elementSpec>
   <elementSpec ident="catRel" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">category relationship</gloss>
-    <desc xml:lang="en">Contains the name of a related category.</desc>
+    <gloss xml:lang="en">category relationship</gloss>
+    <desc xml:lang="en">Contains the name, i.e., label, of a related
+        category.</desc>
     <classes>
       <memberOf key="att.authorized"/>
       <memberOf key="att.basic"/>
@@ -710,6 +732,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.datable"/>
+      <memberOf key="att.docStatus"/>
     </classes>
     <content>
       <rng:optional>
@@ -740,13 +763,11 @@
         person/entity responsible for change. The <gi scheme="MEI">edition</gi> element can be used
         to designate an MEI encoding that has been so substantively changed that it constitutes a
         new version that supersedes earlier versions.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="changeDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">change description</gloss>
+    <gloss xml:lang="en">change description</gloss>
     <desc xml:lang="en">Description of a revision of the MEI file.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -793,9 +814,7 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:oneOrMore>
-        <rng:choice>
-          <rng:ref name="termList"/>
-        </rng:choice>
+        <rng:ref name="termList"/>
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
@@ -935,7 +954,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
   <p>A suitable tone ; Left hand coloring ; Rhythm and accent ; Tempo ; 
@@ -943,7 +962,7 @@
 </contents>
             </egXML>
     </exemplum>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
   <head>Contents</head>
@@ -956,7 +975,7 @@
 </contents>
             </egXML>
     </exemplum>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
 <contents target="http://www.contentProvider.org/toc/toc01.html"/>
             </egXML>
@@ -1089,8 +1108,6 @@
         remaining upper half. If, in contrast, only the lower right quarter of the page has been
         cut, these attributes still indicate the size of the full page (assuming that the removed
         section was a regular rectangle).</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The dimensions (@width, @height) on <gi scheme="MEI">cutout</gi> itself are only to be used
         when there is a "gap" in the manuscript that allows to specify the dimensions of that
         missing part. In this case, the bounding box dimensions are given, together with @x and @y
@@ -1134,7 +1151,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="domainsDecl" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">domains declaration</gloss>
+    <gloss xml:lang="en">domains declaration</gloss>
     <desc xml:lang="en">Indicates which domains are included in the encoding.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1159,7 +1176,7 @@
     </attList>
   </elementSpec>
   <elementSpec ident="editionStmt" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">edition statement</gloss>
+    <gloss xml:lang="en">edition statement</gloss>
     <desc xml:lang="en">Container for meta-data pertaining to a particular edition of the
       material being described.</desc>
     <classes>
@@ -1187,7 +1204,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="editorialDecl" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">editorial declaration</gloss>
+    <gloss xml:lang="en">editorial declaration</gloss>
     <desc xml:lang="en">Used to provide details of editorial principles and practices
       applied during the encoding of musical text.</desc>
     <classes>
@@ -1220,7 +1237,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="encodingDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">encoding description</gloss>
+    <gloss xml:lang="en">encoding description</gloss>
     <desc xml:lang="en">Documents the relationship between an electronic file and the
       source or sources from which it was derived as well as applications used in the
       encoding/editing process.</desc>
@@ -1260,7 +1277,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="exhibHist" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">exhibition history</gloss>
+    <gloss xml:lang="en">exhibition history</gloss>
     <desc xml:lang="en">A record of public exhibitions, including dates, venues,
       etc.</desc>
     <classes>
@@ -1270,32 +1287,14 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <abbr>MARC</abbr> <ref target="https://www.loc.gov/marc/bibliographic/bd585.html">585</ref> field.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="extMeta" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">extended metadata</gloss>
+    <gloss xml:lang="en">extended metadata</gloss>
     <desc xml:lang="en">Provides a container element for non-MEI metadata formats.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1314,7 +1313,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="fileChar" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">file characteristics</gloss>
+    <gloss xml:lang="en">file characteristics</gloss>
     <desc xml:lang="en">Standards or schemes used to encode the file (<abbr>e.g.</abbr>, ASCII, SGML,
       etc.), physical characteristics of the file (<abbr>e.g.</abbr>, recording density, parity, blocking, etc.),
       and other characteristics that have a bearing on how the file can be processed.</desc>
@@ -1329,7 +1328,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="fileDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">file description</gloss>
+    <gloss xml:lang="en">file description</gloss>
     <desc xml:lang="en">Contains a full bibliographic description of the MEI file.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1356,15 +1355,12 @@
     </content>
     <remarks xml:lang="en">
       <p>Extent in this context represents file size.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-fileDesc.html">fileDesc</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-filedesc">filedesc</ref> element of the Encoded
         Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="foliaDesc" module="MEI.header">
-    <desc xml:lang="en">Describes the order of folia and bifolia making up the text block of a manuscript or
-      print.</desc>
+    <desc xml:lang="en">Describes the arrangement of folia and bifolia making up the text block of a manuscript or printed item.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="model.physDescPart"/>
@@ -1436,7 +1432,7 @@
       </attDef>
     </attList>
     <remarks xml:lang="en">
-      <p>The <att>initial</att> attribute indicates whether this is the first or main hand of the
+      <p>The <att>initial</att> attribute indicates whether this is the first hand of the
         document. The <att>medium</att> attribute describes the writing medium, <abbr>e.g.</abbr>, 
         <val>pencil</val>, or the tint or type of ink, <abbr>e.g.</abbr>, <val>brown</val>. 
         The <att>resp</att> attribute contains an ID reference to an element containing the name of 
@@ -1444,8 +1440,6 @@
         hand, particularly those related to the quality of the writing, such as <val>shaky</val>, 
         <val>thick</val>, etc. may be described within the content of the <gi scheme="MEI">hand</gi> 
         element.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-handNote.html">handNote</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
@@ -1551,7 +1545,22 @@
             <desc xml:lang="en">**kern representation of the Humdrum format.</desc>
           </valItem>
           <valItem ident="parsons">
-            <desc xml:lang="en">Parsons code.</desc>
+            <desc xml:lang="en">Parsons code containing intervallic direction only
+              (e.g., "sususddsdsdsd"). Permitted values are composed of a series of tokens, which may 
+              be "u" (Up), "d" (Down) or "s" (Same). Tokens should not be separated by spaces.</desc>
+          </valItem>
+          <valItem ident="intervals">
+            <desc xml:lang="en">Representation of interval quality and direction
+              (e.g., "P1 +P5 P1 +M2 P1 -M2"). Values must be composed of a series of space-separated tokens, where each token
+              is comprised of three components: a direction indicator ("+" for "up" and "-" for "down"); an interval quality, being one of 
+              "P" (Perfect), "M" (Major), "m" (Minor), "A" (Augmented), or "d" (Diminished); and finally an integer indicating 
+              interval size, where "1" is a Unison. (For a Perfect Unison, P1, the direction indicator may be omitted). 
+            </desc>
+          </valItem>
+          <valItem ident="semitones">
+            <desc xml:lang="en">Representation of intervallic direction and size in half steps (semitones)
+              (e.g., "0 +7 0 +2 0 -2"). Values must be composed of a series of space-separated positive or negative 
+              integers indicating the number of semitones to ascend or descend, respectively.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1617,22 +1626,13 @@
     <desc xml:lang="en">Key captures information about tonal center and mode.</desc>
     <classes>
       <memberOf key="att.common"/>
-      <memberOf key="att.accidental"/>
       <memberOf key="att.bibl"/>
-      <memberOf key="att.pitch"/>
+      <memberOf key="att.keySig.anl"/>
       <memberOf key="model.workIdent"/>
     </classes>
     <content>
       <rng:text/>
     </content>
-    <attList>
-      <attDef ident="mode" usage="opt">
-        <desc xml:lang="en">Indicates major, minor, or other tonality.</desc>
-        <datatype>
-          <rng:ref name="data.MODE"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>This element is used exclusively within bibliographic descriptions. Do not confuse this
         element with <gi scheme="MEI">keySig</gi>, which is used within the body of an MEI file to
@@ -1661,14 +1661,12 @@
         ISO639-2b, to the same value as this element’s codedval attribute. The name and web location
         of the authorizing list may be encoded in the <att>auth</att> attribute and the
         <att>auth.uri</att> attribute, respectively.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-language.html">language</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-language">language</ref> element of the Encoded
         Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="langUsage" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">language usage</gloss>
+    <gloss xml:lang="en">language usage</gloss>
     <desc xml:lang="en">Groups elements describing the languages, sub-languages, dialects,
       etc., represented within the encoded resource.</desc>
     <classes>
@@ -1689,7 +1687,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="meiHead" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">MEI header</gloss>
+    <gloss xml:lang="en">MEI header</gloss>
     <desc xml:lang="en">Supplies the descriptive and declarative metadata prefixed to every
       MEI-conformant text.</desc>
     <classes>
@@ -1700,6 +1698,7 @@
       <memberOf key="att.meiVersion"/>
       <memberOf key="att.responsibility"/>
       <memberOf key="model.startLike.header"/>
+      <memberOf key="att.docStatus"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -1865,7 +1864,8 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="notesStmt" module="MEI.header">
-    <desc xml:lang="en">(notes statement)– Collects any notes providing information about a text additional to
+    <gloss xml:lang="en">notes statement</gloss>
+    <desc xml:lang="en">Collects any notes providing information about a text additional to
       that recorded in other parts of the bibliographic description.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -1884,7 +1884,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="otherChar" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">other distinguishing characteristic</gloss>
+    <gloss xml:lang="en">other distinguishing characteristic</gloss>
     <desc xml:lang="en">Any characteristic that serves to differentiate a
       work or expression from another.</desc>
     <classes>
@@ -1986,7 +1986,7 @@
           </remarks>-->
   </elementSpec>
   <elementSpec ident="perfDuration" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">performance duration</gloss>
+    <gloss xml:lang="en">performance duration</gloss>
     <desc xml:lang="en">Used to express the duration of performance of printed or
       manuscript music or the playing time for a sound recording, videorecording, etc.</desc>
     <classes>
@@ -1994,7 +1994,6 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.biblPart"/>
       <memberOf key="model.physDescPart"/>
       <memberOf key="model.titlePagePart"/>
     </classes>
@@ -2014,7 +2013,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="perfMedium" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">performance medium</gloss>
+    <gloss xml:lang="en">performance medium</gloss>
     <desc xml:lang="en">Indicates the number and character of the performing forces used in
       a musical composition.</desc>
     <classes>
@@ -2043,7 +2042,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="perfRes" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">performance resource</gloss>
+    <gloss xml:lang="en">performance resource</gloss>
     <desc xml:lang="en">Name of an instrument on which a performer plays, a performer's
       voice range, or a standard performing ensemble designation.</desc>
     <classes>
@@ -2065,12 +2064,11 @@
     </content>
     <remarks xml:lang="en">
       <p>In the context of a performance resource the attribute <att>adlib</att> marks a resource as optional.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>To indicate the tuning of an instrument, the attribute <att>trans.diat</att> can be used.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="perfResList" module="MEI.header">
+    <gloss xml:lang="en">performance resources list</gloss>
     <desc xml:lang="en">Several instrumental or vocal resources treated as a group.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2099,7 +2097,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="physDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">physical description</gloss>
+    <gloss xml:lang="en">physical description</gloss>
     <desc xml:lang="en">Container for information about the appearance, construction, or
       handling of physical materials, such as their dimension, quantity, color, style, and technique
       of creation.</desc>
@@ -2122,13 +2120,11 @@
       <p>Dedicatory text and title page features may also be encoded here when they are not
         transcribed as part of the front or back matter; <abbr>i.e.</abbr>, when they are considered to be
         meta-data rather than a transcription.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-physdesc">physdesc</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="physMedium" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">physical medium</gloss>
+    <gloss xml:lang="en">physical medium</gloss>
     <desc xml:lang="en">Records the physical materials used in the source, such as ink and
       paper.</desc>
     <classes>
@@ -2144,14 +2140,12 @@
     <remarks xml:lang="en">
       <p>All materials may be described in a single <gi scheme="MEI">physMedium</gi> element or
         multiple elements may be used, one for each medium.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on respective elements of the Encoded Archival Description (EAD). It
         has the same function as the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-material.html">material</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="plateNum" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">plate number</gloss>
+    <gloss xml:lang="en">plate number</gloss>
     <desc xml:lang="en">Designation assigned to a resource by a music publisher, usually printed
       at the bottom of each page, and sometimes appearing also on the title page.</desc>
     <classes>
@@ -2226,7 +2220,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="projectDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">project description</gloss>
+    <gloss xml:lang="en">project description</gloss>
     <desc xml:lang="en">Project-level meta-data describing the aim or purpose for which
       the electronic file was encoded, funding agencies, etc. together with any other relevant
       information concerning the process by which it was assembled or collected.</desc>
@@ -2258,25 +2252,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD) and the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-provenance.html">provenance</ref> element of the Text
@@ -2284,7 +2260,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="pubStmt" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">publication statement</gloss>
+    <gloss xml:lang="en">publication statement</gloss>
     <desc xml:lang="en">Container for information regarding the publication or
       distribution of a bibliographic item, including the publisher’s name and address, the date of
       publication, and other relevant details.</desc>
@@ -2307,13 +2283,11 @@
     </content>
     <remarks xml:lang="en">
       <p>When an item is unpublished, use only the <gi scheme="MEI">unpub</gi> sub-element.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-publicationStmt.html">publicationStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="revisionDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">revision description</gloss>
+    <gloss xml:lang="en">revision description</gloss>
     <desc xml:lang="en">Container for information about alterations that have been made
       to an MEI file.</desc>
     <classes>
@@ -2331,13 +2305,11 @@
     <remarks xml:lang="en">
       <p>It is recommended that changes be recorded in reverse chronological order, with the most
         recent alteration first.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-revisionDesc.html">revisionDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="samplingDecl" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">sampling declaration</gloss>
+    <gloss xml:lang="en">sampling declaration</gloss>
     <desc xml:lang="en">Contains a prose description of the rationale and methods used in
       sampling texts in the creation of a corpus or collection.</desc>
     <classes>
@@ -2396,7 +2368,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="seriesStmt" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">series statement</gloss>
+    <gloss xml:lang="en">series statement</gloss>
     <desc xml:lang="en">Groups information about the series, if any, to which a publication
       belongs.</desc>
     <classes>
@@ -2432,13 +2404,11 @@
         >contents</gi> element should be used when it is necessary to enumerate the content of the
         series, but not describe each component. The <gi scheme="MEI">seriesStmt</gi> element is
         provided within seriesStmt for the description of a sub-series.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-seriesStmt.html">seriesStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="soundChan" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">sound channels</gloss>
+    <gloss xml:lang="en">sound channels</gloss>
     <desc xml:lang="en">Reflects the number of apparent sound channels in the playback of a
       recording (monaural, stereophonic, quadraphonic, etc.).</desc>
     <classes>
@@ -2496,9 +2466,7 @@
         </rng:choice>
       </rng:zeroOrMore>
       <rng:zeroOrMore>
-        <rng:choice>
-          <rng:ref name="model.biblLike"/>
-        </rng:choice>
+        <rng:ref name="model.biblLike"/>
       </rng:zeroOrMore>
     </content>
     <constraintSpec ident="check_source_target" scheme="schematron">
@@ -2521,14 +2489,12 @@
         element.</p>
       <p>The <att>data</att> attribute may be used to reference one or more musical features found
         in the content of this particular source.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-source.html">source</ref> element of the Text Encoding Initiative (TEI) and the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-source">source</ref> element of the Encoded
         Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="sourceDesc" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">source description</gloss>
+    <gloss xml:lang="en">source description</gloss>
     <desc xml:lang="en">A container for the descriptions of the source(s) used in the
       creation of the electronic file.</desc>
     <classes>
@@ -2538,9 +2504,12 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="source"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:ref name="p"/>
+        <rng:oneOrMore>
+          <rng:ref name="source"/>
+        </rng:oneOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>This element is recommended where the MEI file is a transcription of existing music, but is
@@ -2548,7 +2517,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="specRepro" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">special reproduction characteristic</gloss>
+    <gloss xml:lang="en">special reproduction characteristic</gloss>
     <desc xml:lang="en">The equalization system, noise reduction system,
       etc. used in making the recording (<abbr>e.g.</abbr>, NAB, DBX, Dolby, etc.).</desc>
     <classes>
@@ -2563,7 +2532,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="stdVals" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">standard values</gloss>
+    <gloss xml:lang="en">standard values</gloss>
     <desc xml:lang="en">Specifies the format used when standardized date or number values are
       supplied.</desc>
     <classes>
@@ -2586,7 +2555,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="sysReq" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">system requirements</gloss>
+    <gloss xml:lang="en">system requirements</gloss>
     <desc xml:lang="en">System requirements for using the electronic item.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2599,7 +2568,7 @@
     </content>
   </elementSpec>
   <elementSpec ident="tagsDecl" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">tagging declaration</gloss>
+    <gloss xml:lang="en">tagging declaration</gloss>
     <desc xml:lang="en">Provides detailed information about the tagging applied to a
       document.</desc>
     <classes>
@@ -2731,7 +2700,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="titleStmt" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">title statement</gloss>
+    <gloss xml:lang="en">title statement</gloss>
     <desc xml:lang="en">Container for title and responsibility meta-data.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2745,9 +2714,13 @@
         <rng:ref name="model.titleLike"/>
       </rng:oneOrMore>
       <rng:zeroOrMore>
-        <rng:choice>
-          <rng:ref name="model.respLike"/>
-        </rng:choice>
+        <rng:ref name="model.nameLike.agent"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="name"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="respStmt"/>
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
@@ -2755,7 +2728,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="trackConfig" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">track configuration</gloss>
+    <gloss xml:lang="en">track configuration</gloss>
     <desc xml:lang="en">Number of physical/input tracks on a sound medium (<abbr>e.g.</abbr>, eight
       track, twelve track).</desc>
     <classes>
@@ -2786,7 +2759,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="treatHist" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">treatment history</gloss>
+    <gloss xml:lang="en">treatment history</gloss>
     <desc xml:lang="en">A record of the treatment the item has undergone (<abbr>e.g.</abbr>,
       de-acidification, restoration, etc.).</desc>
     <classes>
@@ -2796,36 +2769,16 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>Treatment history may also comprise details of the treatment process (<abbr>e.g.</abbr>, chemical
         solutions used, techniques applied, etc.), the date the treatment was applied, etc.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="treatSched" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">treatment scheduled</gloss>
+    <gloss xml:lang="en">treatment scheduled</gloss>
     <desc xml:lang="en">Scheduled treatment, <abbr>e.g.</abbr>, de-acidification, restoration, etc., for
       an item.</desc>
     <classes>
@@ -2835,38 +2788,21 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="unpub" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">unpublished</gloss>
+    <gloss xml:lang="en">unpublished</gloss>
     <desc xml:lang="en">Used to explicitly indicate that a bibliographic resource is
       unpublished.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="model.imprintPart"/>
     </classes>
     <content>
       <rng:text/>
@@ -2877,7 +2813,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="useRestrict" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">usage restrictions</gloss>
+    <gloss xml:lang="en">usage restrictions</gloss>
     <desc xml:lang="en">Container for information about the conditions that affect use of a
       bibliographic item after access has been granted.</desc>
     <classes>
@@ -2897,10 +2833,54 @@
         such as when rights have been ceded to the public domain. Do not confuse this element with
         the <gi scheme="MEI">accessRestrict</gi> element, which holds information about conditions
         affecting the availability of the material.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-userestrict">userestrict</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="watermarkDesc" module="MEI.header">
+    <gloss xml:lang="en">watermark description</gloss>
+    <desc xml:lang="en">Contains a description of the watermark(s) of an item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="head"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="watermarkList"/>
+            <rng:ref name="watermark"/>
+            <rng:ref name="p"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+  </elementSpec>
+  <elementSpec ident="watermarkList" module="MEI.header">
+    <gloss xml:lang="en">list of watermarks</gloss>
+    <desc xml:lang="en">Grouping several watermarks.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.edit"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="annot"/>
+          <rng:ref name="watermark"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
   </elementSpec>
   <elementSpec ident="watermark" module="MEI.header">
     <desc xml:lang="en">Contains a description of a watermark or similar device.</desc>
@@ -2909,26 +2889,18 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.msInline"/>
-      <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:oneOrMore>
+        <rng:choice>
+          <rng:ref name="macro.watermark"/>
+          <rng:text/>
+        </rng:choice>
+      </rng:oneOrMore>
     </content>
-    <constraintSpec ident="check_watermark_inline" scheme="schematron">
-      <constraint>
-        <sch:rule
-          context="mei:watermark">
-          <sch:assert test="ancestor::mei:physDesc">The watermark element may only appear as a
-            descendant of the physDesc element.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks xml:lang="en">
       <p>The <att>facs</att> attribute may be used to record the location of the watermark in a
         facsimile image.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-watermark.html">watermark</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
@@ -2949,66 +2921,71 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.identifierLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.titleLike"/>
-      </rng:oneOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.respLikePart"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.workIdent"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="otherChar"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="creation"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="history"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="langUsage"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="perfMedium"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="perfDuration"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="audience"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="contents"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="context"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="biblList"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="notesStmt"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="classification"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="expressionList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="componentList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="relationList"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="extMeta"/>
-      </rng:zeroOrMore>
+      <rng:interleave>
+        <rng:zeroOrMore>
+          <rng:ref name="model.identifierLike"/>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:ref name="model.titleLike"/>
+        </rng:oneOrMore>
+        <rng:optional>
+          <rng:ref name="respStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="dedication"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="otherChar"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfMedium"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfDuration"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="audience"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="context"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classification"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="expressionList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="componentList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
+      </rng:interleave>
     </content>
     <remarks xml:lang="en">
       <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended duration</emph>
@@ -3016,7 +2993,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="workList" module="MEI.header">
-    <gloss versionDate="2022-05-18" xml:lang="en">work list</gloss>
+    <gloss xml:lang="en">work list</gloss>
     <desc xml:lang="en">Grouping mechanism for information describing non-bibliographic aspects of a
       text.</desc>
     <classes>

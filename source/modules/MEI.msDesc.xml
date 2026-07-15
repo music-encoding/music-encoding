@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.msDesc">
   <moduleSpec ident="MEI.msDesc">
     <desc xml:lang="en">Manuscript description component declarations.</desc>
@@ -36,6 +54,19 @@
       </attDef>
     </attList>
   </classSpec>
+  <classSpec ident="att.foliation.scheme" type="atts" module="MEI.msDesc">
+    <desc xml:lang="en">Attributes that describe foliation schemes.</desc>
+    <attList>
+      <attDef ident="scheme" usage="opt">
+        <desc xml:lang="en">Identifies the foliation scheme in terms of which the location is being specified by
+          pointing to some foliation element defining it, or to some other equivalent
+          resource.</desc>
+        <datatype>
+          <rng:ref name="data.URI"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
   <classSpec ident="model.msInline" type="model" module="MEI.msDesc">
     <desc xml:lang="en">Groups elements that may appear inline when the msdesc module is active.</desc>
     <classes>
@@ -43,6 +74,7 @@
     </classes>
   </classSpec>
   <elementSpec ident="accMat" module="MEI.msDesc">
+    <gloss xml:lang="en">accompanying material</gloss>
     <desc xml:lang="en">Holds a description of any additional material bound with an item, such as
       non-contemporaneous documents or fragments.</desc>
     <classes>
@@ -59,7 +91,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="addDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">addition description</gloss>
+    <gloss xml:lang="en">addition description</gloss>
     <desc xml:lang="en">Provides a description of significant additions found within an
       item, such as marginalia or other annotations.</desc>
     <classes>
@@ -76,12 +108,13 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="binding" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">binding</gloss>
+    <gloss xml:lang="en">binding</gloss>
     <desc xml:lang="en">Contains a description of one binding, <abbr>i.e.</abbr>, type of covering, boards, etc.
       applied to an item.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.contemporary"/>
       <memberOf key="att.datable"/>
       <memberOf key="att.lang"/>
     </classes>
@@ -98,19 +131,12 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <attList>
-      <attDef ident="contemporary" usage="opt">
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-binding.html">binding</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="bindingDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">binding description</gloss>
+    <gloss xml:lang="en">binding description</gloss>
     <desc xml:lang="en">Describes the present and former bindings of an item.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -206,7 +232,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="decoDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">decoration description</gloss>
+    <gloss xml:lang="en">decoration description</gloss>
     <desc xml:lang="en">Contains a description of the decoration of an item.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -241,7 +267,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="decoNote" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">decoration note</gloss>
+    <gloss xml:lang="en">decoration note</gloss>
     <desc xml:lang="en">Contains a description of one or more decorative features of an
       item.</desc>
     <classes>
@@ -293,8 +319,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="foliation" module="MEI.msDesc">
-    <desc xml:lang="en">Describes the numbering system or systems used to count the leaves or pages in a
-      codex.</desc>
+    <desc xml:lang="en">Describes the numbering system or systems used to count the folios, leaves, or pages in a manuscript or printed item.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -321,15 +346,6 @@
     <content>
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
-    <constraintSpec ident="check_heraldry_inline" scheme="schematron">
-      <constraint>
-        <sch:rule
-          context="mei:heraldry">
-          <sch:assert test="ancestor::mei:physDesc">The heraldry element may only appear as a
-            descendant of the physDesc element.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-heraldry.html">heraldry</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
@@ -406,7 +422,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="layoutDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">layout description</gloss>
+    <gloss xml:lang="en">layout description</gloss>
     <desc xml:lang="en">Collects layout descriptions.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -445,6 +461,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.foliation.scheme"/>
       <memberOf key="att.lang"/>
       <memberOf key="model.msInline"/>
     </classes>
@@ -458,28 +475,7 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="check_locus_inline" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:locus">
-          <sch:assert
-            test="ancestor::mei:physDesc or parent::mei:contentItem or 
-            ancestor::mei:source[ancestor::mei:componentList[ancestor::mei:sourceDesc or 
-            ancestor::mei:sourceList or ancestor::mei:workList]]"
-            >The locus element may only appear as a descendant of a physDesc element, a
-            contentItem element, or a source element that is a component of another source or
-            work.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <attList>
-      <attDef ident="scheme" usage="opt">
-        <desc xml:lang="en">Identifies the foliation scheme in terms of which the location is being specified by
-          pointing to some foliation element defining it, or to some other equivalent
-          resource.</desc>
-        <datatype>
-          <rng:ref name="data.URI"/>
-        </datatype>
-      </attDef>
       <attDef ident="from" usage="opt">
         <desc xml:lang="en">Specifies the starting point of the location in a normalized form.</desc>
         <datatype>
@@ -498,12 +494,13 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="locusGrp" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">locus group</gloss>
+    <gloss xml:lang="en">locus group</gloss>
     <desc xml:lang="en">Groups locations which together form a distinct but discontinuous item
       within a manuscript or manuscript part, according to a specific foliation.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.foliation.scheme"/>
       <memberOf key="att.lang"/>
       <memberOf key="model.msInline"/>
     </classes>
@@ -525,16 +522,6 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <attList>
-      <attDef ident="scheme" usage="opt">
-        <desc xml:lang="en">Identifies the foliation scheme in terms of which the location is being specified by
-          pointing to some foliation element defining it, or to some other equivalent
-          resource.</desc>
-        <datatype>
-          <rng:ref name="data.URI"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-locusGrp.html">locusGrp</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
@@ -555,13 +542,13 @@
       <rng:ref name="macro.struc-unstrucContent"/>
     </content>
     <attList>
-      <attDef ident="func">
+      <attDef ident="func" usage="opt">
         <valList type="closed">
           <valItem ident="initial">
             <desc xml:lang="en">Signals beginning of a text division.</desc>
           </valItem>
           <valItem ident="final">
-            <desc xml:lang="en">Makrs the end of a text division.</desc>
+            <desc xml:lang="en">Marks the end of a text division.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -571,7 +558,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="scriptDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">script description</gloss>
+    <gloss xml:lang="en">script description</gloss>
     <desc xml:lang="en">Contains a description of the letters or characters used in an
       autographic item.</desc>
     <classes>
@@ -606,7 +593,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="scriptNote" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">script note</gloss>
+    <gloss xml:lang="en">script note</gloss>
     <desc xml:lang="en">Describes a particular script distinguished within the description of an
       autographic item.</desc>
     <classes>
@@ -626,6 +613,7 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
+      <memberOf key="att.contemporary"/>
       <memberOf key="att.datable"/>
       <memberOf key="att.lang"/>
     </classes>
@@ -651,19 +639,12 @@
         </rng:zeroOrMore>
       </rng:choice>
     </content>
-    <attList>
-      <attDef ident="contemporary">
-        <datatype>
-          <rng:ref name="data.BOOLEAN"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-seal.html">seal</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="sealDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">seal description</gloss>
+    <gloss xml:lang="en">seal description</gloss>
     <desc xml:lang="en">Describes the seals or similar external attachments applied to an
       item.</desc>
     <classes>
@@ -704,7 +685,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="secFolio" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">second folio</gloss>
+    <gloss xml:lang="en">second folio</gloss>
     <desc xml:lang="en">Marks the word or words taken from a fixed point in a codex (typically
       the beginning of the second leaf) in order to provide a unique identifier for the item.</desc>
     <classes>
@@ -800,7 +781,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="supportDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">support description</gloss>
+    <gloss xml:lang="en">support description</gloss>
     <desc xml:lang="en">Groups elements describing the physical support material of an
       item.</desc>
     <classes>
@@ -868,7 +849,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="typeDesc" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">type description</gloss>
+    <gloss xml:lang="en">type description</gloss>
     <desc xml:lang="en">Contains a description of the typefaces or other aspects of the
       printing of a printed source.</desc>
     <classes>
@@ -903,7 +884,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="typeNote" module="MEI.msDesc">
-    <gloss versionDate="2022-05-18" xml:lang="en">type note</gloss>
+    <gloss xml:lang="en">type note</gloss>
     <desc xml:lang="en">Describes a particular font or other significant typographic feature of a
       printed resource.</desc>
     <classes>

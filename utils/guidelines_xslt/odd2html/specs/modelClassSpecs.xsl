@@ -41,6 +41,7 @@
         <xd:return>the section element</xd:return>
     </xd:doc>
     <xsl:function name="tools:getModelClassSpecs" as="node()">
+        <xsl:message select="'Getting model class specs'"/>
         <section id="modelClassSpecs" class="specSection">
             <h1>Model Class Specifications</h1>
             <xsl:for-each select="$model.classes">

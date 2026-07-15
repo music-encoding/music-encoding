@@ -15,6 +15,7 @@
     <xd:doc scope="stylesheet">
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Jul 8, 2021</xd:p>
+            <xd:p><xd:b>Modified on:</xd:b> Nov 28, 2025</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
             <xd:p>This XSLT is part of odd2html.xsl. It holds basic functions, which are
                 used to adjust input parameters like image paths.</xd:p>
@@ -56,7 +57,7 @@
         <xsl:sequence select="$out"/>
     </xsl:function>
     
-    <!--<xd:doc>
+    <xd:doc>
         <xd:desc>
             <xd:p>Builds a flat list of chapter elements that can be used for building tocs etc. Recursively called on child chapters.</xd:p>
         </xd:desc>
@@ -64,27 +65,23 @@
         <xd:param name="level">The current level of nesting. Increased by one with every recursive call</xd:param>
         <xd:param name="parent.number">The number of parent chapters, to which the current index will be appended</xd:param>
         <xd:return>A list of chapter elements</xd:return>
-    </xd:doc>-->
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:param name="node"></xd:param>
-        <xd:param name="level"></xd:param>
-        <xd:param name="parent.number"></xd:param>
-        <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:buildChapterList" as="node()*">
         <xsl:param name="node" as="node()"/>
         <xsl:param name="level" as="xs:integer"/>
-        <xsl:param name="parent.number" as="xs:string"/>
+        <xsl:param name="parent.chapter.number" as="xs:string"/>
+        <xsl:param name="chapter.prefix" as="xs:string"/>
         
         <xsl:for-each select="$node/child::tei:div">
             <xsl:variable name="current.div" select="." as="node()"/>
-            <xsl:variable name="index" select="position()" as="xs:integer"/>
-            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$parent.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
-                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, $parent.number || $index || '.')"/>    
-            </chapter>            
+            
+            <xsl:variable name="origElemSource" select="$mei.source//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            <xsl:variable name="origElemCustomization" select="$mei.customization//tei:div[@xml:id = $current.div/@xml:id]" as="node()?"/>
+            
+            <xsl:variable name="index" select="if($origElemSource) then(count($origElemSource/preceding-sibling::tei:div) + 1) else(count($origElemCustomization/preceding-sibling::tei:div) + 1)" as="xs:integer"/>
+            <chapter level="{$level}" xml:id="{$current.div/@xml:id}" number="{$chapter.prefix || $parent.chapter.number || $index}" head="{normalize-space(string-join($current.div/tei:head/text(),' '))}">
+                <xsl:sequence select="tools:buildChapterList($current.div, $level + 1, chapter.prefix || $parent.chapter.number || $index || '.', '')"/>
+            </chapter>
         </xsl:for-each>
     </xsl:function>
     
@@ -101,13 +98,13 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:generatePreface" as="node()+">
-        
+        <xsl:message select="'Generating preface'"/>
         <xsl:variable name="git.link" select="'https://github.com/music-encoding/music-encoding/commit/' || $retrieved.hash" as="xs:string"/>
         <xsl:variable name="git.short" select="substring($retrieved.hash,1,7)" as="xs:string"/>
         
         <xsl:variable name="overlay.content" as="xs:string?">
             <xsl:choose>
-                <xsl:when test="tokenize($git.head,'/')[last()] = ('stable','main','master')"></xsl:when>
+                <xsl:when test="tokenize($git.head,'/')[last()] = ('stable','main','master','v5.0')"></xsl:when>
                 <xsl:when test="tokenize($git.head,'/')[last()] = 'develop'">DEVELOPMENT VERSION</xsl:when>
                 <xsl:otherwise><xsl:value-of select="upper-case(tokenize($git.head,'/')[last()]) || ' BRANCH'"/></xsl:otherwise>
             </xsl:choose>
@@ -147,10 +144,10 @@
                 Music Encoding Initiative
                 <small class="out">Guidelines</small>
             </h1>
-            <img id="meiLogo" src="images/meilogo.png"/>    
+            <img id="meiLogo" src="images/meilogo.png"/>
             <div class="bottom">
                 <div class="versionDiv">Version <span id="version"><xsl:value-of select="$version"/></span> <span class="gitLinkWrapper">(<a id="gitVersionLink" href="{$git.link}">#<xsl:value-of select="$git.short"/></a>)</span></div>
-                <div class="generationDiv">generated on <span id="generationDate"><xsl:value-of select="format-date(current-date(), '[D1] [MNn] [Y1]')"/></span></div>                
+                <div class="generationDiv">generated on <span id="generationDate"><xsl:value-of select="format-date(current-date(), '[D1] [MNn] [Y1]')"/></span></div>
             </div>
         </section>
         <section class="imprintPage">
@@ -180,12 +177,13 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:generateToc" as="node()">
+        <xsl:message select="'Generating TOC'"/>
         <nav>
             <header>Table of Contents</header>
             <!-- TODO: Do we have front pages that need to be included? -->
             <ul class="toc toc_body">
                 <xsl:for-each select="$all.chapters">
-                    <xsl:sequence select="tools:generateTocChapterItem(.)"/>    
+                    <xsl:sequence select="tools:generateTocChapterItem(.)"/>
                 </xsl:for-each>
             </ul>
             <ul class="toc toc_back">
@@ -230,10 +228,10 @@
                         </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#dataTypeIndex">Index of Data Types</a>
-                        </li>     
+                        </li>
                         <li class="toc toc_2">
                             <a class="toc toc_2" href="#contributorList">Contributors</a>
-                        </li>     
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -263,7 +261,7 @@
             <xsl:if test="$chapter/child::chapter">
                 <ul class="toc">
                     <xsl:for-each select="$chapter/child::chapter">
-                        <xsl:sequence select="tools:generateTocChapterItem(.)"/>    
+                        <xsl:sequence select="tools:generateTocChapterItem(.)"/>
                     </xsl:for-each>
                 </ul>
             </xsl:if>
@@ -377,13 +375,8 @@
         </xd:desc>
         <xd:return></xd:return>
     </xd:doc>
-    <xd:doc>
-        <xd:desc>
-            <xd:p></xd:p>
-        </xd:desc>
-        <xd:return></xd:return>
-    </xd:doc>
     <xsl:function name="tools:generateIndizes" as="node()+">
+        <xsl:message select="'Generating indices'"/>
         <section id="elementIndex" class="backIndex">
             <h1>Index of Elements</h1>
             <xsl:for-each select="$elements.pdf.links">
@@ -424,15 +417,25 @@
                 </div>
             </xsl:for-each>
         </section>
+    </xsl:function>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Generates a list of contributors for the back of the Guidelines PDF</xd:p>
+        </xd:desc>
+        <xd:return>an html:section containing the contributors</xd:return>
+    </xd:doc>
+    <xsl:function name="tools:generateContributorsList" as="node()+">
+        <xsl:message select="'Generating contributors list'"/>
         <section id="contributorList" class="backIndex">
             <h1>Contributors</h1>
             <p>
                 The Guidelines and specifications made available in this document wouldn't have been possible without the generous
                 and selfless support of a large number of people. Some of those people, especially from the early days of MEI are 
-                explicitly mentioned in chapter <a href="#acknowledgments">1.1.2 Acknowledgments</a> of these Guidelines. However, we 
+                explicitly mentioned in chapter <a href="#acknowledgments">1.1.1 Acknowledgments</a> of these Guidelines. However, we 
                 believe it is important to give proper recognition to everyone contributing to this community effort. Without 
                 their continued commitment, MEI would not be possible. 
-            </p>            
+            </p>
             <xsl:sequence select="tools:getContributors()"/>
             <p>
                 This list is automatically compiled from all contributors to the 
@@ -450,7 +453,6 @@
                 bridges between different musical repertoires and styles, historical periods, cultural backgrounds, musical domains, 
                 research interests, and methodical concepts by reasoning about a common encoding framework like MEI. 
             </p>
-            
         </section>
     </xsl:function>
     
@@ -462,13 +464,16 @@
         <xd:return></xd:return>
     </xd:doc>
     <xsl:function name="tools:getContributors" as="node()*">
+        <xsl:message select="'Getting contributors'"/>
         <xsl:variable name="spec.repo.contributors" select="'https://api.github.com/repos/music-encoding/music-encoding/contributors'" as="xs:string"/>
         <xsl:variable name="docs.repo.contributors" select="'https://api.github.com/repos/music-encoding/guidelines/contributors'" as="xs:string"/>
         
         <xsl:variable name="contributors">
             <xsl:variable name="raw.contributors" as="node()*">
-                <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
-                <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
+                <xsl:if test="$retrieve-contributors">
+                    <xsl:sequence select="tools:retrieveData($docs.repo.contributors)/child::json:array/json:map"/>
+                    <xsl:sequence select="tools:retrieveData($spec.repo.contributors)/child::json:array/json:map"/>
+                </xsl:if>
             </xsl:variable>
             <xsl:variable name="unique.ids" select="distinct-values($raw.contributors//json:number[@key = 'id']/text())" as="xs:string*"/>
             <xsl:variable name="unique.contributors" as="node()*">
@@ -494,8 +499,8 @@
                         <string key="viaf"></string>
                         <string key="orcid"></string>
                         <string key="avatar"><xsl:value-of select="$user.data/json:string[@key = 'avatar_url']"/></string>
-                    </map>                    
-                </xsl:for-each>    
+                    </map>
+                </xsl:for-each>
             </array>
             
         </xsl:variable>
@@ -553,8 +558,8 @@
                                     <img class="contibutorAvatar" src="images/ORCID_iD.svg"/>
                                     <span><xsl:value-of select="substring-after($current.contributor/json:string[@key = 'orcid']/text(),'https://orcid.org/')"/></span>
                                 </a>
-                            </xsl:if>                            
-                        </td>                        
+                            </xsl:if>
+                        </td>
                         <td class="viaf">
                             <xsl:if test="$current.contributor/json:string[@key = 'viaf']/text() and string-length($current.contributor/json:string[@key = 'viaf']/text()) gt 0">
                                 <a class="contributorLink viafLink" href="{$current.contributor/json:string[@key = 'viaf']/text()}">

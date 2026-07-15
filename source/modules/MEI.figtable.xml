@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.figtable">
   <moduleSpec ident="MEI.figtable">
     <desc xml:lang="en">Figures and tables component declarations.</desc>
@@ -32,7 +50,7 @@
     <desc xml:lang="en">Groups elements representing or containing graphic information such as an illustration or
       figure.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
   </classSpec>
   <classSpec ident="model.graphicLike" module="MEI.figtable" type="model">
@@ -47,7 +65,7 @@
     </classes>
   </classSpec>
   <elementSpec ident="fig" module="MEI.figtable">
-    <gloss versionDate="2022-05-18" xml:lang="en">figure</gloss>
+    <gloss xml:lang="en">figure</gloss>
     <desc xml:lang="en">Groups elements representing or containing graphic information such as an
       illustration or figure.</desc>
     <classes>
@@ -73,7 +91,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="figDesc" module="MEI.figtable">
-    <gloss versionDate="2022-05-18" xml:lang="en">figure description</gloss>
+    <gloss xml:lang="en">figure description</gloss>
     <desc xml:lang="en">Contains a brief prose description of the appearance or content of
       a graphic figure, for use when documenting an image without displaying it.</desc>
     <classes>
@@ -84,9 +102,7 @@
     <content>
       <rng:choice>
         <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="model.textComponentLike"/>
-          </rng:choice>
+          <rng:ref name="model.textComponentLike"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:choice>
@@ -100,8 +116,6 @@
       <p>Best practice suggests the use of controlled vocabulary for figure descriptions. Don't
         confuse this entity with a figure caption. A caption is text primarily intended for display
         with an illustration. It may or may not function as a description of the illustration.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-figDesc.html">figDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
@@ -109,6 +123,7 @@
     <desc xml:lang="en">Indicates the location of an inline graphic.</desc>
     <classes>
       <memberOf key="att.common"/>
+      <memberOf key="att.coordinated.ul"/>
       <memberOf key="att.dimensions"/>
       <memberOf key="att.internetMedia"/>
       <memberOf key="att.facsimile"/>
@@ -141,20 +156,6 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <attList>
-      <attDef ident="ulx" usage="opt">
-        <desc xml:lang="en">Indicates the upper-left corner x coordinate.</desc>
-        <datatype>
-          <rng:data type="nonNegativeInteger"/>
-        </datatype>
-      </attDef>
-      <attDef ident="uly" usage="opt">
-        <desc xml:lang="en">Indicates the upper-left corner y coordinate.</desc>
-        <datatype>
-          <rng:data type="nonNegativeInteger"/>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-graphic.html">graphic</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
@@ -185,7 +186,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="td" module="MEI.figtable">
-    <gloss versionDate="2022-05-18" xml:lang="en">table data</gloss>
+    <gloss xml:lang="en">table data</gloss>
     <desc xml:lang="en">Designates a table cell that contains data as opposed to a cell that
       contains column or row heading information.</desc>
     <classes>
@@ -209,13 +210,11 @@
     <remarks xml:lang="en">
       <p>The <att>colspan</att> and <att>rowspan</att> attributes record tabular display rendering
         information.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://html.spec.whatwg.org/#the-td-element">td</ref> element of <abbr>HTML</abbr>.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="th" module="MEI.figtable">
-    <gloss versionDate="2022-05-18" xml:lang="en">table header</gloss>
+    <gloss xml:lang="en">table header</gloss>
     <desc xml:lang="en">Designates a table cell containing column or row heading information as
       opposed to one containing data.</desc>
     <classes>
@@ -239,13 +238,11 @@
     <remarks xml:lang="en">
       <p>The <att>colspan</att> and <att>rowspan</att> attributes record tabular display rendering
         information.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://html.spec.whatwg.org/#the-th-element">th</ref> element of <abbr>HTML</abbr>.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="tr" module="MEI.figtable">
-    <gloss versionDate="2022-05-18" xml:lang="en">table row</gloss>
+    <gloss xml:lang="en">table row</gloss>
     <desc xml:lang="en">A formatting element that contains one or more cells (intersection of a row
       and a column) in a <gi scheme="MEI">table</gi>.</desc>
     <classes>
@@ -264,8 +261,6 @@
     </content>
     <remarks xml:lang="en">
       <p>More precise rendition of the table and its cells can be specified in a style sheet.</p>
-    </remarks>
-    <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://html.spec.whatwg.org/#the-tr-element">tr</ref> element of <abbr>HTML</abbr>.</p>
     </remarks>
   </elementSpec>

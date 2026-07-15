@@ -8,7 +8,7 @@ To build the RNG schema of a specific customization, follow these steps:
 
 1. Open the customization file in oXygen.
 
-   To make sure that step 2 works out of the box, make sure that it has the extension `.odd` and not `.xml`. This is necessary for oXygen to recognize the file as TEI ODD customization and offer you the preconfigured transformation scenario for generating RNG schema files from an ODD.
+   To make sure that step 2 works out of the box, make sure that it has the extension `.odd` and not `.xml`. This is necessary for oXygen to recognize the file as TEI ODD customization and offer you the pre-configured transformation scenario for generating RNG schema files from an ODD.
 
 2. Click on the _Configure Transformation Scenario(s)_ button (the red play button with the wrench). This will open a window of the same name.
 
@@ -52,4 +52,4 @@ In this section, we will use Oxygen to generate the HTML document for the guidel
 
 7. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Global_ section of the window, you will find your new _XML transformation with XSLT_ with the name you gave it in Step 4. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will generate the HTML document for the guidelines.
 
-After a few minutes, the results of this build can be found in the web folder (`music-encoding/source/web`). The guidelines are stored in the `index.html` file.
+After a few minutes, the results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
