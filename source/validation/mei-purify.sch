@@ -5,11 +5,9 @@ Author: Benjamin W. Bohl
 This schematron is intended to be run associated with the MEI source files:
   * mei-source.xml
   * modules/
-  * guidelines
+  * docs/
 
-This is being done automatically through Apache Ant and GitHub Actions for each pull request.
-Moreover it is associated with the above files to be part of the standard validation
-if editors support schematron validation.
+This is being done automatically through Apache Ant and GitHub Actions for each pull request. Moreover, it is associated with the above files to be validated against in standard validation if editors support schematron validation.
 
 The intent of this schematron is to give hints for preparing the conversion to pureODD.
 
@@ -27,7 +25,7 @@ The intent of this schematron is to give hints for preparing the conversion to p
     <sch:pattern id="check_teiConstraintSpec_ident">
         <sch:rule context="tei:constraintSpec">
           <sch:let name="precedingIdents" value="preceding::tei:constraintSpec/@ident"></sch:let>
-            <sch:assert role="warning" test="if ($precedingIdents != ()) then @ident != $precedingIdents else true()">Purification Warning: The @ident (<sch:value-of select="@ident"/>) on constraintSpec has to be unique across all of mei-source.xml. (<sch:value-of select="$precedingIdents"/>)</sch:assert>
+            <sch:assert role="warning" test="if ($precedingIdents != ()) then @ident != $precedingIdents else true()">Purification Warning: The @ident (<sch:value-of select="@ident"/>) on constraintSpec has to be unique across all of the MEI source files (mei-source.xml). (<sch:value-of select="$precedingIdents"/>)</sch:assert>
         </sch:rule>
     </sch:pattern>
 
@@ -45,7 +43,7 @@ The intent of this schematron is to give hints for preparing the conversion to p
 
     <sch:pattern id="check_teiDatatype_text">
         <sch:rule context="tei:datatype">
-            <sch:report role="warning" test="rng:text">Purification Warning: Although valid &lt;tei:datatype&gt; should not contain a &lt;rng:text&gt; as a child element, as &lt;rng:data type="[xs-datatype]" /&gt; is preferred.</sch:report>
+            <sch:report role="warning" test="rng:text">Purification Warning: Although valid, a &lt;tei:datatype&gt; should not contain a &lt;rng:text&gt; as a child element, since &lt;rng:data type="[xs-datatype]" /&gt; is preferred.</sch:report>
         </sch:rule>
     </sch:pattern>
 
