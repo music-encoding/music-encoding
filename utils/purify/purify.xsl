@@ -7,6 +7,11 @@
   
   <xsl:param name="schema-prefix" as="xs:token" select="xs:token('tei')" />
   
+  <xsl:param name="target-tei-version">4.11.0</xsl:param>
+  <xsl:variable name="target-tei-version.major" select="xs:integer(tokenize($target-tei-version, '\.')[1])" as="xs:integer"/>
+  <xsl:variable name="target-tei-version.minor" select="xs:integer(tokenize($target-tei-version, '\.')[2])" as="xs:integer"/>
+  <xsl:variable name="target-tei-version.patch" select="xs:integer(tokenize($target-tei-version, '\.')[3])" as="xs:integer"/>
+  
   <xsl:function name="purify:is-xs-datatype" as="xs:boolean">
     <xsl:param name="name" as="xs:token" required="yes"/>
     
@@ -190,9 +195,18 @@
   
   
   <xsl:template match="rng:interleave">
-    <interleave>
+    <xsl:choose>
+      <xsl:when test="$target-tei-version.major gt 4 and $target-tei-version.minor gt 11">
+        <interleave>
       <xsl:apply-templates />
     </interleave>
+      </xsl:when>
+    <xsl:otherwise>
+        <sequence preserveOrder="false">
+          <xsl:apply-templates />
+        </sequence>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
   
   <!-- ********************************************* -->
