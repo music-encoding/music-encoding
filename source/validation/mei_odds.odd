@@ -79,17 +79,115 @@
             <gloss>Introduce <gi>gloss</gi> and <gi>expan</gi> with <att>target</att>/<att>ref</att> attributes for index generation, mouseover behaviors, and a unified glossary.</gloss>
           </item>
         </list>
-        <p><term>Encoding Level 1</term> should be achieved for <term>MEI 6.0</term>, all other levels are to be applied later and preferably step-by-step and consistently accross all MEI specifications in the above order.</p>
+        <p><term>Encoding Level 1</term> should be achieved for <term>MEI 6.0</term>, all other levels are to be applied later and preferably step-by-step and consistently accross all MEI source files (docs nad modules) in the above order. The below encoding guidelines will illustrate the markup for <term>Encoding Level 1</term>, guidelines for the higher levels will be added when applicable.</p>
       </div>
       <div>
         <head>Encoding Level 1</head>
         <p>The main goal of <term>Encoding Level 1</term> is consistency, including:<list>
-          <item>file preamble</item>
-          <item>schema associations</item>
-          <item>metadata in the headers</item>
-          <item>markup of textstructures, e.g., <gi>div</gi> with <gi>head</gi> and <gi>p</gi></item>
-          <item>pureODD-markup of specifications, e.g., <gi>elementSpec</gi></item>
+          <item>File preamble</item>
+          <item>Schema associations</item>
+          <item>Metadata in the headers</item>
+          <item>Markup of textstructures, e.g., <gi>div</gi> with <gi>head</gi> and <gi>p</gi></item>
+          <item>Deprecation <att>rend</att> in favour of <att>rendition</att> or the TEI processing model</item>
+          <item>Deprecation of <gi>abbr</gi> for lexicalized Latin discourse markers such as <q>e.g.</q> and <q>i.e.</q></item>
+          <item><term>pureODD</term>-markup of specifications, e.g., <gi>elementSpec</gi></item>
           </list></p>
+          <div>
+            <head>Encoding Guidelines Chapters</head>
+            <p>Each chapter of the guidelines is represented by one TEI document with <gi>TEI</gi> as root element. Consequently the file will contain <gi>teiHeader</gi> and <gi>text</gi> elements. While the header will be mostly identical in all chapters some metadata will be specific to the chapters:</p>
+            <list type="gloss">
+              <label>Analytic title</label>
+              <item>
+                <p>Encoded in <code lang="xpath">/TEI/fileDesc/titleStmt/title[level="a"]</code></p>
+              </item>
+              <label>Chapter editor</label>
+              <item><p>Encoded in <code lang="xpath">/TEI/fileDesc/titleStmt/respStmt</code>, e.g.: <figure>
+                <head>A chapter-specific responsibility statement</head>
+                <teix:egXML xml:space="preserve"><respStmt>
+  <resp>Edited by</resp>
+  <name role="edt">Benjamin W. Bohl</name>
+  <note>The editors listed here are responsible for the contents of this very chapter of the MEI Guidelines.</note>
+</respStmt></teix:egXML>
+                </figure></p> <p>The text of the chapter is to be encoded in <gi>body</gi> (<code>/TEI/text/body)</code>. Although <gi>front</gi>, and <gi>back</gi> are also available in <gi>text</gi>, their use is discouraged in chapters.</p> <p>The contents of the body have to start with a <gi>div</gi> holding a <att>xml:id</att> and a <gi>head</gi>, both of which hold the chapters heading. This should also be true for any subdivision of the chapter.</p></item>
+            </list>
+          <div>
+            <head>Creating Element or Attribute Overview-Lists</head>
+            <p>The MEI Guidelines contain overview lists of elements or attributes discussed or relevant in the respective section. These are encoded using the <gi>specList</gi> element with a child <gi>specDesc</gi> for each referenced element or attribute class. Attributes on the <gi>specDesc</gi> control, what to include, depending on the target type:<list type="gloss">
+              <label>element</label>
+              <item>add the value of the element’s <att>ident</att> into <att>key</att></item>
+              <label>attribute(s)</label>
+              <item>add the attribute classe’s <att>ident</att> into <att>key</att> and the <att>ident</att> values of all attributes from that class that you want to be listed as space-separated list into <att>atts</att>.</item>
+              </list><figure>
+              <head> Example-encoding of a element and attribute overview list</head>
+              <teix:egXML><specList>
+   <specDesc key="mdiv"/>
+   <specDesc key="att.typed" atts="type"/>
+   <specDesc key="att.classed" atts="class"/>
+</specList></teix:egXML>
+              </figure></p>
+          </div>
+          <div>
+            <head>Encoding Code or Code References in the Textflow</head>
+            <p>Every mention of any elements, attributes, models, or datatypes from the MEI specifications in the MEI Guidelines should be tagged following the below scheme, to facilitate automatic linking between the Guidelines and the Specifications.:<list type="gloss">
+              <label>Mentioning element names</label>
+              <item>
+                <teix:egXML><gi scheme="MEI">note</gi></teix:egXML>
+              </item>
+              <label>Mentioning attribute names</label>
+              <item>
+                <teix:egXML><att>pname</att></teix:egXML>
+              </item>
+              <label>Giving examples for attribute values</label>
+              <item>
+                <p>Isolated attribute values in the text have to be marked using the <gi scheme="TEI">val</gi> element: <teix:egXML><val>c</val></teix:egXML></p>
+                <p>For encoding an element with potential attributes definitions use <gi scheme="TEI">tag</gi>: <figure>
+                  <head>Encoding and rendition of a <gi scheme="TEI">tag</gi> element.</head>
+                  <teix:egXML><tag>note dur="4" oct="4" pname="c"</tag></teix:egXML>
+                  <eg><tag>note dur="4" oct="4" pname="c"</tag></eg>
+                  </figure></p>
+              </item>
+              </list></p>
+          </div>
+          <div>
+            <head>Linking to other sections of the guidelines</head>
+            <p>Two elements should serve this prupose: </p>
+            <p><specList>
+              <specDesc key="ptr"/>
+              <specDesc key="ref"/>
+              </specList></p>
+          </div>
+          </div>
+          <div>
+            <head>Encoding Figures – Notation Examples and Codeblocks</head>
+            <p>The Guidelines contain figures, such as notation examples from graphics files available in the repository, or generated on-build from MEI encodings with Verovio. Moreover, the code exmples can be rendered as codeblocks. Whichever you want to achieve, it must always be wrapped in a <gi>figure</gi> with a <gi>head</gi> encoding the figure caption (<?TODO ref/ptr ?> without any prefix or numbering; theses will be generated automatically).</p>
+            <div>
+            <head>Embedding a Graphics File</head>
+            <p>To embed a graphics file use a <gi>graphic</gi> with <att>url</att>.</p>
+            </div>
+          <figure>
+            <head>A <gi>graphic</gi> element referencing a pixelgraphic.</head>
+            <teix:egXML><graphic url="../images/modules/usersymbols/triangle.png"/></teix:egXML>
+          </figure>
+            <div>
+              <head>Rendering Codeblocks</head>
+            <p>Codeblocks can be encoded using the <gi>eg:egXML</gi> element.</p>
+            <figure>
+              <head>Embedding a codeblock</head>
+              <teix:egXML><figure>
+                           <head>Accidentals encoded as <gi scheme="MEI">accid</gi> elements, independently from a <gi scheme="MEI">note</gi> element (instead of <att>accid</att>)</head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="verovio code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/accid-03.mei" parse="text"/></egXML>
+                        </figure></teix:egXML>
+            </figure>
+          </div>
+          <div>
+            <head>Encoding Lists</head>
+            <p>For encoding lists please refer to the TEI Guidelines <ref/>.</p>
+          </div>
+            <div>
+            <head>Encoding Tables</head>
+            <p>For encoding tables please refer to the TEI Guidelines <ref/>.</p>
+          </div>
+        </div>
       </div>
     </body>
     <back>
