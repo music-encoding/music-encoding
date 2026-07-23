@@ -19,6 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.cmn">
   <moduleSpec ident="MEI.cmn">
@@ -303,9 +304,11 @@
         </datatype>
       </attDef>
       <attDef ident="slope" usage="opt">
-        <desc xml:lang="en">Records the slope of the beam.</desc>
+        <desc xml:lang="en">Records the slope of a beam; e.g., in MEI virtual units. Positive values indicate 
+          upward slope, negative values indicate slope downward, and a zero value indicates the beam 
+          is horizontal.</desc>
         <datatype>
-          <rng:data type="decimal"/>
+          <rng:ref name="data.MEASUREMENTSIGNED"/>
         </datatype>
       </attDef>
     </attList>
@@ -450,7 +453,12 @@
         <desc xml:lang="en">"Cut-out" style.</desc>
         <valList type="closed">
           <valItem ident="cutout">
-            <desc xml:lang="en">The staff lines should not be drawn.</desc>
+            <desc xml:lang="en">Means that the staff lines "behind" the element are hidden for the
+              entire duration of the element, based on <att scheme="MEI">dur</att> and <att
+                scheme="MEI">dots</att>. <att scheme="MEI">cutout</att> does not imply that any
+              other elements are hidden. Only barlines directly adjacent to the cut-out area may be
+              hidden or shortened. When rendering, barline handling is up to the rendering
+              application.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -1221,6 +1229,7 @@
       <memberOf key="att.attacca.ges"/>
       <memberOf key="att.attacca.log"/>
       <memberOf key="att.attacca.vis"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="model.controlEventLike.cmn"/>
       <!--<memberOf key="model.controlEventLike"/>-->
     </classes>
@@ -1483,6 +1492,7 @@
       <memberOf key="att.fermata.vis"/>
       <memberOf key="att.fermata.ges"/>
       <memberOf key="att.fermata.anl"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
@@ -2182,6 +2192,7 @@
       <memberOf key="att.reh.vis"/>
       <memberOf key="att.reh.ges"/>
       <memberOf key="att.reh.anl"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="model.controlEventLike.cmn"/>
     </classes>
     <content>
@@ -2212,6 +2223,7 @@
       <memberOf key="att.repeatMark.vis"/>
       <memberOf key="att.repeatMark.ges"/>
       <memberOf key="att.repeatMark.anl"/>
+      <memberOf key="att.staffGrpIdent"/>
       <memberOf key="model.controlEventLike"/>
     </classes>
     <content>

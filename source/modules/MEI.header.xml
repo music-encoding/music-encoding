@@ -19,6 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" 
   xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.header">
   <moduleSpec ident="MEI.header">
@@ -72,6 +73,30 @@
       <rng:zeroOrMore>
         <rng:ref name="seriesStmt"/>
       </rng:zeroOrMore>
+    </content>
+  </macroSpec>
+  <macroSpec ident="macro.histAccount" module="MEI.header" type="pe">
+    <desc xml:lang="en">Content model for elements that can be used to describe historical account.</desc>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="eventList"/>
+              <rng:ref name="model.pLike"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </macroSpec>
   <classSpec ident="att.bifoliumSurfaces" module="MEI.header" type="atts">
@@ -396,25 +421,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-acquisition.html">acquisition</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -947,7 +954,7 @@
         </sch:rule>
       </constraint>
     </constraintSpec>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
   <p>A suitable tone ; Left hand coloring ; Rhythm and accent ; Tempo ; 
@@ -955,7 +962,7 @@
 </contents>
             </egXML>
     </exemplum>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve">
 <contents>
   <head>Contents</head>
@@ -968,7 +975,7 @@
 </contents>
             </egXML>
     </exemplum>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve">
 <contents target="http://www.contentProvider.org/toc/toc01.html"/>
             </egXML>
@@ -1280,25 +1287,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <abbr>MARC</abbr> <ref target="https://www.loc.gov/marc/bibliographic/bd585.html">585</ref> field.</p>
@@ -2005,7 +1994,6 @@
       <memberOf key="att.bibl"/>
       <memberOf key="att.facsimile"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.biblPart"/>
       <memberOf key="model.physDescPart"/>
       <memberOf key="model.titlePagePart"/>
     </classes>
@@ -2264,25 +2252,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD) and the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-provenance.html">provenance</ref> element of the Text
@@ -2534,9 +2504,12 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="source"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:ref name="p"/>
+        <rng:oneOrMore>
+          <rng:ref name="source"/>
+        </rng:oneOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>This element is recommended where the MEI file is a transcription of existing music, but is
@@ -2741,7 +2714,13 @@
         <rng:ref name="model.titleLike"/>
       </rng:oneOrMore>
       <rng:zeroOrMore>
-        <rng:ref name="model.respLike"/>
+        <rng:ref name="model.nameLike.agent"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="name"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:ref name="respStmt"/>
       </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
@@ -2790,25 +2769,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>Treatment history may also comprise details of the treatment process (<abbr>e.g.</abbr>, chemical
@@ -2827,25 +2788,7 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
+      <rng:ref name="macro.histAccount"/>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
@@ -2903,20 +2846,18 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="head"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="watermarkList"/>
-              <rng:ref name="watermark"/>
-              <rng:ref name="p"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
-      </rng:choice>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="head"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="watermarkList"/>
+            <rng:ref name="watermark"/>
+            <rng:ref name="p"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
     </content>
   </elementSpec>
   <elementSpec ident="watermarkList" module="MEI.header">
@@ -2980,69 +2921,71 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.identifierLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.titleLike"/>
-      </rng:oneOrMore>
-      <rng:optional>
-        <rng:ref name="respStmt"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="dedication"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="model.workIdent"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="otherChar"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="creation"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="history"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="langUsage"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="perfMedium"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="perfDuration"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="audience"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="contents"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="context"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="biblList"/>
-      </rng:zeroOrMore>
-      <rng:optional>
-        <rng:ref name="notesStmt"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="classification"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="expressionList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="componentList"/>
-      </rng:optional>
-      <rng:optional>
-        <rng:ref name="relationList"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="extMeta"/>
-      </rng:zeroOrMore>
+      <rng:interleave>
+        <rng:zeroOrMore>
+          <rng:ref name="model.identifierLike"/>
+        </rng:zeroOrMore>
+        <rng:oneOrMore>
+          <rng:ref name="model.titleLike"/>
+        </rng:oneOrMore>
+        <rng:optional>
+          <rng:ref name="respStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="dedication"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.workIdent"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="otherChar"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfMedium"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="perfDuration"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="audience"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="context"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="biblList"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="classification"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="expressionList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="componentList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="extMeta"/>
+        </rng:zeroOrMore>
+      </rng:interleave>
     </content>
     <remarks xml:lang="en">
       <p>The <gi scheme="MEI">perfDuration</gi> element captures the <emph>intended duration</emph>

@@ -19,6 +19,7 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.visual">
   <moduleSpec ident="MEI.visual">
@@ -227,9 +228,11 @@
         </valList>
       </attDef>
       <attDef ident="beam.slope" usage="opt">
-        <desc xml:lang="en">Captures beam slope.</desc>
+        <desc xml:lang="en">Records the slope of a beam; e.g., in terms of MEI virtual units. Positive values 
+          indicate upward slope, negative values indicate slope downward, and a zero value indicates the beam 
+          is horizontal.</desc>
         <datatype>
-          <rng:data type="decimal"/>
+          <rng:ref name="data.MEASUREMENTSIGNED"/>
         </datatype>
       </attDef>
     </attList>
@@ -1992,6 +1995,14 @@
           <rng:ref name="data.STAFFREL.basic"/>
         </datatype>
       </attDef>
+      <attDef ident="bracket.slope" usage="opt">
+         <desc xml:lang="en">Records the slope of a bracket; e.g., in terms of MEI virtual units. Positive 
+           values indicate upward slope, negative values indicate slope downward, and a zero value indicates 
+           the bracket is horizontal.</desc>
+        <datatype>
+          <rng:ref name="data.MEASUREMENTSIGNED"/>
+        </datatype>
+      </attDef>
       <attDef ident="bracket.visible" usage="opt">
         <desc xml:lang="en">States whether a bracket should be rendered with a tuplet.</desc>
         <datatype>
@@ -2010,6 +2021,10 @@
         </valList>
       </attDef>
     </attList>
+    <remarks xml:lang="en">
+      <p>The value in <att>bracket.slope</att> is independent of the slope of the beam (if any) encompassing 
+        the events of the tuplet.</p>
+    </remarks>
   </classSpec>
   <classSpec ident="att.tupletSpan.vis" module="MEI.visual" type="atts">
     <desc xml:lang="en">Visual domain attributes.</desc>
