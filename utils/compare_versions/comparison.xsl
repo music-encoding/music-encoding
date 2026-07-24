@@ -1052,7 +1052,7 @@
                     or count($added.values) gt 0
                     or count($removed.values) gt 0">
                     <tr class="c" id="{$current.macro}">
-                        <td class="macroSpec datatype ident">
+                        <td class="dataSpec datatype ident">
                             <xsl:value-of select="$current.macro"/>
                         </td>
                         <td class="module">
@@ -1132,7 +1132,7 @@
 
             </xsl:for-each>
         </xsl:variable>
-        <xsl:variable name="unchanged.models" select="$kept.models[not(. = $modified.models//td[@class='macroSpec datatype ident']/text())]" as="xs:string*"/>
+        <xsl:variable name="unchanged.models" select="$kept.models[not(. = $modified.models//td[@class='dataSpec datatype ident']/text())]" as="xs:string*"/>
 
         <h2>DataSpec Comparison (datatypes)</h2>
         <h3 id="dataSpecAdded"><xsl:value-of select="count($added.models)"/> new dataSpecs:</h3>

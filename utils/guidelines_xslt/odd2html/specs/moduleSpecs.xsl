@@ -118,9 +118,9 @@
                 <div class="contentListBox">
                     <h3>Macro Groups in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="source.items" select="$module.content//tei:macroSpec[@type = 'pe']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:macroSpec" as="node()*"/>
                         <xsl:variable name="items" as="node()*">
-                            <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'pe'][@ident = $source.items/@ident]">
+                            <xsl:for-each select="$compiled.source//tei:macroSpec[@ident = $source.items/@ident]">
                                 <xsl:sort select="@ident" data-type="text"/>
                                 <xsl:sequence select="."/>
                             </xsl:for-each>
@@ -154,9 +154,9 @@
                 <div class="contentListBox">
                     <h3>Data Types in <xsl:value-of select="$module/@ident"/></h3>
                     <div class="contents">
-                        <xsl:variable name="source.items" select="$module.content//tei:macroSpec[@type = 'dt']" as="node()*"/>
+                        <xsl:variable name="source.items" select="$module.content//tei:dataSpec" as="node()*"/>
                         <xsl:variable name="items" as="node()*">
-                            <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'dt'][@ident = $source.items/@ident]">
+                            <xsl:for-each select="$compiled.source//tei:dataSpec[@ident = $source.items/@ident]">
                                 <xsl:sort select="@ident" data-type="text"/>
                                 <xsl:sequence select="."/>
                             </xsl:for-each>
