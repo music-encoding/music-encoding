@@ -2,6 +2,19 @@
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
+    
+    <sch:let name="URI.file" value="document-uri(/)" />
+    <sch:let name="URI.repo-collection" value="replace(document-uri(/), '^(.*/music-encoding/).*', '$1')" />
+    <sch:let name="URI.source-collection" value="resolve-uri('./source/', $URI.repo-collection)" />
+    <sch:let name="URI.schematron" value="resolve-uri('./validation/mei-source.sch', $URI.source-collection)" />
+    <sch:let name="URI.docs-collection" value="resolve-uri('./docs/', $URI.source-collection)" />
+    <sch:let name="URI.modules-collection" value="resolve-uri('./modules/', $URI.source-collection)" />
+
+    <sch:pattern id="environment">
+        <sch:rule context="/">
+            <sch:report role="info" test="true()">Validating <sch:value-of select="$URI.file"/> in the repo's (<sch:value-of select="$URI.repo-collection"/>) source collection (<sch:value-of select="$URI.source-collection"/>) with <sch:value-of select="$URI.schematron"/>; checks will be performed against <sch:value-of select="$URI.modules-collection"/></sch:report>
+        </sch:rule>
+    </sch:pattern>
 
     <sch:pattern id="check_gi_references">
         <sch:rule context="tei:gi">
