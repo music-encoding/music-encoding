@@ -79,24 +79,19 @@
     <desc xml:lang="en">Content model for elements that can be used to describe historical account.</desc>
     <content>
       <rng:choice>
-        <rng:group>
-          <rng:zeroOrMore>
-            <rng:ref name="model.headLike"/>
-          </rng:zeroOrMore>
-          <rng:zeroOrMore>
-            <rng:choice>
-              <rng:ref name="eventList"/>
-              <rng:ref name="model.pLike"/>
-            </rng:choice>
-          </rng:zeroOrMore>
-        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="eventList"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
-            <rng:ref name="model.textPhraseLike.limited"/>
+            <rng:ref name="model.textPhraseLike.basic"/>
           </rng:choice>
         </rng:zeroOrMore>
-      </rng:choice>
+      </rng:choice>      
     </content>
   </macroSpec>
   <classSpec ident="att.bifoliumSurfaces" module="MEI.header" type="atts">
@@ -401,7 +396,17 @@
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>May indicate the nature of restrictions or the lack of restrictions. Do not confuse this
@@ -409,6 +414,38 @@
         information about limitations on the <hi rend="bold">use</hi> of material, such as those
         afforded by copyright.</p>
       <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-accessrestrict">accessrestrict</ref> element of the Encoded Archival Description (EAD).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="accMat" module="MEI.header">
+    <gloss xml:lang="en">accompanying material</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing material, such as biographical, historical,
+      or technical information, that accompanies a resource but is not bound with it. Analogous to
+      MARC21 008/24-29 (music) and 353 ǂa. If one of the recommended values is not used, then an
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.ACCMATERIAL"/>
+    </content>
+    <constraintSpec ident="check_accMat_value" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:accMat[not(matches(normalize-space(.), 
+          '^(|bibliography|biography of creator|discography|ethnologic information|filmography|historical information|history of performer or ensemble|index|instructional materials|libretto or text|music|technical information on music|technical/historical information on instruments|thematic index)$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec><remarks xml:lang="en">
+      <p>Do not confuse this element with the <gi scheme="MEI">addDesc</gi> element, which holds a
+        narrative description of additions to the content of a resource.</p>
+      <p>The model of this element is based on the 
+        <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-accMat.html">accMat</ref> 
+        element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="acquisition" module="MEI.header">
@@ -425,6 +462,60 @@
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-acquisition.html">acquisition</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="addDesc" module="MEI.header">
+    <gloss xml:lang="en">addition description</gloss>
+    <desc xml:lang="en">Provides a description of significant additions found within an
+      item, such as marginalia or other annotations.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="addDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-additions.html">additions</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="altId" module="MEI.header">
@@ -486,7 +577,7 @@
           <rng:ref name="model.locrefLike"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="model.pLike"/>
+          <rng:ref name="macro.p.basic"/>
         </rng:zeroOrMore>
       </rng:choice>
     </content>
@@ -548,7 +639,17 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </elementSpec>
   <elementSpec ident="availability" module="MEI.header">
@@ -594,6 +695,59 @@
       </rng:zeroOrMore>
     </content>
   </elementSpec>
+  <elementSpec ident="bindingDesc" module="MEI.header">
+    <gloss xml:lang="en">binding description</gloss>
+    <desc xml:lang="en">Describes the present and former bindings of an item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="bindingDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-bindingDesc.html">bindingDesc</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="byline" module="MEI.header">
     <desc xml:lang="en">Contains the primary statement of responsibility given for a work on its title
       page.</desc>
@@ -616,8 +770,10 @@
   </elementSpec>
   <elementSpec ident="captureMode" module="MEI.header">
     <gloss xml:lang="en">capture mode</gloss>
-    <desc xml:lang="en">The means used to record notation, sound, or images in the production of
-      a source/manifestation (<abbr>e.g.</abbr>, analogue, acoustic, electric, digital, optical etc.).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the means used to record notation, sound,
+      or images in the production of a resouce. Analogous to MARC21 344 ǂj and 007/13 (sound recording).
+      If one of the recommended values is not used, then an <att>auth</att> or <att>auth.uri</att>
+      attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -626,16 +782,17 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.CAPTUREMODE"/>
     </content>
   </elementSpec>
   <elementSpec ident="carrierForm" module="MEI.header">
     <gloss xml:lang="en">carrier form</gloss>
-    <desc xml:lang="en">The specific class of material to which the physical carrier of the
-      source/manifestation belongs (<abbr>e.g.</abbr>, sound cassette, videodisc, microfilm cartridge,
-      transparency, etc.). The carrier for a manifestation comprising multiple physical components
-      may include more than one form (<abbr>e.g.</abbr>, a filmstrip with an accompanying booklet, a separate
-      sound disc carrying the sound track for a film, etc.).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the specific class of material to which
+      the physical carrier of the source/manifestation belongs. Analogous to MARC21 338 ǂa. For a
+      manifestation omprising multiple physical components, e.g., a filmstrip with an accompanying
+      booklet, a separate sound disc carrying the sound track for a film, etc.), use more than one
+      carrierForm element. If one of the recommended values is not used, then an <att>auth</att>
+      or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -644,7 +801,7 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.CARRIERFORM"/>
     </content>
   </elementSpec>
   <elementSpec ident="category" module="MEI.header">
@@ -825,6 +982,63 @@
         institutions.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="collation" module="MEI.header">
+    <desc xml:lang="en">Records a description of how the leaves, bifolia, or similar materials are
+      physically arranged.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="macro.p.basic"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="foliaDesc"/>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-collation.html">collation</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="colophon" module="MEI.header">
+    <desc xml:lang="en">Contains a statement providing information regarding the date, place, agency, or reason
+      for production of the item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-colophon.html">colophon</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="componentList" module="MEI.header">
     <desc xml:lang="en">Container for intellectual or physical component parts of a bibliographic entity.</desc>
     <classes>
@@ -897,7 +1111,17 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
@@ -999,7 +1223,17 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </elementSpec>
   <elementSpec ident="correction" module="MEI.header">
@@ -1013,12 +1247,17 @@
       <memberOf key="model.editorialDeclPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <attList>
       <attDef ident="corrlevel" usage="opt">
@@ -1118,6 +1357,59 @@
         on <gi scheme="MEI">cutout</gi> is expendable.</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="decoDesc" module="MEI.header">
+    <gloss xml:lang="en">decoration description</gloss>
+    <desc xml:lang="en">Contains a description of the decorative features of a resource.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="decoDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-decoDesc.html">decoDesc</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="dedication" module="MEI.header">
     <desc xml:lang="en">Contains a dedicatory statement.</desc>
     <classes>
@@ -1145,10 +1437,6 @@
         </rng:zeroOrMore>
       </rng:choice>
     </content>
-    <remarks xml:lang="en">
-      <p>This element uses a variant of the content model provided by
-        macro.struc-unstrucContent.</p>
-    </remarks>
   </elementSpec>
   <elementSpec ident="domainsDecl" module="MEI.header">
     <gloss xml:lang="en">domains declaration</gloss>
@@ -1215,19 +1503,16 @@
       <memberOf key="model.encodingPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
       <rng:choice>
         <rng:oneOrMore>
-          <rng:ref name="model.pLike"/>
+          <rng:ref name="macro.p.basic"/>
         </rng:oneOrMore>
         <rng:group>
           <rng:oneOrMore>
             <rng:ref name="model.editorialDeclPart"/>
           </rng:oneOrMore>
           <rng:zeroOrMore>
-            <rng:ref name="model.pLike"/>
+            <rng:ref name="macro.p.basic"/>
           </rng:zeroOrMore>
         </rng:group>
       </rng:choice>
@@ -1312,21 +1597,6 @@
       </rng:zeroOrMore>
     </content>
   </elementSpec>
-  <elementSpec ident="fileChar" module="MEI.header">
-    <gloss xml:lang="en">file characteristics</gloss>
-    <desc xml:lang="en">Standards or schemes used to encode the file (<abbr>e.g.</abbr>, ASCII, SGML,
-      etc.), physical characteristics of the file (<abbr>e.g.</abbr>, recording density, parity, blocking, etc.),
-      and other characteristics that have a bearing on how the file can be processed.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
-    </classes>
-    <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
-    </content>
-  </elementSpec>
   <elementSpec ident="fileDesc" module="MEI.header">
     <gloss xml:lang="en">file description</gloss>
     <desc xml:lang="en">Contains a full bibliographic description of the MEI file.</desc>
@@ -1384,6 +1654,30 @@
         the <gi scheme="MEI">gap</gi> element. The <gi scheme="MEI">folium</gi> and <gi scheme="MEI"
         >bifolium</gi> children describe the physical order of <gi scheme="MEI">surface</gi>
         elements provided elsewhere.</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="foliation" module="MEI.header">
+    <desc xml:lang="en">Describes the numbering system or systems used to count the folios, leaves, or pages in a manuscript or printed item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+           <rng:ref name="macro.p.basic"/>
+         </rng:zeroOrMore>
+         <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+             <rng:ref name="model.textPhraseLike.basic"/>
+           </rng:choice>
+         </rng:zeroOrMore>
+       </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-foliation.html">foliation</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="folium" module="MEI.header">
@@ -1471,6 +1765,60 @@
     </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-handNotes.html">handNotes</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="heraldry" module="MEI.header">
+    <desc xml:lang="en">Contains a description of heraldic devices, such as an armorial bearing, 
+      insignia, blazon, coat of arms, etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="heraldry"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-heraldry.html">heraldry</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="history" module="MEI.header">
@@ -1597,7 +1945,17 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.limited"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </elementSpec>
   <elementSpec ident="interpretation" module="MEI.header">
@@ -1611,12 +1969,17 @@
       <memberOf key="model.editorialDeclPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-interpretation.html">interpretation</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -1685,6 +2048,137 @@
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-langUsage.html">langUsage</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="layout" module="MEI.header">
+    <desc xml:lang="en">Describes how text is laid out on the page, including information about any ruling,
+      pricking, or other evidence of page-preparation techniques.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+            <rng:ref name="macro.p.basic"/>
+          </rng:zeroOrMore>
+        <rng:group>
+          <rng:ref name="macro.p.basic"/>
+          <rng:zeroOrMore>
+            <rng:ref name="layoutTech"/>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <attList>
+      <attDef ident="cols" usage="opt">
+        <desc xml:lang="en">Specifies the number of columns per page.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks xml:lang="en">
+          <p>A single number indicates that all pages have this number of columns. Two numbers mean
+            that the number of columns per page varies between the values supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="ruledlines" usage="opt">
+        <desc xml:lang="en">Specifies the number of ruled text lines per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks xml:lang="en">
+          <p> A single number indicates that all columns have this number of ruled lines. Two
+            numbers mean that the number of text lines per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="writtenlines" usage="opt">
+        <desc xml:lang="en">Specifies the number of written text lines per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks xml:lang="en">
+          <p>A single number indicates that all columns have this number of written text lines. Two
+            numbers mean that the number of text lines per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="ruledstaves" usage="opt">
+        <desc xml:lang="en">Specifies the number of ruled staves per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks xml:lang="en">
+          <p>A single number indicates that all columns have this number of ruled staves. Two
+            numbers mean that the number of ruled staves per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+      <attDef ident="writtenstaves" usage="opt">
+        <desc xml:lang="en">Specifies the number of written staves per column.</desc>
+        <datatype minOccurs="1" maxOccurs="2">
+          <rng:data type="nonNegativeInteger"/>
+        </datatype>
+        <remarks xml:lang="en">
+          <p>A single number indicates that all columns have this number of written staves. Two
+            numbers mean that the number of written staves per column varies between the values
+            supplied.</p>
+        </remarks>
+      </attDef>
+    </attList>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-layout.html">layout</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="layoutDesc" module="MEI.header">
+    <gloss xml:lang="en">layout description</gloss>
+    <desc xml:lang="en">Collects a set of layout descriptions.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:ref name="layout"/>
+          </rng:oneOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-layoutDesc.html">layoutDesc</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="layoutTech" module="MEI.header">
+    <desc xml:lang="en">Controlled vocabulary term describing a page layout technique found within a
+      resource. Analogous to MARC21 340 ǂk. If one of the recommended values is not used, then an 
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="data.LAYOUTTECH"/>
+    </content>
   </elementSpec>
   <elementSpec ident="meiHead" module="MEI.header">
     <gloss xml:lang="en">MEI header</gloss>
@@ -1852,12 +2346,17 @@
       <memberOf key="model.editorialDeclPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-normalization.html">normalization</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -1893,7 +2392,17 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </elementSpec>
   <elementSpec ident="patch" module="MEI.header">
@@ -1998,7 +2507,12 @@
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.bare"/>
+        </rng:choice>
+      </rng:zeroOrMore>
     </content>
     <attList>
       <attDef ident="isodur" usage="opt">
@@ -2106,15 +2620,34 @@
       <memberOf key="att.bibl"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="model.physDescPart"/>
-      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="physDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.physDescPart"/>
+              <rng:ref name="physMedium"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>Dedicatory text and title page features may also be encoded here when they are not
@@ -2125,8 +2658,8 @@
   </elementSpec>
   <elementSpec ident="physMedium" module="MEI.header">
     <gloss xml:lang="en">physical medium</gloss>
-    <desc xml:lang="en">Records the physical materials used in the source, such as ink and
-      paper.</desc>
+    <desc xml:lang="en">Provides a description of the physical materials used by a resource; i.e., base
+        material(s), such as paper or stone, and the surface material(s), such as ink or paint.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -2135,14 +2668,35 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="physMedium"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.physMediumPart"/>
+              <rng:ref name="model.physTechPart"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
-    <remarks xml:lang="en">
-      <p>All materials may be described in a single <gi scheme="MEI">physMedium</gi> element or
-        multiple elements may be used, one for each medium.</p>
-      <p>The model of this element is based on respective elements of the Encoded Archival Description (EAD). It
-        has the same function as the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-material.html">material</ref> element of the Text Encoding Initiative (TEI).</p>
-    </remarks>
   </elementSpec>
   <elementSpec ident="plateNum" module="MEI.header">
     <gloss xml:lang="en">plate number</gloss>
@@ -2157,7 +2711,12 @@
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.bare"/>
+        </rng:choice>
+      </rng:zeroOrMore>
     </content>
     <remarks xml:lang="en">
       <p>While it is often called a "plate number", it does not always contain numbers. The
@@ -2166,8 +2725,10 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="playingSpeed" module="MEI.header">
-    <desc xml:lang="en">Playing speed for a sound recording is the speed at which the carrier must be operated to
-      produce the sound intended (<abbr>e.g.</abbr>, 33 1/3 rpm, 19 cm/s, etc.).</desc>
+    <desc xml:lang="en">Playing speed for a sound recording is the speed at which the carrier must
+      be operated to produce the sound intended or the data rate of a digital audio file. Analogous
+      to MARC21 007/03, 344 ǂc, 345 ǂb, and 347 ǂf. If one of the recommended values is not used,
+      then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -2175,7 +2736,7 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.PLAYINGSPEED"/>
     </content>
   </elementSpec>
   <elementSpec ident="price" module="MEI.header">
@@ -2188,12 +2749,9 @@
     </classes>
     <content>
       <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
+          <rng:ref name="model.textPhraseLike.bare"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -2232,11 +2790,8 @@
       <memberOf key="model.encodingPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
       <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
+        <rng:ref name="macro.p.basic"/>
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
@@ -2320,11 +2875,8 @@
       <memberOf key="model.encodingPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
       <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
+        <rng:ref name="macro.p.basic"/>
       </rng:oneOrMore>
     </content>
     <remarks xml:lang="en">
@@ -2332,8 +2884,10 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="scoreFormat" module="MEI.header">
-    <desc xml:lang="en">Describes the type of score used to represent a musical composition (<abbr>e.g.</abbr>, short score,
-      full score, condensed score, close score, etc.).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the type of score used to represent a
+      musical composition (e.g., (full) score, condensed score, table book, etc.). Analogous to
+      MARC21 348 ǂa and 008/20 (music). If one of the following values is not used, then an 
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -2342,8 +2896,62 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.SCOREFORMAT"/>
     </content>
+  </elementSpec>
+  <elementSpec ident="sealDesc" module="MEI.header">
+    <gloss xml:lang="en">seal description</gloss>
+    <desc xml:lang="en">Describes the seals or similar external attachments applied to an
+      item.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="sealDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-sealDesc.html">sealDesc</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
   </elementSpec>
   <elementSpec ident="segmentation" module="MEI.header">
     <desc xml:lang="en">Describes the principles according to which the musical text has been segmented, for
@@ -2356,12 +2964,17 @@
       <memberOf key="model.editorialDeclPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-segmentation.html">segmentation</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -2405,6 +3018,31 @@
         series, but not describe each component. The <gi scheme="MEI">seriesStmt</gi> element is
         provided within seriesStmt for the description of a sub-series.</p>
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-seriesStmt.html">seriesStmt</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
+  <elementSpec ident="signatures" module="MEI.header">
+    <desc xml:lang="en">Provides a description of the leaf or quire signatures found within a codex.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-signatures.html">signatures</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="soundChan" module="MEI.header">
@@ -2512,8 +3150,10 @@
   </elementSpec>
   <elementSpec ident="specRepro" module="MEI.header">
     <gloss xml:lang="en">special reproduction characteristic</gloss>
-    <desc xml:lang="en">The equalization system, noise reduction system,
-      etc. used in making the recording (<abbr>e.g.</abbr>, NAB, DBX, Dolby, etc.).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the equalization system, noise
+      reduction system, etc. used in making the recording. Analogous to MARC21 007/12 (sound
+      recording) and 344 ǂh. If one of the recommended values is not used, then an <att>auth</att>
+      or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -2522,7 +3162,57 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.SPECREPRO"/>
+    </content>
+  </elementSpec>
+  <elementSpec ident="stampDesc" module="MEI.header">
+    <gloss xml:lang="en">stamp description</gloss>
+    <desc xml:lang="en">Describes official marks indicating ownership, genuineness, validity,
+      etc.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="stampDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
   </elementSpec>
   <elementSpec ident="stdVals" module="MEI.header">
@@ -2537,12 +3227,17 @@
       <memberOf key="model.editorialDeclPart"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:oneOrMore>
-        <rng:ref name="model.pLike"/>
-      </rng:oneOrMore>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-stdVals.html">stdVals</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -2550,7 +3245,8 @@
   </elementSpec>
   <elementSpec ident="sysReq" module="MEI.header">
     <gloss xml:lang="en">system requirements</gloss>
-    <desc xml:lang="en">System requirements for using the electronic item.</desc>
+    <desc xml:lang="en">Contains a phrase that specifies the hardware and/or software needed
+      to access or use an electronic resource.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -2558,7 +3254,12 @@
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.bare"/>
+        </rng:choice>
+      </rng:zeroOrMore>
     </content>
   </elementSpec>
   <elementSpec ident="tagsDecl" module="MEI.header">
@@ -2723,8 +3424,10 @@
   </elementSpec>
   <elementSpec ident="trackConfig" module="MEI.header">
     <gloss xml:lang="en">track configuration</gloss>
-    <desc xml:lang="en">Number of physical/input tracks on a sound medium (<abbr>e.g.</abbr>, eight
-      track, twelve track).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the configuration of tracks present
+        in an audio recording or sound-track film. Analogous to MARC21 007/08 and 344 ǂe. If one of
+        the recommended values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute
+        is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -2733,7 +3436,7 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:ref name="data.TRACKCONFIG"/>
     </content>
     <attList>
       <attDef ident="num" usage="opt">
@@ -2788,6 +3491,60 @@
       <p>The model of this element is based on the respective element of the Encoded Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="typeDesc" module="MEI.header">
+    <gloss xml:lang="en">type description</gloss>
+    <desc xml:lang="en">Contains a description of the typefaces or other related aspects of the
+      printing of a printed source.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="typeDesc"/>
+            <rng:ref name="macro.p.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
+    </content>
+    <remarks xml:lang="en">
+      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-typeDesc.html">typeDesc</ref> element of the Text Encoding Initiative (TEI).</p>
+    </remarks>
+  </elementSpec>
   <elementSpec ident="unpub" module="MEI.header">
     <gloss xml:lang="en">unpublished</gloss>
     <desc xml:lang="en">Used to explicitly indicate that a bibliographic resource is
@@ -2818,7 +3575,17 @@
       <memberOf key="model.titlePagePart"/>
     </classes>
     <content>
-      <rng:ref name="macro.struc-unstrucContent"/>
+      <rng:choice>
+        <rng:zeroOrMore>
+          <rng:ref name="macro.p.basic"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p> <gi scheme="MEI">useRestrict</gi> may indicate limitations imposed by an owner,
@@ -2840,63 +3607,45 @@
       <memberOf key="model.physDescPart"/>
     </classes>
     <content>
-      <rng:group>
-        <rng:zeroOrMore>
-          <rng:ref name="head"/>
-        </rng:zeroOrMore>
+      <rng:choice>
         <rng:zeroOrMore>
           <rng:choice>
-            <rng:ref name="watermarkList"/>
-            <rng:ref name="watermark"/>
-            <rng:ref name="p"/>
+            <rng:ref name="watermarkDesc"/>
+            <rng:ref name="macro.p.basic"/>
           </rng:choice>
         </rng:zeroOrMore>
-      </rng:group>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="creation"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
-  </elementSpec>
-  <elementSpec ident="watermarkList" module="MEI.header">
-    <gloss xml:lang="en">list of watermarks</gloss>
-    <desc xml:lang="en">Grouping several watermarks.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.authorized"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.edit"/>
-      <memberOf key="att.lang"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:ref name="annot"/>
-          <rng:ref name="watermark"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
-  <elementSpec ident="watermark" module="MEI.header">
-    <desc xml:lang="en">Contains a description of a watermark or similar device.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.bibl"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-    </classes>
-    <content>
-      <rng:oneOrMore>
-        <rng:choice>
-          <rng:ref name="macro.watermark"/>
-          <rng:text/>
-        </rng:choice>
-      </rng:oneOrMore>
-    </content>
-    <remarks xml:lang="en">
-      <p>The <att>facs</att> attribute may be used to record the location of the watermark in a
-        facsimile image.</p>
-      <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-watermark.html">watermark</ref> element of the Text Encoding Initiative (TEI).</p>
-    </remarks>
   </elementSpec>
   <elementSpec ident="work" module="MEI.header">
     <desc xml:lang="en">Provides a detailed description of a work — a distinct intellectual or artistic creation —
