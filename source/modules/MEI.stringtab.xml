@@ -93,28 +93,19 @@
   <classSpec ident="att.stringtab" module="MEI.stringtab" type="atts">
     <desc xml:lang="en">String tablature string and fret information.</desc>
     <attList>
-      <attDef ident="tab.fing" usage="opt">
-        <desc xml:lang="en">This attribute is deprecated and will be removed in a future version. Indicates which finger, if any, should be used to play an individual string. The index, middle, ring, and little fingers are represented by the values 1-4, while <val>t</val> is for the thumb. The values <val>x</val> and <val>o</val> indicate muffled and open strings, respectively.</desc>
-        <datatype>
-          <rng:ref name="data.FINGER.FRET"/>
-        </datatype>
-      </attDef>
       <attDef ident="tab.fret" usage="opt">
-        <desc xml:lang="en">Records the location at which a string should be stopped against a fret.</desc>
+        <desc xml:lang="en">Records the location at which a string should be stopped against a fret. The value <val>0</val> (zero) indicates the open string. The value <val>omit</val> indicates an omitted string that does not sound.</desc>
         <datatype>
-          <rng:ref name="data.FRETNUMBER"/>
+          <rng:choice>
+            <rng:ref name="data.FRETNUMBER"/>
+            <rng:ref name="data.FRETNUMBER.omit"/>
+          </rng:choice>
         </datatype>
       </attDef>
       <attDef ident="tab.line" usage="opt">
         <desc xml:lang="en">Used in German lute tablature in cases where vertical positioning deviates from the norm which can be specified by <att>tab.align</att>. Indicates the position of the tab note on one of the horizontal strands corresponding to the <att>lines</att> attribute on <gi scheme="MEI">staffDef</gi>. (Note that in this case, the lines are conceptual rather than visible).</desc>
         <datatype>
           <rng:ref name="data.CLEFLINE"/>
-        </datatype>
-      </attDef>
-      <attDef ident="tab.string" usage="opt">
-        <desc xml:lang="en">This attribute is deprecated in favor of <att>tab.course</att> and will be removed in a future version. Records which string is to be played.</desc>
-        <datatype>
-          <rng:ref name="data.STRINGNUMBER"/>
         </datatype>
       </attDef>
       <attDef ident="tab.course" usage="opt">
@@ -132,38 +123,6 @@
         <desc xml:lang="en">Records fret position.</desc>
         <datatype>
           <rng:data type="positiveInteger"/>
-        </datatype>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.stringtab.tuning" module="MEI.stringtab" type="atts">
-    <desc xml:lang="en">This collection of attributes is deprecated in favor of the new <gi scheme="MEI">tuning</gi> element and will be removed in a future version. String tablature tuning information.</desc>
-    <attList>
-      <attDef ident="tab.strings" usage="opt">
-        <desc xml:lang="en">This attribute is deprecated in favor of the new <gi scheme="MEI">tuning</gi> element and will be removed in a future version. Provides a *written* pitch and octave for each open string or course of
-          strings.</desc>
-        <datatype>
-          <rng:list>
-            <rng:oneOrMore>
-              <rng:data type="token">
-                <rng:param name="pattern">
-                  [a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
-              </rng:data>
-            </rng:oneOrMore>
-          </rng:list>
-        </datatype>
-      </attDef>
-      <attDef ident="tab.courses" usage="opt">
-        <desc xml:lang="en">This attribute is deprecated in favor of the new <gi scheme="MEI">tuning</gi> element and will be removed in a future version. Provides a *written* pitch and octave for each open string or course of strings.</desc>
-        <datatype>
-          <rng:list>
-            <rng:oneOrMore>
-              <rng:data type="token">
-                <rng:param name="pattern">
-                  [a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?([a-g][0-9](s|f|ss|x|ff|xs|sx|ts|tf|n|nf|ns|su|sd|fu|fd|nu|nd|1qf|3qf|1qs|3qs)?)*</rng:param>
-              </rng:data>
-            </rng:oneOrMore>
-          </rng:list>
         </datatype>
       </attDef>
     </attList>
@@ -191,25 +150,15 @@
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.startEndId"/>
+      <memberOf key="att.stringtab"/>
     </classes>
     <content>
       <empty/>
     </content>
-    <attList>
-      <attDef ident="fret" usage="opt">
-        <desc xml:lang="en">This attribute is deprecated in favor of <att>tab.fret</att>, and will be removed in a future version. Records the location at which the strings should be stopped against a fret in a fretboard diagram. This may or may not be the same as the actual location on the fretboard of the instrument in performance.</desc>
-        <datatype>
-          <rng:data type="positiveInteger">
-            <rng:param name="minInclusive">1</rng:param>
-            <rng:param name="maxInclusive">5</rng:param>
-          </rng:data>
-        </datatype>
-      </attDef>
-    </attList>
     <remarks xml:lang="en">
       <p>The <att>startid</att> and <att>endid</att> attributes are used to indicate the <gi
           scheme="MEI">chordMember</gi> elements on which the barre starts and finishes
-        respectively. The fret at which the barre should be created is recorded by the <att>fret</att>
+        respectively. The fret at which the barre should be created is recorded by the <att>tab.fret</att>
         attribute.</p>
     </remarks>
   </elementSpec>
