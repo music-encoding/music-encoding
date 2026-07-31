@@ -29,7 +29,6 @@
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
       <memberOf key="att.stringtab.position"/>
-      <memberOf key="att.stringtab.tuning"/>
     </classes>
   </classSpec>
   <classSpec ident="att.chordMember.log" module="MEI.harmony" type="atts">
@@ -37,6 +36,7 @@
     <classes>
       <memberOf key="att.pitched"/>
       <memberOf key="att.stringtab"/>
+      <memberOf key="att.fing.finger"/>
     </classes>
   </classSpec>
   <classSpec ident="att.f.log" module="MEI.harmony" type="atts">
@@ -140,8 +140,16 @@
     <content>
       <empty/>
     </content>
+    <constraintSpec ident="chordMember_finger_requires_stopped_string" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:chordMember[@tab.fret = ('0', 'omit')]">
+          <sch:assert test="not(@finger)">When the @tab.fret attribute indicates an open or omitted string
+            (has the value "0" or "omit"), the @finger attribute must not be used.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
-      <p>The <att>string</att>, <att>fret</att>, and <att>fing</att> attributes are provided in
+      <p>The <att>tab.course</att>, <att>tab.fret</att> and <att>finger</att> attributes are provided in
         order to create displayable chord tablature grids. The <att>inth</att> (harmonic interval)
         attribute may be used to facilitate automated performance of a chord. It gives the number of
         diatonic steps above the bass. Of course, for the bass note itself, <att>inth</att> should be set

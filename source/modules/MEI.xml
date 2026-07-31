@@ -1382,23 +1382,6 @@
       </valList>
     </content>
   </macroSpec>
-  <macroSpec ident="data.FINGER.FRET" module="MEI" type="dt">
-    <desc xml:lang="en">In a guitar chord diagram, a label indicating which finger, if any, should be used to play
-      an individual string. The index, middle, ring, and little fingers are represented by the
-      values 1-4, while 't' is for the thumb. The values 'x' and 'o' indicate stopped and open
-      strings, respectively.</desc>
-    <content>
-      <rng:choice>
-        <rng:data type="positiveInteger">
-          <rng:param name="minInclusive">1</rng:param>
-          <rng:param name="maxInclusive">4</rng:param>
-        </rng:data>
-        <rng:data type="token">
-          <rng:param name="pattern">x|o|t</rng:param>
-        </rng:data>
-      </rng:choice>
-    </content>
-  </macroSpec>
   <macroSpec ident="data.FONTFAMILY" module="MEI" type="dt">
     <desc xml:lang="en">Font family (for text) attribute values.</desc>
     <content>
@@ -1425,24 +1408,7 @@
     <desc xml:lang="en">Font size expressed as numbers; <abbr>i.e.</abbr>, points or virtual units.</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">\d*(\.\d+)?(pt|vu)</rng:param>
-        <rng:except>
-          <!-- disallow no-value or all-zero patterns -->
-          <rng:choice>
-            <rng:data type="token">
-              <rng:param name="pattern">(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">0+(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">0+(\.0+)?(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">\.0+(pt|vu)</rng:param>
-            </rng:data>
-          </rng:choice>
-        </rng:except>
+          <rng:param name="pattern">([1-9]\d*(\.\d+)?|\d*\.[0-9]*[1-9][0-9]*)(pt|vu)</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -1523,6 +1489,16 @@
       string.</desc>
     <content>
       <rng:data type="nonNegativeInteger"/>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.FRETNUMBER.omit" module="MEI" type="dt">
+    <desc xml:lang="en">In cases like those in chord tablature grids where a string is omitted, the value <val>omit</val> is used.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="omit">
+          <desc xml:lang="en">The string is omitted, not sounding.</desc>
+        </valItem>
+      </valList>
     </content>
   </macroSpec>
   <!--<macroSpec ident="data.FRETNUMBER.limited" module="MEI" type="dt">
@@ -3182,6 +3158,31 @@
       </rng:data>
     </content>
   </macroSpec>
+  <macroSpec ident="data.PART" module="MEI" type="dt">
+    <desc xml:lang="en">Reference to parts.</desc>
+    <content>
+      <rng:choice>
+        <rng:value>all</rng:value>
+        <rng:value>none</rng:value>
+        <rng:list>
+          <rng:oneOrMore>
+            <rng:ref name="data.URI"/>
+          </rng:oneOrMore>
+        </rng:list>
+      </rng:choice>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.PARTSTAFF" module="MEI" type="dt">
+    <desc xml:lang="en">Reference to part staves.</desc>
+    <content>
+      <rng:choice>
+        <rng:value>all</rng:value>
+        <rng:data type="token">
+          <rng:param name="pattern">\d+(-\d+)?</rng:param>
+        </rng:data>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.PEDALSTYLE" module="MEI" type="dt">
     <desc xml:lang="en">Styling of piano pedal marks.</desc>
     <content>
@@ -3614,12 +3615,6 @@
           <desc xml:lang="en">Stem is originates from center of note head.</desc>
         </valItem>
       </valList>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.STRINGNUMBER" module="MEI" type="dt">
-    <desc xml:lang="en">This datatype is deprecated in favor of data.COURSENUMBER and will be removed in a future version. In string tablature, the number of the string to be played.</desc>
-    <content>
-      <rng:data type="positiveInteger"/>
     </content>
   </macroSpec>
   <macroSpec ident="data.TEMPERAMENT" module="MEI" type="dt">

@@ -2858,36 +2858,23 @@
     <desc xml:lang="en">Attributes for identifying the part in which the current feature appears.</desc>
     <attList>
       <attDef ident="part" usage="opt">
-        <desc xml:lang="en">Indicates the part in which the current feature should appear. Use '%all' when the
-          feature should occur in every part.</desc>
-        <datatype maxOccurs="unbounded">
-          <rng:data type="token">
-            <rng:param name="pattern">(%all|#[\i][\c]+)</rng:param>
-          </rng:data>
+        <desc xml:lang="en">Indicates the part in which the current feature should appear. Use 'all' when the feature
+          should occur in every part or 'none' when the feature should not appear in any part.</desc>
+        <datatype>
+          <rng:ref name="data.PART"/>
         </datatype>
-        <constraintSpec ident="check_part_attr_all" scheme="schematron">
-          <constraint>
-            <sch:rule
-              context="@part[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
-              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
-                values.</sch:assert>
-            </sch:rule>
-          </constraint>
-        </constraintSpec>
       </attDef>
       <attDef ident="partstaff" usage="opt">
-        <desc xml:lang="en">Signifies the part staff on which a notated feature occurs. Use '%all' when the
+        <desc xml:lang="en">Signifies the part staff on which a notated feature occurs. Use 'all' when the
           feature should occur on every staff.</desc>
         <datatype maxOccurs="unbounded">
-          <rng:data type="token">
-            <rng:param name="pattern">(%all|\d+(-\d+)?)</rng:param>
-          </rng:data>
+          <rng:ref name="data.PARTSTAFF"/>
         </datatype>
         <constraintSpec ident="check_partstaff_attr_all" scheme="schematron">
           <constraint>
             <sch:rule
-              context="@partstaff[some $i in tokenize(., '\s+') satisfies (matches($i, '^%all$'))]">
-              <sch:assert test="count(tokenize(., '\s+')) = 1">'%all' cannot be mixed with other
+              context="@partstaff[some $i in tokenize(., '\s+') satisfies (matches($i, '^all$'))]">
+              <sch:assert test="count(tokenize(., '\s+')) = 1">'all' cannot be mixed with other
                 values.</sch:assert>
             </sch:rule>
           </constraint>
@@ -8382,27 +8369,6 @@
             value="preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines"/>
           <sch:assert test="number(@clef.line) &lt;= number($stafflines)">The clef position must be
             less than or equal to the number of lines on the staff.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <constraintSpec ident="Check_tab_strings_lines" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:staffDef[@tab.strings and @lines]">
-          <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
-          <sch:assert test="$countTokens = @lines">The tab.strings attribute must have the same
-            number of values as there are staff lines.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <constraintSpec ident="Check_tab_strings_nolines" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:staffDef[@tab.strings and not(@lines)]">
-          <sch:let name="countTokens" value="count(tokenize(normalize-space(@tab.strings), '\s'))"/>
-          <sch:let name="thisstaff" value="@n"/>
-          <sch:assert
-            test="$countTokens = preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines">The
-            tab.strings attribute must have the same number of values as there are staff
-            lines.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
