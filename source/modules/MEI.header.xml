@@ -371,6 +371,9 @@
     <desc xml:lang="en">Groups elements that may appear as part of the physical description of a bibliographic
       item.</desc>
   </classSpec>
+  <classSpec ident="model.physTechPart" module="MEI.header" type="model">
+    <desc xml:lang="en">Groups elements that may appear as part of the physTech element.</desc>
+  </classSpec>
   <classSpec ident="model.pubStmtPart" module="MEI.header" type="model">
     <desc xml:lang="en">Groups elements that may appear as part of the publication statement for a bibliographic
       item.</desc>
@@ -431,7 +434,7 @@
     <content>
       <rng:ref name="data.ACCMATERIAL"/>
     </content>
-    <constraintSpec ident="check_accMat_value" scheme="schematron">
+    <constraintSpec ident="check_accMat_auth" scheme="schematron">
       <constraint>
         <sch:rule context="mei:accMat[not(matches(normalize-space(.), 
           '^(|bibliography|biography of creator|discography|ethnologic information|filmography|historical information|history of performer or ensemble|index|instructional materials|libretto or text|music|technical information on music|technical/historical information on instruments|thematic index)$'))]">
@@ -440,7 +443,8 @@
             >@auth or @auth.uri is required.</sch:assert>
         </sch:rule>
       </constraint>
-    </constraintSpec><remarks xml:lang="en">
+    </constraintSpec>
+    <remarks xml:lang="en">
       <p>Do not confuse this element with the <gi scheme="MEI">addDesc</gi> element, which holds a
         narrative description of additions to the content of a resource.</p>
       <p>The model of this element is based on the 
@@ -593,6 +597,32 @@
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-application.html">application</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="aspectRatio" module="MEI.header">
+    <gloss xml:lang="en">aspect ratio</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the width of the screen image in relation to its
+      height. Analogous to MARC21 345 ǂc and 345 ǂd. If one of the recommended values is not used, then an
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.ASPECTRATIO"/>
+    </content>
+    <constraintSpec ident="check_aspectRatio_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:aspectRatio[not(matches(normalize-space(.), 
+          '^(|anamorphic|full screen|fullframe|letterboxed|mixed aspect|non-anamorphic|pan and scan|reduced frame|wide screen|[1-9][0-9]{0,2}:[1-9][0-9]{0,2})$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>  
   </elementSpec>
   <elementSpec ident="attUsage" module="MEI.header">
     <desc xml:lang="en">Documents the usage of a specific attribute of the element.</desc>
@@ -748,6 +778,84 @@
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-bindingDesc.html">bindingDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="bitDepth" module="MEI.header">
+    <gloss xml:lang="en">bit depth</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the number of bits used to define each pixel in a
+      digital image or each sample in a digital audio file. Analogous to MARC21 007/06-08. If a
+      token matching the pattern "\d{1,3}" is not used, an <att>auth</att> or <att>auth.uri</att>
+      attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.BITDEPTH"/>
+    </content>
+    <constraintSpec ident="check_bitDepth_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:bitDepth[not(matches(normalize-space(.), 
+          '^(|\d{1,3})$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>  
+  </elementSpec>
+  <elementSpec ident="bookFormat" module="MEI.header">
+    <gloss xml:lang="en">book format</gloss>
+    <desc xml:lang="en">Relationship between a whole sheet and individual leaves in printing.
+      Analogous to MARC21 340 ǂm. If one of the recommended values is not used, then an
+        <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physMediumPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.BOOKFORMAT"/>
+    </content>
+    <constraintSpec ident="check_bookFormat_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:bookFormat[not(matches(normalize-space(.),
+          '^(|128mo|12mo|16mo|18mo|24mo|32mo|36mo|48mo|4to|64mo|72mo|8vo|96mo|folio|full-sheet)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="broadcastStandard" module="MEI.header">
+    <gloss xml:lang="en">broadcast standard</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the system used to format a video resource
+      for television broadcast. Analogous to MARC21 346 ǂb. If one of the recommended values is not used, then an
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.BROADCASTSTANDARD"/>
+    </content>
+    <constraintSpec ident="check_broadcastStandard_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:broadcastStandard[not(matches(normalize-space(.), 
+          '^(|HDTV|NTSC|PAL|SECAM)$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>  
+  </elementSpec>
   <elementSpec ident="byline" module="MEI.header">
     <desc xml:lang="en">Contains the primary statement of responsibility given for a work on its title
       page.</desc>
@@ -779,7 +887,7 @@
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physTechPart"/>
     </classes>
     <content>
       <rng:ref name="data.CAPTUREMODE"/>
@@ -798,11 +906,20 @@
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physMediumPart"/>
     </classes>
     <content>
       <rng:ref name="data.CARRIERFORM"/>
     </content>
+    <constraintSpec ident="check_carrierForm_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:carrierForm[not(matches(normalize-space(.),
+          '^(|aperture card|audio belt|audio cartridge|audio cylinder|audio disc|audio roll|audio wire reel|audiocassette|audiotape reel|card|collection|computer card|computer chip cartridge|computer data file|computerdisc|computer disc cartridge|computer tape cartridge|computer tapecassette|computer tape reel|film cartridge|film cassette|filmreel|film roll|filmslip|filmstrip|filmstrip cartridge|flipchart|kit|microfiche|microfiche cassette|microfilmcartridge|microfilm cassette|microfilm reel|microfilm roll|microfilm slip|microopaque|microscope slide|object|onlineresource|overhead transparency|roll|sheet|slide|sound-track reel|stereograph card|stereograph disc|unspecified|video cartridge|videocassette|videodisc|videotape reel|volume)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="category" module="MEI.header">
     <desc xml:lang="en">Contains an individual descriptive category in a user-defined taxonomy, possibly nested
@@ -965,6 +1082,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.dataPointing"/>
+      <memberOf key="model.physMediumPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -989,6 +1107,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="model.physMediumPart"/>
     </classes>
     <content>
       <rng:choice>
@@ -1038,6 +1157,82 @@
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-colophon.html">colophon</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="colorContent" module="MEI.header">
+    <gloss xml:lang="en">color content</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the use of color, tone, etc., in the
+      content of a resource. Analogous to MARC21 007/03 (electronic, motion picture, video recording)
+      and 340 $g. If one of the recommended values is not used, then an <att>auth</att> or
+        <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.COLORCONTENT"/>
+    </content>
+    <constraintSpec ident="check_colorContent_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:colorContent[not(matches(normalize-space(.),
+          '^(|monochrome|polychrome|mixed color)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="completeness" module="MEI.header">
+    <desc xml:lang="en">Controlled vocabulary term describing whether all intended parts of a resource
+      are present. Analogous to MARC21 007/16 (motion picture). If one of the recommended values is
+      not used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physMediumPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.COMPLETENESS"/>
+    </content>
+    <constraintSpec ident="check_completeness_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:completeness[not(matches(normalize-space(.),
+          '^(|complete|incomplete)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="compressionLevel" module="MEI.header">
+    <gloss xml:lang="en">compression level</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the kind of compression to which an
+      electronic resource has been subjected. Used to judge the fidelity of the file to the original.
+      Analogous to MARC21 007/12 (electronic). If one of the recommended values is not used, then an
+        <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.COMPRESSIONLEVEL"/>
+    </content>
+    <constraintSpec ident="check_compressionLevel_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:compressionLevel[not(matches(normalize-space(.),
+          '^(|uncompressed|lossless|lossy|mixed)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="componentList" module="MEI.header">
     <desc xml:lang="en">Container for intellectual or physical component parts of a bibliographic entity.</desc>
@@ -1108,7 +1303,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physMediumPart"/>
     </classes>
     <content>
       <rng:choice>
@@ -1561,6 +1756,31 @@
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-encodingDesc.html">encodingDesc</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="encodingFormat" module="MEI.header">
+    <gloss xml:lang="en">encoding format</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the schema, standard, etc., used to
+      encode the digital content of a resource. Analogous to MARC21 347 ǂb. If one of the recommended
+      values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.ENCODINGFORMAT"/>
+    </content>
+    <constraintSpec ident="check_encodingFormat_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:encodingFormat[not(matches(normalize-space(.),
+          '^(|4K Ultra HD Blu-ray|AVI file|AZW3 file|Blu-ray|CD audio|DVD audio|DVD video|DVD-R video|Excel file|GIF image|HTML file|JPEG image|MP3 audio|MP4 video|PDF file|PNG image|QuickTime file|SACD audio|SWF video|TIFF image|VCD video|WMA file|XML file)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
   <elementSpec ident="exhibHist" module="MEI.header">
     <gloss xml:lang="en">exhibition history</gloss>
     <desc xml:lang="en">A record of public exhibitions, including dates, venues,
@@ -1629,6 +1849,31 @@
         Archival Description (EAD).</p>
     </remarks>
   </elementSpec>
+  <elementSpec ident="filmFormat" module="MEI.header">
+    <gloss xml:lang="en">film format</gloss>
+    <desc xml:lang="en">Material format used by an analog moving image (e.g., Cinerama, IMAX).
+      Analogus to MARC21 007/04 (motion picture) and 345 $a. If one of the recommended values is not
+      used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.FILMFORMAT"/>
+    </content>
+    <constraintSpec ident="check_filmFormat_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:filmFormat[not(matches(normalize-space(.),
+          '^(^(|3D|Cinemiracle|Cinerama|Circarama|IMAX|multiprojector|multiscreen|Panavision|standard silent aperture|standard sound aperture|stereoscopic|Techniscope)$)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
   <elementSpec ident="foliaDesc" module="MEI.header">
     <desc xml:lang="en">Describes the arrangement of folia and bifolia making up the text block of a manuscript or printed item.</desc>
     <classes>
@@ -1662,6 +1907,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="model.physMediumPart"/>
     </classes>
     <content>
       <rng:choice>
@@ -1699,6 +1945,58 @@
         >folium</gi> elements only (and not guess about the presence of <gi scheme="MEI"
         >bifolium</gi>s in the document).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="generation" module="MEI.header">
+    <desc xml:lang="en">Relationship between an original carrier and the carrier of a reproduction
+      made from the original. Analogous to MARC21 007/11 (motion picture), 007/09 (sound recording),
+      and 340 $j. If one of the recommended values is not used, then an <att>auth</att> or
+        <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.GENERATION"/>
+    </content>
+    <constraintSpec ident="check_generation_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:generation[not(matches(normalize-space(.),
+          '^(|derivativemaster|disc master|duplicate|facsimile|first generation|master|master positive|mastertape|mixed generation|mother|original|original negative|paper positive|printingmaster|reference print|reversal|service copy|stamper|tape duplication master|testpressing)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="grooveDesc" module="MEI.header">
+    <gloss xml:lang="en">groove description</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the groove width of an analog disc,
+      groove pitch of an analog cylinder, or groove cutting type. Analogous to MARC21 007/05
+      (sound recording) and 344 $d. If one of the recommended values is not used, then an
+      <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.GROOVEDESC"/>
+    </content>
+    <constraintSpec ident="check_grooveDesc_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:grooveDesc[not(matches(normalize-space(.), 
+          '^(|fine pitch|lateral or combined cutting|microgroove|standard pitch|vertical cutting)$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>  
   </elementSpec>
   <elementSpec ident="hand" module="MEI.header">
     <desc xml:lang="en">Defines a distinct scribe or handwriting style.</desc>
@@ -2063,7 +2361,9 @@
             <rng:ref name="macro.p.basic"/>
           </rng:zeroOrMore>
         <rng:group>
-          <rng:ref name="macro.p.basic"/>
+          <rng:optional>
+            <rng:ref name="macro.p.basic"/>
+          </rng:optional>          
           <rng:zeroOrMore>
             <rng:ref name="layoutTech"/>
           </rng:zeroOrMore>
@@ -2698,6 +2998,23 @@
       </rng:choice>
     </content>
   </elementSpec>
+  <elementSpec ident="physTech" module="MEI.header">
+    <gloss xml:lang="en">physical and technical characteristics</gloss>
+    <desc xml:lang="en">Container for elements used to encode physical or technical information which
+      may affect access to or use of the resource.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.pointing"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.physTechPart"/>
+        <rng:zeroOrMore>
+          <rng:ref name="model.annotLike"/>
+        </rng:zeroOrMore>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
   <elementSpec ident="plateNum" module="MEI.header">
     <gloss xml:lang="en">plate number</gloss>
     <desc xml:lang="en">Designation assigned to a resource by a music publisher, usually printed
@@ -2733,13 +3050,38 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physTechPart"/>
     </classes>
     <content>
       <rng:ref name="data.PLAYINGSPEED"/>
     </content>
   </elementSpec>
-  <elementSpec ident="price" module="MEI.header">
+    <elementSpec ident="polarity" module="MEI.header">
+    <desc xml:lang="en">Relationship of the colors and tones in an image to the colors and tones of
+      the object reproduced. Analogous to MARC21 007/10 (motion picture) and 340 $o. If one of the
+      recommended values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute is
+      required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.POLARITY"/>
+    </content>
+    <constraintSpec ident="check_polarity_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:polarity[not(matches(normalize-space(.),
+          '^(|positive|negative|mixed)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+<elementSpec ident="price" module="MEI.header">
     <desc xml:lang="en">The cost of access to a bibliographic item.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -2840,6 +3182,52 @@
       <p>When an item is unpublished, use only the <gi scheme="MEI">unpub</gi> sub-element.</p>
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-publicationStmt.html">publicationStmt</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="regionalEncoding" module="MEI.header">
+    <gloss xml:lang="en">regional encoding</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing one or more regions of the world for
+      which videodisc or video game carrier has been encoded, restricting playback to devices
+      configured to decode it. Analogous to MARC21 347 ǂe. If one of the recommended values is not
+      used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.REGIONALENCODING"/>
+    </content>
+    <constraintSpec ident="check_regionalEncoding_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:regionalEncoding[not(matches(normalize-space(.),
+          '^(|all regions|region 1|region 2|region 3|region 4|region 5|region 6|region 7|region 8|region A|region B|region C (Blu-ray)|region C (video game)|region J|region U/C)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+  </elementSpec>
+  <elementSpec ident="resolution" module="MEI.header">
+    <desc xml:lang="en">Controlled vocabulary term describing the clarity of detail in
+      a digital image, expressed by measurement of the image in pixels, etc. Analogous
+      to MARC21 347 ǂd.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="mei_model.textPhraseLike.bare"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
   </elementSpec>
   <elementSpec ident="revisionDesc" module="MEI.header">
     <gloss xml:lang="en">revision description</gloss>
@@ -3047,14 +3435,16 @@
   </elementSpec>
   <elementSpec ident="soundChan" module="MEI.header">
     <gloss xml:lang="en">sound channels</gloss>
-    <desc xml:lang="en">Reflects the number of apparent sound channels in the playback of a
-      recording (monaural, stereophonic, quadraphonic, etc.).</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the number of apparent sound channels in the
+        playback of a recording  (monaural, stereophonic, quadraphonic, etc.). Analogous to MARC21 007/04, 344 ǂg (sound recording), and 007/08
+        (video recording). If one of the recommended values is not used, then an <att>auth</att> or
+          <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physTechPart"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -3064,6 +3454,16 @@
         </rng:choice>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_soundChan_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:soundChan[not(matches(normalize-space(.), 
+          '^(mixed|mono|quadraphonic|stereo|surround|\d+(\.\d+)?)$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <attList>
       <attDef ident="num" usage="opt">
         <desc xml:lang="en">Records the channel configuration in numeric form.</desc>
@@ -3079,6 +3479,32 @@
         scheme="MEI">trackConfig</gi> element should capture the existence of two physical tracks.
         This element is analogous to <abbr>MARC</abbr> field 344 subfield g.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="soundContent" module="MEI.header">
+    <gloss xml:lang="en">sound content</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the presence or absence of sound. Also,
+      whether sound is captured on the medium or separately. Analogous to MARC21 007/05 (electronic),
+      007/05, 007/06 (motion picture, video recording), and 344 $i. If one of the recommended values
+      is not used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.SOUNDCONTENT"/>
+    </content>
+    <constraintSpec ident="check_soundContent_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:soundContent[not(matches(normalize-space(.),
+          '^(|sound|soundOnMedium|soundSeparate|silent)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="source" module="MEI.header">
     <desc xml:lang="en">A bibliographic description of a source used in the creation of the electronic
@@ -3159,11 +3585,20 @@
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physTechPart"/>
     </classes>
     <content>
       <rng:ref name="data.SPECREPRO"/>
     </content>
+    <constraintSpec ident="check_specRepro_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:specRepro[not(matches(normalize-space(.),
+          '^(|CCIR encoded|CX encoded|dbx encoded|Dolby|Dolby Digital|Dolby Digital 1.0|Dolby Digital 2.0|Dolby Digital 5.1|Dolby-A encoded|Dolby-B encoded|Dolby-C encoded|DTS|DTS 5.0|DTS 5.1|DTS-HD Master Audio|DTS-HD Master Audio 5.1|DTS-HD Master Audio 7.1|LPCM|LPCM 2.0|NAB standard|PCM|PCM 5.1|PCM 5.1 uncompressed|PCM uncompressed)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+         </sch:rule>
+       </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="stampDesc" module="MEI.header">
     <gloss xml:lang="en">stamp description</gloss>
@@ -3424,35 +3859,35 @@
   </elementSpec>
   <elementSpec ident="trackConfig" module="MEI.header">
     <gloss xml:lang="en">track configuration</gloss>
-    <desc xml:lang="en">Controlled vocabulary term describing the configuration of tracks present
-        in an audio recording or sound-track film. Analogous to MARC21 007/08 and 344 ǂe. If one of
-        the recommended values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute
-        is required.</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the number of tracks present in an audio
+      recording or sound-track film. Analogous to MARC21 007/08 and 344 ǂe. If one of the recommended
+      values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
-      <memberOf key="model.physDescPart"/>
+      <memberOf key="model.physTechPart"/>
     </classes>
     <content>
       <rng:ref name="data.TRACKCONFIG"/>
     </content>
-    <attList>
-      <attDef ident="num" usage="opt">
-        <desc xml:lang="en">Records the track configuration in numeric form.</desc>
-        <datatype>
-          <rng:data type="positiveInteger"/>
-        </datatype>
-      </attDef>
-    </attList>
+    <constraintSpec ident="check_trackConfig_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:trackConfig[not(matches(normalize-space(.),
+          '^(^(|8 track|12 track|16 track|center track|edge track|full track|half track|quarter track|[1-9][0-9]* track)$)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
       <p>The number of apparent playback channels can differ from the number of physical channels of
-        the recording medium, <abbr>i.e.</abbr>, 2-track monophonic recordings. In this example, the trackConfig
-        element should record the fact that there are two physical tracks on the sound medium, while
-        the <gi scheme="MEI">soundChan</gi> element should be used to state that there is a single
-        output channel. This element may be mapped to <abbr>MARC</abbr> field 344 subfield e or subfield f as
-        appropriate.</p>
+        the recording medium, <abbr>i.e.</abbr>, 2-track monophonic recordings. In this case, the
+        trackConfig element should record the fact that there are two physical tracks on the sound
+        medium, while the <gi scheme="MEI">soundChan</gi> element should be used to state that there
+        is a single output channel. This element may be mapped to <abbr>MARC</abbr> field 344 subfield
+        ǂe or subfield ǂf as appropriate.</p>
     </remarks>
   </elementSpec>
   <elementSpec ident="treatHist" module="MEI.header">
@@ -3596,6 +4031,32 @@
         affecting the availability of the material.</p>
       <p>The model of this element is based on the <ref target="https://www.loc.gov/ead/EAD3taglib/EAD3-TL-eng.html#elem-userestrict">userestrict</ref> element of the Encoded Archival Description (EAD).</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="videoFormat" module="MEI.header">
+    <gloss xml:lang="en">video format</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the schema, standard, etc., used to
+      encode the video content of a resource. Analogous to MARC21 007/04 (video recording) and 346 $a.
+      If one of the recommended values is not used, then an <att>auth</att> or <att>auth.uri</att>
+      attribute is required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physTechPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.VIDEOFORMAT"/>
+    </content>
+    <constraintSpec ident="check_videoFormat_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:videoFormat[not(matches(normalize-space(.),
+          '^(^(|8mm|Betacam|Betacam SP|Betamax|CED|D-2|EIAJ|Hi-8mm|laser optical|M-II|Quadruplex|Super-VHS|Type C|U-matic|VHS)$)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="watermarkDesc" module="MEI.header">
     <gloss xml:lang="en">watermark description</gloss>
