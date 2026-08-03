@@ -2,6 +2,46 @@
 <sch:schema queryBinding="xslt2" xmlns:sch="http://purl.oclc.org/dsdl/schematron">
     <sch:ns prefix="tei" uri="http://www.tei-c.org/ns/1.0"/>
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
+    
+    <sch:let name="URI.file" value="document-uri(/)" />
+    <sch:let name="URI.repo-collection" value="replace(document-uri(/), '^(.*/music-encoding/).*', '$1')" />
+    <sch:let name="URI.source-collection" value="resolve-uri('./source/', $URI.repo-collection)" />
+    <sch:let name="URI.schematron" value="resolve-uri('./validation/mei-source.sch', $URI.source-collection)" />
+    <sch:let name="URI.docs-collection" value="resolve-uri('./docs/', $URI.source-collection)" />
+    <sch:let name="URI.modules-collection" value="resolve-uri('./modules/', $URI.source-collection)" />
+    
+    <!-- IDENTs of tei:classSpec elements and derived subsets -->
+    <sch:let name="IDENTS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classSpec/@ident" />
+    <sch:let name="IDENTS.atts" value="$IDENTS.classes[parent::*/@type ='atts']"/>
+    <sch:let name="IDENTS.models" value="$IDENTS.classes[parent::*/@type ='model']"/>
+    
+    <!-- IDENTs of tei:elementSpec elements -->
+    <sch:let name="IDENTS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementSpec/@ident" />
+    
+    <!-- IDENTs of tei:macSpec elements -->
+    <sch:let name="IDENTS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroSpec/@ident"/>
+    <sch:let name="IDENTS.datatypes" value="$IDENTS.macros[parent::*/@type ='dt']"/>
+    <sch:let name="IDENTS.patterns" value="$IDENTS.macros[parent::*/@type ='pe']"/>
+    
+    <!-- declare xml:ids in docs and modules and derived subsets -->
+    <sch:let name="IDS.docs" value="collection($URI.docs-collection || '?select=*.xml;recurse=yes')//@xml:id" />
+    <sch:let name="IDS.modules" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//@xml:id" />
+    <sch:let name="IDS.docs-modules" value="$IDS.docs, $IDS.modules" />
+    <sch:let name="IDS.divs" value="($IDS.docs, $IDS.modules)[parent::tei:div]" />
+    
+    <!-- all class memberships -->
+    <sch:let name="KEYS.memberOf" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:memberOf/string(@key)"/>
+    <sch:let name="KEYS.memberOf.model" value="$KEYS.memberOf[starts-with(., 'model.')]"/>
+    
+    <!-- all datatype references -->
+    <sch:let name="REFS" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//rng:ref/string(@name)"/>
+    <sch:let name="REFS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroRef/string(@key)"/>
+
+    <sch:pattern id="environment">
+        <sch:rule context="/">
+            <sch:report role="info" test="true()">Validating <sch:value-of select="$URI.file"/> in the repo's (<sch:value-of select="$URI.repo-collection"/>) source collection (<sch:value-of select="$URI.source-collection"/>) with <sch:value-of select="$URI.schematron"/>; checks will be performed against <sch:value-of select="$URI.modules-collection"/></sch:report>
+        </sch:rule>
+    </sch:pattern>
 
     <sch:pattern id="check_gi_references">
         <sch:rule context="tei:gi">
@@ -13,7 +53,7 @@
 
     <sch:pattern id="check_gi_scheme_MEI_references">
         <sch:rule context="tei:gi[@scheme = 'MEI']">
-            <sch:let name="ident_vals" value="//tei:elementSpec/@ident/string()"/>
+            <sch:let name="ident_vals" value="$IDENTS.elements"/>
             <sch:assert role="error" test=" some $ident in $ident_vals satisfies ($ident = text()/string())">
                 A &lt;gi scheme="MEI"&gt;<sch:value-of select="text()"/>&lt;/gi&gt; references an element unknown to MEI. It has to match an //elementSpec/@ident.</sch:assert>
         </sch:rule>
@@ -31,15 +71,15 @@
 
     <sch:pattern id="check_ident_type_class_references">
         <sch:rule context="tei:ident[@type = 'class']">
-            <sch:let name="ident_vals" value="//tei:classSpec[@type = ('atts', 'model')]/@ident/string()"/>
+            <sch:let name="ident_vals" value="$IDENTS.classes"/>
             <sch:assert role="error"
                 test="
                     some $ident in $ident_vals
                         satisfies ($ident = text()/string())"
                 >The &lt;<sch:name/>&gt; contains text which is not declared in any
-                &lt;classSpec&gt;/@ident.</sch:assert>
+                classSpec/@ident (<sch:value-of select="text()/string()"/>).</sch:assert>
             <sch:p>The text value of &lt;ident&gt; must be equal to at least one value of
-                &lt;classSpec&gt;/@ident.</sch:p>
+                classSpec/@ident.</sch:p>
         </sch:rule>
     </sch:pattern>
     
@@ -49,10 +89,10 @@
                 test="exists(@key)"
                 >A &lt;specDesc&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
-            <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
-            <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
-            <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="elements" value="$IDENTS.elements"/>
+            <sch:let name="atts" value="$IDENTS.atts"/>
+            <sch:let name="models" value="$IDENTS.models"/>
+            <sch:let name="macros" value="$IDENTS.patterns"/>
             <sch:assert role="error"
                 test="$key = $elements or $key = $atts or $key = $models or $key = $macros">
                 The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -65,9 +105,9 @@
                 test="exists(@key)"
                 >A &lt;memberOf&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
-            <sch:let name="atts" value="//tei:classSpec[@type ='atts']/@ident/string()"/>
-            <sch:let name="models" value="//tei:classSpec[@type ='model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
+            <sch:let name="atts" value="$IDENTS.atts"/>
+            <sch:let name="models" value="$IDENTS.models"/>
+            <sch:let name="macros" value="$IDENTS.patterns"/>
             <sch:assert role="error"
                 test="$key = $atts or $key = $models or $key = $macros">
                 The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -80,10 +120,10 @@
                 test="exists(@name)"
                 >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
             <sch:let name="name" value="string(@name)"/>
-            <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
-            <sch:let name="models" value="//tei:classSpec[@type = 'model']/@ident/string()"/>
-            <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
-            <sch:let name="datatypes" value="//tei:macroSpec[@type ='dt']/@ident/string()"/>
+            <sch:let name="elements" value="$IDENTS.elements"/>
+            <sch:let name="models" value="$IDENTS.models"/>
+            <sch:let name="macros" value="$IDENTS.patterns"/>
+            <sch:let name="datatypes" value="$IDENTS.datatypes"/>
             <sch:assert role="error"
                 test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -103,7 +143,7 @@
 
     <sch:pattern id="check_ptr_target_references">
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
-            <sch:let name="div_IDs" value="//tei:div/@xml:id/string()"/>
+            <sch:let name="div_IDs" value="$IDS.divs"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
             <sch:assert role="error" test="some $id in $div_IDs satisfies ($id = $target)">
                 The &lt;<sch:name/>&gt; points to <sch:value-of select="@target"/> which wasn't declared in a &lt;div&gt;/xml:id.</sch:assert>
@@ -163,38 +203,38 @@
     <!-- check whether things are referenced somewhere -->
     <sch:pattern id="unused_objects">
         <sch:rule context="tei:classSpec[@type = 'atts']">
-            <sch:let name="all.memberships" value="//tei:memberOf/string(@key)"/>
+            <sch:let name="all.memberships" value="$KEYS.memberOf"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.memberships" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:classSpec[@type = 'model']">
-            <sch:let name="all.memberships" value="//tei:memberOf/string(@key)"/>
-            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="all.memberships" value="$KEYS.memberOf"/>
+            <sch:let name="all.refs" value="$REFS"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.memberships or $ident = $all.refs" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec[@type = 'pe']">
-            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
+            <sch:let name="all.refs" value="$REFS"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:elementSpec">
-            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
-            <sch:let name="models" value=".//tei:memberOf[starts-with(@key, 'model.')]/@key"/>
+            <sch:let name="all.refs" value="$REFS"/>
+            <sch:let name="models" value="$KEYS.memberOf.model"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs or count($models) gt 0" role="warning">
                 Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec[@type = 'dt']">
-            <sch:let name="all.refs" value="//rng:ref/string(@name)"/>
-            <sch:let name="all.macroRefs" value="//tei:macroRef/string(@key)"/>
+            <sch:let name="all.refs" value="$REFS"/>
+            <sch:let name="all.macroRefs" value="$REFS.macros"/>
             <sch:let name="ident" value="@ident"/>
             <sch:assert test="$ident = $all.refs or $ident = $all.macroRefs" role="warning">
                <sch:value-of select="$ident"/> seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; or &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
