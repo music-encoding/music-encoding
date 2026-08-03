@@ -892,6 +892,15 @@
     <content>
       <rng:ref name="data.CAPTUREMODE"/>
     </content>
+    <constraintSpec ident="check_captureMode_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:captureMode[not(matches(normalize-space(.),
+          '^(|acoustical capture, direct storage|electrical capture, analog electrical storage|electrical capture, digital storage|electrical capture, direct storage)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="carrierForm" module="MEI.header">
     <gloss xml:lang="en">carrier form</gloss>
@@ -3052,12 +3061,13 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="playingSpeed" module="MEI.header">
-    <desc xml:lang="en">Playing speed for a sound recording is the speed at which the carrier must
-      be operated to produce the sound intended or the data rate of a digital audio file. Analogous
-      to MARC21 007/03, 344 ǂc, 345 ǂb, and 347 ǂf. If one of the recommended values is not used,
-      then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
+    <desc xml:lang="en">Speed at which the carrier must be operated or rate at which data must be
+      provided/consumed to produce the sound intended. Analogous to MARC21 007/03, 344 ǂc, 345 ǂb,
+      and 347 ǂf. If one of the recommended values is not used, then an <att>auth</att> or
+      <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
       <memberOf key="model.physTechPart"/>
@@ -3065,6 +3075,15 @@
     <content>
       <rng:ref name="data.PLAYINGSPEED"/>
     </content>
+    <constraintSpec ident="check_playingSpeed_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:playingSpeed[not(matches(normalize-space(.),
+          '^(|1 7/8 ips|120 rpm|15 ips|15/16 ips|16 rpm|160 rpm|3 3/4 ips|30 ips|33 1/3 rpm|45 rpm|7 1/2 ips|78 rpm|8 rpm|[1-9][0-9]*(\.[0-9]+)?\s*(c|f|i|m|r)[p/](m|s)|[1-9][0-9]*(\.[0-9]+)?\s*(k|M)?bp(m|s))$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
     <elementSpec ident="polarity" module="MEI.header">
     <desc xml:lang="en">Relationship of the colors and tones in an image to the colors and tones of
@@ -3284,7 +3303,7 @@
   <elementSpec ident="scoreFormat" module="MEI.header">
     <desc xml:lang="en">Controlled vocabulary term describing the type of score used to represent a
       musical composition (e.g., (full) score, condensed score, table book, etc.). Analogous to
-      MARC21 348 ǂa and 008/20 (music). If one of the following values is not used, then an 
+      MARC21 348 ǂa and 008/20 (music). If one of the recommended values is not used, then an 
       <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
@@ -3296,6 +3315,16 @@
     <content>
       <rng:ref name="data.SCOREFORMAT"/>
     </content>
+    <constraintSpec ident="check_scoreFormat_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:scoreFormat[not(matches(normalize-space(.), 
+          '^(|choir book|chorus score|condensed score|part|performer conductor part|piano conductor part|piano score|score|study score|table book|violin conductor part|vocal score)$'))]">
+          <sch:assert
+            test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) = '')]"
+            >@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="sealDesc" module="MEI.header">
     <gloss xml:lang="en">seal description</gloss>
@@ -3446,9 +3475,9 @@
   <elementSpec ident="soundChan" module="MEI.header">
     <gloss xml:lang="en">sound channels</gloss>
     <desc xml:lang="en">Controlled vocabulary term describing the number of apparent sound channels in the
-        playback of a recording  (monaural, stereophonic, quadraphonic, etc.). Analogous to MARC21 007/04, 344 ǂg (sound recording), and 007/08
-        (video recording). If one of the recommended values is not used, then an <att>auth</att> or
-          <att>auth.uri</att> attribute is required.</desc>
+      playback of a recording  (monaural, stereophonic, quadraphonic, etc.). Analogous to MARC21 007/04,
+      344 ǂg (sound recording), and 007/08 (video recording). If one of the recommended values is not used,
+      then an <att>auth</att> or <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
