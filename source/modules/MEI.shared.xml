@@ -5297,13 +5297,24 @@
       <rng:zeroOrMore>
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <rng:oneOrMore>
+      <rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:choice>
           <rng:ref name="castItem"/>
           <rng:ref name="castGrp"/>
         </rng:choice>
-      </rng:oneOrMore>
+      </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_castList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:castList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:castItem | mei:castGrp)">When labels
+            are used, usually each castItem or castGrp has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-castList.html">castList</ref> element of the Text Encoding Initiative (TEI).</p>
     </remarks>
@@ -6150,29 +6161,36 @@
     </classes>
     <content>
       <rng:zeroOrMore>
-        <rng:group>
-          <!-- an organizing data element; when not present, the list is a simple list of event descriptions -->
-          <rng:optional>
-            <rng:choice>
-              <rng:ref name="name"/>
-              <rng:ref name="model.addressLike"/>
-              <rng:ref name="model.dateLike"/>
-              <rng:ref name="model.nameLike.agent"/>
-              <rng:ref name="model.nameLike.geogName"/>
-            </rng:choice>
-          </rng:optional>
-          <!-- an event description or a nested group of events -->
-          <rng:choice>
-            <rng:ref name="event"/>
-            <rng:ref name="eventList"/>
-          </rng:choice>
-        </rng:group>
+        <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
-      <!-- at the very end, a list of citations -->
+      <rng:oneOrMore>
+        <rng:group>
+          <rng:optional>
+            <rng:ref name="label"/>
+          </rng:optional>
+          <rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="event"/>
+              <rng:ref name="eventList"/>
+            </rng:choice>
+          </rng:oneOrMore>
+        </rng:group>
+      </rng:oneOrMore>
       <rng:zeroOrMore>
-        <rng:ref name="biblList"/>
+        <rng:choice>
+          <rng:ref name="model.annotLike"/>
+          <rng:ref name="model.biblLike"/>
+        </rng:choice>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_eventList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:eventList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:event | mei:eventList)">When labels
+            are used, usually each event or eventList has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
       <p>An <gi scheme="MEI">eventList</gi> contains <gi scheme="MEI">event</gi> elements that
         capture a brief description of the associated event, including dates and locations where the
@@ -7754,9 +7772,23 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="mei_model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:ref name="model.relationLike"/>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_relationList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:relationList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:relation | mei:relationList)">When labels
+            are used, usually each relation or relationList has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>    
   </elementSpec>
   <elementSpec ident="rend" module="MEI.shared">
     <gloss xml:lang="en">render</gloss>
