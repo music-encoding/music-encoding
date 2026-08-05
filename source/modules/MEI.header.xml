@@ -1240,20 +1240,35 @@
       <memberOf key="att.common"/>
     </classes>
     <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
       <rng:choice>
         <rng:choice>
           <rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="label"/>
+            </rng:optional>
             <rng:ref name="model.workLike"/>
           </rng:zeroOrMore>
           <rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="label"/>
+            </rng:optional>
             <rng:ref name="model.expressionLike"/>
           </rng:zeroOrMore>
         </rng:choice>
         <rng:choice>
           <rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="label"/>
+            </rng:optional>
             <rng:ref name="model.manifestationLike"/>
           </rng:zeroOrMore>
           <rng:zeroOrMore>
+            <rng:optional>
+              <rng:ref name="label"/>
+            </rng:optional>
             <rng:ref name="model.itemLike"/>
           </rng:zeroOrMore>
         </rng:choice>
@@ -1277,6 +1292,15 @@
             test="count(mei:*[@comptype]) = count(mei:*[local-name() ne 'head'])">When any child
             element has a comptype attribute, it is recommended that comptype appear on all child
             elements.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="check_componentList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:componentList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:work | mei:expression
+            | mei:manifestation | mei:item)">When labels are used, usually each work, expression,
+            manifestation, or item has one.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -1360,7 +1384,7 @@
         </rng:oneOrMore>
       </rng:choice>
     </content>
-    <constraintSpec ident="checkContentsLabels" scheme="schematron">
+    <constraintSpec ident="check_contents_labels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:contents[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:contentItem)">When labels
@@ -2068,13 +2092,19 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="label"/>
         </rng:optional>
-        <rng:ref name="hand"/>
+        <rng:choice>
+          <rng:ref name="hand"/>
+          <rng:ref name="handList"/>
+        </rng:choice>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="checkHandListLabels" scheme="schematron">
+    <constraintSpec ident="check_handList_labels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:handList[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:hand)">When labels are used,
@@ -2901,6 +2931,9 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="label"/>
         </rng:optional>
@@ -2913,6 +2946,14 @@
         </rng:optional>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_perfResList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:perfResList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:perfRes | mei:perfResList)">When
+            labels are used, usually each perfRes or perfResList has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <remarks xml:lang="en">
       <p>The function of instrumentalists or vocalists is represented by the choice of <gi
         scheme="MEI">perfRes</gi> and <gi scheme="MEI">perfResList</gi> child elements. Arrangements
@@ -3826,13 +3867,16 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="label"/>
         </rng:optional>
         <rng:ref name="term"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="checkTermListLabels" scheme="schematron">
+    <constraintSpec ident="check_termList_labels" scheme="schematron">
       <constraint>
         <sch:rule context="mei:termList[mei:label]">
           <sch:assert role="warning" test="count(mei:label) = count(mei:term)">When labels are used,
@@ -4209,9 +4253,23 @@
       <memberOf key="model.headerPart"/>
     </classes>
     <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
       <rng:oneOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:ref name="work"/>
       </rng:oneOrMore>
     </content>
+    <constraintSpec ident="check_workList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:workList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:work)">When labels are used,
+            usually each work has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
 </specGrp>
