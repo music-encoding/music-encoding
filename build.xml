@@ -51,39 +51,50 @@
             </tokenfilter>
         </filterchain>
     </loadresource>
-    <loadresource property="windir" quiet="true">
-        <string value="${basedir}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="\\" replace="/"/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
-    <condition property="basedir.cross_platform" value="${basedir}" else="file:/${windir}">
-        <not>
-            <os family="windows"/>
-        </not>
-    </condition>
+    <!--
+        Macrodef: path-to-file-uri
+        Converts a filesystem path to a file URI suitable for Saxon/XSLT.
+        On Windows: C:\path\to\file → file:/C:/path/to/file
+        On Unix:    /path/to/file   → /path/to/file (unchanged)
+    -->
+    <macrodef name="path-to-file-uri">
+        <attribute name="path"/>
+        <attribute name="property"/>
+        <sequential>
+            <!-- First normalize to absolute path with forward slashes -->
+            <local name="_normalized"/>
+            <pathconvert property="_normalized" targetos="unix">
+                <path location="@{path}"/>
+            </pathconvert>
+            <!-- On Windows, prepend file:/ prefix; on Unix use as-is -->
+            <local name="_isWindows"/>
+            <condition property="_isWindows">
+                <os family="windows"/>
+            </condition>
+            <condition property="@{property}" value="file:/${_normalized}" else="${_normalized}">
+                <isset property="_isWindows"/>
+            </condition>
+        </sequential>
+    </macrodef>
     <condition property="verbose" value="true" else="false">
         <contains string="${sun.java.command}" substring="-v" />
     </condition>
-    <!-- directories -->
-    <property name="dir.build" value="build"/>
-    <property name="dir.dist" value="dist"/>
-    <property name="dir.lib" value="lib"/>
-    <property name="dir.validation" value="source/validation"/>
-    <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
-    <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
-    <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
-    <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
-    <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
-    <property name="dir.lib.xerces" value="${dir.lib}/xerces"/>
+    <!-- directories (using @location for consistent absolute paths) -->
+    <property name="dir.build" location="build"/>
+    <property name="dir.dist" location="dist"/>
+    <property name="dir.lib" location="lib"/>
+    <property name="dir.validation" location="source/validation"/>
+    <property name="dir.dist.guidelines" location="${dir.dist}/guidelines/web"/>
+    <property name="dir.dist.schemata" location="${dir.dist}/schemata"/>
+    <property name="dir.lib.saxon" location="${dir.lib}/saxon"/>
+    <property name="dir.lib.schematron" location="${dir.lib}/schematron"/>
+    <property name="dir.lib.stylesheets" location="${dir.lib}/stylesheets"/>
+    <property name="dir.lib.xerces" location="${dir.lib}/xerces"/>
     <!-- canonicalization -->
     <property name="canonicalized.file.prefix" value="mei-source_canonicalized_v"/>
     <property name="canonicalized.file.latest" value="${canonicalized.file.prefix}${meiversion.latest}.xml"/>
     <property name="canonicalized.file.next" value="${canonicalized.file.prefix}${meiversion.next}.xml"/>
-    <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
-    <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
+    <property name="canonicalized.source.path" location="${dir.build}/${canonicalized.file.next}"/>
     <!-- jar dependencies -->
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
     <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
@@ -319,10 +330,12 @@
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <!-- NB: do not use on mei-source.xml as the egXMLs will be corrupted in the output -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <!-- Convert path to file URI for Saxon/XSLT -->
+        <path-to-file-uri path="${canonicalized.source.path}" property="canonicalized.source.uri"/>
         <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
-            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
+            <property name="defaultSource" value="${canonicalized.source.uri}"/>
             <property name="verbose" value="${verbose}"/>
             <property name="summaryDoc" value="false"/>
             <property name="suppressTEIexamples" value="true"/>
@@ -356,6 +369,8 @@
         <antcall target="build-compiled-odd" inheritall="yes" />
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
         <antcall target="copy-guidelines-assets"/>
+        <!-- Convert basedir to file URI for Saxon/XSLT -->
+        <path-to-file-uri path="${basedir}" property="basedir.uri"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-s:${compiled.path}"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html.xsl"/>
@@ -363,7 +378,7 @@
             <arg value="dist.folder=${output.folder}/"/><!-- NB: trailing slash needed for XSLT -->
             <arg value="hash=${hash}"/>
             <arg value="branch=${branch}"/>
-            <arg value="basedir=${basedir.cross_platform}"/>
+            <arg value="basedir=${basedir.uri}"/>
         </java>
         <antcall target="generate-images"/>
         <antcall target="copy-generated-images" inheritall="yes"/>
@@ -371,13 +386,15 @@
     
     <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <!-- Convert path to file URI for Saxon/XSLT -->
+        <path-to-file-uri path="${canonicalized.source.path}" property="canonicalized.source.uri"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
-        <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
+        <echo>    source: ${canonicalized.source.uri}</echo>
         <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
         <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
-            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
+            <property name="defaultSource" value="${canonicalized.source.uri}"/>
             <property name="verbose">true</property>
             <reference refid="mei.classpath" torefid="classpath"/>
             <property name="verbose" value="${verbose}"/>
