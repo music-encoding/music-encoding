@@ -414,29 +414,34 @@
                         </p>
                      </div>
                   </div>
-                  <div xml:id="cmnRests" type="div4">
-                     <head>Rests</head>
-                     <p>The <att>dur</att> attribute on <gi scheme="MEI">rest</gi> captures the written duration of the rest and allows the same values as on <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi>. The CMN module also makes three more elements available for special forms of rest:</p>
-                     <p>
-                        <specList>
-                           <specDesc key="mRest"/>
-                           <specDesc key="multiRest"/>
-                           <specDesc key="mSpace"/>
-                        </specList>
+                  <div xml:id="cmn-clusters">
+                     <head>Note Clusters</head>
+                     <p>A <term>tone cluster</term> is a musical chord comprised of adjacent musical steps played simultaneously. In MEI, clusters can be represented to capture both their underlying harmonic meaning (semantics) and their specific engraving styles (visual layout).</p>                  
+                     
+                     <div xml:id="cmn-clusters-semantics">
+                     <head>Basic Semantic Encoding</head>
+                     <p>To declare a chord as a cluster, the <gi scheme="MEI">chord</gi> element is used with the <att>cluster</att> attribute. The <att>cluster</att> attribute specifies which keys or scale steps are to be filled in between the explicitly encoded notes. Its values map to the <ident type="datatype">data.CLUSTER</ident> data type, which includes:                        <list type="bulleted">
+                        <item><val>white</val>: Play only white keys (diatonic steps).</item>
+                        <item><val>black</val>: Play only black keys (pentatonic steps).</item>
+                        <item><val>chromatic</val>: Play all half-steps within the interval (chromatic steps).</item>
+                        </list>
                      </p>
-                     <div xml:id="cmnRestsMRest" type="div5">
-                        <head>Measure Rests</head>
-                        <p>The <gi scheme="MEI">mRest</gi> (measure rest) element is used to indicate a complete measure rest, independent from the meter of the current</p>
-                        <p>
-                           <gi scheme="MEI">measure</gi>.</p>
-                        <p>The <att>cutout</att> attribute provides for the description of the rendition of the <gi scheme="MEI">mRest</gi>. If <att>cutout</att> is set to ‘cutout’ (the only value allowed), then the complete staff including the staff lines will not be rendered for this measure.</p>
-                        <p>
-                           <figure>
-                              <head/>
-                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample103.txt" parse="text"/></egXML>
-                           </figure>
-                        </p>
-                        <p>It is a semantic error to mix an <gi scheme="MEI">mRest</gi> with other events in the same <gi scheme="MEI">layer</gi>. However, other ‘control events’, such as <gi scheme="MEI">fermata</gi>, may be used at the same time as <gi scheme="MEI">mRest</gi>.</p>
+                     <p>Rather than encoding every internal note, the encoder only needs to provide the highest and lowest notes of the cluster. Rendering engines fill in the missing steps automatically based on the value of the <att>cluster</att> attribute.</p>                     
+
+                     <p>
+                        <figure>
+                           <head>A cluster on white keys only</head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_01.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+
+                     <p>
+                        <figure>
+                           <head>A chromatic cluster</head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_02.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  
                      </div>
                      <div xml:id="cmnRestsMultiRest" type="div5">
                         <head>Multiple-Measure Rests</head>
@@ -823,14 +828,14 @@
                      </figure>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-tuplets01.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_01.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                   <p>The duration of the entire tuplet may be encoded using the usual ‘power of 2’ values, <abbr>e.g.</abbr>, 1, 2, 4, etc., in the <att>dur</att> attribute if necessary.</p>
                   <p>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample140.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_02.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                   <p>Tuplets are often highlighted using brackets above or below the affected notes. The presence and position of these brackets can be encoded using the <att>bracket.place</att> (above / below) and <att>bracket.visible</att> (true / false) attributes.</p>
@@ -846,7 +851,7 @@
                      </figure>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample141.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_03.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                </div>
@@ -933,7 +938,7 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_01.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>The <att>unitdur</att> attribute value indicates the exact note values in an aural rendition of a measured tremolo, <abbr>i.e.</abbr>, quarters, 8ths, and so on. The <att>stem.mod</att> attribute must also be explicity set on the child <gi scheme="MEI">note</gi> or <gi scheme="MEI">chord</gi> element for a complete visual representation. The example above shows a short excerpt from the second movement of <name ref="https://en.wikipedia.org/wiki/Franz_Schubert">Franz Schubert’s</name>
@@ -942,25 +947,25 @@
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148a.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>Note that within beams the number of slashes should be adjusted anyway.</p>
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148b.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_03.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>The <gi scheme="MEI">bTrem</gi> element can be used as shorthand for a tuplet consisting of repetitions of a single note or chord. This kind of markup may be the result of an optical music recognition process in which complete semantics cannot be determined <hi rend="italic">a priori</hi>. When used this way, the <att>num</att> attribute on <gi scheme="MEI">bTrem</gi> can record a number to be rendered along with the pseudo-tuplet. In spite of this capability, the <gi scheme="MEI">tuplet</gi> element is preferred. This makes the following examples’ visual appearance equal, but not necessarily their semantics.</p>
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample149.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_04.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample149a.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_05.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>In the case of alternating pitches, MEI offers the <gi scheme="MEI">fTrem</gi> (fingered tremolo) element. While it mostly behaves the same as <gi scheme="MEI">bTrem</gi>, a fingered tremolo requires exactly two child elements, either being a <gi scheme="MEI">note</gi> or <gi scheme="MEI">chord</gi>. The <att>unitdur</att> attribute value indicates the exact note values in an aural rendition of a measured tremolo, <abbr>i.e.</abbr>, 4ths, 8ths, 16ths, etc. The number of beams present in the source is captured by the <att>beams</att> attribute.</p>
@@ -971,7 +976,7 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample150.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_06.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>Similar to <gi scheme="MEI">bTrem</gi>, here the number of beams present may disagree with the rhythmic value indicated by the <att>unitdur</att> attribute, especially in manuscript sources. The number of so-called ‘floating’ beams, which are not attached to stems, may be encoded in the <att>beams.float</att> attribute.</p>
@@ -1008,11 +1013,11 @@
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample152.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fermata_01.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample153.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fermata_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                   </div>
@@ -1103,11 +1108,11 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fing1.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fingering_01.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fing2.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fingering_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                   </div>
