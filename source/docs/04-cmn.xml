@@ -479,6 +479,23 @@
             <div xml:id="cmnAdditionalMeasureContent" type="div2">
                <head>Advanced CMN Features</head>
                <p>Over time, in addition to the basic features of note, chord, and rest, many other symbols have been added to CMN. The following section describes some of these symbols and introduces their handling in MEI.</p>
+               <div xml:id="cmnBarlines" type="div3">
+                  <head>Bar lines</head>
+                  <p>The bar lines bounding measures can take a variety of different forms to indicate various musical features. These forms can be encoded in MEI using the following attributes of the <gi scheme="MEI">measure</gi> element:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="att.measure.log" atts="right left"/>
+                     </specList>
+                  </p>
+                  <p>The following example shows some common uses of <att>right</att>:</p>
+                  <p>
+                     <figure>
+                        <head>Measures with common values for <att>right</att></head>
+                        <graphic url="../images/ExampleImages/barlines.png"/>
+                     </figure>
+                  </p>
+                  <p>The behavior of bar lines across staves can be controlled using various attributes of the <gi scheme="MEI">staffGrp</gi> element (the most common example being <att>bar.thru</att>), discussed in section <ptr target="#cmnDefs"/>.</p>
+               </div>
                <div xml:id="cmnBeams" type="div3">
                   <head>Beams</head>
                   <p>A very common feature of music from the CMN repertoire is the beaming of eighth or shorter notes. MEI provides two elements for the explicit encoding of features joined by beams.</p>
@@ -1157,7 +1174,7 @@
                </div>
                <div xml:id="cmnDir" type="div3">
                   <head>Directives and Rehearsal marks</head>
-                  <p>In CMN scores, there is often a large number of natural language instructions. Some of them concern the loudness and the speed of the performance, in which case MEI offers the elements <gi scheme="MEI">dynam</gi> (described at <ptr target="#cmnDynam"/>) and <gi scheme="MEI">tempo</gi>. In other cases, however, they provide other instructions for the performer. Instead of providing separate elements for all possible types of such directions, MEI offers the generic <gi scheme="MEI">dir</gi> element. Although this element is not CMN specific (it is defined in <ptr target="#shared"/>), it is frequently used in this repertoire.</p>
+                  <p>In CMN scores, there is often a large number of natural language instructions. Some of them concern the loudness and the speed of the performance, in which case MEI offers the elements <gi scheme="MEI">dynam</gi> (described in <ptr target="#cmnDynam"/>) and <gi scheme="MEI">tempo</gi>. Others are structural repetition instructions, for which MEI offers the <gi scheme="MEI">repeatMark</gi> element (described in <ptr target="#cmnRepStruct" />). In other cases, however, they provide other instructions for the performer. Instead of providing separate elements for all possible types of such directions, MEI offers the generic <gi scheme="MEI">dir</gi> element. Although this element is not CMN specific (it is defined in <ptr target="#shared"/>), it is frequently used in this repertoire.</p>
                   <div xml:id="cmnTempo" type="div4">
                      <head>Tempo changes and other directives</head>
                      <p>A tempo or character indication is often provided above the topmost staff of the first measure of a score, movement, or section. This indication, such as "Allegro moderato" or "Andante maestoso", may be regarded as a label. Though it is possible to label the movement, etc. using a <att>label</att> attribute attached to the enclosing structural entity (that is, on <gi scheme="MEI">mdiv</gi> or <gi scheme="MEI">section</gi>), it is often required to capture the exact position, spelling, or other features of the label as found in the underlying source material. In these cases, an element is necessary.</p>
@@ -1229,7 +1246,23 @@
                   <p>Repetition is a characteristic feature of music. Many musical forms rely on repetition (sometimes with modification) of distinct sections of the music. Repetition in this sense can be thought of as ‘structural’. At the same time, composers and engravers of music often use local symbols for repeating smaller portions of music instead of writing them in full more than once. In this case, the repetition is better defined as a species of abbreviation.</p>
                   <div xml:id="cmnRepStruct" type="div4">
                      <head>Structural Repetition</head>
-                     <p>Large-scale structural repetition, utilizing <gi scheme="MEI">section</gi> and <gi scheme="MEI">expansion</gi> elements, is discussed in section <ptr target="#sharedMdivContent"/>. This section will focus on repetition within sections.</p>
+                     <p>The most common variety of structural repetition is the use of repeat bar lines and endings. The encoding of bar lines is discussed in section <ptr target="cmnBarlines"/>, and endings in <ptr target="#sharedStrucRep"/>.</p>
+                     <p>For larger-scale repetition using da capo, segnos, codas, and etc., MEI provides the <gi scheme="MEI">repeatMark</gi> element:</p>
+                     <p>
+                        <specList>
+                           <specDesc key="repeatMark"/>
+                        </specList>
+                     </p>
+                     <p>Its <att>func</att> attribute indicates the function of the mark, usually implying a corresponding form; allowed values are listed in <ident type="class">att.repeatMark.log</ident>. Textual content or glyph information (via <ident type="class">att.extSym.names</ident>) can also be provided, and will override the symbol implied by <att>func</att>.
+                     </p>
+                     <p>The placement of the repeat mark is indicated using a <att>tstamp</att>, <att>tstamp.ges</att>, <att>tstamp.real</att>, or <att>startId</att> attribute. To place the mark above a bar line, a <att>tstamp</att> value of one more than the number of beats in the measure can be used (e.g. <val>5</val> in 4/4 time):</p>
+                     <p>
+                        <figure>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code verovio"
+                           xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/repeatMark.mei" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>The semantic meaning of the repetition can be encoded using the <gi scheme="MEI">expansion</gi> element, discussed in section <ptr target="#sharedStrucRep"/>.</p>
                   </div>
                   <div xml:id="cmnRepSym" type="div4">
                      <head>Measure-Level Repetition Symbols</head>
