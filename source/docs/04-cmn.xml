@@ -414,29 +414,34 @@
                         </p>
                      </div>
                   </div>
-                  <div xml:id="cmnRests" type="div4">
-                     <head>Rests</head>
-                     <p>The <att>dur</att> attribute on <gi scheme="MEI">rest</gi> captures the written duration of the rest and allows the same values as on <gi scheme="MEI">note</gi> and <gi scheme="MEI">chord</gi>. The CMN module also makes three more elements available for special forms of rest:</p>
-                     <p>
-                        <specList>
-                           <specDesc key="mRest"/>
-                           <specDesc key="multiRest"/>
-                           <specDesc key="mSpace"/>
-                        </specList>
+                  <div xml:id="cmn-clusters">
+                     <head>Note Clusters</head>
+                     <p>A <term>tone cluster</term> is a musical chord comprised of adjacent musical steps played simultaneously. In MEI, clusters can be represented to capture both their underlying harmonic meaning (semantics) and their specific engraving styles (visual layout).</p>                  
+                     
+                     <div xml:id="cmn-clusters-semantics">
+                     <head>Basic Semantic Encoding</head>
+                     <p>To declare a chord as a cluster, the <gi scheme="MEI">chord</gi> element is used with the <att>cluster</att> attribute. The <att>cluster</att> attribute specifies which keys or scale steps are to be filled in between the explicitly encoded notes. Its values map to the <ident type="datatype">data.CLUSTER</ident> data type, which includes:                        <list type="bulleted">
+                        <item><val>white</val>: Play only white keys (diatonic steps).</item>
+                        <item><val>black</val>: Play only black keys (pentatonic steps).</item>
+                        <item><val>chromatic</val>: Play all half-steps within the interval (chromatic steps).</item>
+                        </list>
                      </p>
-                     <div xml:id="cmnRestsMRest" type="div5">
-                        <head>Measure Rests</head>
-                        <p>The <gi scheme="MEI">mRest</gi> (measure rest) element is used to indicate a complete measure rest, independent from the meter of the current</p>
-                        <p>
-                           <gi scheme="MEI">measure</gi>.</p>
-                        <p>The <att>cutout</att> attribute provides for the description of the rendition of the <gi scheme="MEI">mRest</gi>. If <att>cutout</att> is set to ‘cutout’ (the only value allowed), then the complete staff including the staff lines will not be rendered for this measure.</p>
-                        <p>
-                           <figure>
-                              <head/>
-                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample103.txt" parse="text"/></egXML>
-                           </figure>
-                        </p>
-                        <p>It is a semantic error to mix an <gi scheme="MEI">mRest</gi> with other events in the same <gi scheme="MEI">layer</gi>. However, other ‘control events’, such as <gi scheme="MEI">fermata</gi>, may be used at the same time as <gi scheme="MEI">mRest</gi>.</p>
+                     <p>Rather than encoding every internal note, the encoder only needs to provide the highest and lowest notes of the cluster. Rendering engines fill in the missing steps automatically based on the value of the <att>cluster</att> attribute.</p>                     
+
+                     <p>
+                        <figure>
+                           <head>A cluster on white keys only</head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_01.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+
+                     <p>
+                        <figure>
+                           <head>A chromatic cluster</head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_02.txt" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                  
                      </div>
                      <div xml:id="cmnRestsMultiRest" type="div5">
                         <head>Multiple-Measure Rests</head>
