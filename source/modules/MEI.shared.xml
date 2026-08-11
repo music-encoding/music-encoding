@@ -6306,7 +6306,7 @@
     </remarks>
   </elementSpec>
   <elementSpec ident="event" module="MEI.shared">
-    <desc xml:lang="en">Contains a free-text event description.</desc>
+    <desc xml:lang="en">Contains a description of a significant time point or time span.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
@@ -6318,31 +6318,51 @@
     </classes>
     <content>
       <rng:zeroOrMore>
-        <rng:ref name="model.headLike"/>
+        <rng:ref name="model.identifierLike"/>
       </rng:zeroOrMore>
-      <rng:choice>
-        <!-- data-like organization -->
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="model.eventPart"/>
-            <rng:ref name="castList"/>
-            <rng:ref name="eventList"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-        <!-- free-form organization -->
-        <rng:zeroOrMore>
-          <rng:choice>
-            <!-- model.listLike is expanded here in order to disallow biblList,
-                    castList, and eventList -->
-            <rng:ref name="model.pLike"/>
-            <rng:ref name="model.tableLike"/>
-            <rng:ref name="list"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
-      <!-- biblList may occur in either organizational approach, but must come at the end -->
       <rng:zeroOrMore>
-        <rng:ref name="biblList"/>
+        <rng:ref name="name"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="macro.p.basic"/>
+          <rng:ref name="model.dateLike"/>
+          <rng:ref name="model.descLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.annotLike"/>
+          <rng:ref name="model.biblLike"/>
+          <rng:ref name="model.identifierLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+      <rng:interleave>
+        <rng:optional>
+          <rng:ref name="prfr"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="castList"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="event"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="eventList"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="list"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="place"/>
+        </rng:zeroOrMore>
+      </rng:interleave>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="model.annotLike"/>
+          <rng:ref name="model.biblLike"/>
+          <rng:ref name="model.relationLike"/>
+        </rng:choice>
       </rng:zeroOrMore>
     </content>
   </elementSpec>
