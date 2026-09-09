@@ -901,12 +901,12 @@
   </elementSpec>
   <elementSpec ident="carrierForm" module="MEI.header">
     <gloss xml:lang="en">carrier form</gloss>
-    <desc xml:lang="en">Controlled vocabulary term describing the specific class of material to which
-      the physical carrier of the source/manifestation belongs. Analogous to MARC21 338 ǂa. For a
-      manifestation omprising multiple physical components, e.g., a filmstrip with an accompanying
-      booklet, a separate sound disc carrying the sound track for a film, etc.), use more than one
-      carrierForm element. If one of the recommended values is not used, then an <att>auth</att>
-      or <att>auth.uri</att> attribute is required.</desc>
+    <desc xml:lang="en">Controlled vocabulary term describing the specific class of material to
+      which the physical carrier of the resource belongs. Analogous to MARC21 338 ǂa. For a reource
+      comprised of multiple physical components, e.g., a filmstrip with an accompanying booklet, a
+      separate sound disc carrying the sound track for a film, etc.), use more than one carrierForm
+      element. If one of the recommended values is not used, then an <att>auth</att> or
+      <att>auth.uri</att> attribute is required.</desc>
     <classes>
       <memberOf key="att.common"/>
       <memberOf key="att.authorized"/>
@@ -1412,6 +1412,33 @@
         included material is desired, use the <gi scheme="MEI">componentList</gi> element
         instead.</p>
     </remarks>
+  </elementSpec>
+  <elementSpec ident="contentType" module="MEI.header">
+    <gloss xml:lang="en">content type</gloss>
+    <desc xml:lang="en">Controlled vocabulary term describing the fundamental form of communication
+      in which the content of a resource is expressed. Analogous to MARC21 336 ǂa. For a reource
+      that uses multiple content types, use more than one contentType element. If one of the
+      recommended values is not used, then an <att>auth</att> or <att>auth.uri</att> attribute is
+      required.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>      
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.physDescPart"/>
+    </classes>
+    <content>
+      <rng:ref name="data.CONTENTTYPE"/>
+    </content>
+    <constraintSpec ident="check_contentType_auth" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:contentType[not(matches(normalize-space(.),
+          '^(|cartographic dataset|cartographic image|cartographic moving image|cartographic tactile image|cartographic tactile three-dimensional form|cartographic three-dimensional form|computer dataset|computer program|notated movement|notated music|performed movement|performed music|sounds|spoken word|still image|tactile image|tactile notated movement|tactile notated music|tactile text|tactile three-dimensional form|text|three-dimensional form|three-dimensional moving image|two-dimensional moving image)$'))]">
+          <sch:assert test="@auth[not(normalize-space(.) = '')] or @auth.uri[not(normalize-space(.) =
+            '')]">@auth or @auth.uri is required.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>    
   </elementSpec>
   <elementSpec ident="context" module="MEI.header">
     <desc xml:lang="en">The historical, social, intellectual, artistic, or other context within
