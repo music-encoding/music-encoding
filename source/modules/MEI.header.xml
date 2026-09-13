@@ -29,21 +29,18 @@
     <desc xml:lang="en">Groups elements that may appear as part of a description of the availability of and access
       to a bibliographic item.</desc>
     <content>
-      <rng:choice>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="accessRestrict"/>
-            <rng:ref name="distributor"/>
-            <rng:ref name="price"/>
-            <rng:ref name="sysReq"/>
-            <rng:ref name="useRestrict"/>
-            <rng:ref name="model.addressLike"/>
-            <rng:ref name="model.dateLike"/>
-            <rng:ref name="model.identifierLike"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-        <rng:text/>
-      </rng:choice>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:ref name="accessRestrict"/>
+          <rng:ref name="distributor"/>
+          <rng:ref name="price"/>
+          <rng:ref name="sysReq"/>
+          <rng:ref name="useRestrict"/>
+          <rng:ref name="model.addressLike"/>
+          <rng:ref name="model.dateLike"/>
+          <rng:ref name="model.identifierLike"/>
+        </rng:choice>
+      </rng:zeroOrMore>
     </content>
   </macroSpec>
   <macroSpec ident="macro.bibldescPart" module="MEI.header" type="pe">
@@ -59,9 +56,9 @@
       <rng:optional>
         <rng:ref name="availability"/>
       </rng:optional>
-      <rng:zeroOrMore>
+      <rng:optional>
         <rng:ref name="physDesc"/>
-      </rng:zeroOrMore>
+      </rng:optional>
       <rng:zeroOrMore>
         <rng:ref name="physLoc"/>
       </rng:zeroOrMore>
@@ -74,18 +71,18 @@
     <desc xml:lang="en">Content model for elements that can be used to describe historical account.</desc>
     <content>
       <rng:choice>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="eventList"/>
-            <rng:ref name="macro.p.basic"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.basic"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="eventList"/>
+              <rng:ref name="macro.p.basic"/>
+            </rng:choice>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:text/>
       </rng:choice>      
     </content>
   </macroSpec>
@@ -204,6 +201,7 @@
       description.</desc>
     <attList>
       <attDef ident="recordtype" usage="opt">
+        <desc xml:lang="en">Analogous to MARC leader position 6, record type.</desc>
         <valList type="closed">
           <valItem ident="a">
             <desc xml:lang="en">Language material.</desc>
@@ -245,7 +243,7 @@
             <desc xml:lang="en">Three-dimensional artifact or naturally occurring object.</desc>
           </valItem>
           <valItem ident="t">
-            <desc xml:lang="en">Manuscript language material. </desc>
+            <desc xml:lang="en">Manuscript language material.</desc>
           </valItem>
         </valList>
       </attDef>
@@ -690,7 +688,20 @@
       <memberOf key="model.imprintPart"/>
     </classes>
     <content>
-      <rng:ref name="macro.availabilityPart"/>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:ref name="macro.availabilityPart"/>
+        </rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:text/>
+            <rng:ref name="mei_model.textPhraseLike.basic"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>When used within the <gi scheme="MEI">fileDesc</gi> element, <gi scheme="MEI"
@@ -2044,6 +2055,7 @@
       <memberOf key="att.evidence"/>
       <memberOf key="att.lang"/>
       <memberOf key="att.medium"/>
+      <memberOf key="att.scope"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -2060,24 +2072,6 @@
         <datatype>
           <rng:ref name="data.BOOLEAN"/>
         </datatype>
-      </attDef>
-      <attDef ident="scope" usage="opt">
-        <desc xml:lang="en">Indicates the scope of application of the element. Suggested values
-          include: "sole", "major", and "minor".</desc>
-        <datatype>
-          <rng:ref name="data.NMTOKEN"/>
-        </datatype>
-        <valList type="semi">
-          <valItem ident="sole">
-            <desc xml:lang="en">Only this handwriting style is used throughout the document.</desc>
-          </valItem>
-          <valItem ident="major">
-            <desc xml:lang="en">This handwriting style is used in most of the document.</desc>
-          </valItem>
-          <valItem ident="minor">
-            <desc xml:lang="en">This handwriting style is used occasionally in the document.</desc>
-          </valItem>
-        </valList>
       </attDef>
       <attDef ident="scribe" usage="opt">
         <desc xml:lang="en">Gives a name or other identifier for the scribe believed to be responsible
@@ -2391,6 +2385,7 @@
       <memberOf key="att.authorized"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.scope"/>
     </classes>
     <content>
       <rng:zeroOrMore>
@@ -2435,6 +2430,7 @@
       <memberOf key="att.common"/>
       <memberOf key="att.bibl"/>
       <memberOf key="att.lang"/>
+      <memberOf key="att.scope"/>
     </classes>
     <content>
       <rng:choice>
