@@ -1272,20 +1272,18 @@
     </classes>
     <attList>
       <attDef ident="extent" usage="opt">
-        <desc xml:lang="en">Captures a measurement, count, or description. When extent contains a numeric value,
-          use the unit attribute to indicate the measurement unit.</desc>
+        <desc xml:lang="en">Captures a description of the scope of the element to which
+          the attribute is attached using a phrase that combines quantity and units in
+          a single string; e.g., "3 pages" or "5 notes".</desc>
         <datatype>
           <rng:data type="string"/>
         </datatype>
         <constraintSpec ident="check_extent" scheme="schematron">
           <constraint>
-            <sch:rule context="@extent[matches(normalize-space(.), '^\d+(\.\d+)?$')]">
-              <sch:assert role="warning" test="../@unit">The @unit attribute is
-                recommended.</sch:assert>
-            </sch:rule>
-            <sch:rule context="@extent[matches(., '\d+(\.\d+)?\s')]">
-              <sch:assert role="warning" test="../@unit">Separation into value (@extent) and unit
-                (@unit) is recommended.</sch:assert>
+            <sch:rule context="@extent">
+              <sch:assert role="warning" test="matches(normalize-space(.),
+                '^\d+(\.\d+)? .+$')">Extent is typically recorded as a numeric
+                value followed by an indication of the units of measurement.</sch:assert>
             </sch:rule>
           </constraint>
         </constraintSpec>
