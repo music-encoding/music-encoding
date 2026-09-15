@@ -4612,6 +4612,7 @@
         <rng:oneOrMore>
           <rng:ref name="model.addressPart"/>
         </rng:oneOrMore>
+        <rng:text/>
       </rng:choice>
     </content>
     <remarks xml:lang="en">
@@ -5389,14 +5390,41 @@
       <memberOf key="att.lang"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-          <rng:ref name="creator"/>
-          <rng:ref name="contributor"/>
-        </rng:choice>
-      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="macro.p.basic"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:choice>
+              <rng:ref name="model.addressLike"/>
+              <rng:ref name="model.biblLike"/>
+              <rng:ref name="model.dateLike"/>
+              <rng:ref name="model.dimLike"/>
+              <rng:ref name="model.identifierLike"/>
+              <rng:ref name="model.locrefLike"/>
+              <rng:ref name="model.locusLike"/>
+              <rng:ref name="model.relationLike"/>
+              <rng:ref name="classification"/>
+              <rng:ref name="condition"/>
+              <rng:ref name="contributor"/>
+              <rng:ref name="creator"/>
+              <rng:ref name="dimensions"/>
+              <rng:ref name="extent"/>
+              <rng:ref name="geogName"/>
+              <rng:ref name="material"/>
+              <rng:ref name="repository"/>
+            </rng:choice>
+            <rng:zeroOrMore>
+              <rng:ref name="model.annotLike"/>
+            </rng:zeroOrMore>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:text/>
+      </rng:choice>
     </content>
     <remarks xml:lang="en">
       <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-creation.html">creation</ref> element of the Text Encoding Initiative (TEI).</p>
@@ -5508,18 +5536,10 @@
     </classes>
     <content>
       <rng:choice>
-        <rng:group>
-          <rng:ref name="macro.p.basic"/>
-          <rng:oneOrMore>
-            <rng:ref name="macro.p.basic"/>
-          </rng:oneOrMore>
-        </rng:group>
         <rng:zeroOrMore>
-          <rng:choice>
-            <rng:text/>
-            <rng:ref name="model.textPhraseLike.basic"/>
-          </rng:choice>
+          <rng:ref name="macro.p.basic"/>
         </rng:zeroOrMore>
+        <rng:text/>
       </rng:choice>
     </content>
     <remarks xml:lang="en">
@@ -5612,13 +5632,17 @@
       <memberOf key="model.textPhraseLike.basic"/>
     </classes>
     <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.basic"/>
-          <rng:ref name="model.dimLike"/>
-        </rng:choice>
-      </rng:zeroOrMore>
+      <rng:choice>
+        <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
+          <rng:zeroOrMore>
+            <rng:ref name="macro.p.limited"/>
+          </rng:zeroOrMore>
+        </rng:group>
+        <rng:text/>
+      </rng:choice>
     </content>
     <constraintSpec ident="check_dimensions" scheme="schematron">
       <constraint>
@@ -6002,6 +6026,9 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:ref name="model.identifierLike"/>
       </rng:zeroOrMore>
       <rng:zeroOrMore>
@@ -6022,9 +6049,6 @@
         </rng:choice>
       </rng:zeroOrMore>
       <rng:interleave>
-        <rng:optional>
-          <rng:ref name="prfr"/>
-        </rng:optional>
         <rng:zeroOrMore>
           <rng:ref name="castList"/>
         </rng:zeroOrMore>
@@ -6040,6 +6064,9 @@
         <rng:zeroOrMore>
           <rng:ref name="place"/>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="prfr"/>
+        </rng:optional>
       </rng:interleave>
       <rng:zeroOrMore>
         <rng:choice>
@@ -6443,10 +6470,10 @@
       <memberOf key="att.bibl"/>
       <memberOf key="model.incipLike"/>
     </classes>
-    <!-- Can XSLT be used within content to "select" an incipit from the
-        already-encoded MEI transcription in the music element?
-        <rng:ref name="macro.XSLT"/> -->
     <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
       <rng:optional>
         <rng:ref name="tempo"/>
       </rng:optional>
@@ -7511,6 +7538,9 @@
     </classes>
     <content>
       <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
+      <rng:zeroOrMore>
         <rng:group>
           <rng:ref name="model.repositoryLike"/>
           <rng:zeroOrMore>
@@ -7920,33 +7950,32 @@
       <memberOf key="model.respLike"/>
     </classes>
     <content>
+      <rng:zeroOrMore>
+        <rng:ref name="model.headLike"/>
+      </rng:zeroOrMore>
       <rng:choice>
-        <rng:group>
+        <rng:oneOrMore>
           <rng:oneOrMore>
-            <rng:oneOrMore>
-              <rng:ref name="resp"/>
-            </rng:oneOrMore>
-            <rng:oneOrMore>
-              <rng:choice>
-                <rng:ref name="model.nameLike.agent"/>
-                <rng:ref name="name"/>
-              </rng:choice>
-            </rng:oneOrMore>
+            <rng:ref name="resp"/>
           </rng:oneOrMore>
-        </rng:group>
-        <rng:group>
           <rng:oneOrMore>
-            <rng:oneOrMore>
-              <rng:choice>
-                <rng:ref name="model.nameLike.agent"/>
-                <rng:ref name="name"/>
-              </rng:choice>
-            </rng:oneOrMore>
-            <rng:oneOrMore>
-              <rng:ref name="resp"/>
-            </rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="model.nameLike.agent"/>
+              <rng:ref name="name"/>
+            </rng:choice>
           </rng:oneOrMore>
-        </rng:group>
+        </rng:oneOrMore>
+        <rng:oneOrMore>
+          <rng:oneOrMore>
+            <rng:choice>
+              <rng:ref name="model.nameLike.agent"/>
+              <rng:ref name="name"/>
+            </rng:choice>
+          </rng:oneOrMore>
+          <rng:oneOrMore>
+            <rng:ref name="resp"/>
+          </rng:oneOrMore>
+        </rng:oneOrMore>
         <rng:oneOrMore>
           <rng:choice>
             <rng:ref name="model.nameLike.agent"/>
@@ -7955,7 +7984,7 @@
         </rng:oneOrMore>
       </rng:choice>
       <rng:zeroOrMore>
-        <rng:ref name="annot"/>
+        <rng:ref name="model.annotLike"/>
       </rng:zeroOrMore>
     </content>
     <constraintSpec ident="check_respStmt" scheme="schematron">
@@ -8913,6 +8942,9 @@
     <content>
       <rng:choice>
         <rng:group>
+          <rng:zeroOrMore>
+            <rng:ref name="model.headLike"/>
+          </rng:zeroOrMore>
           <rng:oneOrMore>
             <rng:choice>
               <rng:ref name="model.pLike"/>
