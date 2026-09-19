@@ -179,69 +179,40 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:interleave>
+        <rng:ref name="macro.profileDescPart"/>
         <rng:zeroOrMore>
           <rng:ref name="model.identifierLike"/>
         </rng:zeroOrMore>
         <rng:oneOrMore>
           <rng:ref name="model.titleLike"/>
         </rng:oneOrMore>
-        <rng:optional>
-          <rng:ref name="respStmt"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="dedication"/>
-        </rng:optional>
         <rng:zeroOrMore>
           <rng:ref name="model.workIdent"/>
         </rng:zeroOrMore>
         <rng:zeroOrMore>
-          <rng:ref name="otherChar"/>
+          <rng:ref name="biblList"/>
         </rng:zeroOrMore>
         <rng:optional>
-          <rng:ref name="creation"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="history"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="langUsage"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="perfMedium"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="perfDuration"/>
+          <rng:ref name="componentList"/>
         </rng:optional>
         <rng:zeroOrMore>
           <rng:ref name="extent"/>
         </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="scoreFormat"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="contents"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="context"/>
-        </rng:optional>
         <rng:zeroOrMore>
-          <rng:ref name="biblList"/>
+          <rng:ref name="extMeta"/>
         </rng:zeroOrMore>
         <rng:optional>
           <rng:ref name="notesStmt"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="classification"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="componentList"/>
-        </rng:optional>
-        <rng:optional>
           <rng:ref name="relationList"/>
         </rng:optional>
-        <rng:zeroOrMore>
-          <rng:ref name="extMeta"/>
-        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="respStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="scoreFormat"/>
+        </rng:optional>
       </rng:interleave>
     </content>
     <remarks xml:lang="en">
@@ -260,9 +231,20 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:ref name="model.expressionLike"/>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_expressionList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:expressionList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:expression | mei:expressionList)">When
+            labels are used, usually each expression or expressionList has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="item" module="MEI.frbr">
     <desc xml:lang="en">Single instance or exemplar of a source/manifestation.</desc>
@@ -284,22 +266,7 @@
           <rng:ref name="model.identifierLike"/>
         </rng:zeroOrMore>
         <rng:optional>
-          <rng:ref name="dedication"/>
-        </rng:optional>
-        <rng:optional>
           <rng:ref name="availability"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="physDesc"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="physLoc"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="history"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="notesStmt"/>
         </rng:optional>
         <rng:optional>
           <rng:ref name="classification"/>
@@ -308,11 +275,26 @@
           <rng:ref name="componentList"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="relationList"/>
+          <rng:ref name="dedication"/>
         </rng:optional>
         <rng:zeroOrMore>
           <rng:ref name="extMeta"/>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="physDesc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="physLoc"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
       </rng:interleave>
     </content>
   </elementSpec>
@@ -326,9 +308,20 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:ref name="model.itemLike"/>
       </rng:zeroOrMore>
     </content>
+    <constraintSpec ident="check_itemList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:itemList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:item)">When
+            labels are used, usually each item has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
   <elementSpec ident="manifestation" module="MEI.frbr">
     <desc xml:lang="en">A bibliographic description of a physical embodiment of an expression of a work.</desc>
@@ -348,55 +341,52 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:interleave>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="locus"/>
-            <rng:ref name="locusGrp"/>
-          </rng:choice>
-        </rng:zeroOrMore>
+        <rng:ref name="macro.bibldescPart"/>
         <rng:zeroOrMore>
           <rng:ref name="model.identifierLike"/>
         </rng:zeroOrMore>
-        <rng:optional>
-          <rng:ref name="titleStmt"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="dedication"/>
-        </rng:optional>
-        <rng:ref name="macro.bibldescPart"/>
-        <rng:optional>
-          <rng:ref name="creation"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="history"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="langUsage"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="contents"/>
-        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:ref name="model.locusLike"/>
+        </rng:zeroOrMore>
         <rng:zeroOrMore>
           <rng:ref name="biblList"/>
         </rng:zeroOrMore>
         <rng:optional>
-          <rng:ref name="notesStmt"/>
-        </rng:optional>
-        <rng:optional>
           <rng:ref name="classification"/>
-        </rng:optional>
-        <rng:optional>
-          <rng:ref name="itemList"/>
         </rng:optional>
         <rng:optional>
           <rng:ref name="componentList"/>
         </rng:optional>
         <rng:optional>
-          <rng:ref name="relationList"/>
+          <rng:ref name="contents"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="creation"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="dedication"/>
         </rng:optional>
         <rng:zeroOrMore>
           <rng:ref name="extMeta"/>
         </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="itemList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="langUsage"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="relationList"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="titleStmt"/>
+        </rng:optional>
       </rng:interleave>
     </content>
     <constraintSpec ident="check_singleton" scheme="schematron">
@@ -436,8 +426,19 @@
         <rng:ref name="model.headLike"/>
       </rng:zeroOrMore>
       <rng:oneOrMore>
+        <rng:optional>
+          <rng:ref name="label"/>
+        </rng:optional>
         <rng:ref name="model.manifestationLike"/>
       </rng:oneOrMore>
     </content>
+    <constraintSpec ident="check_manifestationList_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:manifestationList[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:manifestation)">When
+            labels are used, usually each manifestation has one.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
   </elementSpec>
 </specGrp>

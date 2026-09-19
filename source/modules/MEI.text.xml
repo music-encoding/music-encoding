@@ -43,15 +43,13 @@
   <classSpec ident="model.lgLike" module="MEI.text" type="model">
     <desc xml:lang="en">Groups elements that have a line-grouping function.</desc>
     <classes>
-      <memberOf key="model.paracontentPart"/>
-      <memberOf key="model.textComponentLike"/>
+      <memberOf key="model.textComponentLikePart"/>
     </classes>
   </classSpec>
   <classSpec ident="model.listLike" module="MEI.text" type="model">
     <desc xml:lang="en">Groups list-like elements.</desc>
     <classes>
-      <memberOf key="model.paracontentPart"/>
-      <memberOf key="model.textComponentLike"/>
+      <memberOf key="model.textComponentLikePart"/>
     </classes>
   </classSpec>
   <classSpec ident="model.lLike" module="MEI.text" type="model">
@@ -60,14 +58,13 @@
   <classSpec ident="model.qLike" module="MEI.text" type="model">
     <desc xml:lang="en">Groups elements related to highlighting which can appear at the phrase-level.</desc>
     <classes>
-      <memberOf key="model.textPhraseLike.limited"/>
+      <memberOf key="model.textPhraseLike.basic"/>
     </classes>
   </classSpec>
   <classSpec ident="model.quoteLike" module="MEI.text" type="model">
     <desc xml:lang="en">Groups elements used to directly contain quotations.</desc>
     <classes>
-      <memberOf key="model.paracontentPart"/>
-      <memberOf key="model.textComponentLike"/>
+      <memberOf key="model.textComponentLikePart"/>
     </classes>
   </classSpec>
   <elementSpec ident="argument" module="MEI.text">
@@ -139,7 +136,7 @@
       <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.paracontentPart"/>
+          <rng:ref name="model.paraContentPart"/>
           <rng:ref name="p"/>
         </rng:choice>
       </rng:zeroOrMore>
@@ -192,7 +189,7 @@
       <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.paracontentPart"/>
+          <rng:ref name="model.paraContentPart"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -213,10 +210,8 @@
         <rng:zeroOrMore>
           <rng:choice>
             <rng:text/>
-            <rng:ref name="model.editLike"/>
             <rng:ref name="model.sylLike"/>
             <rng:ref name="model.textPhraseLike"/>
-            <rng:ref name="model.transcriptionLike"/>
           </rng:choice>
         </rng:zeroOrMore>
     </content>
@@ -249,8 +244,6 @@
           <rng:text/>
           <rng:ref name="model.textComponentLike"/>
           <rng:ref name="model.textPhraseLike"/>
-          <rng:ref name="model.editLike"/>
-          <rng:ref name="model.transcriptionLike"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
@@ -290,6 +283,14 @@
         <sch:rule context="mei:list[contains(@type,'gloss')]">
           <sch:assert test="count(mei:label) = count(mei:li)">In a list of type "gloss" all items
             must be immediately preceded by a label.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="check_list_labels" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:list[mei:label]">
+          <sch:assert role="warning" test="count(mei:label) = count(mei:li)">When labels are used,
+            usually each list item has one.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -437,7 +438,7 @@
       <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.paracontentPart"/>
+          <rng:ref name="model.paraContentPart"/>
           <rng:ref name="model.pLike"/>
           <rng:ref name="sp"/>
         </rng:choice>
@@ -463,10 +464,8 @@
       <rng:zeroOrMore>
         <rng:choice>
           <rng:text/>
-          <rng:ref name="model.editLike"/>
           <rng:ref name="model.sylLike"/>
           <rng:ref name="model.textPhraseLike"/>
-          <rng:ref name="model.transcriptionLike"/>
         </rng:choice>
       </rng:zeroOrMore>
     </content>
