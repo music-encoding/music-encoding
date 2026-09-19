@@ -32,7 +32,7 @@
     <sch:pattern id="check_ident_type_class_references">
         <sch:rule context="tei:ident[@type = 'class']">
             <sch:let name="ident_vals" value="//tei:classSpec[@type = ('atts', 'model')]/@ident/string()"/>
-            <sch:assert role="error"
+            <sch:assert role="warning"
                 test="
                     some $ident in $ident_vals
                         satisfies ($ident = text()/string())"

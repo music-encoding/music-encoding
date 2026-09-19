@@ -25,6 +25,21 @@
   <moduleSpec ident="MEI.fingering">
     <desc xml:lang="en">Fingering component declarations.</desc>
   </moduleSpec>
+  <macroSpec ident="data.HANDROLE" module="MEI.fingering" type="dt">
+    <desc xml:lang="en">Role of hand in fingering indication relevant to plucked string instruments.
+      One of 'sounding' and 'stopping'.
+    </desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="sounding">
+          <desc xml:lang="en">The plucking or strumming hand.</desc>
+        </valItem>
+        <valItem ident="stopping">
+          <desc xml:lang="en">The stopping or fretting hand.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
   <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
     <classes>
@@ -33,6 +48,61 @@
       <memberOf key="att.startEndId"/>
       <memberOf key="att.timestamp2.log"/>
     </classes>
+  </classSpec>
+  <classSpec ident="att.fing.finger" module="MEI.fingering" type="atts">
+    <desc xml:lang="en">Attributes used for a description of the finger (in physical terms).</desc>
+    <constraintSpec ident="finger_none_not_allowed" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:barre[@finger]">
+          <sch:assert test="not(@finger eq 'none')">The value "none" is not permitted for
+            the @finger attribute on barre element.
+          </sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="finger" usage="opt">
+        <valList type="closed">
+          <valItem ident="t">
+            <desc xml:lang="en">Thumb</desc>
+          </valItem>
+          <valItem ident="i">
+            <desc xml:lang="en">Index finger</desc>
+          </valItem>
+          <valItem ident="m">
+            <desc xml:lang="en">Middle finger</desc>
+          </valItem>
+          <valItem ident="r">
+            <desc xml:lang="en">Ring finger</desc>
+          </valItem>
+          <valItem ident="l">
+            <desc xml:lang="en">Little finger</desc>
+          </valItem>
+          <valItem ident="none">
+            <desc xml:lang="en">No fingers in use</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
+  <classSpec ident="att.fing.hand" module="MEI.fingering" type="atts">
+    <desc xml:lang="en">Attributes used for a description of the hand role (in physical terms).</desc>
+    <attList>
+      <attDef ident="handRole" usage="opt">
+        <desc xml:lang="en">Records the role of the hand in a fingering indication.</desc>
+        <datatype>
+          <rng:ref name="data.HANDROLE"/>
+        </datatype>
+        <constraintSpec ident="When_sounding_hand" scheme="schematron">
+          <constraint>
+            <sch:rule context="mei:*[@handRole eq 'sounding']">
+              <sch:assert test="not(@finger eq 'none')">A sounding hand requires a finger. The value "none"
+                is not permitted for @finger when @handRole is "sounding".</sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+      </attDef>
+    </attList>
   </classSpec>
   <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
     <desc xml:lang="en">Logical domain attributes.</desc>
@@ -75,6 +145,8 @@
       <memberOf key="att.fing.ges"/>
       <memberOf key="att.fing.log"/>
       <memberOf key="att.fing.vis"/>
+      <memberOf key="att.fing.finger" />
+      <memberOf key="att.fing.hand" />
       <memberOf key="model.fingeringLike"/>
     </classes>
     <content>
