@@ -218,5 +218,3 @@ flowchart TD
 | `compare-versions` | Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via `-Dsource`, `-Dold` and `-Doutput` input params. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
 | `reset` | Resets the build environment. Same as `clean`, but additionally deletes the `lib` directory with the TEI Stylesheets and the jar files. |
-
-
