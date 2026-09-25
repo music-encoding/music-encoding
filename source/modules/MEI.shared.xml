@@ -8304,6 +8304,7 @@
       <memberOf key="att.staffDef.ges"/>
       <memberOf key="att.staffDef.log"/>
       <memberOf key="att.staffDef.vis"/>
+      <memberOf key="model.eventLike"/>
       <memberOf key="model.staffDefLike"/>
     </classes>
     <content>
@@ -8412,6 +8413,25 @@
             <sch:let name="scorePPQ" value="preceding::mei:scoreDef[@ppq][1]/@ppq"/>
             <sch:assert test="($scorePPQ mod $staffPPQ) = 0">The value of ppq must be a factor of
               the value of ppq on a preceding scoreDef.</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </constraint>
+    </constraintSpec>
+    <constraintSpec ident="Check_staffDef_in_layer" scheme="schematron">
+      <constraint>
+        <sch:pattern>
+          <sch:rule context="mei:staffDef[ancestor::mei:layer or ancestor::mei:oLayer]">
+            <sch:let name="staff" value="ancestor::*[self:mei:staff or self::mei:oStaff][1]"/>
+            <sch:let name="layers" value="$staff//mei:layer|$staff//mei:oLayer]"/>
+            <sch:let name="mainLayer" value="$layers[.//mei:staffDef[not(@sameas)]]"/>
+            <sch:let name="mainStaffDefs" value="$mainLayer//mei:staffDef[not(@sameas)]"/>
+            <sch:let name="secondaryStaffDefs" value="$layers//mei:staffDef[@sameas]"/>
+            <sch:assert
+              test="count($mainLayer) = 1
+                and not($layers[count(.//mei:staffDef) != count($mainStaffDefs)])
+                and count($secondaryStaffDefs) = count($mainStaffDefs) * (count($layers) - 1)"
+              >One layer must be used for main staffDefs. All other sibling layers must have
+              secondary staffDefs pointing to main staffDefs with @sameas.</sch:assert>
           </sch:rule>
         </sch:pattern>
       </constraint>
