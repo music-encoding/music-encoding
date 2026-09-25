@@ -9,7 +9,8 @@
     
     <sch:pattern id="abstract-rules">
         <sch:rule abstract="true" id="get.source">
-            <sch:let name="schemaSpec.source.path" value="resolve-uri(ancestor-or-self::tei:schemaSpec/@source, document-uri(/root()))"/>
+            <sch:let name="applicable.schemaSpec" value="ancestor-or-self::tei:schemaSpec, //tei:schemaSpec[//tei:specGrpRef/@target = '#' || current()/ancestor-or-self::tei:specGrp/@xml:id]"/>
+            <sch:let name="schemaSpec.source.path" value="resolve-uri($applicable.schemaSpec/@source, document-uri(/root()))"/>
             <sch:let name="ident" value="@ident"/>
             <sch:let name="key" value="@key"/>
             <sch:let name="module" value="@module"/>
