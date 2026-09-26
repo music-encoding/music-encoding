@@ -81,11 +81,12 @@
                 >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
             <sch:let name="name" value="string(@name)"/>
             <sch:let name="elements" value="//tei:elementSpec/@ident/string()"/>
+            <sch:let name="attributes" value="//tei:classSpec[@type = 'atts']/@ident/string()"/>
             <sch:let name="models" value="//tei:classSpec[@type = 'model']/@ident/string()"/>
             <sch:let name="macros" value="//tei:macroSpec[@type ='pe']/@ident/string()"/>
             <sch:let name="datatypes" value="//tei:macroSpec[@type ='dt']/@ident/string()"/>
             <sch:assert role="error"
-                test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
+                test="$name = $elements or $name = $attributes or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
