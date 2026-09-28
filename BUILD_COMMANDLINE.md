@@ -141,6 +141,66 @@
 
 The following targets can be called using `ant <target>`:
 
+
+```mermaid
+flowchart TD
+    DIST["ant / dist"]:::primary
+
+    subgraph PREP["Preparation and validation"]
+        CANON["canonicalize-source"]
+        VALID["validate-source"]
+        INIT["init"]
+        CLP["init-mei-classpath"]
+    end
+
+    subgraph SCHEMA["Schema generation"]
+        RNGS["build-customizations"]
+        ODDS["build-compiled-odds"]
+        RNG_CUS["build-rng\nper customization"]
+        ODD_CUS["build-compiled-odd\nper customization"]
+    end
+
+    subgraph DOCS["Guidelines output"]
+        HTML["build-guidelines-html"]
+        HTML_CUS["build-customization-guidelines-html"]
+        IDX["build-guidelines-html-index-page"]
+        PDF["build-guidelines-pdf\n(if Prince available)"]
+        IMG["generate-images / generate-images-py"]
+    end
+
+    subgraph UTIL["Utilities and maintenance"]
+        INFO["info"]
+        COMP["compare-versions"]
+        CLEAN["clean / reset"]
+    end
+
+    DIST --> INIT
+    INIT --> CLP
+    INIT --> CANON
+    CANON --> VALID
+
+    VALID --> RNGS
+    VALID --> ODDS
+    VALID --> HTML
+    VALID --> COMP
+
+    RNGS --> RNG_CUS
+    ODDS --> ODD_CUS
+    HTML --> HTML_CUS
+    HTML_CUS --> ODD_CUS
+    HTML_CUS --> IMG
+    HTML --> IDX
+    HTML --> PDF
+
+    DIST --> INFO
+    DIST --> CLEAN
+
+    classDef primary fill:#e8f1ff,stroke:#2b6cb0,stroke-width:1.5px,color:#111;
+    classDef default fill:#f7fafc,stroke:#a0aec0,stroke-width:1px,color:#111;
+    class DIST primary;
+    class CANON,VALID,INIT,CLP,RNGS,ODDS,RNG_CUS,ODD_CUS,HTML,HTML_CUS,IDX,PDF,IMG,INFO,COMP,CLEAN default;
+```
+
 | target                | description     |
 |-----------------------|-----------------|
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
