@@ -10,7 +10,7 @@
    |Apache Ant|1.10.14|
    |Verovio Toolkit|5.0.0|
    |Prince XML|15.3|
-   |Saxon HE*|12.9|
+   |Saxon HE*|12.10|
    |TEI Stylesheets*|7.58.0|
    |Xerces*|Synchrosoft patched version 27.1.0.2|
 
