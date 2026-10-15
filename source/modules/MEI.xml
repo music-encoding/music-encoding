@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  NOTICE: Copyright (c) 2017-2023 by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
 
   Licensed under the Educational Community License, Version 2.0 (the "License"); you may
   not use this file except in compliance with the License. You may obtain a copy of the License
@@ -19,8 +19,9 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:tei="http://www.tei-c.org/ns/1.0"
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI">
   <moduleSpec ident="MEI">
     <desc xml:lang="en">Data type definitions.</desc>
@@ -437,16 +438,16 @@
         </valItem>
         <valItem ident="dblheavy">
           <desc xml:lang="en">Heavy double bar line (SMuFL E035).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="dblsegno">
           <desc xml:lang="en">Segno serpent with vertical lines (SMuFL E04B).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="end">
           <desc xml:lang="en">End bar line (SMuFL E032 and Unicode 1D102).</desc>
         </valItem>
         <valItem ident="heavy">
           <desc xml:lang="en">Heavy bar line (SMuFL E034).</desc>
-        </valItem> 
+        </valItem>
         <valItem ident="invis">
           <desc xml:lang="en">Bar line not rendered.</desc>
         </valItem>
@@ -493,15 +494,18 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.BEAT" module="MEI" type="dt">
-    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, [0-9]+(\.?[0-9]*)? The value must fall between 0 and the numerator
-      of the time signature + 1, where 0 represents the left bar line and the upper boundary
-      represents the right bar line. For example, in 12/8 the value must be in the range from 0 to
-      13.</desc>
+    <desc xml:lang="en">A beat location, <abbr>i.e.</abbr>, a decimal number.</desc>
     <content>
       <rng:data type="decimal">
         <rng:param name="minInclusive">0</rng:param>
       </rng:data>
     </content>
+    <remarks xml:lang="en">
+      <p>The value must fall between 0 and the numerator of the time signature + 1,
+        where 0 represents the left bar line and the upper boundary represents the right bar line.
+        For example, in 12/8 the value must be in the range from 0 to 13.
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.BEATRPT.REND" module="MEI" type="dt">
     <desc xml:lang="en">Visual and performance information for a repeated beat symbol.</desc>
@@ -542,6 +546,22 @@
         </valItem>
         <valItem ident="false">
           <desc xml:lang="en">False.</desc>
+        </valItem>
+      </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.BOOLEAN.unknown" module="MEI" type="dt">
+    <desc xml:lang="en">Boolean attribute values and "unknown".</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="true">
+          <desc xml:lang="en">True.</desc>
+        </valItem>
+        <valItem ident="false">
+          <desc xml:lang="en">False.</desc>
+        </valItem>
+        <valItem ident="unknown">
+          <desc xml:lang="en">Unknown.</desc>
         </valItem>
       </valList>
     </content>
@@ -599,19 +619,22 @@
     <content>
       <valList type="closed">
         <valItem ident="G">
-          <desc xml:lang="en">G clef (Unicode 1D11E).</desc>
+          <desc xml:lang="en">G clef (<abbr>e.g.</abbr>, Unicode 1D11E).</desc>
         </valItem>
         <valItem ident="GG">
-          <desc xml:lang="en">Double G clef. Sounds one octave lower than G clef. (See remarks on usage below.)</desc>
-        </valItem>
-        <valItem ident="F">
-          <desc xml:lang="en">F clef (Unicode 1D122).</desc>
+          <desc xml:lang="en">Double G clef. Sounds one octave lower than G clef. (<abbr>e.g.</abbr>, SMuFL E055) See remarks on usage below.</desc>
         </valItem>
         <valItem ident="C">
-          <desc xml:lang="en">C clef (Unicode 1D121).</desc>
+          <desc xml:lang="en">C clef (<abbr>e.g.</abbr>, Unicode 1D121).</desc>
+        </valItem>
+        <valItem ident="F">
+          <desc xml:lang="en">F clef (<abbr>e.g.</abbr>, Unicode 1D122).</desc>
+        </valItem>
+        <valItem ident="gamma">
+          <desc xml:lang="en">Gamma clef depicting the locus of gamma-ut</desc>
         </valItem>
         <valItem ident="perc">
-          <desc xml:lang="en">Drum clef (Unicode 1D125 or Unicode 1D126).</desc>
+          <desc xml:lang="en">Drum clef (<abbr>e.g.</abbr>, Unicode 1D125 or Unicode 1D126).</desc>
         </valItem>
         <valItem ident="TAB">
           <desc xml:lang="en">Tablature "clef"; <abbr>i.e.</abbr>, usually "TAB" rendered vertically.</desc>
@@ -1202,6 +1225,17 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.DECIMALORTIMEINTERVAL" module="MEI" type="dt">
+    <desc xml:lang="en">Time interval datatype.</desc>
+    <content>
+      <rng:choice>
+        <rng:data type="decimal">
+          <rng:param name="minInclusive">1</rng:param>
+        </rng:data>
+        <rng:data type="time"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.DEGREES" module="MEI" type="dt">
     <desc xml:lang="en">360th-unit measure of a circle’s circumference; optionally signed decimal number between
       -360 and 360.</desc>
@@ -1360,23 +1394,6 @@
       </valList>
     </content>
   </macroSpec>
-  <macroSpec ident="data.FINGER.FRET" module="MEI" type="dt">
-    <desc xml:lang="en">In a guitar chord diagram, a label indicating which finger, if any, should be used to play
-      an individual string. The index, middle, ring, and little fingers are represented by the
-      values 1-4, while 't' is for the thumb. The values 'x' and 'o' indicate stopped and open
-      strings, respectively.</desc>
-    <content>
-      <rng:choice>
-        <rng:data type="positiveInteger">
-          <rng:param name="minInclusive">1</rng:param>
-          <rng:param name="maxInclusive">4</rng:param>
-        </rng:data>
-        <rng:data type="token">
-          <rng:param name="pattern">x|o|t</rng:param>
-        </rng:data>
-      </rng:choice>
-    </content>
-  </macroSpec>
   <macroSpec ident="data.FONTFAMILY" module="MEI" type="dt">
     <desc xml:lang="en">Font family (for text) attribute values.</desc>
     <content>
@@ -1403,24 +1420,7 @@
     <desc xml:lang="en">Font size expressed as numbers; <abbr>i.e.</abbr>, points or virtual units.</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">\d*(\.\d+)?(pt|vu)</rng:param>
-        <rng:except>
-          <!-- disallow no-value or all-zero patterns -->
-          <rng:choice>
-            <rng:data type="token">
-              <rng:param name="pattern">(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">0+(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">0+(\.0+)?(pt|vu)</rng:param>
-            </rng:data>
-            <rng:data type="token">
-              <rng:param name="pattern">\.0+(pt|vu)</rng:param>
-            </rng:data>
-          </rng:choice>
-        </rng:except>
+          <rng:param name="pattern">([1-9]\d*(\.\d+)?|\d*\.[0-9]*[1-9][0-9]*)(pt|vu)</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -1501,6 +1501,16 @@
       string.</desc>
     <content>
       <rng:data type="nonNegativeInteger"/>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.FRETNUMBER.omit" module="MEI" type="dt">
+    <desc xml:lang="en">In cases like those in chord tablature grids where a string is omitted, the value <val>omit</val> is used.</desc>
+    <content>
+      <valList type="closed">
+        <valItem ident="omit">
+          <desc xml:lang="en">The string is omitted, not sounding.</desc>
+        </valItem>
+      </valList>
     </content>
   </macroSpec>
   <!--<macroSpec ident="data.FRETNUMBER.limited" module="MEI" type="dt">
@@ -1666,14 +1676,24 @@
     </content>
   </macroSpec>-->
   <macroSpec ident="data.INTERVAL.HARMONIC" module="MEI" type="dt">
-    <desc xml:lang="en">A token indicating diatonic interval quality and size.</desc>
+    <desc xml:lang="en">A token indicating diatonic interval quality and size in shorthand notation.</desc>
     <content>
-      <rng:choice>
-        <rng:data type="token">
-          <rng:param name="pattern">[AdMmP][0-9]+</rng:param>
-        </rng:data>
-      </rng:choice>
+      <rng:data type="token">
+        <rng:param name="pattern">[AdMmP][1-9][0-9]*</rng:param>
+      </rng:data>
     </content>
+    <remarks xml:lang="en">
+      <p>
+        <list>
+          <head>Interval qualities:</head>
+          <item>A = augmented,</item>
+          <item>d = diminished,</item>
+          <item>M = major,</item>
+          <item>m = minor,</item>
+          <item>P = perfect</item>
+        </list>
+      </p>
+    </remarks>
   </macroSpec>
   <macroSpec ident="data.INTERVAL.MELODIC" module="MEI" type="dt">
     <desc xml:lang="en">A token indicating direction of the interval but not its precise value, a diatonic
@@ -1823,6 +1843,15 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.LINEHEIGHT" module="MEI" type="dt">
+    <desc xml:lang="en">Datatype for line height measurements.</desc>
+    <content>
+      <rng:choice>
+        <rng:ref name="data.MEASUREMENTTYPOGRAPHYUNSIGNED"/>
+        <rng:ref name="data.PERCENT"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.LINESTARTENDSYMBOL" module="MEI" type="dt">
     <desc xml:lang="en">Symbol that may begin/end a line.</desc>
     <content>
@@ -1834,12 +1863,13 @@
           <desc xml:lang="en">90 degree turn up (similar to Unicode 231F at end of line, 231E at start).</desc>
         </valItem>
         <valItem ident="angleright">
-          <desc xml:lang="en">90 degree turn right (syntactic sugar for "angledown" for vertical or angled
-            lines).</desc>
+          <desc xml:lang="en">90 degree turn right (syntactic sugar for "angledown" for vertical or angled lines).</desc>
         </valItem>
         <valItem ident="angleleft">
-          <desc xml:lang="en">90 degree turn left (syntactic sugar for "angleup" for vertical or angled
-            lines).</desc>
+          <desc xml:lang="en">90 degree turn left (syntactic sugar for "angleup" for vertical or angled lines).</desc>
+        </valItem>
+        <valItem ident="angleboth">
+          <desc xml:lang="en">90 degree turn left and right (T-shaped anchor).</desc>
         </valItem>
         <valItem ident="arrow">
           <desc xml:lang="en">Filled, triangular arrowhead (similar to Unicode U+25C0 or SMuFL U+EB78).</desc>
@@ -1851,12 +1881,10 @@
           <desc xml:lang="en">Unfilled, triangular arrowhead (similar to Unicode U+25C1 or SMuFL U+EB82).</desc>
         </valItem>
         <valItem ident="harpoonleft">
-          <desc xml:lang="en">Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode
-            U+21BD).</desc>
+          <desc xml:lang="en">Harpoon-shaped arrowhead left of line (similar to arrowhead of Unicode U+21BD).</desc>
         </valItem>
         <valItem ident="harpoonright">
-          <desc xml:lang="en">Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode
-            U+21BC).</desc>
+          <desc xml:lang="en">Harpoon-shaped arrowhead right of line (similar to arrowhead of Unicode U+21BC).</desc>
         </valItem>
         <valItem ident="H">
           <desc xml:lang="en">Hauptstimme (Unicode U+1D1A6 or SMuFL U+E860).</desc>
@@ -3025,6 +3053,21 @@
         <valItem ident="tab">
           <desc xml:lang="en">Tablature notation.</desc>
         </valItem>
+        <valItem ident="tab.staff-like">
+          <desc xml:lang="en">"Notehead" notation: a hybrid between staff and tablature notation consisting of solid, stemless noteheads on a CMN staff with tablature rhythm flags placed above the staff.</desc>
+        </valItem>
+        <valItem ident="tab.guitar">
+          <desc xml:lang="en">Tablature notation for guitars (includes "spanish" lute tablature). Frets are indicated using numbers. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.french">
+          <desc xml:lang="en">"French" tablature notation for lutes. Frets are indicated using letters. Courses closest to the player's feet are at the top of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.italian">
+          <desc xml:lang="en">"Italian" tablature notation for lutes. Frets are indicated using numbers. Courses closest to the player's feet are at the bottom of the staff.</desc>
+        </valItem>
+        <valItem ident="tab.lute.german">
+          <desc xml:lang="en">"German" tablature notation for lutes. Fret and course information is conveyed solely by choice of symbol (vertical position is not used for this).</desc>
+        </valItem>
       </valList>
     </content>
   </macroSpec>
@@ -3136,6 +3179,31 @@
       </rng:data>
     </content>
   </macroSpec>
+  <macroSpec ident="data.PART" module="MEI" type="dt">
+    <desc xml:lang="en">Reference to parts.</desc>
+    <content>
+      <rng:choice>
+        <rng:value>all</rng:value>
+        <rng:value>none</rng:value>
+        <rng:list>
+          <rng:oneOrMore>
+            <rng:ref name="data.URI"/>
+          </rng:oneOrMore>
+        </rng:list>
+      </rng:choice>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.PARTSTAFF" module="MEI" type="dt">
+    <desc xml:lang="en">Reference to part staves.</desc>
+    <content>
+      <rng:choice>
+        <rng:value>all</rng:value>
+        <rng:data type="token">
+          <rng:param name="pattern">\d+(-\d+)?</rng:param>
+        </rng:data>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.PEDALSTYLE" module="MEI" type="dt">
     <desc xml:lang="en">Styling of piano pedal marks.</desc>
     <content>
@@ -3211,9 +3279,7 @@
   <macroSpec ident="data.PGSCALE" module="MEI" type="dt">
     <desc xml:lang="en">Page scale factor; a percentage of the values in page.height and page.width.</desc>
     <content>
-      <rng:choice>
-        <rng:ref name="data.PERCENT"/>
-      </rng:choice>
+      <rng:ref name="data.PERCENT"/>
     </content>
   </macroSpec>
   <macroSpec ident="data.PITCHCLASS" module="MEI" type="dt">
@@ -3358,7 +3424,7 @@
         <rng:param name="pattern">[i|m|t][1-6]</rng:param>
       </rng:data>
     </content>
-    <exemplum>
+    <exemplum xml:lang="en">
       <egXML xmlns="http://www.tei-c.org/ns/Examples" xml:space="preserve" valid="feasible">
 <note slur="i1 i2"/>
 <note slur="t1"/>
@@ -3570,12 +3636,6 @@
           <desc xml:lang="en">Stem is originates from center of note head.</desc>
         </valItem>
       </valList>
-    </content>
-  </macroSpec>
-  <macroSpec ident="data.STRINGNUMBER" module="MEI" type="dt">
-    <desc xml:lang="en">In string tablature, the number of the string to be played, <abbr>i.e.</abbr>, [1-9]+.</desc>
-    <content>
-      <rng:data type="positiveInteger"/>
     </content>
   </macroSpec>
   <macroSpec ident="data.TEMPERAMENT" module="MEI" type="dt">

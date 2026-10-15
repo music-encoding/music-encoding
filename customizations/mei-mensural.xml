@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../source/validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../source/validation/mei-customizations.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0"   xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:sch="http://purl.oclc.org/dsdl/schematron"  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <teiHeader>
+    <fileDesc>
+      <titleStmt>
+          <title level="m" type="main">Music Encoding Initiative Guidelines</title>
+          <title level="a" type="main">Mensural Customization</title>
+          <title level="a" type="short">MEI Mensural</title>
+        <respStmt>
+          <resp>Authored by</resp>
+          <name xml:id="PR" role="pbd">Perry Roland</name>
+        </respStmt>
+        <respStmt>
+          <resp>Revisions</resp>
+          <name xml:id="JK">Johannes Kepper</name>
+        </respStmt>
+        <respStmt>
+          <resp>Revisions</resp>
+          <name xml:id="BWB">Benjamin W. Bohl</name>
+        </respStmt>
+      </titleStmt>
+      <editionStmt>
+        <edition>MEI 6.0-dev+mensural</edition>
+      </editionStmt>
+      <publicationStmt>
+        <publisher>Music Encoding Initiative (MEI) Board</publisher>
+        <availability>
+          <licence target="https://opensource.org/license/ECL-2.0/">Licensed under the Educational Community License version 2.0</licence>
+        </availability>
+      </publicationStmt>
+      <sourceDesc>
+        <p/>
+      </sourceDesc>
+    </fileDesc>
+    <profileDesc>
+      <abstract>
+          <p>A customization for encoding mensural notation, both black and white.</p>
+      </abstract>
+      <textClass>
+        <keywords>
+          <term>repertoire</term>
+        </keywords>
+      </textClass>
+    </profileDesc>
+    <revisionDesc>
+      <change n="3" when="2025-05-03" who="#BWB">
+        <desc>Restructure titles in titleStmt (series, main, short). Add abstract and textClass.</desc>
+      </change>
+      <change n="2" when="2025-02-07" who="#JK">
+        <desc>Adjusting to allow documentation of this customization.</desc>
+      </change>
+      <change n="1" notAfter="2025-02-07" who="#PR">
+        <desc>Creation of the initial ODD.</desc>
+      </change>
+    </revisionDesc>
+  </teiHeader>
+  <text>
+    <front>
+      <divGen type="toc"/>
+    </front>
+    <body>
+      <div xml:id="customizationDocs" type="customizationDocs">
+        <head>MEI for Mensural Notation</head>
+        <div xml:id="mei-mensuralDocs" type="div1">
+          <head>MEI for Mensural Notation</head>
+          <p>This customization of MEI is meant to encode music notation following the principles of
+           mensural notation.</p>
+        </div>
+      </div>
+      <div xml:id="mei-generalDocs" type="sourceRefs">
+        <head>General Documentation of MEI</head>
+        <xi:include href="../source/docs/01-introduction.xml" xpointer="introduction"/>
+        <xi:include href="../source/docs/02-shared.xml" xpointer="shared"/>
+        <xi:include href="../source/docs/03-metadata.xml" xpointer="metadata"/>
+        <!--<xi:include href="../source/docs/04-cmn.xml" xpointer="cmn"/>-->
+        <xi:include href="../source/docs/05-mensural.xml" xpointer="mensural"/>
+        <!--<xi:include href="../source/docs/06-neumes.xml" xpointer="neumes"/>-->
+        <xi:include href="../source/docs/07-tablature.xml" xpointer="tablature"/>
+        <xi:include href="../source/docs/08-lyricsperfdir.xml" xpointer="lyricsperfdir"/>
+        <xi:include href="../source/docs/09-textencoding.xml" xpointer="textencoding"/>
+        <xi:include href="../source/docs/10-analysisharm.xml" xpointer="analysisharm"/>
+        <xi:include href="../source/docs/11-scholarlyediting.xml" xpointer="scholarlyediting"/>
+        <xi:include href="../source/docs/12-facsimilesperformances.xml" xpointer="facsimilesperformances"/>
+        <xi:include href="../source/docs/13-linkingdata.xml" xpointer="linkingdata"/>
+        <xi:include href="../source/docs/14-integration.xml" xpointer="integration"/>
+      </div>
+    </body>
+    <back>
+      <div>
+        <!-- Limit the set of possible start elements -->
+        <schemaSpec ident="mei-mensural" ns="http://www.music-encoding.org/ns/mei" prefix="mei_"
+          start="mei meiHead meiCorpus music">
+
+          <!-- Declare MEI and XLink namespaces for use in Schematron -->
+          <constraintSpec ident="set_ns" scheme="schematron" mode="add">
+            <constraint>
+              <sch:ns prefix="mei" uri="http://www.music-encoding.org/ns/mei"/>
+              <sch:ns prefix="xlink" uri="http://www.w3.org/1999/xlink"/>
+            </constraint>
+          </constraintSpec>
+
+          <!-- Include all modules -->
+          <!-- Deactivate the CMN, cmnOrnaments, and neumes modules -->
+          <moduleRef key="MEI"/>
+          <moduleRef key="MEI.analytical"/>
+          <!--<moduleRef key="MEI.cmn"/>-->
+          <!--<moduleRef key="MEI.cmnOrnaments"/>-->
+          <moduleRef key="MEI.corpus"/>
+          <moduleRef key="MEI.critapp"/>
+          <moduleRef key="MEI.drama"/>
+          <moduleRef key="MEI.edittrans"/>
+          <moduleRef key="MEI.externalsymbols"/>
+          <moduleRef key="MEI.facsimile"/>
+          <moduleRef key="MEI.figtable"/>
+          <moduleRef key="MEI.fingering"/>
+          <moduleRef key="MEI.frbr"/>
+          <moduleRef key="MEI.genetic"/>
+          <moduleRef key="MEI.gestural"/>
+          <moduleRef key="MEI.harmony"/>
+          <moduleRef key="MEI.header"/>
+          <moduleRef key="MEI.lyrics"/>
+          <moduleRef key="MEI.mensural"/>
+          <moduleRef key="MEI.midi"/>
+          <moduleRef key="MEI.msDesc"/>
+          <moduleRef key="MEI.namesdates"/>
+          <!--<moduleRef key="MEI.neumes"/>-->
+          <moduleRef key="MEI.performance"/>
+          <moduleRef key="MEI.ptrref"/>
+          <moduleRef key="MEI.shared"/>
+          <moduleRef key="MEI.stringtab"/>
+          <moduleRef key="MEI.text"/>
+          <moduleRef key="MEI.usersymbols"/>
+          <moduleRef key="MEI.visual"/>
+
+          <!-- Include SVG -->
+          <moduleRef url="../source/svg11.rng" prefix="svg_">
+            <content>
+              <rng:define name="mei_model.graphicLike" combine="choice">
+                <rng:ref name="svg_svg"/>
+              </rng:define>
+            </content>
+          </moduleRef>
+
+          <classSpec ident="att.meiVersion" module="MEI.shared" type="atts" mode="change">
+            <attList>
+              <attDef ident="meiversion" usage="rec" mode="change">
+                <valList type="closed" mode="change">
+                  <valItem ident="6.0-dev"/>
+                  <valItem ident="6.0-dev+mensural"/>
+                  <valItem ident="6.0-dev+anyStart" mode="delete"/>
+                  <valItem ident="6.0-dev+basic" mode="delete"/>
+                  <valItem ident="6.0-dev+cmn" mode="delete"/>
+                  <valItem ident="6.0-dev+neumes" mode="delete"/>
+              </valList>
+              </attDef>
+            </attList>
+          </classSpec>
+
+          <!-- Change the availability of dots -->
+          <!-- Remove them as children of <note> -->
+          <elementSpec ident="dot" module="MEI.shared" mode="change">
+            <desc>Dot of augmentation or division.</desc>
+            <classes>
+              <memberOf key="att.common"/>
+              <memberOf key="att.facsimile"/>
+              <memberOf key="att.dot.anl"/>
+              <memberOf key="att.dot.ges"/>
+              <memberOf key="att.dot.log"/>
+              <memberOf key="att.dot.vis"/>
+              <memberOf key="model.noteModifierLike" mode="delete"/>
+              <memberOf key="model.eventLike.mensural"/>
+            </classes>
+            <content>
+              <empty/>
+            </content>
+            <remarks>
+              <p>This element provides an alternative to the <att>dots</att> attribute on <gi scheme="MEI"
+                >note</gi> and <gi scheme="MEI">rest</gi> elements. It should be used when specific display
+                info, such as size or color, needs to be recorded for the dot. This element may also be used
+                for dots of division in the mensural repertoire.</p>
+            </remarks>
+          </elementSpec>
+          <!-- Remove them as children of <rest> -->
+          <elementSpec ident="rest" module="MEI.shared" mode="replace">
+            <desc>A non-sounding event found in the source being transcribed.</desc>
+            <classes>
+              <memberOf key="att.common"/>
+              <memberOf key="att.facsimile"/>
+              <memberOf key="att.rest.anl"/>
+              <memberOf key="att.rest.ges"/>
+              <memberOf key="att.rest.log"/>
+              <memberOf key="att.rest.vis"/>
+              <memberOf key="model.eventLike"/>
+            </classes>
+            <content>
+              <rng:zeroOrMore>
+                <rng:choice>
+                  <!--<rng:ref name="dot"/>-->
+                  <rng:ref name="model.appLike"/>
+                  <rng:ref name="model.editLike"/>
+                  <rng:ref name="model.transcriptionLike"/>
+                </rng:choice>
+              </rng:zeroOrMore>
+            </content>
+            <constraintSpec ident="Check_restline" scheme="schematron">
+              <constraint>
+                <sch:rule context="mei:rest[@line]">
+                  <sch:let name="thisstaff" value="ancestor::mei:staff/@n"/>
+                  <sch:assert
+                    test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
+                    >The value of @line must be less than or equal to the number of lines on the
+                    staff.</sch:assert>
+                </sch:rule>
+              </constraint>
+            </constraintSpec>
+            <remarks>
+              <p>See (Read, p. 96-102). Do not confuse this element with the <gi scheme="MEI">space</gi>
+                element, which is used as an aid for visual alignment.</p>
+            </remarks>
+          </elementSpec>
+          <!-- Remove them as attributes of <note> and <rest> -->
+          <classSpec ident="att.augmentDots" module="MEI.shared" type="atts" mode="delete"/>
+
+        </schemaSpec>
+      </div>
+   </back>
+ </text>
+</TEI>

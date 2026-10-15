@@ -23,14 +23,14 @@ const svg3 = d3.select("#modelClassesChart")
     .append("g")
         .attr("transform", `translate(${width / 2}, ${height / 2})`);
         
-const svg4 = d3.select("#macroPeChart")
+const svg4 = d3.select("#macroChart")
     .append("svg")
         .attr("width", width)
         .attr("height", height)
     .append("g")
         .attr("transform", `translate(${width / 2}, ${height / 2})`);
         
-const svg5 = d3.select("#macroDtChart")
+const svg5 = d3.select("#dataChart")
     .append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -97,7 +97,7 @@ function getCharts() {
         
         // Join new data
     const path4 = svg4.selectAll("path")
-        .data(pie(macroPe));
+        .data(pie(macro));
     
     // Enter new arcs
     path4.enter().append("path")
@@ -111,7 +111,7 @@ function getCharts() {
         
         // Join new data
     const path5 = svg5.selectAll("path")
-        .data(pie(macroDt));
+        .data(pie(data));
     
     // Enter new arcs
     path5.enter().append("path")

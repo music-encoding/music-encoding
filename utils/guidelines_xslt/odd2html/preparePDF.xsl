@@ -63,7 +63,7 @@
                 <xsl:choose>
                     <xsl:when test="$classType = 'Available at'">
                         <div class="classItem">
-                            <label><a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a></label>
+                            <label><a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}">&lt;<xsl:value-of select="$current.item/@ident"/>&gt;</a></label>
                             <div class="desc"><xsl:apply-templates select="$current.item/desc/node()" mode="#current"/></div>
                             <div class="breadcrumb">
                                 <span class="step start"><xsl:value-of select="$start"/></span>
@@ -81,12 +81,12 @@
                                     <xsl:variable name="att.item" select="." as="node()"/>
                                     <div class="classItem">
                                         <label>
-                                            <a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a> / 
-                                            <span class="ident attribute"><xsl:value-of select="$att.item/link/text()"/></span> 
+                                            <a class="link_odd link_odd_elementSpec" href="#{$current.item/@ident}">&lt;<xsl:value-of select="$current.item/@ident"/>&gt;</a> / 
+                                            <span class="ident attribute">@<xsl:value-of select="$att.item/link/text()"/></span>
                                         </label>
                                         <div class="desc"><xsl:apply-templates select="$att.item/desc/node()" mode="#current"/></div>
                                     </div>
-                                </xsl:for-each>                                    
+                                </xsl:for-each>
                             </xsl:when>
                             <xsl:when test="$att.classes/self::tei:classSpec[@ident = $current.item/@ident]">
                                 <div class="classItem">
@@ -134,7 +134,7 @@
                                 </xsl:for-each>
                                 <span class="step end"><xsl:value-of select="$mod.end"/></span>
                             </div>
-                        </div>        
+                        </div>
                     </xsl:when>
                     <xsl:otherwise>
                         <div class="classItem">
@@ -147,11 +147,11 @@
                                 </xsl:for-each>
                                 <span class="step end"><xsl:value-of select="$end"/></span>
                             </div>
-                        </div>        
+                        </div>
                     </xsl:otherwise>
                 </xsl:choose>
                 
-            </xsl:for-each>            
+            </xsl:for-each>
         </xsl:copy>
     </xsl:template>
     
@@ -170,7 +170,7 @@
             <xsl:otherwise>
                 <xsl:next-match/>
             </xsl:otherwise>
-        </xsl:choose>        
+        </xsl:choose>
     </xsl:template>
     
     <xd:doc>

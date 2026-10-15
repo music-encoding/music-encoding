@@ -1,12 +1,12 @@
 import argparse
-import os
 import sys
 import pprint
 import logging
+from pathlib import Path
 
 import verovio
 
-IMAGES_PATH = "../../build/assets/images/GeneratedImages"
+IMAGES_PATH = Path("../../build/assets/images/GeneratedImages")
 
 VRV_OPTIONS: dict = {
    'scale': 10,
@@ -62,39 +62,31 @@ if __name__ == "__main__":
     log.debug("Running Verovio with the following options: %s", pprint.pformat(VRV_OPTIONS))
     tk.setOptions(VRV_OPTIONS)
 
-    for file in os.listdir(IMAGES_PATH):
-        # Skip everything that is not an .mei or .xml file
-        if not file.endswith(".mei"): 
-            continue
+    for mei_file in IMAGES_PATH.glob("*.mei"):
+        svg_file = mei_file.with_suffix(".svg")
 
-        mei_file = os.path.join(IMAGES_PATH, file)
-        svg_file = os.path.join(IMAGES_PATH, f"{file}.svg")
-
-        if os.path.exists(svg_file) and os.path.exists(mei_file) and not args.clean:
-            log.info("This example already exists, and we're not running in cleaning mode. Skipping.")
+        if svg_file.exists() and mei_file.exists() and not args.clean:
+            log.info("%s already exists, and we're not running in cleaning mode. Skipping.", svg_file.name)
             continue
 
         # Download the MEI file from the given url
-        mei_example: str = ""
-        with open(mei_file) as f:
-            mei_example = f.read()
+        mei_example: str = mei_file.read_text()
 
         if not tk.loadData(mei_example):
-            log.error("Failed to load %s", mei_file)
+            log.error("Failed to load %s", mei_file.name)
             success = False
             continue
 
         svg: str = tk.renderToSVG(1)
 
         if svg:
-            with open(svg_file, 'w') as f:
-                f.write(svg)
-                log.info("Successfully rendered %s", svg_file)
+            svg_file.write_text(svg)
+            log.info("Successfully rendered %s", svg_file.name)
         else:
-            log.error("Failed to render %s", mei_file)
+            log.error("Failed to render %s", mei_file.name)
             success = False
 
-        log.debug("Finished processing %s", mei_file)
+        log.debug("Finished processing %s", mei_file.name)
     
     if not success:
         sys.exit(1)
