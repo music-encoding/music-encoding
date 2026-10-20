@@ -19,6 +19,10 @@
 -->
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <!-- import version properties -->
+    
+    <import file="ant/github-environment.xml"/>
+    
+    <import file="ant/git-interaction.xml"/>
     <property file="build.properties"/>
     
     <property environment="env">
@@ -26,31 +30,8 @@
     </property>
     <property name="version" value="dev"/>
     <!-- in XSLT version = att.meiversion defaultVal -->
-    <property name="github.sha" value="">
-        <!-- string    external    The current GitHub sha -->
-    </property>
-    <property name="github.event_name" value="github.event_name">
-        <!--string    external    The name of the event that triggered the workflow run. e.g.: push, pull_request; cf. https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows -->
-    </property>
-    <property name="github.ref" value="">
-        <!-- string    external    The branch or tag ref that triggered the workflow run. For branches this in the format refs/heads/<branch_name>, and for tags it is refs/tags/<tag_name> -->
-    </property>
-    <loadresource property="github.ref-type" quiet="true">
-        <string value="${github.ref}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="([^\/]+\/)([^\/]+)(\/[^\/]+)" replace="\2"/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
-    <loadresource property="github.ref-name" quiet="true">
-        <string value="${github.ref}"/>
-        <filterchain>
-            <tokenfilter>
-                <replaceregex pattern="([^\/]+\/)+" replace=""/>
-            </tokenfilter>
-        </filterchain>
-    </loadresource>
+    
+    
     <!--
         Macrodef: path-to-file-uri
         Converts a filesystem path to a file URI suitable for Saxon/XSLT.
