@@ -12,22 +12,22 @@
     
     <!-- IDENTs of tei:classSpec elements and derived subsets -->
     <sch:let name="IDENTS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classSpec/@ident" />
-    <sch:let name="IDENTS.atts" value="$IDENTS.classes[parent::*/@type ='atts']"/>
-    <sch:let name="IDENTS.models" value="$IDENTS.classes[parent::*/@type ='model']"/>
+    <sch:let name="IDENTS.classes.atts" value="$IDENTS.classes[parent::*/@type ='atts']"/>
+    <sch:let name="IDENTS.classes.models" value="$IDENTS.classes[parent::*/@type ='model']"/>
     
     <!-- IDENTs of tei:elementSpec elements -->
     <sch:let name="IDENTS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementSpec/@ident" />
     
-    <!-- IDENTs of tei:macSpec elements -->
+    <!-- IDENTs of tei:macroSpec elements -->
     <sch:let name="IDENTS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroSpec/@ident"/>
-    <sch:let name="IDENTS.datatypes" value="$IDENTS.macros[parent::*/@type ='dt']"/>
-    <sch:let name="IDENTS.patterns" value="$IDENTS.macros[parent::*/@type ='pe']"/>
+    <sch:let name="IDENTS.macros.datatypes" value="$IDENTS.macros[parent::*/@type ='dt']"/>
+    <sch:let name="IDENTS.macros.parameter-entities" value="$IDENTS.macros[parent::*/@type ='pe']"/>
     
     <!-- declare xml:ids in docs and modules and derived subsets -->
     <sch:let name="IDS.docs" value="collection($URI.docs-collection || '?select=*.xml;recurse=yes')//@xml:id" />
     <sch:let name="IDS.modules" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//@xml:id" />
     <sch:let name="IDS.docs-modules" value="$IDS.docs, $IDS.modules" />
-    <sch:let name="IDS.divs" value="($IDS.docs, $IDS.modules)[parent::tei:div]" />
+    <sch:let name="IDS.docs-modules.divs" value="($IDS.docs-modules)[parent::tei:div]" />
     
     <!-- all class memberships -->
     <sch:let name="KEYS.memberOf" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:memberOf/string(@key)"/>
@@ -90,9 +90,9 @@
                 >A &lt;specDesc&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:let name="elements" value="$IDENTS.elements"/>
-            <sch:let name="atts" value="$IDENTS.atts"/>
-            <sch:let name="models" value="$IDENTS.models"/>
-            <sch:let name="macros" value="$IDENTS.patterns"/>
+            <sch:let name="atts" value="$IDENTS.classes.atts"/>
+            <sch:let name="models" value="$IDENTS.classes.models"/>
+            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
             <sch:assert role="error"
                 test="$key = $elements or $key = $atts or $key = $models or $key = $macros">
                 The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -105,9 +105,9 @@
                 test="exists(@key)"
                 >A &lt;memberOf&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
-            <sch:let name="atts" value="$IDENTS.atts"/>
-            <sch:let name="models" value="$IDENTS.models"/>
-            <sch:let name="macros" value="$IDENTS.patterns"/>
+            <sch:let name="atts" value="$IDENTS.classes.atts"/>
+            <sch:let name="models" value="$IDENTS.classes.models"/>
+            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
             <sch:assert role="error"
                 test="$key = $atts or $key = $models or $key = $macros">
                 The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -121,9 +121,9 @@
                 >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
             <sch:let name="name" value="string(@name)"/>
             <sch:let name="elements" value="$IDENTS.elements"/>
-            <sch:let name="models" value="$IDENTS.models"/>
-            <sch:let name="macros" value="$IDENTS.patterns"/>
-            <sch:let name="datatypes" value="$IDENTS.datatypes"/>
+            <sch:let name="models" value="$IDENTS.classes.models"/>
+            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
+            <sch:let name="datatypes" value="$IDENTS.macros.datatypes"/>
             <sch:assert role="error"
                 test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
@@ -143,7 +143,7 @@
 
     <sch:pattern id="check_ptr_target_references">
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
-            <sch:let name="div_IDs" value="$IDS.divs"/>
+            <sch:let name="div_IDs" value="$IDS.docs-modules.divs"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
             <sch:assert role="error" test="some $id in $div_IDs satisfies ($id = $target)">
                 The &lt;<sch:name/>&gt; points to <sch:value-of select="@target"/> which wasn't declared in a &lt;div&gt;/xml:id.</sch:assert>
