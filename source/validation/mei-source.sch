@@ -53,8 +53,7 @@
 
     <sch:pattern id="check_gi_scheme_MEI_references">
         <sch:rule context="tei:gi[@scheme = 'MEI']">
-            <sch:let name="ident_vals" value="$IDENTS.elements"/>
-            <sch:assert role="error" test=" some $ident in $ident_vals satisfies ($ident = text()/string())">
+            <sch:assert role="error" test=" some $ident in $IDENTS.elements satisfies ($ident = text()/string())">
                 A &lt;gi scheme="MEI"&gt;<sch:value-of select="text()"/>&lt;/gi&gt; references an element unknown to MEI. It has to match an //elementSpec/@ident.</sch:assert>
         </sch:rule>
         <sch:p>A &lt;gi&gt; in the MEI scheme must reference a value from &lt;elementSpec&gt;/@ident.</sch:p>
@@ -71,10 +70,9 @@
 
     <sch:pattern id="check_ident_type_class_references">
         <sch:rule context="tei:ident[@type = 'class']">
-            <sch:let name="ident_vals" value="$IDENTS.classes"/>
             <sch:assert role="warning"
                 test="
-                    some $ident in $ident_vals
+                    some $ident in $IDENTS.classes
                         satisfies ($ident = text()/string())"
                 >The &lt;<sch:name/>&gt; contains text which is not declared in any
                 classSpec/@ident (<sch:value-of select="text()/string()"/>).</sch:assert>
@@ -89,12 +87,8 @@
                 test="exists(@key)"
                 >A &lt;specDesc&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
-            <sch:let name="elements" value="$IDENTS.elements"/>
-            <sch:let name="atts" value="$IDENTS.classes.atts"/>
-            <sch:let name="models" value="$IDENTS.classes.models"/>
-            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
             <sch:assert role="error"
-                test="$key = $elements or $key = $atts or $key = $models or $key = $macros">
+                test="$key = $IDENTS.elements or $key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros.parameter-entities">
                 The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -105,11 +99,8 @@
                 test="exists(@key)"
                 >A &lt;memberOf&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
-            <sch:let name="atts" value="$IDENTS.classes.atts"/>
-            <sch:let name="models" value="$IDENTS.classes.models"/>
-            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
             <sch:assert role="error"
-                test="$key = $atts or $key = $models or $key = $macros">
+                test="$key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros.parameter-entities">
                 The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -120,12 +111,8 @@
                 test="exists(@name)"
                 >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
             <sch:let name="name" value="string(@name)"/>
-            <sch:let name="elements" value="$IDENTS.elements"/>
-            <sch:let name="models" value="$IDENTS.classes.models"/>
-            <sch:let name="macros" value="$IDENTS.macros.parameter-entities"/>
-            <sch:let name="datatypes" value="$IDENTS.macros.datatypes"/>
             <sch:assert role="error"
-                test="$name = $elements or $name = $models or $name = $macros or $name = $datatypes or $name = ('svg', 'svg_svg')">
+                test="$name = $IDENTS.elements or $name = $IDENTS.classes.models or $name = $IDENTS.macros.parameter-entities or $name = $IDENTS.macros.datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -143,9 +130,8 @@
 
     <sch:pattern id="check_ptr_target_references">
         <sch:rule context="tei:ptr[starts-with(@target, '#')]">
-            <sch:let name="div_IDs" value="$IDS.docs-modules.divs"/>
             <sch:let name="target" value="substring-after(@target, '#')"/>
-            <sch:assert role="error" test="some $id in $div_IDs satisfies ($id = $target)">
+            <sch:assert role="error" test="some $id in $IDS.docs-modules.divs satisfies ($id = $target)">
                 The &lt;<sch:name/>&gt; points to <sch:value-of select="@target"/> which wasn't declared in a &lt;div&gt;/xml:id.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -203,40 +189,32 @@
     <!-- check whether things are referenced somewhere -->
     <sch:pattern id="unused_objects">
         <sch:rule context="tei:classSpec[@type = 'atts']">
-            <sch:let name="all.memberships" value="$KEYS.memberOf"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.memberships" role="warning">
+            <sch:assert test="$ident = $KEYS.memberOf" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:classSpec[@type = 'model']">
-            <sch:let name="all.memberships" value="$KEYS.memberOf"/>
-            <sch:let name="all.refs" value="$REFS"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.memberships or $ident = $all.refs" role="warning">
+            <sch:assert test="$ident = $KEYS.memberOf or $ident = $REFS" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec[@type = 'pe']">
-            <sch:let name="all.refs" value="$REFS"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.refs" role="warning">
+            <sch:assert test="$ident = $REFS" role="warning">
                 <sch:value-of select="$ident"/> is not used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:elementSpec">
-            <sch:let name="all.refs" value="$REFS"/>
-            <sch:let name="models" value="$KEYS.memberOf.model"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.refs or count($models) gt 0" role="warning">
+            <sch:assert test="$ident = $REFS or count($KEYS.memberOf.model) gt 0" role="warning">
                 Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec[@type = 'dt']">
-            <sch:let name="all.refs" value="$REFS"/>
-            <sch:let name="all.macroRefs" value="$REFS.macros"/>
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $all.refs or $ident = $all.macroRefs" role="warning">
+            <sch:assert test="$ident = $REFS or $ident = $REFS.macros" role="warning">
                <sch:value-of select="$ident"/> seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; or &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
             </sch:assert>
         </sch:rule>
