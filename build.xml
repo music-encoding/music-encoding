@@ -20,7 +20,7 @@
 <project name="music-encoding" default="dist" xmlns:if="ant:if" xmlns:unless="ant:unless">
     <!-- import version properties -->
     <property file="build.properties"/>
-    
+
     <property environment="env">
         <!-- set environment variable -->
     </property>
@@ -65,7 +65,7 @@
         </not>
     </condition>
     <condition property="verbose" value="true" else="false">
-        <contains string="${sun.java.command}" substring="-v" />
+        <contains string="${sun.java.command}" substring="-v"/>
     </condition>
     <!-- directories -->
     <property name="dir.build" value="build"/>
@@ -89,7 +89,7 @@
     <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
     <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
-    
+
 
     <target name="help">
         <antcall target="echo-mei"/>
@@ -123,7 +123,7 @@
     </target>
 
     <target name="echo-mei">
-        <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei" />
+        <loadfile srcfile="source/assets/images/meilogo_ascii_100.txt" property="mei"/>
         <echo message="${mei}"/>
     </target>
 
@@ -159,7 +159,7 @@
         <echo>Ant version: ${ant.version}</echo>
         <echo>Java version (JDK): ${ant.java.version}</echo>
     </target>
-    
+
     <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
         <!-- check if Xerces is available -->
         <condition property="xerces-available">
@@ -193,7 +193,7 @@
             <patternset>
                 <include name="VERSION"/>
             </patternset>
-            <contains text="${stylesheets.version}" />
+            <contains text="${stylesheets.version}"/>
         </fileset>
         <condition property="stylesheets-available">
             <and>
@@ -205,7 +205,7 @@
         <echo unless:set="stylesheets-available" message="stylesheets available: false"/>
         <!-- check if Prince is available -->
         <condition property="prince-available">
-            <available file="prince" filepath="${env.PATH}" />
+            <available file="prince" filepath="${env.PATH}"/>
         </condition>
         <echo if:set="prince-available" message="prince available: ${prince-available}"/>
         <echo unless:set="prince-available" message="prince available: false"/>
@@ -279,7 +279,7 @@
         </path>
         <echo>mei.classpath set</echo>
     </target>
-    
+
     <target name="canonicalize-source" description="Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`." depends="init-mei-classpath">
         <echo unless:set="canonicalize-source.done">canonicalizing source...</echo>
         <java unless:set="canonicalize-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
@@ -294,22 +294,22 @@
 
     <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
-        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
         <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
-            <fileset dir="${dir.build}">    
-                <include name="${canonicalized.file.next}" ></include>
+            <fileset dir="${dir.build}">
+                <include name="${canonicalized.file.next}"></include>
             </fileset>
         </schematron>
         <property name="validate-source.done" value="true"/>
         <echo>canonicalized source validated: ${validate-source.done}</echo>
     </target>
-    
+
     <target name="validate-purification" depends="canonicalize-source" description="Validates the canonicalized source with mei-purify.sch. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-purification.done">validating purification of source...</echo>
-        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader" />
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
         <schematron unless:set="validate-purification.done" schematronFile="${dir.validation}/mei-purify.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
-            <fileset dir="${dir.build}">    
-                <include name="${canonicalized.file.next}" ></include>
+            <fileset dir="${dir.build}">
+                <include name="${canonicalized.file.next}"></include>
             </fileset>
         </schematron>
         <property name="validate-purification.done" value="true"/>
@@ -329,7 +329,7 @@
             <reference refid="mei.classpath" torefid="classpath"/>
         </ant>
     </target>
-    
+
     <target name="build-customization-guidelines-html" depends="init-mei-classpath, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
         <!-- set selectedSchema from filename; N.B. has to match schemaSpec/@ident to make processing by TEI Stylesheets work correctly -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
@@ -351,9 +351,9 @@
                   backslashes; the XSLT appends location steps to it using forward slashes and thus will not be able to handle it
                   using @value will just submit this as string literals and not change the separator.
         -->
-        <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}" />
+        <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}"/>
         <!-- generate customization’s compiled ODD -->
-        <antcall target="build-compiled-odd" inheritall="yes" />
+        <antcall target="build-compiled-odd" inheritall="yes"/>
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
@@ -368,7 +368,7 @@
         <antcall target="generate-images"/>
         <antcall target="copy-generated-images" inheritall="yes"/>
     </target>
-    
+
     <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
@@ -406,10 +406,10 @@
         <!-- call build for the index page that offers links to the customization-specific guidelines -->
         <antcall target="build-guidelines-html-index-page"/>
     </target>
-    
+
     <target name="build-guidelines-html-index-page" depends="init-mei-classpath">
         <!-- create a path that includes the customization index pages -->
-        <path id="customizationIndexPath" >
+        <path id="customizationIndexPath">
             <fileset dir="${dir.dist.guidelines}">
                 <include name="*/index.html"/>
             </fileset>
@@ -421,7 +421,7 @@
         <loadresource property="customizationIndexPages">
             <string value="${customizationIndexPages.raw}"/>
             <filterchain>
-                 <!-- Replace backslashes with forward slashes for cross-platform compatibility -->
+                <!-- Replace backslashes with forward slashes for cross-platform compatibility -->
                 <replaceregex pattern="\\" replace="/" flags="g"/>
                 <!-- Remove everything up to and including ${dir.dist.guidelines}/ -->
                 <replaceregex pattern="[^;]*${dir.dist.guidelines}/" replace="" flags="g"/>
@@ -429,23 +429,23 @@
         </loadresource>
 
         <echo message="Generating guidelines index including: ${customizationIndexPages}"/>
-        
+
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
             <arg value="-it:initial-template"/>
             <arg value="-xsl:${basedir}/utils/guidelines_xslt/odd2html/generateWebsiteIndexPage.xsl"/>
             <arg value="-xi:off"/>
             <arg value="output.folder=${dir.dist.guidelines}"/>
-            <arg value="customizationIndexPages=${customizationIndexPages}" />
+            <arg value="customizationIndexPages=${customizationIndexPages}"/>
         </java>
-        
+
         <antcall target="copy-guidelines-assets">
-            <param name="output.folder" value="${dir.dist.guidelines}" />
+            <param name="output.folder" value="${dir.dist.guidelines}"/>
         </antcall>
-        
+
     </target>
 
     <target name="build-guidelines-pdf" description="Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.)" depends="build-guidelines-html">
-         <antcall target="build-customization-guidelines-pdf">
+        <antcall target="build-customization-guidelines-pdf">
             <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}.html"/>
         </antcall>
         <antcall target="build-customization-guidelines-pdf">
@@ -464,7 +464,7 @@
             <param name="prince.input" location="${dir.build}/MEI_Guidelines_v${meiversion.next}+neumes.html"/>
         </antcall>
     </target>
-    
+
     <target name="build-customization-guidelines-pdf" description="Builds the PDF version of the MEI guidelines for a customization submitted as prince.input param.">
         <!-- create output directory for PDF -->
         <mkdir dir="${dir.dist}/guidelines/pdf"/>
@@ -472,11 +472,11 @@
         <basename file="${prince.input}" property="prince.output.basename" suffix=".html"/>
         <property name="prince.output.filename" value="${prince.output.basename}.pdf"/>
         <property name="prince.output.path" location="${dir.dist}/guidelines/pdf/${prince.output.filename}"/>
-        
+
         <echo message="calling prince with following parameters"/>
         <echo message=".   prince.input=${prince.input}"/>
         <echo message=".   prince.output.path=${prince.output.path}"/>
-        
+
         <!-- run Prince to convert HTML guidelines to PDF -->
         <exec executable="prince" failonerror="true">
             <arg prefix="--log=" value="${dir.build}/prince.log"/>
@@ -500,7 +500,7 @@
             <arg value="index.js"/>
         </exec>
     </target>
-    
+
     <target name="generate-images-py" description="Generates SVG images of MEI files in assets/images/GeneratedImages; depends on python3 with Verovio installed.">
         <exec executable="python3" logerror="true" dir="${basedir}/utils/examples" failifexecutionfails="true" failonerror="true">
             <arg value="generate-examples.py"/>
@@ -573,7 +573,7 @@
         <!-- set old file to compare with -->
         <property name="old.default" value="${dir.build}/${canonicalized.file.latest}"/>
         <condition property="old.default-available" value="true">
-                <available file="${old.default}"/>
+            <available file="${old.default}"/>
         </condition>
         <get src="https://raw.githubusercontent.com/music-encoding/schema/main/${meiversion.latest}/${canonicalized.file.latest}" dest="${old.default}" unless:true="${old.default-available}"/>
 
