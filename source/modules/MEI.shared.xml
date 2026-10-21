@@ -2609,16 +2609,29 @@
         </datatype>
       </attDef>
       <attDef ident="head.shape" usage="opt">
-        <desc xml:lang="en">Used to override the head shape normally used for the given duration.</desc>
+        <desc xml:lang="en">Used to describe the class of head shape.</desc>
         <datatype>
           <rng:ref name="data.HEADSHAPE"/>
         </datatype>
-        <constraintSpec ident="check_headshape_num" scheme="schematron">
+      </attDef>
+      <attDef ident="head.glyphname" usage="opt">
+        <desc xml:lang="en">Glyph name.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="head.glyphnum" usage="opt">
+        <desc xml:lang="en">Numeric glyph reference in hexadecimal notation, <abbr>e.g.</abbr>, "#xE000" or "U+E000". N.B. SMuFL
+          version 1.18 uses the range U+E000 - U+ECBF.</desc>
+        <datatype>
+          <rng:ref name="data.HEXNUM"/>
+        </datatype>
+        <constraintSpec ident="check_glyph.num" scheme="schematron">
           <constraint>
             <sch:rule
-              context="mei:*[(matches(@head.shape, '#x') or matches(@head.shape, 'U+')) and (lower-case(@head.auth) eq 'smufl')]">
+              context="mei:*[@head.glyphnum and (lower-case(@head.auth) eq 'smufl' or @head.glyphuri eq 'http://www.smufl.org/')]">
               <sch:assert role="warning"
-                test="matches(normalize-space(@head.shape), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
+                test="matches(normalize-space(@head.glyphnum), '^(#x|U\+)E([0-9AB][0-9A-F][0-9A-F]|C[0-9A][0-9A-F]|CB[0-9A-F])$')"
                 >SMuFL version 1.18 uses the range U+E000 - U+ECBF.</sch:assert>
             </sch:rule>
           </constraint>
