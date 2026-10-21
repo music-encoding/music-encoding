@@ -384,6 +384,24 @@
         </ant>
     </target>
 
+    <target name="build-schematron" description="Builds the Schematron schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+        <fail unless="customization.path" message="Missing input: You must specify a customization path using -Dcustomization.path=/path/to/file.xml" />
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <!-- Convert path to file URI for Saxon/XSLT -->
+        <path-to-file-uri path="${canonicalized.source.path}" property="canonicalized.source.uri"/>
+        <echo>building schematron for ${selectedSchema} from ${customization.path}</echo>
+        <echo>    source: ${canonicalized.source.uri}</echo>
+        <echo>    output: ${dir.dist.schemata}/${selectedSchema}.sch</echo>
+        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true">
+            <property name="inputFile" value="${customization.path}"/>
+            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.sch"/>
+            <property name="defaultSource" value="${canonicalized.source.uri}"/>
+            <property name="verbose" value="${verbose}"/>
+            <property name="processODD" value="true"/>
+            <reference refid="mei.classpath" torefid="classpath"/>
+        </ant>
+    </target>
+
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
         <antcall target="build-customization-guidelines-html">
             <param name="customization.path" location="customizations/mei-all.xml"/>
