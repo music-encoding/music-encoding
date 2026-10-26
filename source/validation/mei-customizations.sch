@@ -109,9 +109,9 @@
             <sch:extends rule="get.source"/>
             <sch:let name="classenames.mei.source" value="$mei.source//tei:classSpec/@ident"/>
             <sch:let name="classenames.applicable.source" value="$applicable.source.doc//tei:classSpec/@ident"/>
-            <sch:let name="classnames.customization" value="//tei:classSpec/@ident[@mode = 'add']"/>
+            <sch:let name="classnames.customization" value="//tei:classSpec[@mode = 'add']/@ident"/>
             <sch:let name="classnames.deleted" value="//tei:classSpec[@mode = 'delete']/@ident"/>
-            <sch:assert test="@key = ($classenames.mei.source, $classenames.applicable.source, $classnames.customization)">The referenced class "<sch:value-of select="@key"/>" does neither exist in the applicable source nor in mei source or in your customization.</sch:assert>
+            <sch:assert test="@key = ($classenames.mei.source, $classenames.applicable.source, $classnames.customization)">The referenced class "<sch:value-of select="@key"/>" (module: <sch:value-of select="$module"/>) does neither exist in the applicable source (<sch:value-of select="$applicable.source.path"/>) nor in mei source (<sch:value-of select="$mei.source.path"/>) or in your customization (<sch:value-of select="$customization.path"/>).</sch:assert>
             <sch:report role="warning" test="@key = $classnames.deleted">The referenced class "<sch:value-of select="@key"/>" has been deleted from your customization. When converting the ODD to a schema the class will probably be zapped but you should remove the reference here or make sure it is not deleted from your customization.</sch:report>
         </sch:rule>
     </sch:pattern>
