@@ -94,6 +94,20 @@
     </sch:pattern>
     
     <!-- CHECK IF MODULES ARE AVAILABLE -->
+    <sch:pattern id="check_moduleSpec">
+        <sch:let name="moduleKey" value="@ident"/>
+        <sch:rule context="tei:moduleSpec">
+            <sch:assert test="@mode" role="warning">The "<sch:value-of select="$moduleKey"/>" <sch:name/> should have a @mode.</sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:moduleSpec">
+            <sch:extends rule="get.source"/>
+            <sch:let name="moduleKey" value="@ident"/>
+            <sch:let name="exists" value="$moduleKey = $applicable.source.doc//tei:moduleSpec/@ident"/>
+            <sch:assert test="$exists">There is no module "<sch:value-of select="$moduleKey"/>".</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+    
+    <!-- CHECK IF MODULES ARE AVAILABLE -->
     <sch:pattern id="check_moduleRef">
         <sch:rule context="tei:moduleRef[@key]">
             <sch:extends rule="get.source"/>
