@@ -543,6 +543,7 @@
                         <graphic url="../images/ExampleImages/barlines.png"/>
                      </figure>
                   </p>
+                  <p>A more detailed discussion on encoding section-level repetition using bar lines can be found in <ptr target="#cmnRepSection"/>.</p>
                   <p>The behavior of bar lines across staves can be controlled using various attributes of the <gi scheme="MEI">staffGrp</gi> element (the most common example being <att>bar.thru</att>), discussed in section <ptr target="#cmnDefs"/>.</p>
                </div>
                <div xml:id="cmnBeams" type="div3">
@@ -1292,29 +1293,63 @@
                </div>
                <div xml:id="cmnRep" type="div3">
                   <head>Repetition in CMN</head>
-                  <p>Repetition is a characteristic feature of music. Many musical forms rely on repetition (sometimes with modification) of distinct sections of the music. Repetition in this sense can be thought of as ‘structural’. At the same time, composers and engravers of music often use local symbols for repeating smaller portions of music instead of writing them in full more than once. In this case, the repetition is better defined as a species of abbreviation.</p>
+                  <p>Repetition is a characteristic feature of music. Many musical forms rely on repetition (sometimes with modification) of distinct sections of the music. Repetition in this sense can be thought of as <emph>structural</emph>. At the same time, composers and engravers of music often use local symbols for repeating smaller portions of music instead of writing them in full more than once. In this case, the repetition is better defined as a species of abbreviation.</p>
                   <div xml:id="cmnRepStruct" type="div4">
-                     <head>Structural Repetition</head>
-                     <p>The most common variety of structural repetition is the use of repeat bar lines and endings. The encoding of bar lines is discussed in section <ptr target="cmnBarlines"/>, and endings in <ptr target="#sharedStrucRep"/>.</p>
-                     <p>For larger-scale repetition using da capo, segnos, codas, and etc., MEI provides the <gi scheme="MEI">repeatMark</gi> element:</p>
+                     <head>Large-Scale Structural Repetition</head>
+                     <p>Large-scale structural repetition; that is, repetition of multiple sections, can be encoded using one or more <gi scheme="MEI">expansion</gi> elements and/or the <gi scheme="MEI">repeatMark</gi> element.</p>
+                     <p>Use of <gi scheme="MEI">section</gi> and <gi scheme="MEI">expansion</gi> elements is discussed in section <ptr target="#sharedMdivContent" />. This approach enables the encoding of complex musical structures (repeats, da capos, multiple endings, etc.) separate from their visual encoding or performance implications. Multiple performed versions, even conflicting ones, can be captured without changing the encoded structures themselves.</p>
+                     <p>The <gi scheme="MEI">repeatMark</gi> element, a specialized form of the <gi scheme="MEI">dir</gi> (performance directive) element, can be used to encode the text and/or symbols used in a manuscript to signal large-scale repetition:</p>
                      <p>
                         <specList>
                            <specDesc key="repeatMark"/>
                         </specList>
                      </p>
-                     <p>Its <att>func</att> attribute indicates the function of the mark, usually implying a corresponding form; allowed values are listed in <ident type="class">att.repeatMark.log</ident>. Textual content or glyph information (via <ident type="class">att.extSym.names</ident>) can also be provided, and will override the symbol implied by <att>func</att>.
-                     </p>
+                     <p>Its <att>func</att> attribute indicates the function of the mark, usually implying a corresponding form; allowed values are listed in <ident type="class">att.repeatMark.log</ident>.</p>
                      <p>The placement of the repeat mark is indicated using a <att>tstamp</att>, <att>tstamp.ges</att>, <att>tstamp.real</att>, or <att>startId</att> attribute. To place the mark above a bar line, a <att>tstamp</att> value of one more than the number of beats in the measure can be used (e.g. <val>5</val> in 4/4 time):</p>
                      <p>
                         <figure>
+                           <head>Encoding a segno using <gi scheme="MEI">repeatMark</gi></head>
                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code verovio"
                            xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/repeatMark.mei" parse="text"/></egXML>
                         </figure>
                      </p>
-                     <p>The semantic meaning of the repetition can be encoded using the <gi scheme="MEI">expansion</gi> element, discussed in section <ptr target="#sharedStrucRep"/>.</p>
+                     <p>In situations where the encoder does not wish to assign a particular meaning to a symbol, textual content or glyph information (via <ident type="class">att.extSym</ident>) can be provided instead of or in addition to <att>func</att>:</p>
+                     <figure>
+                        <head><gi scheme="MEI">repeatMark</gi> without <att>func</att> and with text or symbol information</head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-only-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>The textual content of a <gi scheme="MEI">repeatMark</gi> element can also be used to assign a "repetition function" to any symbol or text, for example in situations where a manuscript uses nonstandard symbols. In other words, <att>func</att> can be used to <q>normalize</q> historical or individual practice:</p>
+                     <figure>
+                        <head><gi scheme="MEI">repeatMark</gi> with <att>func</att> and with text or symbol information</head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-func-and-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>It may also be used to capture editorial suggestions not present in the music notation itself, for example:</p>
+                     <figure>
+                        <head>Encoding editorial suggestion with <gi scheme="MEI">repeatMark</gi></head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-only-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                  </div>
+                  <div xml:id="cmnRepSection" type="div4">
+                     <head>Section-Level Repetition</head>
+                     <p>Repetition of the contents of a section can be encoded using the <att>left</att> and <att>right</att> attributes on the first and last measures of the repeated material:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>When a measure ends one repeated section and begins another, both the <att>left</att> and <att>right</att> attributes can be used:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat-right-and-left.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>It is preferred to encode repeat barlines on the measure to which they <q>belong</q>:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat-which-measure.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>The other allowed values for <att>left</att> and <att>right</att> are documented in <ptr target="cmnBarlines"/>.</p>
                   </div>
                   <div xml:id="cmnRepSym" type="div4">
-                     <head>Measure-Level Repetition Symbols</head>
+                     <head>Mid-Measure Repetition</head>
                      <p>In addition to repetition at the section level, CMN includes a number of different symbols for measure-level repetitions. Many of these symbols are found in manuscripts and may be regarded as personal conventions of their respective authors. Some signs, however, have been widely adopted. For example, it is common to indicate the repetition of a single beat or an entire measure with one or more diagonal lines, sometimes with dots at the upper left and lower right, much like a percent sign. The illustration below contains the most common signs:</p>
                      <p>
                         <figure>
