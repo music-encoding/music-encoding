@@ -19,6 +19,8 @@
 -->
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" version="4.9" rend="book" xml:lang="en">
    <teiHeader>
       <fileDesc>
@@ -413,6 +415,53 @@
                            </figure>
                         </p>
                      </div>
+                     <div xml:id="cmnChordsSplitStems" type="div5">
+                        <head>Split Stems</head>
+                        <p>In some more modern cases, a chord may have a split stem, where the notes of the chord are divided into two groups, each with its own stem. This is often necessary when two notes sharing the same diatonic pitch have different accidentals. In MEI, this can be represented by using <gi scheme="MEI">chord</gi> elements, where single notes carry a <att>stem.split</att> attribute to indicate the direction of the stem.</p>
+                        <p>In the following example from <name ref="https://en.wikipedia.org/wiki/B%C3%A9la_Bart%C3%B3k">Béla Bartók’s</name>
+                           <hi rend="italic">Mikrokosmos</hi>, Sz.107 the chords in the right hand may be encoded as follows.</p>
+
+                        <p>
+                           <figure>
+                              <head>A chord with a split stem</head>
+                              <graphic url="../images/ExampleImages/stemsplit.png"/>
+                           </figure>
+                        </p>
+                        <p>
+                           <figure>
+                              <head/>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/stemsplit_01.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+
+                     </div>
+                     <div xml:id="cmnChordsClusters" type="div5">
+                        <head>Note Clusters</head>
+                        <p>A <term>tone cluster</term> is a musical chord comprised of adjacent musical steps played simultaneously. In MEI, clusters can be represented to capture both their underlying harmonic meaning (semantics) and their specific engraving styles (visual layout).</p>
+                        <p>To declare a chord as a cluster, the <gi scheme="MEI">chord</gi> element is used with the <att>cluster</att> attribute. The <att>cluster</att> attribute specifies which keys or scale steps are to be filled in between the explicitly encoded notes. Its values map to the <ident type="datatype">data.CLUSTER</ident> data type, which includes:
+                           <list type="bulleted">
+                              <item><val>white</val>: Play only white keys (diatonic steps).</item>
+                              <item><val>black</val>: Play only black keys (pentatonic steps).</item>
+                              <item><val>chromatic</val>: Play all half-steps within the interval (chromatic steps).</item>
+                           </list>
+                        </p>
+                        <p>Rather than encoding every internal note, the encoder only needs to provide the highest and lowest notes of the cluster. Rendering engines fill in the missing steps automatically based on the value of the <att>cluster</att> attribute.</p>                     
+
+                        <p>
+                           <figure>
+                              <head>A cluster on white keys only</head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_01.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+
+                        <p>
+                           <figure>
+                              <head>A chromatic cluster</head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cluster_02.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                     
+                     </div>
                   </div>
                   <div xml:id="cmnRests" type="div4">
                      <head>Rests</head>
@@ -479,6 +528,24 @@
             <div xml:id="cmnAdditionalMeasureContent" type="div2">
                <head>Advanced CMN Features</head>
                <p>Over time, in addition to the basic features of note, chord, and rest, many other symbols have been added to CMN. The following section describes some of these symbols and introduces their handling in MEI.</p>
+               <div xml:id="cmnBarlines" type="div3">
+                  <head>Bar lines</head>
+                  <p>The bar lines bounding measures can take a variety of different forms to indicate various musical features. These forms can be encoded in MEI using the following attributes of the <gi scheme="MEI">measure</gi> element:</p>
+                  <p>
+                     <specList>
+                        <specDesc key="att.measure.log" atts="right left"/>
+                     </specList>
+                  </p>
+                  <p>The following example shows some common uses of <att>right</att>:</p>
+                  <p>
+                     <figure>
+                        <head>Measures with common values for <att>right</att></head>
+                        <graphic url="../images/ExampleImages/barlines.png"/>
+                     </figure>
+                  </p>
+                  <p>A more detailed discussion on encoding section-level repetition using bar lines can be found in <ptr target="#cmnRepSection"/>.</p>
+                  <p>The behavior of bar lines across staves can be controlled using various attributes of the <gi scheme="MEI">staffGrp</gi> element (the most common example being <att>bar.thru</att>), discussed in section <ptr target="#cmnDefs"/>.</p>
+               </div>
                <div xml:id="cmnBeams" type="div3">
                   <head>Beams</head>
                   <p>A very common feature of music from the CMN repertoire is the beaming of eighth or shorter notes. MEI provides two elements for the explicit encoding of features joined by beams.</p>
@@ -576,6 +643,16 @@
                         <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample-schulhoff.txt" parse="text"/></egXML>
                      </figure>
                   </p>
+                  <p>Another way of notating beams is to use the <att>beam</att> attribute found on <gi scheme="MEI">note</gi>, <gi scheme="MEI">chord</gi>, <gi scheme="MEI">rest</gi>, and <gi scheme="MEI">space</gi> elements. This attribute allows three values:</p>
+                  <list type="gloss">
+                     <label>i (initial)</label>
+                     <item>Marks the start of a beam</item>
+                     <label>m (medial)</label>
+                     <item>Marks a participant in a beam other than the first or last</item>
+                     <label>t (terminal)</label>
+                     <item>Marks the end of a beam</item>
+                  </list>
+                  <p>Although <att>beam</att> can be used for rendering beams, <gi scheme="MEI">beam</gi> or <gi scheme="MEI">beamSpan</gi> is preferred over <att>beam</att> in most cases. However, because it makes beaming a <emph>property</emph> of a note, chord, rest, or space rather than an <emph>entity</emph> in its own right, <att>beam</att> can provide a flatter structure that simplifies analytical tasks.</p>
                   <p>In addition to the explicit encoding of beams accommodated by the <gi scheme="MEI">beam</gi> and <gi scheme="MEI">beamSpan</gi> elements and the <att>beam</att> attribute, MEI allows for specification of default beaming behavior using the following attributes on <gi scheme="MEI">scoreDef</gi>, <gi scheme="MEI">staffDef</gi>, and <gi scheme="MEI">layerDef</gi>:</p>
                   <list type="gloss">
                      <label>beam.group</label>
@@ -813,14 +890,14 @@
                      </figure>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-tuplets01.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_01.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                   <p>The duration of the entire tuplet may be encoded using the usual ‘power of 2’ values, <abbr>e.g.</abbr>, 1, 2, 4, etc., in the <att>dur</att> attribute if necessary.</p>
                   <p>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample140.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_02.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                   <p>Tuplets are often highlighted using brackets above or below the affected notes. The presence and position of these brackets can be encoded using the <att>bracket.place</att> (above / below) and <att>bracket.visible</att> (true / false) attributes.</p>
@@ -836,7 +913,7 @@
                      </figure>
                      <figure>
                         <head/>
-                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample141.txt" parse="text"/></egXML>
+                        <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tuplet_03.txt" parse="text"/></egXML>
                      </figure>
                   </p>
                </div>
@@ -923,7 +1000,7 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_01.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>The <att>unitdur</att> attribute value indicates the exact note values in an aural rendition of a measured tremolo, <abbr>i.e.</abbr>, quarters, 8ths, and so on. The <att>stem.mod</att> attribute must also be explicity set on the child <gi scheme="MEI">note</gi> or <gi scheme="MEI">chord</gi> element for a complete visual representation. The example above shows a short excerpt from the second movement of <name ref="https://en.wikipedia.org/wiki/Franz_Schubert">Franz Schubert’s</name>
@@ -932,25 +1009,25 @@
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148a.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>Note that within beams the number of slashes should be adjusted anyway.</p>
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample148b.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_03.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>The <gi scheme="MEI">bTrem</gi> element can be used as shorthand for a tuplet consisting of repetitions of a single note or chord. This kind of markup may be the result of an optical music recognition process in which complete semantics cannot be determined <hi rend="italic">a priori</hi>. When used this way, the <att>num</att> attribute on <gi scheme="MEI">bTrem</gi> can record a number to be rendered along with the pseudo-tuplet. In spite of this capability, the <gi scheme="MEI">tuplet</gi> element is preferred. This makes the following examples’ visual appearance equal, but not necessarily their semantics.</p>
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample149.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_04.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample149a.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_05.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>In the case of alternating pitches, MEI offers the <gi scheme="MEI">fTrem</gi> (fingered tremolo) element. While it mostly behaves the same as <gi scheme="MEI">bTrem</gi>, a fingered tremolo requires exactly two child elements, either being a <gi scheme="MEI">note</gi> or <gi scheme="MEI">chord</gi>. The <att>unitdur</att> attribute value indicates the exact note values in an aural rendition of a measured tremolo, <abbr>i.e.</abbr>, 4ths, 8ths, 16ths, etc. The number of beams present in the source is captured by the <att>beams</att> attribute.</p>
@@ -961,7 +1038,7 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample150.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/tremolo_06.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                      <p>Similar to <gi scheme="MEI">bTrem</gi>, here the number of beams present may disagree with the rhythmic value indicated by the <att>unitdur</att> attribute, especially in manuscript sources. The number of so-called ‘floating’ beams, which are not attached to stems, may be encoded in the <att>beams.float</att> attribute.</p>
@@ -998,11 +1075,11 @@
                      <p>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample152.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fermata_01.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/cmn-sample153.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fermata_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                   </div>
@@ -1093,11 +1170,11 @@
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fing1.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fingering_01.txt" parse="text"/></egXML>
                         </figure>
                         <figure>
                            <head/>
-                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fing2.txt" parse="text"/></egXML>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve" valid="true"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/cmn/fingering_02.txt" parse="text"/></egXML>
                         </figure>
                      </p>
                   </div>
@@ -1147,7 +1224,7 @@
                </div>
                <div xml:id="cmnDir" type="div3">
                   <head>Directives and Rehearsal marks</head>
-                  <p>In CMN scores, there is often a large number of natural language instructions. Some of them concern the loudness and the speed of the performance, in which case MEI offers the elements <gi scheme="MEI">dynam</gi> (described at <ptr target="#cmnDynam"/>) and <gi scheme="MEI">tempo</gi>. In other cases, however, they provide other instructions for the performer. Instead of providing separate elements for all possible types of such directions, MEI offers the generic <gi scheme="MEI">dir</gi> element. Although this element is not CMN specific (it is defined in <ptr target="#shared"/>), it is frequently used in this repertoire.</p>
+                  <p>In CMN scores, there is often a large number of natural language instructions. Some of them concern the loudness and the speed of the performance, in which case MEI offers the elements <gi scheme="MEI">dynam</gi> (described in <ptr target="#cmnDynam"/>) and <gi scheme="MEI">tempo</gi>. Others are structural repetition instructions, for which MEI offers the <gi scheme="MEI">repeatMark</gi> element (described in <ptr target="#cmnRepStruct" />). In other cases, however, they provide other instructions for the performer. Instead of providing separate elements for all possible types of such directions, MEI offers the generic <gi scheme="MEI">dir</gi> element. Although this element is not CMN specific (it is defined in <ptr target="#shared"/>), it is frequently used in this repertoire.</p>
                   <div xml:id="cmnTempo" type="div4">
                      <head>Tempo changes and other directives</head>
                      <p>A tempo or character indication is often provided above the topmost staff of the first measure of a score, movement, or section. This indication, such as "Allegro moderato" or "Andante maestoso", may be regarded as a label. Though it is possible to label the movement, etc. using a <att>label</att> attribute attached to the enclosing structural entity (that is, on <gi scheme="MEI">mdiv</gi> or <gi scheme="MEI">section</gi>), it is often required to capture the exact position, spelling, or other features of the label as found in the underlying source material. In these cases, an element is necessary.</p>
@@ -1216,13 +1293,63 @@
                </div>
                <div xml:id="cmnRep" type="div3">
                   <head>Repetition in CMN</head>
-                  <p>Repetition is a characteristic feature of music. Many musical forms rely on repetition (sometimes with modification) of distinct sections of the music. Repetition in this sense can be thought of as ‘structural’. At the same time, composers and engravers of music often use local symbols for repeating smaller portions of music instead of writing them in full more than once. In this case, the repetition is better defined as a species of abbreviation.</p>
+                  <p>Repetition is a characteristic feature of music. Many musical forms rely on repetition (sometimes with modification) of distinct sections of the music. Repetition in this sense can be thought of as <emph>structural</emph>. At the same time, composers and engravers of music often use local symbols for repeating smaller portions of music instead of writing them in full more than once. In this case, the repetition is better defined as a species of abbreviation.</p>
                   <div xml:id="cmnRepStruct" type="div4">
-                     <head>Structural Repetition</head>
-                     <p>Large-scale structural repetition, utilizing <gi scheme="MEI">section</gi> and <gi scheme="MEI">expansion</gi> elements, is discussed in section <ptr target="#sharedMdivContent"/>. This section will focus on repetition within sections.</p>
+                     <head>Large-Scale Structural Repetition</head>
+                     <p>Large-scale structural repetition; that is, repetition of multiple sections, can be encoded using one or more <gi scheme="MEI">expansion</gi> elements and/or the <gi scheme="MEI">repeatMark</gi> element.</p>
+                     <p>Use of <gi scheme="MEI">section</gi> and <gi scheme="MEI">expansion</gi> elements is discussed in section <ptr target="#sharedMdivContent" />. This approach enables the encoding of complex musical structures (repeats, da capos, multiple endings, etc.) separate from their visual encoding or performance implications. Multiple performed versions, even conflicting ones, can be captured without changing the encoded structures themselves.</p>
+                     <p>The <gi scheme="MEI">repeatMark</gi> element, a specialized form of the <gi scheme="MEI">dir</gi> (performance directive) element, can be used to encode the text and/or symbols used in a manuscript to signal large-scale repetition:</p>
+                     <p>
+                        <specList>
+                           <specDesc key="repeatMark"/>
+                        </specList>
+                     </p>
+                     <p>Its <att>func</att> attribute indicates the function of the mark, usually implying a corresponding form; allowed values are listed in <ident type="class">att.repeatMark.log</ident>.</p>
+                     <p>The placement of the repeat mark is indicated using a <att>tstamp</att>, <att>tstamp.ges</att>, <att>tstamp.real</att>, or <att>startId</att> attribute. To place the mark above a bar line, a <att>tstamp</att> value of one more than the number of beats in the measure can be used (e.g. <val>5</val> in 4/4 time):</p>
+                     <p>
+                        <figure>
+                           <head>Encoding a segno using <gi scheme="MEI">repeatMark</gi></head>
+                           <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code verovio"
+                           xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/verovio/repeatMark.mei" parse="text"/></egXML>
+                        </figure>
+                     </p>
+                     <p>In situations where the encoder does not wish to assign a particular meaning to a symbol, textual content or glyph information (via <ident type="class">att.extSym</ident>) can be provided instead of or in addition to <att>func</att>:</p>
+                     <figure>
+                        <head><gi scheme="MEI">repeatMark</gi> without <att>func</att> and with text or symbol information</head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-only-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>The textual content of a <gi scheme="MEI">repeatMark</gi> element can also be used to assign a "repetition function" to any symbol or text, for example in situations where a manuscript uses nonstandard symbols. In other words, <att>func</att> can be used to <q>normalize</q> historical or individual practice:</p>
+                     <figure>
+                        <head><gi scheme="MEI">repeatMark</gi> with <att>func</att> and with text or symbol information</head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-func-and-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>It may also be used to capture editorial suggestions not present in the music notation itself, for example:</p>
+                     <figure>
+                        <head>Encoding editorial suggestion with <gi scheme="MEI">repeatMark</gi></head>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-repeatMark-only-symbol.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                  </div>
+                  <div xml:id="cmnRepSection" type="div4">
+                     <head>Section-Level Repetition</head>
+                     <p>Repetition of the contents of a section can be encoded using the <att>left</att> and <att>right</att> attributes on the first and last measures of the repeated material:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>When a measure ends one repeated section and begins another, both the <att>left</att> and <att>right</att> attributes can be used:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat-right-and-left.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>It is preferred to encode repeat barlines on the measure to which they <q>belong</q>:</p>
+                     <figure>
+                        <head/>
+                        <egXML rend="code" xml:space="preserve" xmlns="http://www.tei-c.org/ns/Examples"><xi:include href="../examples/cmn/cmn-barline-repeat-which-measure.txt" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/></egXML>
+                     </figure>
+                     <p>The other allowed values for <att>left</att> and <att>right</att> are documented in <ptr target="cmnBarlines"/>.</p>
                   </div>
                   <div xml:id="cmnRepSym" type="div4">
-                     <head>Measure-Level Repetition Symbols</head>
+                     <head>Mid-Measure Repetition</head>
                      <p>In addition to repetition at the section level, CMN includes a number of different symbols for measure-level repetitions. Many of these symbols are found in manuscripts and may be regarded as personal conventions of their respective authors. Some signs, however, have been widely adopted. For example, it is common to indicate the repetition of a single beat or an entire measure with one or more diagonal lines, sometimes with dots at the upper left and lower right, much like a percent sign. The illustration below contains the most common signs:</p>
                      <p>
                         <figure>
