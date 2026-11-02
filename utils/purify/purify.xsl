@@ -287,7 +287,7 @@
     <xsl:call-template name="purify:alert">
       <xsl:with-param name="message" select="$message" tunnel="yes" />
     </xsl:call-template>
-    <!--<xsl:message>Purify: TODO</xsl:message>-->
+    <!--<xsl:message>Pure ODD: TODO</xsl:message>-->
     <junk was="{name(.)}">
       <xsl:apply-templates select="@*,*"/>
     </junk>
