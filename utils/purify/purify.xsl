@@ -332,7 +332,7 @@
   
   <xsl:template name="purify:add-processing-instruction">
     <xsl:param name="message" as="xs:string" tunnel="yes" />
-    <xsl:processing-instruction name="PURIFY"><xsl:copy-of select="$message"/></xsl:processing-instruction>
+    <xsl:processing-instruction name="PUREODD"><xsl:copy-of select="$message"/></xsl:processing-instruction>
   </xsl:template>
   
   <xsl:template name="purify:add-comment">
