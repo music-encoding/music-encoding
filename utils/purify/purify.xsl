@@ -37,6 +37,24 @@
     <xsl:copy/>
   </xsl:template>
     
+  <xsl:template match="/">
+    <xsl:message>
+      Target TEI version: <xsl:value-of select="$target-tei-version"/>
+    </xsl:message>
+    <xsl:message>
+        major: <xsl:value-of select="$target-tei-version.major"/>
+    </xsl:message>
+    <xsl:message>
+        minor: <xsl:value-of select="$target-tei-version.minor"/>
+    </xsl:message>
+    <xsl:message>
+        patch: <xsl:value-of select="$target-tei-version.patch"/>
+    </xsl:message>
+    
+    <xsl:apply-templates />
+
+  </xsl:template>
+    
   <!-- ********************************************* -->
   <!-- Process TEI ODD elements that need to change. -->
   <!-- ********************************************* -->
