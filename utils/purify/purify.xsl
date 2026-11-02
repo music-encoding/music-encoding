@@ -337,7 +337,7 @@
   
   <xsl:template name="purify:add-comment">
     <xsl:param name="message" as="xs:string" tunnel="yes" />
-    <xsl:comment>PURIFY: <xsl:copy-of select="$message"/></xsl:comment>
+    <xsl:comment>PUREODD: <xsl:copy-of select="$message"/></xsl:comment>
   </xsl:template>
 
   <xsl:template name="purify:add-todo">
@@ -348,7 +348,7 @@
   <xsl:template name="purify:log-message">
     <xsl:param name="message" as="xs:string" tunnel="yes" />
     <xsl:param name="terminate" as="xs:string" select="xs:string('no')" tunnel="yes" />
-    <xsl:message terminate="{$terminate}">PURIFY: <xsl:copy-of select="$message"/></xsl:message>
+    <xsl:message terminate="{$terminate}">PUREODD: <xsl:copy-of select="$message"/></xsl:message>
     <!-- (line <xsl:value-of select="saxon:line-number(.)"/>) only available in Saxon-PE or Saxon-EE -->
   </xsl:template>
   
