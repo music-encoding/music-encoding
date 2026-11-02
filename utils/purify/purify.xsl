@@ -342,7 +342,7 @@
 
   <xsl:template name="purify:add-todo">
     <xsl:param name="message" as="xs:string" tunnel="yes" />
-    <xsl:comment>TODO: purify <xsl:copy-of select="$message"/></xsl:comment>
+    <xsl:comment>TODO: Pure ODD <xsl:copy-of select="$message"/></xsl:comment>
   </xsl:template>
 
   <xsl:template name="purify:log-message">
