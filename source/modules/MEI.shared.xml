@@ -809,6 +809,7 @@
       <memberOf key="att.lineLoc"/>
       <memberOf key="att.octave"/>
       <memberOf key="att.octaveDisplacement"/>
+      <memberOf key="att.staffLoc"/>
     </classes>
     <attList>
       <attDef ident="cautionary" usage="opt">
@@ -869,11 +870,11 @@
   </classSpec>
   <classSpec ident="att.clefShape" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that record the shape of a clef.</desc>
-    <constraintSpec ident="shape_requires_line" scheme="schematron">
+    <constraintSpec ident="shape_requires_line_or_loc" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clef[matches(@shape, '[FCG]')]">
-          <sch:assert test="@line">When @shape is present, @line must also be
-            specified.</sch:assert>
+          <sch:assert test="@line or @loc">An 'F', 'C', or 'G' clef requires that its position be
+            specified using @line or @loc.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -5456,9 +5457,17 @@
     <content>
       <empty/>
     </content>
+    <constraintSpec ident="clef_line_loc_exclusive" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:clef">
+          <sch:assert test="not(@line and @loc)">The @line and @loc attributes must not be used
+            together on the same clef.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <constraintSpec ident="Clef_position_lines" scheme="schematron">
       <constraint>
-        <sch:rule context="mei:clef[matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
+        <sch:rule context="mei:clef[@line][matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
           <sch:assert
             test="number(@line) &lt;= number(ancestor::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
@@ -5469,7 +5478,7 @@
     </constraintSpec>
     <constraintSpec ident="Clef_position_nolines" scheme="schematron">
       <constraint>
-        <sch:rule context="mei:clef[ancestor::mei:staffDef[not(@lines)]]">
+        <sch:rule context="mei:clef[@line][ancestor::mei:staffDef[not(@lines)]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
           <sch:assert
             test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
@@ -5484,6 +5493,16 @@
         needs to be recorded for the clef or when multiple, simultaneous clefs occur on a single
         staff. This element may also be used within the staff context to indicate changes of
         clef.</p>
+      <p>The position of a clef may be specified using either <att>line</att> or <att>loc</att>,
+        but not both. The <att>line</att> attribute numbers staff lines starting with <val>1</val>
+        for the bottom line. The <att>loc</att> attribute uses
+        <ident type="datatype">data.STAFFLOC</ident>: integer MEI virtual units (half the distance
+        between adjacent staff lines), with <val>0</val> at the bottom line, positive values above
+        it, and negative values below it. For a position on a staff line, loc = 2 * (line - 1).
+        Thus, line="1" and loc="0" are alternative ways to specify the bottom line, while
+        loc="5" specifies the space between the third and fourth lines. The <att>loc</att> attribute
+        allows clefs to be placed on spaces as well as lines.
+      </p>
     </remarks>
   </elementSpec>
   <elementSpec ident="clefGrp" module="MEI.shared">
