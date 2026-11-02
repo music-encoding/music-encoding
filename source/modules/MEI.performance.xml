@@ -20,6 +20,7 @@
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.performance">
   <moduleSpec ident="MEI.performance">
@@ -96,14 +97,6 @@
         <rng:ref name="when"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="betype_required_when_begin_or_end" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:clip[@begin or @end]">
-          <sch:assert role="warning" test="@betype or ancestor::mei:*[@betype]">When @begin or @end
-            is used, @betype should appear on clip or one of its ancestors.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks xml:lang="en">
       <p>This element is analogous to the <gi scheme="MEI">zone</gi> element in the facsimile
         module.</p>
@@ -147,14 +140,6 @@
         <rng:ref name="clip"/>
       </rng:zeroOrMore>
     </content>
-    <constraintSpec ident="betype_required_when_begin_or_end" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:recording[@begin or @end]">
-          <sch:assert role="warning" test="@betype">When @begin or @end is used, @betype should be
-            present.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
     <remarks xml:lang="en">
       <p>The <att>startid</att> attribute may be used to hold a reference to the first feature
         occurring in this performance. This element is analogous to the <gi scheme="MEI"
@@ -213,12 +198,7 @@
           since attribute. This attribute can only be interpreted meaningfully in conjunction with
           the inttype attribute.</desc>
         <datatype>
-          <rng:choice>
-            <rng:data type="decimal">
-              <rng:param name="minInclusive">1</rng:param>
-            </rng:data>
-            <rng:data type="time"/>
-          </rng:choice>
+          <rng:ref name="data.DECIMALORTIMEINTERVAL"/>
         </datatype>
       </attDef>
       <attDef ident="abstype" usage="opt">
