@@ -2,10 +2,37 @@
 
 # run this script from anywhere
 
-# Config
-OVERWRITE=true
+# Config (defaults, can be changed via options)
+OVERWRITE=false
 PROCESS_DATASPECS=false
 PROCESS_FILES=true
+
+usage() {
+    cat <<EOF
+Usage: $(basename "$0") [options]
+
+Options:
+  --overwrite, --no-overwrite   overwrite source/modules in place, or write to
+                                ideas/modules_purified (default: no-overwrite)
+  --dataspecs, --no-dataspecs   run purifyDataSpecs.xsl (default: off)
+  --files, --no-files           run purify.xsl (default: on)
+  -h, --help                    show this help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --overwrite)    OVERWRITE=true ;;
+        --no-overwrite) OVERWRITE=false ;;
+        --dataspecs)    PROCESS_DATASPECS=true ;;
+        --no-dataspecs) PROCESS_DATASPECS=false ;;
+        --files)        PROCESS_FILES=true ;;
+        --no-files)     PROCESS_FILES=false ;;
+        -h|--help)      usage; exit 0 ;;
+        *)              echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
+    esac
+    shift
+done
 
 # Save location of purify scripts to source
 PURIFY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
