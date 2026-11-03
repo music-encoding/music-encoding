@@ -43,6 +43,7 @@ MEI_REPO_DIR="$(git -C "$PURIFY_DIR" rev-parse --show-toplevel 2>/dev/null)" \
 
 # Save modules path to variable
 MEI_MODULES_DIR="$MEI_REPO_DIR"/source/modules
+SAXON_JAR="$MEI_REPO_DIR"/lib/saxon/saxon-he-12.9.jar
 
 # Overwrite the source modules in place, or write to a separate output dir
 if [[ "$OVERWRITE" == true ]]; then
@@ -60,7 +61,7 @@ transform() {
     local out="$MEI_MODULES_OUTPUT_DIR/$(basename "$1")"
     local tmp
     tmp="$(mktemp "${out}.XXXXXX")" || return 1
-    if saxon -s:"$1" -xsl:"$2" -o:"$tmp"; then
+    if java -jar "$SAXON_JAR" -s:"$1" -xsl:"$2" -o:"$tmp"; then
         mv "$tmp" "$out"
     else
         rm -f "$tmp"
