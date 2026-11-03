@@ -7,7 +7,10 @@
   
   <xsl:param name="schema-prefix" as="xs:token" select="xs:token('tei')" />
   
-  <xsl:param name="target-tei-version">4.11.0</xsl:param>
+  <xsl:param name="target-tei-version">4.12.0</xsl:param>
+  
+  <xsl:param name="debug" select="xs:boolean('false')"/>
+  
   <xsl:variable name="target-tei-version.major" select="xs:integer(tokenize($target-tei-version, '\.')[1])" as="xs:integer"/>
   <xsl:variable name="target-tei-version.minor" select="xs:integer(tokenize($target-tei-version, '\.')[2])" as="xs:integer"/>
   <xsl:variable name="target-tei-version.patch" select="xs:integer(tokenize($target-tei-version, '\.')[3])" as="xs:integer"/>
@@ -96,9 +99,11 @@
       <xsl:otherwise>
         <xsl:copy>
           <xsl:apply-templates select="@*" />
-          <xsl:call-template name="purify:alert">
+          <xsl:if test="$debug">
+            <xsl:call-template name="purify:alert">
             <xsl:with-param name="message" tunnel="yes">inferred sequence element - thoroughly inspect against source and compare generated schema</xsl:with-param>
           </xsl:call-template>
+          </xsl:if>
           <xsl:element name="sequence">
             <xsl:apply-templates />
           </xsl:element>
