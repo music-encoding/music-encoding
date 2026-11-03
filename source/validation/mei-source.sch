@@ -20,8 +20,9 @@
     
     <!-- IDENTs of tei:macroSpec elements -->
     <sch:let name="IDENTS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroSpec/@ident"/>
-    <sch:let name="IDENTS.macros.datatypes" value="//tei:dataSpec"/><!-- TODO cleanup naming -->
-    <sch:let name="IDENTS.macros.parameter-entities" value="$IDENTS.macros"/>
+    
+    <!-- IDENTs of tei:dataSpec elements -->
+    <sch:let name="IDENTS.datatypes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:dataSpec/@ident"/>
     
     <!-- declare xml:ids in docs and modules and derived subsets -->
     <sch:let name="IDS.docs" value="collection($URI.docs-collection || '?select=*.xml;recurse=yes')//@xml:id" />
@@ -88,7 +89,7 @@
                 >A &lt;specDesc&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:assert role="error"
-                test="$key = $IDENTS.elements or $key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros.parameter-entities">
+                test="$key = $IDENTS.elements or $key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros">
                 The &lt;specDesc&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -100,7 +101,7 @@
                 >A &lt;memberOf&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:assert role="error"
-                test="$key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros.parameter-entities">
+                test="$key = $IDENTS.classes.atts or $key = $IDENTS.classes.models or $key = $IDENTS.macros">
                 The &lt;memberOf&gt; referencing "<sch:value-of select="$key"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
@@ -112,7 +113,7 @@
                 >An &lt;rng:ref&gt; element needs to specify a @name.</sch:assert>
             <sch:let name="name" value="string(@name)"/>
             <sch:assert role="error"
-                test="$name = $IDENTS.elements or $name = $IDENTS.classes.models or $name = $IDENTS.macros.parameter-entities or $name = $IDENTS.macros.datatypes or $name = ('svg', 'svg_svg')">
+                test="$name = $IDENTS.elements or $name = $IDENTS.classes.models or $name = $IDENTS.macros or $name = $IDENTS.datatypes or $name = ('svg', 'svg_svg')">
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
