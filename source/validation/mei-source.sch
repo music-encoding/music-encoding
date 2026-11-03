@@ -20,8 +20,8 @@
     
     <!-- IDENTs of tei:macroSpec elements -->
     <sch:let name="IDENTS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroSpec/@ident"/>
-    <sch:let name="IDENTS.macros.datatypes" value="$IDENTS.macros[parent::*/@type ='dt']"/>
-    <sch:let name="IDENTS.macros.parameter-entities" value="$IDENTS.macros[parent::*/@type ='pe']"/>
+    <sch:let name="IDENTS.macros.datatypes" value="//tei:dataSpec"/><!-- TODO cleanup naming -->
+    <sch:let name="IDENTS.macros.parameter-entities" value="$IDENTS.macros"/>
     
     <!-- declare xml:ids in docs and modules and derived subsets -->
     <sch:let name="IDS.docs" value="collection($URI.docs-collection || '?select=*.xml;recurse=yes')//@xml:id" />
