@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0"
+         xmlns:rng="http://relaxng.org/ns/structure/1.0"
+         xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+         xml:id="module.MEI.drama">
+   <moduleSpec ident="MEI.drama">
+      <desc xml:lang="en">Dramatic text component declarations.</desc>
+   </moduleSpec>
+   <classSpec ident="att.sp.log" module="MEI.drama" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.controlEvent"/>
+         <memberOf key="att.startEndId"/>
+         <memberOf key="att.timestamp2.log"/>
+      </classes>
+   </classSpec>
+   <classSpec ident="att.stageDir.log" module="MEI.drama" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.controlEvent"/>
+         <memberOf key="att.startEndId"/>
+         <memberOf key="att.timestamp2.log"/>
+      </classes>
+   </classSpec>
+   <classSpec ident="model.stageDirLike" module="MEI.drama" type="model">
+      <desc xml:lang="en">Groups elements containing stage directions in performance texts.</desc>
+      <classes>
+         <memberOf key="model.controlEventLike"/>
+         <memberOf key="model.paracontentPart"/>
+      </classes>
+   </classSpec>
+   <elementSpec ident="sp" module="MEI.drama">
+      <gloss xml:lang="en">speech</gloss>
+      <desc xml:lang="en">Contains an individual speech in a performance text.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.lang"/>
+         <memberOf key="att.sp.anl"/>
+         <memberOf key="att.sp.ges"/>
+         <memberOf key="att.sp.log"/>
+         <memberOf key="att.sp.vis"/>
+         <memberOf key="model.controlEventLike"/>
+      </classes>
+      <content><!--PURIFY:  inferred sequence element - thoroughly inspect against source and compare generated schema--><?PURIFY inferred sequence element - thoroughly inspect against source and compare generated schema?>
+         <sequence>
+            <alternate minOccurs="0" maxOccurs="unbounded">
+               <classRef key="model.annotLike"/>
+               <classRef key="model.appLike"/>
+               <classRef key="model.figureLike"/>
+               <classRef key="model.milestoneLike.text"/>
+            </alternate>
+            <sequence minOccurs="0" maxOccurs="unbounded">
+               <elementRef key="speaker"/>
+               <alternate minOccurs="0" maxOccurs="unbounded">
+                  <classRef key="model.annotLike"/>
+                  <classRef key="model.appLike"/>
+                  <classRef key="model.figureLike"/>
+                  <classRef key="model.milestoneLike.text"/>
+               </alternate>
+            </sequence>
+            <alternate minOccurs="1" maxOccurs="unbounded">
+               <classRef key="model.lgLike"/>
+               <classRef key="model.lLike"/>
+               <classRef key="model.pLike"/>
+               <classRef key="model.quoteLike"/>
+               <classRef key="model.stageDirLike"/>
+               <elementRef key="list"/>
+            </alternate>
+            <alternate minOccurs="0" maxOccurs="unbounded">
+               <classRef key="model.annotLike"/>
+               <classRef key="model.appLike"/>
+               <classRef key="model.figureLike"/>
+               <classRef key="model.milestoneLike.text"/>
+            </alternate>
+         </sequence>
+      </content>
+      <constraintSpec ident="sp_start-type_attributes_required" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:sp[ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff][not(ancestor::mei:sp)]">
+               <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <constraintSpec ident="sp_start-type_attributes_forbidden" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:sp[not(ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff)]">
+               <sch:assert test="not(@startid or @endid or @tstamp or @tstamp2 or @tstamp.ges or @tstamp.real or                @startho or @endho or @to or @startto or @endto or @staff or @layer or @place or @plist)">Must not have any of the attributes: startid, endid, tstamp, tstamp2, tstamp.ges,
+            tstamp.real, startho, endho, to, startto, endto, staff, layer, place, or
+            plist.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <remarks xml:lang="en">
+         <p>In a musical context <gi scheme="MEI">sp</gi> must have a start-type attribute when it's
+        not a descendant of <gi scheme="MEI">sp</gi>. In a textual content <gi scheme="MEI">sp</gi>
+        must NOT have any musical attributes.</p>
+         <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-sp.html">sp</ref> element of the Text Encoding Initiative (TEI).</p>
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="stageDir" module="MEI.drama">
+      <gloss xml:lang="en">stage direction</gloss>
+      <desc xml:lang="en">Contains any kind of stage direction within a dramatic text or
+      fragment.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.lang"/>
+         <memberOf key="att.stageDir.anl"/>
+         <memberOf key="att.stageDir.ges"/>
+         <memberOf key="att.stageDir.log"/>
+         <memberOf key="att.staffGrpIdent"/>
+         <memberOf key="att.stageDir.vis"/>
+         <memberOf key="model.stageDirLike"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <textNode/>
+            <classRef key="model.textPhraseLike.limited"/>
+            <classRef key="model.editLike"/>
+            <classRef key="model.transcriptionLike"/>
+         </alternate>
+      </content>
+      <constraintSpec ident="stageDir_start-type_attributes_required" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:stageDir[ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff][not(ancestor::mei:sp)]">
+               <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+            attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <constraintSpec ident="stageDir_start-type_attributes_forbidden" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:stageDir[not(ancestor::mei:layer or ancestor::mei:measure or ancestor::mei:staff) or ancestor::mei:sp]">
+               <sch:assert test="not(@startid or @endid or @tstamp or @tstamp2 or @tstamp.ges or @tstamp.real or @startho or @endho or @to or                @startto or @endto or @staff or @layer or @place or @plist)">Must not have any of the attributes: startid, endid, tstamp, tstamp2, tstamp.ges,
+            tstamp.real, startho, endho, to, startto, endto, staff, layer, place, or
+            plist.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <remarks xml:lang="en">
+         <p>In a musical context <gi scheme="MEI">stageDir</gi> must have a start-type attribute when
+        it’s not a descendant of <gi scheme="MEI">sp</gi>. In a textual content <gi scheme="MEI">stageDir</gi> must NOT have any musical attributes.</p>
+         <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-stage.html">stage</ref> element of the Text Encoding Initiative (TEI).</p>
+      </remarks>
+   </elementSpec>
+</specGrp>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0"
+         xmlns:rng="http://relaxng.org/ns/structure/1.0"
+         xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+         xml:id="module.MEI.performance">
+   <moduleSpec ident="MEI.performance">
+      <desc xml:lang="en">Performance component declarations.</desc>
+   </moduleSpec>
+   <classSpec ident="att.alignment" module="MEI.performance" type="atts">
+      <desc xml:lang="en">Temporal alignment attributes.</desc>
+      <constraintSpec ident="check_whenTarget" scheme="schematron">
+         <constraint>
+            <sch:rule context="@when">
+               <sch:assert role="warning" test="not(normalize-space(.) eq '')">@when attribute should
+            have content.</sch:assert>
+               <sch:assert role="warning"
+                           test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:when/@xml:id">A
+            value in @when should correspond to the @xml:id attribute of a when
+            element.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <attList>
+         <attDef ident="when" usage="opt">
+            <desc xml:lang="en">Indicates the point of occurrence of this feature along a time line. Its value must be
+          the ID of a <gi scheme="MEI">when</gi> element elsewhere in the document.</desc>
+            <datatype>
+               <dataRef key="teidata.URI"/>
+            </datatype>
+         </attDef>
+      </attList>
+   </classSpec>
+   <elementSpec ident="avFile" module="MEI.performance">
+      <gloss xml:lang="en">audio/video file</gloss>
+      <desc xml:lang="en">References an external digital audio or video file.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.bibl"/>
+         <memberOf key="att.internetMedia"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.metadataPointing"/>
+         <memberOf key="att.pointing"/>
+      </classes>
+      <content>
+         <elementRef key="clip" minOccurs="0" maxOccurs="unbounded"/>
+      </content>
+      <constraintSpec ident="avFile_child_of_clip" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:clip/mei:avFile">
+               <sch:assert test="count(mei:*) = 0">An avFile child of clip cannot have
+            children.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <remarks xml:lang="en">
+         <p>This element is analogous to the <gi scheme="MEI">graphic</gi> element in the figtable
+        module.</p>
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="clip" module="MEI.performance">
+      <desc xml:lang="en">Defines a time segment of interest within a recording or within a digital audio or video
+      file.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.dataPointing"/>
+         <memberOf key="att.mediaBounds"/>
+         <memberOf key="att.metadataPointing"/>
+         <memberOf key="att.startId"/>
+      </classes>
+      <content><!--PURIFY:  inferred sequence element - thoroughly inspect against source and compare generated schema--><?PURIFY inferred sequence element - thoroughly inspect against source and compare generated schema?>
+         <sequence>
+            <elementRef key="avFile" minOccurs="0" maxOccurs="unbounded"/>
+            <elementRef key="when" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+      </content>
+      <remarks xml:lang="en">
+         <p>This element is analogous to the <gi scheme="MEI">zone</gi> element in the facsimile
+        module.</p>
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="performance" module="MEI.performance">
+      <desc xml:lang="en">A presentation of one or more musical works.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.metadataPointing"/>
+         <memberOf key="model.resourceLike"/>
+      </classes>
+      <content>
+         <elementRef key="recording" minOccurs="0" maxOccurs="unbounded"/>
+      </content>
+      <remarks xml:lang="en">
+         <p>The <att>decls</att> attribute may be used to link the collection with a particular source
+        described in the header. This element is analogous to the <gi scheme="MEI">facsimile</gi>
+        element in the facsimile module.</p>
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="recording" module="MEI.performance">
+      <desc xml:lang="en">A recorded performance.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.dataPointing"/>
+         <memberOf key="att.mediaBounds"/>
+         <memberOf key="att.metadataPointing"/>
+         <memberOf key="att.startId"/>
+      </classes>
+      <content><!--PURIFY:  inferred sequence element - thoroughly inspect against source and compare generated schema--><?PURIFY inferred sequence element - thoroughly inspect against source and compare generated schema?>
+         <sequence>
+            <elementRef key="avFile" minOccurs="0" maxOccurs="unbounded"/>
+            <elementRef key="when" minOccurs="0" maxOccurs="unbounded"/>
+            <elementRef key="clip" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+      </content>
+      <remarks xml:lang="en">
+         <p>The <att>startid</att> attribute may be used to hold a reference to the first feature
+        occurring in this performance. This element is analogous to the <gi scheme="MEI">surface</gi> element in the facsimile module.</p>
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="when" module="MEI.performance">
+      <desc xml:lang="en">Indicates a point in time either absolutely (using the absolute attribute), or relative to
+      another when element (using the since, interval and inttype attributes).</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.dataPointing"/>
+      </classes>
+      <content>
+         <elementRef key="extData" minOccurs="0" maxOccurs="unbounded"/>
+      </content>
+      <constraintSpec ident="check_when_interval" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:when[@interval]">
+               <sch:assert test="@since">@since must be present when @interval is used.</sch:assert>
+               <sch:assert role="warning"
+                           test="every $i in tokenize(@since, '\s+') satisfies substring($i,2)=//mei:when/@xml:id">The value in @since should correspond to the @xml:id attribute of a when
+            element.</sch:assert>
+            </sch:rule>
+            <sch:rule context="mei:when[matches(@interval, '^[0-9]+$')]">
+               <sch:assert test="not(@inttype eq 'time')">When @interval contains an integer value,
+            @inttype cannot be 'time'.</sch:assert>
+            </sch:rule>
+            <sch:rule context="mei:when[matches(@interval, ':')]">
+               <sch:assert test="@inttype eq 'time'">When @interval contains a time value, @inttype must
+            be 'time'.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_when_absolute" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:when[@absolute]">
+               <sch:assert role="warning" test="@abstype or ancestor::mei:*[@betype]">When @absolute is
+            present, @abstype should be present or @betype should be present on an
+            ancestor.</sch:assert>
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <attList>
+         <attDef ident="absolute" usage="opt">
+            <desc xml:lang="en">Provides an absolute value for the time point.</desc>
+            <datatype>
+               <dataRef name="string"/>
+            </datatype>
+         </attDef>
+         <attDef ident="interval" usage="opt">
+            <desc xml:lang="en">Specifies the time interval between this time point and the one designated by the
+          since attribute. This attribute can only be interpreted meaningfully in conjunction with
+          the inttype attribute.</desc>
+            <datatype>
+               <dataRef key="teidata.DECIMALORTIMEINTERVAL"/>
+            </datatype>
+         </attDef>
+         <attDef ident="abstype" usage="opt">
+            <desc xml:lang="en">Specifies the kind of values used in the absolute attribute.</desc>
+            <datatype>
+               <dataRef key="teidata.BETYPE"/>
+            </datatype>
+         </attDef>
+         <attDef ident="inttype" usage="opt">
+            <desc xml:lang="en">Specifies the kind of values used in the interval attribute.</desc>
+            <datatype>
+               <dataRef key="teidata.BETYPE"/>
+            </datatype>
+         </attDef>
+         <attDef ident="since" usage="opt">
+            <desc xml:lang="en">Identifies the reference point for determining the time of the current when element,
+          which is obtained by adding the interval to the time of the reference point. The value
+          should be the ID of another when element within the same parent element. If the since
+          attribute is omitted and the absolute attribute is not specified, then the reference point
+          is understood to be the immediately preceding when element.</desc>
+            <datatype>
+               <dataRef key="teidata.URI"/>
+            </datatype>
+            <constraintSpec ident="check_sinceTarget" scheme="schematron">
+               <constraint>
+                  <sch:rule context="@since">
+                     <sch:assert role="warning" test="not(normalize-space(.) eq '')">@since attribute
+                should have content.</sch:assert>
+                     <sch:assert role="warning"
+                                 test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:when/@xml:id">The value in @since should correspond to the @xml:id attribute of a when
+                element.</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+         </attDef>
+      </attList>
+      <remarks xml:lang="en">
+         <p>The <att>data</att> attribute may be used to reference one or more features that occur at
+        this point in time.</p>
+      </remarks>
+      <remarks xml:lang="en">
+         <p>The model of this element is based on the <ref target="https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-when.html">when</ref> element of the Text Encoding Initiative (TEI).</p>
+      </remarks>
+   </elementSpec>
+</specGrp>

@@ -390,11 +390,11 @@
           <rng:ref name="data.STAFFLOC"/>
         </datatype>
         <remarks xml:lang="en">
-          <p>The location may include staff lines, the spaces between the lines, and the spaces
-            directly above and below the staff. The value ranges between 0 (just below the staff) to
-            2 * number of staff lines (directly above the staff). For example, on a 5-line staff the
-            lines would be numbered 1, 3, 5, 7, and 9 while the spaces would be numbered 0, 2, 4, 6,
-            8, and 10. So, a value of <val>9</val> puts the bar line through the top line of the staff.</p>
+          <p>The location follows <ident type="datatype">data.STAFFLOC</ident>. For example, on a
+            5-line staff the lines are numbered 0, 2, 4, 6, and 8, and the spaces between them are
+            numbered 1, 3, 5, and 7. The spaces directly below and above the staff are numbered -1
+            and 9, respectively. A value of <val>8</val> puts the bar line through the top line of
+            the staff.</p>
           <p>This attribute is ignored if the value of the bar.style attribute is <val>mensur</val>.</p>
         </remarks>
       </attDef>
@@ -516,6 +516,7 @@
       <memberOf key="att.lineLoc"/>
       <memberOf key="att.octave"/>
       <memberOf key="att.octaveDisplacement"/>
+      <memberOf key="att.staffLoc"/>
     </classes>
     <attList>
       <attDef ident="cautionary" usage="opt">
@@ -576,11 +577,11 @@
   </classSpec>
   <classSpec ident="att.clefShape" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that record the shape of a clef.</desc>
-    <constraintSpec ident="shape_requires_line" scheme="schematron">
+    <constraintSpec ident="shape_requires_line_or_loc" scheme="schematron">
       <constraint>
         <sch:rule context="mei:clef[matches(@shape, '[FCG]')]">
-          <sch:assert test="@line">When @shape is present, @line must also be
-            specified.</sch:assert>
+          <sch:assert test="@line or @loc">An 'F', 'C', or 'G' clef requires that its position be
+            specified using @line or @loc.</sch:assert>
         </sch:rule>
       </constraint>
     </constraintSpec>
@@ -1908,6 +1909,18 @@
   </classSpec>
   <classSpec ident="att.mediaBounds" module="MEI.shared" type="atts">
     <desc xml:lang="en">Attributes that establish the boundaries of a media object.</desc>
+    <constraintSpec ident="betype_required_when_begin_or_end" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:clip[@begin or @end]">
+          <sch:assert role="warning" test="@betype or ancestor::mei:*[@betype]">When @begin or @end
+            is used, @betype should appear on clip or one of its ancestors.</sch:assert>
+        </sch:rule>
+        <sch:rule context="mei:recording[@begin or @end]">
+          <sch:assert role="warning" test="@betype">When @begin or @end is used, @betype should be
+            present.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <attList>
       <attDef ident="begin" usage="opt">
         <desc xml:lang="en">Specifies a point where the relevant content begins. A numerical value must be less
@@ -3391,6 +3404,29 @@
             </sch:rule>
           </constraint>
         </constraintSpec>
+      </attDef>
+      <attDef ident="stem.split" usage="opt">
+        <desc xml:lang="en">Determines if and how a stem should be split within a chord.</desc>
+        <constraintSpec ident="check_stem.split" scheme="schematron">
+          <constraint>
+            <sch:rule context="@stem.split">
+              <sch:assert role="error" test="not(parent::node()/local-name() = 'chord')">
+                @stem.split must not be used directly on chord elements.
+              </sch:assert>
+              <sch:assert role="error" test="self::node()/ancestor::mei:chord">
+                Split stem notes are expected to be chord notes.
+              </sch:assert>
+            </sch:rule>
+          </constraint>
+        </constraintSpec>
+        <valList type="closed">
+          <valItem ident="left">
+            <desc xml:lang="en">The stem branches off to the left.</desc>
+          </valItem>
+          <valItem ident="right">
+            <desc xml:lang="en">The stem branches off to the right.</desc>
+          </valItem>
+        </valList>
       </attDef>
       <attDef ident="stem.visible" usage="opt">
         <desc xml:lang="en">Determines whether a stem should be displayed.</desc>
@@ -5203,9 +5239,17 @@
     <content>
       <empty/>
     </content>
+    <constraintSpec ident="clef_line_loc_exclusive" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:clef">
+          <sch:assert test="not(@line and @loc)">The @line and @loc attributes must not be used
+            together on the same clef.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
     <constraintSpec ident="Clef_position_lines" scheme="schematron">
       <constraint>
-        <sch:rule context="mei:clef[matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
+        <sch:rule context="mei:clef[@line][matches(@shape, '[FCG]')][ancestor::mei:staffDef[@lines]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
           <sch:assert
             test="number(@line) &lt;= number(ancestor::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
@@ -5216,7 +5260,7 @@
     </constraintSpec>
     <constraintSpec ident="Clef_position_nolines" scheme="schematron">
       <constraint>
-        <sch:rule context="mei:clef[ancestor::mei:staffDef[not(@lines)]]">
+        <sch:rule context="mei:clef[@line][ancestor::mei:staffDef[not(@lines)]]">
           <sch:let name="thisstaff" value="ancestor::mei:staffDef/@n"/>
           <sch:assert
             test="number(@line) &lt;= number(preceding::mei:staffDef[@n=$thisstaff and @lines][1]/@lines)"
@@ -5231,6 +5275,16 @@
         needs to be recorded for the clef or when multiple, simultaneous clefs occur on a single
         staff. This element may also be used within the staff context to indicate changes of
         clef.</p>
+      <p>The position of a clef may be specified using either <att>line</att> or <att>loc</att>,
+        but not both. The <att>line</att> attribute numbers staff lines starting with <val>1</val>
+        for the bottom line. The <att>loc</att> attribute uses
+        <ident type="datatype">data.STAFFLOC</ident>: integer MEI virtual units (half the distance
+        between adjacent staff lines), with <val>0</val> at the bottom line, positive values above
+        it, and negative values below it. For a position on a staff line, loc = 2 * (line - 1).
+        Thus, line="1" and loc="0" are alternative ways to specify the bottom line, while
+        loc="5" specifies the space between the third and fourth lines. The <att>loc</att> attribute
+        allows clefs to be placed on spaces as well as lines.
+      </p>
     </remarks>
   </elementSpec>
   <elementSpec ident="clefGrp" module="MEI.shared">
@@ -5627,8 +5681,7 @@
       </constraint>
     </constraintSpec>
     <remarks xml:lang="en">
-      <p>Examples include text strings, such as 'affettuoso', and music symbols, such as segno and
-        coda symbols, fermatas over a bar line, etc. Directives can be control elements. That is,
+      <p>Examples include text strings, such as 'affettuoso', and music symbols. Directives can be control elements. That is,
         they can be linked via their attributes to other events. The starting point of the directive
         may be indicated by either a <att>startid</att>, <att>tstamp</att>, <att>tstamp.ges</att>,
         or <att>tstamp.real</att> attribute, while the ending point may be recorded by either a
