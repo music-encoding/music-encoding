@@ -5,7 +5,7 @@
 
   <xsl:output method="xml" indent="yes"/>
   
-  <xsl:param name="schema-prefix" as="xs:token" select="xs:token('tei')" />
+  <xsl:param name="schema-prefix" as="xs:token" select="xs:token('')" />
   
   <xsl:param name="target-tei-version">4.12.0</xsl:param>
   
