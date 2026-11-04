@@ -10,6 +10,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
+  xmlns:tools="no:where"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
   exclude-result-prefixes="#all" version="3.0">
 
   <!-- import base conversion style -->
@@ -52,5 +54,66 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
+
+  <!--
+    Remove redundant rng:group wrappers. odd2relax.xsl maps every tei:sequence
+    to rng:group, even where the parent pattern already groups its children
+    implicitly (RELAX NG spec, section 4.12), e.g.
+      <zeroOrMore><group>a b*</group></zeroOrMore>
+    instead of
+      <zeroOrMore>a b*</zeroOrMore>
+    Both forms are equivalent; this only shortens the output.
+
+    This runs on the result of pass4 for each define, i.e. after the TEI
+    cleanup has unwrapped or killed patterns, so the rules see the final
+    tree. A group is dropped when
+      1. it has exactly one pattern child (allowed in any context), or
+      2. its effective parent groups its children implicitly. Sequence is
+         associative, so this is safe whatever the siblings are.
+    Groups under choice, interleave, attribute, start and except are kept
+    whenever they have more than one pattern child, because there they
+    hold the sequence together as one unit.
+  -->
+  <xsl:template match="rng:define" mode="pass4">
+    <xsl:variable name="result">
+      <xsl:next-match/>
+    </xsl:variable>
+    <xsl:apply-templates select="$result/node()" mode="tools:flattenGroups"/>
+  </xsl:template>
+
+  <xsl:template match="node() | @*" mode="tools:flattenGroups">
+    <xsl:copy>
+      <xsl:apply-templates select="node() | @*" mode="tools:flattenGroups"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template match="rng:group[tools:isRedundantGroup(.)]" mode="tools:flattenGroups">
+    <xsl:apply-templates select="node()" mode="tools:flattenGroups"/>
+  </xsl:template>
+
+  <!-- patterns whose child patterns form an implicit group -->
+  <xsl:variable name="tools:implicitGroupContexts" as="xs:string+"
+    select="('group', 'zeroOrMore', 'oneOrMore', 'optional', 'element', 'define', 'list', 'mixed')"/>
+
+  <xsl:function name="tools:isRedundantGroup" as="xs:boolean">
+    <xsl:param name="group" as="element(rng:group)"/>
+    <xsl:variable name="context" select="tools:effectiveParent($group)"/>
+    <xsl:sequence select="count($group/rng:*) eq 1
+      or ($context instance of element() and namespace-uri($context) eq 'http://relaxng.org/ns/structure/1.0'
+          and local-name($context) = $tools:implicitGroupContexts)"/>
+  </xsl:function>
+
+  <!--
+    The parent a group's content ends up in: climbs past ancestor groups that
+    are dropped themselves, so a group(a, b) inside a dropped single-child
+    group inside a choice is seen as a child of the choice and kept.
+  -->
+  <xsl:function name="tools:effectiveParent" as="node()?">
+    <xsl:param name="node" as="element()"/>
+    <xsl:variable name="parent" select="$node/.."/>
+    <xsl:sequence select="if ($parent instance of element(rng:group) and tools:isRedundantGroup($parent))
+      then tools:effectiveParent($parent)
+      else $parent"/>
+  </xsl:function>
 
 </xsl:stylesheet>
