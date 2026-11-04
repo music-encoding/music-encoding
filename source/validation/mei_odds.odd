@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<?xml-model href="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>-->
-<!--<?xml-model href="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
+<!--<?xml-model href="https://www.tei-c.org/Vault/P5/4.12.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>-->
+<!--<?xml-model href="https://www.tei-c.org/Vault/P5/4.12.0/xml/tei/odd/p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <!--<?xml-model href="p5odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>-->
 <!--<?xml-model href="p5odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <?xml-model href="mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
@@ -13,8 +13,6 @@
         <title>TEI for authoring MEI ODD</title>
         <respStmt>
           <resp>Authored by</resp>
-          <!--<name>Sebastian Rahtz</name>
-          <name>Raff Viglianti</name>-->
           <name>Benjamin W. Bohl</name>
         </respStmt>
       </titleStmt>
@@ -42,13 +40,13 @@
     <front>
       <div>
         <head>Disclaimer</head>
-        <p>This customization is based on the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/custom/odd/tei_odds.odd">TEI 4.9.0 release of the tei_odds.odd customization</ref> for authoring TEI ODDs and is being modified to accomodate the authoring of MEI ODD files.</p>
-        <p>Aside from the overdue modernization of the MEI ODDs Schema, a major reason for updating to tei:4.9.0 was the introduction of <gi>constraintDecl</gi> which allows Schematron query language binding and schematron namespace declarations.</p>
+        <p>This customization is based on the <ref target="https://www.tei-c.org/Vault/P5/4.12.0/xml/tei/custom/odd/tei_odds.odd">TEI 4.12.0 release of the tei_odds.odd customization</ref> for authoring TEI ODDs and is being modified to accomodate the authoring of MEI ODD files.</p>
+        <p>Aside from the overdue modernization of the MEI ODDs Schema, a major reason for updating was the introduction of <gi>constraintDecl</gi> in tei:4.9.0 which allows Schematron query language binding and schematron namespace declarations.</p>
         <p>Moreover tei:4.12.0 introduced <gi>interleave</gi> for easier modelling of that content concept.</p>
       </div>
       <div xml:id="introduction">
         <head>Introduction</head>
-        <p>The definitions of both the <expan>Music Encoding Initiative</expan> (<abbr>MEI</abbr>) Guidelines and the Schemata are facilitated in so called <expan>One-Document-Does-it-all</expan> (<abbr>ODD</abbr>) syntax as defined by the Text Encoding Initiative (TEI) XML dialect. Because the specifications of the TEI dialect emcompass a vast amount of elements and attributes for various kinds of text markup, creating a subset for the purposes of the MEI definitions is strongly adviseable. This <soCalled>customization</soCalled> is defined in the backmatter of this document. Moreover this document summarizes a set of editorial conventions for encoding the <term>MEI Guidelines</term> according th this schema.</p>
+        <p>The definitions of both the Music Encoding Initiative (<abbr>MEI</abbr>) Guidelines and the Schemata are facilitated in so called One-Document-Does-it-all (<abbr>ODD</abbr>) syntax as defined by the Text Encoding Initiative (TEI) XML dialect. Because the specifications of the TEI dialect emcompass a vast amount of elements and attributes for various kinds of text markup, creating a subset for the purposes of the MEI definitions is strongly adviseable. This customization is defined in the backmatter of this document. Moreover this document summarizes a set of editorial conventions for encoding the <term>MEI Guidelines</term> according th this schema.</p>
         <p>The editorial conventions aim to produce markup that is <term>parsimonious</term>, <term>semantic rather than presentational</term>, and aligned with concrete downstream behaviors (rendering, glossary generation, indexing, cross-referencing, validation).</p>
         <p>The guiding principle throughout: markup should earn its presence by enabling a behavior or capturing a distinction that matters. Tagging that does not achieve an effect is a cost without a benefit.</p>
       </div>
@@ -187,7 +185,7 @@
           <?TODO enforce schemaSpec in back (?for customizations only?)?>
         </specGrp>
         <list rend="bulleted">
-          <item><att>source</att> has been set to <val>tei:4.9.0</val>.</item>
+          <item><att>source</att> has been set to <val>tei:4.12.0</val>.</item>
           <item>The available <att>start</att> elements have been reduced to those used in the current MEI ODD files, i.e., <gi>TEI</gi> and <gi>specGrp</gi>.</item>
           <item>The <ident type="module">gaiji</ident> module has been excluded (for now).</item>
           <item>The <ident type="module">dictionaries</ident> module has been excluded.</item>
@@ -311,8 +309,9 @@
               </classes>
             </classSpec>
             <classSpec module="tei" type="atts" ident="att.handFeatures" mode="delete"/>
-            <classSpec module="tei" type="atts" ident="att.media" mode="delete">
-              <?TODO there are two occurences each, of @widht and @height in the specs which I think don’t make sense?> </classSpec>
+            <!--<classSpec module="tei" type="atts" ident="att.media" mode="delete">-->
+              <?TODO there are two occurences each, of @widht and @height in the specs which prespectively should be removed for the benefit of a better mechanism to control image sizing ?>
+            <!--</classSpec>-->
             <!--<classSpec module="tei" type="atts" ident="att.naming" mode="delete">
               <!-\- keep to propagate att.canonical to tei:name -\->
             </classSpec>-->
@@ -391,8 +390,34 @@
         </div>
       </div>
       <div>
+        <head>Modifications to the sequence element</head>
+        <specGrp xml:id="mod_element_sequence">
+          
+          <elementSpec module="tagdocs" xml:id="gi-sequence" ident="sequence" mode="change">
+            <constraintSpec ident="sequencechilden" scheme="schematron" xml:lang="en" mode="change">
+              <constraint>
+                <sch:rule context="tei:sequence">
+                  <sch:assert test="count(*) gt 1" role="warning">The &lt;sequence&gt; element should have at least two child elements, except you’re trying to enforce an rng:list element when transforming to RNG.</sch:assert>
+                </sch:rule>
+              </constraint>
+            </constraintSpec>
+            <attList>
+              <attDef ident="preserveOrder" validUntil="2027-05-06" mode="delete">
+                <desc type="deprecationInfo" versionDate="2024-03-15" xml:lang="en">The <att>preserveOrder</att> on <gi>sequence</gi> has been deprecated. The <gi>interleave</gi> element should be used to denote unordered constructs.</desc>
+                <desc xml:lang="en" versionDate="2023-03-21">if false, indicates that component elements of a sequence may occur in any order.</desc>
+                <datatype><dataRef key="teidata.truthValue"/></datatype>
+              </attDef>
+            </attList>
+            <remarks ident="remark_sequence_children_constraint_change">
+              <p>Changed the role to warning instead of defaulting to error, since the sequence with one child and maxOccurs=unbounded is the only way for creating rng:list elements in datatypes.</p>
+            </remarks>
+            
+          </elementSpec>
+        </specGrp>
+      </div>
+      <div>
         <head>A new module: xinclude</head>
-        <p>The <ident type="file">mei-source.xml</ident> file relies on XInclude to reference the individual ODD files of the MEI Guidelines chapters and module definitions. To facilitate the validation of <ident type="file">mei-source.xml</ident> even without active resolution of XInclude statements, the definition of the <gi scheme="xi">include</gi> element was borrowed from the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd">TEI XInclude customization</ref> by the means of <soCalled>ODD chaining</soCalled>.</p>
+        <p>The <ident type="file">mei-source.xml</ident> file relies on XInclude to reference the individual ODD files of the MEI Guidelines chapters and module definitions. To facilitate the validation of <ident type="file">mei-source.xml</ident> even without active resolution of XInclude statements, the definition of the <gi scheme="xi">include</gi> element was borrowed from the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd">TEI XInclude customization</ref> by the means of ODD chaining.</p>
         <specGrp xml:id="add_element_xi-include">
           <elementRef key="include" source="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd"/>
         </specGrp>
@@ -404,7 +429,7 @@
           <specGrpRef target="#add_element_xi-include"/>
           <specGrpRef target="#mod_element_xi-include"/>
         </specGrp>
-        <p>The <gi scheme="xi">include</gi> element then was modified (and this is where the actual <soCalled>ODD chaining</soCalled> happens), to be member of the <ident type="module">xinclude</ident> module. Moreover the definition of the <gi scheme="xi">include</gi> element was drilled down to what is actually in use in the MEI ODD files: <list>
+        <p>The <gi scheme="xi">include</gi> element then was modified (and this is where the actual ODD chaining happens), to be member of the <ident type="module">xinclude</ident> module. Moreover the definition of the <gi scheme="xi">include</gi> element was drilled down to what is actually in use in the MEI ODD files: <list>
           <item>available on the div-level, i.e., member of the <ident type="class">model.divLike</ident> to allow inclusion of the guidelines chapters</item>
           <item>available on the div-level, i.e., member of the <ident type="class">model.oddRef</ident> to allow inclusion of the module definitions</item>
           <item>no content, because MEI ODD files do not encode, e.g., a <gi scheme="xi">fallback</gi></item>
@@ -436,7 +461,7 @@
           <item>Improve encoding of tables by adding <ident type="class">att.tableDecoration</ident> from the <ident type="module">gaiji</ident> module</item>
           </list> </p>
       </div>
-      <schemaSpec ident="mei_odds" start="TEI specGrp" defaultExceptions="http://exclude.some-ns/1.0" source="tei:4.12.0">
+      <schemaSpec ident="mei_odds" start="TEI specGrp" defaultExceptions="http://exclude.some-ns/1.0" source="https://www.tei-c.org/Vault/P5/4.12.0/xml/tei/odd/p5subset.xml">
 
         <constraintDecl scheme="schematron">
           <sch:ns prefix="sch" uri="http://purl.oclc.org/dsdl/schematron"/>
@@ -455,6 +480,7 @@
         <specGrpRef target="#mod_module_linking"/>
         <specGrpRef target="#mod_module_figures"/>
         <specGrpRef target="#add_module_xinclude"/>
+        <specGrpRef target="#mod_element_sequence"/>
 
       </schemaSpec>
     </back>
