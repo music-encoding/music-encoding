@@ -177,6 +177,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:macroRef/@key" mode="preserveSpace" priority="2"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Links Pure ODD element, model-class, and datatype references when the target is available in this customization.</xd:p>
+            <xd:p>Keep this template on one line to preserve spacing in XML declarations and examples. Unavailable references retain the normal attribute rendering.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:elementRef/@key | tei:classRef/@key | tei:dataRef/@key" mode="preserveSpace" priority="2"><xsl:choose><xsl:when test="(../self::tei:elementRef and . = $elements/@ident) or (../self::tei:classRef and . = $model.classes/@ident) or (../self::tei:dataRef and . = $data.types/@ident)"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:when><xsl:otherwise><xsl:next-match/></xsl:otherwise></xsl:choose></xsl:template>
     
     <xd:doc>
         <xd:desc>
