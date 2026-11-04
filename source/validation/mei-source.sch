@@ -34,7 +34,6 @@
     <sch:let name="KEYS.memberOf" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:memberOf/string(@key)"/>
     
     <!-- all references (as nodes, so that references from within the referenced spec itself can be excluded) -->
-    <sch:let name="REFS" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//rng:ref"/>
     <sch:let name="REFS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classRef"/>
     <sch:let name="REFS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementRef"/>
     <sch:let name="REFS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroRef"/>
@@ -199,30 +198,30 @@
         </sch:rule>
         <sch:rule context="tei:classSpec[@type = 'model']">
             <sch:let name="ident" value="@ident"/>
-            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.classes[@key = $ident])[not(ancestor::tei:classSpec/@ident = $ident)]"/>
+            <sch:let name="refs" value="$REFS.classes[@key = $ident][not(ancestor::tei:classSpec/@ident = $ident)]"/>
             <sch:assert test="exists($refs) or tei:classes/tei:memberOf[starts-with(@key, 'model.')][@key != $ident]" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;classRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec and is not a member of another model class. Is it really necessary?
+                <sch:value-of select="$ident"/> is not used by any &lt;classRef key="<sch:value-of select="$ident"/>"/&gt; outside its own spec and is not a member of another model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:elementSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.elements[@key = $ident])[not(ancestor::tei:elementSpec/@ident = $ident)]"/>
+            <sch:let name="refs" value="$REFS.elements[@key = $ident][not(ancestor::tei:elementSpec/@ident = $ident)]"/>
             <sch:assert test="exists($refs) or tei:classes/tei:memberOf[starts-with(@key, 'model.')]" role="warning">
-                Element &lt;<sch:value-of select="$ident"/>&gt; is not used by any &lt;elementRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec and is not a member of any model class. Is it really necessary?
+                Element &lt;<sch:value-of select="$ident"/>&gt; is not used by any &lt;elementRef key="<sch:value-of select="$ident"/>"/&gt; outside its own spec and is not a member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.macros[@key = $ident])[not(ancestor::tei:macroSpec/@ident = $ident)]"/>
+            <sch:let name="refs" value="$REFS.macros[@key = $ident][not(ancestor::tei:macroSpec/@ident = $ident)]"/>
             <sch:assert test="exists($refs)" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec. Is it really necessary?
+                <sch:value-of select="$ident"/> is not used by any &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt; outside its own spec. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:dataSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.datatypes[@key = $ident])[not(ancestor::tei:dataSpec/@ident = $ident)]"/>
+            <sch:let name="refs" value="$REFS.datatypes[@key = $ident][not(ancestor::tei:dataSpec/@ident = $ident)]"/>
             <sch:assert test="exists($refs)" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;dataRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec. Is it really necessary?
+                <sch:value-of select="$ident"/> is not used by any &lt;dataRef key="<sch:value-of select="$ident"/>"/&gt; outside its own spec. Is it really necessary?
             </sch:assert>
         </sch:rule>
     </sch:pattern>
