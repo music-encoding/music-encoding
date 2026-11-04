@@ -16,12 +16,15 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Build schemata
+        id: build
         run: ant build-customizations
 
       - name: Validate schemata
         run: ant validate-schemata
 
       - name: Validate compiled ODDs
+        # independent of the schemata check, but needs the build output
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: ant validate-compiled-odds
 
       - name: Upload artifact
