@@ -20,6 +20,7 @@
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI">
   <moduleSpec ident="MEI">
@@ -1224,6 +1225,17 @@
       </valList>
     </content>
   </macroSpec>
+  <macroSpec ident="data.DECIMALORTIMEINTERVAL" module="MEI" type="dt">
+    <desc xml:lang="en">Time interval datatype.</desc>
+    <content>
+      <rng:choice>
+        <rng:data type="decimal">
+          <rng:param name="minInclusive">1</rng:param>
+        </rng:data>
+        <rng:data type="time"/>
+      </rng:choice>
+    </content>
+  </macroSpec>
   <macroSpec ident="data.DEGREES" module="MEI" type="dt">
     <desc xml:lang="en">360th-unit measure of a circle’s circumference; optionally signed decimal number between
       -360 and 360.</desc>
@@ -1768,7 +1780,7 @@
     <desc xml:lang="en">Indicates the location of the tonic in the circle of fifths.</desc>
     <content>
       <rng:data type="token">
-        <rng:param name="pattern">mixed|0|([1-9]|1[0-2])[f|s]</rng:param>
+        <rng:param name="pattern">mixed|0|([1-9]|1[0-2])[fs]</rng:param>
       </rng:data>
     </content>
   </macroSpec>
@@ -1829,6 +1841,15 @@
           <desc xml:lang="en">Undulating line.</desc>
         </valItem>
       </valList>
+    </content>
+  </macroSpec>
+  <macroSpec ident="data.LINEHEIGHT" module="MEI" type="dt">
+    <desc xml:lang="en">Datatype for line height measurements.</desc>
+    <content>
+      <rng:choice>
+        <rng:ref name="data.MEASUREMENTTYPOGRAPHYUNSIGNED"/>
+        <rng:ref name="data.PERCENT"/>
+      </rng:choice>
     </content>
   </macroSpec>
   <macroSpec ident="data.LINESTARTENDSYMBOL" module="MEI" type="dt">
@@ -3462,10 +3483,11 @@
     </content>
   </macroSpec>
   <macroSpec ident="data.STAFFLOC" module="MEI" type="dt">
-    <desc xml:lang="en">Staff location. The value <val>0</val> indicates the bottom line of the current staff; positive
-      values are used for positions above the bottom line and negative values for the positions
-      below. For example, in treble clef, 1 = F4, 2 = G4, 3 = A4, etc. and -1 = D4, -2 = C4, and so
-      on.</desc>
+    <desc xml:lang="en">Staff location expressed as an integer number of MEI virtual units (vu). One virtual
+      unit is half the distance between adjacent staff lines, measured from their centers. The value
+      <val>0</val> indicates the bottom line of the current staff; positive values are used for
+      positions above the bottom line and negative values for positions below it. For example, in
+      treble clef, 0 = E4, 1 = F4, 2 = G4, 3 = A4, etc. and -1 = D4, -2 = C4, and so on.</desc>
     <content>
       <rng:data type="integer"/>
     </content>
