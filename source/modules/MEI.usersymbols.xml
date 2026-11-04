@@ -21,137 +21,138 @@
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.usersymbols">
-  <moduleSpec ident="MEI.usersymbols">
-    <desc xml:lang="en">User-defined symbols component declarations.</desc>
-  </moduleSpec>
-  <classSpec ident="att.altSym" module="MEI.usersymbols" type="atts">
-    <desc xml:lang="en">Attributes supplying pointers to user-defined symbols.</desc>
-    <attList>
-      <attDef ident="altsym" usage="opt">
-        <desc xml:lang="en">Provides a way of pointing to a user-defined symbol. It must contain a reference to an
+<specGrp xmlns="http://www.tei-c.org/ns/1.0"
+         xmlns:rng="http://relaxng.org/ns/structure/1.0"
+         xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+         xml:id="module.MEI.usersymbols">
+   <moduleSpec ident="MEI.usersymbols">
+      <desc xml:lang="en">User-defined symbols component declarations.</desc>
+   </moduleSpec>
+   <classSpec ident="att.altSym" module="MEI.usersymbols" type="atts">
+      <desc xml:lang="en">Attributes supplying pointers to user-defined symbols.</desc>
+      <attList>
+         <attDef ident="altsym" usage="opt">
+            <desc xml:lang="en">Provides a way of pointing to a user-defined symbol. It must contain a reference to an
           ID of a <gi scheme="MEI">symbolDef</gi> element elsewhere in the document.</desc>
-        <datatype>
-          <rng:ref name="data.URI"/>
-        </datatype>
-        <constraintSpec ident="check_altsymTarget" scheme="schematron">
-          <constraint>
-            <sch:rule context="@altsym">
-              <sch:assert role="warning" test="not(normalize-space(.) eq '')">@altsym attribute
+            <datatype>
+               <dataRef key="data.URI"/>
+            </datatype>
+            <constraintSpec ident="check_altsymTarget" scheme="schematron">
+               <constraint>
+                  <sch:rule context="@altsym">
+                     <sch:assert role="warning" test="not(normalize-space(.) eq '')">@altsym attribute
                 should have content.</sch:assert>
-              <sch:assert role="warning"
-                test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:symbolDef/@xml:id"
-                >The value in @altsym should correspond to the @xml:id attribute of a symbolDef
+                     <sch:assert role="warning"
+                                 test="every $i in tokenize(., '\s+') satisfies substring($i,2)=//mei:symbolDef/@xml:id">The value in @altsym should correspond to the @xml:id attribute of a symbolDef
                 element.</sch:assert>
-              <sch:assert test="not(substring(., 2) eq ancestor::mei:symbolDef/@xml:id)">The value
+                     <sch:assert test="not(substring(., 2) eq ancestor::mei:symbolDef/@xml:id)">The value
                 in @altsym must not correspond to the @xml:id attribute of a symbolDef
                 ancestor.</sch:assert>
-            </sch:rule>
-          </constraint>
-        </constraintSpec>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.anchoredText.log" module="MEI.usersymbols" type="atts">
-    <desc xml:lang="en">Logical domain attributes.</desc>
-    <classes>
-      <memberOf key="att.startId"/>
-    </classes>
-    <attList>
-      <attDef ident="func" usage="rec">
-        <desc xml:lang="en">Indicates the function of the text.</desc>
-        <datatype>
-          <rng:data type="NMTOKEN"/>
-        </datatype>
-        <valList type="semi">
-          <valItem ident="unknown">
-            <desc xml:lang="en">The function of the text is unknown.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.curve.log" module="MEI.usersymbols" type="atts">
-    <desc xml:lang="en">Logical domain attributes.</desc>
-    <classes>
-      <memberOf key="att.startEndId"/>
-    </classes>
-    <attList>
-      <attDef ident="func" usage="rec">
-        <desc xml:lang="en">Indicates the function of the curve.</desc>
-        <datatype>
-          <rng:data type="NMTOKEN"/>
-        </datatype>
-        <valList type="semi">
-          <valItem ident="unknown">
-            <desc xml:lang="en">The function of the curve is unknown.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.line.log" module="MEI.usersymbols" type="atts">
-    <desc xml:lang="en">Attributes for describing the logical behavior of a line.</desc>
-    <classes>
-      <memberOf key="att.controlEvent"/>
-      <memberOf key="att.duration.additive"/>
-      <memberOf key="att.startEndId"/>
-      <memberOf key="att.timestamp2.log"/>
-    </classes>
-    <attList>
-      <attDef ident="func" usage="rec">
-        <desc xml:lang="en">Indicates the function of the line.</desc>
-        <datatype>
-          <rng:data type="NMTOKEN"/>
-        </datatype>
-        <valList type="semi">
-          <valItem ident="coloration">
-            <desc xml:lang="en">Indicates coloration in material transcribed from a source originally in mensural
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="att.anchoredText.log" module="MEI.usersymbols" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.startId"/>
+      </classes>
+      <attList>
+         <attDef ident="func" usage="rec">
+            <desc xml:lang="en">Indicates the function of the text.</desc>
+            <datatype>
+               <dataRef name="NMTOKEN"/>
+            </datatype>
+            <valList type="semi">
+               <valItem ident="unknown">
+                  <desc xml:lang="en">The function of the text is unknown.</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="att.curve.log" module="MEI.usersymbols" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.startEndId"/>
+      </classes>
+      <attList>
+         <attDef ident="func" usage="rec">
+            <desc xml:lang="en">Indicates the function of the curve.</desc>
+            <datatype>
+               <dataRef name="NMTOKEN"/>
+            </datatype>
+            <valList type="semi">
+               <valItem ident="unknown">
+                  <desc xml:lang="en">The function of the curve is unknown.</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="att.line.log" module="MEI.usersymbols" type="atts">
+      <desc xml:lang="en">Attributes for describing the logical behavior of a line.</desc>
+      <classes>
+         <memberOf key="att.controlEvent"/>
+         <memberOf key="att.duration.additive"/>
+         <memberOf key="att.startEndId"/>
+         <memberOf key="att.timestamp2.log"/>
+      </classes>
+      <attList>
+         <attDef ident="func" usage="rec">
+            <desc xml:lang="en">Indicates the function of the line.</desc>
+            <datatype>
+               <dataRef name="NMTOKEN"/>
+            </datatype>
+            <valList type="semi">
+               <valItem ident="coloration">
+                  <desc xml:lang="en">Indicates coloration in material transcribed from a source originally in mensural
               notation.</desc>
-          </valItem>
-          <valItem ident="ligature">
-            <desc xml:lang="en">Marks a ligature in material transcribed from a source originally in mensural
+               </valItem>
+               <valItem ident="ligature">
+                  <desc xml:lang="en">Marks a ligature in material transcribed from a source originally in mensural
               notation.</desc>
-          </valItem>
-          <valItem ident="unknown">
-            <desc xml:lang="en">The function of the line is unknown.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="model.graphicPrimitiveLike" module="MEI.usersymbols" type="model">
-    <desc xml:lang="en">Groups elements that function as drawing primitives.</desc>
-  </classSpec>
-  <classSpec ident="model.symbolTableLike" module="MEI.usersymbols" type="model">
-    <desc xml:lang="en">Groups elements that group symbol definitions.</desc>
-  </classSpec>
-  <elementSpec ident="anchoredText" module="MEI.usersymbols">
-    <desc xml:lang="en">Container for text that is fixed to a particular page location, regardless of changes made
+               </valItem>
+               <valItem ident="unknown">
+                  <desc xml:lang="en">The function of the line is unknown.</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="model.graphicPrimitiveLike"
+              module="MEI.usersymbols"
+              type="model">
+      <desc xml:lang="en">Groups elements that function as drawing primitives.</desc>
+   </classSpec>
+   <classSpec ident="model.symbolTableLike" module="MEI.usersymbols" type="model">
+      <desc xml:lang="en">Groups elements that group symbol definitions.</desc>
+   </classSpec>
+   <elementSpec ident="anchoredText" module="MEI.usersymbols">
+      <desc xml:lang="en">Container for text that is fixed to a particular page location, regardless of changes made
       to the layout of the measures around it.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.lang"/>
-      <memberOf key="att.anchoredText.anl"/>
-      <memberOf key="att.anchoredText.ges"/>
-      <memberOf key="att.anchoredText.log"/>
-      <memberOf key="att.anchoredText.vis"/>
-      <memberOf key="model.graphicPrimitiveLike"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-          <rng:ref name="model.editLike"/>
-          <rng:ref name="model.transcriptionLike"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <remarks xml:lang="en">
-      <p>This element may be used where semantic markup of the text is neither possible nor
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.lang"/>
+         <memberOf key="att.anchoredText.anl"/>
+         <memberOf key="att.anchoredText.ges"/>
+         <memberOf key="att.anchoredText.log"/>
+         <memberOf key="att.anchoredText.vis"/>
+         <memberOf key="model.graphicPrimitiveLike"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <textNode/>
+            <classRef key="model.textPhraseLike.limited"/>
+            <classRef key="model.editLike"/>
+            <classRef key="model.transcriptionLike"/>
+         </alternate>
+      </content>
+      <remarks xml:lang="en">
+         <p>This element may be used where semantic markup of the text is neither possible nor
         desirable, such as in optical music recognition (OMR) applications. The content model here
         is similar to paragraph without model.textcomponent and <gi scheme="MEI">pb</gi>
         sub-elements. The starting point of the text may be identified in absolute output coordinate
@@ -159,37 +160,37 @@
         another element using the <att>startid</att> attribute. The attributes in the
         att.visualOffset class may be used to record horizontal, vertical, or time offsets from the
         absolute coordinates or from the location of the referenced element.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="curve" module="MEI.usersymbols">
-    <desc xml:lang="en">A curved line that cannot be represented by a more specific element, such as a
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="curve" module="MEI.usersymbols">
+      <desc xml:lang="en">A curved line that cannot be represented by a more specific element, such as a
       slur.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.curve.anl"/>
-      <memberOf key="att.curve.ges"/>
-      <memberOf key="att.curve.log"/>
-      <memberOf key="att.curve.vis"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="model.graphicPrimitiveLike"/>
-    </classes>
-    <content>
-      <empty/>
-    </content>
-    <constraintSpec ident="symbolDef_curve_attributes_required" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:curve[ancestor::mei:symbolDef]">
-          <sch:assert test="@startid or (@x and @y)">In the symbolDef context, curve must have
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.curve.anl"/>
+         <memberOf key="att.curve.ges"/>
+         <memberOf key="att.curve.log"/>
+         <memberOf key="att.curve.vis"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="model.graphicPrimitiveLike"/>
+      </classes>
+      <content>
+         <empty/>
+      </content>
+      <constraintSpec ident="symbolDef_curve_attributes_required" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:curve[ancestor::mei:symbolDef]">
+               <sch:assert test="@startid or (@x and @y)">In the symbolDef context, curve must have
             either a startid attribute or x and y attributes.</sch:assert>
-          <sch:assert test="@endid or (@x2 and @y2)">In the symbolDef context, curve must have
+               <sch:assert test="@endid or (@x2 and @y2)">In the symbolDef context, curve must have
             either an endid attribute or both x2 and y2 attributes.</sch:assert>
-          <sch:assert test="@bezier or @bulge">In the symbolDef context, curve must have either a
+               <sch:assert test="@bezier or @bulge">In the symbolDef context, curve must have either a
             bezier or bulge attribute.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <remarks xml:lang="en">
-      <p>The starting point of the curve may be identified in absolute output coordinate terms using
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <remarks xml:lang="en">
+         <p>The starting point of the curve may be identified in absolute output coordinate terms using
         the <att>x</att> and <att>y</att> attributes or relative to the location of another element
         using the <att>startid</att> attribute. The attributes in the att.visualOffset class may be
         used to record horizontal, vertical, or time offsets from the absolute coordinates or from
@@ -200,48 +201,47 @@
         <att>bulge</att> attribute or, alternatively, the <att>bezier</att> attribute, describe the
         shape of the curve and the <att>lform</att> and <att>lwidth</att> attributes capture its
         appearance.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="line" module="MEI.usersymbols">
-    <desc xml:lang="en">A visual line that cannot be represented by a more specific; <abbr>i.e.</abbr>, semantic,
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="line" module="MEI.usersymbols">
+      <desc xml:lang="en">A visual line that cannot be represented by a more specific; <abbr>i.e.</abbr>, semantic,
       element.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.line.anl"/>
-      <memberOf key="att.line.ges"/>
-      <memberOf key="att.line.log"/>
-      <memberOf key="att.line.vis"/>
-      <memberOf key="model.graphicPrimitiveLike"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <constraintSpec ident="line_start-_and_end-type_attributes_required" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:line[ancestor::mei:symbolDef]">
-          <sch:assert test="@startid or (@x and @y)">When used in the symbolDef context, must have
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.line.anl"/>
+         <memberOf key="att.line.ges"/>
+         <memberOf key="att.line.log"/>
+         <memberOf key="att.line.vis"/>
+         <memberOf key="model.graphicPrimitiveLike"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <textNode/>
+            <classRef key="model.textPhraseLike.limited"/>
+         </alternate>
+      </content>
+      <constraintSpec ident="line_start-_and_end-type_attributes_required"
+                      scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:line[ancestor::mei:symbolDef]">
+               <sch:assert test="@startid or (@x and @y)">When used in the symbolDef context, must have
             either a startid attribute or x and y attributes.</sch:assert>
-          <sch:assert test="@endid or (@x2 and @y2)">When used in the symbolDef context, must have
+               <sch:assert test="@endid or (@x2 and @y2)">When used in the symbolDef context, must have
             either an endid attribute or both x2 and y2 attributes.</sch:assert>
-        </sch:rule>
-        <sch:rule context="mei:line[not(ancestor::mei:symbolDef)]">
-          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real or (@x and @y)">When
+            </sch:rule>
+            <sch:rule context="mei:line[not(ancestor::mei:symbolDef)]">
+               <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real or (@x and @y)">When
             used in the score context, must have a startid, tstamp, tstamp.ges or tstamp.real
             attribute or both x and y attributes.</sch:assert>
-          <sch:assert test="@dur or @dur.ges or @endid or @tstamp2 or (@x2 and @y2)">When used in
+               <sch:assert test="@dur or @dur.ges or @endid or @tstamp2 or (@x2 and @y2)">When used in
             the score context, must have an endid, dur, dur.ges, or tstamp2 attribute or both x2 and
             y2 attributes.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <remarks xml:lang="en">
-      <p>The starting point of the line may be identified in absolute output coordinate terms using
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <remarks xml:lang="en">
+         <p>The starting point of the line may be identified in absolute output coordinate terms using
         the <att>x</att> and <att>y</att> attributes. The attributes in the att.visualOffset class
         may be used to record horizontal, vertical, or time offsets from these absolute coordinates
         or from the location of the element reference in the <att>startid</att> attribute.
@@ -250,137 +250,125 @@
         offsets of the ending point. Textual content of the <gi scheme="MEI">line</gi> element, <abbr>e.g.</abbr>,
         'gliss.', may be rendered with the line. The appearance of the line is captured in the
         color, <att>form</att> and <att>width</att> attributes.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="mapping" module="MEI.usersymbols">
-    <desc xml:lang="en">One or more characters which are related to the parent symbol in some respect, as
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="mapping" module="MEI.usersymbols">
+      <desc xml:lang="en">One or more characters which are related to the parent symbol in some respect, as
       specified by the type attribute.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="symbol"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-  </elementSpec>
-  <elementSpec ident="propName" module="MEI.usersymbols">
-    <gloss xml:lang="en">property name</gloss>
-    <desc xml:lang="en">Name of a property of the symbol.</desc>
-    <classes>
-      <memberOf key="att.basic"/>
-      <memberOf key="att.labelled"/>
-      <memberOf key="att.linking"/>
-      <memberOf key="att.nNumberLike"/>
-      <memberOf key="att.responsibility"/>
-    </classes>
-    <content>
-      <rng:text/>
-    </content>
-    <attList>
-      <attDef ident="type" usage="req">
-        <desc xml:lang="en">Characterizes the property name.</desc>
-        <valList type="closed">
-          <valItem ident="unicode">
-            <desc xml:lang="en">A registered Unicode normative or informative property name.</desc>
-          </valItem>
-          <valItem ident="local">
-            <desc xml:lang="en">A locally defined name.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </elementSpec>
-  <elementSpec ident="propValue" module="MEI.usersymbols">
-    <gloss xml:lang="en">property value</gloss>
-    <desc xml:lang="en">A single property value.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-    </classes>
-    <content>
-      <rng:text/>
-    </content>
-  </elementSpec>
-  <elementSpec ident="symbolDef" module="MEI.usersymbols">
-    <gloss xml:lang="en">symbol definition</gloss>
-    <desc xml:lang="en">Declaration of an individual symbol in a symbolTable.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.coordinated"/>
-      <memberOf key="att.dataSelecting"/>
-    </classes>
-    <content>
-      <rng:optional>
-        <rng:ref name="symName"/>
-      </rng:optional>
-      <rng:zeroOrMore>
-        <rng:ref name="symProp"/>
-      </rng:zeroOrMore>
-      <rng:zeroOrMore>
-        <rng:ref name="mapping"/>
-      </rng:zeroOrMore>
-      <!-- Use either SVG or MEI elements to "draw" the symbol -->
-      <rng:choice>
-        <rng:optional>
-          <rng:ref name="svg_svg"/>
-        </rng:optional>
-        <rng:zeroOrMore>
-          <rng:choice>
-            <rng:ref name="model.graphicPrimitiveLike"/>
-            <rng:ref name="symbol"/>
-            <rng:ref name="graphic"/>
-          </rng:choice>
-        </rng:zeroOrMore>
-      </rng:choice>
-      <rng:zeroOrMore>
-        <rng:ref name="model.annotLike"/>
-      </rng:zeroOrMore>
-    </content>
-    <remarks xml:lang="en">
-      <p>Like a chord table, a symbolTable may be shared between MEI instances through the use of an
+      <classes>
+         <memberOf key="att.common"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <textNode/>
+            <elementRef key="symbol"/>
+         </alternate>
+      </content>
+   </elementSpec>
+   <elementSpec ident="propName" module="MEI.usersymbols">
+      <gloss xml:lang="en">property name</gloss>
+      <desc xml:lang="en">Name of a property of the symbol.</desc>
+      <classes>
+         <memberOf key="att.basic"/>
+         <memberOf key="att.labelled"/>
+         <memberOf key="att.linking"/>
+         <memberOf key="att.nNumberLike"/>
+         <memberOf key="att.responsibility"/>
+      </classes>
+      <content>
+         <textNode/>
+      </content>
+      <attList>
+         <attDef ident="type" usage="req">
+            <desc xml:lang="en">Characterizes the property name.</desc>
+            <valList type="closed">
+               <valItem ident="unicode">
+                  <desc xml:lang="en">A registered Unicode normative or informative property name.</desc>
+               </valItem>
+               <valItem ident="local">
+                  <desc xml:lang="en">A locally defined name.</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </elementSpec>
+   <elementSpec ident="propValue" module="MEI.usersymbols">
+      <gloss xml:lang="en">property value</gloss>
+      <desc xml:lang="en">A single property value.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+      </classes>
+      <content>
+         <textNode/>
+      </content>
+   </elementSpec>
+   <elementSpec ident="symbolDef" module="MEI.usersymbols">
+      <gloss xml:lang="en">symbol definition</gloss>
+      <desc xml:lang="en">Declaration of an individual symbol in a symbolTable.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.coordinated"/>
+         <memberOf key="att.dataSelecting"/>
+      </classes>
+      <content>
+         <sequence>
+            <elementRef key="symName" minOccurs="0"/>
+            <elementRef key="symProp" minOccurs="0" maxOccurs="unbounded"/>
+            <elementRef key="mapping" minOccurs="0" maxOccurs="unbounded"/>
+            <!-- Use either SVG or MEI elements to "draw" the symbol -->
+            <alternate>
+               <elementRef key="svg_svg" minOccurs="0"/>
+               <alternate minOccurs="0" maxOccurs="unbounded">
+                  <classRef key="model.graphicPrimitiveLike"/>
+                  <elementRef key="symbol"/>
+                  <elementRef key="graphic"/>
+               </alternate>
+            </alternate>
+            <classRef key="model.annotLike" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+      </content>
+      <remarks xml:lang="en">
+         <p>Like a chord table, a symbolTable may be shared between MEI instances through the use of an
         external parsed entity containing the symbolTable to be shared.</p>
-    </remarks>
-  </elementSpec>
-  <elementSpec ident="symName" module="MEI.usersymbols">
-    <gloss xml:lang="en">symbol name</gloss>
-    <desc xml:lang="en">Contains the name of a symbol, expressed following Unicode
+      </remarks>
+   </elementSpec>
+   <elementSpec ident="symName" module="MEI.usersymbols">
+      <gloss xml:lang="en">symbol name</gloss>
+      <desc xml:lang="en">Contains the name of a symbol, expressed following Unicode
       conventions.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-    </classes>
-    <content>
-      <rng:text/>
-    </content>
-  </elementSpec>
-  <elementSpec ident="symProp" module="MEI.usersymbols">
-    <gloss xml:lang="en">symbol property</gloss>
-    <desc xml:lang="en">Provides a name and value for some property of the parent
+      <classes>
+         <memberOf key="att.common"/>
+      </classes>
+      <content>
+         <textNode/>
+      </content>
+   </elementSpec>
+   <elementSpec ident="symProp" module="MEI.usersymbols">
+      <gloss xml:lang="en">symbol property</gloss>
+      <desc xml:lang="en">Provides a name and value for some property of the parent
       symbol.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-    </classes>
-    <content>
-      <rng:ref name="propName"/>
-      <rng:ref name="propValue"/>
-    </content>
-  </elementSpec>
-  <elementSpec ident="symbolTable" module="MEI.usersymbols">
-    <desc xml:lang="en">Contains a set of user-defined symbols.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="model.symbolTableLike"/>
-    </classes>
-    <content>
-      <rng:oneOrMore>
-        <rng:ref name="symbolDef"/>
-      </rng:oneOrMore>
-    </content>
-    <remarks xml:lang="en">
-      <p>Like a chord table, a symbolTable may be shared between mei instances through the use of an
+      <classes>
+         <memberOf key="att.common"/>
+      </classes>
+      <content>
+         <sequence>
+            <elementRef key="propName"/>
+            <elementRef key="propValue"/>
+         </sequence>
+      </content>
+   </elementSpec>
+   <elementSpec ident="symbolTable" module="MEI.usersymbols">
+      <desc xml:lang="en">Contains a set of user-defined symbols.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="model.symbolTableLike"/>
+      </classes>
+      <content>
+         <elementRef key="symbolDef" minOccurs="1" maxOccurs="unbounded"/>
+      </content>
+      <remarks xml:lang="en">
+         <p>Like a chord table, a symbolTable may be shared between mei instances through the use of an
         external parsed entity containing the symbolTable to be shared.</p>
-    </remarks>
-  </elementSpec>
+      </remarks>
+   </elementSpec>
 </specGrp>
