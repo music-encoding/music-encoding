@@ -188,7 +188,7 @@ flowchart TD
     VALID --> COMP
 
     RNGS --> RNG_CUS
-    RNGS --> VALID_SCH
+    DIST --> VALID_SCH
     VALID_SCH --> VALID_CUS
     ODDS --> ODD_CUS
     HTML --> HTML_CUS
