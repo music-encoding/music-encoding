@@ -74,6 +74,7 @@
     <property name="dir.validation" value="source/validation"/>
     <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
     <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
+    <property name="dir.lib.jing" value="${dir.lib}/jing"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
     <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
@@ -85,6 +86,7 @@
     <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
     <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
     <!-- jar dependencies -->
+    <property name="jing.jar.file" value="jing-${jing.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
     <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
     <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
@@ -160,7 +162,7 @@
         <echo>Java version (JDK): ${ant.java.version}</echo>
     </target>
 
-    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
+    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces, Schematron and Jing are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
         <!-- check if Xerces is available -->
         <condition property="xerces-available">
             <or>
@@ -188,6 +190,12 @@
         </condition>
         <echo if:set="schematron-available" message="schematron available: ${schematron-available}"/>
         <echo unless:set="schematron-available" message="schematron available: false"/>
+        <!-- check if Jing is available -->
+        <condition property="jing-available">
+            <available file="${dir.lib.jing}/${jing.jar.file}"/>
+        </condition>
+        <echo if:set="jing-available" message="jing available: ${jing-available}"/>
+        <echo unless:set="jing-available" message="jing available: false"/>
         <!-- check if Stylesheets are available -->
         <fileset id="stylesheets.version.file" dir="${dir.lib.stylesheets}">
             <patternset>
@@ -213,6 +221,7 @@
         <antcall target="stylesheets-prepare" unless:true="${stylesheets-available}"/>
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
         <antcall target="schematron-download" unless:true="${schematron-available}"/>
+        <antcall target="jing-download" unless:true="${jing-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
 
         <echo>initialized</echo>
@@ -237,6 +246,12 @@
         <mkdir dir="${dir.lib.schematron}"/>
         <get src="https://repo1.maven.org/maven2/com/helger/schematron/ph-schematron-ant-task/${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
         <echo>downloaded schematron jar</echo>
+    </target>
+
+    <target name="jing-download" unless="${jing-available}">
+        <mkdir dir="${dir.lib.jing}"/>
+        <get src="https://repo1.maven.org/maven2/org/relaxng/jing/${jing.version}/${jing.jar.file}" dest="${dir.lib.jing}"/>
+        <echo>downloaded jing jar</echo>
     </target>
 
     <target name="stylesheets-download" unless="${stylesheets-available}">
