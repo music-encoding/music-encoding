@@ -1584,7 +1584,7 @@
                            <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample081.txt" parse="text"/></egXML>
                         </figure>
                      </p>
-                     <p>To ensure that the description of the pictorial signs conforms to international standards and that the individual components of the watermark are correctly represented, the multilingual description catalogue of the <ref target="https://www.memoryofpaper.eu/BernsteinPortal/" type="_blank">Bernstein project</ref> or the <ref target="http://www.paperhistory.org/Standards/" type="_blank">IPH standard</ref> should be consulted. To refer to already existing databases with watermarks, see <ptr target="#linkingdata"/>.
+                     <p>To ensure that the description of the pictorial signs conforms to international standards and that the individual components of the watermark are correctly represented, the multilingual description catalogue of the <ref target="https://www.memoryofpaper.eu/BernsteinPortal/" type="_blank">Bernstein project</ref> or the <ref target="http://www.paperhistory.org/Standards/" type="_blank">IPH standard</ref> should be consulted. To refer to already existing databases with watermarks, see <ptr target="#linkingdata"/>. A structured description of watermarks, paper molds and paper mills is provided by the MEI.watermark module (see <ptr target="#watermarkModule"/>).
                      </p>
                      <p><specList>
                         <specDesc key="stamp"/>
@@ -1637,6 +1637,111 @@
                      <p>If those value lists are not sufficient, however, it is recommended to design your own classification (see <gi scheme="MEI">classification</gi>).</p>
                            <p><gi scheme="MEI">scoreFormat</gi> can similarly be used for classification in <gi scheme="MEI">expression</gi>.</p>
                               <!--<p>Internal note: Even <gi scheme="MEI">physDesc</gi> is part of the MEI.header module, the parent elements of <gi scheme="MEI">physDesc</gi> (<gi scheme="MEI">manifestation</gi>, <gi scheme="MEI">item</gi>) are part of MEI.frbr. So the use of the module MEI.frbr is mandatory for the use of <gi scheme="MEI">scoreFormat</gi>.</p>-->
+                  </div>
+                  <div xml:id="watermarkModule" type="div4">
+                     <head>Watermark Module Overview</head>
+                     <p>The MEI.watermark module can be used for a structured description of watermarks, paper molds and paper mills, and complements the elements described in <ptr target="#physicalProperties"/>. Besides the attribute class <ident type="class">att.watermarkSign</ident>, it makes available the following main components:</p>
+                     <p>
+                        <specList>
+                           <specDesc key="datingEvid"/>
+                           <specDesc key="paperMoldDesc"/>
+                           <specDesc key="papermillDesc"/>
+                           <specDesc key="collectionMethod"/>
+                        </specList>
+                     </p>
+                     <p>The description can be divided into three parts: the sign itself, its context (dating, paper mold and paper mill), and the method by which the data were collected. Each part can be used independently of the others (see <ptr target="#watermarkCustomization"/>).</p>
+                     <p>The value lists of the module are based on the <ref target="http://www.paperhistory.org/Standards/" type="_blank">IPH standard</ref> (International Standard for the Registration of Papers with or without Watermarks, version 2.1.1), which should be consulted for their use. Motif classes are not defined by the module. For these, it is recommended to use an existing classification, for example the <ref target="https://www.wasserzeichen-online.de/" type="_blank">Wasserzeichen-Informationssystem (WZIS)</ref>, the IPH classification or the multilingual description catalogue of the <ref target="https://www.memoryofpaper.eu/BernsteinPortal/" type="_blank">Bernstein project</ref>.</p>
+                     <p>The module is connected to the MEI.header module by two model classes: <ident type="class">model.watermarkPart</ident> in <gi scheme="MEI">watermark</gi> and <ident type="class">model.watermarkDescPart</ident> in <gi scheme="MEI">watermarkDesc</gi>. Both classes remain empty unless the module is activated, so that <gi scheme="MEI">watermark</gi> and <gi scheme="MEI">watermarkDesc</gi> can be used as before in customizations without the module.</p>
+                     <div xml:id="watermarkSign" type="div5">
+                        <head>Description of the Sign</head>
+                        <p>
+                           <specList>
+                              <specDesc key="att.watermarkSign" atts="wmtype"/>
+                              <specDesc key="att.watermarkSign" atts="wmstruct"/>
+                              <specDesc key="att.watermarkSign" atts="completeness"/>
+                           </specList>
+                        </p>
+                        <p>A <gi scheme="MEI">watermark</gi> can be classified with the attributes of <ident type="class">att.watermarkSign</ident>. With <att>wmtype</att>, you can record the kind of mark. The values that can be used are <val>main</val> (main mark), <val>counter</val> (countermark), <val>corner</val> (corner mark), <val>border</val> (border mark), <val>divider</val> (dividing lines) and <val>none</val> (without watermark); they correspond to the IPH codes M, C, nCRN, BO, DV and N. If these values are not sufficient, project-specific values can be used as well.</p>
+                        <p>With <att>wmstruct</att>, you can record how the mark was produced. The values that can be used are the IPH structure codes <val>TL</val> (watermark produced by thread lines), <val>LW</val> (line watermark), <val>SW</val> (shadow watermark), <val>LSW</val> (combined line/shadow), <val>EMB</val> (embossed watermark), <val>MOL</val> (molette watermark, impressed) and <val>UNT</val> (false watermark); other values are not allowed. With <att>completeness</att>, you can indicate whether the sign itself is completely preserved (<val>true</val>) or only partially (<val>false</val>).</p>
+                        <p>As described in <ptr target="#physicalProperties"/>, main mark and countermark can be encoded as <gi scheme="MEI">heraldry</gi> elements within <gi scheme="MEI">figDesc</gi>. It is recommended to give the motif class in the <att>class</att> attribute of <gi scheme="MEI">heraldry</gi>, pointing to a <gi scheme="MEI">category</gi> of a taxonomy declared in <gi scheme="MEI">classDecls</gi> (see <ptr target="#headerClassDeclarations"/>). Main mark and countermark can be linked by <gi scheme="MEI">relation</gi> elements with the values <val>hasCountermark</val> and <val>isCountermarkOf</val>. For twin marks, that is, marks produced by the two molds of a pair, the value <val>hasTwin</val> can be used.</p>
+                        <p>For relations between watermarks, paper molds and paper mills, it is recommended to use the values <val>hasCountermark</val>, <val>isCountermarkOf</val>, <val>hasTwin</val>, <val>isProductOf</val> and <val>hasProduct</val>, which are not part of the relationships described in <ptr target="#FRBRrelations"/>. When the module is activated, a Schematron rule issues a warning (not an error) if other values are used for <att>rel</att> within these descriptions.</p>
+                        <p>
+                           <figure>
+                              <head>Example of <gi scheme="MEI">watermark</gi> with main mark, countermark and twin mark</head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample104.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                     </div>
+                     <div xml:id="watermarkContext" type="div5">
+                        <head>Dating, Paper Molds and Paper Mills</head>
+                        <p>
+                           <specList>
+                              <specDesc key="datingEvid"/>
+                              <specDesc key="msDate"/>
+                              <specDesc key="usagePeriod"/>
+                              <specDesc key="prodPeriod"/>
+                           </specList>
+                        </p>
+                        <p>Within <gi scheme="MEI">datingEvid</gi>, you can record the evidence for the dating of a watermark, separated by kind: <gi scheme="MEI">msDate</gi> for the date of a dated source in which the watermark occurs, <gi scheme="MEI">usagePeriod</gi> for the period during which the paper mold or paper stock is documented to have been in use, and <gi scheme="MEI">prodPeriod</gi> for the period of production of the paper or the paper mold.</p>
+                        <p>
+                           <specList>
+                              <specDesc key="paperMoldDesc"/>
+                              <specDesc key="paperMold"/>
+                              <specDesc key="paperMoldFormat"/>
+                              <specDesc key="moldStructure"/>
+                              <specDesc key="quadrant"/>
+                           </specList>
+                        </p>
+                        <p>Since one paper mold usually produced the paper of many sources, it is recommended to describe paper molds not within a single <gi scheme="MEI">watermark</gi>, but in <gi scheme="MEI">paperMoldDesc</gi>, a child of <gi scheme="MEI">watermarkDesc</gi> next to <gi scheme="MEI">watermarkList</gi>. Within <gi scheme="MEI">paperMold</gi>, you can record the format of the sheet in <gi scheme="MEI">paperMoldFormat</gi> (<abbr>e.g.</abbr>, a historical format name together with height and width) and the arrangement of the marks in <gi scheme="MEI">moldStructure</gi>. With the <att>twin</att> attribute of <gi scheme="MEI">moldStructure</gi>, you can indicate whether the mold is one of a pair of twin molds, and with <att>completeness</att> whether all quadrants of the mold could be identified. Each <gi scheme="MEI">quadrant</gi> can describe one quadrant of the mold and the mark found in it; the values that can be used for its required <att>quadrant</att> attribute are <val>a</val> to <val>d</val>.</p>
+                        <p>
+                           <specList>
+                              <specDesc key="papermillDesc"/>
+                              <specDesc key="papermill"/>
+                              <specDesc key="papermaker"/>
+                           </specList>
+                        </p>
+                        <p>Paper mills can be described in the same way within <gi scheme="MEI">papermillDesc</gi>. Within <gi scheme="MEI">papermill</gi>, you can record, among others, a title, identifiers from authority files, the location in <gi scheme="MEI">geogName</gi> and the history of the mill. It is recommended to record the persons or families who operated the mill in <gi scheme="MEI">papermaker</gi>, each with the period of activity, so that changes of ownership can be dated. To link watermark, paper mold and paper mill, <gi scheme="MEI">relation</gi> elements with the value <val>isProductOf</val> or, in the opposite direction, <val>hasProduct</val> can be used.</p>
+                        <p>For registers of watermarks, paper molds or paper mills kept in separate files, it is recommended to use <gi scheme="MEI">watermarkDesc</gi> as root element, which requires a customization that allows it as start element (<abbr>e.g.</abbr>, mei-all_anyStart). In this way, all elements described in this section can be used in their usual context.</p>
+                        <p>
+                           <figure>
+                              <head>Example of <gi scheme="MEI">watermarkDesc</gi> with dating evidence, paper mold and paper mill</head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample105.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                     </div>
+                     <div xml:id="watermarkCollection" type="div5">
+                        <head>Collection Method</head>
+                        <p>
+                           <specList>
+                              <specDesc key="collectionMethod"/>
+                              <specDesc key="reproTech"/>
+                              <specDesc key="examinationSide"/>
+                              <specDesc key="moldMeasurement"/>
+                              <specDesc key="chainLinesDistance"/>
+                              <specDesc key="laidLinesDensity"/>
+                           </specList>
+                        </p>
+                        <p>With <gi scheme="MEI">collectionMethod</gi>, you can describe how the data of a watermark were collected. In the <att>repro</att> attribute of <gi scheme="MEI">reproTech</gi>, you can give the technique used to reproduce the watermark and the structure of the paper. The values that can be used are those of the IPH standard, <abbr>e.g.</abbr>, <val>trac</val> (hand-drawn tracing), <val>rubb</val> (rubbing), <val>beta</val> (beta radiography) or <val>scan</val> (scanning), extended by <val>therm</val> (thermography). For other techniques, it is recommended to use the value <val>dive</val> and to describe the technique in the content of the element.</p>
+                        <p>With the <att>side</att> attribute of <gi scheme="MEI">examinationSide</gi>, you can record whether the data were taken from the mold side (<val>mold</val>) or the felt side (<val>felt</val>) of the sheet; if this is not known, the value <val>unknown</val> can be used.</p>
+                        <p>Measurements of the chain and laid lines can be grouped in <gi scheme="MEI">moldMeasurement</gi>, if necessary for each quadrant (<att>quadrant</att>). <gi scheme="MEI">chainLinesDistance</gi> contains the distance between the chain lines, <gi scheme="MEI">laidLinesDensity</gi> the number of laid lines per segment; it is recommended to give the length of the segment in <att>segment</att> (the IPH standard uses 20 mm). Both elements contain a number, whose unit can be given in <att>unit</att>. With <att>aggregate</att>, you can state whether the value is a single measurement (<val>single</val>) or the mean, median, minimum or maximum of several measurements (<val>mean</val>, <val>median</val>, <val>min</val>, <val>max</val>).</p>
+                        <p>It is recommended to indicate with <att>resp</att> who collected a value. The attribute can point to a person or to software declared as <gi scheme="MEI">application</gi> (see <ptr target="#headerApplicationInformation"/>).</p>
+                        <p>
+                           <figure>
+                              <head>Example of <gi scheme="MEI">collectionMethod</gi></head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample106.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                     </div>
+                     <div xml:id="watermarkCustomization" type="div5">
+                        <head>Selecting Parts of the Module</head>
+                        <p>Like other MEI modules, the MEI.watermark module can be included in a customization with <gi scheme="TEI">moduleRef</gi> (see <ptr target="#meiCustomization"/>). Parts of the module that are not needed can be excluded with the <att>except</att> attribute. The following example shows how to include the complete module, and how to include only the description of the sign and the collection method:</p>
+                        <p>
+                           <figure>
+                              <head>Including the MEI.watermark module in a customization</head>
+                              <egXML xmlns="http://www.tei-c.org/ns/Examples" rend="code" xml:space="preserve"><xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../examples/header/header-sample107.txt" parse="text"/></egXML>
+                           </figure>
+                        </p>
+                     </div>
                   </div>
                   <div xml:id="bindingDesc" type="div4">
                      <head>Binding Description</head>

@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  NOTICE: Copyright (c) by the Music Encoding Initiative (MEI) Board (formerly known as "MEI Council").
+
+  Licensed under the Educational Community License, Version 2.0 (the "License"); you may
+  not use this file except in compliance with the License. You may obtain a copy of the License
+  at https://opensource.org/licenses/ECL-2.0.
+  
+  Unless required by applicable law or agreed to in writing, software distributed under the
+  License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+  OF ANY KIND, either express or implied. See the License for the specific language
+  governing permissions and limitations under the License.
+  
+  This is a derivative work based on earlier versions of the schema © 2001-2006 Perry Roland
+  and the Rector and Visitors of the University of Virginia; licensed under the Educational
+  Community License version 1.0.
+  
+  CONTACT: info@music-encoding.org
+-->
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
+  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.watermark">
+  <moduleSpec ident="MEI.watermark">
+    <desc xml:lang="en">Watermark, paper mold and paper mill component declarations.</desc>
+  </moduleSpec>
+
+  <!-- ================================================================== -->
+  <!-- Part 1: Sign                                                       -->
+  <!-- ================================================================== -->
+
+  <classSpec ident="att.watermarkSign" type="atts" module="MEI.watermark">
+    <desc xml:lang="en">Attributes that classify a watermark by its kind, its structure and its
+      completeness. The values follow the IPH standard (version 2.1.1).</desc>
+    <constraintSpec ident="watermark_relations" scheme="schematron">
+      <desc xml:lang="en">Relation vocabulary of the module. Besides MEI relations, the module
+        defines: hasCountermark / isCountermarkOf (main mark and countermark of a watermark),
+        hasTwin (twin marks or twin molds), isProductOf / hasProduct (watermark – paper mold –
+        paper mill).</desc>
+      <constraint>
+        <sch:rule context="mei:relation[ancestor::mei:watermarkDesc or ancestor::mei:watermarkList or ancestor::mei:watermark or ancestor::mei:papermill or ancestor::mei:paperMold]">
+          <sch:let name="recommended" value="('hasCountermark', 'isCountermarkOf', 'hasTwin', 'isProductOf', 'hasProduct', 'hasSuccessor', 'isSuccessorOf', 'hasPart', 'isPartOf', 'hasRealization', 'isRealizationOf', 'hasReproduction', 'isReproductionOf')"/>
+          <sch:assert test="@rel = $recommended" role="warning">For relations between watermarks,
+            signs, paper molds and paper mills the following values of rel are recommended:
+              <sch:value-of select="string-join($recommended, ', ')"/>.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="wmtype" usage="opt">
+        <desc xml:lang="en">Kind of the mark according to its position and function on the sheet
+          (IPH 2.1.1, 3.1.0 KIND). The suggested values correspond to the IPH codes given in
+          their definitions; other values may be used if none of them applies and should be
+          documented in the encoding description. Where IPH describes several watermarks of one
+          sheet with numbered subcodes (e.g. KIND1 M; KIND2 C), MEI uses one watermark element
+          per mark.</desc>
+        <datatype>
+          <rng:data type="NMTOKEN"/>
+        </datatype>
+        <valList type="semi">
+          <valItem ident="main">
+            <gloss xml:lang="en">main mark</gloss>
+            <desc xml:lang="en">The principal design of the sheet, usually placed in the middle of
+              one half of the sheet (IPH: M, main watermark).</desc>
+          </valItem>
+          <valItem ident="counter">
+            <gloss xml:lang="en">countermark</gloss>
+            <desc xml:lang="en">A secondary, usually smaller mark such as initials or a name,
+              usually placed in the other half of the sheet opposite the main mark (IPH: C, counter watermark).</desc>
+          </valItem>
+          <valItem ident="corner">
+            <gloss xml:lang="en">corner mark</gloss>
+            <desc xml:lang="en">A mark or decoration placed in a corner of the sheet (IPH: nCRN,
+              corner watermark (decoration) on n corners, where n is the number of corners).</desc>
+          </valItem>
+          <valItem ident="border">
+            <gloss xml:lang="en">border mark</gloss>
+            <desc xml:lang="en">A mark or decoration running along an edge of the sheet (IPH: BO, border
+              watermark (decoration)).</desc>
+          </valItem>
+          <valItem ident="divider">
+            <gloss xml:lang="en">dividing lines</gloss>
+            <desc xml:lang="en">Lines that divide the sheet into sections (IPH: DV, dividing
+              line(s)).</desc>
+          </valItem>
+          <valItem ident="none">
+            <gloss xml:lang="en">without watermark</gloss>
+            <desc xml:lang="en">The paper carries no watermark (IPH: N, without
+              watermark).</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="wmstruct" usage="opt">
+        <desc xml:lang="en">Structure of the watermark according to its production technique
+          (IPH 2.1.1, 3.1.1 STRU). The values are the codes of the IPH standard; the gloss gives
+          the IPH label, the description an explanation.</desc>
+        <valList type="closed">
+          <valItem ident="TL">
+            <gloss xml:lang="en">watermark produced by thread lines</gloss>
+            <desc xml:lang="en">Watermark formed by a wire figure sewn onto the wire cover of a hand
+              mold; the paper is thinner above the wire, so the figure appears as light lines in
+              transmitted light. The common type in hand-made paper from the 15th to the early 18th
+              century.</desc>
+          </valItem>
+          <valItem ident="LW">
+            <gloss xml:lang="en">line watermark</gloss>
+            <desc xml:lang="en">Watermark whose design consists only of light lines of even
+              width, without graded tones.</desc>
+          </valItem>
+          <valItem ident="SW">
+            <gloss xml:lang="en">shadow watermark</gloss>
+            <desc xml:lang="en">Watermark produced by a relief in the mold cover or on the dandy
+              roll that varies the thickness of the paper gradually, so that the design appears in
+              graded tones of light and dark in transmitted light.</desc>
+          </valItem>
+          <valItem ident="LSW">
+            <gloss xml:lang="en">combined line/shadow</gloss>
+            <desc xml:lang="en">Watermark combining light lines of even width with graded
+              tones.</desc>
+          </valItem>
+          <valItem ident="EMB">
+            <gloss xml:lang="en">embossed watermark</gloss>
+            <desc xml:lang="en">Design produced by pressing a relief into the paper, visible as a
+              deformation of the paper surface.</desc>
+          </valItem>
+          <valItem ident="MOL">
+            <gloss xml:lang="en">molette watermark (impressed)</gloss>
+            <desc xml:lang="en">Design impressed into the still moist paper with an engraved roller
+              (molette) after the sheet has been formed, not formed on the mold.</desc>
+          </valItem>
+          <valItem ident="UNT">
+            <gloss xml:lang="en">false watermark</gloss>
+            <desc xml:lang="en">Imitation of a watermark that is not formed during sheet formation,
+              e.g. produced by printing a colorless liquid onto the finished paper, which makes the
+              printed areas more translucent.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+      <attDef ident="completeness" usage="opt">
+        <desc xml:lang="en">Indicates whether the sign is completely preserved (true) or only
+          partially (false). Completeness refers to the sign itself, not to whether it is
+          distributed across several leaves.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </classSpec>
+
+  <!-- ================================================================== -->
+  <!-- Part 2: Context                                                    -->
+  <!-- ================================================================== -->
+
+  <macroSpec ident="macro.wmPeriodContent" module="MEI.watermark" type="pe">
+    <desc xml:lang="en">Content of the elements that record a date or period used as dating
+      evidence.</desc>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.dateLike"/>
+            <rng:ref name="desc"/>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.locrefLike"/>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="model.relationLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+  </macroSpec>
+
+  <elementSpec ident="datingEvid" module="MEI.watermark">
+    <gloss xml:lang="en">dating evidence</gloss>
+    <desc xml:lang="en">Contains the evidence for the dating of a watermark, separated by kind:
+      a dated source, the period of usage and the period of production.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.watermarkPart"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.dateLike"/>
+            <rng:ref name="msDate"/>
+            <rng:ref name="usagePeriod"/>
+            <rng:ref name="prodPeriod"/>
+            <rng:ref name="model.locrefLike"/>
+            <rng:ref name="biblList"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <constraintSpec ident="datingEvid_single" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:datingEvid[parent::mei:watermark]">
+          <sch:assert test="not(preceding-sibling::mei:datingEvid)">A watermark may contain only
+            one datingEvid.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks xml:lang="en">
+      <p>The <att>evidence</att> attribute states whether the dating is based on internal,
+        external or conjectural evidence. The summarized result may be recorded with the
+        attributes of <ident type="class">att.datable</ident>.</p>
+    </remarks>
+  </elementSpec>
+
+  <elementSpec ident="msDate" module="MEI.watermark">
+    <gloss xml:lang="en">manuscript date</gloss>
+    <desc xml:lang="en">Date of a dated source in which the watermark occurs, used as dating
+      evidence.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.wmPeriodContent"/>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="usagePeriod" module="MEI.watermark">
+    <gloss xml:lang="en">usage period</gloss>
+    <desc xml:lang="en">Period during which a paper mold or paper stock is documented to have been
+      in use.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.wmPeriodContent"/>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="prodPeriod" module="MEI.watermark">
+    <gloss xml:lang="en">production period</gloss>
+    <desc xml:lang="en">Period during which the paper or the paper mold was produced.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.evidence"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.wmPeriodContent"/>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="paperMoldDesc" module="MEI.watermark">
+    <gloss xml:lang="en">paper mold description</gloss>
+    <desc xml:lang="en">Contains the description of one or more paper molds.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.watermarkDescPart"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="paperMold"/>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="paperMold" module="MEI.watermark">
+    <gloss xml:lang="en">paper mold</gloss>
+    <desc xml:lang="en">Describes a paper mold.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.titleLike"/>
+            <rng:ref name="model.identifierLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="paperMoldFormat"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="moldStructure"/>
+            <rng:ref name="datingEvid"/>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="biblList"/>
+            <rng:ref name="model.relationLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <remarks xml:lang="en">
+      <p>The mold is linked to its paper mill with a <gi scheme="MEI">relation</gi> with
+          <att>rel</att>="isProductOf"; twin molds with <att>rel</att>="hasTwin".</p>
+    </remarks>
+  </elementSpec>
+
+  <elementSpec ident="paperMoldFormat" module="MEI.watermark">
+    <gloss xml:lang="en">paper mold format</gloss>
+    <desc xml:lang="en">Format of the sheet produced by a paper mold, e.g. a historical format name
+      such as Kanzlei or Royal, and its dimensions.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.dimensions"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="att.measurement"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="moldStructure" module="MEI.watermark">
+    <gloss xml:lang="en">mold structure</gloss>
+    <desc xml:lang="en">Describes the arrangement of the marks on a paper mold, divided into
+      quadrants.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="quadrant"/>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <constraintSpec ident="moldStructure_uniqueQuadrants" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:moldStructure">
+          <sch:assert test="count(mei:quadrant) eq count(distinct-values(mei:quadrant/@quadrant))">Each
+            quadrant may be described only once within a moldStructure.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <attList>
+      <attDef ident="twin" usage="opt">
+        <desc xml:lang="en">Indicates whether the mold is one of a pair of twin molds.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+      <attDef ident="completeness" usage="opt">
+        <desc xml:lang="en">Indicates whether all quadrants of the mold could be
+          identified.</desc>
+        <datatype>
+          <rng:ref name="data.BOOLEAN"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+  <elementSpec ident="quadrant" module="MEI.watermark">
+    <desc xml:lang="en">Describes one quadrant of a paper mold and the mark found in it.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.identifierLike"/>
+            <rng:ref name="model.graphicLike"/>
+            <rng:ref name="locus"/>
+            <rng:ref name="locusGrp"/>
+            <rng:ref name="model.locrefLike"/>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.annotLike"/>
+            <rng:ref name="model.relationLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <attList>
+      <attDef ident="quadrant" usage="req">
+        <desc xml:lang="en">Designation of the quadrant. The convention used (which corner of the
+          mold is quadrant a) should be documented in the encoding description.</desc>
+        <valList type="closed">
+          <valItem ident="a"/>
+          <valItem ident="b"/>
+          <valItem ident="c"/>
+          <valItem ident="d"/>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+  <elementSpec ident="papermillDesc" module="MEI.watermark">
+    <gloss xml:lang="en">paper mill description</gloss>
+    <desc xml:lang="en">Contains the description of one or more paper mills.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.watermarkDescPart"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.pLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="papermill"/>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+  </elementSpec>
+
+  <elementSpec ident="papermill" module="MEI.watermark">
+    <desc xml:lang="en">Describes a paper mill.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.titleLike"/>
+            <rng:ref name="model.identifierLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="model.nameLike.geogName"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:ref name="papermaker"/>
+        </rng:zeroOrMore>
+        <rng:optional>
+          <rng:ref name="history"/>
+        </rng:optional>
+        <rng:optional>
+          <rng:ref name="notesStmt"/>
+        </rng:optional>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="watermarkList"/>
+            <rng:ref name="paperMoldDesc"/>
+            <rng:ref name="biblList"/>
+            <rng:ref name="model.relationLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <remarks xml:lang="en">
+      <p>Changes of ownership become datable through the periods of activity of the papermakers
+        and through the events in <gi scheme="MEI">history</gi>.</p>
+    </remarks>
+  </elementSpec>
+
+  <elementSpec ident="papermaker" module="MEI.watermark">
+    <desc xml:lang="en">A person or family who operated a paper mill, with the period of
+      activity.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.authorized"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:ref name="macro.struc-unstrucContent"/>
+    </content>
+    <remarks xml:lang="en">
+      <p>The name is encoded with <gi scheme="MEI">persName</gi> or <gi scheme="MEI">corpName</gi>,
+        the period of activity with <gi scheme="MEI">date</gi>.</p>
+    </remarks>
+  </elementSpec>
+
+  <!-- ================================================================== -->
+  <!-- Part 3: Collection method                                          -->
+  <!-- ================================================================== -->
+
+  <classSpec ident="att.measuredValue" type="atts" module="MEI.watermark">
+    <desc xml:lang="en">Attributes that describe how a measured value was obtained.</desc>
+    <attList>
+      <attDef ident="aggregate" usage="opt">
+        <desc xml:lang="en">Aggregation of the individual measurements the value is based
+          on.</desc>
+        <valList type="closed">
+          <valItem ident="single">
+            <desc xml:lang="en">A single measurement.</desc>
+          </valItem>
+          <valItem ident="mean">
+            <desc xml:lang="en">Arithmetic mean.</desc>
+          </valItem>
+          <valItem ident="median">
+            <desc xml:lang="en">Median.</desc>
+          </valItem>
+          <valItem ident="min">
+            <desc xml:lang="en">Minimum.</desc>
+          </valItem>
+          <valItem ident="max">
+            <desc xml:lang="en">Maximum.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </classSpec>
+
+  <elementSpec ident="collectionMethod" module="MEI.watermark">
+    <gloss xml:lang="en">collection method</gloss>
+    <desc xml:lang="en">Describes how the data of a watermark were collected: reproduction
+      technique, examined side of the sheet and measurements.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.lang"/>
+      <memberOf key="model.watermarkPart"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:ref name="model.headLike"/>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="reproTech"/>
+            <rng:ref name="examinationSide"/>
+            <rng:ref name="moldMeasurement"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <constraintSpec ident="collectionMethod_single" scheme="schematron">
+      <constraint>
+        <sch:rule context="mei:collectionMethod">
+          <sch:assert test="not(parent::mei:watermark) or not(preceding-sibling::mei:collectionMethod)">A
+            watermark may contain only one collectionMethod.</sch:assert>
+          <sch:assert test="count(mei:examinationSide) le 1">A collectionMethod may contain at most
+            one examinationSide.</sch:assert>
+        </sch:rule>
+      </constraint>
+    </constraintSpec>
+    <remarks xml:lang="en">
+      <p>Who collected the data, a person or a tool, is recorded with <att>resp</att>; tools are
+        declared as <gi scheme="MEI">application</gi> in the header. The same applies to the
+        individual measurements.</p>
+    </remarks>
+  </elementSpec>
+
+  <elementSpec ident="reproTech" module="MEI.watermark">
+    <gloss xml:lang="en">reproduction technique</gloss>
+    <desc xml:lang="en">Technique used to reproduce or capture the watermark and the structure of
+      the paper.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.facsimile"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="repro" usage="req">
+        <desc xml:lang="en">Reproduction technique. Values of the IPH standard, extended by
+          thermography.</desc>
+        <valList type="closed">
+          <valItem ident="trac">
+            <desc xml:lang="en">Hand-drawn tracing.</desc>
+          </valItem>
+          <valItem ident="phot">
+            <desc xml:lang="en">Transparency photograph.</desc>
+          </valItem>
+          <valItem ident="rubb">
+            <desc xml:lang="en">Rubbing.</desc>
+          </valItem>
+          <valItem ident="UVphot">
+            <desc xml:lang="en">UV photography.</desc>
+          </valItem>
+          <valItem ident="phos">
+            <desc xml:lang="en">Phosphorescence technique.</desc>
+          </valItem>
+          <valItem ident="SXradi">
+            <desc xml:lang="en">Soft X-ray radiography.</desc>
+          </valItem>
+          <valItem ident="beta">
+            <desc xml:lang="en">Beta radiography.</desc>
+          </valItem>
+          <valItem ident="elec">
+            <desc xml:lang="en">Electron radiography.</desc>
+          </valItem>
+          <valItem ident="surf">
+            <desc xml:lang="en">Digitised non-contacting thickness measurement.</desc>
+          </valItem>
+          <valItem ident="scan">
+            <desc xml:lang="en">Scanning.</desc>
+          </valItem>
+          <valItem ident="therm">
+            <desc xml:lang="en">Thermography (not part of IPH 2.1.1).</desc>
+          </valItem>
+          <valItem ident="dive">
+            <desc xml:lang="en">Other reproduction technique; should be described in the content
+              of the element.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+  <elementSpec ident="examinationSide" module="MEI.watermark">
+    <gloss xml:lang="en">examination side</gloss>
+    <desc xml:lang="en">Records from which side of the sheet the data were taken.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:zeroOrMore>
+        <rng:choice>
+          <rng:text/>
+          <rng:ref name="model.textPhraseLike.limited"/>
+        </rng:choice>
+      </rng:zeroOrMore>
+    </content>
+    <attList>
+      <attDef ident="side" usage="req">
+        <desc xml:lang="en">Side of the sheet.</desc>
+        <valList type="closed">
+          <valItem ident="mold">
+            <desc xml:lang="en">Mold side of the sheet, i.e. the side that lay on the wire cover of the mold.</desc>
+          </valItem>
+          <valItem ident="felt">
+            <desc xml:lang="en">Felt side of the sheet, i.e. the side that was couched onto the felt.</desc>
+          </valItem>
+          <valItem ident="unknown">
+            <desc xml:lang="en">The side cannot be determined.</desc>
+          </valItem>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+  <elementSpec ident="moldMeasurement" module="MEI.watermark">
+    <gloss xml:lang="en">mold measurement</gloss>
+    <desc xml:lang="en">Measurements of the chain and laid lines taken in one quadrant of the
+      sheet.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.datable"/>
+      <memberOf key="att.lang"/>
+    </classes>
+    <content>
+      <rng:group>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="locus"/>
+            <rng:ref name="locusGrp"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+        <rng:zeroOrMore>
+          <rng:choice>
+            <rng:ref name="chainLinesDistance"/>
+            <rng:ref name="laidLinesDensity"/>
+            <rng:ref name="model.pLike"/>
+            <rng:ref name="model.annotLike"/>
+          </rng:choice>
+        </rng:zeroOrMore>
+      </rng:group>
+    </content>
+    <attList>
+      <attDef ident="quadrant" usage="opt">
+        <desc xml:lang="en">Quadrant of the sheet in which the measurement was taken.</desc>
+        <valList type="closed">
+          <valItem ident="a"/>
+          <valItem ident="b"/>
+          <valItem ident="c"/>
+          <valItem ident="d"/>
+        </valList>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+  <elementSpec ident="chainLinesDistance" module="MEI.watermark">
+    <gloss xml:lang="en">chain lines distance</gloss>
+    <desc xml:lang="en">Distance between the chain lines.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.measuredValue"/>
+    </classes>
+    <content>
+      <rng:data type="decimal"/>
+    </content>
+    <remarks xml:lang="en">
+      <p>The value is given in the unit stated in <att>unit</att>; <att>aggregate</att> states
+        whether it is a single measurement or an aggregate of several.</p>
+    </remarks>
+  </elementSpec>
+
+  <elementSpec ident="laidLinesDensity" module="MEI.watermark">
+    <gloss xml:lang="en">laid lines density</gloss>
+    <desc xml:lang="en">Number of laid lines per segment of a given length.</desc>
+    <classes>
+      <memberOf key="att.common"/>
+      <memberOf key="att.bibl"/>
+      <memberOf key="att.measurement"/>
+      <memberOf key="att.measuredValue"/>
+    </classes>
+    <content>
+      <rng:data type="decimal"/>
+    </content>
+    <attList>
+      <attDef ident="segment" usage="rec">
+        <desc xml:lang="en">Length of the reference segment in the unit given by <att>unit</att>.
+          The IPH standard uses 20 mm.</desc>
+        <datatype>
+          <rng:data type="decimal"/>
+        </datatype>
+      </attDef>
+    </attList>
+  </elementSpec>
+
+</specGrp>
