@@ -93,17 +93,14 @@
         </sch:rule>
     </sch:pattern>
     
-    <!-- CHECK IF MODULES ARE AVAILABLE -->
+    <!-- CHECK IF MODULES ARE AVAILABLE AND HAVE A @mode -->
     <sch:pattern id="check_moduleSpec">
-        <sch:let name="moduleKey" value="@ident"/>
-        <sch:rule context="tei:moduleSpec">
-            <sch:assert test="@mode" role="warning">The "<sch:value-of select="$moduleKey"/>" <sch:name/> should have a @mode.</sch:assert>
-        </sch:rule>
         <sch:rule context="tei:moduleSpec">
             <sch:extends rule="get.source"/>
-            <sch:let name="moduleKey" value="@ident"/>
-            <sch:let name="exists" value="$moduleKey = $applicable.source.doc//tei:moduleSpec/@ident"/>
-            <sch:assert test="$exists">There is no module "<sch:value-of select="$moduleKey"/>".</sch:assert>
+            <sch:let name="exists" value="$ident = $applicable.source.doc//tei:moduleSpec/@ident"/>
+            <!-- without @mode, TEI defaults to "add", i.e. a new module -->
+            <sch:assert test="not(@mode) or $exists">There is no module "<sch:value-of select="$ident"/>".</sch:assert>
+            <sch:assert test="@mode" role="warning">The "<sch:value-of select="$ident"/>" <sch:name/> should have a @mode.</sch:assert>
         </sch:rule>
     </sch:pattern>
     
