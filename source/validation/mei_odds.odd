@@ -390,6 +390,32 @@
         </div>
       </div>
       <div>
+        <head>Modifications to the sequence element</head>
+        <specGrp xml:id="mod_element_sequence">
+          
+          <elementSpec module="tagdocs" xml:id="gi-sequence" ident="sequence" mode="change">
+            <constraintSpec ident="sequencechilden" scheme="schematron" xml:lang="en" mode="change">
+              <constraint>
+                <sch:rule context="tei:sequence">
+                  <sch:assert test="count(*) gt 1" role="warning">The &lt;sequence&gt; element should have at least two child elements, except you’re trying to enforce an rng:list element when transforming to RNG.</sch:assert>
+                </sch:rule>
+              </constraint>
+            </constraintSpec>
+            <attList>
+              <attDef ident="preserveOrder" validUntil="2027-05-06" mode="delete">
+                <desc type="deprecationInfo" versionDate="2024-03-15" xml:lang="en">The <att>preserveOrder</att> on <gi>sequence</gi> has been deprecated. The <gi>interleave</gi> element should be used to denote unordered constructs.</desc>
+                <desc xml:lang="en" versionDate="2023-03-21">if false, indicates that component elements of a sequence may occur in any order.</desc>
+                <datatype><dataRef key="teidata.truthValue"/></datatype>
+              </attDef>
+            </attList>
+            <remarks ident="remark_sequence_children_constraint_change">
+              <p>Changed the role to warning instead of defaulting to error, since the sequence with one child and maxOccurs=unbounded is the only way for creating rng:list elements in datatypes.</p>
+            </remarks>
+            
+          </elementSpec>
+        </specGrp>
+      </div>
+      <div>
         <head>A new module: xinclude</head>
         <p>The <ident type="file">mei-source.xml</ident> file relies on XInclude to reference the individual ODD files of the MEI Guidelines chapters and module definitions. To facilitate the validation of <ident type="file">mei-source.xml</ident> even without active resolution of XInclude statements, the definition of the <gi scheme="xi">include</gi> element was borrowed from the <ref target="https://www.tei-c.org/Vault/P5/4.9.0/xml/tei/Exemplars/tei_xinclude.odd">TEI XInclude customization</ref> by the means of ODD chaining.</p>
         <specGrp xml:id="add_element_xi-include">
@@ -454,6 +480,7 @@
         <specGrpRef target="#mod_module_linking"/>
         <specGrpRef target="#mod_module_figures"/>
         <specGrpRef target="#add_module_xinclude"/>
+        <specGrpRef target="#mod_element_sequence"/>
 
       </schemaSpec>
     </back>
