@@ -315,17 +315,21 @@
   <!-- subroutine to handle repetition and optionality -->
   <!-- *********************************************** -->
   <xsl:template name="maxmin">
-    <xsl:variable name="num_siblings" select="count(../*) -1"/>
+    <!-- A single-child rng:group produces no output (see the rng:group
+         template), so look past any such groups for the repetition wrapper.
+         Otherwise e.g. zeroOrMore/group/choice loses its occurrence. -->
+    <xsl:variable name="node" select="(ancestor-or-self::*[not(parent::rng:group[count(*) eq 1])])[last()]"/>
+    <xsl:variable name="num_siblings" select="count($node/../*) -1"/>
     <xsl:choose>
-      <xsl:when test="parent::rng:zeroOrMore  and  $num_siblings eq 0">
+      <xsl:when test="$node/parent::rng:zeroOrMore  and  $num_siblings eq 0">
         <xsl:attribute name="minOccurs">0</xsl:attribute>
         <xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
       </xsl:when>
-      <xsl:when test="parent::rng:oneOrMore  and  $num_siblings eq 0">
+      <xsl:when test="$node/parent::rng:oneOrMore  and  $num_siblings eq 0">
         <xsl:attribute name="minOccurs">1</xsl:attribute>
         <xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
       </xsl:when>
-      <xsl:when test="parent::rng:optional  and  $num_siblings eq 0">
+      <xsl:when test="$node/parent::rng:optional  and  $num_siblings eq 0">
         <xsl:attribute name="minOccurs">0</xsl:attribute>
       </xsl:when>
     </xsl:choose>
