@@ -362,9 +362,24 @@
         
     </xsl:function>
     
+    <!-- Only schema references count as datatype users, not references shown in
+         descriptions/examples or disabled/deleted definition branches. -->
+    <xsl:function name="tools:getDatatypeReferences" as="element()*">
+        <xsl:param name="containers" as="element()*"/>
+        <xsl:sequence select="$containers/descendant::*[self::tei:dataRef or self::tei:macroRef]
+            [not(ancestor-or-self::*[self::tei:desc or self::tei:remarks or self::egx:egXML or @mode = 'delete' or @maxOccurs = '0'])]"/>
+    </xsl:function>
+
+    <xsl:function name="tools:getDatatypeReferencingAttributes" as="element(tei:attDef)*">
+        <xsl:param name="spec" as="node()"/>
+        <xsl:param name="datatype" as="node()"/>
+        <xsl:sequence select="$spec/tei:attList//tei:attDef
+            [tools:getDatatypeReferences(tei:datatype)[self::tei:dataRef]/@key = $datatype/@ident]"/>
+    </xsl:function>
+
     <xd:doc>
         <xd:desc>
-            <xd:p>Gets the users of a data type</xd:p>
+            <xd:p>Gets the direct users of a data type</xd:p>
         </xd:desc>
         <xd:param name="object">the data type</xd:param>
         <xd:return>the resulting div</xd:return>
@@ -373,12 +388,13 @@
         
         <xsl:param name="object" as="node()"/>
         
-        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:dataSpec[.//tei:macroRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
-        <xsl:variable name="referencing.att.classes" select="$att.classes/self::tei:classSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
-        <xsl:variable name="referencing.elements" select="$elements/self::tei:elementSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:dataSpec[tools:getDatatypeReferences(tei:content)/@key = $object/@ident]" as="node()*"/>
+        <xsl:variable name="referencing.att.classes" select="$att.classes/self::tei:classSpec[exists(tools:getDatatypeReferencingAttributes(., $object))]" as="node()*"/>
+        <xsl:variable name="referencing.elements" select="$elements/self::tei:elementSpec[exists(tools:getDatatypeReferencingAttributes(., $object))]" as="node()*"/>
         
         <xsl:variable name="data.type.links" as="node()*">
             <xsl:for-each select="$referencing.data.types">
+                <xsl:sort select="@ident"/>
                 <xsl:variable name="ref" select="." as="node()"/>
                 <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
                 
@@ -394,10 +410,12 @@
         </xsl:variable>
         <xsl:variable name="att.class.links" as="node()*">
             <xsl:for-each select="$referencing.att.classes">
+                <xsl:sort select="@ident"/>
                 <xsl:variable name="current.class" select="." as="node()"/>
                 <xsl:variable name="class.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
-                <xsl:variable name="attributes" select="$current.class//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                <xsl:variable name="attributes" select="tools:getDatatypeReferencingAttributes($current.class, $object)" as="element(tei:attDef)+"/>
                 <xsl:for-each select="$attributes">
+                    <xsl:sort select="@ident"/>
                     <xsl:variable name="current.attribute" select="." as="node()"/>
                     <xsl:variable name="attribute.desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
                     <item class="attclass" ident="{$current.class/@ident}" module="{$current.class/@module}">
@@ -412,6 +430,7 @@
         </xsl:variable>
         <xsl:variable name="element.links" as="node()*">
             <xsl:for-each select="$referencing.elements">
+                <xsl:sort select="@ident"/>
                 <xsl:variable name="current.element" select="." as="node()"/>
                 
                 <xsl:variable name="desc" select="normalize-space(string-join(tei:desc//text(),' '))" as="xs:string?"/>
@@ -420,9 +439,10 @@
                     <link><a class="{tools:getLinkClasses($current.element/@ident)}" href="#{$current.element/@ident}">&lt;<xsl:value-of select="$current.element/@ident"/>&gt;</a></link>
                     <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
 
-                    <xsl:variable name="attributes" select="$current.element//tei:attDef[.//rng:ref[@name = $object/@ident]]" as="node()+"/>
+                    <xsl:variable name="attributes" select="tools:getDatatypeReferencingAttributes($current.element, $object)" as="element(tei:attDef)+"/>
                     
                     <xsl:for-each select="$attributes">
+                        <xsl:sort select="@ident"/>
                         <xsl:variable name="current.attribute" select="." as="node()"/>
                         <item class="attribute" ident="{$current.attribute/@ident}" module="{$current.element/@module}">
                             <link><xsl:value-of select="$current.attribute/@ident"/></link>
@@ -443,7 +463,8 @@
             <div class="statement classes">
                 <xsl:choose>
                     <xsl:when test="count($data.type.links) = 0 and count($att.class.links) = 0 and count($element.links) = 0">
-                        <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not used on any attribute</em>)</span>
+                        <xsl:attribute name="class">statement text</xsl:attribute>
+                        <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is not referenced by any datatype or attribute</em>)</span>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:if test="count($element.links) gt 0">
