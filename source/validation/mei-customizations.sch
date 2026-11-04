@@ -58,10 +58,10 @@
                                                           else $mei.source.path"/>
             <sch:let name="applicable.source.doc" value="if (doc-available($applicable.source.path)) then
                                                             doc($applicable.source.path)
-                                                         else 'n.a.'"/>
+                                                         else ()"/>
             <sch:report role="info" test="true()">Validating <sch:name/> (<sch:value-of select="$ident | $key | $module"/>)</sch:report>
             <sch:report role="info" test="true()">applicable source path: <sch:value-of select="$applicable.source.path"/></sch:report>
-            <sch:report role="error" test="$applicable.source.doc = 'n.a.'">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
+            <sch:report role="error" test="$applicable.source.doc = ()">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
         </sch:rule>
     </sch:pattern>
     
