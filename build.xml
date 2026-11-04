@@ -331,6 +331,31 @@
         </sequential>
     </macrodef>
 
+    <!-- calls a target once per MEI customization, passing its path as customization.path -->
+    <macrodef name="for-each-customization">
+        <attribute name="target"/>
+        <sequential>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-all.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-cmn.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-mensural.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-neumes.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-basic.xml"/>
+            </antcall>
+        </sequential>
+    </macrodef>
+
     <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
@@ -437,24 +462,7 @@
     </target>
 
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="build-customization-guidelines-html"/>
         <!-- call build for the index page that offers links to the customization-specific guidelines -->
         <antcall target="build-guidelines-html-index-page"/>
     </target>
@@ -570,24 +578,7 @@
     </target>
 
     <target name="build-customizations" description="Builds the RNG schemata and compiled ODDs for all MEI customizations." depends="validate-source">
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="build-rng"/>
     </target>
 
     <target name="validate-rng" description="Validates the built RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="init-mei-classpath">
@@ -618,24 +609,7 @@
     </target>
 
     <target name="validate-schemata" description="Validates the built RNG schemata of all MEI customizations.">
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="validate-rng"/>
     </target>
 
     <target name="validate-compiled-odd" description="Validates the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="init-mei-classpath">
@@ -650,45 +624,11 @@
     </target>
 
     <target name="validate-compiled-odds" description="Validates the compiled ODDs of all MEI customizations.">
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
-        <antcall target="validate-compiled-odd">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
+        <for-each-customization target="validate-compiled-odd"/>
     </target>
 
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="build-compiled-odd"/>
     </target>
 
     <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="validate-source">
