@@ -553,6 +553,44 @@
         </antcall>
     </target>
 
+    <target name="validate-schemata" description="Validates the RNG schemata of all MEI customizations in `dist/schemata` (expects them to be built, e.g., with `build-customizations`): checks each schema with Jing and compiles its embedded Schematron." depends="init-mei-classpath">
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+        <macrodef name="validate-schema">
+            <attribute name="name" description="Name of the customization, i.e., of the RNG schema without extension."/>
+            <sequential>
+                <local name="rng"/>
+                <local name="sch"/>
+                <property name="rng" location="${dir.dist.schemata}/@{name}.rng"/>
+                <property name="sch" location="${dir.build}/schemata-check/@{name}.sch"/>
+                <echo>validating schema @{name}...</echo>
+                <fail message="Schema not found: ${rng} (build it first, e.g., with `ant build-customizations`).">
+                    <condition><not><available file="${rng}"/></not></condition>
+                </fail>
+                <!-- RELAX NG: without an instance, Jing only checks the schema itself -->
+                <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+                    <arg file="${rng}"/>
+                </java>
+                <!-- Schematron: extract the embedded rules and compile them; ph-schematron only compiles while
+                     validating an instance, so a fake file is used and its validation result is ignored -->
+                <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+                    <arg value="-s:${rng}"/>
+                    <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+                    <arg value="-o:${sch}"/>
+                </java>
+                <schematron schematronFile="${sch}" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="false">
+                    <fileset dir="${dir.validation}" includes="schematron-compile-check.mei"/>
+                </schematron>
+            </sequential>
+        </macrodef>
+        <validate-schema name="mei-all"/>
+        <validate-schema name="mei-all_anyStart"/>
+        <validate-schema name="mei-basic"/>
+        <validate-schema name="mei-cmn"/>
+        <validate-schema name="mei-mensural"/>
+        <validate-schema name="mei-neumes"/>
+        <echo>schemata validated</echo>
+    </target>
+
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" location="customizations/mei-all.xml"/>
@@ -630,10 +668,11 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="validate-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
+        <antcall target="validate-schemata"/>
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
