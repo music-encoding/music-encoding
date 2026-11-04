@@ -120,6 +120,9 @@
 
     <sch:pattern id="check_classRef">
         <sch:rule context="tei:classRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;classRef&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:assert role="error"
                 test="$key = $IDENTS.classes.models">
@@ -129,15 +132,21 @@
 
     <sch:pattern id="check_elementRef">
         <sch:rule context="tei:elementRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;elementRef&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:assert role="error"
-                test="$key = $IDENTS.elements or $key = ('svg', 'svg_svg')">
+                test="$key = $IDENTS.elements or $key = 'svg_svg'">
                 The &lt;elementRef&gt; to "<sch:value-of select="$key"/>" is broken: There is no such element in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
 
     <sch:pattern id="check_macroRef">
         <sch:rule context="tei:macroRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;macroRef&gt; element needs to specify a @key.</sch:assert>
             <sch:let name="key" value="string(@key)"/>
             <sch:assert role="error"
                 test="$key = $IDENTS.macros">
