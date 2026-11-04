@@ -15,7 +15,7 @@
         <xd:desc>
             <xd:p><xd:b>Created on:</xd:b> Nov 12, 2020</xd:p>
             <xd:p><xd:b>Author:</xd:b> Johannes Kepper</xd:p>
-            <xd:p>This file holds rules on how to generate spec pages for macroSpec[@type = 'dt']</xd:p>
+            <xd:p>This file holds rules on how to generate spec pages for dataSpec</xd:p>
             <xd:p>
                 A single data type page has the following facets:
                 <xd:ul>

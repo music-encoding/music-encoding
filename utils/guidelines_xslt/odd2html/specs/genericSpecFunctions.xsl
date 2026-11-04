@@ -373,7 +373,7 @@
         
         <xsl:param name="object" as="node()"/>
         
-        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:macroSpec[.//tei:macroRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
+        <xsl:variable name="referencing.data.types" select="$data.types/self::tei:dataSpec[.//tei:macroRef[@key = $object/@ident] or .//rng:ref[@name = $object/@ident]]" as="node()*"/>
         <xsl:variable name="referencing.att.classes" select="$att.classes/self::tei:classSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
         <xsl:variable name="referencing.elements" select="$elements/self::tei:elementSpec[.//rng:ref[@name = $object/@ident]]" as="node()*"/>
         
