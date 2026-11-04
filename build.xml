@@ -74,6 +74,7 @@
     <property name="dir.validation" value="source/validation"/>
     <property name="dir.dist.guidelines" value="${dir.dist}/guidelines/web"/>
     <property name="dir.dist.schemata" location="${dir.dist}/schemata/"/>
+    <property name="dir.lib.jing" value="${dir.lib}/jing"/>
     <property name="dir.lib.saxon" value="${dir.lib}/saxon"/>
     <property name="dir.lib.schematron" value="${dir.lib}/schematron"/>
     <property name="dir.lib.stylesheets" value="${dir.lib}/stylesheets"/>
@@ -85,6 +86,7 @@
     <property name="canonicalized.source.path" value="${dir.build}/${canonicalized.file.next}"/>
     <property name="canonicalized.source.path.cross_platform" value="${basedir.cross_platform}/${canonicalized.source.path}"/>
     <!-- jar dependencies -->
+    <property name="jing.jar.file" value="jing-${jing.version}.jar"/>
     <property name="oxygen.basic.utilites.jar.file" value="oxygen-basic-utilities-${xerces.version}.jar"/>
     <property name="saxon.jar.file" value="saxon-he-${saxon.version}.jar"/>
     <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
@@ -160,7 +162,7 @@
         <echo>Java version (JDK): ${ant.java.version}</echo>
     </target>
 
-    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
+    <target name="init" description="Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces, Schematron and Jing are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available." depends="info">
         <!-- check if Xerces is available -->
         <condition property="xerces-available">
             <or>
@@ -188,6 +190,12 @@
         </condition>
         <echo if:set="schematron-available" message="schematron available: ${schematron-available}"/>
         <echo unless:set="schematron-available" message="schematron available: false"/>
+        <!-- check if Jing is available -->
+        <condition property="jing-available">
+            <available file="${dir.lib.jing}/${jing.jar.file}"/>
+        </condition>
+        <echo if:set="jing-available" message="jing available: ${jing-available}"/>
+        <echo unless:set="jing-available" message="jing available: false"/>
         <!-- check if Stylesheets are available -->
         <fileset id="stylesheets.version.file" dir="${dir.lib.stylesheets}">
             <patternset>
@@ -213,6 +221,7 @@
         <antcall target="stylesheets-prepare" unless:true="${stylesheets-available}"/>
         <antcall target="saxon-prepare" unless:true="${saxon-available}"/>
         <antcall target="schematron-download" unless:true="${schematron-available}"/>
+        <antcall target="jing-download" unless:true="${jing-available}"/>
         <antcall target="xerces-download" unless:true="${xerces-available}"/>
 
         <echo>initialized</echo>
@@ -237,6 +246,12 @@
         <mkdir dir="${dir.lib.schematron}"/>
         <get src="https://repo1.maven.org/maven2/com/helger/schematron/ph-schematron-ant-task/${schematron.version}/${schematron.jar.file}" dest="${dir.lib.schematron}"/>
         <echo>downloaded schematron jar</echo>
+    </target>
+
+    <target name="jing-download" unless="${jing-available}">
+        <mkdir dir="${dir.lib.jing}"/>
+        <get src="https://repo1.maven.org/maven2/org/relaxng/jing/${jing.version}/${jing.jar.file}" dest="${dir.lib.jing}"/>
+        <echo>downloaded jing jar</echo>
     </target>
 
     <target name="stylesheets-download" unless="${stylesheets-available}">
@@ -538,6 +553,53 @@
         </antcall>
     </target>
 
+    <target name="validate-rng" description="Validates the built RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="init-mei-classpath">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <property name="validate-rng.rng" location="${dir.dist.schemata}/${selectedSchema}.rng"/>
+        <property name="validate-rng.sch" location="${dir.build}/schemata-check/${selectedSchema}.sch"/>
+        <echo>validating rng ${selectedSchema}...</echo>
+        <fail message="Schema not found: ${validate-rng.rng} (build it first, e.g., with `ant build-rng`).">
+            <condition><not><available file="${validate-rng.rng}"/></not></condition>
+        </fail>
+        <!-- RELAX NG: without an instance, Jing only checks the schema itself -->
+        <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+            <arg file="${validate-rng.rng}"/>
+        </java>
+        <!-- Schematron: extract the embedded rules and compile them; ph-schematron only compiles while
+             validating an instance, so a minimal file is used that must stay valid against all rules -->
+        <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+            <arg value="-s:${validate-rng.rng}"/>
+            <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+            <arg value="-o:${validate-rng.sch}"/>
+        </java>
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+        <schematron schematronFile="${validate-rng.sch}" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true">
+            <fileset dir="${dir.validation}" includes="schematron-compile-check.mei"/>
+        </schematron>
+        <echo>rng ${selectedSchema} validated</echo>
+    </target>
+
+    <target name="validate-schemata" description="Validates the built RNG schemata of all MEI customizations.">
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-all.xml"/>
+        </antcall>
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
+        </antcall>
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-basic.xml"/>
+        </antcall>
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-cmn.xml"/>
+        </antcall>
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-mensural.xml"/>
+        </antcall>
+        <antcall target="validate-rng">
+            <param name="customization.path" location="customizations/mei-neumes.xml"/>
+        </antcall>
+    </target>
+
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" location="customizations/mei-all.xml"/>
@@ -615,10 +677,11 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF." depends="validate-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
+        <antcall target="validate-schemata"/>
         <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
