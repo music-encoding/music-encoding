@@ -405,19 +405,19 @@
     <xsl:variable name="macro.groups" as="node()*">
         <xsl:choose>
             <xsl:when test="$isCompiledOdd">
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$mei.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:when test="$isCustomization">
-                <xsl:for-each select="$compiled.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$compiled.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:for-each select="$mei.source//tei:macroSpec[@type = 'pe']">
+                <xsl:for-each select="$mei.source//tei:macroSpec">
                     <xsl:sort select="@ident" data-type="text"/>
                     <xsl:sequence select="."/>
                 </xsl:for-each>
@@ -431,7 +431,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="macro.groups.links" as="node()*">
-        <xsl:for-each select="$data.types">
+        <xsl:for-each select="$macro.groups">
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
@@ -443,7 +443,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="macro.groups.pdf.links" as="node()*">
-        <xsl:for-each select="$data.types">
+        <xsl:for-each select="$macro.groups">
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
