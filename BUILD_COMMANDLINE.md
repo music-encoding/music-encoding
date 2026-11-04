@@ -8,6 +8,7 @@
    |----|----------------|
    |Java| Java Development Kit (JDK) 17 recommended (at least Java 8 at runtime to support Apache Ant™)|
    |Apache Ant|1.10.14|
+   |Jing*|20241231|
    |Verovio Toolkit|5.0.0|
    |Prince XML|15.3|
    |Saxon HE*|12.9|
@@ -158,6 +159,8 @@ flowchart TD
         ODDS["build-compiled-odds"]
         RNG_CUS["build-rng\nper customization"]
         ODD_CUS["build-compiled-odd\nper customization"]
+        VALID_SCH["validate-schemata"]
+        VALID_CUS["validate-rng\nper customization"]
     end
 
     subgraph DOCS["Guidelines output"]
@@ -185,6 +188,8 @@ flowchart TD
     VALID --> COMP
 
     RNGS --> RNG_CUS
+    DIST --> VALID_SCH
+    VALID_SCH --> VALID_CUS
     ODDS --> ODD_CUS
     HTML --> HTML_CUS
     HTML_CUS --> ODD_CUS
@@ -198,22 +203,24 @@ flowchart TD
     classDef primary fill:#e8f1ff,stroke:#2b6cb0,stroke-width:1.5px,color:#111;
     classDef default fill:#f7fafc,stroke:#a0aec0,stroke-width:1px,color:#111;
     class DIST primary;
-    class CANON,VALID,INIT,CLP,RNGS,ODDS,RNG_CUS,ODD_CUS,HTML,HTML_CUS,IDX,PDF,IMG,INFO,COMP,CLEAN default;
+    class CANON,VALID,INIT,CLP,RNGS,ODDS,RNG_CUS,ODD_CUS,VALID_SCH,VALID_CUS,HTML,HTML_CUS,IDX,PDF,IMG,INFO,COMP,CLEAN default;
 ```
 
 | target                | description     |
 |-----------------------|-----------------|
-| `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF.  |
+| `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata.  |
 | `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`. |
-| `validate-source` | Validates the canonicalized source. This target will be triggered before all `build-...` targets. |
+| `validate-source` | Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
 | `build-customizations` | Builds the RNG schemata for all MEI customizations. |
 | `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
+| `validate-schemata` | Validates the built RNG schemata of all MEI customizations. |
+| `validate-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the built RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
 | `info`| Displays the versions of Ant and Java (JDK). |
-| `init` | Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces and Schematron are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available. |
+| `init` | Initializes the build environment, i.e., checks if TEI Stylesheets, Saxon, Xerces, Schematron and Jing are available, and if not, it downloads everything into the `lib` folder. Checks if Prince is available. |
 | `init-mei-classpath` | Initializes the mei.classpath, which is essential for the schema generation, by prepending the jar files contained in the lib directory to the java classpath. Will be called automatically if needed. |
 | `compare-versions` | Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via `-Dsource`, `-Dold` and `-Doutput` input params. |
 | `clean` | Deletes the following directories: `build`, `dist` and `temp`. |
