@@ -307,9 +307,28 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source. This target will be triggered before all `build-...` targets.">
+    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+        <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
+        <!-- -i: skip jing's DTD-compatibility ID check, which rejects xml:id (type ID) next to the anyName attribute wildcards of the pureODD schemata -->
+        <java unless:set="validate-source.done" jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+            <arg value="-i"/>
+            <arg file="${dir.validation}/mei_odds.rng"/>
+            <arg file="${canonicalized.source.path}"/>
+        </java>
+        <java unless:set="validate-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+            <arg value="-s:${dir.validation}/mei_odds.rng"/>
+            <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+            <arg value="-o:${dir.build}/mei_odds.sch"/>
+        </java>
+        <!-- ph-schematron treats the unknown TEI role "nonfatal" as an error; map it to "warning" as TEI intends -->
+        <replace unless:set="validate-source.done" file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
+        <schematron unless:set="validate-source.done" schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+            <fileset dir="${dir.build}">
+                <include name="${canonicalized.file.next}"></include>
+            </fileset>
+        </schematron>
         <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">
                 <include name="${canonicalized.file.next}"></include>
@@ -563,8 +582,9 @@
         <fail message="Schema not found: ${validate-rng.rng} (build it first, e.g., with `ant build-rng`).">
             <condition><not><available file="${validate-rng.rng}"/></not></condition>
         </fail>
-        <!-- RELAX NG: without an instance, Jing only checks the schema itself -->
+        <!-- RELAX NG: without an instance, Jing only checks the schema itself (-i: see validate-source) -->
         <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+            <arg value="-i"/>
             <arg file="${validate-rng.rng}"/>
         </java>
         <!-- Schematron: extract the embedded rules and compile them; ph-schematron only compiles while
