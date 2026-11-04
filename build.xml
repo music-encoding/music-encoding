@@ -555,25 +555,25 @@
 
     <target name="validate-rng" description="Validates the built RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="init-mei-classpath">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <property name="rng" location="${dir.dist.schemata}/${selectedSchema}.rng"/>
-        <property name="sch" location="${dir.build}/schemata-check/${selectedSchema}.sch"/>
+        <property name="validate-rng.rng" location="${dir.dist.schemata}/${selectedSchema}.rng"/>
+        <property name="validate-rng.sch" location="${dir.build}/schemata-check/${selectedSchema}.sch"/>
         <echo>validating rng ${selectedSchema}...</echo>
-        <fail message="Schema not found: ${rng} (build it first, e.g., with `ant build-rng`).">
-            <condition><not><available file="${rng}"/></not></condition>
+        <fail message="Schema not found: ${validate-rng.rng} (build it first, e.g., with `ant build-rng`).">
+            <condition><not><available file="${validate-rng.rng}"/></not></condition>
         </fail>
         <!-- RELAX NG: without an instance, Jing only checks the schema itself -->
         <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
-            <arg file="${rng}"/>
+            <arg file="${validate-rng.rng}"/>
         </java>
         <!-- Schematron: extract the embedded rules and compile them; ph-schematron only compiles while
-             validating an instance, so a fake file is used and its validation result is ignored -->
+             validating an instance, so a minimal file is used that must stay valid against all rules -->
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
-            <arg value="-s:${rng}"/>
+            <arg value="-s:${validate-rng.rng}"/>
             <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
-            <arg value="-o:${sch}"/>
+            <arg value="-o:${validate-rng.sch}"/>
         </java>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
-        <schematron schematronFile="${sch}" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="false">
+        <schematron schematronFile="${validate-rng.sch}" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true">
             <fileset dir="${dir.validation}" includes="schematron-compile-check.mei"/>
         </schematron>
         <echo>rng ${selectedSchema} validated</echo>
