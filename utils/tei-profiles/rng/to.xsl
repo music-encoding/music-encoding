@@ -8,6 +8,7 @@
   different behaviour.
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
   xmlns:rng="http://relaxng.org/ns/structure/1.0"
   xmlns:tei="http://www.tei-c.org/ns/1.0"
   xmlns:tools="no:where"
@@ -51,6 +52,72 @@
         <xsl:next-match>
           <xsl:with-param name="restriction" select="$restriction"/>
         </xsl:next-match>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!--
+    Value lists. teiodds.xsl handles a valList inside content by moving to
+    its parent and calling valListChildren, which selects
+    tei:valList/tei:valItem relative to that parent. With several valLists
+    in one alternate, each of them therefore outputs the items of all of
+    them. Further, every valList gets its own rng:choice, even with a single
+    item or directly inside the rng:choice of an alternate, and every valItem
+    gets an a:documentation, even if empty.
+    Here each valList only outputs its own items, the rng:choice is only
+    created where needed, and empty a:documentation elements are skipped.
+    tei:alternate always emits its own rng:choice (repetition is wrapped
+    around it), so the items can go into it directly.
+  -->
+  <xsl:template match="tei:valList" mode="#default tangle">
+    <xsl:call-template name="tools:valItems">
+      <xsl:with-param name="items" select="tei:valItem"/>
+      <xsl:with-param name="wrap" select="count(tei:valItem) gt 1 and not(parent::tei:alternate)"/>
+      <xsl:with-param name="inAlternate" select="exists(parent::tei:alternate)"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- closed valLists of dataSpec and attDef (called from defineContent and attributeData) -->
+  <xsl:template name="valListChildren">
+    <xsl:call-template name="tools:valItems">
+      <xsl:with-param name="items" select="tei:valList/tei:valItem"/>
+      <xsl:with-param name="wrap" select="count(tei:valList/tei:valItem) gt 1"/>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="tools:valItems">
+    <xsl:param name="items" as="element(tei:valItem)*"/>
+    <xsl:param name="wrap" as="xs:boolean"/>
+    <xsl:param name="inAlternate" as="xs:boolean" select="false()"/>
+    <xsl:variable name="patterns" as="element()*">
+      <xsl:for-each select="$items">
+        <rng:value>
+          <xsl:value-of select="tei:createSpecName(.)"/>
+        </rng:value>
+        <xsl:if test="not($oddmode = 'tei')">
+          <xsl:variable name="description" select="tei:makeDescription(., true(), true())"/>
+          <xsl:if test="normalize-space(string-join($description ! string(.), ''))">
+            <a:documentation>
+              <xsl:sequence select="$description"/>
+            </a:documentation>
+          </xsl:if>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:variable>
+    <!--
+      A value's a:documentation must stay inside a choice: placed directly in
+      rng:attribute or rng:define it would read as documentation of that
+      pattern, next to its own description. So a single item is only left
+      unwrapped when it has no documentation.
+    -->
+    <xsl:choose>
+      <xsl:when test="$wrap or ($patterns[self::a:documentation] and not($inAlternate))">
+        <rng:choice>
+          <xsl:sequence select="$patterns"/>
+        </rng:choice>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:sequence select="$patterns"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
