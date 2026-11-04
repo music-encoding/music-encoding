@@ -58,10 +58,10 @@
                                                           else $mei.source.path"/>
             <sch:let name="applicable.source.doc" value="if (doc-available($applicable.source.path)) then
                                                             doc($applicable.source.path)
-                                                         else 'n.a.'"/>
+                                                         else ()"/>
             <sch:report role="info" test="true()">Validating <sch:name/> (<sch:value-of select="$ident | $key | $module"/>)</sch:report>
             <sch:report role="info" test="true()">applicable source path: <sch:value-of select="$applicable.source.path"/></sch:report>
-            <sch:report role="error" test="$applicable.source.doc = 'n.a.'">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
+            <sch:report role="error" test="$applicable.source.doc = ()">The applicable source doc is not available at: <sch:value-of select="$applicable.source.path"/></sch:report>
         </sch:rule>
     </sch:pattern>
     
@@ -93,17 +93,14 @@
         </sch:rule>
     </sch:pattern>
     
-    <!-- CHECK IF MODULES ARE AVAILABLE -->
+    <!-- CHECK IF MODULES ARE AVAILABLE AND HAVE A @mode -->
     <sch:pattern id="check_moduleSpec">
-        <sch:let name="moduleKey" value="@ident"/>
-        <sch:rule context="tei:moduleSpec">
-            <sch:assert test="@mode" role="warning">The "<sch:value-of select="$moduleKey"/>" <sch:name/> should have a @mode.</sch:assert>
-        </sch:rule>
         <sch:rule context="tei:moduleSpec">
             <sch:extends rule="get.source"/>
-            <sch:let name="moduleKey" value="@ident"/>
-            <sch:let name="exists" value="$moduleKey = $applicable.source.doc//tei:moduleSpec/@ident"/>
-            <sch:assert test="$exists">There is no module "<sch:value-of select="$moduleKey"/>".</sch:assert>
+            <sch:let name="exists" value="$ident = $applicable.source.doc//tei:moduleSpec/@ident"/>
+            <!-- without @mode, TEI defaults to "add", i.e. a new module -->
+            <sch:assert test="not(@mode) or $exists">There is no module "<sch:value-of select="$ident"/>".</sch:assert>
+            <sch:assert test="@mode" role="warning">The "<sch:value-of select="$ident"/>" <sch:name/> should have a @mode.</sch:assert>
         </sch:rule>
     </sch:pattern>
     

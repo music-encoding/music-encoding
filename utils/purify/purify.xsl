@@ -15,6 +15,67 @@
   <xsl:variable name="target-tei-version.minor" select="xs:integer(tokenize($target-tei-version, '\.')[2])" as="xs:integer"/>
   <xsl:variable name="target-tei-version.patch" select="xs:integer(tokenize($target-tei-version, '\.')[3])" as="xs:integer"/>
   
+  <!-- All modules next to the one being processed: datatype macros may be
+       used in another module than the one they are defined in. -->
+  <xsl:variable name="all-modules" as="document-node()*"
+    select="(collection(resolve-uri('.', base-uri(/)) || '?select=*.xml'), /)"/>
+
+  <!-- An rng:list holding one repeated pattern, as alternative of a choice
+       directly in the content of a datatype macro, e.g.
+       data.PART = "all" | "none" | list { data.URI+ }.
+       Pure ODD cannot express such a list inside a dataSpec (a sequence
+       needs two children). The repetition is therefore moved to the
+       datatype of every attribute using the macro (see below). -->
+  <xsl:function name="purify:is-liftable-list" as="xs:boolean">
+    <xsl:param name="list" as="element(rng:list)"/>
+    <xsl:sequence select="exists($list[parent::rng:choice/parent::content/parent::macroSpec[@type = 'dt']]
+                                      [count(*) eq 1]
+                                      [rng:oneOrMore[count(*) eq 1]])"/>
+  </xsl:function>
+
+  <!-- datatype macros whose list is lifted to the using attributes -->
+  <xsl:variable name="list-datatypes" as="xs:string*"
+    select="distinct-values($all-modules//macroSpec[@type = 'dt']
+                              [content/rng:choice/rng:list[purify:is-liftable-list(.)]]/@ident)"/>
+
+  <!-- A datatype holding an rng:list with a single (possibly repeated)
+       pattern: expressible by the occurrence attributes of <datatype>. -->
+  <xsl:function name="purify:is-single-list" as="xs:boolean">
+    <xsl:param name="datatype" as="element(datatype)"/>
+    <xsl:variable name="rep" select="$datatype/rng:list/*[self::rng:oneOrMore or self::rng:zeroOrMore or self::rng:optional]"/>
+    <xsl:sequence select="count($datatype/*) eq 1
+                          and count($datatype/rng:list/*) eq 1
+                          and (empty($rep) or count($rep/*) eq 1)"/>
+  </xsl:function>
+
+  <!-- A datatype holding any other rng:list (e.g. pairs of values): it
+       needs a dataSpec of its own, as <datatype> only allows one dataRef. -->
+  <!-- The same holds for a choice of datatypes, e.g.
+       data.FRETNUMBER | data.FRETNUMBER.omit. -->
+  <xsl:function name="purify:is-multi-list" as="xs:boolean">
+    <xsl:param name="datatype" as="element(datatype)"/>
+    <xsl:sequence select="(exists($datatype/rng:list) and not(purify:is-single-list($datatype)))
+                          or exists($datatype/rng:choice)"/>
+  </xsl:function>
+
+  <!-- The RELAX NG pattern for "any element (except from some namespaces)
+       with any attributes and any content", referring to itself, e.g.
+       macro.anyXML. It is exactly what odd2relax generates for an
+       anyElement with @exclude. -->
+  <xsl:function name="purify:is-any-element" as="xs:boolean">
+    <xsl:param name="e" as="element(rng:element)"/>
+    <xsl:variable name="self" select="$e/ancestor::macroSpec[1]/@ident"/>
+    <xsl:sequence select="count($e/*) eq 3
+      and $e/*[1][self::rng:anyName][count(*) eq 1]/rng:except[*][every $n in * satisfies $n/self::rng:nsName[@ns]]
+      and $e/*[2][self::rng:zeroOrMore][count(*) eq 1]/rng:attribute[count(*) eq 1]/rng:anyName[not(*)]
+      and $e/*[3][self::rng:zeroOrMore][count(*) eq 1]/rng:choice[count(*) eq 2][rng:text][rng:ref[@name = $self]]"/>
+  </xsl:function>
+
+  <xsl:function name="purify:list-dataspec-ident" as="xs:string">
+    <xsl:param name="datatype" as="element(datatype)"/>
+    <xsl:sequence select="'data.' || upper-case($datatype/ancestor::attDef[1]/@ident)"/>
+  </xsl:function>
+
   <xsl:function name="purify:is-xs-datatype" as="xs:boolean">
     <xsl:param name="name" as="xs:token" required="yes"/>
     
@@ -62,6 +123,19 @@
   <!-- Process TEI ODD elements that need to change. -->
   <!-- ********************************************* -->
 
+  <xsl:template match="content[count(*) eq 1][rng:element[purify:is-any-element(.)]]" priority="2">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <anyElement exclude="{string-join(rng:element/rng:anyName/rng:except/rng:nsName/@ns, ' ')}"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- TEI calls the attribute @exclude; an @except is ignored, and the
+       TEI namespace is excluded instead. -->
+  <xsl:template match="anyElement/@except">
+    <xsl:attribute name="exclude" select="."/>
+  </xsl:template>
+
   <!-- If the <content> has unusual or complicated stuff, -->
   <!-- we just copy it for manual treatment later         -->
   <xsl:template match="content[
@@ -71,7 +145,8 @@
     | descendant::rng:except
     | descendant::rng:name
     | descendant::rng:nsName
-    | descendant::rng:value
+    | descendant::rng:value[not(parent::rng:choice)]
+    | descendant::rng:list[not(purify:is-liftable-list(.))]
     ]">
     <xsl:call-template name="purify:alert">
       <xsl:with-param name="message" tunnel="yes">strange content child elements - purify manually</xsl:with-param>
@@ -181,11 +256,41 @@
     <textNode/>
   </xsl:template>
 
-  <xsl:template match="rng:choice[not(parent::datatype)]">
+  <xsl:template match="rng:choice">
     <alternate>
       <xsl:call-template name="maxmin"/>
       <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
     </alternate>
+  </xsl:template>
+
+  <!-- Literal values of a choice become a closed valList. alternate only
+       allows one valList, before the other patterns, so all values of the
+       choice are collected there. A choice of nothing but values needs no
+       alternate around its valList. -->
+  <xsl:template match="rng:choice[rng:value]" priority="1">
+    <xsl:variable name="valList" as="element()">
+      <valList type="closed">
+        <xsl:for-each select="rng:value">
+          <valItem ident="{normalize-space(.)}"/>
+        </xsl:for-each>
+      </valList>
+    </xsl:variable>
+    <xsl:variable name="others" select="* except rng:value"/>
+    <xsl:variable name="occurrence" as="attribute()*">
+      <xsl:call-template name="maxmin"/>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="empty($others) and empty($occurrence)">
+        <xsl:sequence select="$valList"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <alternate>
+          <xsl:sequence select="$occurrence"/>
+          <xsl:sequence select="$valList"/>
+          <xsl:apply-templates select="$others"/>
+        </alternate>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <xsl:template match="rng:zeroOrMore | rng:oneOrMore | rng:optional">
@@ -219,7 +324,9 @@
   
   <xsl:template match="rng:interleave">
     <xsl:choose>
-      <xsl:when test="$target-tei-version.major gt 4 and $target-tei-version.minor gt 11">
+      <!-- <interleave> is available from TEI 4.12.0 on -->
+      <xsl:when test="$target-tei-version.major gt 4
+                      or ($target-tei-version.major eq 4 and $target-tei-version.minor ge 12)">
         <interleave>
       <xsl:apply-templates />
     </interleave>
@@ -265,6 +372,112 @@
     <xsl:element name="dataSpec">
       <xsl:apply-templates select="@*,*"/>
     </xsl:element>
+  </xsl:template>
+
+  <!-- Datatype macros become dataSpecs (see above), so any existing
+       (already pure) reference to them has to become a dataRef. -->
+  <xsl:template match="macroRef[@key = //macroSpec[@type = 'dt']/@ident or starts-with(@key, 'data.')]">
+    <dataRef>
+      <xsl:apply-templates select="@*"/>
+    </dataRef>
+  </xsl:template>
+
+  <!-- A <datatype> may only hold a single dataRef. An rng:list with a
+       single (possibly repeated) pattern is expressed by the occurrence
+       attributes of <datatype>, which odd2relax turns into an rng:list
+       again. -->
+  <xsl:template match="datatype[purify:is-single-list(.)]">
+    <xsl:variable name="rep" select="rng:list/*[self::rng:oneOrMore or self::rng:zeroOrMore or self::rng:optional]"/>
+    <xsl:copy>
+      <xsl:apply-templates select="@* except (@minOccurs, @maxOccurs)"/>
+      <xsl:choose>
+        <xsl:when test="$rep/self::rng:oneOrMore">
+          <xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="$rep/self::rng:zeroOrMore">
+          <xsl:attribute name="minOccurs">0</xsl:attribute>
+          <xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+        </xsl:when>
+        <xsl:when test="$rep/self::rng:optional">
+          <xsl:attribute name="minOccurs">0</xsl:attribute>
+        </xsl:when>
+      </xsl:choose>
+      <xsl:apply-templates select="(if ($rep) then $rep else rng:list)/*"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Any other list: refer to a dataSpec generated for it (see below). -->
+  <xsl:template match="datatype[purify:is-multi-list(.)]">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <dataRef key="{purify:list-dataspec-ident(.)}"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- Emit the dataSpecs for the lists of a spec right after it. A
+       sequence of nothing but dataRefs is turned into an rng:list by
+       odd2relax. -->
+  <xsl:template match="*[self::classSpec or self::elementSpec][.//attDef/datatype[purify:is-multi-list(.)]]">
+    <xsl:next-match/>
+    <xsl:for-each select=".//attDef/datatype[purify:is-multi-list(.)]">
+      <xsl:variable name="ident" select="purify:list-dataspec-ident(.)"/>
+      <xsl:variable name="att" select="ancestor::attDef[1]/@ident"/>
+      <dataSpec ident="{$ident}" module="{ancestor::*[@module][1]/@module}">
+        <xsl:call-template name="purify:alert">
+          <xsl:with-param name="message" tunnel="yes" select="'generated ' || $ident || ' for the datatype of @' || $att || ' - check ident and desc'"/>
+        </xsl:call-template>
+        <xsl:if test="$all-modules//*[@ident = $ident]">
+          <xsl:call-template name="purify:alert">
+            <xsl:with-param name="message" tunnel="yes" select="$ident || ' already exists - rename the generated dataSpec'"/>
+          </xsl:call-template>
+        </xsl:if>
+        <desc xml:lang="en">Datatype of the <att><xsl:value-of select="$att"/></att> attribute.</desc>
+        <content>
+          <xsl:choose>
+            <xsl:when test="count(rng:list/*) gt 1">
+              <sequence>
+                <xsl:apply-templates select="(rng:list/*, rng:choice)"/>
+              </sequence>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:apply-templates select="(rng:list/*, rng:choice)"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </content>
+      </dataSpec>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- The list of a datatype macro like data.PART only keeps its item
+       here; the repetition moves to the using attributes. -->
+  <xsl:template match="rng:list[purify:is-liftable-list(.)]">
+    <xsl:for-each select="rng:oneOrMore/*">
+      <xsl:choose>
+        <xsl:when test="self::rng:ref">
+          <dataRef key="{@name}"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates select="."/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="datatype[count(*) eq 1][(rng:ref/@name, dataRef/@key) = $list-datatypes]">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <xsl:choose>
+        <xsl:when test="not(@maxOccurs) or @maxOccurs = '1'">
+          <xsl:attribute name="maxOccurs">unbounded</xsl:attribute>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:call-template name="purify:alert">
+            <xsl:with-param name="message" tunnel="yes" select="'datatype ' || (rng:ref/@name, dataRef/@key)[1] || ' is a list itself, but already repeated - purify manually'"/>
+          </xsl:call-template>
+        </xsl:otherwise>
+      </xsl:choose>
+      <xsl:apply-templates select="*"/>
+    </xsl:copy>
   </xsl:template>
   
   <!-- ********************************************* -->

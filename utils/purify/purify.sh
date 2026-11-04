@@ -4,18 +4,16 @@
 
 # Config (defaults, can be changed via options)
 OVERWRITE=false
-PROCESS_DATASPECS=false
-PROCESS_FILES=true
 
 usage() {
     cat <<EOF
 Usage: $(basename "$0") [options]
 
+Runs purify.xsl on every file in source/modules.
+
 Options:
   --overwrite, --no-overwrite   overwrite source/modules in place, or write to
                                 ideas/modules_purified (default: no-overwrite)
-  --dataspecs, --no-dataspecs   run purifyDataSpecs.xsl (default: off)
-  --files, --no-files           run purify.xsl (default: on)
   -h, --help                    show this help
 EOF
 }
@@ -24,10 +22,6 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --overwrite)    OVERWRITE=true ;;
         --no-overwrite) OVERWRITE=false ;;
-        --dataspecs)    PROCESS_DATASPECS=true ;;
-        --no-dataspecs) PROCESS_DATASPECS=false ;;
-        --files)        PROCESS_FILES=true ;;
-        --no-files)     PROCESS_FILES=false ;;
         -h|--help)      usage; exit 0 ;;
         *)              echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
     esac
@@ -69,17 +63,7 @@ transform() {
     fi
 }
 
-# extract and convert to pure dataSpecs
-if [[ "$PROCESS_DATASPECS" == true ]]; then
-    for f in "$MEI_MODULES_DIR"/*.xml; do echo "$f"; transform "$f" "$PURIFY_DIR"/purifyDataSpecs.xsl; echo; done
-fi
-#cd ../..
-# then do content  models and datatypes, looking at each 
-# non dataspec file in turn
-#mkdir Source/impureSpecs
-#cp Source/Specs/* Source/impureSpecs
-#rm Source/impureSpecs/data.* Source/impureSpecs/teidata.*
-#cd Source/impureSpecs/
-if [[ "$PROCESS_FILES" == true ]]; then
-    for f in "$MEI_MODULES_DIR"/*.xml; do echo "$f"; transform "$f" "$PURIFY_DIR"/purify.xsl; echo; done
-fi
+# Convert content models and datatypes in each module file.
+# purifyDataSpecs.xsl (the TEI datatype-macro step) is intentionally not used:
+# purify.xsl itself turns MEI datatype macros into dataSpecs.
+for f in "$MEI_MODULES_DIR"/*.xml; do echo "$f"; transform "$f" "$PURIFY_DIR"/purify.xsl; echo; done
