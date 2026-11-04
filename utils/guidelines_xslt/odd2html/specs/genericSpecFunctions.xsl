@@ -1132,44 +1132,37 @@
     </xd:doc>
     <xsl:function name="tools:getParentsByModel" as="node()*">
         <xsl:param name="object" as="node()"/>
-        <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
-        <xsl:variable name="is.macroGroup" select="local-name($object) = 'macroSpec'" as="xs:boolean"/>
-        
-        <xsl:variable name="direct.parents" select="$elements/self::tei:elementSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
-        
-        <xsl:variable name="ident" select="if($is.element) then('elements having ' || $object/@ident || ' as direct children') else($object/@ident)" as="xs:string"/>
-        <xsl:variable name="desc" select="if($is.element) then('') else('(' || $object/@module || ') ' || normalize-space(string-join($object/tei:desc/text(),' ')))" as="xs:string"/>
-        <xsl:variable name="content" as="node()*">
-            <xsl:for-each select="$direct.parents">
-                <xsl:sort select="@ident" data-type="text"/>
-                <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
-                <xsl:variable name="desc" select="normalize-space(string-join(./tei:desc//text(),' '))" as="xs:string"/>
-                <!--<div class="elementDef def">
-                    <span class="ident element" title="{$desc}">
-                        <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a>
-                    </span>
-                    <span class="elementDesc desc">
-                        <xsl:apply-templates select="./tei:desc/node()" mode="guidelines"/>
-                    </span>
-                </div>-->
-                <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                    <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
-                    <desc><xsl:apply-templates select="tei:desc/node()" mode="guidelines"/></desc>
-                </item>
-            </xsl:for-each>
-            <xsl:if test="not($is.element) and not($is.macroGroup)">
-                <xsl:sequence select="tools:processAncestorModels($object)"/>
+        <xsl:sequence select="tools:getParentsByModel($object, ())"/>
+    </xsl:function>
+
+    <xsl:function name="tools:getParentsByModel" as="node()*">
+        <xsl:param name="object" as="node()"/>
+        <xsl:param name="visited" as="node()*"/>
+        <xsl:if test="not(some $seen in $visited satisfies $seen is $object)">
+            <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
+            <xsl:variable name="direct.parents" select="tools:getContentParents($object)" as="node()*"/>
+            <xsl:variable name="ident" select="if($is.element) then('elements having ' || $object/@ident || ' as direct children') else($object/@ident)" as="xs:string"/>
+            <xsl:variable name="desc" select="if($is.element) then('') else('(' || $object/@module || ') ' || normalize-space(string-join($object/tei:desc/text(),' ')))" as="xs:string"/>
+            <xsl:variable name="content" as="node()*">
+                <xsl:for-each select="$direct.parents">
+                    <xsl:sort select="@ident" data-type="text"/>
+                    <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
+                    <item class="element" ident="{$current.elem}" module="{@module}">
+                        <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
+                        <desc><xsl:apply-templates select="tei:desc/node()" mode="guidelines"/></desc>
+                    </item>
+                </xsl:for-each>
+                <xsl:if test="not($is.element)">
+                    <xsl:sequence select="tools:processAncestorModels($object, $visited | $object)"/>
+                </xsl:if>
+            </xsl:variable>
+            <xsl:if test="not($is.element) or exists($direct.parents)">
+                <xsl:sequence select="tools:getClassBox($ident,$desc,$content,'')"/>
             </xsl:if>
-        </xsl:variable>
-        
-        <xsl:if test="not($is.element) or count($direct.parents) gt 0">
-            <xsl:sequence select="tools:getClassBox($ident,$desc,$content,'')"/>
+            <xsl:if test="$is.element">
+                <xsl:sequence select="tools:processAncestorModels($object, $visited | $object)"/>
+            </xsl:if>
         </xsl:if>
-        
-        <xsl:if test="$is.element">
-            <xsl:sequence select="tools:processAncestorModels($object)"/>
-        </xsl:if>
-        
     </xsl:function>
 
     <xd:doc>
@@ -1181,53 +1174,10 @@
     </xd:doc>
     <xsl:function name="tools:processAncestorModels" as="node()*">
         <xsl:param name="object" as="node()"/>
-        <xsl:variable name="class.parents" select="$model.classes/self::tei:classSpec[@ident = $object//tei:memberOf[starts-with(@key,'model.')]/@key]" as="node()*"/>
-        <xsl:variable name="macro.parents" select="$macro.groups/self::tei:macroSpec[.//tei:content//rng:ref[@name = $object/@ident]]" as="node()*"/>
-        <xsl:variable name="ancestor.models" as="node()*">
-            <xsl:sequence select="$class.parents"/>
-            <xsl:sequence select="$macro.parents"/>
-        </xsl:variable>
-        <xsl:for-each select="$ancestor.models">
-            <xsl:sequence select="tools:getParentsByModel(.)"/>
+        <xsl:param name="visited" as="node()*"/>
+        <xsl:for-each select="tools:getReferencingModels($object) except $visited">
+            <xsl:sequence select="tools:getParentsByModel(., $visited)"/>
         </xsl:for-each>
-    </xsl:function>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Gets parents. Not sure this is really needed at this point</xd:p>
-        </xd:desc>
-        <xd:param name="model.classes"></xd:param>
-        <xd:return></xd:return>
-    </xd:doc>
-    <xsl:function name="tools:getParents" as="node()*">
-        <xsl:param name="model.classes" as="node()*"/>
-        
-        <xsl:for-each select="$model.classes">
-            <xsl:variable name="current.model" select="." as="node()"/>
-            <xsl:variable name="relevant.elements" select="$mei.source//tei:elementSpec[(:.//tei:memberOf[@key = $current.model/@ident] or :).//tei:content//rng:ref[@name = $current.model/@ident]]" as="node()*"/>
-            <!--<xsl:message select="'  INFO: looking for ' || count($relevant.elements) || ' elements in ' || $current.model/@ident"/>-->
-            <xsl:sequence select="$relevant.elements"/>
-            <xsl:variable name="inheriting.classes" select="$mei.source//tei:classSpec[@type = 'model' and @ident = $current.model//tei:memberOf/@key]" as="node()*"/>
-            <xsl:sequence select="tools:getParents($inheriting.classes)"/>
-        </xsl:for-each>
-    </xsl:function>
-    
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Gets children. Not sure this is really needed at this point</xd:p>
-        </xd:desc>
-        <xd:param name="model.classes"></xd:param>
-        <xd:return></xd:return>
-    </xd:doc>
-    <xsl:function name="tools:getChildren" as="node()*">
-        <xsl:param name="className" as="xs:string"/>
-        <xsl:sequence select="$elements/self::tei:elementSpec[.//tei:memberOf[@key = $className]]"/>
-        
-        <xsl:variable name="inheriting.models" select="$model.classes/self::tei:classSpec[.//tei:memberOf/@key = $className]/@ident" as="xs:string*"/>
-        <xsl:for-each select="$inheriting.models">
-            <xsl:sequence select="tools:getChildren(.)"/>
-        </xsl:for-each>
-        
     </xsl:function>
     
     <xd:doc>
@@ -1240,36 +1190,14 @@
     <xsl:function name="tools:getMayContainFacet" as="node()">
         <xsl:param name="object" as="node()"/>
         
-        <xsl:variable name="direct.children" select="$elements/self::tei:elementSpec[@ident = $object//tei:content//rng:ref[not(starts-with(@name,'model.'))]/@name]" as="node()*"/>
-        <xsl:variable name="class.children" as="node()*">
-            <xsl:for-each select="$object//tei:content//rng:ref[starts-with(@name,'model.')]">
-                <xsl:variable name="modelClass.name" select="@name" as="xs:string"/>
-                <xsl:sequence select="tools:getChildren($modelClass.name)"/>
-            </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="macro.children" as="node()*">
-            <xsl:for-each select="$object//tei:content//rng:ref[starts-with(@name,'macro.')]">
-                <xsl:variable name="macroSpec.name" select="@name" as="xs:string"/>
-                <xsl:variable name="macroSpec" select="$macro.groups/self::tei:macroSpec[@ident = $macroSpec.name]" as="node()?"/>
-                <xsl:if test="not($macroSpec)">
-                    <xsl:message select="$macroSpec.name || ' missing at ' || $object/@ident" terminate="yes"/>
-                </xsl:if>
-                <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $macroSpec//tei:content//rng:ref/@name]"/>
-                <xsl:for-each select="$macroSpec//tei:content//rng:ref[starts-with(@name,'model.')]">
-                    <xsl:sequence select="tools:getChildren(@name)"/>
-                </xsl:for-each>
-            </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="children" select="$direct.children | $class.children | $macro.children" as="node()*"/>
-        <xsl:variable name="allows.anyXML" select="exists($object/tei:content/rng:element[rng:anyName and rng:zeroOrMore/rng:attribute/rng:anyName and rng:zeroOrMore//rng:text and rng:zeroOrMore//rng:ref[@name = $object/@ident]])" as="xs:boolean"/>
-        <xsl:variable name="allows.text" as="xs:boolean">
-            <xsl:variable name="regular.text" select="xs:boolean(not($allows.anyXML) and exists($object/tei:content//rng:text))" as="xs:boolean"/>
-            <xsl:variable name="macro.text" select="some $macroSpec in (for $name in $object//tei:content//rng:ref[starts-with(@name,'macro.')]/@name return ($macro.groups/self::tei:macroSpec[@ident = $name])) satisfies exists($macroSpec//tei:content//rng:text)" as="xs:boolean"/>
-            <xsl:value-of select="$regular.text or $macro.text"/>
-        </xsl:variable>
+        <xsl:variable name="children" select="tools:getContentChildren($object)" as="node()*"/>
+        <xsl:variable name="models" select="tools:getContentModels($object, ())" as="node()*"/>
+        <xsl:variable name="wildcards" select="tools:getWildcardDescriptions($models)" as="element(div)*"/>
+        <xsl:variable name="allows.text" select="some $model in $models satisfies
+            exists(tools:getContentNodes($model)[self::tei:textNode])" as="xs:boolean"/>
         
         <xsl:choose>
-            <xsl:when test="count($children) gt 0 or $allows.text">
+            <xsl:when test="count($children) gt 0 or $allows.text or exists($wildcards)">
                 <!--<xsl:variable name="children.compact" as="node()*">
                     <xsl:if test="$allows.text">
                         <span class="ident textualContent" title="textual content">textual content</span>
@@ -1339,17 +1267,11 @@
                 
                 <div class="facet mayContain">
                     <div class="label">May Contain</div>
+                    <xsl:if test="exists($wildcards)">
+                        <div class="statement text"><xsl:sequence select="$wildcards"/></div>
+                    </xsl:if>
                     <div class="statement classes">
                         <xsl:sequence select="$children.by.class"/>
-                    </div>
-                </div>
-            </xsl:when>
-            <xsl:when test="$allows.anyXML">
-                
-                <div class="facet mayContain" id="mayContain">
-                    <div class="label">May Contain</div>
-                    <div class="statement text">
-                        any XML element, with any attribute <span class="emptyStatement">(<em><xsl:value-of select="$object/@ident"/> is self-nested</em>)</span>
                     </div>
                 </div>
             </xsl:when>
@@ -1377,76 +1299,44 @@
     </xd:doc>
     <xsl:function name="tools:getChildrenByModel" as="node()*">
         <xsl:param name="object" as="node()"/>
-        
-        <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
-        <xsl:variable name="is.model" select="local-name($object) = 'classSpec' and $object/@type = 'model'" as="xs:boolean"/>
-        <xsl:variable name="is.macro" select="local-name($object) = 'macroSpec'" as="xs:boolean"/>
-        <xsl:variable name="ident" select="if($is.element) then('direct children') else($object/@ident)" as="xs:string"/>
-        <xsl:variable name="desc" select="if($is.element) then('') else('(' || $object/@module || ') ' || normalize-space(string-join($object/tei:desc/text(),' ')))" as="xs:string"/>
-        
-        <xsl:variable name="allows.text" select="exists($object//tei:content//rng:text)" as="xs:boolean"/>
-        
-        <xsl:variable name="relevant.elements" as="node()*">
-            <xsl:choose>
-                <xsl:when test="$is.element">
-                    <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $object//tei:content//rng:ref[not(starts-with(@name,'model.')) and not(starts-with(@name, 'macro.'))]/@name]"/>
-                </xsl:when>
-                <xsl:when test="$is.model">
-                    <xsl:sequence select="$elements/self::tei:elementSpec[.//tei:memberOf[@key = $object/@ident]]"/>
-                </xsl:when>
-                <xsl:when test="$is.macro">
-                    <xsl:sequence select="$elements/self::tei:elementSpec[@ident = $object//tei:content//rng:ref[not(starts-with(@name,'model.'))]/@name]"/>
-                </xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:if test="not($is.element) or count($relevant.elements) gt 0">
-            <xsl:variable name="content" as="node()*">
-                <xsl:if test="$allows.text">
-                    <!--<div class="textualContent" title="textual content">
-                        textual content
-                    </div>-->
-                    <text/>
-                </xsl:if>
-                <xsl:for-each select="$relevant.elements">
-                    <xsl:sort select="@ident" data-type="text"/>
-                    <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
-                    <xsl:variable name="desc" select="normalize-space(string-join(./tei:desc//text(),' '))" as="xs:string"/>
-                    <item class="element" ident="{$current.elem}" module="{$elements/self::tei:elementSpec[@ident = $current.elem]/@module}">
-                        <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
-                        <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
-                    </item>
-                    <!--<div class="elementDef def">
-                        <span class="ident element" title="{$desc}">
-                            <a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a>
-                        </span>
-                        <span class="elementDesc desc">
-                            <xsl:apply-templates select="./tei:desc/node()" mode="guidelines"/>
-                        </span>
-                    </div>-->
-                </xsl:for-each>
-                <xsl:if test="not($is.element)">
-                    <xsl:variable name="inheriting.models" as="node()*">
-                        <xsl:sequence select="$model.classes/self::tei:classSpec[.//tei:memberOf/@key = $object/@ident]"/>
-                        <xsl:sequence select="$macro.groups/self::tei:macroSpec[.//tei:memberOf/@key = $object/@ident]"/>
-                        <xsl:sequence select="$model.classes/self::tei:classSpec[@ident = $object/tei:content//rng:ref/@name]"/>
-                        <xsl:sequence select="$macro.groups/self::tei:macroSpec[@ident = $object/tei:content//rng:ref/@name and not(@ident = $object/@ident)]"/>
-                    </xsl:variable>
-                    <xsl:for-each select="$inheriting.models">
-                        <xsl:sequence select="tools:getChildrenByModel(.)"/>
+        <xsl:sequence select="tools:getChildrenByModel($object, ())"/>
+    </xsl:function>
+
+    <xsl:function name="tools:getChildrenByModel" as="node()*">
+        <xsl:param name="object" as="node()"/>
+        <xsl:param name="visited" as="node()*"/>
+        <xsl:if test="not(some $seen in $visited satisfies $seen is $object)">
+            <xsl:variable name="is.element" select="local-name($object) = 'elementSpec'" as="xs:boolean"/>
+            <xsl:variable name="ident" select="if($is.element) then('direct children') else($object/@ident)" as="xs:string"/>
+            <xsl:variable name="desc" select="if($is.element) then('') else('(' || $object/@module || ') ' || normalize-space(string-join($object/tei:desc/text(),' ')))" as="xs:string"/>
+            <xsl:variable name="allows.text" select="exists(tools:getContentNodes($object)[self::tei:textNode])" as="xs:boolean"/>
+            <xsl:variable name="references" select="tools:getContentReferences($object)" as="node()*"/>
+            <xsl:variable name="relevant.elements" select="$references[self::tei:elementSpec]" as="node()*"/>
+            <xsl:variable name="inheriting.models" select="$references[not(self::tei:elementSpec)] except $visited" as="node()*"/>
+            <xsl:if test="not($is.element) or exists($relevant.elements)">
+                <xsl:variable name="content" as="node()*">
+                    <xsl:if test="$allows.text"><text/></xsl:if>
+                    <xsl:for-each select="$relevant.elements">
+                        <xsl:sort select="@ident" data-type="text"/>
+                        <xsl:variable name="current.elem" select="@ident" as="xs:string"/>
+                        <item class="element" ident="{$current.elem}" module="{@module}">
+                            <link><a class="{tools:getLinkClasses($current.elem)}" href="#{$current.elem}">&lt;<xsl:value-of select="$current.elem"/>&gt;</a></link>
+                            <desc><xsl:apply-templates select="tei:desc" mode="guidelines"/></desc>
+                        </item>
                     </xsl:for-each>
-                </xsl:if>
-            </xsl:variable>
-            <xsl:sequence select="tools:getClassBox($ident,$desc,$content,(if($is.element) then('direct') else('')))"/>
-        </xsl:if>
-        
-        <xsl:if test="$is.element">
-            <xsl:variable name="inheriting.models" as="node()*">
-                <xsl:sequence select="$model.classes/self::tei:classSpec[@ident = $object//tei:content//rng:ref[starts-with(@name,'model.')]/@name]"/>
-                <xsl:sequence select="$macro.groups/self::tei:macroSpec[@ident = $object/tei:content//rng:ref/@name]"/>
-            </xsl:variable>
-            <xsl:for-each select="$inheriting.models">
-                <xsl:sequence select="tools:getChildrenByModel(.)"/>
-            </xsl:for-each>
+                    <xsl:if test="not($is.element)">
+                        <xsl:for-each select="$inheriting.models">
+                            <xsl:sequence select="tools:getChildrenByModel(., $visited | $object)"/>
+                        </xsl:for-each>
+                    </xsl:if>
+                </xsl:variable>
+                <xsl:sequence select="tools:getClassBox($ident,$desc,$content,(if($is.element) then('direct') else('')))"/>
+            </xsl:if>
+            <xsl:if test="$is.element">
+                <xsl:for-each select="$inheriting.models">
+                    <xsl:sequence select="tools:getChildrenByModel(., $visited | $object)"/>
+                </xsl:for-each>
+            </xsl:if>
         </xsl:if>
     </xsl:function>
     
