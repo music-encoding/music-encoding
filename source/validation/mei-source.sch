@@ -117,7 +117,52 @@
                 The &lt;rng:ref&gt; to "<sch:value-of select="$name"/>" is broken: There is no such thing in the specs.</sch:assert>
         </sch:rule>
     </sch:pattern>
-    
+
+    <sch:pattern id="check_classRef">
+        <sch:rule context="tei:classRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;classRef&gt; element needs to specify a @key.</sch:assert>
+            <sch:let name="key" value="string(@key)"/>
+            <sch:assert role="error"
+                test="$key = $IDENTS.classes.models">
+                The &lt;classRef&gt; to "<sch:value-of select="$key"/>" is broken: There is no such model class in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_elementRef">
+        <sch:rule context="tei:elementRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;elementRef&gt; element needs to specify a @key.</sch:assert>
+            <sch:let name="key" value="string(@key)"/>
+            <sch:assert role="error"
+                test="$key = $IDENTS.elements or $key = 'svg_svg'">
+                The &lt;elementRef&gt; to "<sch:value-of select="$key"/>" is broken: There is no such element in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_macroRef">
+        <sch:rule context="tei:macroRef">
+            <sch:assert role="error"
+                test="exists(@key)"
+                >A &lt;macroRef&gt; element needs to specify a @key.</sch:assert>
+            <sch:let name="key" value="string(@key)"/>
+            <sch:assert role="error"
+                test="$key = $IDENTS.macros">
+                The &lt;macroRef&gt; to "<sch:value-of select="$key"/>" is broken: There is no such macro in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
+    <sch:pattern id="check_dataRef">
+        <sch:rule context="tei:dataRef[@key]">
+            <sch:let name="key" value="string(@key)"/>
+            <sch:assert role="error"
+                test="$key = $IDENTS.datatypes">
+                The &lt;dataRef&gt; to "<sch:value-of select="$key"/>" is broken: There is no such dataSpec in the specs.</sch:assert>
+        </sch:rule>
+    </sch:pattern>
+
     <!-- memberOf @key -->
     <!-- rng:ref @name -->
 
