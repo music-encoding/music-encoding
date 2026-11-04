@@ -50,9 +50,25 @@
 
   <!-- A datatype holding any other rng:list (e.g. pairs of values): it
        needs a dataSpec of its own, as <datatype> only allows one dataRef. -->
+  <!-- The same holds for a choice of datatypes, e.g.
+       data.FRETNUMBER | data.FRETNUMBER.omit. -->
   <xsl:function name="purify:is-multi-list" as="xs:boolean">
     <xsl:param name="datatype" as="element(datatype)"/>
-    <xsl:sequence select="exists($datatype/rng:list) and not(purify:is-single-list($datatype))"/>
+    <xsl:sequence select="(exists($datatype/rng:list) and not(purify:is-single-list($datatype)))
+                          or exists($datatype/rng:choice)"/>
+  </xsl:function>
+
+  <!-- The RELAX NG pattern for "any element (except from some namespaces)
+       with any attributes and any content", referring to itself, e.g.
+       macro.anyXML. It is exactly what odd2relax generates for an
+       anyElement with @exclude. -->
+  <xsl:function name="purify:is-any-element" as="xs:boolean">
+    <xsl:param name="e" as="element(rng:element)"/>
+    <xsl:variable name="self" select="$e/ancestor::macroSpec[1]/@ident"/>
+    <xsl:sequence select="count($e/*) eq 3
+      and $e/*[1][self::rng:anyName][count(*) eq 1]/rng:except[*][every $n in * satisfies $n/self::rng:nsName[@ns]]
+      and $e/*[2][self::rng:zeroOrMore][count(*) eq 1]/rng:attribute[count(*) eq 1]/rng:anyName[not(*)]
+      and $e/*[3][self::rng:zeroOrMore][count(*) eq 1]/rng:choice[count(*) eq 2][rng:text][rng:ref[@name = $self]]"/>
   </xsl:function>
 
   <xsl:function name="purify:list-dataspec-ident" as="xs:string">
@@ -106,6 +122,19 @@
   <!-- ********************************************* -->
   <!-- Process TEI ODD elements that need to change. -->
   <!-- ********************************************* -->
+
+  <xsl:template match="content[count(*) eq 1][rng:element[purify:is-any-element(.)]]" priority="2">
+    <xsl:copy>
+      <xsl:apply-templates select="@*"/>
+      <anyElement exclude="{string-join(rng:element/rng:anyName/rng:except/rng:nsName/@ns, ' ')}"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- TEI calls the attribute @exclude; an @except is ignored, and the
+       TEI namespace is excluded instead. -->
+  <xsl:template match="anyElement/@except">
+    <xsl:attribute name="exclude" select="."/>
+  </xsl:template>
 
   <!-- If the <content> has unusual or complicated stuff, -->
   <!-- we just copy it for manual treatment later         -->
@@ -227,7 +256,7 @@
     <textNode/>
   </xsl:template>
 
-  <xsl:template match="rng:choice[not(parent::datatype)]">
+  <xsl:template match="rng:choice">
     <alternate>
       <xsl:call-template name="maxmin"/>
       <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
@@ -238,7 +267,7 @@
        allows one valList, before the other patterns, so all values of the
        choice are collected there. A choice of nothing but values needs no
        alternate around its valList. -->
-  <xsl:template match="rng:choice[not(parent::datatype)][rng:value]" priority="1">
+  <xsl:template match="rng:choice[rng:value]" priority="1">
     <xsl:variable name="valList" as="element()">
       <valList type="closed">
         <xsl:for-each select="rng:value">
@@ -395,7 +424,7 @@
       <xsl:variable name="att" select="ancestor::attDef[1]/@ident"/>
       <dataSpec ident="{$ident}" module="{ancestor::*[@module][1]/@module}">
         <xsl:call-template name="purify:alert">
-          <xsl:with-param name="message" tunnel="yes" select="'generated ' || $ident || ' for the list datatype of @' || $att || ' - check ident and desc'"/>
+          <xsl:with-param name="message" tunnel="yes" select="'generated ' || $ident || ' for the datatype of @' || $att || ' - check ident and desc'"/>
         </xsl:call-template>
         <xsl:if test="$all-modules//*[@ident = $ident]">
           <xsl:call-template name="purify:alert">
@@ -407,11 +436,11 @@
           <xsl:choose>
             <xsl:when test="count(rng:list/*) gt 1">
               <sequence>
-                <xsl:apply-templates select="rng:list/*"/>
+                <xsl:apply-templates select="(rng:list/*, rng:choice)"/>
               </sequence>
             </xsl:when>
             <xsl:otherwise>
-              <xsl:apply-templates select="rng:list/*"/>
+              <xsl:apply-templates select="(rng:list/*, rng:choice)"/>
             </xsl:otherwise>
           </xsl:choose>
         </content>
