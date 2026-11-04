@@ -443,7 +443,7 @@
         </xd:desc>
     </xd:doc>
     <xsl:variable name="macro.groups.pdf.links" as="node()*">
-        <xsl:for-each select="$data.types">
+        <xsl:for-each select="$macro.groups">
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,7,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
