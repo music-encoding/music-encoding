@@ -307,9 +307,24 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source. This target will be triggered before all `build-...` targets.">
+    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+        <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
+        <java unless:set="validate-source.done" jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+            <arg file="${dir.validation}/mei_odds.rng"/>
+            <arg file="${canonicalized.source.path}"/>
+        </java>
+        <java unless:set="validate-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+            <arg value="-s:${dir.validation}/mei_odds.rng"/>
+            <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+            <arg value="-o:${dir.build}/mei_odds.sch"/>
+        </java>
+        <schematron unless:set="validate-source.done" schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+            <fileset dir="${dir.build}">
+                <include name="${canonicalized.file.next}"></include>
+            </fileset>
+        </schematron>
         <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">
                 <include name="${canonicalized.file.next}"></include>
