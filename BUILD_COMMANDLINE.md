@@ -92,7 +92,7 @@
      ant [TASKNAME]
      ```
 
-     * Build the RNG schema of a specific customization:
+     * Build the RNG schema (and the compiled ODD) of a specific customization:
 
        ```shell
        ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
@@ -157,10 +157,12 @@ flowchart TD
     subgraph SCHEMA["Schema generation"]
         RNGS["build-customizations"]
         ODDS["build-compiled-odds"]
-        RNG_CUS["build-rng\nper customization"]
+        RNG_CUS["build-rng\nper customization\n(RNG + compiled ODD)"]
         ODD_CUS["build-compiled-odd\nper customization"]
         VALID_SCH["validate-schemata"]
-        VALID_CUS["validate-rng\nper customization"]
+        VALID_RNG_CUS["validate-rng\nper customization"]
+        VALID_ODDS["validate-compiled-odds"]
+        VALID_ODD_CUS["validate-compiled-odd\nper customization"]
     end
 
     subgraph DOCS["Guidelines output"]
@@ -189,10 +191,12 @@ flowchart TD
 
     RNGS --> RNG_CUS
     DIST --> VALID_SCH
-    VALID_SCH --> VALID_CUS
+    VALID_SCH --> VALID_RNG_CUS
+    DIST --> VALID_ODDS
+    VALID_ODDS --> VALID_ODD_CUS
     ODDS --> ODD_CUS
     HTML --> HTML_CUS
-    HTML_CUS --> ODD_CUS
+    HTML_CUS -. "if compiled ODD is outdated" .-> ODD_CUS
     HTML_CUS --> IMG
     HTML --> IDX
     HTML --> PDF
@@ -203,20 +207,22 @@ flowchart TD
     classDef primary fill:#e8f1ff,stroke:#2b6cb0,stroke-width:1.5px,color:#111;
     classDef default fill:#f7fafc,stroke:#a0aec0,stroke-width:1px,color:#111;
     class DIST primary;
-    class CANON,VALID,INIT,CLP,RNGS,ODDS,RNG_CUS,ODD_CUS,VALID_SCH,VALID_CUS,HTML,HTML_CUS,IDX,PDF,IMG,INFO,COMP,CLEAN default;
+    class CANON,VALID,INIT,CLP,RNGS,ODDS,RNG_CUS,ODD_CUS,VALID_SCH,VALID_RNG_CUS,VALID_ODDS,VALID_ODD_CUS,HTML,HTML_CUS,IDX,PDF,IMG,INFO,COMP,CLEAN default;
 ```
 
 | target                | description     |
 |-----------------------|-----------------|
-| `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata.  |
+| `dist` (or no target) | Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs.  |
 | `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`. |
 | `validate-source` | Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
-| `build-customizations` | Builds the RNG schemata for all MEI customizations. |
-| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
+| `build-customizations` | Builds the RNG schemata and compiled ODDs for all MEI customizations. |
+| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema and the compiled ODD of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `validate-schemata` | Validates the built RNG schemata of all MEI customizations. |
 | `validate-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the built RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
+| `validate-compiled-odds` | Validates the compiled ODDs of all MEI customizations. |
+| `validate-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the compiled ODD of a specific customization submitted as absolute path with `-Dcustomization.path` input param against `mei_odds.rng` (incl. its embedded Schematron). |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
 | `info`| Displays the versions of Ant and Java (JDK). |
