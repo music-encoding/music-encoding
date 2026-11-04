@@ -53,9 +53,17 @@ This outputs the compiled ODD file: `music-encoding/dist/schemata/*.odd`.
 
 
 4. In the _XSLT_ tab, look for the _XSL URL_ field and add the path to your `odd2html.xsl` file. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/utils/guidelines_xslt/odd2html.xsl`) and opening it.
+  
+   Here’s a configuration example that uses project-relative paths:
 
-5. Now, you will be back in the _New Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the _XML URL_ field for a particular folder, as well as the _Parameters_ to change the output folder.
+<img width="400" alt="oXygen transformation scenario dialog box" src="https://github.com/user-attachments/assets/cfac9190-a4cc-4700-9338-1cc1a240416a" />
+
+5. Now, you will be back in the _New Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the _XML URL_ field for a particular folder, as well as the _Parameters_ to change the output folder. 
 
 6. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Global_ section of the window, you will find your new _XML transformation with XSLT_ with the name you gave it in Step 4. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will generate the HTML document for the guidelines.
+
+
+
+
 
 After a few minutes, the results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
