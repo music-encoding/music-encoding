@@ -32,11 +32,13 @@
     
     <!-- all class memberships -->
     <sch:let name="KEYS.memberOf" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:memberOf/string(@key)"/>
-    <sch:let name="KEYS.memberOf.model" value="$KEYS.memberOf[starts-with(., 'model.')]"/>
     
-    <!-- all datatype references -->
+    <!-- all references -->
     <sch:let name="REFS" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//rng:ref/string(@name)"/>
+    <sch:let name="REFS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classRef/string(@key)"/>
+    <sch:let name="REFS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementRef/string(@key)"/>
     <sch:let name="REFS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroRef/string(@key)"/>
+    <sch:let name="REFS.datatypes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:dataRef/string(@key)"/>
 
     <sch:pattern id="environment">
         <sch:rule context="/">
@@ -197,26 +199,26 @@
         </sch:rule>
         <sch:rule context="tei:classSpec[@type = 'model']">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $KEYS.memberOf or $ident = $REFS" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
-            </sch:assert>
-        </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'pe']">
-            <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $REFS" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt;element. Is it really necessary?
+            <sch:assert test="$ident = ($KEYS.memberOf, $REFS, $REFS.classes)" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt;, &lt;classRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:elementSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $REFS or count($KEYS.memberOf.model) gt 0" role="warning">
-                Element &lt;<sch:value-of select="$ident"/>&gt; seems not to be used by either a &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; and isn't member of any model class. Is it really necessary?
+            <sch:assert test="$ident = ($REFS, $REFS.elements) or tei:classes/tei:memberOf[starts-with(@key, 'model.')]" role="warning">
+                Element &lt;<sch:value-of select="$ident"/>&gt; is not used by any &lt;elementRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element and isn't member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
-        <sch:rule context="tei:macroSpec[@type = 'dt']">
+        <sch:rule context="tei:macroSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = $REFS or $ident = $REFS.macros" role="warning">
-               <sch:value-of select="$ident"/> seems not to be used by any &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; or &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt;. Is it really necessary?
+            <sch:assert test="$ident = ($REFS, $REFS.macros)" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
+            </sch:assert>
+        </sch:rule>
+        <sch:rule context="tei:dataSpec">
+            <sch:let name="ident" value="@ident"/>
+            <sch:assert test="$ident = ($REFS, $REFS.datatypes)" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;dataRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
             </sch:assert>
         </sch:rule>
     </sch:pattern>
