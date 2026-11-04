@@ -4,7 +4,7 @@
     <sch:ns prefix="rng" uri="http://relaxng.org/ns/structure/1.0"/>
     
     <sch:let name="URI.file" value="document-uri(/)" />
-    <sch:let name="URI.repo-collection" value="replace(document-uri(/), '^(.*/music-encoding/).*', '$1')" />
+    <sch:let name="URI.repo-collection" value="replace(document-uri(/), '^(.*/)(build|source)/.*$', '$1')" />
     <sch:let name="URI.source-collection" value="resolve-uri('./source/', $URI.repo-collection)" />
     <sch:let name="URI.schematron" value="resolve-uri('./validation/mei-source.sch', $URI.source-collection)" />
     <sch:let name="URI.docs-collection" value="resolve-uri('./docs/', $URI.source-collection)" />
