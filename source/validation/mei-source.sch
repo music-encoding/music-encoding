@@ -33,12 +33,12 @@
     <!-- all class memberships -->
     <sch:let name="KEYS.memberOf" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:memberOf/string(@key)"/>
     
-    <!-- all references -->
-    <sch:let name="REFS" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//rng:ref/string(@name)"/>
-    <sch:let name="REFS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classRef/string(@key)"/>
-    <sch:let name="REFS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementRef/string(@key)"/>
-    <sch:let name="REFS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroRef/string(@key)"/>
-    <sch:let name="REFS.datatypes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:dataRef/string(@key)"/>
+    <!-- all references (as nodes, so that references from within the referenced spec itself can be excluded) -->
+    <sch:let name="REFS" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//rng:ref"/>
+    <sch:let name="REFS.classes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:classRef"/>
+    <sch:let name="REFS.elements" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:elementRef"/>
+    <sch:let name="REFS.macros" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:macroRef"/>
+    <sch:let name="REFS.datatypes" value="collection($URI.modules-collection || '?select=*.xml;recurse=yes')//tei:dataRef[@key]"/>
 
     <sch:pattern id="environment">
         <sch:rule context="/">
@@ -189,7 +189,7 @@
         </sch:rule>
     </sch:pattern>
     
-    <!-- check whether things are referenced somewhere -->
+    <!-- check whether things are referenced somewhere; chains are not followed, so of an unused chain only its topmost spec is reported -->
     <sch:pattern id="unused_objects">
         <sch:rule context="tei:classSpec[@type = 'atts']">
             <sch:let name="ident" value="@ident"/>
@@ -199,26 +199,30 @@
         </sch:rule>
         <sch:rule context="tei:classSpec[@type = 'model']">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = ($KEYS.memberOf, $REFS, $REFS.classes)" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;memberOf key="<sch:value-of select="$ident"/>"/&gt;, &lt;classRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
+            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.classes[@key = $ident])[not(ancestor::tei:classSpec/@ident = $ident)]"/>
+            <sch:assert test="exists($refs) or tei:classes/tei:memberOf[starts-with(@key, 'model.')][@key != $ident]" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;classRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec and is not a member of another model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:elementSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = ($REFS, $REFS.elements) or tei:classes/tei:memberOf[starts-with(@key, 'model.')]" role="warning">
-                Element &lt;<sch:value-of select="$ident"/>&gt; is not used by any &lt;elementRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element and isn't member of any model class. Is it really necessary?
+            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.elements[@key = $ident])[not(ancestor::tei:elementSpec/@ident = $ident)]"/>
+            <sch:assert test="exists($refs) or tei:classes/tei:memberOf[starts-with(@key, 'model.')]" role="warning">
+                Element &lt;<sch:value-of select="$ident"/>&gt; is not used by any &lt;elementRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec and is not a member of any model class. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:macroSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = ($REFS, $REFS.macros)" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
+            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.macros[@key = $ident])[not(ancestor::tei:macroSpec/@ident = $ident)]"/>
+            <sch:assert test="exists($refs)" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;macroRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec. Is it really necessary?
             </sch:assert>
         </sch:rule>
         <sch:rule context="tei:dataSpec">
             <sch:let name="ident" value="@ident"/>
-            <sch:assert test="$ident = ($REFS, $REFS.datatypes)" role="warning">
-                <sch:value-of select="$ident"/> is not used by any &lt;dataRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element. Is it really necessary?
+            <sch:let name="refs" value="($REFS[@name = $ident], $REFS.datatypes[@key = $ident])[not(ancestor::tei:dataSpec/@ident = $ident)]"/>
+            <sch:assert test="exists($refs)" role="warning">
+                <sch:value-of select="$ident"/> is not used by any &lt;dataRef key="<sch:value-of select="$ident"/>"/&gt; or &lt;rng:ref name="<sch:value-of select="$ident"/>"/&gt; element outside its own spec. Is it really necessary?
             </sch:assert>
         </sch:rule>
     </sch:pattern>
