@@ -38,18 +38,24 @@ Once the building is done, Oxygen will automatically open the schema. The schema
 
 In this section, we will use Oxygen to generate the HTML document for the guidelines using the XSLT Stylesheet located at `music-encoding/utils/guidelines_xslt/odd2html.xsl`. The steps are the following:
 
-1. Open the `mei-source.xml` file in Oxygen. This file is located in `music-encoding/source/mei-source.xml`.
+1. Run the following command (as described in the `BUILD_COMMANDLINE.md` file) to build the compiled ODD of a specific customization (e.g., `customizations\mei-cmn.xml`)
+
+```shell
+       ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-compiled-odd
+```
+This outputs the compiled ODD file: `music-encoding/dist/schemata/*.odd`.
 
 2. Click on the _Configure Transformation Scenario(s)_ button (the button with the wrench). This will open a window of the same name.
 
-3. Click on the _New_ button and select the _XML transformation with XSLT_ option. This will open the _New scenario_ window.
+3. Click on the _New_ button and select the _XML transformation with XSLT_ option. This will open the _New scenario_ window. Assign a name to your new XML transformation.
 
-4. Assign a name to your new XML transformation.
+3. In the _XML URL_ field, add the path to your compiled ODD file (e.g., `music-encoding/dist/schemata/mei-cmn.odd`). You can do this by clicking on the folder icon to browse this file and opening it.
 
-5. In the _XSLT_ tab, look for the _XSL URL_ field and add the path to your `odd2html.xsl` file. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/utils/guidelines_xslt/odd2html.xsl`) and opening it.
 
-6. Now, you will be back in the _New Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the _XML URL_ field for a particular folder, as well as the _Parameters_ to change the output folder.
+4. In the _XSLT_ tab, look for the _XSL URL_ field and add the path to your `odd2html.xsl` file. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/utils/guidelines_xslt/odd2html.xsl`) and opening it.
 
-7. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Global_ section of the window, you will find your new _XML transformation with XSLT_ with the name you gave it in Step 4. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will generate the HTML document for the guidelines.
+5. Now, you will be back in the _New Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the _XML URL_ field for a particular folder, as well as the _Parameters_ to change the output folder.
+
+6. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Global_ section of the window, you will find your new _XML transformation with XSLT_ with the name you gave it in Step 4. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will generate the HTML document for the guidelines.
 
 After a few minutes, the results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
