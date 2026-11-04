@@ -307,28 +307,35 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
+    <!-- validates an ODD file against mei_odds.rng, i.e., with jing and the Schematron embedded in mei_odds.rng -->
+    <macrodef name="validate-against-mei-odds">
+        <attribute name="instance"/>
+        <sequential>
+            <!-- -i: skip jing's DTD-compatibility ID check, which rejects xml:id (type ID) next to the anyName attribute wildcards of the pureODD schemata -->
+            <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+                <arg value="-i"/>
+                <arg file="${dir.validation}/mei_odds.rng"/>
+                <arg file="@{instance}"/>
+            </java>
+            <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+                <arg value="-s:${dir.validation}/mei_odds.rng"/>
+                <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+                <arg value="-o:${dir.build}/mei_odds.sch"/>
+            </java>
+            <!-- ph-schematron maps the TEI role "nonfatal" to an error; map it to "warning" as TEI intends -->
+            <replace file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
+            <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+            <schematron schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+                <fileset file="@{instance}"/>
+            </schematron>
+        </sequential>
+    </macrodef>
+
     <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
         <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
-        <!-- -i: skip jing's DTD-compatibility ID check, which rejects xml:id (type ID) next to the anyName attribute wildcards of the pureODD schemata -->
-        <java unless:set="validate-source.done" jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
-            <arg value="-i"/>
-            <arg file="${dir.validation}/mei_odds.rng"/>
-            <arg file="${canonicalized.source.path}"/>
-        </java>
-        <java unless:set="validate-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
-            <arg value="-s:${dir.validation}/mei_odds.rng"/>
-            <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
-            <arg value="-o:${dir.build}/mei_odds.sch"/>
-        </java>
-        <!-- ph-schematron treats the unknown TEI role "nonfatal" as an error; map it to "warning" as TEI intends -->
-        <replace unless:set="validate-source.done" file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
-        <schematron unless:set="validate-source.done" schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
-            <fileset dir="${dir.build}">
-                <include name="${canonicalized.file.next}"></include>
-            </fileset>
-        </schematron>
+        <validate-against-mei-odds unless:set="validate-source.done" instance="${canonicalized.source.path}"/>
         <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">
                 <include name="${canonicalized.file.next}"></include>
@@ -631,6 +638,38 @@
         </antcall>
     </target>
 
+    <target name="validate-compiled-odd" description="Validates the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="init-mei-classpath">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <property name="validate-compiled-odd.odd" location="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+        <echo>validating compiled odd ${selectedSchema}...</echo>
+        <fail message="Compiled ODD not found: ${validate-compiled-odd.odd} (build it first, e.g., with `ant build-rng`).">
+            <condition><not><available file="${validate-compiled-odd.odd}"/></not></condition>
+        </fail>
+        <validate-against-mei-odds instance="${validate-compiled-odd.odd}"/>
+        <echo>compiled odd ${selectedSchema} validated</echo>
+    </target>
+
+    <target name="validate-compiled-odds" description="Validates the compiled ODDs of all MEI customizations.">
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-all.xml"/>
+        </antcall>
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
+        </antcall>
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-cmn.xml"/>
+        </antcall>
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-mensural.xml"/>
+        </antcall>
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-neumes.xml"/>
+        </antcall>
+        <antcall target="validate-compiled-odd">
+            <param name="customization.path" location="customizations/mei-basic.xml"/>
+        </antcall>
+    </target>
+
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <antcall target="build-compiled-odd">
             <param name="customization.path" location="customizations/mei-all.xml"/>
@@ -708,11 +747,12 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata." depends="validate-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
         <antcall target="validate-schemata"/>
+        <antcall target="validate-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
         <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>
