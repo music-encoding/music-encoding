@@ -627,6 +627,20 @@
         <for-each-customization target="validate-compiled-odd"/>
     </target>
 
+    <target name="validate-customization" description="Validates a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="init-mei-classpath">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo>${selectedSchema}: validating customization...</echo>
+        <fail message="Customization not found: ${customization.path}.">
+            <condition><not><available file="${customization.path}"/></not></condition>
+        </fail>
+        <validate-against-mei-odds instance="${customization.path}"/>
+        <echo>${selectedSchema}: customization validated</echo>
+    </target>
+
+    <target name="validate-customizations" description="Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron).">
+        <for-each-customization target="validate-customization"/>
+    </target>
+
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
         <for-each-customization target="build-compiled-odd"/>
     </target>
@@ -687,9 +701,10 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs." depends="validate-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Validates the customizations, builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
+        <antcall target="validate-customizations"/>
         <antcall target="build-customizations"/>
         <antcall target="validate-schemata"/>
         <antcall target="validate-compiled-odds"/>
