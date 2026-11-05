@@ -21,208 +21,204 @@
 <?xml-model href="../validation/mei_odds.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="../validation/mei-purify.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <?xml-model href="../validation/mei-source.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<specGrp xmlns="http://www.tei-c.org/ns/1.0" xmlns:rng="http://relaxng.org/ns/structure/1.0"
-  xmlns:sch="http://purl.oclc.org/dsdl/schematron" xml:id="module.MEI.fingering">
-  <moduleSpec ident="MEI.fingering">
-    <desc xml:lang="en">Fingering component declarations.</desc>
-  </moduleSpec>
-  <macroSpec ident="data.HANDROLE" module="MEI.fingering" type="dt">
-    <desc xml:lang="en">Role of hand in fingering indication relevant to plucked string instruments.
+<specGrp xmlns="http://www.tei-c.org/ns/1.0"
+         xmlns:rng="http://relaxng.org/ns/structure/1.0"
+         xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+         xml:id="module.MEI.fingering">
+   <moduleSpec ident="MEI.fingering">
+      <desc xml:lang="en">Fingering component declarations.</desc>
+   </moduleSpec>
+   <dataSpec ident="data.HANDROLE" module="MEI.fingering">
+      <desc xml:lang="en">Role of hand in fingering indication relevant to plucked string instruments.
       One of 'sounding' and 'stopping'.
     </desc>
-    <content>
-      <valList type="closed">
-        <valItem ident="sounding">
-          <desc xml:lang="en">The plucking or strumming hand.</desc>
-        </valItem>
-        <valItem ident="stopping">
-          <desc xml:lang="en">The stopping or fretting hand.</desc>
-        </valItem>
-      </valList>
-    </content>
-  </macroSpec>
-  <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
-    <desc xml:lang="en">Logical domain attributes.</desc>
-    <classes>
-      <memberOf key="att.controlEvent"/>
-      <memberOf key="att.duration.additive"/>
-      <memberOf key="att.startEndId"/>
-      <memberOf key="att.timestamp2.log"/>
-    </classes>
-  </classSpec>
-  <classSpec ident="att.fing.finger" module="MEI.fingering" type="atts">
-    <desc xml:lang="en">Attributes used for a description of the finger (in physical terms).</desc>
-    <constraintSpec ident="finger_none_not_allowed" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:barre[@finger]">
-          <sch:assert test="not(@finger eq 'none')">The value "none" is not permitted for
+      <content>
+         <valList type="closed">
+            <valItem ident="sounding">
+               <desc xml:lang="en">The plucking or strumming hand.</desc>
+            </valItem>
+            <valItem ident="stopping">
+               <desc xml:lang="en">The stopping or fretting hand.</desc>
+            </valItem>
+         </valList>
+      </content>
+   </dataSpec>
+   <classSpec ident="att.fing.log" module="MEI.fingering" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.controlEvent"/>
+         <memberOf key="att.duration.additive"/>
+         <memberOf key="att.startEndId"/>
+         <memberOf key="att.timestamp2.log"/>
+      </classes>
+   </classSpec>
+   <classSpec ident="att.fing.finger" module="MEI.fingering" type="atts">
+      <desc xml:lang="en">Attributes used for a description of the finger (in physical terms).</desc>
+      <constraintSpec ident="finger_none_not_allowed" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:barre[@finger]">
+               <sch:assert test="not(@finger eq 'none')">The value "none" is not permitted for
             the @finger attribute on barre element.
           </sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <attList>
-      <attDef ident="finger" usage="opt">
-        <valList type="closed">
-          <valItem ident="t">
-            <desc xml:lang="en">Thumb</desc>
-          </valItem>
-          <valItem ident="i">
-            <desc xml:lang="en">Index finger</desc>
-          </valItem>
-          <valItem ident="m">
-            <desc xml:lang="en">Middle finger</desc>
-          </valItem>
-          <valItem ident="r">
-            <desc xml:lang="en">Ring finger</desc>
-          </valItem>
-          <valItem ident="l">
-            <desc xml:lang="en">Little finger</desc>
-          </valItem>
-          <valItem ident="none">
-            <desc xml:lang="en">No fingers in use</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.fing.hand" module="MEI.fingering" type="atts">
-    <desc xml:lang="en">Attributes used for a description of the hand role (in physical terms).</desc>
-    <attList>
-      <attDef ident="handRole" usage="opt">
-        <desc xml:lang="en">Records the role of the hand in a fingering indication.</desc>
-        <datatype>
-          <rng:ref name="data.HANDROLE"/>
-        </datatype>
-        <constraintSpec ident="When_sounding_hand" scheme="schematron">
-          <constraint>
-            <sch:rule context="mei:*[@handRole eq 'sounding']">
-              <sch:assert test="not(@finger eq 'none')">A sounding hand requires a finger. The value "none"
-                is not permitted for @finger when @handRole is "sounding".</sch:assert>
             </sch:rule>
-          </constraint>
-        </constraintSpec>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
-    <desc xml:lang="en">Logical domain attributes.</desc>
-    <classes>
-      <memberOf key="att.controlEvent"/>
-      <memberOf key="att.duration.additive"/>
-      <memberOf key="att.startEndId"/>
-      <memberOf key="att.timestamp2.log"/>
-    </classes>
-    <attList>
-      <attDef ident="form" usage="opt">
-        <valList type="closed">
-          <valItem ident="alter">
-            <desc xml:lang="en">alternation of fingers.</desc>
-          </valItem>
-          <valItem ident="combi">
-            <desc xml:lang="en">combination of fingers.</desc>
-          </valItem>
-          <valItem ident="subst">
-            <desc xml:lang="en">substitution of fingers.</desc>
-          </valItem>
-        </valList>
-      </attDef>
-    </attList>
-  </classSpec>
-  <classSpec ident="model.fingeringLike" module="MEI.fingering" type="model">
-    <desc xml:lang="en">Groups elements that capture performance instructions regarding the use of the fingers of
+         </constraint>
+      </constraintSpec>
+      <attList>
+         <attDef ident="finger" usage="opt">
+            <valList type="closed">
+               <valItem ident="t">
+                  <desc xml:lang="en">Thumb</desc>
+               </valItem>
+               <valItem ident="i">
+                  <desc xml:lang="en">Index finger</desc>
+               </valItem>
+               <valItem ident="m">
+                  <desc xml:lang="en">Middle finger</desc>
+               </valItem>
+               <valItem ident="r">
+                  <desc xml:lang="en">Ring finger</desc>
+               </valItem>
+               <valItem ident="l">
+                  <desc xml:lang="en">Little finger</desc>
+               </valItem>
+               <valItem ident="none">
+                  <desc xml:lang="en">No fingers in use</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="att.fing.hand" module="MEI.fingering" type="atts">
+      <desc xml:lang="en">Attributes used for a description of the hand role (in physical terms).</desc>
+      <attList>
+         <attDef ident="handRole" usage="opt">
+            <desc xml:lang="en">Records the role of the hand in a fingering indication.</desc>
+            <datatype>
+               <dataRef key="data.HANDROLE"/>
+            </datatype>
+            <constraintSpec ident="When_sounding_hand" scheme="schematron">
+               <constraint>
+                  <sch:rule context="mei:*[@handRole eq 'sounding']">
+                     <sch:assert test="not(@finger eq 'none')">A sounding hand requires a finger. The value "none"
+                is not permitted for @finger when @handRole is "sounding".</sch:assert>
+                  </sch:rule>
+               </constraint>
+            </constraintSpec>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="att.fingGrp.log" module="MEI.fingering" type="atts">
+      <desc xml:lang="en">Logical domain attributes.</desc>
+      <classes>
+         <memberOf key="att.controlEvent"/>
+         <memberOf key="att.duration.additive"/>
+         <memberOf key="att.startEndId"/>
+         <memberOf key="att.timestamp2.log"/>
+      </classes>
+      <attList>
+         <attDef ident="form" usage="opt">
+            <valList type="closed">
+               <valItem ident="alter">
+                  <desc xml:lang="en">alternation of fingers.</desc>
+               </valItem>
+               <valItem ident="combi">
+                  <desc xml:lang="en">combination of fingers.</desc>
+               </valItem>
+               <valItem ident="subst">
+                  <desc xml:lang="en">substitution of fingers.</desc>
+               </valItem>
+            </valList>
+         </attDef>
+      </attList>
+   </classSpec>
+   <classSpec ident="model.fingeringLike" module="MEI.fingering" type="model">
+      <desc xml:lang="en">Groups elements that capture performance instructions regarding the use of the fingers of
       the hand (or a subset of them).</desc>
-    <classes>
-      <memberOf key="model.controlEventLike"/>
-    </classes>
-  </classSpec>
-  <elementSpec ident="fing" module="MEI.fingering">
-    <gloss xml:lang="en">finger</gloss>
-    <desc xml:lang="en">An individual finger in a fingering indication.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.fing.anl"/>
-      <memberOf key="att.fing.ges"/>
-      <memberOf key="att.fing.log"/>
-      <memberOf key="att.fing.vis"/>
-      <memberOf key="att.fing.finger" />
-      <memberOf key="att.fing.hand" />
-      <memberOf key="model.fingeringLike"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:text/>
-          <rng:ref name="model.textPhraseLike.limited"/>
-          <rng:ref name="model.editLike"/>
-          <rng:ref name="model.transcriptionLike"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <constraintSpec ident="fing_start-type_attributes_required" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:fing[not(ancestor::mei:fingGrp)]">
-          <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
+      <classes>
+         <memberOf key="model.controlEventLike"/>
+      </classes>
+   </classSpec>
+   <elementSpec ident="fing" module="MEI.fingering">
+      <gloss xml:lang="en">finger</gloss>
+      <desc xml:lang="en">An individual finger in a fingering indication.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.fing.anl"/>
+         <memberOf key="att.fing.ges"/>
+         <memberOf key="att.fing.log"/>
+         <memberOf key="att.fing.vis"/>
+         <memberOf key="att.fing.finger"/>
+         <memberOf key="att.fing.hand"/>
+         <memberOf key="model.fingeringLike"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <textNode/>
+            <classRef key="model.textPhraseLike.limited"/>
+            <classRef key="model.editLike"/>
+            <classRef key="model.transcriptionLike"/>
+         </alternate>
+      </content>
+      <constraintSpec ident="fing_start-type_attributes_required" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:fing[not(ancestor::mei:fingGrp)]">
+               <sch:assert test="@startid or @tstamp or @tstamp.ges or @tstamp.real">Must have one of the
             attributes: startid, tstamp, tstamp.ges or tstamp.real.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <constraintSpec ident="stack_exclusion" scheme="schematron">
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <constraintSpec ident="stack_exclusion" scheme="schematron">
       <!-- Exclusion implemented using Schematron -->
-      <constraint>
-        <sch:rule context="mei:fing">
-          <sch:assert test="not(descendant::mei:stack)">The stack element is not allowed as a
+         <constraint>
+            <sch:rule context="mei:fing">
+               <sch:assert test="not(descendant::mei:stack)">The stack element is not allowed as a
             descendant of fing.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-  </elementSpec>
-  <elementSpec ident="fingGrp" module="MEI.fingering">
-    <gloss xml:lang="en">finger group</gloss>
-    <desc xml:lang="en">A group of individual fingers in a fingering indication.</desc>
-    <classes>
-      <memberOf key="att.common"/>
-      <memberOf key="att.facsimile"/>
-      <memberOf key="att.fingGrp.anl"/>
-      <memberOf key="att.fingGrp.ges"/>
-      <memberOf key="att.fingGrp.log"/>
-      <memberOf key="att.fingGrp.vis"/>
-      <memberOf key="model.fingeringLike"/>
-    </classes>
-    <content>
-      <rng:zeroOrMore>
-        <rng:choice>
-          <rng:ref name="model.fingeringLike"/>
-          <rng:ref name="model.editLike"/>
-          <rng:ref name="model.transcriptionLike"/>
-        </rng:choice>
-      </rng:zeroOrMore>
-    </content>
-    <constraintSpec ident="require_fingeringLike_children" scheme="schematron">
-      <constraint>
-        <sch:rule context="mei:fingGrp">
-          <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or fingGrp
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+   </elementSpec>
+   <elementSpec ident="fingGrp" module="MEI.fingering">
+      <gloss xml:lang="en">finger group</gloss>
+      <desc xml:lang="en">A group of individual fingers in a fingering indication.</desc>
+      <classes>
+         <memberOf key="att.common"/>
+         <memberOf key="att.facsimile"/>
+         <memberOf key="att.fingGrp.anl"/>
+         <memberOf key="att.fingGrp.ges"/>
+         <memberOf key="att.fingGrp.log"/>
+         <memberOf key="att.fingGrp.vis"/>
+         <memberOf key="model.fingeringLike"/>
+      </classes>
+      <content>
+         <alternate minOccurs="0" maxOccurs="unbounded">
+            <classRef key="model.fingeringLike"/>
+            <classRef key="model.editLike"/>
+            <classRef key="model.transcriptionLike"/>
+         </alternate>
+      </content>
+      <constraintSpec ident="require_fingeringLike_children" scheme="schematron">
+         <constraint>
+            <sch:rule context="mei:fingGrp">
+               <sch:assert test="count(mei:fing) + count(mei:fingGrp) &gt; 1">At least 2 fing or fingGrp
             elements are required.</sch:assert>
-        </sch:rule>
-      </constraint>
-    </constraintSpec>
-    <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="schematron">
-      <constraint>
-        <sch:pattern>
-          <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
-            <sch:assert test="not(child::mei:*[@tstamp or @startid])">When @tstamp or @startid is
+            </sch:rule>
+         </constraint>
+      </constraintSpec>
+      <constraintSpec ident="check_fingGrp_start-type_attributes" scheme="schematron">
+         <constraint>
+            <sch:pattern>
+               <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][@tstamp or @startid]">
+                  <sch:assert test="not(child::mei:*[@tstamp or @startid])">When @tstamp or @startid is
               present on fingGrp, its child elements cannot have a @tstamp or @startid
               attribute.</sch:assert>
-          </sch:rule>
-          <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][not(@tstamp or @startid)]">
-            <sch:assert
-              test="count(descendant::mei:*[@tstamp or @startid]) = count(child::mei:*[local-name()='fing' or local-name()='fingGrp'])"
-              >When @tstamp or @startid is not present on fingGrp, each of its child elements must
+               </sch:rule>
+               <sch:rule context="mei:fingGrp[not(ancestor::mei:fingGrp)][not(@tstamp or @startid)]">
+                  <sch:assert test="count(descendant::mei:*[@tstamp or @startid]) = count(child::mei:*[local-name()='fing' or local-name()='fingGrp'])">When @tstamp or @startid is not present on fingGrp, each of its child elements must
               have a @tstamp or @startid attribute.</sch:assert>
-          </sch:rule>
-        </sch:pattern>
-      </constraint>
-    </constraintSpec>
-  </elementSpec>
+               </sch:rule>
+            </sch:pattern>
+         </constraint>
+      </constraintSpec>
+   </elementSpec>
 </specGrp>

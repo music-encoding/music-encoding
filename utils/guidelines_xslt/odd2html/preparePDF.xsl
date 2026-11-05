@@ -96,7 +96,7 @@
                                     <div class="desc"><xsl:apply-templates select="$current.item/desc/node()" mode="#current"/></div>
                                 </div>
                             </xsl:when>
-                            <xsl:when test="$data.types/self::tei:macroSpec[@ident = $current.item/@ident]">
+                            <xsl:when test="$data.types/self::tei:dataSpec[@ident = $current.item/@ident]">
                                 <div class="classItem">
                                     <label>
                                         <a class="link_odd link_odd_dataType" href="#{$current.item/@ident}"><xsl:value-of select="$current.item/@ident"/></a>
