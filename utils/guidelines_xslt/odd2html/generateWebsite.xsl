@@ -893,10 +893,10 @@
                         </span>
                     </div>
                     <div class="classContent">
-                        <xsl:for-each select="$current.items">
+                        <xsl:for-each-group select="$current.items" group-by="if($facet.type = ('mayContain', 'containedBy')) then(string(@ident)) else(generate-id())">
                             <xsl:sort select="@ident"/>
                             <xsl:apply-templates select="." mode="get.website.classTab"/>
-                        </xsl:for-each>
+                        </xsl:for-each-group>
                     </div>
                 </div>
             </xsl:for-each>
