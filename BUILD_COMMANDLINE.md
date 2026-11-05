@@ -219,6 +219,8 @@ flowchart TD
 | `dist` (or no target) | Default main target; equivalent to calling ant without any target. Validates the customizations, builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs.  |
 | `canonicalize-source` | Creates a canonicalized version of the mei-source.xml, i.e., resolves xincludes and puts result in `build/mei-source_canonicalized_v{mei-version}`. |
 | `validate-source` | Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets. |
+| `validate-customizations` | Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron). |
+| `validate-customization -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates a specific customization submitted as absolute path with `-Dcustomization.path` input param against `mei_odds.rng` (incl. its embedded Schematron). |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
 | `build-customizations` | Builds the RNG schemata and compiled ODDs for all MEI customizations. |
@@ -227,8 +229,6 @@ flowchart TD
 | `validate-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the built RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `validate-compiled-odds` | Validates the compiled ODDs of all MEI customizations. |
 | `validate-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the compiled ODD of a specific customization submitted as absolute path with `-Dcustomization.path` input param against `mei_odds.rng` (incl. its embedded Schematron). |
-| `validate-customizations` | Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron). |
-| `validate-customization -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates a specific customization submitted as absolute path with `-Dcustomization.path` input param against `mei_odds.rng` (incl. its embedded Schematron). |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
 | `build-guidelines-pdf` | Builds the PDF version of the MEI guidelines. (Calls `build-guidelines-html` before execution.) |
 | `info`| Displays the versions of Ant and Java (JDK). |
