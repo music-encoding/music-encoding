@@ -307,7 +307,18 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <!-- validates an ODD file against mei_odds.rng: structure with jing, then the Schematron embedded in it -->
+    <target name="extract-mei-odds-sch" description="Extracts the Schematron embedded in `mei_odds.rng` to `build/mei_odds.sch` (once per build)." depends="init-mei-classpath">
+        <java unless:set="extract-mei-odds-sch.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+            <arg value="-s:${dir.validation}/mei_odds.rng"/>
+            <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
+            <arg value="-o:${dir.build}/mei_odds.sch"/>
+        </java>
+        <!-- ph-schematron maps the TEI role "nonfatal" to an error; map it to "warning" as TEI intends -->
+        <replace unless:set="extract-mei-odds-sch.done" file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
+        <property name="extract-mei-odds-sch.done" value="true"/>
+    </target>
+
+    <!-- validates an ODD file against mei_odds.rng: structure with jing, then the Schematron embedded in it (needs extract-mei-odds-sch) -->
     <macrodef name="validate-against-mei-odds">
         <attribute name="instance"/>
         <sequential>
@@ -317,13 +328,6 @@
                 <arg file="${dir.validation}/mei_odds.rng"/>
                 <arg file="@{instance}"/>
             </java>
-            <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
-                <arg value="-s:${dir.validation}/mei_odds.rng"/>
-                <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
-                <arg value="-o:${dir.build}/mei_odds.sch"/>
-            </java>
-            <!-- ph-schematron maps the TEI role "nonfatal" to an error; map it to "warning" as TEI intends -->
-            <replace file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
             <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
             <schematron schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
                 <fileset file="@{instance}"/>
@@ -356,7 +360,7 @@
         </sequential>
     </macrodef>
 
-    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
+    <target name="validate-source" depends="canonicalize-source, extract-mei-odds-sch" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
         <echo unless:set="validate-source.done">validating source...</echo>
         <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
         <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
@@ -612,7 +616,7 @@
         <for-each-customization target="validate-rng"/>
     </target>
 
-    <target name="validate-compiled-odd" description="Validates the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="init-mei-classpath">
+    <target name="validate-compiled-odd" description="Validates the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <property name="validate-compiled-odd.odd" location="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
         <echo>${selectedSchema}: validating compiled ODD...</echo>
@@ -623,11 +627,11 @@
         <echo>${selectedSchema}: compiled ODD validated</echo>
     </target>
 
-    <target name="validate-compiled-odds" description="Validates the compiled ODDs of all MEI customizations.">
+    <target name="validate-compiled-odds" description="Validates the compiled ODDs of all MEI customizations." depends="extract-mei-odds-sch">
         <for-each-customization target="validate-compiled-odd"/>
     </target>
 
-    <target name="validate-customization" description="Validates a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="init-mei-classpath">
+    <target name="validate-customization" description="Validates a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>${selectedSchema}: validating customization...</echo>
         <fail message="Customization not found: ${customization.path}.">
@@ -637,7 +641,7 @@
         <echo>${selectedSchema}: customization validated</echo>
     </target>
 
-    <target name="validate-customizations" description="Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron).">
+    <target name="validate-customizations" description="Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
         <for-each-customization target="validate-customization"/>
     </target>
 
