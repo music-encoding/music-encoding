@@ -215,6 +215,7 @@
     <xsl:include href="odd2html/renderXML.xsl"/>
     <xsl:include href="odd2html/htmlFile.xsl"/>
     
+    <xsl:include href="odd2html/specs/contentModels.xsl"/>
     <xsl:include href="odd2html/specs/genericSpecFunctions.xsl"/>
     <xsl:include href="odd2html/specs/moduleSpecs.xsl"/>
     <xsl:include href="odd2html/specs/elementSpecs.xsl"/>
