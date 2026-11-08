@@ -15,10 +15,19 @@
   <xsl:variable name="target-tei-version.minor" select="xs:integer(tokenize($target-tei-version, '\.')[2])" as="xs:integer"/>
   <xsl:variable name="target-tei-version.patch" select="xs:integer(tokenize($target-tei-version, '\.')[3])" as="xs:integer"/>
   
-  <!-- All modules next to the one being processed: datatype macros may be
-       used in another module than the one they are defined in. -->
+  <!-- Directory holding the modules (absolute path or URI). Defaults to the
+       directory of the file being processed, i.e. a module's siblings; set
+       it to source/modules when processing a customization. -->
+  <xsl:param name="modules-dir" as="xs:string" select="''"/>
+
+  <!-- All modules next to the one being processed (or in $modules-dir):
+       datatype macros may be used in another module than the one they are
+       defined in. -->
   <xsl:variable name="all-modules" as="document-node()*"
-    select="(collection(resolve-uri('.', base-uri(/)) || '?select=*.xml'), /)"/>
+    select="(collection(
+               (if ($modules-dir = '') then resolve-uri('.', base-uri(/))
+                else resolve-uri(replace($modules-dir, '([^/])$', '$1/'), static-base-uri()))
+               || '?select=*.xml'), /)"/>
 
   <!-- An rng:list holding one repeated pattern, as alternative of a choice
        directly in the content of a datatype macro, e.g.
