@@ -694,9 +694,10 @@
 
     <xsl:template match="tei:dataRef" mode="attribute.datatype.pattern">
         <xsl:choose>
-            <xsl:when test="@key">
+            <xsl:when test="@key = $data.types/@ident">
                 <a class="{tools:getLinkClasses(@key)}" href="#{@key}"><xsl:value-of select="@key"/></a>
             </xsl:when>
+            <xsl:when test="@key"><xsl:value-of select="@key"/></xsl:when>
             <xsl:when test="@name">
                 <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#{@name}">XML Schema <xsl:value-of select="@name"/> datatype</a>
                 <xsl:apply-templates select="tei:dataFacet" mode="attribute.datatype"/>
