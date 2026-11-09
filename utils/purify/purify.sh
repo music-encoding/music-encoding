@@ -4,40 +4,61 @@
 
 # Config (defaults, can be changed via options)
 OVERWRITE=false
+EXTERNAL=false
 OUTPUT_DIR=""
-FILES=()
+SOURCE=""
+INPUT=""
 
 usage() {
     cat <<EOF
-Usage: $(basename "$0") [options] [FILE...]
+Usage: $(basename "$0") [options] ODD|DIR
 
-Runs purify.xsl on every file in source/modules, or on the given FILEs
-(e.g. customizations/mei-basic.xml). Files outside source/modules are
-treated as customizations: source/modules is used as module context.
+Purifies an ODD file (source/mei-source.xml or a customization), or every
+*.xml file in DIR, with purify.xsl.
+
+Dependencies are resolved: xi:include, moduleRef/@key (via the source of the
+schemaSpec), @source on elementSpec, classSpec, macroSpec, dataSpec and
+specGrpRef, and specGrpRef/@target. The source of a schemaSpec (its @source,
+or --source) is read as context only. Only local files inside the repository
+are written, and only when purify changes them. References that cannot be
+followed (remote URLs, tei: URIs, moduleRef/@url, missing files) are
+reported as "external".
 
 Options:
-  --overwrite, --no-overwrite   overwrite the input files in place, or write
-                                to the output dir (default: no-overwrite)
-  -o, --output-dir DIR          output dir for --no-overwrite
-                                (default: build/purified/modules for modules,
-                                build/purified/customizations for other files)
+  --overwrite, --no-overwrite   overwrite the files in place, or write them to
+                                the output dir (default: no-overwrite)
+  --external, --no-external     transform the dependencies as well, not only
+                                the ODD itself (default: no-external)
+  -o, --output-dir DIR          output dir for --no-overwrite; files keep their
+                                path relative to the repository
+                                (default: build/purified)
+  -s, --source FILE             source for a schemaSpec without @source
+                                (default: source/mei-source.xml)
   -h, --help                    show this help
 EOF
+}
+
+need_arg() {
+    [[ -n "$2" ]] || { echo "Missing argument for $1" >&2; exit 1; }
 }
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --overwrite)     OVERWRITE=true ;;
         --no-overwrite)  OVERWRITE=false ;;
-        -o|--output-dir) [[ -n "$2" ]] || { echo "Missing argument for $1" >&2; exit 1; }
-                         OUTPUT_DIR="$2"; shift ;;
+        --external)      EXTERNAL=true ;;
+        --no-external)   EXTERNAL=false ;;
+        -o|--output-dir) need_arg "$1" "$2"; OUTPUT_DIR="$2"; shift ;;
+        -s|--source)     need_arg "$1" "$2"; SOURCE="$2"; shift ;;
         -h|--help)       usage; exit 0 ;;
-        --)              shift; FILES+=("$@"); break ;;
         -*)              echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
-        *)               FILES+=("$1") ;;
+        *)               [[ -z "$INPUT" ]] || { echo "Only one ODD or directory allowed" >&2; exit 1; }
+                         INPUT="$1" ;;
     esac
     shift
 done
+
+[[ -n "$INPUT" ]] || { usage >&2; exit 1; }
 
 # Save location of purify scripts to source
 PURIFY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -46,65 +67,56 @@ PURIFY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MEI_REPO_DIR="$(git -C "$PURIFY_DIR" rev-parse --show-toplevel 2>/dev/null)" \
   || MEI_REPO_DIR="$(cd "$PURIFY_DIR/../.." && pwd)"
 
-# Save modules path to variable
-MEI_MODULES_DIR="$MEI_REPO_DIR"/source/modules
 SAXON_JAR="$MEI_REPO_DIR"/lib/saxon/saxon-he-12.9.jar
 
-# Default: all modules
-if [[ ${#FILES[@]} -eq 0 ]]; then
-    FILES=("$MEI_MODULES_DIR"/*.xml)
+# Absolute path of an existing file
+abs_file() {
+    [[ -f "$1" ]] || { echo "No such file: $1" >&2; return 1; }
+    echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+}
+
+SOURCE="$(abs_file "${SOURCE:-$MEI_REPO_DIR/source/mei-source.xml}")" || exit 1
+
+if [[ "$OVERWRITE" == true ]]; then
+    DEST_DIR="$MEI_REPO_DIR"
+else
+    mkdir -p "${OUTPUT_DIR:=$MEI_REPO_DIR/build/purified}" || exit 1
+    DEST_DIR="$(cd "$OUTPUT_DIR" && pwd)"
 fi
 
-# Make an output dir absolute (creating it if needed)
-abs_dir() {
-    mkdir -p "$1" && (cd "$1" && pwd)
-}
+# The ODD files to process
+if [[ -d "$INPUT" ]]; then
+    ODDS=("$INPUT"/*.xml)
+    [[ -f "${ODDS[0]}" ]] || { echo "No *.xml files in $INPUT" >&2; exit 1; }
+else
+    ODDS=("$INPUT")
+fi
 
-# Transform file $1 into dir $2, passing module context dir $3 (may be empty);
-# goes through a temp file so input and output may be the same file
-transform() {
-    local out="$2/$(basename "$1")"
-    local tmp
-    tmp="$(mktemp "${out}.XXXXXX")" || return 1
-    if java -jar "$SAXON_JAR" -s:"$1" -xsl:"$PURIFY_DIR"/purify.xsl -o:"$tmp" \
-            ${3:+modules-dir="$3"}; then
-        mv "$tmp" "$out"
-    else
-        rm -f "$tmp"
-        return 1
+# Purify one ODD: transformed files are written to a staging dir first (Saxon
+# cannot write to a file it has read), then copied to the destination
+purify() {
+    local odd staging status
+    odd="$(abs_file "$1")" || return 1
+    staging="$(mktemp -d)" || return 1
+
+    echo "== $odd"
+    java -jar "$SAXON_JAR" -s:"$odd" -it -xsl:"$PURIFY_DIR"/purify-odd.xsl \
+        base-dir="$MEI_REPO_DIR" staging-dir="$staging" source="$SOURCE" \
+        external="$EXTERNAL"
+    status=$?
+
+    if [[ $status -eq 0 ]]; then
+        cp -R "$staging"/. "$DEST_DIR"/ || status=1
     fi
-}
-
-# Convert content models and datatypes in each file.
-# purifyDataSpecs.xsl (the TEI datatype-macro step) is intentionally not used:
-# purify.xsl itself turns MEI datatype macros into dataSpecs.
-STATUS=0
-for f in "${FILES[@]}"; do
-    if [[ ! -f "$f" ]]; then
-        echo "No such file: $f" >&2; STATUS=1; continue
-    fi
-    in_dir="$(cd "$(dirname "$f")" && pwd)"
-    f="$in_dir/$(basename "$f")"
-
-    # Modules see their siblings; anything else (a customization) gets
-    # source/modules as module context
-    if [[ "$in_dir" == "$MEI_MODULES_DIR" ]]; then
-        modules_dir=""
-        default_out="$MEI_REPO_DIR"/build/purified/modules
-    else
-        modules_dir="$MEI_MODULES_DIR"
-        default_out="$MEI_REPO_DIR"/build/purified/customizations
-    fi
-
-    if [[ "$OVERWRITE" == true ]]; then
-        out_dir="$in_dir"
-    else
-        out_dir="$(abs_dir "${OUTPUT_DIR:-$default_out}")" || { STATUS=1; continue; }
-    fi
-
-    echo "$f -> $out_dir"
-    transform "$f" "$out_dir" "$modules_dir" || STATUS=1
+    rm -rf "$staging"
     echo
+    return $status
+}
+
+STATUS=0
+for f in "${ODDS[@]}"; do
+    purify "$f" || STATUS=1
 done
 
+[[ "$OVERWRITE" == true ]] || echo "Output: $DEST_DIR"
 exit $STATUS
