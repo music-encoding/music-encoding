@@ -145,6 +145,9 @@ The driver prints one line per file or reference:
     item; the repetition moves to every `datatype` using the macro
 - `constraintSpec/@scheme` becomes `schematron`
 - `exemplum` is copied unchanged
+- `moduleRef[@url]` (inclusion of an external RELAX NG schema) is
+  copied unchanged, including its `content` (e.g. an `rng:define`
+  combining into an ODD class), which is RELAX NG by design
 
 `content` with RELAX NG constructs that cannot be expressed in pure
 ODD (`rng:anyName`, `rng:attribute`, `rng:element`, `rng:except`,

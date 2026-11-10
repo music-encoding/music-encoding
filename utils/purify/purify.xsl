@@ -196,7 +196,14 @@
   <xsl:template match="exemplum">
     <xsl:copy-of select="."/>
   </xsl:template>
- 
+
+  <!-- A moduleRef/@url includes an external RELAX NG schema; its content
+       (e.g. an rng:define combining into an ODD class) is RELAX NG by
+       design and has no pure ODD equivalent, so it is copied unchanged. -->
+  <xsl:template match="moduleRef[@url]">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
   <!-- ********************************************* -->
   <!-- Process RNG elements that need to change. -->
   <!-- ********************************************* -->
