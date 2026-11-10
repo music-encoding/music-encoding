@@ -352,6 +352,8 @@
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <!-- NB: do not use on mei-source.xml as the egXMLs will be corrupted in the output -->
+        <!-- NB: build-rng produces the same compiled ODD via TEI's oddexpand; keep both in sync -->
+
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
@@ -364,7 +366,7 @@
         </ant>
     </target>
 
-    <target name="build-customization-guidelines-html" depends="init-mei-classpath, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
+    <target name="build-customization-guidelines-html" depends="validate-source, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
         <!-- set selectedSchema from filename; N.B. has to match schemaSpec/@ident to make processing by TEI Stylesheets work correctly -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <!-- derive path for compiled ODD from filename -->
@@ -386,8 +388,12 @@
                   using @value will just submit this as string literals and not change the separator.
         -->
         <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}"/>
-        <!-- generate customization’s compiled ODD -->
-        <antcall target="build-compiled-odd" inheritall="yes"/>
+        <!-- generate customization’s compiled ODD only if it is older than customization or source (build-rng usually provides it) -->
+        <uptodate property="compiled.uptodate" targetfile="${compiled.path}">
+            <srcfiles file="${customization.path}"/>
+            <srcfiles file="${canonicalized.source.path}"/>
+        </uptodate>
+        <antcall target="build-compiled-odd" inheritall="yes" unless:set="compiled.uptodate"/>
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
@@ -403,12 +409,14 @@
         <antcall target="copy-generated-images" inheritall="yes"/>
     </target>
 
-    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+    <target name="build-rng" description="Builds the RNG schema and the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
         <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
-        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
+        <echo>            ${dir.dist.schemata}/${selectedSchema}_compiled.odd</echo>
+        <!-- target "go" instead of "dist": skip TEI's oddcleanup, so the processed ODD (identical to the output of build-compiled-odd) can be kept as compiled ODD -->
+        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="go" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
@@ -418,6 +426,7 @@
             <reference refid="mei.classpath" torefid="classpath"/>
             <property name="verbose" value="${verbose}"/>
         </ant>
+        <move file="${customization.path}.processedodd" tofile="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
     </target>
 
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
@@ -553,7 +562,7 @@
         </copy>
     </target>
 
-    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="validate-source">
+    <target name="build-customizations" description="Builds the RNG schemata and compiled ODDs for all MEI customizations." depends="validate-source">
         <antcall target="build-rng">
             <param name="customization.path" location="customizations/mei-all.xml"/>
         </antcall>
@@ -704,7 +713,6 @@
         <antcall target="echo-mei"/>
         <antcall target="build-customizations"/>
         <antcall target="validate-schemata"/>
-        <antcall target="build-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
         <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>

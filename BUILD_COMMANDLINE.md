@@ -92,7 +92,7 @@
      ant [TASKNAME]
      ```
 
-     * Build the RNG schema of a specific customization:
+     * Build the RNG schema (and the compiled ODD) of a specific customization:
 
        ```shell
        ant -Dcustomization.path="[/ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]" build-rng
@@ -157,7 +157,7 @@ flowchart TD
     subgraph SCHEMA["Schema generation"]
         RNGS["build-customizations"]
         ODDS["build-compiled-odds"]
-        RNG_CUS["build-rng\nper customization"]
+        RNG_CUS["build-rng\nper customization\n(RNG + compiled ODD)"]
         ODD_CUS["build-compiled-odd\nper customization"]
         VALID_SCH["validate-schemata"]
         VALID_CUS["validate-rng\nper customization"]
@@ -192,7 +192,7 @@ flowchart TD
     VALID_SCH --> VALID_CUS
     ODDS --> ODD_CUS
     HTML --> HTML_CUS
-    HTML_CUS --> ODD_CUS
+    HTML_CUS -. "if compiled ODD is outdated" .-> ODD_CUS
     HTML_CUS --> IMG
     HTML --> IDX
     HTML --> PDF
@@ -213,8 +213,8 @@ flowchart TD
 | `validate-source` | Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets. |
 | `build-compiled-odds` | Builds the compiled ODD files for all MEI customizations. |
 | `build-compiled-odd -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the compiled ODD of a specific customization submitted as as absolute path with `-Dcustomization.path` input param. |
-| `build-customizations` | Builds the RNG schemata for all MEI customizations. |
-| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
+| `build-customizations` | Builds the RNG schemata and compiled ODDs for all MEI customizations. |
+| `build-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Builds the RNG schema and the compiled ODD of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `validate-schemata` | Validates the built RNG schemata of all MEI customizations. |
 | `validate-rng -Dcustomization.path="[ABSOLUTE/PATH/TO/YOUR/CUSTOMIZATION]"` | Validates the built RNG schema of a specific customization submitted as absolute path with `-Dcustomization.path` input param. |
 | `build-guidelines-html` | Builds the HTML version of the MEI guidelines. |
