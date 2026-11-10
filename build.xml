@@ -307,28 +307,64 @@
         <echo>canonicalized source available: ${canonicalize-source.done}</echo>
     </target>
 
-    <target name="validate-source" depends="canonicalize-source" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
-        <echo unless:set="validate-source.done">validating source...</echo>
-        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
-        <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
-        <!-- -i: skip jing's DTD-compatibility ID check, which rejects xml:id (type ID) next to the anyName attribute wildcards of the pureODD schemata -->
-        <java unless:set="validate-source.done" jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
-            <arg value="-i"/>
-            <arg file="${dir.validation}/mei_odds.rng"/>
-            <arg file="${canonicalized.source.path}"/>
-        </java>
-        <java unless:set="validate-source.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
+    <target name="extract-mei-odds-sch" description="Extracts the Schematron embedded in `mei_odds.rng` to `build/mei_odds.sch` (once per build)." depends="init-mei-classpath">
+        <java unless:set="extract-mei-odds-sch.done" classname="net.sf.saxon.Transform" classpathref="mei.classpath" fork="true" failonerror="true">
             <arg value="-s:${dir.validation}/mei_odds.rng"/>
             <arg value="-xsl:${basedir}/utils/schematron/ExtractSchFromRNG-2.xsl"/>
             <arg value="-o:${dir.build}/mei_odds.sch"/>
         </java>
-        <!-- ph-schematron treats the unknown TEI role "nonfatal" as an error; map it to "warning" as TEI intends -->
-        <replace unless:set="validate-source.done" file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
-        <schematron unless:set="validate-source.done" schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
-            <fileset dir="${dir.build}">
-                <include name="${canonicalized.file.next}"></include>
-            </fileset>
-        </schematron>
+        <!-- ph-schematron maps the TEI role "nonfatal" to an error; map it to "warning" as TEI intends -->
+        <replace unless:set="extract-mei-odds-sch.done" file="${dir.build}/mei_odds.sch" token="role=&quot;nonfatal&quot;" value="role=&quot;warning&quot;"/>
+        <property name="extract-mei-odds-sch.done" value="true"/>
+    </target>
+
+    <!-- validates an ODD file against mei_odds.rng: structure with jing, then the Schematron embedded in it (needs extract-mei-odds-sch) -->
+    <macrodef name="validate-against-mei-odds">
+        <attribute name="instance"/>
+        <sequential>
+            <!-- -i: skip jing's DTD-compatibility ID check, which rejects xml:id (type ID) next to the anyName attribute wildcards of the pureODD schemata -->
+            <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
+                <arg value="-i"/>
+                <arg file="${dir.validation}/mei_odds.rng"/>
+                <arg file="@{instance}"/>
+            </java>
+            <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+            <schematron schematronFile="${dir.build}/mei_odds.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
+                <fileset file="@{instance}"/>
+            </schematron>
+        </sequential>
+    </macrodef>
+
+    <!-- calls a target once per MEI customization, passing its path as customization.path -->
+    <macrodef name="for-each-customization">
+        <attribute name="target"/>
+        <sequential>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-all.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-cmn.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-mensural.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-neumes.xml"/>
+            </antcall>
+            <antcall target="@{target}">
+                <param name="customization.path" location="customizations/mei-basic.xml"/>
+            </antcall>
+        </sequential>
+    </macrodef>
+
+    <target name="validate-source" depends="canonicalize-source, extract-mei-odds-sch" description="Validates the canonicalized source against `mei_odds.rng` (incl. its embedded Schematron) and `mei-source.sch`. This target will be triggered before all `build-...` targets.">
+        <echo unless:set="validate-source.done">validating source...</echo>
+        <taskdef name="schematron" classname="com.helger.schematron.ant.Schematron" classpathref="mei.classpath" loaderref="mei.classpath.loader"/>
+        <!-- structure first: the source has to be a valid ODD as defined by mei_odds, before the project rules of mei-source.sch apply -->
+        <validate-against-mei-odds unless:set="validate-source.done" instance="${canonicalized.source.path}"/>
         <schematron unless:set="validate-source.done" schematronFile="${dir.validation}/mei-source.sch" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true" failOnValidationError="true">
             <fileset dir="${dir.build}">
                 <include name="${canonicalized.file.next}"></include>
@@ -352,6 +388,8 @@
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <!-- NB: do not use on mei-source.xml as the egXMLs will be corrupted in the output -->
+        <!-- NB: build-rng produces the same compiled ODD via TEI's oddexpand; keep both in sync -->
+
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
             <property name="inputFile" value="${customization.path}"/>
@@ -364,7 +402,7 @@
         </ant>
     </target>
 
-    <target name="build-customization-guidelines-html" depends="init-mei-classpath, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
+    <target name="build-customization-guidelines-html" depends="validate-source, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
         <!-- set selectedSchema from filename; N.B. has to match schemaSpec/@ident to make processing by TEI Stylesheets work correctly -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <!-- derive path for compiled ODD from filename -->
@@ -386,8 +424,12 @@
                   using @value will just submit this as string literals and not change the separator.
         -->
         <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}"/>
-        <!-- generate customization’s compiled ODD -->
-        <antcall target="build-compiled-odd" inheritall="yes"/>
+        <!-- generate customization’s compiled ODD only if it is older than customization or source (build-rng usually provides it) -->
+        <uptodate property="compiled.uptodate" targetfile="${compiled.path}">
+            <srcfiles file="${customization.path}"/>
+            <srcfiles file="${canonicalized.source.path}"/>
+        </uptodate>
+        <antcall target="build-compiled-odd" inheritall="yes" unless:set="compiled.uptodate"/>
         <!--build customization’s guidelines html (mostly copied from build-guidelines-html) -->
         <antcall target="copy-guidelines-assets"/>
         <java classname="net.sf.saxon.Transform" classpathref="mei.classpath" failonerror="true" fork="true">
@@ -403,12 +445,14 @@
         <antcall target="copy-generated-images" inheritall="yes"/>
     </target>
 
-    <target name="build-rng" description="Builds the RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
+    <target name="build-rng" description="Builds the RNG schema and the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <echo>building rng ${selectedSchema} from ${customization.path}</echo>
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
         <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
-        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="dist" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
+        <echo>            ${dir.dist.schemata}/${selectedSchema}_compiled.odd</echo>
+        <!-- target "go" instead of "dist": skip TEI's oddcleanup, so the processed ODD (identical to the output of build-compiled-odd) can be kept as compiled ODD -->
+        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="go" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
             <property name="inputFile" value="${customization.path}"/>
             <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
             <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
@@ -418,27 +462,11 @@
             <reference refid="mei.classpath" torefid="classpath"/>
             <property name="verbose" value="${verbose}"/>
         </ant>
+        <move file="${customization.path}.processedodd" tofile="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
     </target>
 
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-customization-guidelines-html">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="build-customization-guidelines-html"/>
         <!-- call build for the index page that offers links to the customization-specific guidelines -->
         <antcall target="build-guidelines-html-index-page"/>
     </target>
@@ -553,36 +581,19 @@
         </copy>
     </target>
 
-    <target name="build-customizations" description="Builds the RNG schemata for all MEI customizations." depends="validate-source">
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-rng">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+    <target name="build-customizations" description="Builds the RNG schemata and compiled ODDs for all MEI customizations." depends="validate-source">
+        <for-each-customization target="build-rng"/>
     </target>
 
     <target name="validate-rng" description="Validates the built RNG schema of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="init-mei-classpath">
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
         <property name="validate-rng.rng" location="${dir.dist.schemata}/${selectedSchema}.rng"/>
         <property name="validate-rng.sch" location="${dir.build}/schemata-check/${selectedSchema}.sch"/>
-        <echo>validating rng ${selectedSchema}...</echo>
+        <echo>${selectedSchema}: validating RNG...</echo>
         <fail message="Schema not found: ${validate-rng.rng} (build it first, e.g., with `ant build-rng`).">
             <condition><not><available file="${validate-rng.rng}"/></not></condition>
         </fail>
-        <!-- RELAX NG: without an instance, Jing only checks the schema itself (-i: see validate-source) -->
+        <!-- RELAX NG: without an instance, Jing only checks the schema itself (-i: see validate-against-mei-odds) -->
         <java jar="${dir.lib.jing}/${jing.jar.file}" fork="true" failonerror="true">
             <arg value="-i"/>
             <arg file="${validate-rng.rng}"/>
@@ -598,49 +609,44 @@
         <schematron schematronFile="${validate-rng.sch}" expectSuccess="true" schematronProcessingEngine="schematron" languageCode="en" failOnError="true">
             <fileset dir="${dir.validation}" includes="schematron-compile-check.mei"/>
         </schematron>
-        <echo>rng ${selectedSchema} validated</echo>
+        <echo>${selectedSchema}: RNG validated</echo>
     </target>
 
     <target name="validate-schemata" description="Validates the built RNG schemata of all MEI customizations.">
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="validate-rng">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="validate-rng"/>
+    </target>
+
+    <target name="validate-compiled-odd" description="Validates the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <property name="validate-compiled-odd.odd" location="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+        <echo>${selectedSchema}: validating compiled ODD...</echo>
+        <fail message="Compiled ODD not found: ${validate-compiled-odd.odd} (build it first, e.g., with `ant build-rng`).">
+            <condition><not><available file="${validate-compiled-odd.odd}"/></not></condition>
+        </fail>
+        <validate-against-mei-odds instance="${validate-compiled-odd.odd}"/>
+        <echo>${selectedSchema}: compiled ODD validated</echo>
+    </target>
+
+    <target name="validate-compiled-odds" description="Validates the compiled ODDs of all MEI customizations." depends="extract-mei-odds-sch">
+        <for-each-customization target="validate-compiled-odd"/>
+    </target>
+
+    <target name="validate-customization" description="Validates a specific customization submitted as absolute path with -Dcustomization.path input param against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
+        <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
+        <echo>${selectedSchema}: validating customization...</echo>
+        <fail message="Customization not found: ${customization.path}.">
+            <condition><not><available file="${customization.path}"/></not></condition>
+        </fail>
+        <validate-against-mei-odds instance="${customization.path}"/>
+        <echo>${selectedSchema}: customization validated</echo>
+    </target>
+
+    <target name="validate-customizations" description="Validates all MEI customizations against `mei_odds.rng` (incl. its embedded Schematron)." depends="extract-mei-odds-sch">
+        <for-each-customization target="validate-customization"/>
     </target>
 
     <target name="build-compiled-odds" description="Builds the compiled ODD files for all MEI customizations." depends="validate-source">
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-all_anyStart.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-basic.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-cmn.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-mensural.xml"/>
-        </antcall>
-        <antcall target="build-compiled-odd">
-            <param name="customization.path" location="customizations/mei-neumes.xml"/>
-        </antcall>
+        <for-each-customization target="build-compiled-odd"/>
     </target>
 
     <target name="compare-versions" description="Compares the canonicalized sources of the MEI dev version with the previous stable version and creates an HTML output; custom versions and output folder can be set via -Dsource, -Dold and -Doutput input params." depends="validate-source">
@@ -699,12 +705,13 @@
         <echo>Comparison done. See ${output.folder}/comparison.html for results.</echo>
     </target>
 
-    <target name="dist" description="Default main target; equivalent to calling ant without any target. Builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata." depends="validate-source">
+    <target name="dist" description="Default main target; equivalent to calling ant without any target. Validates the customizations, builds all artifacts, i.e., RNG and compiled ODDs of all customizations, guidelines html and PDF, and validates the RNG schemata and the compiled ODDs." depends="validate-source">
         <classfileset refid="mei.classpath"/>
         <antcall target="echo-mei"/>
+        <antcall target="validate-customizations"/>
         <antcall target="build-customizations"/>
         <antcall target="validate-schemata"/>
-        <antcall target="build-compiled-odds"/>
+        <antcall target="validate-compiled-odds"/>
         <antcall target="build-guidelines-html"/>
         <property name="${build-guidelines-html.done}" value="true"/>
         <antcall target="build-guidelines-pdf" if:true="${prince-available}"/>
