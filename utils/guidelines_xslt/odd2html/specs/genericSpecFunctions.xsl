@@ -567,9 +567,9 @@
     <xsl:function name="tools:handleAttributes" as="node()*">
         <xsl:param name="current.element" as="node()"/>
         
-        <xsl:if test="$current.element//tei:attDef">
+        <xsl:if test="$current.element//tei:attDef[not(@mode = 'delete')]">
             <xsl:variable name="content" as="node()*">
-                <xsl:for-each select="$current.element//tei:attDef">
+                <xsl:for-each select="$current.element//tei:attDef[not(@mode = 'delete')]">
                     <xsl:variable name="current.att" select="." as="node()"/>
                     <xsl:sequence select="tools:resolveAttDef($current.att,$current.element/@module)"/>
                 </xsl:for-each>
@@ -603,7 +603,7 @@
         
         <xsl:variable name="desc" select="'(' || $att.class/@module || ') ' || normalize-space(string-join($att.class/tei:desc/text(),' '))" as="xs:string"/>
         <xsl:variable name="content" as="node()*">
-            <xsl:for-each select="$att.class//tei:attDef">
+            <xsl:for-each select="$att.class//tei:attDef[not(@mode = 'delete')]">
                 <xsl:variable name="current.att" select="." as="node()"/>
                 <xsl:sequence select="tools:resolveAttDef($current.att,$att.class/@module)"/>
             </xsl:for-each>
@@ -645,162 +645,13 @@
                             <xsl:for-each select="$current.att/tei:valList/tei:valItem">
                                 <xsl:if test="position() gt 1">, </xsl:if> "<span style="font-weight: 500;"><xsl:value-of select="@ident"/></span>" <xsl:if test="tei:desc"> <i>(<xsl:value-of select="tei:desc/text()"/>)</i></xsl:if>
                             </xsl:for-each>
-                            <xsl:if test="$current.att/tei:valList/@type = 'semi' and $current.att/tei:dataType/rng:data[@type = 'NMTOKEN']">
-                                and custom <i>NMToken</i>
+                            <xsl:if test="$current.att/tei:valList/@type = 'semi' and $current.att/tei:datatype/tei:*">
+                                <xsl:text>. Other values conform to </xsl:text>
+                                <xsl:apply-templates select="$current.att/tei:datatype" mode="attribute.datatype"/>.
                             </xsl:if>
                         </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:ref]">
-                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:choose>
-                                <xsl:when test="$dt/@maxOccurs = '1'">
-                                    Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
-                                </xsl:when>
-                                <xsl:when test="$dt/@maxOccurs = '2'">
-                                    One or two values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by a space.
-                                </xsl:when>
-                                <xsl:when test="$dt/@maxOccurs = 'unbounded'">
-                                    One or more values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by spaces.
-                                </xsl:when>
-                                <xsl:when test="not($dt/@maxOccurs) and not($dt/@minOccurs)">
-                                    Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                    <xsl:message terminate="yes" select="$dt"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:choice[every $child in child::* satisfies local-name($child) eq 'ref']]">
-                            <xsl:variable name="refs" as="node()+">
-                                <xsl:for-each select="$current.att/tei:datatype//rng:ref">
-                                    <xsl:variable name="separator" as="xs:string">
-                                        <xsl:choose>
-                                            <xsl:when test="count($current.att/tei:datatype//rng:ref) eq 2 and position() = 1">
-                                                <xsl:value-of select="' or '"/>
-                                            </xsl:when>
-                                            <xsl:when test="position() lt last() -1">
-                                                <xsl:value-of select="', '"/>
-                                            </xsl:when>
-                                            <xsl:when test="position() eq last() -1">
-                                                <xsl:value-of select="', or '"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:value-of select="''"/>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
-                                    </xsl:variable>
-                                    <a class="{tools:getLinkClasses(@name)}" href="#{@name}"><xsl:value-of select="@name"/></a><xsl:value-of select="$separator"/>
-                                </xsl:for-each>
-                            </xsl:variable>
-                            Value conforms to either <xsl:sequence select="$refs"/>.
-                        </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:data]">
-                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:choose>
-                                <xsl:when test="$dt/@maxOccurs = '1'">
-                                    Value of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.
-                                </xsl:when>
-                                <xsl:when test="$dt/@maxOccurs = '2'">
-                                    One or two values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>, separated by a space.
-                                </xsl:when>
-                                <xsl:when test="$dt/@maxOccurs = 'unbounded'">
-                                    One or more values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>, separated by spaces.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:ref) = 1 and $dt/child::rng:ref/@type = 'string'">
-                                    Value is plain text.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'string'">
-                                    Value is plain text.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'ID'">
-                                    Value is a valid <a target="_blank" href="https://www.w3.org/TR/xml-id/">xml:id</a>.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'decimal'">
-                                    Value is a decimal number.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'integer'">
-                                    Value is an integer.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'positiveInteger'">
-                                    Value is a positive integer.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'nonNegativeInteger'">
-                                    Value is a positive integer, including 0.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'language'">
-                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#language">language</a>.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'token'">
-                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#token">token</a>.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'NMTOKEN'">
-                                    Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#NMTOKEN">NMTOKEN</a>.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'duration'">
-                                    Value is an <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#duration">ISO duration</a>.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'token' and $dt/child::rng:data/child::rng:param[@name='pattern']">
-                                    Value conforms to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                    <xsl:message terminate="yes" select="$dt"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:list]">
-                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:choose>
-                                <xsl:when test="$dt/rng:list/rng:oneOrMore/rng:data[@type='token']/rng:param[@name='pattern']">
-                                    One or more values conforming to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
-                                </xsl:when>
-                                <xsl:when test="count($dt/rng:list/rng:oneOrMore/rng:data) = 2">
-                                    One or more values, each consisting of a sequence of <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span> and <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[2])"/></span> sub-values.
-                                </xsl:when>
-                                <xsl:when test="count($dt/rng:list/rng:oneOrMore/rng:data) = 1">
-                                    One or more of <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.
-                                </xsl:when>
-                                <xsl:when test="$dt/rng:list/rng:oneOrMore/rng:data[following-sibling::rng:ref]">
-                                    One or more values, each consisting of a sequence of a <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data)"/></span> part, followed by a <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt//rng:ref/@name"/></a>.
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                    <xsl:message terminate="yes" select="$dt"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:choice]">
-                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:choose>
-                                <xsl:when test="$dt/rng:choice[count(child::rng:data) = 2]">
-                                    Value must either conform to <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span> or <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[2])"/></span>.                            
-                                </xsl:when>
-                                <xsl:when test="$dt/rng:choice[count(child::*) = 1]">
-                                    Value must conform to <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.                            
-                                </xsl:when>
-                                <xsl:when test="$dt/rng:choice[count(child::*) = 2 and rng:ref[@name = 'data.BOOLEAN'] and rng:value]">
-                                    Value must conform to <span style="font-weight: 500;">data.BOOLEAN</span> or <span style="font-weight: 500;"><xsl:value-of select="$dt/rng:choice/rng:value/text()"/></span>.                            
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                    <xsl:message terminate="yes" select="$dt"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:text]">
-                            <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:choose>
-                                <xsl:when test="count($dt/child::*) = 1 and $dt/rng:text and $dt/@maxOccurs = '1'">
-                                    Value is plain text.
-                                </xsl:when>
-                                <xsl:when test="count($dt/child::*) = 1 and $dt/rng:text and not($dt/@maxOccurs)">
-                                    Value is plain text.
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                    <xsl:message terminate="no" select="$dt"/>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                        <xsl:when test="$current.att/tei:datatype">
+                            Value conforms to <xsl:apply-templates select="$current.att/tei:datatype" mode="attribute.datatype"/>.
                         </xsl:when>
                         <xsl:otherwise>
                             <xsl:message select="'WARNING: Not sure how to resolve the values of attDef ' || $current.att/@ident"/>
@@ -810,212 +661,80 @@
             </desc>
         </item>
         
-        <!--
-        <div class="attributeDef def" data-module="{$module}">
-            <span class="ident attribute" title="{normalize-space(string-join($desc/descendant-or-self::text(),' '))}">@<xsl:value-of select="$current.att/@ident"/></span>
-            <xsl:if test="$usage">
-                <span class="attributeUsage">(<xsl:value-of select="$usage"/>)</span>
-            </xsl:if>
-            <span class="attributeDesc desc"><xsl:sequence select="$desc"/></span>
-            <span class="attributeValues">
-                <xsl:choose>
-                    <xsl:when test="$current.att/tei:valList">
-                        Allowed values are:
-                        <xsl:for-each select="$current.att/tei:valList/tei:valItem">
-                            <xsl:if test="position() gt 1">, </xsl:if> "<span style="font-weight: 500;"><xsl:value-of select="@ident"/></span>" <xsl:if test="tei:desc"> <i>(<xsl:value-of select="tei:desc/text()"/>)</i></xsl:if>
-                        </xsl:for-each>
-                        <xsl:if test="$current.att/tei:valList/@type = 'semi' and $current.att/tei:dataType/rng:data[@type = 'NMTOKEN']">
-                            and custom <i>NMToken</i>
-                        </xsl:if>
-                    </xsl:when>
-                    <xsl:when test="$current.att/tei:datatype[rng:ref]">
-                        <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                        <xsl:choose>
-                            <xsl:when test="$dt/@maxOccurs = '1'">
-                                Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
-                            </xsl:when>
-                            <xsl:when test="$dt/@maxOccurs = '2'">
-                                One or two values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by a space.
-                            </xsl:when>
-                            <xsl:when test="$dt/@maxOccurs = 'unbounded'">
-                                One or more values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by spaces.
-                            </xsl:when>
-                            <xsl:when test="not($dt/@maxOccurs) and not($dt/@minOccurs)">
-                                Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                <xsl:message terminate="yes" select="$dt"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="$current.att/tei:datatype[rng:data]">
-                        <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                        <xsl:choose>
-                            <xsl:when test="$dt/@maxOccurs = '1'">
-                                Value of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.
-                            </xsl:when>
-                            <xsl:when test="$dt/@maxOccurs = '2'">
-                                One or two values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>, separated by a space.
-                            </xsl:when>
-                            <xsl:when test="$dt/@maxOccurs = 'unbounded'">
-                                One or more values of datatype <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>, separated by spaces.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:ref) = 1 and $dt/child::rng:ref/@type = 'string'">
-                                Value is plain text.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'string'">
-                                Value is plain text.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'ID'">
-                                Value is a valid <a target="_blank" href="https://www.w3.org/TR/xml-id/">xml:id</a>.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'decimal'">
-                                Value is a decimal number.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'integer'">
-                                Value is an integer.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'positiveInteger'">
-                                Value is a positive integer.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'nonNegativeInteger'">
-                                Value is a positive integer, including 0.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'language'">
-                                Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#language">language</a>.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'token'">
-                                Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#token">token</a>.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'NMTOKEN'">
-                                Value is a <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#NMTOKEN">NMTOKEN</a>.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'duration'">
-                                Value is an <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#duration">ISO duration</a>.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::rng:data) = 1 and $dt/child::rng:data/@type = 'token' and $dt/child::rng:data/child::rng:param[@name='pattern']">
-                                Value conforms to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                <xsl:message terminate="yes" select="$dt"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="$current.att/tei:datatype[rng:list]">
-                        <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                        <xsl:choose>
-                            <xsl:when test="$dt/rng:list/rng:oneOrMore/rng:data[@type='token']/rng:param[@name='pattern']">
-                                One or more values conforming to the pattern "<span style="font-weight: 500;"><xsl:value-of select="$dt//rng:param[@name='pattern']/text()"/></span>".
-                            </xsl:when>
-                            <xsl:when test="count($dt/rng:list/rng:oneOrMore/rng:data) = 2">
-                                One or more values, each consisting of a sequence of <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span> and <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[2])"/></span> sub-values.
-                            </xsl:when>
-                            <xsl:when test="count($dt/rng:list/rng:oneOrMore/rng:data) = 1">
-                                One or more of <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.
-                            </xsl:when>
-                            <xsl:when test="$dt/rng:list/rng:oneOrMore/rng:data[following-sibling::rng:ref]">
-                                One or more values, each consisting of a sequence of a <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data)"/></span> part, followed by a <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt//rng:ref/@name"/></a>.
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                <xsl:message terminate="yes" select="$dt"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="$current.att/tei:datatype[rng:choice]">
-                        <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                        <xsl:choose>
-                            <xsl:when test="$dt/rng:choice[count(child::rng:data) = 2]">
-                                Value must either conform to <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span> or <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[2])"/></span>.                            
-                            </xsl:when>
-                            <xsl:when test="$dt/rng:choice[count(child::*) = 1]">
-                                Value must conform to <span style="font-weight: 500;"><xsl:sequence select="tools:resolveData($dt//rng:data[1])"/></span>.                            
-                            </xsl:when>
-                            <xsl:when test="$dt/rng:choice[count(child::*) = 2 and rng:ref[@name = 'data.BOOLEAN'] and rng:value]">
-                                Value must conform to <span style="font-weight: 500;">data.BOOLEAN</span> or <span style="font-weight: 500;"><xsl:value-of select="$dt/rng:choice/rng:value/text()"/></span>.                            
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                <xsl:message terminate="yes" select="$dt"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:when test="$current.att/tei:datatype[rng:text]">
-                        <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                        <xsl:choose>
-                            <xsl:when test="count($dt/child::*) = 1 and $dt/rng:text and $dt/@maxOccurs = '1'">
-                                Value is plain text.
-                            </xsl:when>
-                            <xsl:when test="count($dt/child::*) = 1 and $dt/rng:text and not($dt/@maxOccurs)">
-                                Value is plain text.
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
-                                <xsl:message terminate="no" select="$dt"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:message select="'WARNING: Not sure how to resolve the values of attDef ' || $current.att/@ident"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </span>
-        </div>-->
-        
     </xsl:function>
     
-    <xd:doc>
-        <xd:desc>
-            <xd:p>Translates a data type into a descriptive string</xd:p>
-        </xd:desc>
-        <xd:param name="data"></xd:param>
-        <xd:return></xd:return>
-    </xd:doc>
-    <xsl:function name="tools:resolveData" as="node()+">
-        <xsl:param name="data" as="node()"/>
-        
+    <!-- Describe the Pure ODD patterns retained in compiled attribute datatypes.
+         Do not expand named types: link to their specification instead. -->
+    <xsl:template match="tei:datatype | tei:sequence | tei:alternate | tei:dataRef" mode="attribute.datatype">
+        <xsl:variable name="min" select="if (@minOccurs) then string(@minOccurs) else '1'"/>
+        <xsl:variable name="max" select="if (@maxOccurs) then string(@maxOccurs) else '1'"/>
+        <xsl:if test="$min ne '1' or $max ne '1'">
+            <xsl:choose>
+                <xsl:when test="$max = 'unbounded'"><xsl:value-of select="$min"/> or more</xsl:when>
+                <xsl:when test="$min = $max">exactly <xsl:value-of select="$min"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="$min"/> to <xsl:value-of select="$max"/></xsl:otherwise>
+            </xsl:choose>
+            <xsl:text> space-separated values of (</xsl:text>
+        </xsl:if>
+        <xsl:apply-templates select="." mode="attribute.datatype.pattern"/>
+        <xsl:if test="$min ne '1' or $max ne '1'"><xsl:text>)</xsl:text></xsl:if>
+    </xsl:template>
+
+    <xsl:template match="tei:datatype | tei:sequence | tei:alternate" mode="attribute.datatype.pattern">
+        <xsl:if test="self::tei:sequence">a sequence of (</xsl:if>
+        <xsl:if test="self::tei:alternate">one of (</xsl:if>
+        <xsl:for-each select="*">
+            <xsl:if test="position() gt 1">
+                <xsl:value-of select="if (parent::tei:alternate) then ' or ' else ', followed by '"/>
+            </xsl:if>
+            <xsl:apply-templates select="." mode="attribute.datatype"/>
+        </xsl:for-each>
+        <xsl:if test="self::tei:sequence or self::tei:alternate">)</xsl:if>
+    </xsl:template>
+
+    <xsl:template match="tei:dataRef" mode="attribute.datatype.pattern">
         <xsl:choose>
-            <xsl:when test="not($data/child::*)">
-                <xsl:value-of select="$data/@type"/>
+            <xsl:when test="@key = $data.types/@ident">
+                <a class="{tools:getLinkClasses(@key)}" href="#{@key}"><xsl:value-of select="@key"/></a>
             </xsl:when>
-            <xsl:when test="$data/@type = ('string','token') and $data/rng:param[@name = 'pattern']">
-                a string matching the following regular expression: "<xsl:value-of select="$data/rng:param/text()"/>"
+            <xsl:when test="@key"><xsl:value-of select="@key"/></xsl:when>
+            <xsl:when test="@name">
+                <a target="_blank" href="https://www.w3.org/TR/xmlschema11-2/#{@name}">XML Schema <xsl:value-of select="@name"/> datatype</a>
+                <xsl:apply-templates select="tei:dataFacet" mode="attribute.datatype"/>
             </xsl:when>
-            <xsl:when test="$data/@type = 'decimal' and $data/rng:param[@name = 'minInclusive'] and $data/rng:param[@name = 'maxInclusive']">
-                a decimal number between <xsl:value-of select="$data/rng:param[@name = 'minInclusive']/text()"/> and <xsl:value-of select="$data/rng:param[@name = 'maxInclusive']/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'positiveInteger' and $data/rng:param[@name = 'minInclusive'] and $data/rng:param[@name = 'maxInclusive']">
-                a positive integer between <xsl:value-of select="$data/rng:param[@name = 'minInclusive']/text()"/> and <xsl:value-of select="$data/rng:param[@name = 'maxInclusive']/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'positiveInteger' and $data/rng:param[@name = 'maxInclusive']">
-                a positive integer no larger than <xsl:value-of select="$data/rng:param/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'positiveInteger' and $data/rng:param[@name = 'minInclusive']">
-                a positive integer no smaller than <xsl:value-of select="$data/rng:param/text()" />
-            </xsl:when>
-            <xsl:when test="$data/@type = 'nonNegativeInteger' and $data/rng:param[@name = 'maxInclusive']">
-                a non-negative integer no larger than <xsl:value-of select="$data/rng:param/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'decimal' and $data/rng:param[@name = 'minInclusive']">
-                a decimal number no smaller than <xsl:value-of select="$data/rng:param/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'decimal' and $data/rng:param[@name = 'minExclusive']">
-                a decimal number larger than <xsl:value-of select="$data/rng:param/text()"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'positiveInteger' and $data/rng:param[@name = 'pattern']">
-                one of the following integers: <xsl:value-of select="string-join(tokenize($data/rng:param/text(),'|'),', ')"/>
-            </xsl:when>
-            <xsl:when test="$data/@type = 'decimal' and $data/rng:param[@name = 'pattern']">
-                a decimal number matching the pattern "<xsl:value-of select="$data/rng:param/text()"/>"
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:message select="'ERROR: Cannot resolve the following datatype:'"/>
-                <xsl:message terminate="yes" select="$data"/>
-            </xsl:otherwise>
+            <xsl:otherwise><xsl:call-template name="attribute.datatype.unsupported"/></xsl:otherwise>
         </xsl:choose>
-    </xsl:function>
+    </xsl:template>
+
+    <xsl:template match="tei:dataFacet" mode="attribute.datatype">
+        <xsl:variable name="label" select="map {
+            'pattern': 'matching the regular expression',
+            'minInclusive': 'greater than or equal to',
+            'maxInclusive': 'less than or equal to',
+            'minExclusive': 'greater than',
+            'maxExclusive': 'less than',
+            'length': 'length exactly',
+            'minLength': 'length at least',
+            'maxLength': 'length at most',
+            'totalDigits': 'total digits at most',
+            'fractionDigits': 'fractional digits at most'
+        }(string(@name))"/>
+        <xsl:choose>
+            <xsl:when test="$label">
+                <xsl:text>, </xsl:text><xsl:value-of select="$label"/><xsl:text> </xsl:text>
+                <code><xsl:value-of select="@value"/></code>
+            </xsl:when>
+            <xsl:otherwise><xsl:call-template name="attribute.datatype.unsupported"/></xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
+    <!-- Override the tei:* and rng:* debug templates in odd2html.xsl, but
+         leave the specific datatype templates above at their default priority. -->
+    <xsl:template match="*" mode="attribute.datatype" priority="-0.2" name="attribute.datatype.unsupported">
+        <xsl:variable name="att" select="ancestor::tei:attDef[1]"/>
+        <xsl:message select="'WARNING: Unsupported datatype construct ' || name() || ' on attDef ' || $att/@ident"/>
+        <span class="datatypeUnsupported">unsupported datatype construct: <xsl:value-of select="name()"/></span>
+    </xsl:template>
     
     
     <xd:doc>
