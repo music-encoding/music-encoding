@@ -558,19 +558,19 @@
                             <attDef ident="stem.dir" mode="add" usage="opt">
                                 <desc>Describes the direction of a stem.</desc>
                                 <datatype maxOccurs="1" minOccurs="1">
-                                    <rng:ref name="data.STEMDIRECTION"/>
+                                    <dataRef key="data.STEMDIRECTION"/>
                                 </datatype>
                             </attDef>
                             <attDef ident="stem.len" mode="add" usage="opt">
                                 <desc>Encodes the stem length.</desc>
                                 <datatype maxOccurs="1" minOccurs="1">
-                                    <rng:ref name="data.MEASUREMENTUNSIGNED"/>
+                                    <dataRef key="data.MEASUREMENTUNSIGNED"/>
                                 </datatype>
                             </attDef>
                             <attDef ident="stem.mod" mode="add" usage="opt">
                                 <desc>Encodes any stem "modifiers"; that is, symbols rendered on the stem, such as tremolo or Sprechstimme indicators.</desc>
                                 <datatype maxOccurs="1" minOccurs="1">
-                                    <rng:ref name="data.STEMMODIFIER"/>
+                                    <dataRef key="data.STEMMODIFIER"/>
                                 </datatype>
                             </attDef>
                             <!--<attDef ident="stem.pos" mode="add" predeclare="false" usage="opt">
@@ -606,7 +606,7 @@
                             <attDef ident="metcon" usage="opt">
                                 <desc>Indicates the relationship between the content of a measure and the prevailing meter.</desc>
                                 <datatype>
-                                    <rng:ref name="data.BOOLEAN"/>
+                                    <dataRef key="data.BOOLEAN"/>
                                 </datatype>
                             </attDef>
                             <!--<attDef ident="control" usage="opt">
@@ -645,13 +645,13 @@
                             <attDef ident="oct.ges" usage="opt">
                                 <desc>Records performed octave information that differs from the written value.</desc>
                                 <datatype>
-                                    <rng:ref name="data.OCTAVE"/>
+                                    <dataRef key="data.OCTAVE"/>
                                 </datatype>
                             </attDef>
                             <attDef ident="pname.ges" usage="opt">
                                 <desc>Contains a performed pitch name that differs from the written value.</desc>
                                 <datatype>
-                                    <rng:ref name="data.PITCHNAME.GESTURAL"/>
+                                    <dataRef key="data.PITCHNAME.GESTURAL"/>
                                 </datatype>
                             </attDef>
                         </attList>
@@ -746,12 +746,13 @@
 
                     <classSpec ident="att.lang" module="MEI.shared" type="atts" mode="replace">
                         <desc>Language attributes common to text elements.</desc>
+
                         <attList org="group">
 
                             <attDef ident="xml:lang" mode="add" predeclare="false" usage="opt">
                                 <desc>Identifies the language of the element's content. The values for this attribute are language 'tags' as defined in BCP 47. All language tags that make use of private use sub-tags must be documented in a corresponding language element in the MEI header whose id attribute is the same as the language tag's value.</desc>
                                 <datatype maxOccurs="1" minOccurs="1">
-                                    <rng:data type="language"/>
+                                    <dataRef name="language"/>
                                 </datatype>
                             </attDef>
                             <!--<attDef ident="translit" mode="add" predeclare="false" usage="opt">
@@ -902,7 +903,7 @@
                             <attDef ident="lines.color" usage="opt">
                                 <desc xml:lang="en">Captures the colors of the staff lines.</desc>
                                 <datatype maxOccurs="unbounded">
-                                    <rng:ref name="data.COLOR"/>
+                                    <dataRef key="data.COLOR"/>
                                 </datatype>
                                 <remarks xml:lang="en">
                                     <p>The value is structured; that is, it should contain a single color value or have the same number of space-separated values as the number of lines indicated by the lines attribute. The first value then applies to the lowest line of the staff.</p>
@@ -912,7 +913,7 @@
                             <attDef ident="lines.visible" usage="opt">
                                 <desc xml:lang="en">Records whether all staff lines are visible.</desc>
                                 <datatype>
-                                    <rng:ref name="data.BOOLEAN"/>
+                                    <dataRef key="data.BOOLEAN"/>
                                 </datatype>
                             </attDef>
                         </attList>
@@ -971,22 +972,20 @@
                             <memberOf key="att.nNumberLike" mode="add"/>
                         </classes>
                         <content>
-                            <rng:optional>
-                                <rng:ref name="mNum"/>
-                            </rng:optional>
-                            <rng:zeroOrMore>
-                                <rng:choice>
-                                    <rng:ref name="model.annotLike"/>
-                                    <rng:ref name="model.appLike"/>
-                                    <rng:ref name="model.editLike"/>
-                                    <rng:ref name="model.graphicPrimitiveLike"/>
-                                    <rng:ref name="model.measurePart"/>
-                                    <rng:ref name="model.milestoneLike.music"/>
-                                    <rng:ref name="model.relationLike"/>
+                            <sequence>
+                                <elementRef key="mNum" minOccurs="0"/>
+                                <alternate minOccurs="0" maxOccurs="unbounded">
+                                    <classRef key="model.annotLike"/>
+                                    <classRef key="model.appLike"/>
+                                    <classRef key="model.editLike"/>
+                                    <classRef key="model.graphicPrimitiveLike"/>
+                                    <classRef key="model.measurePart"/>
+                                    <classRef key="model.milestoneLike.music"/>
+                                    <classRef key="model.relationLike"/>
                                     <!--<rng:ref name="model.staffDefLike"/>-->
-                                    <rng:ref name="model.transcriptionLike"/>
-                                </rng:choice>
-                            </rng:zeroOrMore>
+                                    <classRef key="model.transcriptionLike"/>
+                                </alternate>
+                            </sequence>
                         </content>
                         <remarks>
                             <p>In MEI, the <gi scheme="MEI">measure</gi> element is a grouping mechanism for events and control events. Pointing attributes make it possible to connect this element to other internal or external entities, such as media objects or annotations. The <att>width</att> attribute may be used to capture the width of the measure for interchange with music printing systems that utilize this information for printing.</p>
@@ -1002,18 +1001,14 @@
                             <memberOf key="att.nNumberLike" mode="add"/>
                         </classes>
                         <content>
-                            <rng:zeroOrMore>
-                                <rng:ref name="label"/>
-                            </rng:zeroOrMore>
-                            <rng:zeroOrMore>
-                                <rng:ref name="labelAbbr"/>
-                            </rng:zeroOrMore>
-                            <rng:oneOrMore>
-                                <rng:choice>
-                                    <rng:ref name="volta"/>
-                                    <rng:ref name="model.sylLike"/>
-                                </rng:choice>
-                            </rng:oneOrMore>
+                            <sequence>
+                                <elementRef key="label" minOccurs="0" maxOccurs="unbounded"/>
+                                <elementRef key="labelAbbr" minOccurs="0" maxOccurs="unbounded"/>
+                                <alternate minOccurs="1" maxOccurs="unbounded">
+                                    <elementRef key="volta"/>
+                                    <classRef key="model.sylLike"/>
+                                </alternate>
+                            </sequence>
                         </content>
                     </elementSpec>
 
@@ -1045,10 +1040,10 @@
                             <memberOf key="model.startLike.header"/>
                         </classes>
                         <content>
-                            <rng:ref name="fileDesc"/>
-                            <rng:optional>
-                                <rng:ref name="encodingDesc"/>
-                            </rng:optional>
+                            <sequence>
+                                <elementRef key="fileDesc"/>
+                                <elementRef key="encodingDesc" minOccurs="0"/>
+                            </sequence>
                         </content>
                         <remarks>
                             <p part="N">For MEI Basic, an MEI header may contain a fileDesc element only.</p>
@@ -1063,10 +1058,10 @@
                             <!--<memberOf key="att.metadataPointing"/>-->
                         </classes>
                         <content>
-                            <rng:zeroOrMore>
-                                <rng:ref name="model.resourceLike"/>
-                            </rng:zeroOrMore>
-                            <rng:ref name="macro.musicPart"/>
+                            <sequence>
+                                <classRef key="model.resourceLike" minOccurs="0" maxOccurs="unbounded"/>
+                                <macroRef key="macro.musicPart"/>
+                            </sequence>
                         </content>
                         <constraintSpec ident="check_controlEventLinking" scheme="schematron">
                             <constraint> <sch:rule context="mei:*[@tstamp]"> <sch:assert test="not(@startid)">An element with @tstamp may not have @startid as well (and vice versa).</sch:assert> </sch:rule> <sch:rule context="mei:*[@tstamp2]"> <sch:assert test="not(@endid)">An element with @tstamp2 may not have @endid as well (and vice versa).</sch:assert> </sch:rule> </constraint>
@@ -1081,14 +1076,16 @@
                             <!--<memberOf key="att.bibl"/>-->
                         </classes>
                         <content>
-                            <rng:ref name="titleStmt"/>
-                            <rng:ref name="pubStmt"/>
+                            <sequence>
+                                <elementRef key="titleStmt"/>
+                                <elementRef key="pubStmt"/>
+                            </sequence>
                         </content>
                         <attList org="group">
                             <attDef ident="corresp" usage="opt" mode="add">
                                 <desc>Used to point to other elements that correspond to this one in a generic fashion.</desc>
                                 <datatype maxOccurs="unbounded" minOccurs="1">
-                                    <rng:ref name="data.URI"/>
+                                    <dataRef key="data.URI"/>
                                 </datatype>
                                 <constraintSpec ident="check_correspTarget" scheme="schematron">
                                     <constraint> <sch:rule context="@corresp"> <sch:assert role="warning" test="not(normalize-space(.) eq '')">@corresp attribute should have content.</sch:assert> </sch:rule> </constraint>
@@ -1117,12 +1114,10 @@
                             <!--<memberOf key="model.dateLike"/>-->
                         </classes>
                         <content>
-                            <rng:zeroOrMore>
-                                <rng:choice>
-                                    <rng:text/>
-                                    <rng:ref name="model.textPhraseLike"/>
-                                </rng:choice>
-                            </rng:zeroOrMore>
+                            <alternate minOccurs="0" maxOccurs="unbounded">
+                                <textNode/>
+                                <classRef key="model.textPhraseLike"/>
+                            </alternate>
                         </content>
                         <remarks>
                             <p part="N">This element is modelled on elements in the Text Encoding Initiative (TEI) and Encoded Archival Description (EAD) standards.</p>
@@ -1137,18 +1132,12 @@
                             <!--<memberOf key="att.bibl"/>-->
                         </classes>
                         <content>
-                            <rng:optional>
-                                <rng:ref name="publisher"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="pubPlace"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="date"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="availability"/>
-                            </rng:optional>
+                            <sequence>
+                                <elementRef key="publisher" minOccurs="0"/>
+                                <elementRef key="pubPlace" minOccurs="0"/>
+                                <elementRef key="date" minOccurs="0"/>
+                                <elementRef key="availability" minOccurs="0"/>
+                            </sequence>
                         </content>
                         <remarks>
                             <p part="N">This element is modelled on an element in the Text Encoding Initiative (TEI) standard. In MEI Basic, it may contain only publisher, publishing place, date and availability information, in that order.</p>
@@ -1169,18 +1158,16 @@
                             <memberOf key="model.mdivLike"/>
                         </classes>
                         <content>
-                            <rng:choice>
-                                <rng:ref name="model.scoreLike"/>
-                                <rng:zeroOrMore>
-                                    <rng:ref name="model.mdivLike"/>
-                                </rng:zeroOrMore>
-                            </rng:choice>
+                            <alternate>
+                                <classRef key="model.scoreLike"/>
+                                <classRef key="model.mdivLike" minOccurs="0" maxOccurs="unbounded"/>
+                            </alternate>
                         </content>
                         <attList org="group">
                             <attDef ident="n" usage="opt">
                                 <desc>Provides a number-like designation that indicates an element's position in a sequence of similar elements. May not contain space characters.</desc>
                                 <datatype maxOccurs="1" minOccurs="1">
-                                    <rng:ref name="data.WORD"/>
+                                    <dataRef key="data.WORD"/>
                                 </datatype>
                             </attDef>
                         </attList>
@@ -1204,38 +1191,26 @@
                             <memberOf key="att.meterSigDefault.log" mode="add"/>
                         </classes>
                         <content>
-                            <!--<rng:optional>
+                            <sequence>
+                                <!--<rng:optional>
                             <rng:ref name="model.chordTableLike"/>
                         </rng:optional>-->
-                            <rng:optional>
-                                <rng:ref name="model.symbolTableLike"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="model.keySigLike"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="model.meterSigLike"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="pgHead"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="pgFoot"/>
-                            </rng:optional>
-                            <rng:optional>
-                                <rng:ref name="instrGrp"/>
-                            </rng:optional>
-                            <rng:choice>
-                                <rng:optional>
-                                    <rng:ref name="model.staffGrpLike"/>
-                                </rng:optional>
-                            </rng:choice>
-                            <!--<rng:zeroOrMore>
+                                <classRef key="model.symbolTableLike" minOccurs="0"/>
+                                <classRef key="model.keySigLike" minOccurs="0"/>
+                                <classRef key="model.meterSigLike" minOccurs="0"/>
+                                <elementRef key="pgHead" minOccurs="0"/>
+                                <elementRef key="pgFoot" minOccurs="0"/>
+                                <elementRef key="instrGrp" minOccurs="0"/>
+                                <alternate>
+                                    <classRef key="model.staffGrpLike" minOccurs="0"/>
+                                </alternate>
+                                <!--<rng:zeroOrMore>
                             <rng:ref name="grpSym"/>
                         </rng:zeroOrMore>-->
-                            <!--<rng:optional>
+                                <!--<rng:optional>
                             <rng:ref name="ambitus"/>
                         </rng:optional>-->
+                            </sequence>
                         </content>
                     </elementSpec>
 
@@ -1253,26 +1228,22 @@
                             <memberOf key="model.staffGrpLike"/>
                         </classes>
                         <content>
-                            <!--<rng:zeroOrMore>
+                            <sequence>
+                                <!--<rng:zeroOrMore>
                             <rng:ref name="grpSym"/>
                         </rng:zeroOrMore>-->
-                            <rng:zeroOrMore>
-                                <rng:choice>
-                                    <rng:ref name="model.labelLike"/>
-                                </rng:choice>
-                            </rng:zeroOrMore>
-                            <rng:zeroOrMore>
-                                <rng:ref name="model.instrDefLike"/>
-                            </rng:zeroOrMore>
-                            <rng:oneOrMore>
-                                <rng:choice>
-                                    <rng:ref name="model.staffGrpLike"/>
-                                    <rng:ref name="model.staffDefLike"/>
-                                </rng:choice>
-                            </rng:oneOrMore>
-                            <!--<rng:zeroOrMore>
+                                <alternate minOccurs="0" maxOccurs="unbounded">
+                                    <classRef key="model.labelLike"/>
+                                </alternate>
+                                <classRef key="model.instrDefLike" minOccurs="0" maxOccurs="unbounded"/>
+                                <alternate minOccurs="1" maxOccurs="unbounded">
+                                    <classRef key="model.staffGrpLike"/>
+                                    <classRef key="model.staffDefLike"/>
+                                </alternate>
+                                <!--<rng:zeroOrMore>
                             <rng:ref name="grpSym"/>
                         </rng:zeroOrMore>-->
+                            </sequence>
                         </content>
                         <constraintSpec ident="Check_staffGrp_unique_staff_n_values" scheme="schematron">
                             <constraint> <sch:rule context="mei:staffGrp"> <sch:let name="countstaves" value="count(descendant::mei:staffDef)"/> <sch:let name="countuniqstaves" value="count(distinct-values(descendant::mei:staffDef/@n))"/> <sch:assert test="$countstaves eq $countuniqstaves">Each staffDef must have a unique value for the n attribute.</sch:assert> </sch:rule> </constraint>
