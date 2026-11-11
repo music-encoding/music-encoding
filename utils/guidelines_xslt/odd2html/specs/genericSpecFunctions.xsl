@@ -649,9 +649,9 @@
                                 and custom <i>NMToken</i>
                             </xsl:if>
                         </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:ref or tei:dataRef/@key]">
+                        <xsl:when test="$current.att/tei:datatype[tei:dataRef/@key]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
-                            <xsl:variable name="target" select="($dt/tei:dataRef/@key, $dt/rng:ref/@name)[1]" as="xs:string"/>
+                            <xsl:variable name="target" select="$dt/tei:dataRef/@key" as="xs:string"/>
                             <xsl:variable name="reference" as="node()*">
                                 <xsl:choose>
                                     <xsl:when test="$target = $data.types/@ident">
