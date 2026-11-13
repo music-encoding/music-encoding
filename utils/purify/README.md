@@ -116,7 +116,9 @@ The driver prints one line per file or reference:
   (`data.*`) or `elementRef` (anything else)
 - `rng:choice` becomes `alternate`; literal `rng:value`s of a choice
   become a closed `valList` (without `alternate` if there is nothing
-  else)
+  else); a choice with a single child produces no `alternate` and its
+  occurrence moves to the child, unless the child cannot carry it (e.g.
+  `rng:zeroOrMore/rng:choice/rng:optional`)
 - `rng:group` with more than one child becomes `sequence`;
   `rng:zeroOrMore`, `rng:oneOrMore`, `rng:optional` become
   `@minOccurs`/`@maxOccurs` (or a `sequence` with several children)

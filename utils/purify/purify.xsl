@@ -268,11 +268,27 @@
     <textNode/>
   </xsl:template>
 
+  <!-- A choice of one pattern needs no alternate. Its occurrence moves to
+       the pattern (maxmin looks past a single-child choice), so it is only
+       unwrapped when the pattern can carry it: a ref, group or choice, or
+       any pattern when the choice has no occurrence. Otherwise (e.g.
+       zeroOrMore/choice/optional) the alternate is kept. -->
   <xsl:template match="rng:choice">
-    <alternate>
+    <xsl:variable name="occurrence" as="attribute()*">
       <xsl:call-template name="maxmin"/>
-      <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
-    </alternate>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count(*) eq 1
+                      and (*[self::rng:ref or self::rng:group or self::rng:choice] or empty($occurrence))">
+        <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <alternate>
+          <xsl:sequence select="$occurrence"/>
+          <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
+        </alternate>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Literal values of a choice become a closed valList. alternate only
@@ -540,10 +556,11 @@
   <!-- subroutine to handle repetition and optionality -->
   <!-- *********************************************** -->
   <xsl:template name="maxmin">
-    <!-- A single-child rng:group produces no output (see the rng:group
-         template), so look past any such groups for the repetition wrapper.
-         Otherwise e.g. zeroOrMore/group/choice loses its occurrence. -->
-    <xsl:variable name="node" select="(ancestor-or-self::*[not(parent::rng:group[count(*) eq 1])])[last()]"/>
+    <!-- A single-child rng:group or rng:choice produces no output (see the
+         rng:group and rng:choice templates), so look past any such groups
+         and choices for the repetition wrapper. Otherwise e.g.
+         zeroOrMore/group/choice loses its occurrence. -->
+    <xsl:variable name="node" select="(ancestor-or-self::*[not(parent::*[self::rng:group or self::rng:choice][count(*) eq 1])])[last()]"/>
     <xsl:variable name="num_siblings" select="count($node/../*) -1"/>
     <xsl:choose>
       <xsl:when test="$node/parent::rng:zeroOrMore  and  $num_siblings eq 0">
