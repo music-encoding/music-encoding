@@ -92,6 +92,24 @@
     <property name="schematron.jar.file" value="ph-schematron-ant-task-${schematron.version}-jar-with-dependencies.jar"/>
     <property name="xerces.jar.file" value="oxygen-patched-xerces-${xerces.version}.jar"/>
 
+    <!-- Expands ${customization.path} with TEI's oddexpand ("odd": compiled ODD only; "rng": compiled ODD + RNG).
+         Shared by build-compiled-odd and build-rng, so oddexpand parameters belong here, not in nested elements. -->
+    <macrodef name="tei-odd-build">
+        <attribute name="stylesheets"/>
+        <attribute name="output"/>
+        <element name="extra-properties" optional="true" implicit="true"/>
+        <sequential>
+            <ant dir="${dir.lib.stylesheets}/@{stylesheets}/" antfile="build-to.xml" target="go" inheritall="true">
+                <property name="inputFile" value="${customization.path}"/>
+                <property name="outputFile" value="@{output}"/>
+                <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
+                <property name="verbose" value="${verbose}"/>
+                <reference refid="mei.classpath" torefid="classpath"/>
+                <extra-properties/>
+            </ant>
+        </sequential>
+    </macrodef>
+
 
     <target name="help">
         <antcall target="echo-mei"/>
@@ -352,18 +370,9 @@
 
     <target name="build-compiled-odd" description="Builds the compiled ODD of a specific customization submitted as absolute path with -Dcustomization.path input param." depends="validate-source">
         <!-- NB: do not use on mei-source.xml as the egXMLs will be corrupted in the output -->
-        <!-- NB: build-rng produces the same compiled ODD via TEI's oddexpand; keep both in sync -->
-
+        <!-- NB: build-rng produces the same compiled ODD; both share the macro tei-odd-build -->
         <basename property="selectedSchema" file="${customization.path}" suffix=".xml"/>
-        <ant dir="${dir.lib.stylesheets}/odd/" antfile="build-to.xml" target="go" inheritall="true">
-            <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
-            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose" value="${verbose}"/>
-            <property name="summaryDoc" value="false"/>
-            <property name="suppressTEIexamples" value="true"/>
-            <reference refid="mei.classpath" torefid="classpath"/>
-        </ant>
+        <tei-odd-build stylesheets="odd" output="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
     </target>
 
     <target name="build-customization-guidelines-html" depends="validate-source, get-local-git-sha, get-local-git-branch" description="Builds the guidelines for a customization submitted as absolute path with -Dcustomization.source input param.">
@@ -388,7 +397,7 @@
                   using @value will just submit this as string literals and not change the separator.
         -->
         <property name="output.folder" value="${dir.dist.guidelines}/${selectedSchema}"/>
-        <!-- generate customization’s compiled ODD only if it is older than customization or source (build-rng usually provides it) -->
+        <!-- generate customization’s compiled ODD only if it is missing or older than customization or canonicalized source (in `ant dist`, build-rng has already built it) -->
         <uptodate property="compiled.uptodate" targetfile="${compiled.path}">
             <srcfiles file="${customization.path}"/>
             <srcfiles file="${canonicalized.source.path}"/>
@@ -415,18 +424,12 @@
         <echo>    source: ${canonicalized.source.path.cross_platform}</echo>
         <echo>    output: ${dir.dist.schemata}/${selectedSchema}.rng</echo>
         <echo>            ${dir.dist.schemata}/${selectedSchema}_compiled.odd</echo>
-        <!-- target "go" instead of "dist": skip TEI's oddcleanup, so the processed ODD (identical to the output of build-compiled-odd) can be kept as compiled ODD -->
-        <ant dir="${dir.lib.stylesheets}/rng/" antfile="build-to.xml" target="go" inheritall="true" usenativebasedir="true"><!-- check whether nativebasdir is required -->
-            <property name="inputFile" value="${customization.path}"/>
-            <property name="outputFile" value="${dir.dist.schemata}/${selectedSchema}.rng"/>
-            <property name="defaultSource" value="${canonicalized.source.path.cross_platform}"/>
-            <property name="verbose">true</property>
+        <tei-odd-build stylesheets="rng" output="${dir.dist.schemata}/${selectedSchema}.rng">
             <property name="profiledir" location="utils"/>
             <property name="profile" value="tei-profiles"/>
-            <reference refid="mei.classpath" torefid="classpath"/>
-            <property name="verbose" value="${verbose}"/>
-        </ant>
-        <move file="${customization.path}.processedodd" tofile="${dir.dist.schemata}/${selectedSchema}_compiled.odd"/>
+        </tei-odd-build>
+        <!-- keep TEI's intermediate processed ODD as compiled ODD; it exists only because the macro runs "go", not "dist" (whose oddcleanup deletes it) -->
+        <move file="${customization.path}.processedodd" tofile="${dir.dist.schemata}/${selectedSchema}_compiled.odd" overwrite="true"/>
     </target>
 
     <target name="build-guidelines-html" description="Builds the HTML version of the MEI guidelines for all customizations." depends="validate-source, get-local-git-sha, get-local-git-branch" unless="${build-guidelines-html.done}">
