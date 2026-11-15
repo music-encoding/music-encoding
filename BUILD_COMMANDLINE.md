@@ -200,7 +200,7 @@ flowchart TD
     VALID_CUSS --> VALID_CUS
     ODDS --> ODD_CUS
     HTML --> HTML_CUS
-    HTML_CUS -. "if compiled ODD is outdated" .-> ODD_CUS
+    HTML_CUS -. "if compiled ODD is missing or outdated" .-> ODD_CUS
     HTML_CUS --> IMG
     HTML --> IDX
     HTML --> PDF
