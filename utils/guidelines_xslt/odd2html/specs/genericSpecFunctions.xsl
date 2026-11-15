@@ -649,20 +649,29 @@
                                 and custom <i>NMToken</i>
                             </xsl:if>
                         </xsl:when>
-                        <xsl:when test="$current.att/tei:datatype[rng:ref]">
+                        <xsl:when test="$current.att/tei:datatype[tei:dataRef/@key]">
                             <xsl:variable name="dt" select="$current.att/tei:datatype" as="node()"/>
+                            <xsl:variable name="target" select="$dt/tei:dataRef/@key" as="xs:string"/>
+                            <xsl:variable name="reference" as="node()*">
+                                <xsl:choose>
+                                    <xsl:when test="$target = $data.types/@ident">
+                                        <a class="{tools:getLinkClasses($target)}" href="#{$target}"><xsl:value-of select="$target"/></a>
+                                    </xsl:when>
+                                    <xsl:otherwise><xsl:value-of select="$target"/></xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
                             <xsl:choose>
                                 <xsl:when test="$dt/@maxOccurs = '1'">
-                                    Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
+                                    Value conforms to <xsl:sequence select="$reference"/>.
                                 </xsl:when>
                                 <xsl:when test="$dt/@maxOccurs = '2'">
-                                    One or two values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by a space.
+                                    One or two values from <xsl:sequence select="$reference"/>, separated by a space.
                                 </xsl:when>
                                 <xsl:when test="$dt/@maxOccurs = 'unbounded'">
-                                    One or more values from <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>, separated by spaces.
+                                    One or more values from <xsl:sequence select="$reference"/>, separated by spaces.
                                 </xsl:when>
                                 <xsl:when test="not($dt/@maxOccurs) and not($dt/@minOccurs)">
-                                    Value conforms to <a class="{tools:getLinkClasses($dt/rng:ref/@name)}" href="#{$dt/rng:ref/@name}"><xsl:value-of select="$dt/rng:ref/@name"/></a>.
+                                    Value conforms to <xsl:sequence select="$reference"/>.
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <xsl:message select="'ERROR: Unable to resolve the following datatype on attribute ' || $current.att/@ident"/>
