@@ -16,9 +16,14 @@
   <xsl:variable name="target-tei-version.patch" select="xs:integer(tokenize($target-tei-version, '\.')[3])" as="xs:integer"/>
   
   <!-- All modules next to the one being processed: datatype macros may be
-       used in another module than the one they are defined in. -->
+       used in another module than the one they are defined in.
+       purify-odd.xsl overrides this with the resolved dependencies. -->
   <xsl:variable name="all-modules" as="document-node()*"
     select="(collection(resolve-uri('.', base-uri(/)) || '?select=*.xml'), /)"/>
+
+  <!-- idents of all datatype macros -->
+  <xsl:variable name="dt-macros" as="xs:string*"
+    select="distinct-values($all-modules//macroSpec[@type = 'dt']/@ident)"/>
 
   <!-- An rng:list holding one repeated pattern, as alternative of a choice
        directly in the content of a datatype macro, e.g.
@@ -191,7 +196,14 @@
   <xsl:template match="exemplum">
     <xsl:copy-of select="."/>
   </xsl:template>
- 
+
+  <!-- A moduleRef/@url includes an external RELAX NG schema; its content
+       (e.g. an rng:define combining into an ODD class) is RELAX NG by
+       design and has no pure ODD equivalent, so it is copied unchanged. -->
+  <xsl:template match="moduleRef[@url]">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+
   <!-- ********************************************* -->
   <!-- Process RNG elements that need to change. -->
   <!-- ********************************************* -->
@@ -256,11 +268,27 @@
     <textNode/>
   </xsl:template>
 
+  <!-- A choice of one pattern needs no alternate. Its occurrence moves to
+       the pattern (maxmin looks past a single-child choice), so it is only
+       unwrapped when the pattern can carry it: a ref, group or choice, or
+       any pattern when the choice has no occurrence. Otherwise (e.g.
+       zeroOrMore/choice/optional) the alternate is kept. -->
   <xsl:template match="rng:choice">
-    <alternate>
+    <xsl:variable name="occurrence" as="attribute()*">
       <xsl:call-template name="maxmin"/>
-      <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
-    </alternate>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="count(*) eq 1
+                      and (*[self::rng:ref or self::rng:group or self::rng:choice] or empty($occurrence))">
+        <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <alternate>
+          <xsl:sequence select="$occurrence"/>
+          <xsl:apply-templates select="node() except text()[ normalize-space(.) eq '']"/>
+        </alternate>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
   <!-- Literal values of a choice become a closed valList. alternate only
@@ -376,7 +404,7 @@
 
   <!-- Datatype macros become dataSpecs (see above), so any existing
        (already pure) reference to them has to become a dataRef. -->
-  <xsl:template match="macroRef[@key = //macroSpec[@type = 'dt']/@ident or starts-with(@key, 'data.')]">
+  <xsl:template match="macroRef[@key = $dt-macros or starts-with(@key, 'data.')]">
     <dataRef>
       <xsl:apply-templates select="@*"/>
     </dataRef>
@@ -528,10 +556,11 @@
   <!-- subroutine to handle repetition and optionality -->
   <!-- *********************************************** -->
   <xsl:template name="maxmin">
-    <!-- A single-child rng:group produces no output (see the rng:group
-         template), so look past any such groups for the repetition wrapper.
-         Otherwise e.g. zeroOrMore/group/choice loses its occurrence. -->
-    <xsl:variable name="node" select="(ancestor-or-self::*[not(parent::rng:group[count(*) eq 1])])[last()]"/>
+    <!-- A single-child rng:group or rng:choice produces no output (see the
+         rng:group and rng:choice templates), so look past any such groups
+         and choices for the repetition wrapper. Otherwise e.g.
+         zeroOrMore/group/choice loses its occurrence. -->
+    <xsl:variable name="node" select="(ancestor-or-self::*[not(parent::*[self::rng:group or self::rng:choice][count(*) eq 1])])[last()]"/>
     <xsl:variable name="num_siblings" select="count($node/../*) -1"/>
     <xsl:choose>
       <xsl:when test="$node/parent::rng:zeroOrMore  and  $num_siblings eq 0">
