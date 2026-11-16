@@ -674,10 +674,9 @@
                 <xsl:when test="$min = $max">exactly <xsl:value-of select="$min"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="$min"/> to <xsl:value-of select="$max"/></xsl:otherwise>
             </xsl:choose>
-            <xsl:text> space-separated values of (</xsl:text>
+            <xsl:text> space-separated values of </xsl:text>
         </xsl:if>
         <xsl:apply-templates select="." mode="attribute.datatype.pattern"/>
-        <xsl:if test="$min ne '1' or $max ne '1'"><xsl:text>)</xsl:text></xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:datatype | tei:sequence | tei:alternate" mode="attribute.datatype.pattern">
