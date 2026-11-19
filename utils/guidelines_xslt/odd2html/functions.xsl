@@ -356,7 +356,12 @@
                 </xsl:for-each>
             </xsl:when>
             <xsl:when test="$type = 'dataType'">
-                <!-- dunno how to reference data types, so nothing given back here yet -->
+                <xsl:for-each select="$all.chapters/descendant-or-self::chapter[@xml:id = $chapters//tei:ident[text() = $ident]/ancestor::tei:div[1]/@xml:id or @xml:id = $chapters//tei:specDesc[@key = $ident]/ancestor::tei:div[1]/@xml:id]">
+                    <xsl:variable name="chapter" select="." as="node()"/>
+                    <xsl:variable name="hasSpecDesc" select="exists($chapter//tei:specDesc[@key = $ident])" as="xs:boolean"/>
+                    <xsl:variable name="class" select="'chapterLink' || (if($hasSpecDesc) then(' desc') else(''))" as="xs:string"/>
+                    <a class="{$class}" href="#{$chapter/@xml:id}" title="{$chapter/@number || ' ' || $chapter/@head}"><xsl:value-of select="$chapter/@number || ' ' || $chapter/@head"/></a>
+                </xsl:for-each>
             </xsl:when>
             <xsl:when test="$type = 'macroGroup'">
                 <!-- dunno how to reference macro groups, so nothing given back here yet -->

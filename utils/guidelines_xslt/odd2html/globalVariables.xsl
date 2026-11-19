@@ -380,6 +380,7 @@
     </xd:doc>
     <xsl:variable name="data.types.links" as="node()*">
         <xsl:for-each select="$data.types">
+            <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,6,1)}" href="/documentation/{$version}/{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
@@ -392,6 +393,7 @@
     </xd:doc>
     <xsl:variable name="data.types.pdf.links" as="node()*">
         <xsl:for-each select="$data.types">
+            <xsl:sort select="@ident" data-type="text"/>
             <xsl:variable name="name" select="@ident"/>
             <a class="{tools:getLinkClasses($name)} {substring($name,6,1)}" href="#{$name}"><xsl:value-of select="$name"/></a>
         </xsl:for-each>
