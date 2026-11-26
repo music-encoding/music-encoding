@@ -177,6 +177,14 @@
         </xd:desc>
     </xd:doc>
     <xsl:template match="tei:macroRef/@key" mode="preserveSpace" priority="2"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:template>
+
+    <xd:doc>
+        <xd:desc>
+            <xd:p>Translates dataRef relationships to available data types into operable links.</xd:p>
+            <xd:p>In order to preserve spacing, it is important that the following template is kept on one line.</xd:p>
+        </xd:desc>
+    </xd:doc>
+    <xsl:template match="tei:dataRef/@key" mode="preserveSpace" priority="2"><xsl:choose><xsl:when test=". = $data.types/@ident"><xsl:value-of select="' '"/><span class="attribute"><xsl:value-of select="local-name()"/>=</span><span class="attributevalue">"<a class="{tools:getLinkClasses(.)}" href="#{string(.)}"><xsl:value-of select="string(.)"/></a>"</span></xsl:when><xsl:otherwise><xsl:next-match/></xsl:otherwise></xsl:choose></xsl:template>
     
     <xd:doc>
         <xd:desc>
