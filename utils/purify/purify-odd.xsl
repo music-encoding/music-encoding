@@ -55,7 +55,9 @@
 
   <xsl:function name="pd:path-uri" as="xs:string">
     <xsl:param name="path" as="xs:string"/>
-    <xsl:sequence select="'file:' || string-join(tokenize($path, '/') ! encode-for-uri(.), '/')"/>
+    <!-- Windows: backslashes, and a drive letter (D:/x → /D:/x, ':' kept) -->
+    <xsl:variable name="p" select="replace(replace($path, '\\', '/'), '^([A-Za-z]:)', '/$1')"/>
+    <xsl:sequence select="'file:' || string-join(tokenize($p, '/') ! (if (matches(., '^[A-Za-z]:$')) then . else encode-for-uri(.)), '/')"/>
   </xsl:function>
 
   <xsl:function name="pd:dir-uri" as="xs:string">
