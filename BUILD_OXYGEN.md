@@ -38,18 +38,26 @@ Once the building is done, Oxygen will automatically open the schema. The schema
 
 In this section, we will use Oxygen to generate the HTML document for the guidelines using the XSLT Stylesheet located at `music-encoding/utils/guidelines_xslt/odd2html.xsl`. The steps are the following:
 
-1. Open the `mei-source.xml` file in Oxygen. This file is located in `music-encoding/source/mei-source.xml`.
+1. Open `build.xml` or any other XML file in oXygen. Create a new [ant task](https://www.oxygenxml.com/doc/versions/28.1/ug-editor/topics/ant-transformation.html?hl=ant%2Ctransformation) in oXygen with the following parameters:
 
-2. Click on the _Configure Transformation Scenario(s)_ button (the button with the wrench). This will open a window of the same name.
+   * Name: `build-compiled-odd`
+   * Ant build file: `${pd}/build.xml`
+   * Build target: `build-compiled-odd`
 
-3. Click on the _New_ button and select the _XML transformation with XSLT_ option. This will open the _New scenario_ window.
+   In the parameters tab, add parameter `customization.path` with the value of the path to your customization file (e.g., `${pd}/customizations/mei-cmn.xml`). After applying this ant task, you will find the compiled ODD file: `music-encoding/dist/schemata/*_compiled.odd`.
 
-4. Assign a name to your new XML transformation.
+   
 
-5. In the _XSLT_ tab, look for the _XSL URL_ field and add the path to your `odd2html.xsl` file. You can do this by clicking on the folder icon to browse this file (it is located in your local copy of the music-encoding repo, in `music-encoding/utils/guidelines_xslt/odd2html.xsl`) and opening it.
+2. Open the compiled ODD file in oXygen (e.g. `music-encoding/dist/schemata/mei-cmn_compiled.odd`). Configure a new [transformation scenario](https://www.oxygenxml.com/doc/versions/28.1/ug-editor/topics/xml-transformation-with-xslt.html) with the following parameters:
 
-6. Now, you will be back in the _New Scenario_ window again. If you are satisfied with your changes, click on the _OK_ button. Otherwise, you could also edit the _XML URL_ field for a particular folder, as well as the _Parameters_ to change the output folder.
+   * Name: `odd2html`
+   * XML URL: `${currentFileURL}`
+   * XSL URL: `${pdu}/utils/guidelines_xslt/odd2html.xsl`
 
-7. Now, you will be back in your _Configure Transformation Scenario(s)_ window. In the _Global_ section of the window, you will find your new _XML transformation with XSLT_ with the name you gave it in Step 4. Click on it and then click on the _Applied associated_ button at the left-bottom corner of your window. This will generate the HTML document for the guidelines.
+   <img width="300"  alt="oXygen transformation scenario dialog box" src="https://github.com/user-attachments/assets/ccc7e059-38b0-4d44-83ab-ceaf4d612831" />
 
-After a few minutes, the results of this build can be found in the web folder (`music-encoding/dist/guidelines/web`). The guidelines are stored in the `index.html` file.
+   Afer applying this transformation the output files will be in `dist/guidelines/web`. 
+
+   Note that `assets/` folder is only copied by the respective ant task `build-guidelines-html` and not by the XSLT transformation. If you want to copy the `assets/` folder, you can do it manually or use the ant task.
+
+   Note that the `${pd}` variable is a built-in variable in oXygen that points to the directory of the currently opened file.  You may replace it with an absolute path to your customization file.
